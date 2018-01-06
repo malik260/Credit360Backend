@@ -202,8 +202,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
         [HttpGet]
         [Route("loan-application-eligibility/loanApplicationId/{id}")]
         public HttpResponseMessage GetLoanApplicationsDetails(int id)
@@ -300,15 +298,9 @@ namespace FintrakBanking.APICore.Controllers
                 //model.companyId = token.GetCompanyId;
                 //model.branchId = (short)token.GetBranchId;
 
-                var response = repo.UpdateApprovalStatusForApplication(id);
-
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = $"Checklist Completed. Loan application has being sent to CAM" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "Checklist not completed. Please complete checklist to proceed." });
+                var response = repo.UpdateApprovalStatusForApplication(id);              
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+              
             }
             catch (Exception ex)
             {
@@ -725,6 +717,23 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.ValidateDocumentDate(data);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("loan-validate-document-number")]
+        public HttpResponseMessage ValidateDocumentNumber([FromBody] ValidateNumberViewModel data)
+        {
+            try
+            {
+                var response = repo.ValidateDocumentNumber(data);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }

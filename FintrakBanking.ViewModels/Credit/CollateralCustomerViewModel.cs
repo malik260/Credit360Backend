@@ -23,9 +23,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int? valuationCycle { get; set; }
         public double haircut { get; set; }
         public bool hasInsurance { get; set; }
+        public string collateralSubTypeName { get; set; }
 
-        // presentation
-        public int approvalStatus { get; set; }
+    // presentation
+    public int approvalStatus { get; set; }
 
         // insurance
         public string referenceNumber { get; set; }

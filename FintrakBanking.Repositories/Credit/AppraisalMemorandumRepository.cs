@@ -654,7 +654,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = x.a.TBL_LOAN_TYPE.LOANTYPENAME,
                             createdBy = x.a.CREATEDBY,
                             loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
-                            //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
+                            customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                             operationId = x.a.OPERATIONID,
                         })
                         .GroupBy(d => d.loanApplicationId)
@@ -667,7 +667,7 @@ namespace FintrakBanking.Repositories.Credit
             var staffApprovalLevelIds =
                 context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)// && x.PRODUCTCLASSID == classId)
                 .Select(x => x.TBL_APPROVAL_GROUP)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.ISACTIVE == true))
                 .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId))
                 .Select(x => x.APPROVALLEVELID);
 
@@ -739,7 +739,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanTypeName = x.a.TBL_LOAN_TYPE.LOANTYPENAME,
                 createdBy = x.a.CREATEDBY,
                 loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
-                //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
+                customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                 operationId = x.a.OPERATIONID,
             })
             .OrderByDescending(x => x.applicationDate)
@@ -978,11 +978,6 @@ namespace FintrakBanking.Repositories.Credit
                             loanInformation = x.a.LOANINFORMATION,
                             submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
-                            //notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
-                            //notInBlackbook = x.a.NOTINBLACKBOOK,
-                            //notInCamsol = x.a.NOTINCAMSOL,
-                            //notInXds = x.a.NOTINXDS,
-                            //notInCrc = x.a.NOTINCRC,
                             isRelatedParty = x.a.ISRELATEDPARTY,
                             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                             approvalStatusId = x.a.APPROVALSTATUSID,
@@ -995,7 +990,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = x.a.TBL_LOAN_TYPE.LOANTYPENAME,
                             createdBy = x.a.CREATEDBY,
                             loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
-                            //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
+                            customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                             operationId = x.a.OPERATIONID,
                     })
                     .GroupBy(d => d.loanApplicationId)

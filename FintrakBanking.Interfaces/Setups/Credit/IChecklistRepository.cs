@@ -9,6 +9,7 @@ namespace FintrakBanking.Interfaces.Setups
     public interface IChecklistRepository
     {
         #region Loan Checklist Definition
+        IEnumerable<CheckListResponseTypeViewModel> GetAllChecklistResponseType();
         IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistType();
         IEnumerable<CheckListStatusViewModel> GetChecklistStatusYesorNo();
         IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition();

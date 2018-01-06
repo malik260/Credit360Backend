@@ -48,16 +48,20 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
         public IEnumerable<CollateralTypeViewModel> CollateralTypesByLoanApplication(int? applicationId)
         {
-            var list = (from m in context.TBL_COLLATERAL_TYPE
-                    select new CollateralTypeViewModel
-                    {
-                        collateralTypeId = m.COLLATERALTYPEID,
-                        collateralTypeName = m.COLLATERALTYPENAME,
-                        chargeGLAccountId = m.CHARGEGLACCOUNTID,
-                        requireInsurancePolicy = m.REQUIREINSURANCEPOLICY,
-                        details = m.DETAILS,
-                        position = m.POSITION
-                    }).OrderBy(m => m.position);
+            var list = context.TBL_COLLATERAL_TYPE_SUB
+                        .Select(m => new CollateralTypeViewModel
+                        {
+                            collateralTypeId = m.COLLATERALTYPEID,
+                            collateralTypeName = m.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                            chargeGLAccountId = m.TBL_COLLATERAL_TYPE.CHARGEGLACCOUNTID,
+                            requireInsurancePolicy = m.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
+                            details = m.TBL_COLLATERAL_TYPE.DETAILS,
+                            position = m.TBL_COLLATERAL_TYPE.POSITION,
+                            collateralSubTypeName = m.COLLATERALSUBTYPENAME,
+                            collateralSubTypeId = m.COLLATERALSUBTYPEID,
+                        })
+                        .Distinct()
+                        .OrderBy(m => m.position);
 
             if (applicationId == null) { return list; }
 

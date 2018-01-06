@@ -361,6 +361,7 @@ namespace FintrakBanking.Repositories.Credit
                 currencyId = x.CURRENCYID,
                 currency = x.TBL_CURRENCY.CURRENCYNAME,
                 collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                collateralSubTypeName = "not implimented",
                 collateralCode = x.COLLATERALCODE,
                 collateralValue = x.COLLATERALVALUE,
                 camRefNumber = x.CAMREFNUMBER,

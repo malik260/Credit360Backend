@@ -1062,7 +1062,7 @@ namespace FintrakBanking.Repositories.Customer
                                 accountHolder = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.LASTNAME,
                                 companyId = s.TBL_CUSTOMER.COMPANYID,
                                 branchId = s.TBL_CUSTOMER.BRANCHID,
-                                isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERCODE == s.TBL_CUSTOMER.CUSTOMERCODE),
+                                //isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERID == s.CUSTOMERID),
                                 isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == s.CUSTOMERID) && x.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList),
                                 isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == s.CUSTOMERID)),
                                 taxIdentificationNumber = s.TBL_CUSTOMER.TAXNUMBER,

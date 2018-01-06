@@ -76,7 +76,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = _fsGroupRepo.GetCustomerFSCaptionGroup(token.GetCompanyId);
+                var data = _fsGroupRepo.GetCustomerFSCaptionGroup();
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -872,6 +872,7 @@ namespace FintrakBanking.APICore.Controllers
                     new { success = false, message = ex.Message });
             }
         }
+
 
         #endregion Customer FS Ratio Caption
 

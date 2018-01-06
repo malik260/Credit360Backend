@@ -37,12 +37,12 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = await olAvlmentRepo.GetApplicationsDueForOfferLetterGeneration(token.GetStaffId, token.GetCompanyId).ToListAsync();
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
-                }
+                //if (!response.Any())
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response });
+                //}
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count(), message = "No record found" });
             }
             catch (Exception e)
             {
@@ -52,25 +52,25 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
-        [Route("loan-application/credit-assessment-memorandum/due-for-bondandguarantees")]
-        public async Task<HttpResponseMessage> GetApplicationsDueBondAndGuarantees()
-        {
-            try
-            {
-                var response = await olAvlmentRepo.GetApplicationsDueBondAndGuarantees(token.GetStaffId, token.GetCompanyId).ToListAsync();
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
-                }
+        //[HttpGet]
+        //[Route("loan-application/credit-assessment-memorandum/due-for-bondandguarantees")]
+        //public async Task<HttpResponseMessage> GetApplicationsDueBondAndGuarantees()
+        //{
+        //    try
+        //    {
+        //        var response = await olAvlmentRepo.GetApplicationsDueBondAndGuarantees(token.GetStaffId, token.GetCompanyId).ToListAsync();
+        //        if (!response.Any())
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+        //    }
+        //}
 
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum/due-for-review")]
@@ -78,6 +78,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                var staffid = token.GetStaffId;
                 var response = await olAvlmentRepo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToListAsync();
                 if (!response.Any())
                 {
@@ -154,6 +155,32 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
+
+
+        [HttpPut]
+        [Route("updateFinalOfferLetter/{applicationRef}")]
+        public HttpResponseMessage UpdateFinalOfferLetter(string applicationRef, OfferLetterTemplateViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                var data = olAvlmentRepo.UpdateFinalOfferLetter(applicationRef, model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this group {data}" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this group {e.Message}" });
+            }
+        }
+
+
 
         #region Offer Letter & Availment
 
@@ -427,8 +454,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Now proceeding to availment" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful!" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -442,8 +468,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion Offer Letter & Availment
-
-
 
         [HttpPost]
         [Route("offer-letter/forward-bonds-and-guarantee")]

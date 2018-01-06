@@ -13,7 +13,6 @@ namespace FintrakBanking.Entities.Models
         public TBL_CUSTOMER_FS_CAPTION_GROUP()
         {
             TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
-            TBL_CUSTOMER_FS_CAPTION = new HashSet<TBL_CUSTOMER_FS_CAPTION>();
         }
 
         [Key]
@@ -23,7 +22,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string FSCAPTIONGROUPNAME { get; set; }
 
-        public int COMPANYID { get; set; }
+        public int POSITION { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -39,12 +38,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CUSTOMER_FS_CAPTION> TBL_CUSTOMER_FS_CAPTION { get; set; }
     }
 }

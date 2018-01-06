@@ -103,6 +103,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountNumber { get; set; }
     }
 
+    public class LoanApplicationUpdateMessage
+    {
+        public bool isdone { get; set; }
+        public string messageStr { get; set; }
+    }
+
     public class CollateralLenPlacementViewModel : GeneralEntity
     {
         public string acountNumber { get; set; }
@@ -126,6 +132,13 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime date { get; set; }
         public int? dayInterval { get; set;}
         public bool InvoiceStatus { get; set; }
+    }
+    public class ValidateNumberViewModel
+    {
+        public int productId { get; set; }
+        public int principalId { get; set; }
+        public bool invoiceStatus { get; set; }
+        public string documentNo { get; set; }
     }
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
