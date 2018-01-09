@@ -53,5 +53,7 @@ namespace FintrakBanking.Interfaces.Credit
         ValidateNumberViewModel ValidateDocumentNumber(ValidateNumberViewModel data);
 
         IQueryable<LoanApplicationViewModel> GetLoanApplicationsByOperation(int operationId, int? classId, int branchId, int staffId);
+
+        decimal GetCustomerTotalOutstandingBalance(int customerId);
     }
 }

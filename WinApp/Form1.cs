@@ -33,8 +33,9 @@ namespace WinApp
         FinTrakBankingContext context;
         ILoanOperationsRepository loanOperation;
         ICustomerFSRatioRepository cust;
+        ILoanRepository loan;
         public Form1(FinTrakBankingContext _context , IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction,
-            ILoanScheduleRepository _loanSchedule, ICustomerFSRatioRepository _cust,
+            ILoanScheduleRepository _loanSchedule, ICustomerFSRatioRepository _cust, ILoanRepository _loan,
             IAuditTrailRepository _auditTrail, ILoanOperationsRepository _loanOperation )
         //IGeneralSetupRepository _genSetup )
         {
@@ -46,6 +47,7 @@ namespace WinApp
             this.financeTransaction = _financeTransaction;
             this.loanOperation = _loanOperation;
             this.cust = _cust;
+            this.loan = _loan;
 
         }
 
@@ -66,7 +68,7 @@ namespace WinApp
 
             short priceIndex = 1;
             double newRate = 20;
-            int customeId = 13;
+            int customeId = 60;
             //string vDesc = txtDesc.Text;
 
             //model.CountryId = 1;//(int)vCountry;
@@ -101,7 +103,8 @@ namespace WinApp
             //loanOperation.BulkRateReview(priceIndex,newRate,vDate,vStaff,vReview);
             //loanOperation.CalLoanClassification(vDate);
 
-            cust.GetCustomerFSRatioValues(customeId);
+            //cust.GetCustomerFSRatioValues(customeId);
+            loan.GetCustomerTotalOutstandingBalance(customeId);
 
             MessageBox.Show("Successful", "Fintrak");
 

@@ -742,5 +742,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+
+        [HttpGet]
+        [Route("customer-total-outstanding-balance/{customerId}")]
+        public HttpResponseMessage GetCustomerTotalOutstandingBalance(int customerId)
+        {
+            try
+            {
+                var response = repo.GetCustomerTotalOutstandingBalance(customerId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
 }
