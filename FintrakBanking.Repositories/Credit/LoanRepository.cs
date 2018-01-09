@@ -1014,95 +1014,95 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             loanId = ln.CONTINGENTLOANID,
                             operationId = (int)OperationsEnum.ContigentLoanBooking,
-                            loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
-                            customerId = ln.CUSTOMERID,
-                            productId = ln.PRODUCTID,
-                            casaAccountId = ln.CASAACCOUNTID,
-                            loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
+                            //loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
+                            //customerId = ln.CUSTOMERID,
+                            //productId = ln.PRODUCTID,
+                            //casaAccountId = ln.CASAACCOUNTID,
+                            //loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
 
-                            branchId = ln.BRANCHID,
-                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
-                            applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            //branchId = ln.BRANCHID,
+                            //loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            //applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
 
-                            relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
-                            relationshipManagerId = ln.RELATIONSHIPMANAGERID,
-                            misCode = ln.MISCODE,
-                            teamMiscode = ln.TEAMMISCODE,
-                            effectiveDate = ln.EFFECTIVEDATE,
-                            maturityDate = ln.MATURITYDATE,
-                            bookingDate = ln.BOOKINGDATE,
+                            //relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                            //relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                            //misCode = ln.MISCODE,
+                            //teamMiscode = ln.TEAMMISCODE,
+                            //effectiveDate = ln.EFFECTIVEDATE,
+                            //maturityDate = ln.MATURITYDATE,
+                            //bookingDate = ln.BOOKINGDATE,
 
-                            approvalStatusId = ln.APPROVALSTATUSID,
-                            approvedBy = ln.APPROVEDBY,
-                            approverComment = ln.APPROVERCOMMENT,
-                            dateApproved = ln.DATEAPPROVED,
-                            //loanStatusId = ln.LoanStatusId,
+                            //approvalStatusId = ln.APPROVALSTATUSID,
+                            //approvedBy = ln.APPROVEDBY,
+                            //approverComment = ln.APPROVERCOMMENT,
+                            //dateApproved = ln.DATEAPPROVED,
+                            ////loanStatusId = ln.LoanStatusId,
 
-                            isDisbursed = ln.ISDISBURSED,
-                            disbursedBy = ln.DISBURSEDBY,
-                            disburserComment = ln.DISBURSERCOMMENT,
-                            disburseDate = ln.DISBURSEDATE,
+                            //isDisbursed = ln.ISDISBURSED,
+                            //disbursedBy = ln.DISBURSEDBY,
+                            //disburserComment = ln.DISBURSERCOMMENT,
+                            //disburseDate = ln.DISBURSEDATE,
 
-                            approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                            //approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
 
-                            customerGroupId = ln.CUSTOMERGROUPID,
+                            //customerGroupId = ln.CUSTOMERGROUPID,
                             // operationId = ln.OperationId,
-                            loanTypeId = ln.LOANTYPEID,
+                            //loanTypeId = ln.LOANTYPEID,
 
-                            subSectorId = ln.SUBSECTORID,
-                            subSectorName = ln.TBL_SUB_SECTOR.NAME,
-                            //SectorName = ln.tbl_Sub_Sector.tbl_Sector.Name,
-                            dischargeLetter = ln.DISCHARGELETTER,
+                            //subSectorId = ln.SUBSECTORID,
+                            //subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                            ////SectorName = ln.tbl_Sub_Sector.tbl_Sector.Name,
+                            //dischargeLetter = ln.DISCHARGELETTER,
 
-                            customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
-                            customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
-                            firstName = ln.TBL_CUSTOMER.FIRSTNAME,
-                            middleName = ln.TBL_CUSTOMER.MIDDLENAME,
-                            lastName = ln.TBL_CUSTOMER.LASTNAME,
-                            customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
-                            productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                            productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
-                            loanTypeName = ln.TBL_LOAN_TYPE.LOANTYPENAME,
-                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
-                            currencyId = ln.CURRENCYID,
+                            //customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
+                            //customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
+                            //firstName = ln.TBL_CUSTOMER.FIRSTNAME,
+                            //middleName = ln.TBL_CUSTOMER.MIDDLENAME,
+                            //lastName = ln.TBL_CUSTOMER.LASTNAME,
+                            //customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
+                            //productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                            //productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            //loanTypeName = ln.TBL_LOAN_TYPE.LOANTYPENAME,
+                            //customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            //currencyId = ln.CURRENCYID,
 
-                            branchName = ln.TBL_BRANCH.BRANCHNAME,
-                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
-                            relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
+                            //branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            //relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            //relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
 
-                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            //productName = ln.TBL_PRODUCT.PRODUCTNAME,
 
-                            createdBy = ln.CREATEDBY,
-                            creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
-                            dateTimeCreated = ln.DATETIMECREATED,
-                            comment = "",
+                            //createdBy = ln.CREATEDBY,
+                            //creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
+                            //dateTimeCreated = ln.DATETIMECREATED,
+                            //comment = "",
 
-                            loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANAPPLICATIONID == ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID)
-                                              select (
-                                                       new LoanCollateralMappingViewModel
-                                                       {
-                                                           loanCollateralMappingId = cm.LOANCOLLATERALMAPPINGID,
-                                                           collateralTypeName = cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
-                                                           + "(" + cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.FirstOrDefault().COLLATERALSUBTYPENAME + ")",
-                                                           collateralCustomerId = cm.COLLATERALCUSTOMERID,
-                                                           loanApplicationId = cm.LOANAPPLICATIONID,
-                                                           collateralValue = cm.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                                                           hairCut = cm.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                                                           valuationCycle = cm.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                                                           currencyId = cm.TBL_COLLATERAL_CUSTOMER.CURRENCYID,
-                                                           currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
-                                                           currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
-                                                       })).ToList(),
-                            monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.CONTINGENTLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
-                                                  select (
-                                                           new LoanMonitoringTrigger
-                                                           {
-                                                               loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
-                                                               productTypeId = i.PRODUCTTYPEID,
-                                                               monitoringTriggerId = i.MONITORING_TRIGGERID,
-                                                               monitoringTrigger = i.MONITORING_TRIGGER,
-                                                               monitoringTriggerSetupName = i.TBL_LOAN_MONITORING_TRIG_SETUP.MONITORING_TRIGGER_NAME,
-                                                           })).ToList(),
+                            //loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANAPPLICATIONID == ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID)
+                            //                  select (
+                            //                           new LoanCollateralMappingViewModel
+                            //                           {
+                            //                               loanCollateralMappingId = cm.LOANCOLLATERALMAPPINGID,
+                            //                               collateralTypeName = cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
+                            //                               + "(" + cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.FirstOrDefault().COLLATERALSUBTYPENAME + ")",
+                            //                               collateralCustomerId = cm.COLLATERALCUSTOMERID,
+                            //                               loanApplicationId = cm.LOANAPPLICATIONID,
+                            //                               collateralValue = cm.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                            //                               hairCut = cm.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                            //                               valuationCycle = cm.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                            //                               currencyId = cm.TBL_COLLATERAL_CUSTOMER.CURRENCYID,
+                            //                               currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                            //                               currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
+                            //                           })).ToList(),
+                            //monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.CONTINGENTLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
+                            //                      select (
+                            //                               new LoanMonitoringTrigger
+                            //                               {
+                            //                                   loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
+                            //                                   productTypeId = i.PRODUCTTYPEID,
+                            //                                   monitoringTriggerId = i.MONITORING_TRIGGERID,
+                            //                                   monitoringTrigger = i.MONITORING_TRIGGER,
+                            //                                   monitoringTriggerSetupName = i.TBL_LOAN_MONITORING_TRIG_SETUP.MONITORING_TRIGGER_NAME,
+                            //                               })).ToList(),
                             //loanCovenant = { },
                             //loanChargeFee = { }
                         });
@@ -3187,7 +3187,6 @@ namespace FintrakBanking.Repositories.Credit
                     if (!item.customerAvailableAmount.HasValue)
                         item.customerAvailableAmount = item.approvedAmount;
                 }
-
             }
 
             return data;
