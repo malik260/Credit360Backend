@@ -16,6 +16,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string BATCHCODE { get; set; }
 
+        [StringLength(50)]
+        public string REVERSAL_BATCHCODE { get; set; }
+
         public int GLACCOUNTID { get; set; }
 
         public int OPERATIONID { get; set; }
@@ -55,10 +58,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime POSTEDDATETIME { get; set; }
 
         public bool ISAPPROVED { get; set; }
-
-        public bool ISREVERSAL { get; set; }
-
-        public bool ISSYSTEMTRANSACTION { get; set; }
 
         public int POSTEDBY { get; set; }
 

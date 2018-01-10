@@ -1435,11 +1435,12 @@ namespace FintrakBanking.Repositories.Customer
             {
                 customer = customer.Where(x =>
                x.firstName.ToLower().Contains(search.ToLower())
-               || x.lastName.ToLower().Contains(search.ToLower())
-               || x.middleName.ToLower().Contains(search.ToLower())
-               || x.customerCode.Contains(search.ToLower())
+               //|| x.lastName.ToLower().Contains(search.ToLower())
+               //|| x.middleName.ToLower().Contains(search.ToLower())
+               //|| x.customerCode.Contains(search.ToLower())
                 ).ToList();
             }
+
             return customer;
         }
 

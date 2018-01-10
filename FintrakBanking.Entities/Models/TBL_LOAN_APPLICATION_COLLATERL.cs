@@ -18,6 +18,14 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOANAPPLICATIONDETAILID { get; set; }
 
+        public bool? LEGAL_FEE_TAKEN { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? LEGAL_FEE_AMOUNT { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? LEGAL_FEE_DATE { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
