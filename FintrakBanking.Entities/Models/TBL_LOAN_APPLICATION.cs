@@ -69,6 +69,9 @@ namespace FintrakBanking.Entities.Models
         public decimal APPLICATIONAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
+        public decimal TOTALEXPOSUREAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
         public decimal APPROVEDAMOUNT { get; set; }
 
         [Required]
@@ -115,16 +118,6 @@ namespace FintrakBanking.Entities.Models
         public bool SUBMITTEDFORAPPRAISAL { get; set; }
 
         public bool CUSTOMERINFOVALIDATED { get; set; }
-
-        public bool NOTINNEGATIVECRMS { get; set; }
-
-        public bool NOTINBLACKBOOK { get; set; }
-
-        public bool NOTINCAMSOL { get; set; }
-
-        public bool NOTINXDS { get; set; }
-
-        public bool NOTINCRC { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
