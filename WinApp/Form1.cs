@@ -104,7 +104,7 @@ namespace WinApp
             //loanOperation.CalLoanClassification(vDate);
 
             //cust.GetCustomerFSRatioValues(customeId);
-            loan.GetCustomerTotalOutstandingBalance(customeId);
+            //loan.GetCustomerTotalOutstandingBalance(customeId);
 
             MessageBox.Show("Successful", "Fintrak");
 

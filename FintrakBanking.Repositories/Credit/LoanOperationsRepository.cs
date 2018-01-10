@@ -6407,11 +6407,11 @@ namespace FintrakBanking.Repositories.Credit
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
                              customerInfoValidated = a.CUSTOMERINFOVALIDATED,
-                             notInNegativeCrms = a.NOTINNEGATIVECRMS,
-                             notInBlackbook = a.NOTINBLACKBOOK,
-                             notInCamsol = a.NOTINCAMSOL,
-                             notInXds = a.NOTINXDS,
-                             notInCrc = a.NOTINCRC,
+                             //notInNegativeCrms = a.NOTINNEGATIVECRMS,
+                             //notInBlackbook = a.NOTINBLACKBOOK,
+                             //notInCamsol = a.NOTINCAMSOL,
+                             //notInXds = a.NOTINXDS,
+                             //notInCrc = a.NOTINCRC,
 
                          }).ToList();
 
