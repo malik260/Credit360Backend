@@ -361,6 +361,7 @@ namespace FintrakBanking.Repositories.Credit
                 currencyId = x.CURRENCYID,
                 currency = x.TBL_CURRENCY.CURRENCYNAME,
                 collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                collateralSubTypeName = "not implimented",
                 collateralCode = x.COLLATERALCODE,
                 collateralValue = x.COLLATERALVALUE,
                 camRefNumber = x.CAMREFNUMBER,
@@ -417,6 +418,8 @@ namespace FintrakBanking.Repositories.Credit
             return collateral;
         }
 
+
+       
         // GET TYPE SPICIFIC & INSURANCE DETAILS
 
         public CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId)
@@ -2630,6 +2633,316 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
 
         }
+
+        #region Collateral Information View
+        // .....COMPLETE COLLATERAL INFORMATION VIEW............
+        public IEnumerable<AllCollateralViewModel> GetCollateralInformationById(int customercollateralId)
+        {
+            var collateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false
+                && x.COLLATERALCUSTOMERID == customercollateralId
+            )
+            .Select(x => new AllCollateralViewModel
+            {
+                collateralId = x.COLLATERALCUSTOMERID,
+                collateralTypeId = x.COLLATERALTYPEID,
+                collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                collateralSubTypeId = x.COLLATERALSUBTYPEID,
+                collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID)
+                                                                                   .FirstOrDefault().COLLATERALSUBTYPENAME,
+                customerId = x.CUSTOMERID,
+                customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME,
+                currencyId = x.CURRENCYID,
+                currency = x.TBL_CURRENCY.CURRENCYNAME,
+                currencyCode = x.TBL_CURRENCY.CURRENCYCODE,
+                collateralCode = x.COLLATERALCODE,
+                collateralValue = x.COLLATERALVALUE,
+                camRefNumber = x.CAMREFNUMBER,
+                allowSharing = x.ALLOWSHARING,
+                isLocationBased = x.ISLOCATIONBASED,
+                valuationCycle = x.VALUATIONCYCLE,
+                haircut = x.HAIRCUT,
+                approvalStatus = x.APPROVALSTATUS,
+                collateralItemPolicy = (from p in context.TBL_COLLATERAL_ITEM_POLICY.Where(s => s.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID)
+                                        select new CollateralCustomerPolicyViewModel
+                                        {
+                                            policyId = p.POLICYID,
+                                            policyReferenceNumber = p.POLICYREFERENCENUMBER,
+                                            insuranceCompanyName = p.INSURANCECOMPANYNAME,
+                                            startDate = p.STARTDATE,
+                                            endDate = p.ENDDATE,
+
+                                        }).ToList(),
+                })
+            .OrderByDescending(x => x.collateralId)
+
+            .ToList();
+
+            foreach (var record in collateral)
+            {
+                if (record.collateralTypeId == (int)CollateralTypeEnum.CASA)
+                {
+                    record.collateralCasa = (from x in context.TBL_COLLATERAL_CASA.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
+                                             select new CollateralCasaViewModel
+                                             {
+                                                 collateralCasaId = x.COLLATERALCASAID,
+                                                 collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                 collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                 collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                    x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                                             .FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                 accountNumber = x.ACCOUNTNUMBER,
+                                                 isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
+                                                 availableBalance = x.AVAILABLEBALANCE,
+                                                 existingLienAmount = x.EXISTINGLIENAMOUNT,
+                                                 lienAmount = x.LIENAMOUNT,
+                                                 securityValue = x.SECURITYVALUE,
+                                                 remark = x.REMARK,
+                                             }).FirstOrDefault();
+
+                }
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.TermDeposit)
+                {
+                    record.collateralDeposit = (from x in context.TBL_COLLATERAL_DEPOSIT.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
+                                             select new CollateralDepositViewModel
+                                             {
+                                                 collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                 collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                 collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                    x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                                             .FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                 accountNumber = x.ACCOUNTNUMBER,
+                                                 collateralDepositId = x.COLLATERALDEPOSITID,
+                                                 dealReferenceNumber = x.DEALREFERENCENUMBER,
+                                                 maturityDate = x.MATURITYDATE,
+                                                 maturityAmount = x.MATURITYAMOUNT,
+                                                 availableBalance = x.AVAILABLEBALANCE,
+                                                 existingLienAmount = x.EXISTINGLIENAMOUNT,
+                                                 lienAmount = x.LIENAMOUNT,
+                                                 securityValue = x.SECURITYVALUE,
+                                                 remark = x.REMARK,
+                                             }).FirstOrDefault();
+
+                }
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.Property)
+                {
+                    record.collateralProperty = (from x in context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
+                                                 select new CollateralPropertyViewModel
+                                                 {
+                                                     collateralPropertyId = x.COLLATERALPROPERTYID,
+                                                     collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                     collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                     collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                        x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                        .FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                     propertyName = x.PROPERTYNAME,
+                                                     cityId = x.CITYID,
+                                                     cityName = x.TBL_CITY.CITYNAME,
+                                                     countryId = x.COUNTRYID,
+                                                     constructionDate = x.CONSTRUCTIONDATE,
+                                                     propertyAddress = x.PROPERTYADDRESS,
+                                                     dateOfAcquisition = x.DATEOFACQUISITION,
+                                                     lastValuationDate = x.LASTVALUATIONDATE,
+                                                     valuerId = x.VALUERID,
+                                                     valuerName = context.TBL_COLLATERAL_VALUER.Where(c => c.COLLATERALVALUERID == x.VALUERID).FirstOrDefault().NAME,
+                                                     valuerReferenceNumber = x.VALUERREFERENCENUMBER,
+                                                     propertyValueBaseTypeId = x.PROPERTYVALUEBASETYPEID,
+                                                     openMarketValue = x.OPENMARKETVALUE,
+                                                     collateralValue = x.COLLATERALVALUE,
+                                                     forcedSaleValue = x.FORCEDSALEVALUE,
+                                                     stampToCover = x.STAMPTOCOVER,
+                                                     valuationSource = x.VALUATIONSOURCE,
+                                                     originalValue = x.ORIGINALVALUE,
+                                                     availableValue = x.AVAILABLEVALUE,
+                                                     securityValue = (decimal)x.SECURITYVALUE,
+                                                     collateralUsableAmount = x.COLLATERALUSABLEAMOUNT,
+                                                     remark = x.REMARK
+                                                 }).FirstOrDefault();
+
+                }
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.MarketableSecurities)
+                {
+                    record.collateralMarketableSecurity = (from x in context.TBL_COLLATERAL_MKT_SECURITY.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
+                                                           select new CollateralMarketableSecurityViewModel
+                                                           {
+                                                               collateralMarketableSecurityId = x.COLLATERALMARKETABLESECURITYID,
+                                                               collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                               collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                               collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                                  x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                                  .FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                               securityType = x.SECURITYTYPE,
+                                                               dealReferenceNumber = x.DEALREFERENCENUMBER,
+                                                               effectiveDate = x.EFFECTIVEDATE,
+                                                               maturityDate = x.MATURITYDATE,
+                                                               dealAmount = x.DEALAMOUNT,
+                                                               lienUsableAmount = x.LIENUSABLEAMOUNT,
+                                                               issuerName = x.ISSUERNAME,
+                                                               issuerReferenceNumber = x.ISSUERREFERENCENUMBER,
+                                                               unitValue = x.UNITVALUE,
+                                                               numberOfUnits = x.NUMBEROFUNITS,
+                                                               rating = x.RATING,
+                                                               percentageInterest = x.PERCENTAGEINTEREST,
+                                                               interestPaymentFrequency = x.INTERESTPAYMENTFREQUENCY,
+                                                               securityValue = x.SECURITYVALUE,
+                                                               remark = x.REMARK,
+                                                           }).FirstOrDefault();
+
+                }
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.Gaurantee)
+                {
+                    record.collateralGaurantee = (from x in context.TBL_COLLATERAL_GAURANTEE.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
+                                                  select new CollateralGauranteeViewModel
+                                                  {
+                                                      collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                      collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                      collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                         x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                                                  .FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                      isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
+                                                      collateralGauranteeId = x.COLLATERALGAURANTEEID,
+                                                      institutionName = x.INSTITUTIONNAME,
+                                                      guarantorAddress = x.GUARANTORADDRESS,
+                                                      guarantorReferenceNumber = x.GUARANTORREFERENCENUMBER,
+                                                      guaranteeValue = x.GUARANTEEVALUE,
+                                                      startDate = x.STARTDATE,
+                                                      endDate = x.ENDDATE,
+                                                      remark = x.REMARK,
+                                                  }).FirstOrDefault();
+
+                }
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.PlantAndMachinery)
+                {
+                    record.collateralEquipment = (from x in context.TBL_COLLATERAL_PLANT_AND_EQUIP.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
+                                                  select new CollateralPlantsAndEquipmentViewModel
+                                                  {
+                                                      collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                      collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                      collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                         x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                                                  .FirstOrDefault().COLLATERALSUBTYPENAME,
+
+                                                      collateralMachineDetailId = x.COLLATERALMACHINEDETAILID,
+                                                      machineName = x.MACHINENAME,
+                                                      description = x.DESCRIPTION,
+                                                      machineNumber = x.MACHINENUMBER,
+                                                      manufacturerName = x.MANUFACTURERNAME,
+                                                      yearOfManufacture = x.YEAROFMANUFACTURE,
+                                                      yearOfPurchase = x.YEAROFPURCHASE,
+                                                      valueBaseTypeId = x.VALUEBASETYPEID,
+                                                      valueBaseTypeName = x.TBL_COLLATERAL_VALUEBASE_TYPE.VALUEBASETYPENAME,
+                                                      machineCondition = x.MACHINECONDITION,
+                                                      machineryLocation = x.MACHINERYLOCATION,
+                                                      replacementValue = x.REPLACEMENTVALUE,
+                                                      equipmentSize = x.EQUIPMENTSIZE,
+                                                      intendedUse = x.INTENDEDUSE,
+                                                  }).FirstOrDefault();
+
+                }
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.Vehicle)
+                {
+                    record.collateralVehicle = (from x in context.TBL_COLLATERAL_VEHICLE.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
+                                                select new CollateralVehicleViewModel
+                                                {
+                                                    collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                    collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                    collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                       x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                                                .FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                    collateralVehicleId = x.COLLATERALVEHICLEID,
+                                                    vehicleType = x.VEHICLETYPE,
+                                                    vehicleStatus = x.VEHICLESTATUS,
+                                                    vehicleMake = x.VEHICLEMAKE,
+                                                    modelName = x.MODELNAME,
+                                                    manufacturedDate = x.MANUFACTUREDDATE,
+                                                    registrationNumber = x.REGISTRATIONNUMBER,
+                                                    serialNumber = x.REGISTRATIONNUMBER,
+                                                    chasisNumber = x.CHASISNUMBER,
+                                                    engineNumber = x.ENGINENUMBER,
+                                                    nameOfOwner = x.NAMEOFOWNER,
+                                                    registrationCompany = x.REGISTRATIONCOMPANY,
+                                                    resaleValue = x.RESALEVALUE,
+                                                    valuationDate = x.VALUATIONDATE,
+                                                    lastValuationAmount = x.LASTVALUATIONAMOUNT,
+                                                    invoiceValue = x.INVOICEVALUE,
+                                                    remark = x.REMARK,
+                                                }).FirstOrDefault();
+
+                }
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.Stock)
+                {
+                    record.collateralStock = (from x in context.TBL_COLLATERAL_STOCK.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
+                                              select new CollateralStockViewModel
+                                              {
+                                                  collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                  collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                  collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                     x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                                              .FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                  collateralStockId = x.COLLATERALSTOCKID,
+                                                  companyName = x.COMPANYNAME,
+                                                  shareQuantity = x.SHAREQUANTITY,
+                                                  marketPrice = x.MARKETPRICE,
+                                                  amount = x.AMOUNT,
+                                                  shareSecurityValue = x.SHARESSECURITYVALUE,
+                                                  shareValueAmountToUse = x.SHAREVALUEAMOUNTTOUSE,
+                                              }).FirstOrDefault();
+
+                }
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.PreciousMetal)
+                {
+                    record.collateralPreciousMetal = (from x in context.TBL_COLLATERAL_PRECIOUSMETAL.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
+                                                      select new CollateralPreciousMetalViewModel
+                                                      {
+                                                          collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                          collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                          collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                             x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                                                      .FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                          collateralPreciousMetalId = x.COLLATERALPRECIOUSMETALID,
+                                                          isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
+                                                          preciousMetalName = x.PRECIOUSMETALNAME,
+                                                          weightInGrammes = x.WEIGHTINGRAMMES,
+                                                          valuationAmount = x.VALUATIONAMOUNT,
+                                                          unitRate = x.UNITRATE,
+                                                          preciousMetalForm = x.PRECIOUSMETALFORM,
+                                                          remark = x.REMARK,
+                                                      }).FirstOrDefault();
+
+                }
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.InsurancePolicy)
+                {
+                    record.collateralInsurancePolicy = (from x in context.TBL_COLLATERAL_POLICY.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
+                                                        select new CollateralInsurancePolicyViewModel
+                                                        {
+                                                            collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                            collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                            collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                               x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                                                        .FirstOrDefault().COLLATERALSUBTYPENAME,
+
+                                                            collateralInsurancePolicyId = x.COLLATERALINSURANCEPOLICYID,
+                                                            isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
+                                                            insurancePolicyNumber = x.INSURANCEPOLICYNUMBER,
+                                                            premiumAmount = x.PREMIUMAMOUNT,
+                                                            policyAmount = x.POLICYAMOUNT,
+                                                            insuranceCompanyName = x.INSURANCECOMPANYNAME,
+                                                            insurerAddress = x.INSURERADDRESS,
+                                                            policyStartDate = x.POLICYSTARTDATE,
+                                                            assignDate = x.ASSIGNDATE,
+                                                            renewalFrequencyTypeId = x.RENEWALFREQUENCYTYPEID,
+                                                            renewalFrequency = x.TBL_FREQUENCY_TYPE.MODE,
+                                                            insurerDetails = x.INSURERDETAILS,
+                                                            policyRenewalDate = x.POLICYRENEWALDATE,
+                                                            remark = x.REMARK,
+                                                        }).FirstOrDefault();
+
+                }
+            }
+
+            return collateral;
+        }
+        // .....END OF COMPLETE COLLATERAL INFORMATION VIEW......
+        #endregion Collateral Information View
     }
 
 }

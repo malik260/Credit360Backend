@@ -137,7 +137,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var data = new TBL_JOB_REQUEST_MESSAGE
             {
-                JOBREQUESTID = model.jobRequestId,
+                JOBREQUESTID = model.jobRequestId ,
                 MESSAGE = model.message,
                 DATE_TIME_SENT = DateTime.Now,
                 STAFFID = model.createdBy
@@ -246,6 +246,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             productClassName = a.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             relationshipOfficerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPOFFICERID,
                             relationshipManagerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPMANAGERID,
+                            
                             invoiceDiscountDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                      select new LoanApplicationDetailInvoiceViewModel
                                                      {
@@ -448,10 +449,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return null;
             }
-
+            TBL_JOB_REQUEST_STATUS_FEEDBAK feedback;
             var requestsList = new List<JobRequestViewModel>();
             foreach(var x in requests)
             {
+                feedback = context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Where(c => c.JOB_STATUS_FEEDBACKID == x.JOB_STATUS_FEEDBACKID).FirstOrDefault();
                 var request = new JobRequestViewModel
                 {
                     jobRequestId = x.JOBREQUESTID,
@@ -477,6 +479,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                     systemResponseDate = x.SYSTEMRESPONSEDATE,
                     acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
                     systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+                    jobStatusFeedBackId = x.JOB_STATUS_FEEDBACKID ?? 0,
+                    jobStatusFeedback = (feedback != null) ? feedback.JOB_STATUS_FEEDBACK_NAME : string.Empty,
+                    msgExchangeTrail = (from y in context.TBL_JOB_REQUEST_MESSAGE
+                                        where y.JOBREQUESTID == x.JOBREQUESTID
+                                        select new JobRequestMessageViewModel
+                                        {
+                                            jobRequestMessageId = y.JOBREQUEST_MESSAGEID,
+                                            jobRequestId = y.JOBREQUESTID,
+                                            message = y.MESSAGE,
+                                            staffId = y.STAFFID,
+                                            staffName = y.TBL_STAFF.FIRSTNAME + " " + y.TBL_STAFF.MIDDLENAME + " " + y.TBL_STAFF.LASTNAME,
+                                            datetimeSent = y.DATE_TIME_SENT
+                                        }).ToList(),
                     //fromBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
                     //toBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.RECEIVERSTAFFID).FirstOrDefault().BRANCHNAME,
                 };

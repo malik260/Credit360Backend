@@ -13,5 +13,6 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerDocumentUploadViewModel> GetKYCDocumentUploadByCustomerId(int customerId);
         bool KYCDocumentUpload(CustomerDocumentUploadViewModel model, byte[] file);
         bool CheckListDocumentUpload(CheckListDocumentUploadViewModel model, byte[] file);
+        bool RemoveCheckListDocument(int definitionId, int statusId, int detailId, bool isProductBased);
     }
 }

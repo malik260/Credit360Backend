@@ -274,7 +274,7 @@ namespace FintrakBanking.Repositories.Customer
 
             var ratioCaptions = from a in context.TBL_CUSTOMER_FS_CAPTION
                                 join b in context.TBL_CUSTOMER_FS_CAPTION_GROUP on a.FSCAPTIONGROUPID equals b.FSCAPTIONGROUPID
-                                //where a.ISRATIO == true
+                              orderby b.FSCAPTIONGROUPNAME descending //where a.ISRATIO == true
                                 select a;
 
             List<CustomerFSRatioCaptionReportViewModel> output = new List<CustomerFSRatioCaptionReportViewModel>();
