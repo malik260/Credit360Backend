@@ -57,5 +57,11 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanApplicationViewModel> GetRejectedLoanApplications(UserInfo user);
 
         string ReviewRequest(ForwardViewModel model);
+         
+        dynamic GetCollateralRequirements(int applicationID, int? collateralCurrencyId, int companyId);
+
+        bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
+
+        decimal GetCustomerTotalOutstandingBalance(int customerId);
     }
 }

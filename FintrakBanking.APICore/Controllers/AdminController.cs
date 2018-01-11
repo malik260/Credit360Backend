@@ -57,7 +57,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.staffId = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.userIPAddress = Request.RequestUri.Host;
+                entity.userIPAddress = Request.RequestUri.Host;              
                 
                 var data = repo.GoForApproval(entity);
 

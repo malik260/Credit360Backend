@@ -310,31 +310,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpDelete("loan-application/{aid}/approval-status/{id}")]
-        //public IActionResult UpdateApprovalStatus(int aid, ApprovalStatusEnum id)
-        //{
-        //    try
-        //    {
-        //        var token = new TokenDecryptionHelper(this.HttpContext);
+       
+        [HttpGet]
+        [Route("loan/collateralrequirement/{applicationId}/{collateralCurrencyId}")]
+        public HttpResponseMessage GetCollateralRequirements(int applicationId, int? collateralCurrencyId)
+        {
+            try
+            {
+                var response = repo.GetCollateralRequirements(applicationId, collateralCurrencyId, token.GetCompanyId);
 
-        //        UserInfo user = new UserInfo()
-        //        {
-        //            BranchId = token.GetBranchId,
-        //            companyId = token.GetCompanyId,
-        //            staffId = token.GetStaffId,
-        //            applicationUrl = HttpContext.Current.Request.Path,
-        //            userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
-        //        };
-
-        //        repo.UpdateApprovalStatus(aid,id, user);
-
-        //        return new { success = true, result = id, message = "record has been deleted successfully" });
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        return new { success = false, message = ex.Message });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpPost]
         [Route("loan/application")]
@@ -342,7 +333,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                //FinTrakBankingContext
                 if (entity.customerId.HasValue)
                 {
                     if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
