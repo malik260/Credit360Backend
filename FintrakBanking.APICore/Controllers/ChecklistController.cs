@@ -839,28 +839,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
-        [Route("checklist-status-yesorno")]
-        public HttpResponseMessage GetChecklistStatusYesorNo()
-        {
-            try
-            {
-                var data = repo.GetChecklistStatusYesorNo();
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                new { success = true, result = data, count = data.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-        [HttpGet]
         [Route("checklist-response-type")]
         public HttpResponseMessage GetAllChecklistResponseType()
         {

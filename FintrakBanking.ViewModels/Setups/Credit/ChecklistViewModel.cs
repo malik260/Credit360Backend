@@ -62,6 +62,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
 
     public class CheckListStatusViewModel
     {
+        public short responseTypeId { get; set; }
         public short checklistStatusId { get; set; }
         public string checklistStatusName { get; set; }
     }

@@ -102,6 +102,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public double? fcyLimit { get; set; }
         public decimal? customerLimit { get; set; }
         public double? productLimit { get; set; }
+        public bool isInvoiceBased { get; set; }
     }
 
     public class ProductClassProcessViewModel

@@ -579,8 +579,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             customerLimit = d.CUSTOMER_LIMIT,
                             fcyLimit = d.COLLATERAL_FCY_LIMIT,
                             lcyLimit = d.COLLATERAL_LCY_LIMIT,
-                            productLimit = d.PRODUCT_LIMIT
-
+                            productLimit = d.PRODUCT_LIMIT,
+                            isInvoiceBased = d.ISINVOICEBASED
                         }).FirstOrDefault()
                     });
         }

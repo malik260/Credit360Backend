@@ -557,26 +557,7 @@ namespace FintrakBanking.Repositories.Credit
                     application.CUSTOMERINFOVALIDATED = (application.CUSTOMERINFOVALIDATED == false) ? true : false;
                     result = application.CUSTOMERINFOVALIDATED;
                     break;
-                case 2:
-                    application.NOTINNEGATIVECRMS = (application.NOTINNEGATIVECRMS == false) ? true : false;
-                    result = application.NOTINNEGATIVECRMS;
-                    break;
-                case 3:
-                    application.NOTINBLACKBOOK = (application.NOTINBLACKBOOK == false) ? true : false;
-                    result = application.NOTINBLACKBOOK;
-                    break;
-                case 4:
-                    application.NOTINCAMSOL = (application.NOTINCAMSOL == false) ? true : false;
-                    result = application.NOTINCAMSOL;
-                    break;
-                case 5:
-                    application.NOTINXDS = (application.NOTINXDS == false) ? true : false;
-                    result = application.NOTINXDS;
-                    break;
-                case 6:
-                    application.NOTINCRC = (application.NOTINCRC == false) ? true : false;
-                    result = application.NOTINCRC;
-                    break;
+              
                 default:
                     break;
             }
