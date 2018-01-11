@@ -5,6 +5,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -26,7 +27,8 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workflow;
         private IApprovalLevelStaffRepository approvalLevel;
 
-        public OfferLetterAndAvailmentRepository(IAuditTrailRepository _auditTrail,
+        public OfferLetterAndAvailmentRepository(
+            IAuditTrailRepository _auditTrail,
             IGeneralSetupRepository _genSetup,
             FinTrakBankingContext _context,
             IApprovalLevelStaffRepository _approvallevel,
@@ -903,6 +905,13 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_OFFERLETTER.Add(document);
                 }
 
+                if (model.isAccepted == false)
+                {
+                    var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+                    if (appl == null) throw new Exception("Loan application with the given reference number not found!");
+                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
+                }
+
                 return context.SaveChanges() > 0;
             }
             catch (Exception ex)
@@ -1132,8 +1141,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var target = context.TBL_LOAN_APPLICATION.FirstOrDefault(x =>
-                    x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+                var target = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
 
                 var entity = new ApprovalViewModel
                 {

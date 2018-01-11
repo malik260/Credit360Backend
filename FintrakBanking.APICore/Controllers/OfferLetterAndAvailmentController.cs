@@ -2,6 +2,7 @@
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Data.Entity;
@@ -19,15 +20,15 @@ namespace FintrakBanking.APICore.Controllers
     {
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
         private IErrorLogRepository errorLogger;
-        private IOfferLetterAndAvailmentRepository olAvlmentRepo;
+        private IOfferLetterAndAvailmentRepository repo;
 
         public OfferLetterAndAvailmentController(
             IErrorLogRepository _errorLogger,
-            IOfferLetterAndAvailmentRepository _olAvlmentRepo
+            IOfferLetterAndAvailmentRepository _repo
             )
         {
             errorLogger = _errorLogger;
-            olAvlmentRepo = _olAvlmentRepo;
+            repo = _repo;
         }
 
         [HttpGet]
@@ -36,7 +37,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = await olAvlmentRepo.GetApplicationsDueForOfferLetterGeneration(token.GetStaffId, token.GetCompanyId).ToListAsync();
+                var response = await repo.GetApplicationsDueForOfferLetterGeneration(token.GetStaffId, token.GetCompanyId).ToListAsync();
                 //if (!response.Any())
                 //{
                 //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response });
@@ -79,7 +80,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var staffid = token.GetStaffId;
-                var response = await olAvlmentRepo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToListAsync();
+                var response = await repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToListAsync();
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
@@ -99,7 +100,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = await olAvlmentRepo.GetApplicationsDueForAvailment(token.GetStaffId, token.GetCompanyId).ToListAsync();
+                var response = await repo.GetApplicationsDueForAvailment(token.GetStaffId, token.GetCompanyId).ToListAsync();
 
                 if (!response.Any())
                 {
@@ -120,7 +121,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = await olAvlmentRepo.GetApplicationsUnderForReview(token.GetCompanyId).ToListAsync();
+                var response = await repo.GetApplicationsUnderForReview(token.GetCompanyId).ToListAsync();
 
                 if (!response.Any())
                 {
@@ -141,7 +142,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = olAvlmentRepo.UpdateLoanApplicationStatus(applicationRefNumber.Trim(), applicationStatusId);
+                var response = repo.UpdateLoanApplicationStatus(applicationRefNumber.Trim(), applicationStatusId);
 
                 if (!response)
                 {
@@ -166,7 +167,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.userBranchId = (short)token.GetBranchId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
-                var data = olAvlmentRepo.UpdateFinalOfferLetter(applicationRef, model);
+                var data = repo.UpdateFinalOfferLetter(applicationRef, model);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully" });
@@ -190,7 +191,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = olAvlmentRepo.GenerateOfferLetterTemplate(applicationRefNumber);
+                var response = repo.GenerateOfferLetterTemplate(applicationRefNumber);
 
                 if (response != null)
                 {
@@ -211,7 +212,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = olAvlmentRepo.GenerateForm3800Template(applicationRefNumber);
+                var response = repo.GenerateForm3800Template(applicationRefNumber);
 
                 if (response != null)
                 {
@@ -232,7 +233,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = olAvlmentRepo.SaveDraftOfferLetter(model);
+                var response = repo.SaveDraftOfferLetter(model);
 
                 if (response)
                 {
@@ -258,7 +259,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
-                var response = olAvlmentRepo.UpdateDraftOfferLetter(documentId, model);
+                var response = repo.UpdateDraftOfferLetter(documentId, model);
 
                 if (response)
                 {
@@ -278,7 +279,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = olAvlmentRepo.GetAllDraftOfferLetters().ToList();
+                var response = repo.GetAllDraftOfferLetters().ToList();
 
                 if (response != null)
                 {
@@ -299,7 +300,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = olAvlmentRepo.GetDraftOfferLetterByApplRefNumber(applicationRefNumber);
+                var response = repo.GetDraftOfferLetterByApplRefNumber(applicationRefNumber);
 
                 if (response != null)
                 {
@@ -320,7 +321,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = olAvlmentRepo.GetAllFinalOfferLetters().ToList();
+                var response = repo.GetAllFinalOfferLetters().ToList();
 
                 if (response != null)
                 {
@@ -341,7 +342,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = olAvlmentRepo.GetFinalOfferLetterByApplRefNumber(applicationRefNumber);
+                var response = repo.GetFinalOfferLetterByApplRefNumber(applicationRefNumber);
 
                 if (response != null)
                 {
@@ -362,7 +363,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = olAvlmentRepo.SaveFinalOfferLetter(model);
+                var response = repo.SaveFinalOfferLetter(model);
 
                 if (response)
                 {
@@ -389,7 +390,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.createdBy = token.GetStaffId;
 
-                var data = olAvlmentRepo.ApproveLoanAvailmentDecision(entity);
+                var data = repo.ApproveLoanAvailmentDecision(entity);
 
                 if (data)
                 {
@@ -420,7 +421,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.createdBy = token.GetStaffId;
 
-                var data = olAvlmentRepo.LogApplicationForApprovalDuringAvailment(entity);
+                var data = repo.LogApplicationForApprovalDuringAvailment(entity);
 
                 if (data)
                 {
@@ -450,7 +451,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.createdBy = token.GetStaffId;
 
-                var data = olAvlmentRepo.ApproveOfferLetterGeneration(entity);
+                var data = repo.ApproveOfferLetterGeneration(entity);
 
                 if (data)
                 {
@@ -480,7 +481,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var response = olAvlmentRepo.ForwardBondsAndGuarantee(entity);
+                var response = repo.ForwardBondsAndGuarantee(entity);
 
                 if (response == true)
                 {

@@ -10,8 +10,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public LoanApplicationViewModel()
         {
- 
-            LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
+             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
         }
 
         public int loanApplicationId { get; set; }
@@ -75,7 +74,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanPreliminaryEvaluationId { get; set; }
         public double exchangeRate { get; set; }
         public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
-        public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }
+        public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; } 
+        public List<ApprovedLoanDetailViewModel> details { get; set; }
         public int? currentApprovalStateId { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public string currentApprovalLevel { get; set; }
@@ -101,6 +101,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string lastName { get; set; }
         public int groupRoleId { get; set; }
         public string accountNumber { get; set; }
+        public string applicationStatus { get; set; }
+        public string relatedReferenceNumber { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
