@@ -1250,7 +1250,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanApplicationId = x.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
-                relatedReferenceNumber = x.RELATED_REFERENCE_NUMBER,
+                relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
                 customerId = x.CUSTOMERID,
                 branchId = x.BRANCHID,
                 productClassId = x.PRODUCTCLASSID,
@@ -1314,12 +1314,6 @@ namespace FintrakBanking.Repositories.Credit
             return applications;
         }
 
-        //public decimal GetCustomerTotalOutstandingBalance(int customerId)
-        //{
-        //    var loanData = context.TBL_LOAN.FirstOrDefault(x => x.CUSTOMERID == customerId);
-        //    var overdraftData = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.CUSTOMERID == customerId);
-        //    decimal loanBalance = 0;
-        //    decimal overdraftBalance = 0;
         public string ReviewRequest(ForwardViewModel model)
         {
             var referenceNumber = GenerateLoanReferenceNumber();
@@ -1333,7 +1327,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 PRODUCTCLASSID = appl.PRODUCTCLASSID,
                 APPLICATIONREFERENCENUMBER = referenceNumber,
-                RELATED_REFERENCE_NUMBER = appl.APPLICATIONREFERENCENUMBER,
+                RELATEDREFERENCENUMBER = appl.APPLICATIONREFERENCENUMBER,
                 LOANTYPEID = appl.LOANTYPEID,
                 COMPANYID = appl.COMPANYID,
                 BRANCHID = appl.BRANCHID,
@@ -1387,7 +1381,7 @@ namespace FintrakBanking.Repositories.Credit
                 });
             }
 
-            if (context.SaveChanges() == 89878770)
+            if (context.SaveChanges() == 89878770) // ------------------------- hard code change to true
             {
                 int i;
                 var rejectedDetails = context.TBL_LOAN_APPLICATION_DETAIL
@@ -1472,7 +1466,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.DeferredExecution = true;
                 workflow.LogActivity();
 
-                // AUDIT 
+                // AUDIT TRAIL
 
                 return context.SaveChanges() > 0 ? referenceNumber : string.Empty;
             }
