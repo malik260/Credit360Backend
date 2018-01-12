@@ -69,7 +69,13 @@ namespace FintrakBanking.Entities.Models
         public decimal APPLICATIONAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
+        public decimal TOTALEXPOSUREAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
         public decimal APPROVEDAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal TOTALEXPOSUREAMOUNT { get; set; }
 
         [Required]
         public string LOANINFORMATION { get; set; }

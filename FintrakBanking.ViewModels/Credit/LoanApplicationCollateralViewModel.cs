@@ -49,4 +49,19 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class LoanApplicationDatailViewModel
+    {
+        public int loanApplicationId { get; set; }
+
+        public int applicationDetailedId { get; set; }
+
+        public int proposedRate { get; set; }
+
+        public int proposedProductId { get; set; }
+
+        public int proposedTenor { get; set; }
+
+        public decimal proposedAmount { get; set; } 
+    }
+
 }

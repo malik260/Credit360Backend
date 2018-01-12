@@ -10,8 +10,11 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
-        public int loggedInStaffId;
-        public string operationName;
+        public int loggedInStaffId { get; set; }
+        public string operationName { get; set; }
+        public short? jobStatusFeedBackId { get; set; }
+        public string jobStatusFeedback { get; set; }
+        public List<JobRequestMessageViewModel> msgExchangeTrail { get; set; }
 
         public int targetId { get; set; }
         public short departmentId { get; set; }
@@ -55,7 +58,6 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
         public string message { get; set; }
 
-        public int staffId { get; set; }
         public string staffName { get; set; }
         public DateTime datetimeSent { get; set; }
     }

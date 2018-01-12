@@ -25,6 +25,8 @@ namespace FintrakBanking.Entities.Models
 
         public double? PRODUCT_LIMIT { get; set; }
 
+        public bool? ISINVOICEBASED { get; set; }
+
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
     }
 }
