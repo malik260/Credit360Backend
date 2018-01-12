@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -43,10 +44,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId);
 
-        IQueryable<CamProcessedLoanViewModel> GetApplicationsDueBondAndGuarantees(int staffId, int companyId);
-
-        bool ApproveBondAndGuarantees(LoanAvailmentApprovalViewModel entity);
-
         bool ForwardBondsAndGuarantee(ForwardViewModel entity);
+
+        bool UpdateFinalOfferLetter(string applicationRef, OfferLetterTemplateViewModel model);
     }
 }

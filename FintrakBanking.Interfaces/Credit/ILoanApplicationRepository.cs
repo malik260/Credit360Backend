@@ -26,7 +26,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<ProductClassViewModel> GetProductClass();
 
-        bool UpdateApprovalStatusForApplication(int applicationId);
+        LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId);
 
         IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId);
 
@@ -50,6 +50,18 @@ namespace FintrakBanking.Interfaces.Credit
 
         ValidateDataViewModel ValidateDocumentDate(ValidateDataViewModel data);
 
+        ValidateNumberViewModel ValidateDocumentNumber(ValidateNumberViewModel data);
+
         IQueryable<LoanApplicationViewModel> GetLoanApplicationsByOperation(int operationId, int? classId, int branchId, int staffId);
+
+        IQueryable<LoanApplicationViewModel> GetRejectedLoanApplications(UserInfo user);
+
+        string ReviewRequest(ForwardViewModel model);
+         
+        dynamic GetCollateralRequirements(int applicationID, int? collateralCurrencyId, int companyId);
+
+        bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
+
+        decimal GetCustomerTotalOutstandingBalance(int customerId);
     }
 }

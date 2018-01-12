@@ -14,8 +14,8 @@ namespace FintrakBanking.Common.Enum
         CAMCompleted = 4,
         OfferLetterGenerationInProgress = 5,
         OfferLetterGenerationCompleted = 6,
-        RelationshipManagerOfferLetterReviewInProgress = 7,
-        RelationshipManagerOfferLetterReviewCompleted = 8,
+        OfferLetterReviewInProgress = 7,
+        OfferLetterReviewCompleted = 8,
         AvailmentInProgress = 9,
         AvailmentCompleted = 10,
         LoanBookingInProgress = 11,
@@ -25,6 +25,8 @@ namespace FintrakBanking.Common.Enum
         BookingRequestInitiated = 15,
         BookingRequestCompleted = 16,
         ApplicationUnderReview = 17,
-        BondAndGuaranteesInProgress = 18
+        BondAndGuaranteesInProgress = 18,
+        ApplicationRejected = 19,
+        OfferLetterRejected = 20,
     }
 }

@@ -23,8 +23,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string CHECKLISTSTATUSNAME { get; set; }
 
-        public short RESPONSE_TYPEID { get; set; }
-
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
@@ -41,7 +39,5 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CHECKLIST_DETAIL> TBL_CHECKLIST_DETAIL { get; set; }
-
-        public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
     }
 }

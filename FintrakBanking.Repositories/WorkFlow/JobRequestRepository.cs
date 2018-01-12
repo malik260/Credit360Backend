@@ -12,6 +12,7 @@ using FintrakBanking.ViewModels.Setups.Approval;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Entities.DocumentModels;
 using System.Data.Entity;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -20,14 +21,17 @@ namespace FintrakBanking.Repositories.WorkFlow
         private FinTrakBankingContext context;
         private FinTrakBankingDocumentsContext docContext;
         private IGeneralSetupRepository general;
+        private IDepartmentRepository department;
         private IAuditTrailRepository audit;
 
-        public JobRequestRepository(FinTrakBankingDocumentsContext docContext, FinTrakBankingContext _context, IGeneralSetupRepository _general, IAuditTrailRepository _audit)
+        public JobRequestRepository(FinTrakBankingDocumentsContext docContext, FinTrakBankingContext _context, IGeneralSetupRepository _general, 
+            IAuditTrailRepository _audit, IDepartmentRepository _department)
         {
             this.context = _context;
             this.docContext = docContext;
             this.general = _general;
             this.audit = _audit;
+            this.department = _department;
         }
 
         public bool AddJobRequest(JobRequestViewModel model)
@@ -133,7 +137,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var data = new TBL_JOB_REQUEST_MESSAGE
             {
-                JOBREQUESTID = model.jobRequestId,
+                JOBREQUESTID = model.jobRequestId ,
                 MESSAGE = model.message,
                 DATE_TIME_SENT = DateTime.Now,
                 STAFFID = model.createdBy
@@ -242,6 +246,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             productClassName = a.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             relationshipOfficerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPOFFICERID,
                             relationshipManagerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPMANAGERID,
+                            
                             invoiceDiscountDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                      select new LoanApplicationDetailInvoiceViewModel
                                                      {
@@ -432,6 +437,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId); 
         }
 
+
         public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId)
         {
             var requests = this.context.TBL_JOB_REQUEST.Where(d=>d.TARGETID == applicationDetailId
@@ -443,10 +449,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return null;
             }
-
+            TBL_JOB_REQUEST_STATUS_FEEDBAK feedback;
             var requestsList = new List<JobRequestViewModel>();
             foreach(var x in requests)
             {
+                feedback = context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Where(c => c.JOB_STATUS_FEEDBACKID == x.JOB_STATUS_FEEDBACKID).FirstOrDefault();
                 var request = new JobRequestViewModel
                 {
                     jobRequestId = x.JOBREQUESTID,
@@ -472,6 +479,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                     systemResponseDate = x.SYSTEMRESPONSEDATE,
                     acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
                     systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+                    jobStatusFeedBackId = x.JOB_STATUS_FEEDBACKID ?? 0,
+                    jobStatusFeedback = (feedback != null) ? feedback.JOB_STATUS_FEEDBACK_NAME : string.Empty,
+                    msgExchangeTrail = (from y in context.TBL_JOB_REQUEST_MESSAGE
+                                        where y.JOBREQUESTID == x.JOBREQUESTID
+                                        select new JobRequestMessageViewModel
+                                        {
+                                            jobRequestMessageId = y.JOBREQUEST_MESSAGEID,
+                                            jobRequestId = y.JOBREQUESTID,
+                                            message = y.MESSAGE,
+                                            staffId = y.STAFFID,
+                                            staffName = y.TBL_STAFF.FIRSTNAME + " " + y.TBL_STAFF.MIDDLENAME + " " + y.TBL_STAFF.LASTNAME,
+                                            datetimeSent = y.DATE_TIME_SENT
+                                        }).ToList(),
                     //fromBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
                     //toBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.RECEIVERSTAFFID).FirstOrDefault().BRANCHNAME,
                 };

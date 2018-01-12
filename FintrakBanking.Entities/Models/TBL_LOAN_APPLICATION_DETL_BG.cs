@@ -36,9 +36,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(800)]
         public string APPROVAL_COMMENT { get; set; }
 
-        [StringLength(50)]
-        public string REFERENCENO { get; set; }
-
         public int? APPROVEDBY { get; set; }
 
         public DateTime? APPROVEDDATETIME { get; set; }

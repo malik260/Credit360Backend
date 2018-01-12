@@ -22,8 +22,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string RATIOCAPTION { get; set; }
 
-        public short RATIOTYPEID { get; set; }
-
         public int COMPANYID { get; set; }
 
         public bool ANNUALISED { get; set; }

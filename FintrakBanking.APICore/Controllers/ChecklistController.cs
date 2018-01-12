@@ -839,12 +839,12 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
-        [Route("checklist-status-yesorno")]
-        public HttpResponseMessage GetChecklistStatusYesorNo()
+        [Route("checklist-response-type")]
+        public HttpResponseMessage GetAllChecklistResponseType()
         {
             try
             {
-                var data = repo.GetChecklistStatusYesorNo();
+                var data = repo.GetAllChecklistResponseType();
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
