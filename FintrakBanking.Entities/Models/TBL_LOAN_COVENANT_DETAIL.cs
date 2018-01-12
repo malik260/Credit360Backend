@@ -27,8 +27,6 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal? COVENANTAMOUNT { get; set; }
 
-        public bool ISPERCENTAGE { get; set; }
-
         [Column(TypeName = "date")]
         public DateTime COVENANTDATE { get; set; }
 

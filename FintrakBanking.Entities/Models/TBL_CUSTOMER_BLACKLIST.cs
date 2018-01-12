@@ -12,20 +12,19 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CUSTOMER_BLACKLISTID { get; set; }
 
-        public int COMPANYID { get; set; }
+        public int? COMPANYID { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string CUSTOMERCODE { get; set; }
+        public int? CUSTOMERID { get; set; }
 
-        public DateTime DATEBLACKLISTED { get; set; }
+        public DateTime? DATEBLACKLISTED { get; set; }
 
-        [Required]
         [StringLength(2000)]
         public string REASON { get; set; }
 
-        public bool ISCURRENT { get; set; }
+        public bool? ISCURRENT { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }

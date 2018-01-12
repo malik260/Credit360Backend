@@ -159,6 +159,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_LOAN_REVOLVING TBL_LOAN_REVOLVING { get; set; }
 
+        public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
+
         public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
     }
 }
