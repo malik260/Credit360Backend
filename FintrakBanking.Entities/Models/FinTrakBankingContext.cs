@@ -268,7 +268,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RISK_RATING> TBL_RISK_RATING { get; set; }
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
-        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -2331,6 +2331,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.RELATIONSHIPMANAGERID)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_STAFF>()
+                .HasMany(e => e.TBL_STAFF1)
+                .WithOptional(e => e.TBL_STAFF2)
+                .HasForeignKey(e => e.RELIEF_STAFFID);
+
             modelBuilder.Entity<TBL_STAFF_JOBTITLE>()
                 .HasMany(e => e.TBL_STAFF)
                 .WithRequired(e => e.TBL_STAFF_JOBTITLE)
@@ -3778,6 +3783,21 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_LOAN_SCHEDULE_TYPE>()
                 .HasMany(e => e.TBL_LOAN_SCHEDULE_TYPE_PRODUCT)
                 .WithRequired(e => e.TBL_LOAN_SCHEDULE_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_STATUS>()
+                .HasMany(e => e.TBL_LOAN)
+                .WithRequired(e => e.TBL_LOAN_STATUS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_STATUS>()
+                .HasMany(e => e.TBL_LOAN_CONTINGENT)
+                .WithRequired(e => e.TBL_LOAN_STATUS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_STATUS>()
+                .HasMany(e => e.TBL_LOAN_REVOLVING)
+                .WithRequired(e => e.TBL_LOAN_STATUS)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_TRANSACTION_TYPE>()

@@ -733,47 +733,54 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-
-        [HttpPost]
-        [Route("update-loan-application/loan-details")]
-        public HttpResponseMessage UpdateLoanApplicationDetails([FromBody] LoanApplicationDatailViewModel data)
+        
+        [HttpGet, Route("loan-application-and-offer/rejected")]
+        public HttpResponseMessage GetRejectedLoanApplications()
         {
             try
             {
-                UserInfo user = new UserInfo
+                UserInfo user = new UserInfo()
                 {
                     BranchId = token.GetBranchId,
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
-                    createdBy = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
-                    userIPAddress = Request.RequestUri.Host
                 };
 
-                var response = repo.UpdateLoanApplicationDetails(data, user);
+                IQueryable<LoanApplicationViewModel> items;
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Update was successful", result = response });
+                items = repo.GetRejectedLoanApplications(user);
+
+                var data = items.ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
             }
-            catch (Exception e)
+            catch (System.Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 
-
-        [HttpGet]
-        [Route("customer-total-outstanding-balance/{customerId}")]
-        public HttpResponseMessage GetCustomerTotalOutstandingBalance(int customerId)
+        [HttpPost]
+        [Route("loan-application/review-request")]
+        public HttpResponseMessage ReviewRequest([FromBody] ForwardViewModel model)
         {
             try
             {
-                var response = repo.GetCustomerTotalOutstandingBalance(customerId);
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                string response = repo.ReviewRequest(model);
+
+                bool ok = response == string.Empty ? false : true;
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = ok, result = response });
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: { e.InnerException }" });
             }
         }
     }

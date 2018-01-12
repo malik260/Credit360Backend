@@ -34,6 +34,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? productId = null;
         private string comment = string.Empty;
         private int statusId = (int)ApprovalStatusEnum.Processing;
+        private int groupStatusId = (int)ApprovalStatusEnum.Processing;
         private int? nextLevelId = null; // for refer backs
         private bool emailNotification = false;
         private bool smsNotification = false;
@@ -74,6 +75,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool PoliticallyExposed { set { politicallyExposed = value; } }
         public short? Vote { set { vote = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
+        public int GroupStatusId { get { return groupStatusId; } }
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
         public int? ProductId { set { productId = value; } }
         public int? ProductClassId { set { productClassId = value; } }
@@ -309,7 +311,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 && x.TARGETID == this.targetId
                 && x.APPROVALSTATEID != (int)ApprovalState.Ended
                 && x.FROMAPPROVALLEVELID == this.fromLevelId
-                ).ToList();
+                )
+                .ToList();
 
             if (votes.FirstOrDefault(x => x.REQUESTSTAFFID == (int)this.staffId) != null) throw new Exception("You have already acted on this item.");
 
@@ -365,6 +368,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     int voteResult = 0;
 
                     voteResult = (approvals > disapprovals) ? (int)ApprovalStatusEnum.Approved : (int)ApprovalStatusEnum.Disapproved;
+                    this.groupStatusId = (approvals > disapprovals) ? (int)ApprovalStatusEnum.Approved : (int)ApprovalStatusEnum.Disapproved;
 
                     var vetoers = context.TBL_APPROVAL_LEVEL_STAFF
                                     .Where(x => x.APPROVALLEVELID == this.fromLevelId && x.VETOPOWER == true)
@@ -560,7 +564,14 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (mappings.Any() == false)
             {
-                throw new Exception("There is no approval workflow setup for the operation");
+                var operarion = context.TBL_OPERATIONS.Find(operationId);
+                var productclass = "NULL";
+                if (productClassId != null)
+                {
+                    var productClass = context.TBL_PRODUCT_CLASS.Find(productClassId);
+                    productclass = productClass.PRODUCTCLASSNAME;
+                }
+                throw new Exception("There is no approval workflow setup for the OPERATION: " + operarion.OPERATIONNAME + ", PRODUCT CLASS: " + productclass);
             }
 
             var approvalLevels = mappings

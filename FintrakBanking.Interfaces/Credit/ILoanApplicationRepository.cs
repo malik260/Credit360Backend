@@ -53,6 +53,10 @@ namespace FintrakBanking.Interfaces.Credit
         ValidateNumberViewModel ValidateDocumentNumber(ValidateNumberViewModel data);
 
         IQueryable<LoanApplicationViewModel> GetLoanApplicationsByOperation(int operationId, int? classId, int branchId, int staffId);
+
+        IQueryable<LoanApplicationViewModel> GetRejectedLoanApplications(UserInfo user);
+
+        string ReviewRequest(ForwardViewModel model);
          
         dynamic GetCollateralRequirements(int applicationID, int? collateralCurrencyId, int companyId);
 
