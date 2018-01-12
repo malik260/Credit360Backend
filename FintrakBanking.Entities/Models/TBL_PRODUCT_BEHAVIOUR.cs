@@ -18,8 +18,6 @@ namespace FintrakBanking.Entities.Models
 
         public double? COLLATERAL_FCY_LIMIT { get; set; }
 
-        public bool ISINVOICEBASED { get; set; }
-
         [Column(TypeName = "money")]
         public decimal? CUSTOMER_LIMIT { get; set; }
 

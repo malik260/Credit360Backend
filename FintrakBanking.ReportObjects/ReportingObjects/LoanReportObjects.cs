@@ -167,7 +167,7 @@ namespace FintrakBanking.ReportObjects
                                facilityCurrency = a.TBL_CURRENCY.CURRENCYCODE,
                                maturitydate = a.MATURITYDATE,
                                productId = a.PRODUCTID,
-                               status = a.TBL_LOAN_STATUS.ACCOUNTSTATUS
+                         //      status = a.TBL_LOAN_STATUS.ACCOUNTSTATUS
                            };
 
 
@@ -192,7 +192,7 @@ namespace FintrakBanking.ReportObjects
                                 maturityDate = a.MATURITYDATE.Date,
                                 disburseDate = a.DISBURSEDATE,
                                 bookingNumber = a.LOANREFERENCENUMBER,
-                                loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                          //      loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
                                 customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME,
                                 principalAmount = a.PRINCIPALAMOUNT,
                                 rate = a.TBL_PRODUCT.PRODUCTPRICEINDEXSPREAD,
@@ -224,7 +224,7 @@ namespace FintrakBanking.ReportObjects
                                 maturityDate = a.MATURITYDATE.Date,
                                 disburseDate = a.DISBURSEDATE,
                                 bookingNumber = a.LOANREFERENCENUMBER,
-                                loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                          //      loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
                                 customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME,
                                 principalAmount = a.PRINCIPALAMOUNT,
                                 rate = a.TBL_PRODUCT.PRODUCTPRICEINDEXSPREAD,
