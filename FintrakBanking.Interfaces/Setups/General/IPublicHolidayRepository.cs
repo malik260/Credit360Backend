@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Setups.General;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,5 +20,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool AddWeekendsInTheYear(PublicHolidayViewModel model);
 
         DateTime GetNextWorkDay(DateTime date, int countryId);
+
+        bool DeletePublicHoliday(UserInfo model,int id);
     }
 }

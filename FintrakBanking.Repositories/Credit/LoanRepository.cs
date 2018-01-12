@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -4164,6 +4165,21 @@ namespace FintrakBanking.Repositories.Credit
                                     effectiveInterestRate = sch.EFFECTIVEINTERESTRATE
                                 }).ToList();
             return loanSchedule;
+        }
+        public IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, ReportSearchEntity param)
+        {
+            IEnumerable<LoanViewModel> loans = Enumerable.Empty<LoanViewModel>();
+
+
+            loans = GetAllLoans().Where(x => x.companyId == companyId
+            //&& (param.customerName=="" && param.branchId == null) 
+            && (x.branchId == param.branchId || param.branchId == null)
+            && (x.customerName.Contains(param.customerName.Trim()) || x.loanReferenceNumber.StartsWith(param.customerName.Trim()) || param.customerName.Trim() ==null || param.customerName.Trim() == "")
+            );
+
+
+
+            return loans;
         }
     }
 

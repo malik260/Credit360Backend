@@ -8,21 +8,16 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class LoanDocumentWaived : System.Web.UI.Page
+    public partial class LoanCASAaccountWithLein : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                startDate.Text = Request.QueryString["startDate"];
-                endDate.Text = Request.QueryString["endDate"];
                 companyId.Text = Request.QueryString["companyId"];
                 branchId.Text = Request.QueryString["branchId"];
+                customerName.Text = Request.QueryString["customerName"];
 
-                ReportParameter sDate = new ReportParameter("startDate", startDate.Text);
-                ReportParameter eDate = new ReportParameter("endDate", endDate.Text);
-
-                ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                 ReportViewer.LocalReport.Refresh();
             }
         }

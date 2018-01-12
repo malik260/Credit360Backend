@@ -63,6 +63,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string approverComment { get; set; }
         public DateTime? dateApproved { get; set; }
         public short loanStatusId { get; set; }
+        public string loanStatus { get; set; }
         public short scheduleTypeId { get; set; }
         public string scheduleTypeName { get; set; }
         public bool isDisbursed { get; set; }
@@ -75,6 +76,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string operationName {get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
+        public decimal overDraft { get; set; }
 
         public decimal equityContribution { get; set; }
         public short subSectorId { get; set; }
@@ -112,6 +114,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
         public int? customerRiskRatingId { get; set; }
+        public int teno { get; set; }
 
         // public double productPriceIndexRate { get; set; }
         public bool allowForceDebitRepayment { get; set; }
@@ -147,6 +150,9 @@ namespace FintrakBanking.ViewModels.Credit
         public bool feeOverride { get; set; }
         public int loanBookingRequestId { get; set; }
         public int staffId { get; set; }
+        public bool hasLein { get; set; }
+        public int postNoStatusId { get; set; }
+
         public List<ApprovalLevelStaffViewModel> loanOperationApprovers { get; set; }
 
         //............Loan Repayment Schedule Model..........................//

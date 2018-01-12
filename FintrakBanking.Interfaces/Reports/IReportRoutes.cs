@@ -36,5 +36,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetTeamAndRevolving(DateRange dateRange, int companyId);
         string GetEarnedUnearnedInterest(DateRange dateRange, int companyId);
         string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
+        string GetAccountWithLein(short? branchId, string customerName, int companyId);
+        string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId);
     }
 }

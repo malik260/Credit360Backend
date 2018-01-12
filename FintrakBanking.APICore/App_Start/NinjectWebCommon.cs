@@ -53,6 +53,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.ReportObjects.ReportCalls;
     using FintrakBanking.Interfaces.Reports;
     using FintrakBanking.Repositories.Reports;
+    using FintrakBanking.Repositories.Setups.Credit;
 
 
     public static class NinjectWebCommon
@@ -186,6 +187,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICustomerStagingRepository>().To<CustomerStagingRepository>();
             kernel.Bind<ILoanPrincipalRepository>().To<LoanPrincipalRepository>();
             kernel.Bind<ILoanMarketRepository>().To<LoanMarketRepository>();
+            kernel.Bind<IPrudentialGuidelineSetupRepository>().To<PrudentialGuidelineSetupRepository>();
 
 
             //kernel.Bind<IEmployerRepository>().To<EmployerRepository>();
