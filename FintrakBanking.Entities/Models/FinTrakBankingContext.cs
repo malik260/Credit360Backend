@@ -300,6 +300,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_COLLATERAL_PLANT_EQUP> TBL_TEMP_COLLATERAL_PLANT_EQUP { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_POLICY> TBL_TEMP_COLLATERAL_POLICY { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_PREC_METAL> TBL_TEMP_COLLATERAL_PREC_METAL { get; set; }
+        public virtual DbSet<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_VEHICLE> TBL_TEMP_COLLATERAL_VEHICLE { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER_GROUP> TBL_TEMP_CUSTOMER_GROUP { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER_GROUP_MAPPNG> TBL_TEMP_CUSTOMER_GROUP_MAPPNG { get; set; }
@@ -316,7 +317,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DEAL_TYPE> TBL_DEAL_TYPE { get; set; }
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
-        public virtual DbSet<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
         public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -4400,6 +4400,22 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.REMARK)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
+                .Property(e => e.MARKETPRICE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
+                .Property(e => e.AMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
+                .Property(e => e.SHARESSECURITYVALUE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
+                .Property(e => e.SHAREVALUEAMOUNTTOUSE)
+                .HasPrecision(19, 4);
+
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_VEHICLE>()
                 .Property(e => e.RESALEVALUE)
                 .HasPrecision(19, 4);
@@ -4468,22 +4484,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_PRODUCT_TYPE)
                 .WithRequired(e => e.TBL_DEAL_CLASSIFICATION)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
-                .Property(e => e.MARKETPRICE)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
-                .Property(e => e.AMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
-                .Property(e => e.SHARESSECURITYVALUE)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
-                .Property(e => e.SHAREVALUEAMOUNTTOUSE)
-                .HasPrecision(19, 4);
 
             modelBuilder.Entity<view_Approval_Setup>()
                 .Property(e => e.LEVELMAXIMUMAMOUNT)
