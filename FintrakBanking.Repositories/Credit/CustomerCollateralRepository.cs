@@ -831,7 +831,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 COLLATERALCUSTOMERID = collateralId,
                 PROPERTYNAME = entity.propertyName,
-                CITYID = entity.cityId,
+                CITYID = (int)entity.cityId,
                 COUNTRYID = entity.countryId,
                 CONSTRUCTIONDATE = entity.constructionDate,
                 PROPERTYADDRESS = entity.propertyAddress,
@@ -864,7 +864,7 @@ namespace FintrakBanking.Repositories.Credit
                 .FirstOrDefault();
 
             collateral.PROPERTYNAME = entity.propertyName;
-            collateral.CITYID = entity.cityId;
+            collateral.CITYID = (int)entity.cityId;
             collateral.COUNTRYID = entity.countryId;
             collateral.CONSTRUCTIONDATE = entity.constructionDate;
             collateral.PROPERTYADDRESS = entity.propertyAddress;

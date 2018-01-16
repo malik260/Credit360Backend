@@ -496,7 +496,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private IQueryable<ProductViewModel> AllProduct()
         {
-            return (from data in context.TBL_PRODUCT
+            var productData = (from data in context.TBL_PRODUCT
                     select new ProductViewModel()
                     {
                         productId = data.PRODUCTID,
@@ -574,15 +574,18 @@ namespace FintrakBanking.Repositories.Setups.General
                         equityContribution = data.EQUITYCONTRIBUTION,
                         expiryPeriod = data.EXPIRYPERIOD,
                         scheduleTypeId = data.SCHEDULETYPEID,
-                        ProductBehaviour = data.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == data.PRODUCTID).Select (d => new ProductBehaviourViewModel()
+                        ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == data.PRODUCTID).Select(d => new ProductBehaviourViewModel()
                         {
                             customerLimit = d.CUSTOMER_LIMIT,
-                            fcyLimit = d.COLLATERAL_FCY_LIMIT,
-                            lcyLimit = d.COLLATERAL_LCY_LIMIT,
+                            fcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                            lcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                             productLimit = d.PRODUCT_LIMIT
 
                         }).FirstOrDefault()
+
                     });
+
+            return productData;
         }
 
         public IEnumerable<ProductViewModel> GetAllProduct()

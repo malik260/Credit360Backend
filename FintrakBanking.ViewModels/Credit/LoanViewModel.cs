@@ -356,6 +356,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public DateTime? approvalDate { get; set; }
+
         public string loanDetails { get; set; }
         public string camReference { get; set; }
         public List<CasaViewModel> customerAccounts { get; set; }
@@ -375,7 +377,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerOccupation { get; set; }
         public string customerType { get; set; }
         public int? bookingRequestStatusId { get; set; }
-        public decimal? bookRequestAmount { get; set; }
+        public decimal? bookingAmountRequested { get; set; }
         public DateTime requestDate { get; set; }
         public string requestedBy { get; set; }
         public short requestOperationId { get; set; }
@@ -468,6 +470,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string taxNumber  { get; set; }
         public string customerTypeName { get; set; }
         public short customerTypeId { get; set; }
+        public string customerType { get; set; }
     }
 
     public class LoanFeeDefferalViewModel : LoanViewModel

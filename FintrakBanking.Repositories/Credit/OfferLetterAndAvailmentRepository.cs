@@ -76,7 +76,10 @@ namespace FintrakBanking.Repositories.Credit
                             subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
                             branchId = a.BRANCHID,
                             productClassId = b.TBL_PRODUCT.PRODUCTCLASSID,
+                            productTypeId = b.TBL_PRODUCT.PRODUCTTYPEID,
+                            productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
+                            approvalDate = a.APPROVEDDATE,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
                                 .Select(camDoc => new CamDocumentViewModel
                                 {
@@ -86,6 +89,21 @@ namespace FintrakBanking.Repositories.Credit
                                     camDocumentation = camDoc.CAMDOCUMENTATION
                                 }
                             ).ToList(),
+                            loanApplicationCollateral = (from e in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
+                                                           select new LoanApplicationCollateralViewModel
+                                                           {
+                                                               collateralValue = e.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                               collateralType = e.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                                               collateralCustomerId = e.COLLATERALCUSTOMERID,
+                                                               collateralSubtype = e.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB
+                                                               .Where(p => p.COLLATERALSUBTYPEID == e.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                               collateralReferenceNumber = e.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                                                               haircut = e.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                               valuationCycle = e.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                               allowSharing = e.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                                                               currencyCode = e.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE
+                                                           }).ToList(),
+        
                             operationId = e.OPERATIONID,
                             currentApprovalStateId = e.APPROVALSTATEID,
                             approvalStatusId = e.APPROVALSTATUSID,
@@ -317,23 +335,23 @@ namespace FintrakBanking.Repositories.Credit
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
 
-                foreach (var i in data)
-                {
-                    i.loanApplicationCollateral = (from e in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == i.loanApplicationId)
-                                                   select new LoanApplicationCollateralViewModel
-                                                   {
-                                                       collateralValue = e.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                                                       collateralType = e.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                                                       collateralCustomerId = e.COLLATERALCUSTOMERID,
-                                                       collateralSubtype = e.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB
-                                                       .Where(p => p.COLLATERALSUBTYPEID == e.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
-                                                       collateralReferenceNumber = e.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                                                       haircut = e.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                                                       valuationCycle = e.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                                                       allowSharing = e.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                                                       currencyCode = e.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE
-                                                   }).ToList();
-                };
+                //foreach (var i in data)
+                //{
+                //    i.loanApplicationCollateral = (from e in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == i.loanApplicationId)
+                //                                   select new LoanApplicationCollateralViewModel
+                //                                   {
+                //                                       collateralValue = e.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                //                                       collateralType = e.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                //                                       collateralCustomerId = e.COLLATERALCUSTOMERID,
+                //                                       collateralSubtype = e.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB
+                //                                       .Where(p => p.COLLATERALSUBTYPEID == e.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                //                                       collateralReferenceNumber = e.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                //                                       haircut = e.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                //                                       valuationCycle = e.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                //                                       allowSharing = e.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                //                                       currencyCode = e.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE
+                //                                   }).ToList();
+                //};
 
                 loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId));
 

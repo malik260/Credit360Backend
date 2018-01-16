@@ -2145,6 +2145,11 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public bool AddLoanGuarantor(LoanGuarantorViewModel entity, short productTypeId, int loanApplicationId)
         {
+            if (entity.customerType == "Corporate") {
+                entity.customerTypeId = (short)CustomerTypeEnum.Corporate;
+                    } else entity.customerTypeId = (short)CustomerTypeEnum.Individual;
+
+
             var guarantor = new TBL_LOAN_GUARANTOR
             {
                 PRODUCTTYPEID = productTypeId,
@@ -3516,16 +3521,15 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         private IEnumerable<CamProcessedLoanViewModel> AppraisalMemorandumProcessedLoanApplications(int companyId)
         {
-
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                        where m.COMPANYID == companyId && d.DELETED == false &&  s.DELETED==false //&& m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted
-                        orderby s.LOAN_BOOKING_REQUESTID descending
+                        where m.COMPANYID == companyId && d.DELETED == false &&  s.DELETED==false 
+                        orderby s.LOAN_BOOKING_REQUESTID ascending
                         select new CamProcessedLoanViewModel
                         {
-                            bookRequestAmount = s.AMOUNT_REQUESTED,
+                            bookingAmountRequested = s.AMOUNT_REQUESTED,
                             loanBookingRequestId =s.LOAN_BOOKING_REQUESTID,
                             bookingRequestStatusId = s.APPROVALSTATUSID,
                             requestDate = s.DATETIMECREATED,
@@ -3536,6 +3540,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                             applicationStatusId = m.APPLICATIONSTATUSID,
+                            
                             //// casaAccountId = m.CasaAccountId,
                             customerId = d.CUSTOMERID,
                             customerCode = cust.CUSTOMERCODE,

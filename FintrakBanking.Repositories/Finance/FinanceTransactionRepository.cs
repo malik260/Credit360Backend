@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using System.Data.Entity;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -1087,6 +1088,85 @@ namespace FintrakBanking.Repositories.Finance
             terminateAndRebookTransaction.transactionDetails.Add(credit);
 
             return terminateAndRebookTransaction;
+
+        }
+
+
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public FinanceTransactionViewModel BuildCustomerApplicationChargeOrChargeReversalPosting (string postType, int loanId, GeneralEntity model, decimal postedAmount, int creditGL, string description)
+        {
+            var loanData = this.context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanId).FirstOrDefault();
+
+            FinanceTransactionViewModel terminateAndRebookTransaction = new FinanceTransactionViewModel();
+
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanData.CASAACCOUNTID && x.COMPANYID == model.companyId);
+
+            terminateAndRebookTransaction.operationId = (int)OperationsEnum.LoanTermination;
+            terminateAndRebookTransaction.description = description;
+            terminateAndRebookTransaction.valueDate = generalSetup.GetApplicationDate();
+            terminateAndRebookTransaction.transactionDate = terminateAndRebookTransaction.valueDate;
+            terminateAndRebookTransaction.currencyId = casa.CURRENCYID;
+            terminateAndRebookTransaction.currencyRate = GetExchangeRate(terminateAndRebookTransaction.valueDate, terminateAndRebookTransaction.currencyId, model.companyId).sellingRate;
+            terminateAndRebookTransaction.isApproved = true;
+            terminateAndRebookTransaction.postedBy = model.createdBy;
+            terminateAndRebookTransaction.approvedBy = model.createdBy;
+            terminateAndRebookTransaction.approvedDate = terminateAndRebookTransaction.transactionDate;
+            terminateAndRebookTransaction.approvedDateTime = DateTime.Now;
+            terminateAndRebookTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            terminateAndRebookTransaction.companyId = model.companyId;
+
+            if(postType == "Post")
+            {
+                FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+                debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
+                debit.casaAccountId = casa.CASAACCOUNTID;
+                debit.debitAmount = postedAmount;
+                debit.creditAmount = 0;
+                debit.sourceBranchId = casa.BRANCHID;
+                debit.destinationBranchId = casa.BRANCHID;
+
+                FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+                credit.glAccountId = creditGL;
+
+                credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
+                credit.casaAccountId = null;
+                credit.debitAmount = 0;
+                credit.creditAmount = postedAmount; ;
+                credit.sourceBranchId = casa.BRANCHID;
+                credit.destinationBranchId = casa.BRANCHID;
+
+                terminateAndRebookTransaction.transactionDetails.Add(debit);
+                terminateAndRebookTransaction.transactionDetails.Add(credit);
+
+                return terminateAndRebookTransaction;
+            }
+            else
+            {
+                FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+                debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
+                debit.casaAccountId = casa.CASAACCOUNTID;
+                debit.debitAmount = postedAmount;
+                debit.creditAmount = 0;
+                debit.sourceBranchId = casa.BRANCHID;
+                debit.destinationBranchId = casa.BRANCHID;
+
+                FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+                credit.glAccountId = creditGL;
+
+                credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
+                credit.casaAccountId = null;
+                credit.debitAmount = 0;
+                credit.creditAmount = postedAmount; ;
+                credit.sourceBranchId = casa.BRANCHID;
+                credit.destinationBranchId = casa.BRANCHID;
+
+                terminateAndRebookTransaction.transactionDetails.Add(debit);
+                terminateAndRebookTransaction.transactionDetails.Add(credit);
+
+                return terminateAndRebookTransaction;
+            }
 
         }
 

@@ -32,6 +32,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOANPRELIMINARYEVALUATIONID { get; set; }
 
+        [StringLength(50)]
+        public string RELATEDREFERENCENUMBER { get; set; }
+
         public int COMPANYID { get; set; }
 
         public int? CUSTOMERID { get; set; }
@@ -118,6 +121,9 @@ namespace FintrakBanking.Entities.Models
         public bool SUBMITTEDFORAPPRAISAL { get; set; }
 
         public bool CUSTOMERINFOVALIDATED { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? APPROVEDDATE { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

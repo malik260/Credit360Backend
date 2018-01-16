@@ -2332,6 +2332,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.RELATIONSHIPMANAGERID)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_STAFF>()
+                .HasMany(e => e.TBL_STAFF1)
+                .WithOptional(e => e.TBL_STAFF2)
+                .HasForeignKey(e => e.RELIEF_STAFFID);
+
             modelBuilder.Entity<TBL_STAFF_JOBTITLE>()
                 .HasMany(e => e.TBL_STAFF)
                 .WithRequired(e => e.TBL_STAFF_JOBTITLE)
@@ -3779,6 +3784,21 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_LOAN_SCHEDULE_TYPE>()
                 .HasMany(e => e.TBL_LOAN_SCHEDULE_TYPE_PRODUCT)
                 .WithRequired(e => e.TBL_LOAN_SCHEDULE_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_STATUS>()
+                .HasMany(e => e.TBL_LOAN)
+                .WithRequired(e => e.TBL_LOAN_STATUS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_STATUS>()
+                .HasMany(e => e.TBL_LOAN_CONTINGENT)
+                .WithRequired(e => e.TBL_LOAN_STATUS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_STATUS>()
+                .HasMany(e => e.TBL_LOAN_REVOLVING)
+                .WithRequired(e => e.TBL_LOAN_STATUS)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_TRANSACTION_TYPE>()
