@@ -25,6 +25,8 @@ namespace FintrakBanking.Common.Enum
         BookingRequestInitiated = 15,
         BookingRequestCompleted = 16,
         ApplicationUnderReview = 17,
-        BondAndGuaranteesInProgress = 18
+        BondAndGuaranteesInProgress = 18,
+        ApplicationRejected = 19,
+        OfferLetterRejected = 20,
     }
 }

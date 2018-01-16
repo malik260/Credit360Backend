@@ -41,6 +41,11 @@ namespace FintrakBanking.Repositories.Setups.General
             documentsContext = _documentsContext;
         }
 
+        public StaffRepository(FinTrakBankingContext context)
+        {
+            this.context = context;
+        }
+
         private bool SaveAll()
         {
             return this.context.SaveChanges() > 0;

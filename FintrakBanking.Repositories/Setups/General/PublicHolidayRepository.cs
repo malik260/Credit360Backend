@@ -28,6 +28,8 @@ namespace FintrakBanking.Repositories.Setups.General
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
         }
+
+
         public PublicHolidayViewModel GetPublicHoliday(int id)
         {
             var holiday = context.TBL_PUBLIC_HOLIDAY.Find(id);
@@ -226,16 +228,48 @@ namespace FintrakBanking.Repositories.Setups.General
             return response != 0;
         }
 
+        public bool DeletePublicHoliday(UserInfo model, int id)
+        {
+            var response = 0;
+            var holiday = context.TBL_PUBLIC_HOLIDAY.Where(o=>o.PUBLICHOLIDAYID==id).FirstOrDefault();
+
+            if (holiday != null)
+            {
+
+                context.TBL_PUBLIC_HOLIDAY.Remove(holiday);
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.PublicHolidayUpdated,
+                    STAFFID = (int)model.staffId,
+                    BRANCHID = (short)model.BranchId,
+                    DETAIL = $"Delete Public holyday with public Holiday Id: " + id,
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.auditTrail.AddAuditTrail(audit);
+                //end of Audit section -------------------------------
+                response = context.SaveChanges();
+            }
+
+            return response != 0;
+        }
+
+        
+
         //public async Task<bool> DeleteBranch(int id, UserInfo user)
         //{
         //    var response = 0;
-        //    var holiday = context.tbl_Public_Holiday.Remove(id);
+        //    var holiday = context.TBL_PUBLIC_HOLIDAY.Remove(id);
 
         //    if (holiday != null)
         //    {
         //        response = await context.SaveChangesAsync();
         //        // Audit Section ---------------------------
-        //        var audit = new tbl_Audit
+        //        var audit = new TBL_AUDIT
         //        {
         //            AuditTypeId = (short)AuditTypeEnum.BranchDeleted,
         //            StaffId = (int)user.staffId,

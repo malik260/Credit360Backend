@@ -22,8 +22,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string RATIOCAPTION { get; set; }
 
-        public short RATIOTYPEID { get; set; }
-
         public int COMPANYID { get; set; }
 
         public bool ANNUALISED { get; set; }
@@ -45,8 +43,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
-
-        public virtual TBL_CUSTOMER_FS_RATIO_TYPE TBL_CUSTOMER_FS_RATIO_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER_FS_RATIO_DETAIL> TBL_CUSTOMER_FS_RATIO_DETAIL { get; set; }

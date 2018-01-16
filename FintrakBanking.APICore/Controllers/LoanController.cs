@@ -12,6 +12,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Customer;
 using System.Collections.Generic;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -770,15 +771,15 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("detail")]
-        public HttpResponseMessage GetBookedLoanDetails()
+        public HttpResponseMessage GetBookedLoanDetails([FromBody]ReportSearchEntity param)
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var data = repo.GetBookedLoanDetails(token.GetCompanyId);
+                var data = repo.GetBookedLoanDetailsWithParameters(token.GetCompanyId, param).ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }

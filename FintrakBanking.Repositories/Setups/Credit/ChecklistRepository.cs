@@ -1034,20 +1034,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             checklistStatusId = a.CHECKLISTSTATUSID,
                             checklistStatusName = a.CHECKLISTSTATUSNAME,
-                        }).ToList().Take(3);
+                            responseTypeId = a.RESPONSE_TYPEID
+                        }).ToList();
             return data;
         }
-        public IEnumerable<CheckListStatusViewModel> GetChecklistStatusYesorNo()
-        {
-            var data = (from a in context.TBL_CHECKLIST_STATUS
-                        where a.DELETED == false
-                        select new CheckListStatusViewModel
-                        {
-                            checklistStatusId = a.CHECKLISTSTATUSID,
-                            checklistStatusName = a.CHECKLISTSTATUSNAME,
-                        }).ToList().Skip(3);
-            return data;
-        }
+      
+      
 
         public IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistTargetType()
         {

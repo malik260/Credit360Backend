@@ -67,7 +67,6 @@
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
-    <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -106,7 +105,6 @@
     <Compile Include="Models\TBL_CHECKLIST_DEFINITION.cs" />
     <Compile Include="Models\TBL_CHECKLIST_DETAIL.cs" />
     <Compile Include="Models\TBL_CHECKLIST_ITEM.cs" />
-    <Compile Include="Models\TBL_CHECKLIST_RESPONSE_TYPE.cs" />
     <Compile Include="Models\TBL_CHECKLIST_STATUS.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TARGETTYPE.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TYPE.cs" />
@@ -172,7 +170,6 @@
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_CAPTION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DETAIL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DIVI_TYP.cs" />
-    <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_VALUETYP.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP_MAPPING.cs" />
@@ -183,7 +180,6 @@
     <Compile Include="Models\TBL_CUSTOMER_IDENTI_MODE_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_NEXTOFKIN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_PHONECONTACT.cs" />
-    <Compile Include="Models\TBL_CUSTOMER_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_RISK_RATING.cs" />
     <Compile Include="Models\TBL_CUSTOMER_SENSITIVITY_LEVEL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_SIGNATORY.cs" />
@@ -220,7 +216,6 @@
     <Compile Include="Models\TBL_JOB_REQUEST_STATUS.cs" />
     <Compile Include="Models\TBL_JOB_REQUEST_STATUS_FEEDBAK.cs" />
     <Compile Include="Models\TBL_JOB_TYPE.cs" />
-    <Compile Include="Models\TBL_JOB_TYPE_DEPARTMENT.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_SUB.cs" />
     <Compile Include="Models\TBL_KYC_DOCUMENTTYPE.cs" />
     <Compile Include="Models\TBL_KYC_ITEM.cs" />
@@ -302,6 +297,7 @@
     <Compile Include="Models\TBL_PRODUCT_BEHAVIOUR.cs" />
     <Compile Include="Models\TBL_PRODUCT_CATEGORY.cs" />
     <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE_CUSTMER.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS_PROCESS.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS_TYPE.cs" />
@@ -368,7 +364,6 @@
     <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
-    <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />

@@ -257,6 +257,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var operationId = (int)OperationsEnum.CAM;
             var applicationDate = general.GetApplicationDate();
+            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
 
             // init
             workflow.StaffId = model.createdBy;
@@ -271,7 +272,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
 
-            workflow.Amount = model.amount;
+            workflow.Amount = appl.TOTALEXPOSUREAMOUNT; //model.amount;
             workflow.InvestmentGrade = model.investmentGrade;
             workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
@@ -280,7 +281,6 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
             appl.APPROVALSTATUSID = workflow.StatusId;
             if (appl.SUBMITTEDFORAPPRAISAL == false) { appl.SUBMITTEDFORAPPRAISAL = true; } // for product programs
 
@@ -294,6 +294,9 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                if (model.forwardAction == (int)ApprovalStatusEnum.Approved) { appl.APPROVEDDATE = applicationDate; }
+                if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+
                 if (amountUpdated == false)
                 {
                     var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
@@ -621,6 +624,7 @@ namespace FintrakBanking.Repositories.Credit
                             //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
                             loanApplicationId = x.a.LOANAPPLICATIONID,
                             applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                            relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
                             customerId = x.a.CUSTOMERID,
                             branchId = x.a.BRANCHID,
                             productClassId = x.a.PRODUCTCLASSID,
@@ -707,6 +711,7 @@ namespace FintrakBanking.Repositories.Credit
                 //groupRoleId = x.b.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
                 loanApplicationId = x.a.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
                 customerId = x.a.CUSTOMERID,
                 branchId = x.a.BRANCHID,
                 productClassId = x.a.PRODUCTCLASSID,
@@ -837,6 +842,8 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                if (workflow.GroupStatusId == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+
                 if (memo != null) memo.ISCOMPLETED = true;
                 var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
                 var approvedAmount = items.Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
@@ -957,6 +964,7 @@ namespace FintrakBanking.Repositories.Credit
                             //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
                             loanApplicationId = x.a.LOANAPPLICATIONID,
                             applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                            relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
                             customerId = x.a.CUSTOMERID,
                             branchId = x.a.BRANCHID,
                             productClassId = x.a.PRODUCTCLASSID,

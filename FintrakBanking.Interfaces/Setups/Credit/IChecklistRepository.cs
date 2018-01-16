@@ -11,7 +11,6 @@ namespace FintrakBanking.Interfaces.Setups
         #region Loan Checklist Definition
         IEnumerable<CheckListResponseTypeViewModel> GetAllChecklistResponseType();
         IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistType();
-        IEnumerable<CheckListStatusViewModel> GetChecklistStatusYesorNo();
         IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition();
         IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId);
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId);

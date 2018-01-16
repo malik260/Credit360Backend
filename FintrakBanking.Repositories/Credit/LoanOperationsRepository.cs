@@ -4082,7 +4082,6 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
-
         public void updateLoanPrincipalInterestPaymentDate(DateTime firstPrincipalPaymentDate , DateTime firstInterestPaymentDate, int loanId)
         {
             TBL_LOAN result = (from p in context.TBL_LOAN
@@ -4810,7 +4809,7 @@ namespace FintrakBanking.Repositories.Credit
                                select p).SingleOrDefault();
 
             result.LOANSTATUSID = (short)LoanStatusEnum.WriteOff;
-
+            //context.SaveChanges();
             ///call disturbs loan method and posting
 
             TBL_LOAN_CAMSOL loanCamsol = new TBL_LOAN_CAMSOL();
@@ -4820,9 +4819,10 @@ namespace FintrakBanking.Repositories.Credit
             loanCamsol.AMOUNTAFFECTED = accruedInterest + accruedPrincipal;
             loanCamsol.DATE = applicationDate;
             loanCamsol.TYPE = "Loan Complete Write Off"; 
+            loanCamsol.CUSTOMERCODE = (context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == loanInput.customerId)).CUSTOMERCODE;
 
             this.context.TBL_LOAN_CAMSOL.Add(loanCamsol); ////change to Temp table
-
+            //context.SaveChanges();
             /// Place a Lien on Customer Repayment Account
 
             var data = new TBL_CASA_LIEN
@@ -4838,25 +4838,32 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = (int)SystemStaff.System,
                 DESCRIPTION = "lien placed due to Loan Write Off", // model.description,
                 DATECREATED = generalSetup.GetApplicationDate()
-
             };
 
             context.TBL_CASA_LIEN.Add(data);
-
+            //context.SaveChanges();
             // Audit Section ---------------------------            
 
-            //var audit = new tbl_Audit
-            //{
-            //    AuditTypeId = (short)AuditTypeEnum.LienAdded,
-            //    StaffId = (int)SystemStaff.System,
-            //    BranchId = item.branchId,
-            //    Detail = $"Applied for lien with reference number: {data.SourceReferenceNumber}",
-            //    IPAddress = item.userIPAddress,
-            //    Url = item.applicationUrl,
-            //    ApplicationDate = generalSetup.GetApplicationDate(),
-            //    SystemDateTime = DateTime.Now
-            //};
-            //this.auditTrail.AddAuditTrail(audit);
+            var audit = new TBL_AUDIT
+            {
+                //AuditTypeId = (short)AuditTypeEnum.LienAdded,
+                //StaffId = (int)SystemStaff.System,
+                //BranchId = loan.BRANCHID,
+                //Detail = $"Applied for lien with reference number: {data.SourceReferenceNumber}",
+                //IPAddress = loan.userIPAddress,
+                //Url = item.applicationUrl,
+                //ApplicationDate = generalSetup.GetApplicationDate(),
+                //SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
+                STAFFID = (int)SystemStaff.System,
+                BRANCHID = data.BRANCHID,
+                DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
+                IPADDRESS = loanInput.userIPAddress,
+                URL = loanInput.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
 
@@ -5876,7 +5883,11 @@ namespace FintrakBanking.Repositories.Credit
                              newPrincipalFirstpaymentDate = a.PRINCIPALFIRSTPAYMENTDATE,
                              isManagementInterestRate = a.ISMANAGEMENTINTERESTRATE,
                              proposedTenor = (int?)a.TENOR,
-                             newMaturityDate = (DateTime?)a.MATURITYDATE,// change to maturity date affter scarfolding                             
+                             newMaturityDate = (DateTime?)a.MATURITYDATE,// change to maturity date affter scarfolding  
+                             companyId = b.COMPANYID,
+                             staffId = staffId,
+                             createdBy = staffId,
+                             customerId = b.CUSTOMERID,
                          }).ToList();
 
                 foreach (var item in model)
@@ -6053,6 +6064,9 @@ namespace FintrakBanking.Repositories.Credit
                              proposedTenor = a.TENOR,
                              newMaturityDate = a.MATURITYDATE,// change to maturity date affter scarfolding
                              companyId = b.COMPANYID,
+                             staffId = staffId,
+                             createdBy = staffId,
+                             customerId = b.CUSTOMERID,
 
                          }).ToList();
 

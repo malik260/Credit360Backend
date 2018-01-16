@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         string Comment { set; }
         decimal Amount { set; }
         int StatusId { get; set; }
+        int GroupStatusId { get; }
         int NewState { get; }
         int? NextLevelId { get; set; }
         bool EmailNotification { set; }

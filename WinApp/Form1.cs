@@ -20,7 +20,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Repositories.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Interfaces.Customer;
+using FinTrakMail;
 
 namespace WinApp
 {
@@ -30,24 +30,21 @@ namespace WinApp
         IGeneralSetupRepository genSetup;
         IFinanceTransactionRepository financeTransaction;
         ILoanScheduleRepository loanSchedule;
-        FinTrakBankingContext context;
+        FinTrakBankingContext context = new FinTrakBankingContext();
         ILoanOperationsRepository loanOperation;
-        ICustomerFSRatioRepository cust;
-        ILoanRepository loan;
-        public Form1(FinTrakBankingContext _context , IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction,
-            ILoanScheduleRepository _loanSchedule, ICustomerFSRatioRepository _cust, ILoanRepository _loan,
+        public Form1(FinTrakBankingContext _context , IGeneralSetupRepository _genSetup, 
+            IFinanceTransactionRepository _financeTransaction,
+            ILoanScheduleRepository _loanSchedule, 
             IAuditTrailRepository _auditTrail, ILoanOperationsRepository _loanOperation )
         //IGeneralSetupRepository _genSetup )
         {
             InitializeComponent();
-            this.context = _context;
+          //  this.context = _context;
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
             this.loanSchedule = _loanSchedule;
             this.financeTransaction = _financeTransaction;
             this.loanOperation = _loanOperation;
-            this.cust = _cust;
-            this.loan = _loan;
 
         }
 
@@ -60,15 +57,14 @@ namespace WinApp
             //tbl_Public_Holiday model = new tbl_Public_Holiday();
 
             //decimal vCountry =  NunCountry.Value;
-            DateTime vDate = dtpDate.Value;
-            int vStaff = 1;
-           // int vLoan  = 215;
-            decimal vAmount  = NunCountry.Value;
-            short vReview  = 19;
+            // DateTime vDate = dtpDate.Value;
+            // int vStaff = 1;
+            //// int vLoan  = 215;
+            // decimal vAmount  = NunCountry.Value;
+            // short vReview  = 19;
 
-            short priceIndex = 1;
-            double newRate = 20;
-            int customeId = 60;
+            // short priceIndex = 1;
+            // double newRate = 20;
             //string vDesc = txtDesc.Text;
 
             //model.CountryId = 1;//(int)vCountry;
@@ -103,8 +99,12 @@ namespace WinApp
             //loanOperation.BulkRateReview(priceIndex,newRate,vDate,vStaff,vReview);
             //loanOperation.CalLoanClassification(vDate);
 
-            //cust.GetCustomerFSRatioValues(customeId);
-            //loan.GetCustomerTotalOutstandingBalance(customeId);
+        //    BusLogic mailsender = new BusLogic();
+            PopulateAlertTable test = new PopulateAlertTable();
+            test.Start();
+
+          //  bool sent = mailsender.SendMail();
+
 
             MessageBox.Show("Successful", "Fintrak");
 
