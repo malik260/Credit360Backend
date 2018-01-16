@@ -81,7 +81,7 @@ namespace FintrakBanking.Repositories.Credit
                             productTypeId = b.TBL_PRODUCT.PRODUCTTYPEID,
                             productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
-                            approvalDate = a.APPROVEDDATE,
+                           // approvalDate = a.APPROVEDDATE,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
                                 .Select(camDoc => new CamDocumentViewModel
                                 {

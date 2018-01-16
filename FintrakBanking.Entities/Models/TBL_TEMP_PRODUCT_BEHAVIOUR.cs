@@ -6,13 +6,15 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_PRODUCT_BEHAVIOUR")]
-    public partial class TBL_PRODUCT_BEHAVIOUR
+    [Table("temp.TBL_TEMP_PRODUCT_BEHAVIOUR")]
+    public partial class TBL_TEMP_PRODUCT_BEHAVIOUR
     {
         [Key]
-        public int PRODUCT_BEHAVIOURID { get; set; }
+        public int TEMPPRODUCT_BEHAVIOURID { get; set; }
 
-        public short PRODUCTID { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string PRODUCTCODE { get; set; }
 
         public double? COLLATERAL_LCY_LIMIT { get; set; }
 
@@ -25,6 +27,16 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISINVOICEBASED { get; set; }
 
-        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
+        public int CREATEDBY { get; set; }
+
+        public int? LASTUPDATEDBY { get; set; }
+
+        public DateTime DATETIMECREATED { get; set; }
+
+        public DateTime? DATETIMEUPDATED { get; set; }
+
+        public bool ISCURRENT { get; set; }
+
+        public short APPROVALSTATUSID { get; set; }
     }
 }

@@ -307,7 +307,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = from a in context.TBL_LOAN_APPLICATION
                        where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress && a.COMPANYID == companyId && a.DELETED == false
                        orderby a.APPLICATIONDATE descending
-                       // && a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId
+                       //&& a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId
                        select new
                        {
                            approvalStatusId = a.APPROVALSTATUSID,
@@ -570,7 +570,7 @@ namespace FintrakBanking.Repositories.Credit
                     isGroupLoan = true;
                 }
                 int casaAccountId = -1;
-                //     string refNumber = GenerateLoanReference(loan.customerId.Value);
+                     string refNumber = GenerateLoanReference(loan.customerId.Value);
                 if (loan.customerAccount != "N/A")
                 {
                     casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
@@ -589,7 +589,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
                 decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
-                //var loanStatusId = (short)LoanStatusEnum.Inactive;
+                var loanStatusId = (short)LoanStatusEnum.Inactive;
 
                 var data = new TBL_LOAN_APPLICATION
                 {
@@ -685,6 +685,11 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw ex;
             }
+        }
+
+        public decimal GetCustomerTotalOutstandingBalance(int customerId)
+        {
+            throw new NotImplementedException();
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -1247,7 +1252,7 @@ namespace FintrakBanking.Repositories.Credit
             var applications = context.TBL_LOAN_APPLICATION
                 .Where(x => (isHeadOffice || x.BRANCHID == user.BranchId)
                 && (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected)
-                //&& x.RELATED_REFERENCE_NUMBER == null
+                && x.RELATEDREFERENCENUMBER == null
                 )
             .Select(x => new LoanApplicationViewModel
             {

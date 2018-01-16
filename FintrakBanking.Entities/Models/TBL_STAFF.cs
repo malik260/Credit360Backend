@@ -28,6 +28,7 @@ namespace FintrakBanking.Entities.Models
             TBL_JOB_REQUEST2 = new HashSet<TBL_JOB_REQUEST>();
             TBL_JOB_REQUEST_MESSAGE = new HashSet<TBL_JOB_REQUEST_MESSAGE>();
             TBL_NOTIFICATION_LOG = new HashSet<TBL_NOTIFICATION_LOG>();
+            TBL_OVERRIDE_DETAIL = new HashSet<TBL_OVERRIDE_DETAIL>();
             TBL_PROFILE_USER = new HashSet<TBL_PROFILE_USER>();
             TBL_CALL_MEMO = new HashSet<TBL_CALL_MEMO>();
             TBL_LOAN_APPLICATION_ARCHIVE = new HashSet<TBL_LOAN_APPLICATION_ARCHIVE>();
@@ -129,6 +130,12 @@ namespace FintrakBanking.Entities.Models
 
         public bool NPL_LIMITEXCEEDED { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal? NPL_LIMIT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? LOAN_LIMIT { get; set; }
+
         public int? CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
@@ -196,6 +203,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_NOTIFICATION_LOG> TBL_NOTIFICATION_LOG { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_OVERRIDE_DETAIL> TBL_OVERRIDE_DETAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PROFILE_USER> TBL_PROFILE_USER { get; set; }

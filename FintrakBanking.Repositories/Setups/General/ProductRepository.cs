@@ -577,8 +577,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == data.PRODUCTID).Select(d => new ProductBehaviourViewModel()
                         {
                             customerLimit = d.CUSTOMER_LIMIT,
-                            fcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
-                            lcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+                           // fcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                           // lcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                             productLimit = d.PRODUCT_LIMIT
 
                         }).FirstOrDefault()
