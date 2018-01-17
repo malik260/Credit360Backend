@@ -157,6 +157,10 @@ namespace FintrakBanking.Repositories.Credit
             if (totaloverdraftLimit > model.customerAvailableAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.loanBookingRequestId);
+            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                throw new Exception("This Loan Request has already been booked by another staff");
+
             var CurrRatings = context.TBL_CURRENCY_RATE.Where(x => x.CURRENCYID == model.currencyId).FirstOrDefault();
             var currentExchangeRate = 1.0;
 
@@ -222,10 +226,15 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Revolving Loan Record.........................
                     var loan = context.TBL_LOAN_REVOLVING.Add(data);
 
+                    
                     if (model.monitoringTriggers.Count > 0)
                         AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)model.productTypeId);
+
                     //...................Saving Loan Collaterals Mapping.......................
-                    // AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
+                     AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
+
+                    //...................Update the Loan Request table.......................
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
 
                     //...................Saving Loan Gaurantors................................
                     //AddLoanGuarantor(model.loanGuarantor, (short)model.productTypeId, model.loanApplicationId);
@@ -298,6 +307,10 @@ namespace FintrakBanking.Repositories.Credit
             if (totalContingentAmount > entity.customerAvailableAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
+            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                throw new Exception("This Loan Request has already been booked by another staff");
+
             var CurrRatings = context.TBL_CURRENCY_RATE.Where(x => x.CURRENCYID == contingentLoanInput.currencyId).FirstOrDefault();
             var currentExchangeRate = 1.0;
 
@@ -365,8 +378,12 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (entity.monitoringTriggers.Count > 0)
                         AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)entity.productTypeId);
+
                     //...................Saving Loan Collaterals Mapping.......................
-                    // AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
+                     AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
+
+                    //...................Update the Loan Request table.......................
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
 
                     //...................Saving Loan Gaurantors................................
                     //AddLoanGuarantor(entity.loanGuarantor,  (short)entity.productTypeId, entity.loanApplicationId);
@@ -432,6 +449,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
                 throw new Exception("Loan terminal date should be more than effective date");
+
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
+            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                throw new Exception("This Loan Request has already been booked by another staff");
 
             var principalAmount  = from a in context.TBL_LOAN where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
                                    let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
@@ -561,8 +582,15 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Term Loan Record.........................
                     var loan = context.TBL_LOAN.Add(data);
 
-                    if(entity.monitoringTriggers.Count > 0 )
+                    
+                    if (entity.monitoringTriggers.Count > 0 )
                          AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)entity.productTypeId);
+
+                    //...................Saving Loan Collaterals Mapping.......................
+                     AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
+
+                    //...................Update the Loan Request table.......................
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
 
                     //...................Adding Audit...............................
                     var dataCount = context.SaveChanges();
@@ -578,7 +606,6 @@ namespace FintrakBanking.Repositories.Credit
                         };
 
                         //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-
                         if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending))
                         {
                             //.....Commit transaction ............
