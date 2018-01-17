@@ -72,11 +72,16 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/LoanAnniversery.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
             return path;
         }
-
         public string GetLoanDocumentWaived(int companyId, DateRange dateRange)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/LoanDocumentWaived.aspx?companyId=" + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&branchId="+ dateRange.branchId;
+            path = reportPath + "ReportViews/LoanDocumentWaived.aspx?companyId=" + companyId+ "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&branchId="+ dateRange.branchId;
+            return path;
+        }
+        public string GetLoanDocumentDeferrals(int companyId, DateRange dateRange)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanDocumentDeferral.aspx?companyId=" + companyId + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&branchId=" + dateRange.branchId;
             return path;
         }
         public string GetCollateralEstimated(int companyId, string collateralCode)

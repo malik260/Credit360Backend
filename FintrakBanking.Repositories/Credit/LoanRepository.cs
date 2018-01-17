@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using FintrakBanking.ViewModels.Reports;
 //using XLeratorDLL_financial;
 
 namespace FintrakBanking.Repositories.Credit
@@ -4165,7 +4166,10 @@ namespace FintrakBanking.Repositories.Credit
             return loanSchedule;
         }
 
-
+        public IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, ReportSearchEntity param)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int RATIODETAILID { get; set; }
 
-        public short RATIOCAPTIONID { get; set; }
+        public int RATIOCAPTIONID { get; set; }
 
         public int FSCAPTIONID { get; set; }
 
@@ -41,7 +41,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CUSTOMER_FS_CAPTION TBL_CUSTOMER_FS_CAPTION { get; set; }
 
-        public virtual TBL_CUSTOMER_FS_RATIO_CAPTION TBL_CUSTOMER_FS_RATIO_CAPTION { get; set; }
+        public virtual TBL_CUSTOMER_FS_CAPTION TBL_CUSTOMER_FS_CAPTION1 { get; set; }
 
         public virtual TBL_CUSTOMER_FS_RATIO_DIVI_TYP TBL_CUSTOMER_FS_RATIO_DIVI_TYP { get; set; }
 
