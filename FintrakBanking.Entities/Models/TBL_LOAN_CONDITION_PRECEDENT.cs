@@ -26,11 +26,27 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
+        public short? RESPONSE_TYPEID { get; set; }
+
+        public short? CHECKLISTSTATUSID1 { get; set; }
+
+        public short? CHECKLISTSTATUSID2 { get; set; }
+
+        public short? APPROVALSTATUSID { get; set; }
+
         public int? LASTUPDATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
+
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
+
+        public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
+
+        public virtual TBL_CHECKLIST_STATUS TBL_CHECKLIST_STATUS { get; set; }
+
+        public virtual TBL_CHECKLIST_STATUS TBL_CHECKLIST_STATUS1 { get; set; }
 
         public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
 

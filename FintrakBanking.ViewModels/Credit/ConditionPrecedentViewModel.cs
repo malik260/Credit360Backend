@@ -13,7 +13,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isExternal { get; set; }
         public bool corporate { get; set; }
         public bool retail { get; set; }
-        public int? productId { get; set; }
+        public short? productId { get; set; }
         public int loanApplicationId { get; set; }
         public string staffName { get; set; }
         public bool isSubsequent { get; set; }

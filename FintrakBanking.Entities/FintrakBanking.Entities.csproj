@@ -67,7 +67,6 @@
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
-    <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -169,10 +168,8 @@
     <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION_DETAIL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION_GROUP.cs" />
-    <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_CAPTION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DETAIL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DIVI_TYP.cs" />
-    <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_VALUETYP.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP_MAPPING.cs" />
@@ -298,6 +295,8 @@
     <Compile Include="Models\TBL_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_OPERATIONS.cs" />
     <Compile Include="Models\TBL_OPERATIONS_TYPE.cs" />
+    <Compile Include="Models\TBL_OVERRIDE_DETAIL.cs" />
+    <Compile Include="Models\TBL_OVERRIDE_ITEM.cs" />
     <Compile Include="Models\TBL_PRODUCT.cs" />
     <Compile Include="Models\TBL_PRODUCT_BEHAVIOUR.cs" />
     <Compile Include="Models\TBL_PRODUCT_CATEGORY.cs" />
@@ -368,7 +367,6 @@
     <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
-    <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />
