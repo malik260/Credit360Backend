@@ -82,7 +82,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         
 
-             [HttpGet]
+        [HttpGet]
         [Route("customer-accounts/customer/{id}")]
         public HttpResponseMessage GetAllCustomerAccountByCustomerId(int id )
         {

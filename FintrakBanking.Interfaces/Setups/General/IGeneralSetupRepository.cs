@@ -47,5 +47,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<SectorViewModel> GetSectorsBySubSectorId(short ssId);
 
         IEnumerable<SectorViewModel> GetAllSubSectors();
+
+        bool Updatesector(SectorViewModel model, short id);
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -12,6 +13,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateLoanApplicationStatus(string applicationRefNumber, short applicationStatusId);
 
         IQueryable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId);
+
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailmentCheckList(int companyId);
 
         IQueryable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId);
 

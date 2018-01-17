@@ -32,6 +32,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOANPRELIMINARYEVALUATIONID { get; set; }
 
+        [StringLength(50)]
+        public string RELATEDREFERENCENUMBER { get; set; }
+
         public int COMPANYID { get; set; }
 
         public int? CUSTOMERID { get; set; }
@@ -119,6 +122,9 @@ namespace FintrakBanking.Entities.Models
 
         public bool CUSTOMERINFOVALIDATED { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime? APPROVEDDATE { get; set; }
+
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
@@ -169,5 +175,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_RISK_ASSESSMENT> TBL_RISK_ASSESSMENT { get; set; }
+        public bool DISPUTED { get; set; }
     }
 }

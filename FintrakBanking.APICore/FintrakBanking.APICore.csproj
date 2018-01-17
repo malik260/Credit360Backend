@@ -364,6 +364,7 @@
     <Compile Include="Controllers\ProductCollateralTypeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductFeeController.cs" />
+    <Compile Include="Controllers\PrudentialGuidelineController.cs" />
     <Compile Include="Controllers\PublicHolidayController.cs" />
     <Compile Include="Controllers\RankController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
@@ -490,6 +491,13 @@
     <Compile Include="Reports\ReportViews\FCYScheuledLoan.aspx.designer.cs">
       <DependentUpon>FCYScheuledLoan.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\GetStakeholdersOnExpirationOfFTP.aspx.cs">
+      <DependentUpon>GetStakeholdersOnExpirationOfFTP.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\GetStakeholdersOnExpirationOfFTP.aspx.designer.cs">
+      <DependentUpon>GetStakeholdersOnExpirationOfFTP.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\GrantedFacilities.aspx.cs">
       <DependentUpon>GrantedFacilities.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -503,6 +511,20 @@
     </Compile>
     <Compile Include="Reports\ReportViews\LoanAnniversery.aspx.designer.cs">
       <DependentUpon>LoanAnniversery.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx.cs">
+      <DependentUpon>LoanCASAaccountWithLein.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx.designer.cs">
+      <DependentUpon>LoanCASAaccountWithLein.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferral.aspx.cs">
+      <DependentUpon>LoanDocumentDeferral.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferral.aspx.designer.cs">
+      <DependentUpon>LoanDocumentDeferral.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\LoanDocumentWaived.aspx.cs">
       <DependentUpon>LoanDocumentWaived.aspx</DependentUpon>
@@ -586,8 +608,11 @@
     <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
     <Content Include="Reports\ReportViews\FCYScheuledLoan.aspx" />
+    <Content Include="Reports\ReportViews\GetStakeholdersOnExpirationOfFTP.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanAnniversery.aspx" />
+    <Content Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx" />
+    <Content Include="Reports\ReportViews\LoanDocumentDeferral.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentWaived.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
@@ -758,12 +783,15 @@
     <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanCASAAccountWithLein.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />
   </ItemGroup>
   <PropertyGroup>

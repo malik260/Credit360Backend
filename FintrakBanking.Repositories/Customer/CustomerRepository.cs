@@ -1003,7 +1003,17 @@ namespace FintrakBanking.Repositories.Customer
 
             return false;
         }
+        public bool DeleteChild(int childId)
+        {
+            var child = context.TBL_CUSTOMER_CHILDREN.Find(childId);
 
+            if (child != null)
+            {
+                context.TBL_CUSTOMER_CHILDREN.Remove(child);
+                return context.SaveChanges() > 0;
+            }
+            return false;
+        }
         public async Task<bool> DeleteCustomer(int customerId, UserInfo user)
         {
             var customer = context.TBL_CUSTOMER.Find(customerId);
@@ -1435,11 +1445,12 @@ namespace FintrakBanking.Repositories.Customer
             {
                 customer = customer.Where(x =>
                x.firstName.ToLower().Contains(search.ToLower())
-               || x.lastName.ToLower().Contains(search.ToLower())
-               || x.middleName.ToLower().Contains(search.ToLower())
-               || x.customerCode.Contains(search.ToLower())
+                //|| x.lastName.ToLower().Contains(search.ToLower())
+                //|| x.middleName.ToLower().Contains(search.ToLower())
+                //|| x.customerCode.Contains(search.ToLower())
                 ).ToList();
             }
+
             return customer;
         }
 
@@ -1646,7 +1657,8 @@ namespace FintrakBanking.Repositories.Customer
                                electricMeterNumber = x.ELECTRICMETERNUMBER,
                                pobox = x.POBOX,
                                stateId = x.STATEID,
-                               addressId = x.ADDRESSID
+                               addressId = x.ADDRESSID, 
+                               active = x.ACTIVE
                            }).ToList();
             return address;
         }

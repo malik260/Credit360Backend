@@ -18,12 +18,14 @@ namespace FintrakBanking.Interfaces.WorkFlow
         string Comment { set; }
         decimal Amount { set; }
         int StatusId { get; set; }
+        int GroupStatusId { get; }
         int NewState { get; }
         int? NextLevelId { get; set; }
         bool EmailNotification { set; }
         short? Vote { set; }
         bool InvestmentGrade { set; }
         bool Untenored { set; }
+        bool Disputed { set; }
         bool PoliticallyExposed { set; }
         bool SmsNotification { set; }
         bool ExternalInitialization { set; }

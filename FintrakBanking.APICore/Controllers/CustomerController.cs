@@ -1039,6 +1039,29 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+        [HttpDelete]
+        [Route("customer-children/{childId}")]
+        public HttpResponseMessage DeleteCustomerChild( int childId)
+        {
+            try
+            {
+             
+                var data = repo.DeleteChild(childId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Child Deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error delete this child" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
+            }
+        }
+
 
         #region Single Customer Information By CustomerID
         [HttpGet]

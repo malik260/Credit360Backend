@@ -2,6 +2,7 @@
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Setups.Credit;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Linq;
 using System.Net;
@@ -388,6 +389,29 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [Route("sectors/{id}")]
+        public HttpResponseMessage UpdateCompany([FromBody] SectorViewModel model ,short id)
+        {
+            try
+            {
+                var data = repo.Updatesector( model, id);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, message = "Sector has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "Sector has not been updated successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 

@@ -28,6 +28,7 @@ namespace FintrakBanking.Entities.Models
             TBL_JOB_REQUEST2 = new HashSet<TBL_JOB_REQUEST>();
             TBL_JOB_REQUEST_MESSAGE = new HashSet<TBL_JOB_REQUEST_MESSAGE>();
             TBL_NOTIFICATION_LOG = new HashSet<TBL_NOTIFICATION_LOG>();
+            TBL_OVERRIDE_DETAIL = new HashSet<TBL_OVERRIDE_DETAIL>();
             TBL_PROFILE_USER = new HashSet<TBL_PROFILE_USER>();
             TBL_CALL_MEMO = new HashSet<TBL_CALL_MEMO>();
             TBL_LOAN_APPLICATION_ARCHIVE = new HashSet<TBL_LOAN_APPLICATION_ARCHIVE>();
@@ -48,6 +49,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_REVOLVING_ARCHIVE1 = new HashSet<TBL_LOAN_REVOLVING_ARCHIVE>();
             TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN_REVOLVING1 = new HashSet<TBL_LOAN_REVOLVING>();
+            TBL_STAFF1 = new HashSet<TBL_STAFF>();
         }
 
         [Key]
@@ -58,6 +60,8 @@ namespace FintrakBanking.Entities.Models
         public string STAFFCODE { get; set; }
 
         public int COMPANYID { get; set; }
+
+        public int? RELIEF_STAFFID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -125,6 +129,12 @@ namespace FintrakBanking.Entities.Models
         public short CUSTOMERSENSITIVITYLEVEL { get; set; }
 
         public bool NPL_LIMITEXCEEDED { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? NPL_LIMIT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? LOAN_LIMIT { get; set; }
 
         public int? CREATEDBY { get; set; }
 
@@ -195,6 +205,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_NOTIFICATION_LOG> TBL_NOTIFICATION_LOG { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_OVERRIDE_DETAIL> TBL_OVERRIDE_DETAIL { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PROFILE_USER> TBL_PROFILE_USER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -257,5 +270,10 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_STAFF_JOBTITLE TBL_STAFF_JOBTITLE { get; set; }
 
         public virtual TBL_STAFF_RANK TBL_STAFF_RANK { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_STAFF> TBL_STAFF1 { get; set; }
+
+        public virtual TBL_STAFF TBL_STAFF2 { get; set; }
     }
 }

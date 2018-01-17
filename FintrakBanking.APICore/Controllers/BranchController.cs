@@ -195,6 +195,32 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+
+        [HttpPut]
+        [Route("branches/{id}")]
+        public HttpResponseMessage UpdateBranch([FromBody] BranchViewModel model, short id)
+        {
+
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = token.GetCompanyId;
+                var result =  repo.UpdateBranches(model, id);
+                if (result)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Branch has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+
+        }
+
         [HttpDelete]
         [Route("branch/{id}")]
         public async Task<HttpResponseMessage> DeleteBranchAsync([FromBody] short id)

@@ -12,6 +12,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Customer;
 using System.Collections.Generic;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -770,23 +771,23 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpGet]
-        [Route("detail")]
-        public HttpResponseMessage GetBookedLoanDetails()
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
+        //[HttpPost]
+        //[Route("detail")]
+        //public HttpResponseMessage GetBookedLoanDetails([FromBody]ReportSearchEntity param)
+        //{
+        //    try
+        //    {
+        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var data = repo.GetBookedLoanDetails(token.GetCompanyId);
+        //        var data = repo.GetBookedLoanDetailsWithParameters(token.GetCompanyId, param).ToList();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
         [HttpGet]
         [Route("details/customer/{customerCode}")]

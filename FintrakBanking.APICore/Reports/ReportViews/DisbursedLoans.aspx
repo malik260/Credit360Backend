@@ -25,11 +25,16 @@
             </LocalReport>
         </rsweb:ReportViewer>
      
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetDisburstLoans" TypeName="FintrakBanking.ReportObjects.LoanReportObjects">
+        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetDisburstLoans" TypeName="FintrakBanking.ReportObjects.LoanReportObjects" OldValuesParameterFormatString="original_{0}">
             <SelectParameters> 
                 <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="companyId" DefaultValue="" Name="companyId" PropertyName="Text" Type="Int32" />
+          
+                <asp:ControlParameter ControlID="loanRefNo" Name="loanRefNo" PropertyName="Text" Type="String" />
+                <asp:ControlParameter ControlID="branchId" Name="branchId" PropertyName="Text" Type="Int16" />
+          
+                <asp:ControlParameter ControlID="productClassId" Name="productClassId" PropertyName="Text" Type="Int32" />
           
             </SelectParameters>
         </asp:ObjectDataSource>
@@ -37,6 +42,10 @@
         <asp:Label ID="endDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="startDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>
+                <asp:Label ID="loanRefNo" runat="server" Visible="false" ></asp:Label>
+        <asp:Label ID="branchId" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="productClassId" runat="server"  Visible="false" ></asp:Label>
+
     </form>
 </body>
 </html>

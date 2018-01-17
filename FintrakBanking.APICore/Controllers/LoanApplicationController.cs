@@ -3,6 +3,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -309,31 +310,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpDelete("loan-application/{aid}/approval-status/{id}")]
-        //public IActionResult UpdateApprovalStatus(int aid, ApprovalStatusEnum id)
-        //{
-        //    try
-        //    {
-        //        var token = new TokenDecryptionHelper(this.HttpContext);
+       
+        [HttpGet]
+        [Route("loan/collateralrequirement/{applicationId}/{collateralCurrencyId}")]
+        public HttpResponseMessage GetCollateralRequirements(int applicationId, int? collateralCurrencyId)
+        {
+            try
+            {
+                var response = repo.GetCollateralRequirements(applicationId, collateralCurrencyId, token.GetCompanyId);
 
-        //        UserInfo user = new UserInfo()
-        //        {
-        //            BranchId = token.GetBranchId,
-        //            companyId = token.GetCompanyId,
-        //            staffId = token.GetStaffId,
-        //            applicationUrl = HttpContext.Current.Request.Path,
-        //            userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
-        //        };
-
-        //        repo.UpdateApprovalStatus(aid,id, user);
-
-        //        return new { success = true, result = id, message = "record has been deleted successfully" });
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        return new { success = false, message = ex.Message });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpPost]
         [Route("loan/application")]
@@ -341,7 +333,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                //FinTrakBankingContext
                 if (entity.customerId.HasValue)
                 {
                     if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
@@ -740,6 +731,56 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        
+        [HttpGet, Route("loan-application-and-offer/rejected")]
+        public HttpResponseMessage GetRejectedLoanApplications()
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
+
+                IQueryable<LoanApplicationViewModel> items;
+
+                items = repo.GetRejectedLoanApplications(user);
+
+                var data = items.ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-application/review-request")]
+        public HttpResponseMessage ReviewRequest([FromBody] ForwardViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+
+                string response = repo.ReviewRequest(model);
+
+                bool ok = response == string.Empty ? false : true;
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = ok, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: { e.InnerException }" });
             }
         }
     }

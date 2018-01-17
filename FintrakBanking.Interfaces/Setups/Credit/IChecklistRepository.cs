@@ -1,5 +1,7 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +13,6 @@ namespace FintrakBanking.Interfaces.Setups
         #region Loan Checklist Definition
         IEnumerable<CheckListResponseTypeViewModel> GetAllChecklistResponseType();
         IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistType();
-        IEnumerable<CheckListStatusViewModel> GetChecklistStatusYesorNo();
         IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition();
         IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId);
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId);
@@ -59,5 +60,16 @@ namespace FintrakBanking.Interfaces.Setups
         #region Checklist Validation
         bool ValidateChecklistDetailEntry(int checklistDefinitionId, int targetId);
         #endregion
+
+        // IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklist(int loanApplicationId);
+        IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklist(int loanApplicationId, bool isAvailment);
+        IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklistStatus(int loanApplicationId, bool isAvailment);
+        bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model);
+        bool GoForApproval(ApprovalViewModel entity);
+        bool ExtendChecklistDeferralDate(ConditionPrecedentViewModel model);
+        bool UpdateProvidedChecklist(ConditionPrecedentViewModel model);
+        IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int companyId);
+        IEnumerable<DeferredChecklistViewModel> GetAllDeferralChecklist();
+        IEnumerable<DeferredChecklistViewModel> GetDeferralChecklistByConditionId(int conditionId);
     }
 }
