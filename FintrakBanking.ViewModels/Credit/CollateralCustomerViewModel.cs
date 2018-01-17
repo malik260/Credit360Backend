@@ -6,6 +6,11 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class CollateralViewModel : GeneralEntity
     {
+        public decimal? collateralSearchAmount { get; set; }
+        public decimal? chartingAmount { get; set; }
+        public decimal? verificationAmount { get; set; }
+        public bool? legalFeeTaken { get; set; }
+
         public int collateralId { get; set; }
         public int detailId { get; set; }
         public int collateralTypeId { get; set; }
@@ -251,7 +256,6 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class AllCollateralViewModel : CollateralViewModel
     {
-        public object collateralSubTypeName;
 
         public CollateralStockViewModel collateralStock { get; set; }
 

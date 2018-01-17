@@ -10,13 +10,15 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_TEMP_STAFF
     {
         [Key]
-        public int STAFFID { get; set; }
+        public int TEMPSTAFFID { get; set; }
 
         [Required]
         [StringLength(50)]
         public string STAFFCODE { get; set; }
 
         public int COMPANYID { get; set; }
+
+        public int? RELIEF_STAFFID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -77,6 +79,8 @@ namespace FintrakBanking.Entities.Models
 
         public short? DEPARTMENTID { get; set; }
 
+        public short? DEPARTMENTUNITID { get; set; }
+
         public int? STATEID { get; set; }
 
         public int? CITYID { get; set; }
@@ -94,8 +98,6 @@ namespace FintrakBanking.Entities.Models
         public bool ISCURRENT { get; set; }
 
         public short APPROVALSTATUSID { get; set; }
-
-        public short DEPARTMENTUNITID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

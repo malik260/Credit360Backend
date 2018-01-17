@@ -572,5 +572,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("staff/update-reliever")]
+        public HttpResponseMessage UpdateReliever([FromBody]RelieverViewModel entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+                bool success = repo.UpdateReliever(entity);
+                string message = success == true ? "Reliever Updated Successfully." : "Reliever Update Failed.";
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
     }
+
 }

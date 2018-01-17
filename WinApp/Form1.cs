@@ -20,6 +20,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Repositories.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Credit;
+using FinTrakMail;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 
@@ -31,7 +32,7 @@ namespace WinApp
         IGeneralSetupRepository genSetup;
         IFinanceTransactionRepository financeTransaction;
         ILoanScheduleRepository loanSchedule;
-        FinTrakBankingContext context;
+        FinTrakBankingContext context = new FinTrakBankingContext();
         ILoanOperationsRepository loanOperation;
         ICustomerFSRatioRepository cust;
         ILoanRepository loan;
@@ -42,7 +43,7 @@ namespace WinApp
         //IGeneralSetupRepository _genSetup )
         {
             InitializeComponent();
-            this.context = _context;
+          //  this.context = _context;
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
             this.loanSchedule = _loanSchedule;
@@ -63,11 +64,11 @@ namespace WinApp
             //tbl_Public_Holiday model = new tbl_Public_Holiday();
 
             //decimal vCountry =  NunCountry.Value;
-            DateTime vDate = dtpDate.Value;
-            int vStaff = 1;
-           // int vLoan  = 215;
-            decimal vAmount  = NunCountry.Value;
-            short vReview  = 19;
+            // DateTime vDate = dtpDate.Value;
+            // int vStaff = 1;
+            //// int vLoan  = 215;
+            // decimal vAmount  = NunCountry.Value;
+            // short vReview  = 19;
 
             short priceIndex = 1;
             double newRate = 20;

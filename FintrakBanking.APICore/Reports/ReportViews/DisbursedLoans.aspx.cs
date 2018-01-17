@@ -17,12 +17,14 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 startDate.Text = Request.QueryString["startDate"];
                 endDate.Text = Request.QueryString["endDate"];
                 companyId.Text = Request.QueryString["companyId"];
+                branchId.Text = Request.QueryString["branchId"];
+                loanRefNo.Text = Request.QueryString["loanRefNo"];
+                productClassId.Text = Request.QueryString["productClassId"];
 
-                
                 ReportParameter sDate = new ReportParameter("startDate", startDate.Text);
                 ReportParameter eDate = new ReportParameter("endDate", endDate.Text);
- 
-                ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+
+                ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate});
                 ReportViewer.LocalReport.Refresh();
             }
         }

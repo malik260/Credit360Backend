@@ -157,6 +157,10 @@ namespace FintrakBanking.Repositories.Credit
             if (totaloverdraftLimit > model.customerAvailableAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.loanBookingRequestId);
+            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                throw new Exception("This Loan Request has already been booked by another staff");
+
             var CurrRatings = context.TBL_CURRENCY_RATE.Where(x => x.CURRENCYID == model.currencyId).FirstOrDefault();
             var currentExchangeRate = 1.0;
 
@@ -222,10 +226,15 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Revolving Loan Record.........................
                     var loan = context.TBL_LOAN_REVOLVING.Add(data);
 
+                    
                     if (model.monitoringTriggers.Count > 0)
                         AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)model.productTypeId);
+
                     //...................Saving Loan Collaterals Mapping.......................
-                    // AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
+                     AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
+
+                    //...................Update the Loan Request table.......................
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
 
                     //...................Saving Loan Gaurantors................................
                     //AddLoanGuarantor(model.loanGuarantor, (short)model.productTypeId, model.loanApplicationId);
@@ -298,6 +307,10 @@ namespace FintrakBanking.Repositories.Credit
             if (totalContingentAmount > entity.customerAvailableAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
+            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                throw new Exception("This Loan Request has already been booked by another staff");
+
             var CurrRatings = context.TBL_CURRENCY_RATE.Where(x => x.CURRENCYID == contingentLoanInput.currencyId).FirstOrDefault();
             var currentExchangeRate = 1.0;
 
@@ -365,8 +378,12 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (entity.monitoringTriggers.Count > 0)
                         AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)entity.productTypeId);
+
                     //...................Saving Loan Collaterals Mapping.......................
-                    // AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
+                     AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
+
+                    //...................Update the Loan Request table.......................
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
 
                     //...................Saving Loan Gaurantors................................
                     //AddLoanGuarantor(entity.loanGuarantor,  (short)entity.productTypeId, entity.loanApplicationId);
@@ -432,6 +449,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
                 throw new Exception("Loan terminal date should be more than effective date");
+
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
+            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                throw new Exception("This Loan Request has already been booked by another staff");
 
             var principalAmount  = from a in context.TBL_LOAN where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
                                    let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
@@ -561,8 +582,15 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Term Loan Record.........................
                     var loan = context.TBL_LOAN.Add(data);
 
-                    if(entity.monitoringTriggers.Count > 0 )
+                    
+                    if (entity.monitoringTriggers.Count > 0 )
                          AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)entity.productTypeId);
+
+                    //...................Saving Loan Collaterals Mapping.......................
+                     AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
+
+                    //...................Update the Loan Request table.......................
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
 
                     //...................Adding Audit...............................
                     var dataCount = context.SaveChanges();
@@ -578,7 +606,6 @@ namespace FintrakBanking.Repositories.Credit
                         };
 
                         //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-
                         if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending))
                         {
                             //.....Commit transaction ............
@@ -2145,6 +2172,11 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public bool AddLoanGuarantor(LoanGuarantorViewModel entity, short productTypeId, int loanApplicationId)
         {
+            if (entity.customerType == "Corporate") {
+                entity.customerTypeId = (short)CustomerTypeEnum.Corporate;
+                    } else entity.customerTypeId = (short)CustomerTypeEnum.Individual;
+
+
             var guarantor = new TBL_LOAN_GUARANTOR
             {
                 PRODUCTTYPEID = productTypeId,
@@ -3516,16 +3548,15 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         private IEnumerable<CamProcessedLoanViewModel> AppraisalMemorandumProcessedLoanApplications(int companyId)
         {
-
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                        where m.COMPANYID == companyId && d.DELETED == false &&  s.DELETED==false //&& m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted
-                        orderby s.LOAN_BOOKING_REQUESTID descending
+                        where m.COMPANYID == companyId && d.DELETED == false &&  s.DELETED==false 
+                        orderby s.LOAN_BOOKING_REQUESTID ascending
                         select new CamProcessedLoanViewModel
                         {
-                            bookRequestAmount = s.AMOUNT_REQUESTED,
+                            bookingAmountRequested = s.AMOUNT_REQUESTED,
                             loanBookingRequestId =s.LOAN_BOOKING_REQUESTID,
                             bookingRequestStatusId = s.APPROVALSTATUSID,
                             requestDate = s.DATETIMECREATED,
@@ -3536,6 +3567,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                             applicationStatusId = m.APPLICATIONSTATUSID,
+                            
                             //// casaAccountId = m.CasaAccountId,
                             customerId = d.CUSTOMERID,
                             customerCode = cust.CUSTOMERCODE,
