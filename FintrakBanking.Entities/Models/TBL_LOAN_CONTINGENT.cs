@@ -120,8 +120,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
 
-        public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
-
         public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
     }
 }

@@ -62,6 +62,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
 
-        decimal GetCustomerTotalOutstandingBalance(int customerId);
+       // decimal GetCustomerTotalOutstandingBalance(int customerId);
     }
 }

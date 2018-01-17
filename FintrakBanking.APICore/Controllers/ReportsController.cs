@@ -470,7 +470,28 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        [Route("loan/document-deferrals")]
+        public HttpResponseMessage GetLoanDocumentDeferrals(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
 
+                var data = repo.GetLoanDocumentDeferrals(token.GetCompanyId, dateRange);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         //[HttpPost]
         //[Route("loan/collateral-estimated")]
         //public HttpResponseMessage GetCollateralEstimated(string acctNumber, string collateralCode)

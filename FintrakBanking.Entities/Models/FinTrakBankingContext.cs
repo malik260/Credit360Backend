@@ -11,18 +11,7 @@ namespace FintrakBanking.Entities.Models
             : base("name=FinTrakBankingContext")
         {
         }
-        public override int SaveChanges()
-        {
-            try
-            {
-                return base.SaveChanges();
-            }
-            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
-            {
-                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                throw new System.Data.Entity.Validation.DbEntityValidationException(errorMessages);
-            }
-        }
+
         public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
@@ -210,6 +199,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CREDIT_APPRAISAL_MEMO_DETL> TBL_CREDIT_APPRAISAL_MEMO_DETL { get; set; }
         public virtual DbSet<TBL_CREDIT_APPRAISAL_MEMO_DOCU> TBL_CREDIT_APPRAISAL_MEMO_DOCU { get; set; }
         public virtual DbSet<TBL_CREDIT_APPRAISAL_MEMORANDM> TBL_CREDIT_APPRAISAL_MEMORANDM { get; set; }
+        public virtual DbSet<TBL_CREDIT_BUREAU> TBL_CREDIT_BUREAU { get; set; }
         public virtual DbSet<TBL_CREDIT_TEMPLATE> TBL_CREDIT_TEMPLATE { get; set; }
         public virtual DbSet<TBL_LIMIT> TBL_LIMIT { get; set; }
         public virtual DbSet<TBL_LIMIT_DETAIL> TBL_LIMIT_DETAIL { get; set; }
@@ -229,6 +219,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_STA> TBL_LOAN_APPLICATION_DETL_STA { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_TRA> TBL_LOAN_APPLICATION_DETL_TRA { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_STATUS> TBL_LOAN_APPLICATION_STATUS { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLTN_CREDIT_BUREAU> TBL_LOAN_APPLTN_CREDIT_BUREAU { get; set; }
         public virtual DbSet<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_BOOKING_REQUEST> TBL_LOAN_BOOKING_REQUEST { get; set; }
         public virtual DbSet<TBL_LOAN_BULK_INTEREST_REVIEW> TBL_LOAN_BULK_INTEREST_REVIEW { get; set; }
@@ -283,7 +274,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RISK_RATING> TBL_RISK_RATING { get; set; }
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -328,7 +319,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DEAL_TYPE> TBL_DEAL_TYPE { get; set; }
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
-        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1389,6 +1379,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_CUSTOMER>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_ARCH)
+                .WithRequired(e => e.TBL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER>()
+                .HasMany(e => e.TBL_LOAN_APPLTN_CREDIT_BUREAU)
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
 
@@ -2964,6 +2959,19 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CREDIT_APPRAISAL_MEMORANDM)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_CREDIT_BUREAU>()
+                .Property(e => e.CORPORATE_CHARGEAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_CREDIT_BUREAU>()
+                .Property(e => e.RETAIL_CHARGEAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_CREDIT_BUREAU>()
+                .HasMany(e => e.TBL_LOAN_APPLTN_CREDIT_BUREAU)
+                .WithRequired(e => e.TBL_CREDIT_BUREAU)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_LIMIT>()
                 .HasMany(e => e.TBL_LIMIT_DETAIL)
                 .WithRequired(e => e.TBL_LIMIT)
@@ -3067,6 +3075,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_ARCH)
+                .WithRequired(e => e.TBL_LOAN_APPLICATION)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION>()
+                .HasMany(e => e.TBL_LOAN_APPLTN_CREDIT_BUREAU)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION)
                 .WillCascadeOnDelete(false);
 
@@ -3221,6 +3234,10 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_APPLICATION_ARCHIVE)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION_STATUS)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_APPLTN_CREDIT_BUREAU>()
+                .Property(e => e.CHARGEAMOUNT)
+                .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_ARCHIVE>()
                 .Property(e => e.TEAMMISCODE)
@@ -4495,18 +4512,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_PRODUCT_TYPE)
                 .WithRequired(e => e.TBL_DEAL_CLASSIFICATION)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LEVELMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.INVESTMENTGRADEAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.STAFFMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
         }
     }
 }

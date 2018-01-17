@@ -11,7 +11,7 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
     //[EnableCors("AllDomain")]
-    [RoutePrefix("api/v1/setups/company")]
+    [RoutePrefix("api/v1/setups")]
     public class CompanyController : ApiControllerBase
     {
         private ICompanyRepository repo;
@@ -21,13 +21,40 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
+        //[HttpGet]
+        //[Route("")]
+        //public HttpResponseMessage GetAllCompany()
+        //{
+        //    try
+        //    {
+        //        var companys = repo.GetAllCompany().ToList();
+        //        if (companys == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //               new { success = false, result = companys, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new
+        //        {
+        //            success = true,
+        //            result = companys
+
+        //        });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+
+        //}
+
+
         [HttpGet]
-        [Route("")]
-        public HttpResponseMessage GetAllCompany()
+        [Route("company")]
+        public HttpResponseMessage GetCompanies()
         {
             try
             {
-                var companys = repo.GetAllCompany().ToList();
+                var companys = repo.GetCompanies().ToList();
                 if (companys == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -48,7 +75,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("{companyId}")]
+        [Route("company/{companyId}")]
         public HttpResponseMessage Get(int companyId)
         {
             try
@@ -71,7 +98,7 @@ namespace FintrakBanking.APICore.Controllers
 
         // POST api/values
         [HttpPost]
-        [Route("")]
+        [Route("company")]
         public HttpResponseMessage AddCompany([FromBody] CompanyViewModel model)
         {
             try
@@ -93,12 +120,36 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("{companyId}")]
+        [Route("company/{companyId}")]
         public HttpResponseMessage UpdateCompany(int companyId, [FromBody] CompanyViewModel model)
         {
             try
             {
                 var data = repo.UpdateCompany(companyId, model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, message = "company has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "company has not been updated successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPut]
+        [Route("companys/{companyId}")]
+        public HttpResponseMessage UpdateCompanies(int companyId, [FromBody] CompanyViewModel model)
+        {
+            try
+            {
+                var data = repo.UpdateCompanies(companyId, model);
 
                 if (data)
                 {
