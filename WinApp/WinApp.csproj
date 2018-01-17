@@ -126,10 +126,6 @@
       <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
       <Name>FintrakBanking.ViewModels</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FinTrakMail\FinTrakBanking.MessagingService.csproj">
-      <Project>{26484f06-9255-4f24-9ef1-4a022923e058}</Project>
-      <Name>FinTrakBanking.MessagingService</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
