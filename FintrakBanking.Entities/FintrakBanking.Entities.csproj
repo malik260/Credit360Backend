@@ -298,6 +298,8 @@
     <Compile Include="Models\TBL_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_OPERATIONS.cs" />
     <Compile Include="Models\TBL_OPERATIONS_TYPE.cs" />
+    <Compile Include="Models\TBL_OVERRIDE_DETAIL.cs" />
+    <Compile Include="Models\TBL_OVERRIDE_ITEM.cs" />
     <Compile Include="Models\TBL_PRODUCT.cs" />
     <Compile Include="Models\TBL_PRODUCT_BEHAVIOUR.cs" />
     <Compile Include="Models\TBL_PRODUCT_CATEGORY.cs" />

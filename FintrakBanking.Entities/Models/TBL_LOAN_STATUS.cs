@@ -9,6 +9,14 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.TBL_LOAN_STATUS")]
     public partial class TBL_LOAN_STATUS
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_LOAN_STATUS()
+        {
+            TBL_LOAN = new HashSet<TBL_LOAN>();
+            TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
+            TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
+        }
+
         [Key]
         public short LOANSTATUSID { get; set; }
 
@@ -18,6 +26,15 @@ namespace FintrakBanking.Entities.Models
         [StringLength(20)]
         public string ACCOUNTSTATUS { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_CONTINGENT> TBL_LOAN_CONTINGENT { get; set; }
+
         public virtual TBL_LOAN_OPERATION TBL_LOAN_OPERATION { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; }
     }
 }

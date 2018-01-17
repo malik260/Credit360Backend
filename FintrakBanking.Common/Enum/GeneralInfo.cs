@@ -187,7 +187,10 @@ namespace FintrakBanking.Common.Enum
         CustomerproductFeeAdded = 179,
         CustomerproductFeeUpdated = 180,
         CustomerproductFeeDeleted = 181,
-        CustomerproductFeeApproved = 182
+        CustomerproductFeeApproved = 182,
+        SectorAdded = 183,
+        SectorDeleted = 184,
+        SectorUpdated = 185,
     };
 
 

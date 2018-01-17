@@ -21,6 +21,7 @@ using FintrakBanking.Repositories.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
+using FintrakBanking.Interfaces.CreditLimitValidations;
 
 namespace WinApp
 {
@@ -34,9 +35,10 @@ namespace WinApp
         ILoanOperationsRepository loanOperation;
         ICustomerFSRatioRepository cust;
         ILoanRepository loan;
+        ICreditLimitValidationsRepository credit;
         public Form1(FinTrakBankingContext _context , IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction,
             ILoanScheduleRepository _loanSchedule, ICustomerFSRatioRepository _cust, ILoanRepository _loan,
-            IAuditTrailRepository _auditTrail, ILoanOperationsRepository _loanOperation )
+            IAuditTrailRepository _auditTrail, ILoanOperationsRepository _loanOperation , ICreditLimitValidationsRepository _credit)
         //IGeneralSetupRepository _genSetup )
         {
             InitializeComponent();
@@ -48,6 +50,7 @@ namespace WinApp
             this.loanOperation = _loanOperation;
             this.cust = _cust;
             this.loan = _loan;
+            credit = _credit;
 
         }
 
@@ -68,7 +71,7 @@ namespace WinApp
 
             short priceIndex = 1;
             double newRate = 20;
-            int customeId = 60;
+            int customeId = 1;
             //string vDesc = txtDesc.Text;
 
             //model.CountryId = 1;//(int)vCountry;
@@ -105,7 +108,7 @@ namespace WinApp
 
             //cust.GetCustomerFSRatioValues(customeId);
             //loan.GetCustomerTotalOutstandingBalance(customeId);
-
+            credit.ValidateAmountByCustomer(customeId);
             MessageBox.Show("Successful", "Fintrak");
 
 

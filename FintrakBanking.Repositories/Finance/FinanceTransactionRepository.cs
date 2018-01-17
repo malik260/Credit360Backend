@@ -1072,6 +1072,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.sourceBranchId = casa.BRANCHID;
             debit.destinationBranchId = casa.BRANCHID;
 
+
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
             credit.glAccountId = creditGL;
 

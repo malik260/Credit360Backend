@@ -154,6 +154,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 branchCode = x.BRANCHCODE,
                 addressLine1 = x.ADDRESSLINE1,
                 addressLine2 = x.ADDRESSLINE2,
+                branchLimit = x.NPL_LIMIT,
                 comment = x.COMMENT,
                 deleted = x.DELETED,
             }).ToList();
@@ -178,6 +179,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 addressLine1 = x.ADDRESSLINE1,
                 addressLine2 = x.ADDRESSLINE2,
                 comment = x.COMMENT,
+                branchLimit = x.NPL_LIMIT,
                 dateTimeUpdated = x.DATETIMEUPDATED,
                 deleted = x.DELETED,
             });
@@ -238,10 +240,44 @@ namespace FintrakBanking.Repositories.Setups.General
                 branch.ADDRESSLINE1 = model.addressLine1;
                 branch.ADDRESSLINE2 = model.addressLine2;
                 branch.COMMENT = model.comment;
+                branch.NPL_LIMIT = model.branchLimit;
                 branch.LASTUPDATEDBY = model.lastUpdatedBy;
                 branch.DATETIMEUPDATED = DateTime.Now;
 
                 response = await context.SaveChangesAsync();
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.BranchUpdated,
+                    STAFFID = (int)model.lastUpdatedBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Updated branch: '{model.branchName}' with code: {model.branchCode} ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                //end of Audit section -------------------------------
+            }
+
+            return response != 0;
+        }
+
+
+        public bool UpdateBranches (BranchViewModel model, short id)
+        {
+            var response = 0;
+            var branch = context.TBL_BRANCH.Find(id);
+
+            if (branch != null)
+            {
+                branch.BRANCHID = id;
+                branch.BRANCHNAME = model.branchName;
+                branch.BRANCHCODE = model.branchCode;
+                branch.NPL_LIMIT = model.branchLimit;
+
+                response = context.SaveChanges();
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
