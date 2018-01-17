@@ -1392,10 +1392,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_CUSTOMER>()
-                .HasMany(e => e.TBL_OVERRIDE_DETAIL)
-                .WithRequired(e => e.TBL_CUSTOMER)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_CUSTOMER>()
+            //    .HasMany(e => e.TBL_OVERRIDE_DETAIL)
+            //    .WithRequired(e => e.TBL_CUSTOMER)
+            //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER_ADDRESS_TYPE>()
                 .HasMany(e => e.TBL_CUSTOMER_ADDRESS)

@@ -43,7 +43,7 @@ namespace WinApp
         //IGeneralSetupRepository _genSetup )
         {
             InitializeComponent();
-          //  this.context = _context;
+           this.context = _context;
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
             this.loanSchedule = _loanSchedule;
