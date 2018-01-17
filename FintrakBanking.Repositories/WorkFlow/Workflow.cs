@@ -486,7 +486,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool WithinTenorLimit(TBL_APPROVAL_LEVEL level)
         {
-            if (this.untenored == true) { return level.CANAUTHORIZEUNTENORED == true ? true : false; } // <------ CANDORISKASSESSMENT to AUTHORIZE_TENOR
+            if (this.untenored == true) { return level.CANAPPROVEUNTENORED == true ? true : false; } // <------ CANDORISKASSESSMENT to AUTHORIZE_TENOR
             if (tenor == 0 && level.TENOR == 0) { return true; } // setup
             if (tenor > 0 && level.TENOR >= tenor) { return true; } // gen cam
             return false;
