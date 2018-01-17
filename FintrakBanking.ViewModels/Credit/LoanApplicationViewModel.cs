@@ -321,6 +321,14 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }
         public int? customerId { get; set; }
         public int operationId { get; set; }
+        public int? approvalTrailId { get; set; }
+        public string currentApprovalLevel { get; set; }
+        public int requestStaffId { get; set; }
+        public int? toStaffId { get; set; }
+        public int? toApprovalLevelId { get; set; }
+        public DateTime timeIn { get; set; }
+        public DateTime? timeOut { get; set; }
+        public string responsiblePerson { get; set; }
     }
     public class InvoiceDetailViewModel  
     {

@@ -45,6 +45,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationTenor { get; set; }
         public int operationId { get; set; }
         public bool untenored { get; set; }
+        public bool isBusiness { get; set; }
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity

@@ -922,151 +922,61 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
         {
-            entity.operationId = (int)OperationsEnum.LoanAvailment;
-
-            entity.externalInitialization = false;
-
-            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, (int)OperationsEnum.LoanAvailment);
+            int operationId = (int)OperationsEnum.LoanAvailment;
             int staffApprovalLevelId = 0;
-
+            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, operationId);
+            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == operationId).ToList();
+            var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == (int)OperationsEnum.LoanAvailment).ToList();
+            workflow.StaffId = entity.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = appl.LOANAPPLICATIONID;
+            workflow.CompanyId = entity.companyId;
+            workflow.ProductClassId = entity.productClassId;
+            workflow.ProductId = null;
+            workflow.StatusId = entity.approvalStatusId;
+            workflow.Comment = entity.comment;
+            workflow.Amount = entity.amount;
+            workflow.DeferredExecution = true;
 
-            using (var trans = context.Database.BeginTransaction())
+            if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelTwo && entity.amount <= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
             {
-                try
+                if (staffApprovalLevelId != approvalLvlStaff[2].approvalLevelId) // forward only if the approval level Id is not the third level
                 {
-                    var targetLoanAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x =>
-                        x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
-
-                    ForwardViewModel forward;
-
-                    if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelTwo && entity.amount <= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
-                    {
-                        if (staffApprovalLevelId != approvalLvlStaff[2].approvalLevelId) // forward only if the approval level Id is not the third level
-                        {
-                            forward = new ForwardViewModel
-                            {
-                                createdBy = entity.createdBy,
-                                amount = entity.amount,
-                                companyId = entity.companyId,
-                                receiverLevelId = approvalLvlStaff[2].approvalLevelId,
-                                receiverStaffId = approvalLvlStaff[2].staffId,
-                                comment = entity.comment,
-                                operationId = entity.operationId,
-                                applicationId = targetLoanAppl.LOANAPPLICATIONID,
-                                forwardAction = entity.approvalStatusId
-                            };
-
-                            ForwardApplicationToNextLevel(forward);
-                        }
-                        else
-                        {
-                            // indicate an end to the process before logging on the trail
-                            workflow.KeepPending = false;
-                            workflow.ForcefullyEndProcess = true;
-
-                            workflow.LogForApproval(entity);
-                        }
-                    }
-                    else if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
-                    {
-                        if (staffApprovalLevelId != approvalLvlStaff[3].approvalLevelId)
-                        {
-                            forward = new ForwardViewModel
-                            {
-                                createdBy = entity.createdBy,
-                                amount = entity.amount,
-                                companyId = entity.companyId,
-                                receiverLevelId = approvalLvlStaff[3].approvalLevelId,
-                                receiverStaffId = approvalLvlStaff[3].staffId,
-                                comment = entity.comment,
-                                operationId = entity.operationId,
-                                applicationId = targetLoanAppl.LOANAPPLICATIONID,
-                                forwardAction = entity.approvalStatusId
-                            };
-
-                            ForwardApplicationToNextLevel(forward);
-                        }
-                        else
-                        {
-                            // indicate an end to the process before logging on the trail
-                            workflow.KeepPending = false;
-                            workflow.ForcefullyEndProcess = true;
-
-                            workflow.LogForApproval(entity);
-                        }
-                    }
-                    else
-                    {
-                        if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
-                        {
-                            // indicate an end to the process before logging on the trail
-                            workflow.KeepPending = false;
-                            workflow.ForcefullyEndProcess = true;
-
-                            workflow.LogForApproval(entity);
-                        }
-                        else
-                        {
-                            workflow.LogForApproval(entity);
-                        }
-                    }
-
-                    var b = workflow.NextLevelId ?? 0;
-
-                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
-
-                    if (workflow.NewState == (int)ApprovalState.Ended)
-                    {
-                        var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
-
-                        if (response)
-                        {
-                            trans.Commit();
-                        }
-                        return true;
-                    }
-                    else
-                    {
-                        trans.Commit();
-                    }
-
-                    return false;
+                    workflow.NextLevelId = approvalLvlStaff[2].approvalLevelId;
+                    workflow.ToStaffId = approvalLvlStaff[2].staffId;
                 }
-                catch (Exception ex)
+                else
                 {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
+                    workflow.ForcefullyEndProcess = true;
                 }
             }
-        }
+            else if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
+            {
+                if (staffApprovalLevelId != approvalLvlStaff[3].approvalLevelId)
+                {
+                    workflow.NextLevelId = approvalLvlStaff[3].approvalLevelId;
+                    workflow.ToStaffId = approvalLvlStaff[3].staffId;
+                }
+                else
+                {
+                    workflow.ForcefullyEndProcess = true;
+                }
+            }
+            else
+            {
+                if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
+                {
+                    workflow.ForcefullyEndProcess = true;
+                }
+            }
 
-        private bool ForwardApplicationToNextLevel(ForwardViewModel model)
-        {
-            workflow.StaffId = model.createdBy;
-            workflow.OperationId = model.operationId;
-            workflow.TargetId = model.applicationId;
-            workflow.CompanyId = model.companyId;
-            workflow.Vote = model.vote;
-            workflow.ProductClassId = model.productClassId;
-            workflow.ProductId = model.productId;
-            workflow.NextLevelId = model.receiverLevelId;
-            workflow.ToStaffId = model.receiverStaffId;
-            workflow.StatusId = model.forwardAction;
-            workflow.Comment = model.comment;
+            workflow.LogActivity(); // ------------------- LOG ONCE
 
-            workflow.Amount = model.amount;
-            workflow.InvestmentGrade = model.investmentGrade;
-            workflow.Tenor = model.applicationTenor;
-            workflow.PoliticallyExposed = model.politicallyExposed;
+            if (workflow.NewState == (int)ApprovalState.Ended) { appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted; }
 
-            return workflow.LogActivity();
+            return context.SaveChanges() > 0;
         }
 
         private bool ReferApplicationToSpecificLevel(LoanAvailmentApprovalViewModel model)

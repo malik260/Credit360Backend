@@ -779,8 +779,6 @@ namespace FintrakBanking.Repositories.Credit
 
 
             }
-
-
         }
 
         private void BondDetails(BondsAndGuranty entity, int loanApplicationId, int createdBy)
@@ -1009,9 +1007,6 @@ namespace FintrakBanking.Repositories.Credit
                         loanInformation = x.o.g.a.LOANINFORMATION,
                         submittedForAppraisal = x.o.g.a.SUBMITTEDFORAPPRAISAL,
                         customerInfoValidated = x.o.g.a.CUSTOMERINFOVALIDATED,
-                        //notInNegativeCrms = x.o.g.a.NOTINNEGATIVECRMS,
-                        //notInBlackbook = x.o.g.a.NOTINBLACKBOOK,
-                        //notInCamsol = x.o.g.a.NOTINCAMSOL,
                         isRelatedParty = x.o.g.a.ISRELATEDPARTY,
                         isPoliticallyExposed = x.o.g.a.ISPOLITICALLYEXPOSED,
                         approvalStatusId = x.o.g.a.APPROVALSTATUSID,
@@ -1173,12 +1168,12 @@ namespace FintrakBanking.Repositories.Credit
             var applications = context.TBL_LOAN_APPLICATION
                 .Where(x =>
                 (isHeadOffice || x.BRANCHID == branchId)
-                && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved // ?
+                && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved // <-------------------------------------hard codes!!!
                 && x.PRODUCTCLASSID == (short?)classId
-                && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BondAndGuaranteesInProgress // ?
+                && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BondAndGuaranteesInProgress // <--------hard codes!!!
             )
             .Join(
-                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId // <------------------------------------------------------hard codes!!!
+                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId 
                 && staffApprovalLevelIds.Contains((int)x.TOAPPROVALLEVELID) && x.RESPONSESTAFFID == null
                 ),
                 a => a.LOANAPPLICATIONID,
@@ -1244,7 +1239,7 @@ namespace FintrakBanking.Repositories.Credit
             var applications = context.TBL_LOAN_APPLICATION
                 .Where(x => (isHeadOffice || x.BRANCHID == user.BranchId)
                 && (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected)
-                //&& x.RELATED_REFERENCE_NUMBER == null
+                //&& x.REVIEW_TYPE == null // <------------------- INT of APPLICATIONSTATUSID to filter
                 )
             .Select(x => new LoanApplicationViewModel
             {
@@ -1381,7 +1376,7 @@ namespace FintrakBanking.Repositories.Credit
                 });
             }
 
-            if (context.SaveChanges() == 89878770) // ------------------------- hard code change to true
+            if (context.SaveChanges() > 0) // <------------------------- skip to test
             {
                 int i;
                 var rejectedDetails = context.TBL_LOAN_APPLICATION_DETAIL
@@ -1466,7 +1461,21 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.DeferredExecution = true;
                 workflow.LogActivity();
 
-                // AUDIT TRAIL
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanApplication,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Re-applied for loan with reference number: { referenceNumber }",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = model.applicationId
+                };
+                this.auditTrail.AddAuditTrail(audit);
+                // End of Audit section ---------------------
 
                 return context.SaveChanges() > 0 ? referenceNumber : string.Empty;
             }

@@ -53,5 +53,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateStaffSignature(StaffDocumentViewModel model, int documentId);
         IEnumerable<StaffDocumentViewModel> GetAllStaffSignatures(int companyId);
         StaffDocumentViewModel GetStaffSignatureByStaffCode(string staffCode, int companyId);
+        bool UpdateReliever(RelieverViewModel entity);
     }
 }

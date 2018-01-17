@@ -52,6 +52,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public byte[] fileData { get; set; }
         public string fileName { get; set; }
         public string fileExtension { get; set; }
+        public string DelegateName { get; set; }
     }
 
     public class StaffViewModel
@@ -139,7 +140,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     //}
 
-    public class StaffDocumentViewModel: DocumentViewModel
+    public class StaffDocumentViewModel : DocumentViewModel
     {
         public string StaffCode { get; set; }
         public string documentTitle { get; set; }
@@ -152,5 +153,14 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short? departmentName { get; set; }
         public int rankId { get; set; }
         public string rankName { get; set; }
+    }
+
+    public class RelieverViewModel : GeneralEntity
+    {
+        public int statusId { get; set; }
+        public string status { get; set; }
+        public int? relieverId { get; set; }
+        public int relievedStaffId { get; set; }
+        public string staffCode { get; set; }
     }
 }
