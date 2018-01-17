@@ -190,6 +190,10 @@ namespace FintrakBanking.Common.Enum
         CustomerproductFeeApproved = 182,           
         LoanApplicationUpdate = 183,
         LoanApplicationDelete = 184,
+
+        SectorAdded = 183,
+        SectorDeleted = 184,
+        SectorUpdated = 185,
     };
 
 

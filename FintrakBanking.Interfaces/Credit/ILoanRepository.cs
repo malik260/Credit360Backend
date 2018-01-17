@@ -58,7 +58,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetBookedLoanDetailsByLoanReferenceNumber(string loanReferenceNumber, int companyId);
 
-        IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, ReportSearchEntity param);
+        //IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, ReportSearchEntity param);
 
         IEnumerable<LoanChargeFeeViewModel> GetProductFees(int productId);
 
@@ -101,5 +101,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
 
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> GetLoanScheduleByLoanId(int loanId);
+
+
     }
 }

@@ -15,10 +15,12 @@ namespace FintrakBanking.Repositories.Setups.General
     public class GeneralSetupRepository : IGeneralSetupRepository
     {
         private FinTrakBankingContext context;
+        //private GeneralSetupRepository genSetup;
         public GeneralSetupRepository(FinTrakBankingContext _context)
         {
 
             this.context = _context;
+             //this.genSetup = _genSetup;
             
         }
 
@@ -83,6 +85,19 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupName = data.NAME  
                     });
         }
+
+        //public IEnumerable<LookupViewModel> GetAllSectors ()
+        //{
+        //    return (from data in context.TBL_SECTOR
+        //            select new LookupViewModel()
+        //            {
+        //                lookupId = data.SECTORID,
+        //                lookupName = data.NAME,
+        //                lookupCode = data.CODE,
+        //                lookupLoanLimit = data.LOAN_LIMIT
+        //            });
+        //}
+
         public IEnumerable<LookupViewModel> GetSubsector( )
         {
             return (from data in context.TBL_SUB_SECTOR 
@@ -229,6 +244,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             sectorId = cs.SECTORID,
                             sectorName = cs.NAME,
                             sectorCode = cs.CODE,
+                            sectorLimit =cs.LOAN_LIMIT,
                         });
 
             return data;
@@ -262,6 +278,39 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return data;
         }
+
+
+        public bool Updatesector (SectorViewModel model, short id)
+        {
+            var response = 0;
+            var sector  = context.TBL_SECTOR.Find(id);
+
+            if (sector != null)
+            {
+                sector.CODE = model.sectorCode;
+                sector.NAME = model.sectorName;
+                sector.LOAN_LIMIT = model.sectorLimit;
+
+                response = context.SaveChanges();
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.SectorUpdated,
+                    STAFFID = (int)model.lastUpdatedBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Updated branch: '{model.sectorName}' with code: {model.sectorCode} ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = DateTime.Now,
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                //end of Audit section -------------------------------
+            }
+
+            return response != 0;
+        }
+
 
     }
 }

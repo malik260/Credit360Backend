@@ -145,7 +145,7 @@ namespace FintrakBanking.Repositories.Credit
                 CONDITION = model.condition,
                 ISEXTERNAL = model.isExternal,
                 ISSUBSEQUENT = model.isSubsequent,
-                PRODUCTID = (short?)model.productId,
+                PRODUCTID = (short)model.productId,
                 CORPORATE = model.corporate,
                 RETAIL = model.retail,
                 CREATEDBY = model.createdBy,
@@ -183,7 +183,7 @@ namespace FintrakBanking.Repositories.Credit
             data.CONDITION = model.condition;
             data.ISEXTERNAL = model.isExternal;
             data.ISSUBSEQUENT = model.isSubsequent;
-            data.PRODUCTID =(short?)model.productId;
+            data.PRODUCTID = (short)model.productId;
             data.CORPORATE = model.corporate;
             data.RETAIL = model.retail;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
