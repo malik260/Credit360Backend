@@ -328,7 +328,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // UPDATE APPLICATION
             appl.APPROVALSTATUSID = workflow.StatusId;
-            if (model.vote == 2) { appl.DISPUTED = true; }
+            if (model.vote == 1) { appl.DISPUTED = true; }
             appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
             if (appl.SUBMITTEDFORAPPRAISAL == false) { appl.SUBMITTEDFORAPPRAISAL = true; } // for product programs
             if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
