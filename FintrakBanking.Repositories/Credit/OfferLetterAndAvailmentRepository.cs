@@ -81,7 +81,8 @@ namespace FintrakBanking.Repositories.Credit
                             productTypeId = b.TBL_PRODUCT.PRODUCTTYPEID,
                             productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
-                           // approvalDate = a.APPROVEDDATE,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            availmentlDate = a.AVAILMENTDATE,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
                                 .Select(camDoc => new CamDocumentViewModel
                                 {
@@ -179,6 +180,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (target.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.AvailmentCompleted)
                         {
                             target.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                            target.AVAILMENTDATE = DateTime.Now;
 
                             return context.SaveChanges() > 0;
                         }

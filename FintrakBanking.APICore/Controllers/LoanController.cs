@@ -939,12 +939,12 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpGet]
         [Route("loan-application/availment-completed")]
-        public HttpResponseMessage GetAvailedLoanApplications()
+        public HttpResponseMessage GetAvailedLoanApplicationsDueForInitiateBooking()
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repo.GetAvailedLoanApplications(token.GetCompanyId);
+                var response = repo.GetAvailedLoanApplicationsDueForInitiateBooking(token.GetCompanyId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

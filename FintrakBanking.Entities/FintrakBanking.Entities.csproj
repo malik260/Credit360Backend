@@ -144,6 +144,7 @@
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMORANDM.cs" />
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_DETL.cs" />
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_DOCU.cs" />
+    <Compile Include="Models\TBL_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_CREDIT_TEMPLATE.cs" />
     <Compile Include="Models\TBL_CURRENCY.cs" />
     <Compile Include="Models\TBL_CURRENCY_RATE.cs" />
@@ -243,6 +244,7 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_STA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_TRA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLTN_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_BOOKING_REQUEST.cs" />
     <Compile Include="Models\TBL_LOAN_BULK_INTEREST_REVIEW.cs" />

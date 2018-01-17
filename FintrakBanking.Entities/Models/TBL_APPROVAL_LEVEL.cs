@@ -61,6 +61,12 @@ namespace FintrakBanking.Entities.Models
 
         public bool CANRECIEVESMS { get; set; }
 
+        public bool CANESCALATE { get; set; }
+
+        public bool CANAPPROVEUNTENORED { get; set; }
+
+        public bool CANRESOLVEDISPUTE { get; set; }
+
         public bool HASCHECKLIST { get; set; }
 
         public bool CANPERFORMFINANCIALANALYSIS { get; set; }

@@ -451,7 +451,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new Exception("Loan terminal date should be more than effective date");
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
-            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing )
                 throw new Exception("This Loan Request has already been booked by another staff");
 
             var principalAmount  = from a in context.TBL_LOAN where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
@@ -3197,7 +3197,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplications(int companyId)
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId)
         {
             var data = AvailedLoanApplicationsDetails(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted);
 
@@ -3250,7 +3250,7 @@ namespace FintrakBanking.Repositories.Credit
                  AMOUNT_REQUESTED = entity.amount_Requested,
                  APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                  LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
-                 DATETIMECREATED = generalSetup.GetApplicationDate(),
+                 DATETIMECREATED = DateTime.Now,
                  CREATEDBY = entity.createdBy,
 
             };
@@ -3362,6 +3362,7 @@ namespace FintrakBanking.Repositories.Credit
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         where m.COMPANYID == companyId && d.DELETED == false && m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted
+                        orderby m.AVAILMENTDATE descending, m.DATETIMECREATED descending
                         select new CamProcessedLoanViewModel
                         {
                             approvalStatusId = m.APPROVALSTATUSID,
@@ -3495,6 +3496,7 @@ namespace FintrakBanking.Repositories.Credit
                             createdBy = m.CREATEDBY,
                             applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
+                            availmentlDate = m.AVAILMENTDATE,
 
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                             loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID && x.PRODUCTTYPEID == d.TBL_PRODUCT.PRODUCTTYPEID)
@@ -3553,7 +3555,7 @@ namespace FintrakBanking.Repositories.Credit
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         where m.COMPANYID == companyId && d.DELETED == false &&  s.DELETED==false 
-                        orderby s.LOAN_BOOKING_REQUESTID ascending
+                        orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
                             bookingAmountRequested = s.AMOUNT_REQUESTED,
@@ -3561,6 +3563,7 @@ namespace FintrakBanking.Repositories.Credit
                             bookingRequestStatusId = s.APPROVALSTATUSID,
                             requestDate = s.DATETIMECREATED,
                             requestedBy = "",
+                            requestedAmount = s.AMOUNT_REQUESTED,
                             requestOperationId = (short)OperationsEnum.LoanBookingRequest,
                             approvalStatusId = m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
@@ -3675,6 +3678,7 @@ namespace FintrakBanking.Repositories.Credit
                             submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
                             approvedAmount = d.APPROVEDAMOUNT,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
+                            availmentlDate = m.AVAILMENTDATE,
 
                             customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
                                                       || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)

@@ -18,6 +18,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_APPLICATION_COLLATERL = new HashSet<TBL_LOAN_APPLICATION_COLLATERL>();
             TBL_LOAN_APPLICATION_DETAIL = new HashSet<TBL_LOAN_APPLICATION_DETAIL>();
             TBL_LOAN_APPLICATION_DETL_ARCH = new HashSet<TBL_LOAN_APPLICATION_DETL_ARCH>();
+            TBL_LOAN_APPLTN_CREDIT_BUREAU = new HashSet<TBL_LOAN_APPLTN_CREDIT_BUREAU>();
             TBL_LOAN_COLLATERAL_MAPPING = new HashSet<TBL_LOAN_COLLATERAL_MAPPING>();
             TBL_LOAN_GUARANTOR = new HashSet<TBL_LOAN_GUARANTOR>();
             TBL_RISK_ASSESSMENT = new HashSet<TBL_RISK_ASSESSMENT>();
@@ -125,6 +126,11 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? APPROVEDDATE { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime? AVAILMENTDATE { get; set; }
+
+        public bool DISPUTED { get; set; }
+
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
@@ -166,6 +172,9 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_PRELIMINARY_EVALUATN TBL_LOAN_PRELIMINARY_EVALUATN { get; set; }
 
         public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_APPLTN_CREDIT_BUREAU> TBL_LOAN_APPLTN_CREDIT_BUREAU { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }
