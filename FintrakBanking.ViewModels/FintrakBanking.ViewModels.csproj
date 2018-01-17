@@ -70,12 +70,14 @@
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
     <Compile Include="Credit\CallMemoViewModel.cs" />
+    <Compile Include="Credit\ChecklistApprovalViewModel.cs" />
     <Compile Include="Credit\CollateralCustomerViewModel.cs" />
     <Compile Include="Credit\CollateralDocumentViewModel.cs" />
     <Compile Include="Credit\ColleralCustomFieldsDataViewModel.cs" />
     <Compile Include="Credit\ConditionPrecedentViewModel.cs" />
     <Compile Include="Credit\CreditBereauViewModel.cs" />
     <Compile Include="Credit\CurrentCustomerExposure.cs" />
+    <Compile Include="Credit\DeferredChecklistViewModel.cs" />
     <Compile Include="Credit\ExistingLoanApplicationViewModel.cs" />
     <Compile Include="Credit\InvoiceDiscountingViewModel.cs" />
     <Compile Include="Credit\LimitViewModel.cs" />

@@ -32,6 +32,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOANPRELIMINARYEVALUATIONID { get; set; }
 
+        [StringLength(50)]
+        public string RELATEDREFERENCENUMBER { get; set; }
+
         public int COMPANYID { get; set; }
 
         public int? CUSTOMERID { get; set; }
@@ -70,6 +73,9 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "money")]
         public decimal APPROVEDAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal TOTALEXPOSUREAMOUNT { get; set; }
 
         [Required]
         public string LOANINFORMATION { get; set; }
@@ -116,15 +122,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool CUSTOMERINFOVALIDATED { get; set; }
 
-        public bool NOTINNEGATIVECRMS { get; set; }
-
-        public bool NOTINBLACKBOOK { get; set; }
-
-        public bool NOTINCAMSOL { get; set; }
-
-        public bool NOTINXDS { get; set; }
-
-        public bool NOTINCRC { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime? APPROVEDDATE { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

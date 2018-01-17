@@ -582,7 +582,7 @@ namespace FintrakBanking.Repositories.Credit
                         productClassId = loan.productClassId;
                     }
                 }
-                decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
+                decimal totalAmount = 0; // GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
                 //var loanStatusId = (short)LoanStatusEnum.Inactive;
 
                 var data = new TBL_LOAN_APPLICATION
@@ -1543,7 +1543,7 @@ namespace FintrakBanking.Repositories.Credit
                 decimal loanAmount = loan.APPLICATIONAMOUNT;
                 newAmount = loanAmount - propusedAmount;
 
-                decimal totalAmount = (GetCustomerTotalOutstandingBalance(loanDetails.CUSTOMERID) - propusedAmount) + entity.proposedAmount;
+                decimal totalAmount = 0; // (GetCustomerTotalOutstandingBalance(loanDetails.CUSTOMERID) - propusedAmount) + entity.proposedAmount;
                 loan.APPLICATIONAMOUNT = newAmount + entity.proposedAmount;
                 loan.TOTALEXPOSUREAMOUNT = newAmount + entity.proposedAmount;
 
@@ -1573,6 +1573,6 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-    
+
     }
 }

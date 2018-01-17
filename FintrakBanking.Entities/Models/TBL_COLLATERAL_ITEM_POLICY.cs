@@ -25,8 +25,10 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal SUMINSURED { get; set; }
 
+        [Column(TypeName = "date")]
         public DateTime STARTDATE { get; set; }
 
+        [Column(TypeName = "date")]
         public DateTime ENDDATE { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }

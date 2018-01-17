@@ -9,12 +9,6 @@ namespace FintrakBanking.Entities.Models
     [Table("core.TBL_PRODUCT_CHARGE_FEE")]
     public partial class TBL_PRODUCT_CHARGE_FEE
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_PRODUCT_CHARGE_FEE()
-        {
-            TBL_PRODUCT_CHARGE_FEE_CUSTMER = new HashSet<TBL_PRODUCT_CHARGE_FEE_CUSTMER>();
-        }
-
         [Key]
         public int PRODUCTFEEID { get; set; }
 
@@ -51,8 +45,5 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_PRODUCT_CHARGE_FEE_CUSTMER> TBL_PRODUCT_CHARGE_FEE_CUSTMER { get; set; }
     }
 }

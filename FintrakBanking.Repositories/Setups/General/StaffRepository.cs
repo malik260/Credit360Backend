@@ -310,7 +310,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     var output = await context.SaveChangesAsync() > 0;
 
-                    var targetStaffId = existingTempStaff?.STAFFID ?? tempStaff.STAFFID;
+                    var targetStaffId = existingTempStaff?.TEMPSTAFFID ?? tempStaff.TEMPSTAFFID;
 
                     var entity = new ApprovalViewModel
                     {
@@ -616,7 +616,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         staffId = staffModel.createdBy,
                         companyId = staffModel.companyId,
                         approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = staff.STAFFID,
+                        targetId = staff.TEMPSTAFFID,
                         operationId = (int)OperationsEnum.StaffCreation,
                         BranchId = staffModel.userBranchId,
                         externalInitialization = true
@@ -660,13 +660,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
                     join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
                     join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
-                    join atrail in context.TBL_APPROVAL_TRAIL on c.STAFFID equals atrail.TARGETID
+                    join atrail in context.TBL_APPROVAL_TRAIL on c.TEMPSTAFFID equals atrail.TARGETID
                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
                         && atrail.RESPONSESTAFFID == null
                           && atrail.OPERATIONID == (int)OperationsEnum.StaffCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                     select new StaffInfoViewModel()
                     {
-                        StaffId = c.STAFFID,
+                        StaffId = c.TEMPSTAFFID,
                         Address = c.ADDRESS,
                         companyId = coy.COMPANYID,
                         AddressOfNok = c.ADDRESSOFNOK,
@@ -715,10 +715,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
                     join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
                     join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
-                    where c.STAFFID == staffId //c.ApprovalStatusId == (int)ApprovalStatusEnum.Approved && c.IsCurrent == true
+                    where c.TEMPSTAFFID == staffId //c.ApprovalStatusId == (int)ApprovalStatusEnum.Approved && c.IsCurrent == true
                     select new StaffDetailsModel()
                     {
-                        StaffId = c.STAFFID,
+                        StaffId = c.TEMPSTAFFID,
                         Address = c.ADDRESS,
                         companyId = coy.COMPANYID,
                         AddressOfNok = c.ADDRESSOFNOK,
