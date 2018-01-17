@@ -328,7 +328,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DEAL_TYPE> TBL_DEAL_TYPE { get; set; }
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
-        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
+    //    public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1392,10 +1392,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_CUSTOMER>()
-                .HasMany(e => e.TBL_OVERRIDE_DETAIL)
-                .WithRequired(e => e.TBL_CUSTOMER)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_CUSTOMER>()
+            //    .HasMany(e => e.TBL_OVERRIDE_DETAIL)
+            //    .WithRequired(e => e.TBL_CUSTOMER)
+            //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER_ADDRESS_TYPE>()
                 .HasMany(e => e.TBL_CUSTOMER_ADDRESS)
@@ -4501,17 +4501,17 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_DEAL_CLASSIFICATION)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LEVELMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<view_Approval_Setup>()
+            //    .Property(e => e.LEVELMAXIMUMAMOUNT)
+            //    .HasPrecision(19, 4);
 
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.INVESTMENTGRADEAMOUNT)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<view_Approval_Setup>()
+            //    .Property(e => e.INVESTMENTGRADEAMOUNT)
+            //    .HasPrecision(19, 4);
 
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.STAFFMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<view_Approval_Setup>()
+            //    .Property(e => e.STAFFMAXIMUMAMOUNT)
+            //    .HasPrecision(19, 4);
         }
     }
 }
