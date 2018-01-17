@@ -258,11 +258,16 @@ namespace FintrakBanking.Repositories.Credit
                                                   collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                                   collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
                                                   //collateralSubTypeId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.
-                                                  currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
-                                                  valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                                                  haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                                                  customerName = i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
-                                                 + " " + i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
+                                                 currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                                                 valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                 haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                 customerName = i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " "+ i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
+                                                 +" "+ i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
+                                                 //collateralSearchAmount = context.TBL_STATE.Where(x=>x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
+                                                 //chartingAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.LastOrDefault().TBL_CITY.STATEID).LastOrDefault().CHARTINGAMOUNT,
+                                                 //verificationAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
+                                                 //cityId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().CITYID,
+                                                 legalFeeTaken = i.LEGAL_FEE_TAKEN,
                                               }).ToList(),
                             bondsAndGaurantees = (from i in context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                   select new BondsAndGauranteeViewModel
@@ -286,14 +291,15 @@ namespace FintrakBanking.Repositories.Credit
                                                   }).ToList(),
 
                         }).ToList();
-            foreach (var i in data)
-            {
-                var relationshipOfficer = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipOfficerId).FirstOrDefault();
-                var relationshipManager = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipManagerId).FirstOrDefault();
-                i.relationshipOfficerName = relationshipOfficer.FIRSTNAME + " " + relationshipOfficer.MIDDLENAME + " " + relationshipOfficer.LASTNAME;
-                i.relationshipManagerName = relationshipManager.FIRSTNAME + " " + relationshipManager.MIDDLENAME + " " + relationshipManager.LASTNAME;
-            }
-            return data;
+                        foreach(var i in data)
+                        {
+                            var relationshipOfficer = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipOfficerId).FirstOrDefault();
+                            var relationshipManager = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipManagerId).FirstOrDefault();
+                            i.relationshipOfficerName = relationshipOfficer.FIRSTNAME + " " + relationshipOfficer.MIDDLENAME + " " + relationshipOfficer.LASTNAME;
+                            i.relationshipManagerName = relationshipManager.FIRSTNAME + " " + relationshipManager.MIDDLENAME + " " + relationshipManager.LASTNAME;
+
+                        }
+                        return data;
         }
 
         public IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId)
@@ -301,7 +307,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = from a in context.TBL_LOAN_APPLICATION
                        where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress && a.COMPANYID == companyId && a.DELETED == false
                        orderby a.APPLICATIONDATE descending
-                       // && a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId
+                       //&& a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId
                        select new
                        {
                            approvalStatusId = a.APPROVALSTATUSID,
@@ -564,7 +570,7 @@ namespace FintrakBanking.Repositories.Credit
                     isGroupLoan = true;
                 }
                 int casaAccountId = -1;
-                //     string refNumber = GenerateLoanReference(loan.customerId.Value);
+                     string refNumber = GenerateLoanReference(loan.customerId.Value);
                 if (loan.customerAccount != "N/A")
                 {
                     casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
@@ -583,7 +589,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
                 decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
-                //var loanStatusId = (short)LoanStatusEnum.Inactive;
+                var loanStatusId = (short)LoanStatusEnum.Inactive;
 
                 var data = new TBL_LOAN_APPLICATION
                 {
@@ -1584,7 +1590,6 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-
         public decimal GetCustomerTotalOutstandingBalance(int customerId)
         {
             var loanData = context.TBL_LOAN.FirstOrDefault(x => x.CUSTOMERID == customerId);
@@ -1620,5 +1625,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return totalBalance;
         }
+
     }
 }

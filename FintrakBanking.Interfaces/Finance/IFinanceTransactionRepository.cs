@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Credit;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,9 @@ namespace FintrakBanking.Interfaces.Finance
         FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
 
         FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
+
+        FinanceTransactionViewModel BuildCustomerApplicationChargeOrChargeReversalPosting(string postType, int loanId, GeneralEntity model, decimal postedAmount, int creditGL, string description);
+
         FinanceTransactionViewModel PostDailyInterestSuspension(DailyInterestAccrualViewModel model, int loanId, DateTime applicationDate, int staffId);
     }
 }

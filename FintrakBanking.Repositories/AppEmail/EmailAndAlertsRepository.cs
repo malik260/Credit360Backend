@@ -15,7 +15,7 @@ namespace FintrakBanking.Repositories.AppEmail
 {
     public class EmailAndAlertsRepository : IEmailAndAlertsRepository
     {
-        private FinTrakBankingContext context;
+        private FinTrakBankingContext context = new FinTrakBankingContext();
         private IAuditTrailRepository auditTrail;
         private EmailHelpers emailHelpers;
         private IGeneralSetupRepository genSetup;
@@ -25,18 +25,22 @@ namespace FintrakBanking.Repositories.AppEmail
         private readonly string supportEmail = ConfigurationManager.AppSettings["SupportEmailAddr"];
 
         public EmailAndAlertsRepository(
-                FinTrakBankingContext _context,
+              //  FinTrakBankingContext _context,
                 IAuditTrailRepository _auditTrail,
                 EmailHelpers _emailHelpers,
                 IGeneralSetupRepository _general,
                 IStaffRepository _staffRepo
             ) {
-                context = _context;
+             //   context = _context;
                 auditTrail = _auditTrail;
                 emailHelpers = _emailHelpers;
                 genSetup = _general;
                 staffRepo = _staffRepo;
             }
+
+
+
+
 
         #region Covenant Monitoring
 
@@ -46,7 +50,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
             var data = (from a in context.TBL_LOAN_COVENANT_DETAIL
                         join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                        join c in context.TBL_STAFF on b.RELATIONSHIPMANAGERID equals c.STAFFID
+                        //join c in context.TBL_STAFF on b.RELATIONSHIPMANAGERID equals c.STAFFID
                         join d in context.TBL_STAFF on b.RELATIONSHIPOFFICERID equals d.STAFFID
                         join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                         join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals f.FREQUENCYTYPEID
@@ -65,9 +69,9 @@ namespace FintrakBanking.Repositories.AppEmail
                             frequencyTypeName = f.MODE,
                             loanId = a.LOANID,
                             loanRefNumber = e.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                            relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
-                            relationshipManagerId = c.STAFFID,
-                            managerEmail = c.EMAIL,
+                            relationshipManager = d.FIRSTNAME + " " + d.LASTNAME,
+                            relationshipManagerId = d.STAFFID,
+                            managerEmail = d.EMAIL,
                             relationshipOfficerId = d.STAFFID,
                             relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
                             officerEmail = d.EMAIL,
@@ -102,7 +106,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         dataTable = dataTable + "</table>";
                     }
 
-                    string messageSubject = "FIRSTBANKONLINE (REMINDER) - LOAN COVENANTS APPROACHING DUE DATE";
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] +  " (REMINDER) - LOAN COVENANTS APPROACHING DUE DATE";
 
                     string messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
                                      "This is to bring your attention the following loan covenants " +
@@ -129,7 +133,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
                     SaveMessageDetails(messageModel);
 
-                    //emailHelpers.SendMail(recipient, additionalRecipient, messageSubject, messageContent, templateUrl);
+                    emailHelpers.SendMail(recipient, additionalRecipient, messageSubject, messageContent, templateUrl);
                 }
             }
             catch (Exception ex)
@@ -198,7 +202,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
                     dataTable = dataTable + "</table>";
 
-                    var messageSubject = "FIRSTBANKONLINE (REMINDER) - LOAN COVENANTS OVERDUE";
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " (REMINDER) - LOAN COVENANTS OVERDUE";
 
                     var messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
                                          "This is to bring your attention the following loan covenants " +
@@ -294,7 +298,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
                     dataTable = dataTable + "</table>";
 
-                    var messageSubject = "FIRSTBANKONLINE (REMINDER) - COLLATERAL DUE FOR RE-EVALUATION";
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " (REMINDER) - COLLATERAL DUE FOR RE-EVALUATION";
 
                     var messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
                                              "This is to bring your attention the following collaterals " +
@@ -393,7 +397,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                              "which are underperforming. <br /><br />" +
                                              $"{dataTable}";
 
-                    var messageSubject = "FIRSTBANKONLINE (REMINDER) - NON-PERFORMING LOANS";
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " (REMINDER) - NON-PERFORMING LOANS";
 
                     var otherRecipient = data.FirstOrDefault(x => x.relationshipOfficerId == mailItem.StaffId).relationshipOfficerEmail;
 
@@ -489,7 +493,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
                     dataTable = dataTable + "</table>";
 
-                    var messageSubject = "FIRSTBANKONLINE (REMINDER) - EXPIRED SELF-LIQUIDATING LOANS";
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " (REMINDER) - EXPIRED SELF-LIQUIDATING LOANS";
 
                     string messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
                                              "This is to bring your attention the following self-liquidating loans " +
@@ -589,7 +593,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
                     dataTable = dataTable + "</table>";
 
-                    var messageSubject = "FIRSTBANKONLINE (REMINDER) - EXPIRED OVERDRAFT LOANS";
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " (REMINDER) - EXPIRED OVERDRAFT LOANS";
 
                     string messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
                                              "This is to bring your attention the following overdraft loans " +
@@ -627,6 +631,319 @@ namespace FintrakBanking.Repositories.AppEmail
         }
 
         #endregion Overdraft Monitoring
+
+
+        #region Collateral Monitoring
+
+        public void SendAlertsForExpiredInsurance()
+        {
+            var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+
+            var data = (from a in context.TBL_COLLATERAL_CUSTOMER
+                        join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                        join c in context.TBL_STAFF on a.CREATEDBY equals c.STAFFID
+                        join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
+                        join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
+                        join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
+                        join p in context.TBL_COLLATERAL_ITEM_POLICY on a.COLLATERALCUSTOMERID equals p.COLLATERALCUSTOMERID
+                        where (DbFunctions.DiffDays(p.ENDDATE, DateTime.Now) <= 0)
+                        select new CollateralViewModel
+                        {
+                            collateralType = d.COLLATERALTYPENAME,
+                            collateralCode = a.COLLATERALCODE,
+                            collateralSubType = e.COLLATERALSUBTYPENAME,
+                            customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                            propertyName = f.PROPERTYNAME,
+                            lastValuationDate = f.LASTVALUATIONDATE,
+                            collateralValue = a.COLLATERALVALUE,
+                            valuationCycle = a.VALUATIONCYCLE,
+                            insuranceCompany = p.INSURANCECOMPANYNAME,
+                            startDate = p.STARTDATE,
+                            endDate = p.ENDDATE
+
+                            
+                        }).ToList();
+
+            try
+            {
+                var staffList = staffRepo.GetAllStaff().ToList();
+
+                var dataList = data.Select(g => g.relationshipManagerId).ToList();
+
+                staffList = staffList.Where(x => dataList.Contains(x.StaffId)).ToList();
+
+                string dataTable;
+
+                foreach (var mailItem in staffList)
+                {
+                    string recipient = mailItem.Email;
+
+                    var mailList = data.Where(x => x.relationshipManagerId == mailItem.StaffId).ToList();
+
+                    dataTable =
+                            "<table><tr><th>Collateral Code</th><th>Collateral Type</th>" +
+                            "<th>Collateral Sub Type</th><th>Customer Name</th><th>Property</th><th>Last Valuation Date</th><th>Collateral Value</th>" +
+                            "<th>Valuation Cycle</th><th>Insurance Company</th><th>Start Date</th><th>End Date</th></tr>";
+
+                    foreach (var item in mailList)
+                    {
+                        dataTable = dataTable +
+                           $"<tr><td>{item.collateralCode}</td><td>{item.collateralType}</td><td>{item.collateralSubType}</td><td>{item.customerName}</td>" +
+                            $"<td>{item.propertyName}</td><td>{item.lastValuationDate:d}</td>><td>{item.collateralValue:d}</td>" +
+                            $"><td>{item.valuationCycle:d}</td>><td>{item.insuranceCompany:d}</td>><td>{item.startDate:d}</td>" +
+                            $"><td>{item.endDate:d}</td>></tr>";
+                    }
+
+                    dataTable = dataTable + "</table>";
+
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " (REMINDER) - EXPIRED INSURANCE";
+
+                    var messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
+                                             "This is to bring your attention the following Insurance " +
+                                             "has expired. <br /><br />" +
+                                             $"{dataTable}";
+
+                    var templateUrl = "~/EmailTemplates/Monitoring.html";
+
+                    var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+
+                    var messageModel = new MessageLogViewModel()
+                    {
+                        //MessageId = model.MessageId,
+                        MessageSubject = messageSubject,
+                        MessageBody = mailBody,
+                        MessageStatusId = (short)MessageStatusEnum.Pending,
+                        MessageTypeId = (short)MessageTypeEnum.Email,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = recipient,
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = DateTime.Now
+                    };
+
+                    SaveMessageDetails(messageModel);
+
+                    //emailHelpers.SendMail(recipient, null, messageSubject, messageContent, templateUrl);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion Collateral Monitoring
+
+
+
+        #region LOAN CASA WITH PND
+        //#######################        LOAN CASA WITH PND         ############################ 
+        public void SendAlertsOnLoanCASAwithPND()
+        {
+            var applDate = genSetup.GetApplicationDate();
+
+            var data = (from a in context.TBL_LOAN
+                        join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                        join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                        join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                        where s.HASLIEN == true && (s.POSTNOSTATUSID == (short)CASAPostNoStatusEnum.PostNoDebit || s.POSTNOSTATUSID == (short)CASAPostNoStatusEnum.PostNoDebitandCredit)
+
+                        select new LoanViewModel
+                        {
+                            applicationReferenceNumber = a.LOANREFERENCENUMBER,
+                            loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            bookingDate = a.BOOKINGDATE,
+                            disburseDate = a.DISBURSEDATE,
+                            maturityDate = a.MATURITYDATE,
+                            principalAmount = a.PRINCIPALAMOUNT,
+                            interestRate = a.INTERESTRATE,
+                            outstandingInterest = a.OUTSTANDINGINTEREST,
+                            outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                            loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                            relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                            relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                            relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                            relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+                            branchId = a.BRANCHID,
+                            branchName = br.BRANCHNAME,
+                            customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME
+                        }).ToList();
+
+            try
+            {
+                var staffList = staffRepo.GetAllStaff().ToList();
+
+                var dataList = data.Select(g => g.relationshipManagerId).ToList();
+
+                staffList = staffList.Where(x => dataList.Contains(x.StaffId)).ToList();
+
+                string dataTable;
+
+                foreach (var mailItem in staffList)
+                {
+                    dataTable =
+                             "<table><tr><th>Loan Ref #</th><th>Customer Name</th><th>Principal Amount</th><th>Outstanding Principal</th>" +
+                        "<th>Tenor</th><th>Interest Rate</th><th>Booking Date</th><th>Effective Date</th><th>Maturity Date</th></tr>";
+
+                    string recipient = mailItem.Email;
+
+                    var mailList = data.Where(x => x.relationshipManagerId == mailItem.StaffId).ToList();
+
+                    foreach (var item in mailList)
+                    {
+                        dataTable = dataTable +
+                            $"<tr><td>{item.loanReferenceNumber}</td><td>{item.customerName}</td><td>{item.principalAmount}</td><td>{item.outstandingPrincipal}</td>" +
+                            $"<td style='text-align:right;'>{item.tenor:f}</td>" + $"<td style='text-align:right;'>{item.interestRate:f}</td>" + 
+                            $"<td>{item.bookingDate:d}</td><td>{item.effectiveDate:d}</td><td>{item.maturityDate:d}</td></tr>";
+                    }
+
+                    dataTable = dataTable + "</table>";
+
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " (REMINDER) - LOAN CASA WITH PND AND LEIN";
+
+                    string messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
+                                             "This is to bring your attention the following loans " +
+                                             "are on PND and lein placed on them. <br /><br />" +
+                                             $"{dataTable}";
+
+                    var otherRecipient = data.FirstOrDefault(x => x.relationshipOfficerId == mailItem.StaffId).relationshipOfficerEmail;
+
+                    var templateUrl = "~/EmailTemplates/Monitoring.html";
+
+                    var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+
+                    var messageModel = new MessageLogViewModel()
+                    {
+                        //MessageId = model.MessageId,
+                        MessageSubject = messageSubject,
+                        MessageBody = mailBody,
+                        MessageStatusId = (short)MessageStatusEnum.Pending,
+                        MessageTypeId = (short)MessageTypeEnum.Email,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = $"{recipient};{otherRecipient}",
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = DateTime.Now
+                    };
+
+                    SaveMessageDetails(messageModel);
+
+                    //emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        #endregion LOAN CASA WITH PND
+
+
+        #region INACTIVE BOND AND GUARANTEE
+        //#######################        INACTIVE BOND AND GUARANTEE         ############################ 
+        public void SendAlertsOnLoanForInActiveBondAndGuarantee()
+        {
+            var applDate = genSetup.GetApplicationDate();
+
+            var data = (from a in context.TBL_LOAN_CONTINGENT
+                        join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                        join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                        join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                        where s.HASLIEN == true && (s.POSTNOSTATUSID == (short)CASAPostNoStatusEnum.PostNoDebit || s.POSTNOSTATUSID == (short)CASAPostNoStatusEnum.PostNoDebitandCredit)
+
+                        select new LoanViewModel
+                        {
+                            applicationReferenceNumber = a.LOANREFERENCENUMBER,
+                            loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            bookingDate = a.BOOKINGDATE,
+                            disburseDate = a.DISBURSEDATE,
+                            maturityDate = a.MATURITYDATE,
+                            principalAmount = a.CONTINGENTAMOUNT,
+                            exchangeRate = a.EXCHANGERATE,
+                            loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                            relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                            relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                            relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                            relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+                            branchId = a.BRANCHID,
+                            branchName = br.BRANCHNAME,
+                            customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME
+                        }).ToList();
+
+            try
+            {
+                var staffList = staffRepo.GetAllStaff().ToList();
+
+                var dataList = data.Select(g => g.relationshipManagerId).ToList();
+
+                staffList = staffList.Where(x => dataList.Contains(x.StaffId)).ToList();
+
+                string dataTable;
+
+                foreach (var mailItem in staffList)
+                {
+                    dataTable =
+                             "<table><tr><th>Loan Ref #</th><th>Customer Name</th><th>Contingent Amount</th><th>exchange Rate</th>" +
+                        "<th>Booking Date</th><th>Effective Date</th><th>Maturity Date</th></tr>";
+
+                    string recipient = mailItem.Email;
+
+                    var mailList = data.Where(x => x.relationshipManagerId == mailItem.StaffId).ToList();
+
+                    foreach (var item in mailList)
+                    {
+                        dataTable = dataTable +
+                            $"<tr><td>{item.loanReferenceNumber}</td><td>{item.customerName}</td><td>{item.principalAmount}</td><td>{item.exchangeRate}</td>" +
+                            $"<td style='text-align:right;'>{item.tenor:f}</td>" + $"<td style='text-align:right;'>{item.interestRate:f}</td>" +
+                            $"<td>{item.bookingDate:d}</td><td>{item.effectiveDate:d}</td><td>{item.maturityDate:d}</td></tr>";
+                    }
+
+                    dataTable = dataTable + "</table>";
+
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " (REMINDER) - INACTIVE BOND AND GUARANTEE";
+
+                    string messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
+                                             "This is to bring your attention the following Bond and guarantee " +
+                                             " are about to expire. <br /><br />" +
+                                             $"{dataTable}";
+
+                    var otherRecipient = data.FirstOrDefault(x => x.relationshipOfficerId == mailItem.StaffId).relationshipOfficerEmail;
+
+                    var templateUrl = "~/EmailTemplates/Monitoring.html";
+
+                    var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+
+                    var messageModel = new MessageLogViewModel()
+                    {
+                        //MessageId = model.MessageId,
+                        MessageSubject = messageSubject,
+                        MessageBody = mailBody,
+                        MessageStatusId = (short)MessageStatusEnum.Pending,
+                        MessageTypeId = (short)MessageTypeEnum.Email,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = $"{recipient};{otherRecipient}",
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = DateTime.Now
+                    };
+
+                    SaveMessageDetails(messageModel);
+
+                    //emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        #endregion INACTIVE BOND AND GUARANTEE
+
+
+
 
         #region WORKFLOW
 

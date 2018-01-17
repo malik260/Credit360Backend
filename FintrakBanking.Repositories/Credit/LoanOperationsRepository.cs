@@ -4819,7 +4819,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCamsol.AMOUNTAFFECTED = accruedInterest + accruedPrincipal;
             loanCamsol.DATE = applicationDate;
             loanCamsol.TYPE = "Loan Complete Write Off"; 
-            loanCamsol.CUSTOMERCODE = (context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == loanInput.customerId)).CUSTOMERCODE;
+            //loanCamsol.CUSTOMERCODE = (context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == loanInput.customerId)).CUSTOMERCODE;
 
             this.context.TBL_LOAN_CAMSOL.Add(loanCamsol); ////change to Temp table
             //context.SaveChanges();

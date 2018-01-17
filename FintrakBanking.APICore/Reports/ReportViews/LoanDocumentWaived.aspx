@@ -32,6 +32,8 @@
                 <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="companyId" DefaultValue="" Name="companyId" PropertyName="Text" Type="Int32" />
           
+                <asp:ControlParameter ControlID="branchId" Name="branchId" PropertyName="Text" Type="Int16" />
+          
             </SelectParameters>
         </asp:ObjectDataSource>
         </div>
@@ -39,6 +41,7 @@
          <asp:Label ID="endDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="startDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>
+         <asp:Label ID="branchId" runat="server"  Visible="false" ></asp:Label>
         
     </form>
 </body>

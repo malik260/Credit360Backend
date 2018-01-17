@@ -10,7 +10,7 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_TEMP_STAFF
     {
         [Key]
-        public int STAFFID { get; set; }
+        public int TEMPSTAFFID { get; set; }
 
         [Required]
         [StringLength(50)]

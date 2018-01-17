@@ -9,42 +9,31 @@ namespace FintrakBanking.Entities.Models
     [Table("temp.TBL_TEMP_COLLATERAL_STOCK")]
     public partial class TBL_TEMP_COLLATERAL_STOCK
     {
-        public int? COLLATERALSTOCKID { get; set; }
-
         [Key]
-        [Column(Order = 0)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int TEMPCOLLATERALSTOCKID { get; set; }
+
+        public int COLLATERALSTOCKID { get; set; }
+
         public int COLLATERALCUSTOMERID { get; set; }
 
-        [Key]
-        [Column(Order = 1)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short COLLATERALSUBTYPEID { get; set; }
 
-        [Key]
-        [Column(Order = 2)]
+        [Required]
         [StringLength(250)]
         public string COMPANYNAME { get; set; }
 
-        [Key]
-        [Column(Order = 3)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int SHAREQUANTITY { get; set; }
 
-        [Key]
-        [Column(Order = 4, TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal MARKETPRICE { get; set; }
 
-        [Key]
-        [Column(Order = 5, TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal AMOUNT { get; set; }
 
-        [Key]
-        [Column(Order = 6, TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal SHARESSECURITYVALUE { get; set; }
 
-        [Key]
-        [Column(Order = 7, TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal SHAREVALUEAMOUNTTOUSE { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }

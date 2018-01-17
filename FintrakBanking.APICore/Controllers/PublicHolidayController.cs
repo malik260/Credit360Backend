@@ -3,6 +3,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
@@ -140,6 +141,40 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = enitity, message = "Public Holiday has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "An unknown error has occured" });
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"An unhandled error occured {ex.Message}" });
+            }
+        }
+        [HttpDelete]
+        [Route("public-holiday-delete/{id}")]
+        public HttpResponseMessage DeletePublicHoliday( int id)
+        {
+            try
+            {
+
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+
+
+                var data = repo.DeletePublicHoliday(user, id);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true,  message = "Public Holiday has been deleted successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
