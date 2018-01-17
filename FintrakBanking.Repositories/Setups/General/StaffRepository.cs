@@ -641,7 +641,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
                     join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
                     join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
-                    join t in context.TBL_APPROVAL_TRAIL on c.STAFFID equals t.TARGETID
+                    join t in context.TBL_APPROVAL_TRAIL on c.TEMPSTAFFID equals t.TARGETID
                     where 
                         (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                         && c.ISCURRENT == true
@@ -654,7 +654,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                                 .Where(x => x.STAFFID == c.RELIEF_STAFFID)
                                                 .Select(x => new { name = x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME })
                                                 .FirstOrDefault().name ?? "",
-                        StaffId = c.STAFFID,
+                        StaffId = c.TEMPSTAFFID,
                         Address = c.ADDRESS,
                         companyId = coy.COMPANYID,
                         AddressOfNok = c.ADDRESSOFNOK,
@@ -1071,7 +1071,7 @@ namespace FintrakBanking.Repositories.Setups.General
             workflow.StaffId = model.createdBy;
             workflow.CompanyId = model.companyId;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-            workflow.TargetId = temp.STAFFID;
+            workflow.TargetId = temp.TEMPSTAFFID;
             workflow.Comment = comment;
             workflow.OperationId = (int)OperationsEnum.StaffCreation;
             workflow.ExternalInitialization = true;
