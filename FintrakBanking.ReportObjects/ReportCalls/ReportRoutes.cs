@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.ViewModels.Reports;
@@ -8,7 +9,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 {
     public class ReportRoutes : IReportRoutes
     {
-        string reportPath = "http://localhost:51336/Reports/";
+        string reportPath = CommonHelpers.ReportPath;
         private IQueryable<TBL_LOAN_APPLICATION> LoanApplication(int companyId)
         {
             IQueryable<TBL_LOAN_APPLICATION> data;

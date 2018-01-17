@@ -6353,12 +6353,7 @@ namespace FintrakBanking.Repositories.Credit
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
                              customerInfoValidated = a.CUSTOMERINFOVALIDATED,
-                             notInNegativeCrms = a.NOTINNEGATIVECRMS,
-                             notInBlackbook = a.NOTINBLACKBOOK,
-                             notInCamsol = a.NOTINCAMSOL,
-                             notInXds = a.NOTINXDS,
-                             notInCrc = a.NOTINCRC,
-
+            
                          }).ToList();
 
             List<TBL_LOAN_APPLICATION_ARCHIVE> LoanApplicationArchive  = new List<TBL_LOAN_APPLICATION_ARCHIVE>();
@@ -6406,12 +6401,6 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanApplicationArchive.APPLICATIONSTATUSID = item.applicationStatusId;
                 addLoanApplicationArchive.SUBMITTEDFORAPPRAISAL = item.submittedForAppraisal;
                 addLoanApplicationArchive.CUSTOMERINFOVALIDATED = item.customerInfoValidated;
-                addLoanApplicationArchive.NOTINNEGATIVECRMS = item.notInNegativeCrms;
-                addLoanApplicationArchive.NOTINBLACKBOOK = item.notInNegativeCrms;
-                addLoanApplicationArchive.NOTINBLACKBOOK = item.notInBlackbook;
-                addLoanApplicationArchive.NOTINCAMSOL = item.notInCamsol;
-                addLoanApplicationArchive.NOTINXDS = item.notInXds;
-                addLoanApplicationArchive.NOTINCRC = item.notInCrc;
                 addLoanApplicationArchive.OPERATIONID = (int)item.operationId;
                 addLoanApplicationArchive.CUSTOMERGROUPID = item.customerGroupId;
                 addLoanApplicationArchive.LOANTYPEID = item.loanTypeId;
