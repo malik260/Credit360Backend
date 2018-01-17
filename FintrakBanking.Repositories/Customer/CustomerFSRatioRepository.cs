@@ -126,7 +126,7 @@ namespace FintrakBanking.Repositories.Customer
             //};
 
             //auditTrail.AddAuditTrail(audit);
-            ////end of Audit section -------------------------------
+            //end of Audit section -------------------------------
 
             return context.SaveChanges() != 0;
         }

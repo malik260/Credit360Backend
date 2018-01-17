@@ -13,5 +13,6 @@ namespace FintrakBanking.Common.Enum
         Authorised = 4,
         Referred = 5,
         Reroute = 6,
+        Escalated = 7,
     }
 }

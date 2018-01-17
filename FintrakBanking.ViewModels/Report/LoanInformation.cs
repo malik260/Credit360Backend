@@ -36,6 +36,16 @@ namespace FintrakBanking.ViewModels.Reports
         public decimal outstandingPrincipal { get; set; }
         public decimal outstandingInterest { get; set; }
         public decimal totalOutstanding { get { return (outstandingInterest + outstandingPrincipal); } }
+        public int? stateId { get; set; }
+        public string stateName { get; set; }
+        public short? sectorId { get; set; }
+        public string sectorName { get; set; }
+        public short? subSectorId { get; set; }
+        public string subSectorName { get; set; }
+        public int employerId { get; set; }
+        public dynamic employer { get; set; }
+        public int groupId { get; set; }
+        public string groupName { get; set; }
     }
 
     public class DisburstLoanViewModel
@@ -63,6 +73,7 @@ namespace FintrakBanking.ViewModels.Reports
         public string logoPath { get; set; }
         public string status { get; set; }
         public string bookingRef { get; set; }
+        public short branchId { get; set; }
 
     }
 
@@ -70,18 +81,27 @@ namespace FintrakBanking.ViewModels.Reports
     {
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
+        public short? branchId { get; set; }
+        public string loanRefNo { get; set; }
+        public int productClassId { get; set; }
     }
 
     public class ReportSearchEntity
     {
-        public int? branchId { get; set; }
+        public short? branchId { get; set; }
 
         public int? typeId { get; set; }
         public int? staffId { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public bool excludeSystem { get; set; }
+        public string loanReference { get; set; }
+        public string obligor { get; set; }
+        public string customerName { get; set; }
+        public int pageNo { get; set; }
+        public int pageSize { get; set; }
     }
+
     public class AllLoanViewModel
     {
         public string loanStatus { get; set; }
@@ -182,6 +202,19 @@ namespace FintrakBanking.ViewModels.Reports
         public int loanApplicationId { get; set; }
         public decimal proposedAmount { get; set; }
         public string companyName { get; set; }
+        public string name { get; set; }
+        public string  facilityProduct { get; set; }
+        public string staffId { get; set; }
+        public string currentExposure { get; set; }
+        public string defferalDocument { get; set; }
+        public DateTime initialDefferalDate { get; set; }
+        public DateTime? currentDefferalDate { get; set; }
+        public DateTime? defferalExpiryDate { get; set; }
+        public string nameOfBM { get; set; }
+        public string customerCode { get; set; }
+        public DateTime dateCreated { get; set; }
+        public int deferralDuration { get { return (this.initialDefferalDate - this.dateCreated).Days; } }
+        public int cumulativeDays { get { return (DateTime.Now - this.dateCreated).Days; } }
     }
 
     public class FCYScheuledLoanViewModel

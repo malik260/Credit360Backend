@@ -3,6 +3,9 @@
     public enum LoanPrudentialStatusEnum
     {
         Performing = 1,
-        WatchList = 2
+        WatchList = 2,
+        Substandard = 3,
+        Doubtful = 4,
+        Lost = 5
     }
 }
