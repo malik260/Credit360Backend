@@ -43,6 +43,8 @@ namespace FintrakBanking.Interfaces.Customer
 
         Task<bool> DeleteCustomer(int customerId, UserInfo user);
 
+        bool DeleteChild(int childId);
+
         bool AddCustomerIdentification(CustomerIdentificationViewModels entity);
 
         bool AddCustomerEmploymentHistory(CustomerEmploymentHistoryViewModels entity);

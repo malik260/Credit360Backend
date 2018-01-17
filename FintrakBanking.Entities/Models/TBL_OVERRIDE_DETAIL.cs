@@ -12,7 +12,9 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int OVERRIDE_DETAILID { get; set; }
 
-        public int CUSTOMERID { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string CUSTOMERCODE { get; set; }
 
         public short OVERRIDE_ITEMID { get; set; }
 
@@ -28,8 +30,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATETIMECREATED { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
-
-        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
         public virtual TBL_OVERRIDE_ITEM TBL_OVERRIDE_ITEM { get; set; }
 

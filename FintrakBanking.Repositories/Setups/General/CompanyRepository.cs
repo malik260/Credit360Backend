@@ -111,6 +111,51 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
 
+        public IEnumerable<CompanyViewModel> GetCompanies()
+        {
+            var companies = (from data in context.TBL_COMPANY
+                             select new CompanyViewModel()
+                             {
+                                 companyId = data.COMPANYID,
+                                 companyName = data.NAME,
+                                 address = data.ADDRESS,
+                                 telephone = data.TELEPHONE,
+                                 email = data.EMAIL,
+                                 dateOfIncorporation = data.DATEOFINCORPORATION ?? DateTime.Now,
+                                 natureOfBusinessId = data.NATUREOFBUSINESSID ?? 0,
+                                 natureOfBusiness = data.TBL_NATURE_OF_BUSINESS.NAME,
+                                 nameOfScheme = data.NAMEOFSCHEME,
+                                 functionsRegistered = data.FUNCTIONSREGISTERED,
+                                 authorisedShareCapital = data.AUTHORISEDSHARECAPITAL ?? 0,
+                                 nameOfRegistrar = data.NAMEOFREGISTRAR,
+                                 nameOfTrustees = data.NAMEOFTRUSTEES,
+                                 formerManagersTrustees = data.FORMERMANAGERSTRUSTEES,
+                                 dateOfRenewalOfRegistration = data.DATEOFRENEWALOFREGISTRATION ?? DateTime.Now,
+                                 dateOfCommencement = data.DATEOFCOMMENCEMENT ?? DateTime.Now,
+                                 initialFloatation = data.INITIALFLOATATION ?? 0,
+                                 initialSubscription = data.INITIALSUBSCRIPTION ?? 0,
+                                 registeredBy = data.REGISTEREDBY,
+                                 trusteesAddress = data.TRUSTEESADDRESS,
+                                 investmentObjective = data.INVESTMENTOBJECTIVE,
+                                 website = data.WEBSITE,
+                                 countryId = data.COUNTRYID,
+                                 country = context.TBL_COUNTRY.FirstOrDefault(c => c.COUNTRYID == data.COUNTRYID).NAME ?? string.Empty,
+                                 companyClassId = data.COMPANYCLASSID ?? 1,
+                                 companyTypeId = data.COMPANYTYPEID ?? 1,
+                                 accountingStandardId = data.ACCOUNTINGSTANDARDID ?? 1,
+                                 managementTypeId = data.MANAGEMENTTYPEID ?? 1,
+                                 createdBy = data.CREATEDBY ?? 0,
+                                 lastUpdatedBy = data.LASTUPDATEDBY ?? 0,
+                                 CompanyLogo = data.COMPANYLOGO,
+                                 shareHoldersFund = data.SHAREHOLDERSFUND,
+                                 dateTimeCreated = data.DATETIMECREATED ?? DateTime.Now,
+                                 dateTimeUpdated = data.DATETIMEUPDATED ?? DateTime.Now
+                             });
+
+            return companies;
+        }
+
+
         public IEnumerable<CompanyViewModel> GetAllCompany()
         {
             return GetAllCompanies().ToList();
@@ -129,7 +174,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 if (data != null)
                 {
-                    data.COMPANYID = model.companyId;
+                    data.COMPANYID = companyId;
                     data.NAME = model.companyName;
                     data.ADDRESS = model.address;
                     data.TELEPHONE = model.telephone;
@@ -158,8 +203,36 @@ namespace FintrakBanking.Repositories.Setups.General
                     data.CREATEDBY = model.createdBy;
                     data.LASTUPDATEDBY = model.lastUpdatedBy;
                     data.COMPANYLOGO = model.CompanyLogo;
+                    data.SHAREHOLDERSFUND = model.shareHoldersFund;
                     data.DATETIMECREATED = model.dateTimeCreated;
                     data.DATETIMEUPDATED = model.dateTimeUpdated;
+
+                    return context.SaveChanges() > 0;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+
+        public bool UpdateCompanies(int companyId, CompanyViewModel model)
+        {
+            var data = context.TBL_COMPANY.Find(companyId);
+
+            try
+            {
+                if (data != null)
+                {
+                    data.COMPANYID = companyId;
+                    data.NAME = model.companyName;                  
+                    data.SHAREHOLDERSFUND = model.shareHoldersFund;
 
                     return context.SaveChanges() > 0;
                 }

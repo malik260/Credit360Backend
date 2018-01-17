@@ -102,6 +102,7 @@
     <Compile Include="Models\TBL_CHART_OF_ACCOUNT.cs" />
     <Compile Include="Models\TBL_CHART_OF_ACCOUNT_CLASS.cs" />
     <Compile Include="Models\TBL_CHART_OF_ACCOUNT_CURRENCY.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_DEFERRAL.cs" />
     <Compile Include="Models\TBL_CHECKLIST_DEFINITION.cs" />
     <Compile Include="Models\TBL_CHECKLIST_DETAIL.cs" />
     <Compile Include="Models\TBL_CHECKLIST_ITEM.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMORANDM.cs" />
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_DETL.cs" />
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_DOCU.cs" />
+    <Compile Include="Models\TBL_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_CREDIT_TEMPLATE.cs" />
     <Compile Include="Models\TBL_CURRENCY.cs" />
     <Compile Include="Models\TBL_CURRENCY_RATE.cs" />
@@ -240,12 +242,14 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_STA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_TRA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLTN_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_BOOKING_REQUEST.cs" />
     <Compile Include="Models\TBL_LOAN_BULK_INTEREST_REVIEW.cs" />
     <Compile Include="Models\TBL_LOAN_CAMSOL.cs" />
     <Compile Include="Models\TBL_LOAN_COLLATERAL_MAPPING.cs" />
     <Compile Include="Models\TBL_LOAN_COMMENT.cs" />
+    <Compile Include="Models\TBL_LOAN_CONDITION_DEFERRAL.cs" />
     <Compile Include="Models\TBL_LOAN_CONDITION_PRECEDENT.cs" />
     <Compile Include="Models\TBL_LOAN_CONTINGENT.cs" />
     <Compile Include="Models\TBL_LOAN_COVENANT_DETAIL.cs" />
@@ -361,6 +365,7 @@
     <Compile Include="Models\TBL_TEMP_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT.cs" />
+    <Compile Include="Models\TBL_TEMP_PRODUCT_BEHAVIOUR.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_COLLATERALTYP.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_CURRENCY.cs" />

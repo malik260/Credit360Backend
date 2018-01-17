@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
 using System;
@@ -10,9 +11,9 @@ using System.Linq;
 namespace FintrakBanking.ReportObjects
 {
 
-    public  class LoanReportObjects 
+    public class LoanReportObjects
     {
-        private IQueryable<LoanInformation> Loans(int companyId , DateTime startDate, DateTime endDate)
+        private IQueryable<LoanInformation> Loans(int companyId, DateTime startDate, DateTime endDate)
         {
             IQueryable<LoanInformation> loan;
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -20,11 +21,12 @@ namespace FintrakBanking.ReportObjects
 
                 loan = (from a in context.TBL_LOAN
                         join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
-                        where a.COMPANYID == companyId && a.ISDISBURSED == true &&( a.DISBURSEDATE >= startDate && a.DISBURSEDATE <= endDate)
+                        where a.COMPANYID == companyId && a.ISDISBURSED == true && (a.DISBURSEDATE >= startDate && a.DISBURSEDATE <= endDate)
                         select new LoanInformation()
-                        { customerId = a.CUSTOMERID,
-                        
-                            tearmLoanId = a.TERMLOANID ,
+                        {
+                            customerId = a.CUSTOMERID,
+
+                            tearmLoanId = a.TERMLOANID,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
                             branchCode = a.TBL_BRANCH.BRANCHCODE,
                             customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
@@ -34,21 +36,21 @@ namespace FintrakBanking.ReportObjects
                             loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
                             productName = a.TBL_PRODUCT.PRODUCTNAME,
                             loanRefrenceNumber = a.LOANREFERENCENUMBER,
-                            frequancy = context.TBL_LOAN_SCHEDULE_PERIODIC .Where(c=> c.LOANID == a.TERMLOANID ).Count()-1,
+                            frequancy = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == a.TERMLOANID).Count() - 1,
                             frequencyType = a.TBL_FREQUENCY_TYPE.MODE,
                             companyName = a.TBL_COMPANY.NAME,
                             companylogo = a.TBL_COMPANY.LOGOPATH,
                             effectiveDate = a.EFFECTIVEDATE,
                             interestRate = a.INTERESTRATE,
                             maturityDate = a.MATURITYDATE,
-                            principalAmount = a.PRINCIPALAMOUNT,          
+                            principalAmount = a.PRINCIPALAMOUNT,
                             closePrincipalAmount = b.ENDPRINCIPALAMOUNT,
-                            startingBalance = b.STARTPRINCIPALAMOUNT ,
+                            startingBalance = b.STARTPRINCIPALAMOUNT,
                             paymentDate = b.PAYMENTDATE,
                             periodInterestAmount = b.PERIODINTERESTAMOUNT,
                             principalRepaymentAmount = b.PERIODPAYMENTAMOUNT,
-                            outstandingPrincipal =a.OUTSTANDINGPRINCIPAL,
-                            outstandingInterest   = a.OUTSTANDINGINTEREST
+                            outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                            outstandingInterest = a.OUTSTANDINGINTEREST
                         });
                 return loan;
             }
@@ -62,10 +64,10 @@ namespace FintrakBanking.ReportObjects
                 var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
                 loan = (from a in context.TBL_LOAN
                         join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
-                        where a.COMPANYID == companyId  && a.TERMLOANID == tearmLoanId
+                        where a.COMPANYID == companyId && a.TERMLOANID == tearmLoanId
                         select new LoanInformation()
                         {
-                             accountNumber = context.TBL_CASA .FirstOrDefault(c=> c.CASAACCOUNTID == a.CASAACCOUNTID ).PRODUCTACCOUNTNUMBER ,
+                            accountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == a.CASAACCOUNTID).PRODUCTACCOUNTNUMBER,
                             customerId = a.CUSTOMERID,
                             tearmLoanId = a.TERMLOANID,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
@@ -95,7 +97,7 @@ namespace FintrakBanking.ReportObjects
                         });
                 return loan.ToList();
             }
-             
+
         }
 
         public static IList<LoanStatementViewModel> LoanStatement(int companyId, int loanId)
@@ -134,25 +136,30 @@ namespace FintrakBanking.ReportObjects
 
         }
 
-        public  IEnumerable<DisburstLoanViewModel> GetDisburstLoans(DateTime startDate, DateTime endDate, int companyId)
+        public IEnumerable<DisburstLoanViewModel> GetDisburstLoans(DateTime startDate, DateTime endDate,  int companyId,string loanRefNo, short? branchId, int? productClassId)
         {
+         
+
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var data = from a in context.TBL_LOAN
+               var  data = from a in context.TBL_LOAN
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                           where a.ISDISBURSED
-                            && DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(a.DISBURSEDATE)
+                           where (a.ISDISBURSED
+                            // && a.DISBURSEDATE >= startDate && a.DISBURSEDATE <= endDate
+                            && DbFunctions.TruncateTime(a.DISBURSEDATE) >= DbFunctions.TruncateTime(startDate)
                            && DbFunctions.TruncateTime(a.DISBURSEDATE) <= DbFunctions.TruncateTime(endDate)
-                         && a.COMPANYID == companyId
+                         && a.COMPANYID == companyId ) && (a.LOANREFERENCENUMBER==loanRefNo || a.TBL_CUSTOMER.FIRSTNAME.StartsWith(loanRefNo) || a.TBL_CUSTOMER.LASTNAME.StartsWith(loanRefNo) || a.TBL_CUSTOMER.MIDDLENAME.StartsWith(loanRefNo)  || loanRefNo==null)
+                         && (a.BRANCHID == branchId || branchId==null)
+                         && (a.TBL_PRODUCT.PRODUCTCLASSID==productClassId || productClassId==null  || productClassId == 0)
 
                            select new DisburstLoanViewModel
                            {
-                               bookingRef = a.LOANREFERENCENUMBER ,
+                               bookingRef = a.LOANREFERENCENUMBER,
                                outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
                                approvedInterestRate = a.INTERESTRATE,
                                outstandingInterest = a.OUTSTANDINGINTEREST,
                                amountDisbursed = a.PRINCIPALAMOUNT,
-                               accountNumber= a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                               accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
                                applicationReferenceNumber = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                productName = a.TBL_PRODUCT.PRODUCTNAME,
                                approvedAmount = b.APPROVEDAMOUNT,
@@ -167,11 +174,13 @@ namespace FintrakBanking.ReportObjects
                                facilityCurrency = a.TBL_CURRENCY.CURRENCYCODE,
                                maturitydate = a.MATURITYDATE,
                                productId = a.PRODUCTID,
-                               status = a.TBL_LOAN_STATUS.ACCOUNTSTATUS
+                               status = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                               branchId = a.BRANCHID
+
                            };
+                            return data.ToList();
 
-
-                return data.ToList();
+                
             }
         }
 
@@ -182,7 +191,7 @@ namespace FintrakBanking.ReportObjects
                 var data = (from a in context.TBL_LOAN
                             where a.TBL_PRODUCT.PRODUCTCLASSID == ProductClassId && a.ISDISBURSED
                             && DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(a.DISBURSEDATE)
-                            && DbFunctions.TruncateTime(a. DISBURSEDATE) <= DbFunctions.TruncateTime(endDdate)
+                            && DbFunctions.TruncateTime(a.DISBURSEDATE) <= DbFunctions.TruncateTime(endDdate)
                             && a.COMPANYID == companyId
                             select new AllLoanViewModel()
                             {
@@ -206,7 +215,7 @@ namespace FintrakBanking.ReportObjects
                 return data;
             }
         }
-        
+
         public static List<AllLoanViewModel> EarnedAndReceivableLoans(int ProductClassId, DateTime startDate, DateTime endDdate, int companyId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -239,64 +248,65 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
-        public  IList<LoanAnniverseryViewModel> LoanAnniversery(DateTime startDate, DateTime endDate, int companyId)
+        public IList<LoanAnniverseryViewModel> LoanAnniversery(DateTime startDate, DateTime endDate, int companyId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var data = from a in context.TBL_LOAN
-                                join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
-                                join c in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals c.CUSTOMERID
-                                where a.COMPANYID == companyId && a.LOANSTATUSID == 1
-                                && DbFunctions.TruncateTime(b.PAYMENTDATE) >= DbFunctions.TruncateTime(startDate)
-                                 && DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
-                                //&& DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(b.PAYMENTDATE)
-                                //&& DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
-                                select new LoanAnniverseryViewModel()
-                                {
-                                    customerId = a.CUSTOMERID,
-                                    maturityDate = a.MATURITYDATE,
-                                    grantedAmount = a.PRINCIPALAMOUNT,
-                                    outstandingIntrestAmt = a.OUTSTANDINGINTEREST,
-                                    outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
-                                    loanRefrenceNumber = a.LOANREFERENCENUMBER,
-                                    applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                    accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                    productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                    productId = a.PRODUCTID,
-                                    companyName = a.TBL_COMPANY.NAME,
-                                    logoPath = a.TBL_COMPANY.LOGOPATH,
-                                    firstName = a.TBL_CUSTOMER.FIRSTNAME,
-                                    lastName = a.TBL_CUSTOMER.LASTNAME,
+                           join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
+                           join c in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals c.CUSTOMERID
+                           where a.COMPANYID == companyId && a.LOANSTATUSID == 1
+                           && DbFunctions.TruncateTime(b.PAYMENTDATE) >= DbFunctions.TruncateTime(startDate)
+                            && DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
+                           //&& DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(b.PAYMENTDATE)
+                           //&& DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
+                           select new LoanAnniverseryViewModel()
+                           {
+                               customerId = a.CUSTOMERID,
+                               maturityDate = a.MATURITYDATE,
+                               grantedAmount = a.PRINCIPALAMOUNT,
+                               outstandingIntrestAmt = a.OUTSTANDINGINTEREST,
+                               outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                               loanRefrenceNumber = a.LOANREFERENCENUMBER,
+                               applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                               productName = a.TBL_PRODUCT.PRODUCTNAME,
+                               productId = a.PRODUCTID,
+                               companyName = a.TBL_COMPANY.NAME,
+                               logoPath = a.TBL_COMPANY.LOGOPATH,
+                               firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                               lastName = a.TBL_CUSTOMER.LASTNAME,
 
-                                    middleName = a.TBL_CUSTOMER.MIDDLENAME,
-                                    totalperiodicPaymentAmt = b.PERIODPAYMENTAMOUNT,
-                                    periodicInterestAmt = b.PERIODINTERESTAMOUNT,
-                                    periodicPrincipalAmt = b.PERIODPRINCIPALAMOUNT,
-                                    paymentdate = b.PAYMENTDATE,
-                                    intrestrate = b.INTERESTRATE,
-                                    emailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
-                                    phoneNumber = c.PHONENUMBER
+                               middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                               totalperiodicPaymentAmt = b.PERIODPAYMENTAMOUNT,
+                               periodicInterestAmt = b.PERIODINTERESTAMOUNT,
+                               periodicPrincipalAmt = b.PERIODPRINCIPALAMOUNT,
+                               paymentdate = b.PAYMENTDATE,
+                               intrestrate = b.INTERESTRATE,
+                               emailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+                               phoneNumber = c.PHONENUMBER
 
-                                };               
+                           };
 
                 return data.ToList();
             }
 
         }
 
-        public IList<LoanDocumentWaivedViewModel> LoanDocumentWaived(DateTime startDate, DateTime endDate, int companyId)
+        public IList<LoanDocumentWaivedViewModel> LoanDocumentWaived(DateTime startDate, DateTime endDate, int companyId, short? branchId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var data = from a in context.TBL_CHECKLIST_DETAIL
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.TARGETID equals b.LOANAPPLICATIONDETAILID
 
-                           where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Waived
-                             && b.TBL_CUSTOMER.COMPANYID == companyId
+                           where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred
+                            && b.TBL_CUSTOMER.COMPANYID == companyId
                              && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                             && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
-                            && b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted 
+                            && b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
                             && b.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+                            && (b.TBL_CUSTOMER.BRANCHID == branchId || branchId == null)
 
 
                            select new LoanDocumentWaivedViewModel()
@@ -316,6 +326,77 @@ namespace FintrakBanking.ReportObjects
                                loanApplicationId = b.LOANAPPLICATIONDETAILID,
                                proposedAmount = b.PROPOSEDAMOUNT
 
+                           };
+                return data.ToList();
+            }
+        }
+
+        public IList<LoanDocumentWaivedViewModel> LoanDeferrals(DateTime startDate, DateTime endDate, int companyId, short? branchId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = from a in context.TBL_LOAN_CONDITION_DEFERRAL
+                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.CONDITIONID equals b.CONDITIONID
+                           join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                           join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
+                           join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+
+                           where
+                           // c.COMPANYID == companyId
+                              DbFunctions.TruncateTime(a.DEFERREDDATE) >= DbFunctions.TruncateTime(startDate)
+                            && DbFunctions.TruncateTime(a.DEFERREDDATE) <= DbFunctions.TruncateTime(endDate)
+                           && d.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
+                            && d.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+                            && (c.BRANCHID == branchId || branchId == null)
+
+
+                           select new LoanDocumentWaivedViewModel()
+                           {
+                               name = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               facilityProduct = e.TBL_PRODUCT.PRODUCTNAME,
+                               customerCode = c.CUSTOMERCODE,
+                               initialDefferalDate = a.DEFERREDDATE,
+                               applicationRefrenceNumber = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               defferalDocument = b.CONDITION,
+                               facilityAmount = d.APPROVEDAMOUNT,
+                               facilityExpirationDate = e.TBL_LOAN.Select(c => c.MATURITYDATE).FirstOrDefault(),
+                               facilityGrantedDate = e.TBL_LOAN.Select(m => m.EFFECTIVEDATE).FirstOrDefault(),
+                               companyName = c.TBL_COMPANY.NAME,
+                               branchName = c.TBL_BRANCH.BRANCHNAME,
+                               facilityType = e.TBL_PRODUCT.PRODUCTNAME,
+                               loanApplicationId = b.LOANAPPLICATIONDETAILID,
+                               proposedAmount = d.APPROVEDAMOUNT,
+                               dateCreated = a.DATETIMECREATED,
+                               defferalExpiryDate = a.DEFERREDDATE
+
+                           };
+                return data.ToList();
+            }
+        }
+
+        public IList<LoanDocumentWaivedViewModel> LoanDeferralMCC(int companyId, short? branchId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = from a in context.TBL_LOAN_CONDITION_DEFERRAL
+                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.CONDITIONID equals b.CONDITIONID
+                           join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                           join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
+                           join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+
+                           where
+                            d.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
+                            && d.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+                            && (c.BRANCHID == branchId || branchId == null)
+
+                           select new LoanDocumentWaivedViewModel()
+                           {
+                               name = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               defferalDocument = b.CONDITION,
+                               facilityAmount = d.APPROVEDAMOUNT,
+                               facilityType = e.TBL_PRODUCT.PRODUCTNAME,
+                               dateCreated = a.DATETIMECREATED,
+                               defferalExpiryDate = a.DEFERREDDATE
                            };
                 return data.ToList();
             }
@@ -384,14 +465,14 @@ namespace FintrakBanking.ReportObjects
                                    companyName = a.TBL_COMPANY.NAME,
                                    applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                    loanFigure = a.PRINCIPALAMOUNT,
-                                   
-                //tenorToDate = DbFunctions.DiffDays(DateTime.Now,(a.EFFECTIVEDATE.Day))
 
-                // tenorToDate = DbFunctions.DiffDays(DateTime.Now, a.EFFECTIVEDATE.Day)
+                                   //tenorToDate = DbFunctions.DiffDays(DateTime.Now,(a.EFFECTIVEDATE.Day))
+
+                                   // tenorToDate = DbFunctions.DiffDays(DateTime.Now, a.EFFECTIVEDATE.Day)
 
 
 
-            };
+                               };
                 return currdata.ToList();
             }
         }
@@ -408,10 +489,147 @@ namespace FintrakBanking.ReportObjects
 
                             }).ToList();
             }
-               
+
             return null;
         }
+
+        private IQueryable<LoanInformation> GeneralLoansReport(int companyId)
+        {
+            IQueryable<LoanInformation> loan;
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                loan = (from a in context.TBL_LOAN
+                        where a.COMPANYID == companyId && a.ISDISBURSED == true
+                        select new LoanInformation()
+                        {
+                            customerId = a.CUSTOMERID,
+                            tearmLoanId = a.TERMLOANID,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            branchCode = a.TBL_BRANCH.BRANCHCODE,
+                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                            firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                            lastName = a.TBL_CUSTOMER.LASTNAME,
+                            middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                            loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                            productName = a.TBL_PRODUCT.PRODUCTNAME,
+                            loanRefrenceNumber = a.LOANREFERENCENUMBER,
+                            frequancy = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == a.TERMLOANID).Count() - 1,
+                            frequencyType = a.TBL_FREQUENCY_TYPE.MODE,
+                            companyName = a.TBL_COMPANY.NAME,
+                            companylogo = a.TBL_COMPANY.LOGOPATH,
+                            effectiveDate = a.EFFECTIVEDATE,
+                            interestRate = a.INTERESTRATE,
+                            maturityDate = a.MATURITYDATE,
+                            principalAmount = a.PRINCIPALAMOUNT,
+                            outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                            outstandingInterest = a.OUTSTANDINGINTEREST,
+                            stateName = a.TBL_BRANCH.TBL_STATE.STATENAME,
+                            stateId = a.TBL_BRANCH.STATEID,
+                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                            sectorId = a.TBL_SUB_SECTOR.SECTORID,
+                            subSectorName = a.TBL_SUB_SECTOR.NAME,
+                            subSectorId = a.SUBSECTORID,
+                            employer = a.TBL_CUSTOMER.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(x => x.CUSTOMERID == a.CUSTOMERID & x.ACTIVE == true).Select(x => new { x.EMPLOYERNAME, x.EMPLOYERADDRESS, x.OFFICEPHONE }).FirstOrDefault(),
+                            groupId = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERID == x.CUSTOMERID).Select(x => x.CUSTOMERGROUPID).FirstOrDefault(),
+                            groupName = a.TBL_CUSTOMER.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERID == x.CUSTOMERID).Select(x => x.TBL_CUSTOMER_GROUP.GROUPNAME).FirstOrDefault()
+                        });
+                return loan;
+            }
+        }
+
+        public IList<LoanViewModel> GetLoanWithLein(short branchId, string customerName)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = (from a in context.TBL_LOAN
+                            join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                            join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                            join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                            where (s.HASLIEN == true || (s.POSTNOSTATUSID == (short)CASAPostNoStatusEnum.PostNoDebit || s.POSTNOSTATUSID == (short)CASAPostNoStatusEnum.PostNoDebitandCredit)
+                            && (a.LOANREFERENCENUMBER.StartsWith(customerName.Trim()) || cs.FIRSTNAME.StartsWith(customerName.Trim()) || cs.MIDDLENAME.StartsWith(customerName.Trim()) || cs.LASTNAME.StartsWith(customerName.Trim()) || customerName== "undefined")
+                            && (a.BRANCHID==branchId || branchId==0)
+                            )
+
+
+                            select new LoanViewModel
+                            {
+                                applicationReferenceNumber = a.LOANREFERENCENUMBER,
+                                loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                bookingDate = a.BOOKINGDATE,
+                                disburseDate = a.DISBURSEDATE,
+                                maturityDate = a.MATURITYDATE,
+                                principalAmount = a.PRINCIPALAMOUNT,
+                                interestRate = a.INTERESTRATE,
+                                outstandingInterest = a.OUTSTANDINGINTEREST,
+                                outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                                loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                                relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                                relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+                                branchId = a.BRANCHID,
+                                branchName = br.BRANCHNAME,
+                                customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME
+                            }).ToList();
+                return data;
+
+                //if (branchId == 0 && customerName == "undefined")
+                //{
+                //    return data;
+
+                //}
+                //else if (branchId == 0 && customerName != "undefined")
+                //{
+                //    return data.Where(x => x.loanReferenceNumber.StartsWith(customerName) || x.customerName.Contains(customerName) && x.branchId == 0).ToList();
+                //}
+                //else
+                //{
+                //    return data.Where(x => x.loanReferenceNumber.StartsWith(customerName) || x.customerName.Contains(customerName) && x.branchId == branchId).ToList();
+                //}
+            }
+
+        }
+
+        public IList<LoanViewModel> GetStakeHolderOnExperationOfFTP(short? branchId, string customerName,DateTime maturityDate)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = (
+                            from s in context.TBL_CASA 
+                            join rv in context.TBL_LOAN_REVOLVING on s.CASAACCOUNTID equals rv.CASAACCOUNTID
+                            join br in context.TBL_BRANCH on s.BRANCHID equals br.BRANCHID
+                            join cs in context.TBL_CUSTOMER on s.CUSTOMERID equals cs.CUSTOMERID
+                            where (s.AVAILABLEBALANCE < 0 && rv.MATURITYDATE > maturityDate)
+                            && (br.BRANCHID==branchId || branchId==null)
+                            && (cs.FIRSTNAME.StartsWith(customerName.Trim()) || cs.MIDDLENAME.StartsWith(customerName.Trim()) || cs.LASTNAME.StartsWith(customerName.Trim()) || customerName == null || rv.LOANREFERENCENUMBER.StartsWith(customerName.Trim()))
+
+                            select new LoanViewModel
+                            {
+                                applicationReferenceNumber = rv.LOANREFERENCENUMBER,
+                                loanReferenceNumber = rv.LOANREFERENCENUMBER,
+                                bookingDate = rv.BOOKINGDATE,
+                                disburseDate = rv.DISBURSEDATE,
+                                maturityDate = rv.MATURITYDATE,
+                                interestRate = rv.INTERESTRATE,
+                                loanTypeName = rv.TBL_LOAN_TYPE.LOANTYPENAME,
+                                branchId = s.BRANCHID,
+                                branchName = br.BRANCHNAME,
+                                customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+                                productName = rv.TBL_PRODUCT.PRODUCTNAME,
+                                currency = rv.TBL_CURRENCY.CURRENCYNAME,
+                                customerAvailableAmount = s.AVAILABLEBALANCE,
+                               // teno = (a.MATURITYDATE - a.EFFECTIVEDATE).Days,
+                                effectiveDate = rv.EFFECTIVEDATE,
+                                overDraft = rv.OVERDRAFTLIMIT
+
+                            }).ToList();
+
+                return data;
+            }
+
+        }
     }
-
-
 }
+

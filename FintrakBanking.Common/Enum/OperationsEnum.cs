@@ -18,7 +18,7 @@ namespace FintrakBanking.Common.Enum
         TermLoanBooking = 1,
         LoanApplication = 2,
         CAM = 6,
-        LoanPreliminaryEvaluation = 9,        
+        LoanPreliminaryEvaluation = 9,
         CollateralSearch = 12,
         RevolvingLoanBooking = 13,
         ContigentLoanBooking = 14,
@@ -33,7 +33,7 @@ namespace FintrakBanking.Common.Enum
         PrincipalFrequencyChange = 22,
         InterestFrequencyChange = 23,
         InterestandPrincipalFrequencyChange = 24,
-        PaymentDateChange= 25,
+        PaymentDateChange = 25,
         TenorChange = 26,
         CASAAccountChange = 27,
         OverdraftTopup = 28,
@@ -49,7 +49,7 @@ namespace FintrakBanking.Common.Enum
         LoanAvailment = 38,
         LoanBookingRequest = 39,
         LoanBookingFeeOveride = 40,
-        BondsAndGuarantees = OfferLetterApproval
-
+        BondsAndGuarantees = OfferLetterApproval,
+        ChecklistApproval = 42
     }
 }

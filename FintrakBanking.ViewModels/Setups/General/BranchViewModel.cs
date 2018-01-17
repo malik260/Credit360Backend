@@ -18,6 +18,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string comment { get; set; }
         public decimal branchLimit { get; set; }
         public bool allowOverride { get; set; }
+
     }
 
     public class AddBranchViewModel : GeneralEntity

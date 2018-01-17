@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.ViewModels.Reports;
@@ -8,7 +9,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 {
     public class ReportRoutes : IReportRoutes
     {
-        string reportPath = "http://localhost:51336/Reports/";
+        string reportPath = CommonHelpers.ReportPath;
         private IQueryable<TBL_LOAN_APPLICATION> LoanApplication(int companyId)
         {
             IQueryable<TBL_LOAN_APPLICATION> data;
@@ -55,7 +56,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         public string GetDisburstLoans(DateRange dateRange, int companyId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/DisbursedLoans.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
+            path = reportPath + "ReportViews/DisbursedLoans.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&loanRefNo="+ dateRange.loanRefNo + "&branchId="+ dateRange.branchId + "&productClassId="+ dateRange.productClassId;
             return path;
         }
 
@@ -72,11 +73,16 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/LoanAnniversery.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
             return path;
         }
-
         public string GetLoanDocumentWaived(int companyId, DateRange dateRange)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/LoanDocumentWaived.aspx?companyId=" + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
+            path = reportPath + "ReportViews/LoanDocumentWaived.aspx?companyId=" + companyId+ "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&branchId="+ dateRange.branchId;
+            return path;
+        }
+        public string GetLoanDocumentDeferrals(int companyId, DateRange dateRange)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanDocumentDeferral.aspx?companyId=" + companyId + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&branchId=" + dateRange.branchId;
             return path;
         }
         public string GetCollateralEstimated(int companyId, string collateralCode)
@@ -214,7 +220,19 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        
+        public string GetAccountWithLein(short? branchId, string customerName, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanCASAaccountWithLein.aspx?companyId=" + companyId.ToString() + "&branchId=" + branchId + "&customerName=" + customerName;
+            return path;
+        }
+
+        public string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/GetStakeholdersOnExpirationOfFTP.aspx?companyId=" + companyId.ToString() + "&branchId=" + searchEntity.branchId + "&customerName=" + searchEntity.customerName + "&startDate="+ searchEntity.startDate;
+            return path;
+        }
     }
 
 }

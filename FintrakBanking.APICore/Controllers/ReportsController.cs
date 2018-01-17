@@ -135,7 +135,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [Route("loan-disburstloans")]            
+        [Route("loan-disbursedloans")]            
         public HttpResponseMessage GetDisburstLoans(DateRange dateRange) 
         {
             var token = new TokenDecryptionHelper();
@@ -470,7 +470,28 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        [Route("loan/document-deferrals")]
+        public HttpResponseMessage GetLoanDocumentDeferrals(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
 
+                var data = repo.GetLoanDocumentDeferrals(token.GetCompanyId, dateRange);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         //[HttpPost]
         //[Route("loan/collateral-estimated")]
         //public HttpResponseMessage GetCollateralEstimated(string acctNumber, string collateralCode)
@@ -537,7 +558,48 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-     
+        [HttpGet]
+        [Route("lein-loan-casa-account/{branchId}/{customerName}")]
+        public HttpResponseMessage GetLoanAccountWithLein(short? branchId, string customerName)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetAccountWithLein(branchId, customerName,token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("stakeholders-on-experation-ftp")]
+        public HttpResponseMessage GetStakeHolderOnExperationOfFfp(ReportSearchEntity reportSearchEntity)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetStakeholdersOnExpirationOfFTP(reportSearchEntity, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
 

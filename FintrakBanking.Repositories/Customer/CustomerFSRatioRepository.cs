@@ -110,9 +110,9 @@ namespace FintrakBanking.Repositories.Customer
             //    DATETIMECREATED = _genSetup.GetApplicationDate()
             //};
 
-            //context.TBL_CUSTOMER_FS_RATIO_CAPTION.Add(data);
+            ////context.TBL_CUSTOMER_FS_RATIO_CAPTION.Add(data);
 
-            // Audit Section ---------------------------
+            //// Audit Section ---------------------------
             //var audit = new TBL_AUDIT
             //{
             //    AUDITTYPEID = (short)AuditTypeEnum.CustomerFSRatioCaptionAdded,

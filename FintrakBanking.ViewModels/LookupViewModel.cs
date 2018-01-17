@@ -7,5 +7,6 @@ namespace FintrakBanking.ViewModels
         public string lookupName { get; set; }
         public short lookupTypeId { get; set; }
         public string lookupTypeName { get; set; }
+
     }
 }
