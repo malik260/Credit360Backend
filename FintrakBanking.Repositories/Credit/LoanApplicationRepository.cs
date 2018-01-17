@@ -1561,7 +1561,7 @@ namespace FintrakBanking.Repositories.Credit
                 decimal loanAmount = loan.APPLICATIONAMOUNT;
                 newAmount = loanAmount - propusedAmount;
 
-                decimal totalAmount = (GetCustomerTotalOutstandingBalance(loanDetails.CUSTOMERID) - propusedAmount) + entity.proposedAmount;
+                decimal totalAmount = 0; // (GetCustomerTotalOutstandingBalance(loanDetails.CUSTOMERID) - propusedAmount) + entity.proposedAmount;
                 loan.APPLICATIONAMOUNT = newAmount + entity.proposedAmount;
                 loan.TOTALEXPOSUREAMOUNT = newAmount + entity.proposedAmount;
 

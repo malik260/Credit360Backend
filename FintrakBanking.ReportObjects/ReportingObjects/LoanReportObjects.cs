@@ -300,13 +300,13 @@ namespace FintrakBanking.ReportObjects
                 var data = from a in context.TBL_CHECKLIST_DETAIL
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.TARGETID equals b.LOANAPPLICATIONDETAILID
 
-                           where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Waived
-                             && b.TBL_CUSTOMER.COMPANYID == companyId
+                           where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred
+                            && b.TBL_CUSTOMER.COMPANYID == companyId
                              && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                             && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                             && b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
                             && b.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
-                           && (b.TBL_CUSTOMER.BRANCHID ==branchId || b.TBL_CUSTOMER.BRANCHID == null)
+                            && (b.TBL_CUSTOMER.BRANCHID == branchId || branchId == null)
 
 
                            select new LoanDocumentWaivedViewModel()
@@ -326,6 +326,77 @@ namespace FintrakBanking.ReportObjects
                                loanApplicationId = b.LOANAPPLICATIONDETAILID,
                                proposedAmount = b.PROPOSEDAMOUNT
 
+                           };
+                return data.ToList();
+            }
+        }
+
+        public IList<LoanDocumentWaivedViewModel> LoanDeferrals(DateTime startDate, DateTime endDate, int companyId, short? branchId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = from a in context.TBL_LOAN_CONDITION_DEFERRAL
+                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.CONDITIONID equals b.CONDITIONID
+                           join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                           join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
+                           join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+
+                           where
+                           // c.COMPANYID == companyId
+                              DbFunctions.TruncateTime(a.DEFERREDDATE) >= DbFunctions.TruncateTime(startDate)
+                            && DbFunctions.TruncateTime(a.DEFERREDDATE) <= DbFunctions.TruncateTime(endDate)
+                           && d.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
+                            && d.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+                            && (c.BRANCHID == branchId || branchId == null)
+
+
+                           select new LoanDocumentWaivedViewModel()
+                           {
+                               name = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               facilityProduct = e.TBL_PRODUCT.PRODUCTNAME,
+                               customerCode = c.CUSTOMERCODE,
+                               initialDefferalDate = a.DEFERREDDATE,
+                               applicationRefrenceNumber = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               defferalDocument = b.CONDITION,
+                               facilityAmount = d.APPROVEDAMOUNT,
+                               facilityExpirationDate = e.TBL_LOAN.Select(c => c.MATURITYDATE).FirstOrDefault(),
+                               facilityGrantedDate = e.TBL_LOAN.Select(m => m.EFFECTIVEDATE).FirstOrDefault(),
+                               companyName = c.TBL_COMPANY.NAME,
+                               branchName = c.TBL_BRANCH.BRANCHNAME,
+                               facilityType = e.TBL_PRODUCT.PRODUCTNAME,
+                               loanApplicationId = b.LOANAPPLICATIONDETAILID,
+                               proposedAmount = d.APPROVEDAMOUNT,
+                               dateCreated = a.DATETIMECREATED,
+                               defferalExpiryDate = a.DEFERREDDATE
+
+                           };
+                return data.ToList();
+            }
+        }
+
+        public IList<LoanDocumentWaivedViewModel> LoanDeferralMCC(int companyId, short? branchId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = from a in context.TBL_LOAN_CONDITION_DEFERRAL
+                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.CONDITIONID equals b.CONDITIONID
+                           join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                           join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
+                           join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+
+                           where
+                            d.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
+                            && d.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+                            && (c.BRANCHID == branchId || branchId == null)
+
+                           select new LoanDocumentWaivedViewModel()
+                           {
+                               name = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               defferalDocument = b.CONDITION,
+                               facilityAmount = d.APPROVEDAMOUNT,
+                               facilityType = e.TBL_PRODUCT.PRODUCTNAME,
+                               dateCreated = a.DATETIMECREATED,
+                               defferalExpiryDate = a.DEFERREDDATE
                            };
                 return data.ToList();
             }

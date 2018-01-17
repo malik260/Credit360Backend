@@ -66,7 +66,6 @@
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_SIGNATURE.cs" />
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\SYSDIAGRAM.cs" />
     <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
@@ -170,7 +169,6 @@
     <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION_DETAIL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION_GROUP.cs" />
-    <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_CAPTION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DETAIL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DIVI_TYP.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_VALUETYP.cs" />
@@ -305,7 +303,6 @@
     <Compile Include="Models\TBL_PRODUCT_BEHAVIOUR.cs" />
     <Compile Include="Models\TBL_PRODUCT_CATEGORY.cs" />
     <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE.cs" />
-    <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE_CUSTMER.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS_PROCESS.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS_TYPE.cs" />

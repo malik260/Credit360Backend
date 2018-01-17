@@ -202,6 +202,19 @@ namespace FintrakBanking.ViewModels.Reports
         public int loanApplicationId { get; set; }
         public decimal proposedAmount { get; set; }
         public string companyName { get; set; }
+        public string name { get; set; }
+        public string  facilityProduct { get; set; }
+        public string staffId { get; set; }
+        public string currentExposure { get; set; }
+        public string defferalDocument { get; set; }
+        public DateTime initialDefferalDate { get; set; }
+        public DateTime? currentDefferalDate { get; set; }
+        public DateTime? defferalExpiryDate { get; set; }
+        public string nameOfBM { get; set; }
+        public string customerCode { get; set; }
+        public DateTime dateCreated { get; set; }
+        public int deferralDuration { get { return (this.initialDefferalDate - this.dateCreated).Days; } }
+        public int cumulativeDays { get { return (DateTime.Now - this.dateCreated).Days; } }
     }
 
     public class FCYScheuledLoanViewModel
