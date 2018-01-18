@@ -91,6 +91,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int roleId { get; set; }
         public int approvalLevelId { get; set; }
         public int groupRoleId { get; set; }
+        public bool canEscalate { get; set; }
     }
 
     public class DocumentationViewModel : GeneralEntity
@@ -183,6 +184,15 @@ namespace FintrakBanking.ViewModels.Credit
         public int productClassId { get; set; }
         public string productClassName { get; set; }
         public int pendingNumber { get; set; }
+    }
+
+    public class AuthoritySignatureViewModel : GeneralEntity
+    {
+        public int targetId { get; set; }
+        public int operationId { get; set; }
+        public int? productClassId { get; set; }
+        public int? productId { get; set; }
+        public int? levelId { get; set; }
     }
 
 }

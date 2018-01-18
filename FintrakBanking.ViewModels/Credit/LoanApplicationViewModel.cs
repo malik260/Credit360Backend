@@ -195,7 +195,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short sectorId { get; set; }
 
-        public short productClassId { get; set; }
+        public short? productClassId { get; set; }
 
         public string loanPurpose { get; set; }
 

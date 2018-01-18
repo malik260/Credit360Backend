@@ -35,7 +35,6 @@ namespace FintrakBanking.Repositories.CASA
             {
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 CREATEDBY = c.createdBy,
-                CUSTOMERCODE = c.customerCode,
                 //CUSTOMERID = c.customerId,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 ISUSED = false,
