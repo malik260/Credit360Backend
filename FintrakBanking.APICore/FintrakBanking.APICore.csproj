@@ -361,6 +361,7 @@
     <Compile Include="Controllers\MonitoringSetupController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\OfferLetterAndAvailmentController.cs" />
+    <Compile Include="Controllers\OverrideController.cs" />
     <Compile Include="Controllers\ProductCollateralTypeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductFeeController.cs" />
@@ -727,6 +728,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\EndOfDay\" />
     <Folder Include="Views\LoanOperation\" />
+    <Folder Include="Views\Override\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

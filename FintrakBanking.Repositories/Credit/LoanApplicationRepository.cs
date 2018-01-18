@@ -974,7 +974,7 @@ namespace FintrakBanking.Repositories.Credit
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedAmount = b.PROPOSEDAMOUNT,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
-                            productClassId = (short)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID
+                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID
                         });
 
             return data.ToList();

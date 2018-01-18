@@ -362,7 +362,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public DateTime? approvalDate { get; set; }
+        public decimal requestedAmount;
+
+        public DateTime? availmentlDate { get; set; }
 
         public string loanDetails { get; set; }
         public string camReference { get; set; }
