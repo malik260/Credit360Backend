@@ -35,7 +35,8 @@ namespace FintrakBanking.Repositories.CASA
             {
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 CREATEDBY = c.createdBy,
-                CUSTOMERID = c.customerId,
+                CUSTOMERCODE = c.customerCode,
+                //CUSTOMERID = c.customerId,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 ISUSED = false,
                 OVERRIDE_ITEMID = c.overrideItemId,
@@ -80,7 +81,7 @@ namespace FintrakBanking.Repositories.CASA
             {
                 approvedStatusId = c.APPROVALSTATUSID,
                 createdBy = c.CREATEDBY,
-                customerId = c.CUSTOMERID,
+                //customerId = c.CUSTOMERID,
                 dateTimeCreated = c.DATETIMECREATED,
                 isUsed = c.ISUSED,
                 overrideDetailId = c.OVERRIDE_ITEMID,
@@ -117,7 +118,7 @@ namespace FintrakBanking.Repositories.CASA
             var data = context.TBL_OVERRIDE_DETAIL.Where(c => c.OVERRIDE_DETAILID == entity.overrideDetailId).FirstOrDefault();
             data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
             data.CREATEDBY = entity.createdBy;
-            data.CUSTOMERID = entity.customerId;
+            //data.CUSTOMERID = entity.customerId;
             data.DATETIMECREATED = genSetup.GetApplicationDate();
             data.ISUSED = entity.isUsed;
             data.OVERRIDE_ITEMID = entity.overrideItemId;
