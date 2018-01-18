@@ -843,7 +843,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool AddJobDocument(RequestDocumentViewModel model, byte[] file)
         {
-            var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENTS
+            var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENT
             {
                 FILEDATA = file,
                 //LoanApplicationNumber = model.targetId,
@@ -860,7 +860,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 CREATEDBY = (int)model.createdBy,
             };
 
-            docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Add(data);
+            docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Add(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -884,7 +884,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool UpdateJobDocument(RequestDocumentViewModel model, int documentId)
         {
-            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Find(documentId);
+            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Find(documentId);
             if (data == null)
             {
                 return false;
@@ -923,7 +923,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<RequestDocumentViewModel> GetAllJobDocument()
         {
-            return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Select(x => new RequestDocumentViewModel
+            return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Select(x => new RequestDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
                 //loanApplicationNumber = x.LoanApplicationNumber,
@@ -942,7 +942,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public RequestDocumentViewModel GetJobDocument(int documentId)
         {
-            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Find(documentId);
+            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Find(documentId);
 
             if (data == null)
             {
