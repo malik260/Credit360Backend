@@ -118,7 +118,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         };
                         TBL_CASA casaAccount = context.TBL_CASA.Find(loanApplication.CASAACCOUNTID);
                         collateralLocationState = context.TBL_STATE.Find(city.STATEID);
-                        int crdGL;
+                        int crdGL; 
 
                         switch (actionName)
                         {
@@ -149,22 +149,24 @@ namespace FintrakBanking.Repositories.WorkFlow
                 else throw new Exception("The collateral details information is incomplete");
             }
             else throw new Exception(" Collateral cannot be traced to an active application in the system");
-                // Audit Section ---------------------------
-                //var audit = new TBL_AUDIT
-                //{
-                //    AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
-                //    STAFFID = model.createdBy,
-                //    BRANCHID = (short)model.userBranchId,
-                //    DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
-                //    IPADDRESS = model.userIPAddress,
-                //    URL = model.applicationUrl,
-                //    APPLICATIONDATE = applicationDate,
-                //    SYSTEMDATETIME = DateTime.Now
-                //};
-                //this.audit.AddAuditTrail(audit);
-                // End of Audit Section ---------------------
+            //Audit Section ---------------------------
+           var audit = new TBL_AUDIT
+           {
+              // AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
+               STAFFID = model.createdBy,
+               BRANCHID = (short)model.userBranchId,
+               ///DETAIL = $"{actionType}  '{ model.jobRequestCode }' ",
+               IPADDRESS = model.userIPAddress,
+               URL = model.applicationUrl,
+               APPLICATIONDATE = general.GetApplicationDate(),
+               SYSTEMDATETIME = DateTime.Now
+           };
+            if(actionName == "Verification") audit.DETAIL = $"{actionType} Verification Charge for loan application with ref. '{ loanApplication.APPLICATIONREFERENCENUMBER }' " ;
+            else audit.DETAIL = $"{actionType} Collateral {actionName} Charge for loan application with ref. '{ loanApplication.APPLICATIONREFERENCENUMBER }' ";
+            this.audit.AddAuditTrail(audit);
+           // End of Audit Section ---------------------
 
-                return false; // context.SaveChanges() != 0;
+            return false; // context.SaveChanges() != 0;
         }
 
         public string AddGlobalJobRequest(JobRequestViewModel model)

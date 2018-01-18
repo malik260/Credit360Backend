@@ -1001,27 +1001,27 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpGet]
-        [Route("loan-booking-request/awaiting-approval")]
-        public HttpResponseMessage GetRequestedLoanBookingAwaitingApproval()
+        //[HttpGet]
+        //[Route("loan-booking-request/awaiting-approval")]
+        //public HttpResponseMessage GetRequestedLoanBookingAwaitingApproval()
 
-        {
-            TokenDecryptionHelper token = new TokenDecryptionHelper();
-            try
-            {
-                var response = repo.GetRequestedLoanBookingAwaitingApproval(token.GetCompanyId);
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
+        //{
+        //    TokenDecryptionHelper token = new TokenDecryptionHelper();
+        //    try
+        //    {
+        //        var response = repo.GetRequestedLoanBookingAwaitingApproval(token.GetCompanyId);
+        //        if (!response.Any())
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
         [HttpPost]
         [Route("loan-application/request-booking/{applicationId}")]
@@ -1029,6 +1029,9 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         {
             try
             {
+                entity.userBranchId = (short)token.GetBranchId;
+                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
@@ -1045,39 +1048,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (System.Exception ex)
              {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false,  message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        [Route("booking-request/approval")]
-        public HttpResponseMessage ApproveLoanBookingRequest(ApprovalViewModel model)
-        {
-            try
-            {
-                model.applicationUrl = HttpContext.Current.Request.Path;
-                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                model.createdBy = token.GetStaffId;
-                model.companyId = token.GetCompanyId;
-                model.BranchId = (short)token.GetBranchId;
-                model.staffId = token.GetStaffId;
-
-                var data = repo.GoForBookingRequestApproval(model);
-
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = "Loan Booking Request has been approved successfully" });
-                }
-                else
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-                }
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
             }
         }
 

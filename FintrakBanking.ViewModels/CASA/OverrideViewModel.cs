@@ -16,6 +16,7 @@ namespace FintrakBanking.ViewModels.CASA
 
     public class OverrideDetailVeiwModel
     {
+        public string customerCode;
 
         public int overrideDetailId { get; set; }
         public int customerId { get; set; }
