@@ -13,11 +13,19 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isExternal { get; set; }
         public bool corporate { get; set; }
         public bool retail { get; set; }
-        public int? productId { get; set; }
+        public short? productId { get; set; }
         public int loanApplicationId { get; set; }
         public string staffName { get; set; }
         public bool isSubsequent { get; set; }
         public int loanApplicationDetailId { get; set; }
+        public short? responseTypeId { get; set; }
+        public short? checkListStatusId1 { get; set; }
+        public short? checkListStatusId2 { get; set; }
+        public short? approvalStatusId { get; set; }
+        public bool isAvailment { get; set; }
+        public DateTime? deferedDate { get; set; }
+        public string  reason { get; set; }
+        public string status { get; set; }
     }
 }
 

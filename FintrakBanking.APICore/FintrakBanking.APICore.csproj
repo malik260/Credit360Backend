@@ -361,6 +361,7 @@
     <Compile Include="Controllers\MonitoringSetupController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\OfferLetterAndAvailmentController.cs" />
+    <Compile Include="Controllers\OverrideController.cs" />
     <Compile Include="Controllers\ProductCollateralTypeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductFeeController.cs" />
@@ -519,6 +520,13 @@
     <Compile Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx.designer.cs">
       <DependentUpon>LoanCASAaccountWithLein.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferral.aspx.cs">
+      <DependentUpon>LoanDocumentDeferral.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferral.aspx.designer.cs">
+      <DependentUpon>LoanDocumentDeferral.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\LoanDocumentWaived.aspx.cs">
       <DependentUpon>LoanDocumentWaived.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -605,6 +613,7 @@
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanAnniversery.aspx" />
     <Content Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx" />
+    <Content Include="Reports\ReportViews\LoanDocumentDeferral.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentWaived.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
@@ -719,6 +728,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\EndOfDay\" />
     <Folder Include="Views\LoanOperation\" />
+    <Folder Include="Views\Override\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -776,6 +786,7 @@
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanCASAAccountWithLein.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />

@@ -41,5 +41,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public DateTime? dateTimeCreated { get; set; }
         public DateTime? dateTimeUpdated { get; set; }
         public string natureOfBusiness { get; set; }
+        public decimal? shareHoldersFund { get; set; }
+
     }
 }

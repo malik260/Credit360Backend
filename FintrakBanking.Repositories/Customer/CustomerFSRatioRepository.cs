@@ -100,32 +100,32 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool AddFSRatioCaption(CustomerFSRatioCaptionViewModel model)
         {
-            var data = new TBL_CUSTOMER_FS_RATIO_CAPTION
-            {
-                ANNUALISED = model.annualised,
-                COMPANYID = model.companyId,
-                POSITION = model.position,
-                RATIOCAPTION = model.ratioCaptionName,
-                CREATEDBY = (int)model.createdBy,
-                DATETIMECREATED = _genSetup.GetApplicationDate()
-            };
+            //var data = new TBL_CUSTOMER_FS_RATIO_CAPTION
+            //{
+            //    ANNUALISED = model.annualised,
+            //    COMPANYID = model.companyId,
+            //    POSITION = model.position,
+            //    RATIOCAPTION = model.ratioCaptionName,
+            //    CREATEDBY = (int)model.createdBy,
+            //    DATETIMECREATED = _genSetup.GetApplicationDate()
+            //};
 
-            //context.TBL_CUSTOMER_FS_RATIO_CAPTION.Add(data);
+            ////context.TBL_CUSTOMER_FS_RATIO_CAPTION.Add(data);
 
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.CustomerFSRatioCaptionAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added FS Ratio Caption {data.RATIOCAPTION} and postion {data.POSITION}.",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
+            //// Audit Section ---------------------------
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.CustomerFSRatioCaptionAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"Added FS Ratio Caption {data.RATIOCAPTION} and postion {data.POSITION}.",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
 
-            auditTrail.AddAuditTrail(audit);
+            //auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
             return context.SaveChanges() != 0;

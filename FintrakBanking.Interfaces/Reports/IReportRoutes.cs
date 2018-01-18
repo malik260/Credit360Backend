@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetLoanStatement(int companyId, int loanId);
         string GetLoanAnniversery(DateRange dateRange, int companyId);
         string GetLoanDocumentWaived(int companyId, DateRange dateRange);
+        string GetLoanDocumentDeferrals(int companyId, DateRange dateRange);
         string GetCollateralEstimated(int companyId, string collateralCode);
         string GetFCYScheuledLoan(int companyId, int loanId);
 

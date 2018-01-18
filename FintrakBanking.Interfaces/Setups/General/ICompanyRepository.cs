@@ -13,6 +13,10 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool UpdateCompany(int companyId, CompanyViewModel company);
 
+        bool UpdateCompanies(int companyId, CompanyViewModel model);
+
+        IEnumerable<CompanyViewModel> GetCompanies();
+
         //bool DeleteAccount(short accountId);
     }
 }

@@ -25,6 +25,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         short? Vote { set; }
         bool InvestmentGrade { set; }
         bool Untenored { set; }
+        bool Disputed { set; }
         bool PoliticallyExposed { set; }
         bool SmsNotification { set; }
         bool ExternalInitialization { set; }

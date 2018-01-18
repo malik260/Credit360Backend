@@ -572,6 +572,39 @@ namespace FintrakBanking.Repositories.Credit
                     context.SaveChanges();
                 }
 
+                else if (pastDueDate != null && item.amount < 0)
+                {
+                    DateTime nplDate = (DateTime)context.TBL_LOAN.FirstOrDefault(a => a.TERMLOANID == item.loanId).NPLDATE;
+                    int prudentialStatus = 0;
+                    if ((nplDate - applicationDate).Days <= 60)
+                    {
+                        prudentialStatus = (int)LoanPrudentialStatusEnum.Performing;
+                    }
+                    else if ((nplDate - applicationDate).Days > 60 && (nplDate - applicationDate).Days <= 90)
+                    {
+                        prudentialStatus = (int)LoanPrudentialStatusEnum.WatchList;
+                    }
+                    else if ((nplDate - applicationDate).Days > 90 && (nplDate - applicationDate).Days <= 180)
+                    {
+                        prudentialStatus = (int)LoanPrudentialStatusEnum.Substandard;
+                    }
+                    else if ((nplDate - applicationDate).Days > 180 && (nplDate - applicationDate).Days <= 360)
+                    {
+                        prudentialStatus = (int)LoanPrudentialStatusEnum.Doubtful;
+                    }
+                    else if ((nplDate - applicationDate).Days > 360)
+                    {
+                        prudentialStatus = (int)LoanPrudentialStatusEnum.Lost;
+                    }
+                    TBL_LOAN result = (from p in context.TBL_LOAN
+                                       where p.TERMLOANID == item.loanId
+                                       select p).SingleOrDefault();
+
+                    result.EXT_PRUDENT_GUIDELINE_STATUSID = prudentialStatus;
+
+                    context.SaveChanges();
+                }
+
             }
            // context.SaveChanges();
 
@@ -6246,8 +6279,12 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
 
+            var covenant = from a in context.TBL_LOAN join b in context.TBL_LOAN_COVENANT_DETAIL on a.TERMLOANID equals b.LOANID
+                           where a.TERMLOANID == loanId
+                           let percentage  = b.ISPERCENTAGE
+                           select percentage;
 
-            var covenantAmount = from a in context.TBL_LOAN
+            var covenantAmount  = from a in context.TBL_LOAN
                                  join b in context.TBL_LOAN_COVENANT_DETAIL on a.TERMLOANID equals b.LOANID
                                  join c in context.TBL_LOAN_COVENANT_TYPE on b.COVENANTTYPEID equals c.COVENANTTYPEID
                                  where b.COVENANTTYPEID == c.COVENANTTYPEID && a.TERMLOANID == b.LOANID
