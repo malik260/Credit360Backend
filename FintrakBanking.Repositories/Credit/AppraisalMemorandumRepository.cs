@@ -414,26 +414,18 @@ namespace FintrakBanking.Repositories.Credit
                 }).OrderByDescending(x => x.approvalTrailId);
         }
 
-        public PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId, int operationId = (int)OperationsEnum.CAM)
+        public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {
-            operationId = (int)OperationsEnum.CAM; // <--------------------- overide incoming for now
-
+            var operationId = entity.operationId; // (int)OperationsEnum.CAM; // <--------------------- overide incoming for now
             var privilege = new PrivilegeViewModel();
+            var application = this.context.TBL_LOAN_APPLICATION.Find(entity.targetId);
 
-            var application = this.context.TBL_LOAN_APPLICATION.Find(applicationId);
-            /*
-            var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
-                                //.Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.tbl_Product.ProductClassId) // REFACTOR!!!!!!!!!!!!
-                                .Select(x => x.TBL_APPROVAL_GROUP)
-                                .SelectMany(x => x.TBL_APPROVAL_LEVEL)
-                                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId);*/
-
-            var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+            var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
                 .Join(context.TBL_APPROVAL_GROUP,
                     m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                .Join(context.TBL_APPROVAL_LEVEL,
+                .Join(context.TBL_APPROVAL_LEVEL,//.Where(x => x.APPROVALLEVELID == entity.levelId),
                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })//, u=l.TBL_APPROVAL_LEVEL_STAFF })
-                .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId),
+                .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == entity.createdBy),
                     gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
                     {
                         viewCamDocument = s.CANVIEWCAMDOCUMENT,
@@ -447,16 +439,12 @@ namespace FintrakBanking.Repositories.Credit
                         approvalLimit = s.MAXIMUMAMOUNT,
                         approvalLevelId = s.APPROVALLEVELID,
                         groupRoleId = gl.mg.g.ROLEID,
+                        canEscalate = gl.l.CANESCALATE,
                     });
 
-            var grant = grants.FirstOrDefault();
-            //var staffApprovalLevelIds = grants.Select(x => x.ApprovalLevelId).ToList();
-
-            if (grant != null)
-            {
-                grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
-                return grant;
-            }
+            var grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
+            if (grant != null) privilege = grant;
+            privilege.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
             return privilege;
         }
 
