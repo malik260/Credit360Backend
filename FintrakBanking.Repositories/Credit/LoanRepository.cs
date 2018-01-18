@@ -158,7 +158,7 @@ namespace FintrakBanking.Repositories.Credit
             var totaloverdraftLimit = totalPreviouslyBookedAmount + revolvingLoanInput.overdraftLimit;
 
             if (totaloverdraftLimit > model.customerAvailableAmount)
-                throw new Exception("The loan amount cannot greater than the availiable amount");
+                throw new Exception("The loan amount cannot be greater than the availiable amount");
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.loanBookingRequestId);
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
