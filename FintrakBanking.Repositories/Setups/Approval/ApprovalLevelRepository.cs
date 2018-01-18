@@ -22,13 +22,15 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
 
-        public ApprovalLevelRepository(FinTrakBankingContext _context,
-                                                    IGeneralSetupRepository _genSetup,
-                                                    IAuditTrailRepository _auditTrail)
+        public ApprovalLevelRepository(
+            FinTrakBankingContext _context,
+            IGeneralSetupRepository _genSetup,
+            IAuditTrailRepository _auditTrail
+            )
         {
             this.context = _context;
             this.genSetup = _genSetup;
-            auditTrail = _auditTrail;
+            this.auditTrail = _auditTrail;
         }
 
         private IEnumerable<ApprovalLevelViewModel> GetApprovalLevel(int companyId)
@@ -48,6 +50,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             slaInterval = x.SLAINTERVAL,
                             canRouteBack = x.CANROUTEBACK,
                             isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
+                            canEscalate = x.CANESCALATE,
+                            canApproveUntenored = x.CANAPPROVEUNTENORED,
+                            canResolveDispute = x.CANRESOLVEDISPUTE,
                             isActive = x.ISACTIVE,
                             canEdit = x.CANEDIT,
                             canDoRiskAssessment = x.CANDORISKASSESSMENT,
@@ -91,6 +96,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             slaInterval = a.SLAINTERVAL,
                             canRouteBack = a.CANROUTEBACK,
                             isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                            canEscalate = a.CANESCALATE,
+                            canApproveUntenored = a.CANAPPROVEUNTENORED,
+                            canResolveDispute = a.CANRESOLVEDISPUTE,
                             isActive = a.ISACTIVE,
                             canEdit = a.CANEDIT,
                             canDoRiskAssessment = a.CANDORISKASSESSMENT,
@@ -111,7 +119,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             groupId = (int)a.GROUPID,
                             operationId = d.OPERATIONID //c.TBL_APPROVAL_GROUP_MAPPING.Select(x=> x.OPERATIONID).FirstOrDefault()
                         }).ToList();
-                        //GroupBy(x => x.approvalLevelId).Select(g => g.FirstOrDefault()).ToList();
+            //GroupBy(x => x.approvalLevelId).Select(g => g.FirstOrDefault()).ToList();
 
             return data;
         }
@@ -157,6 +165,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 SLAINTERVAL = model.slaInterval,
                 CANROUTEBACK = model.canRouteBack,
                 ISPOLITICALLYEXPOSED = model.isPoliticallyExposed,
+                CANESCALATE = model.canEscalate,
+                CANAPPROVEUNTENORED = model.canApproveUntenored,
+                CANRESOLVEDISPUTE = model.canResolveDispute,
                 ISACTIVE = model.isActive,
                 CANEDIT = model.canEdit,
                 CANDORISKASSESSMENT = model.canDoRiskAssessment,
@@ -222,6 +233,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
             data.SLAINTERVAL = model.slaInterval;
             data.CANROUTEBACK = model.canRouteBack;
             data.ISPOLITICALLYEXPOSED = model.isPoliticallyExposed;
+            data.CANESCALATE = model.canEscalate;
+            data.CANAPPROVEUNTENORED = model.canApproveUntenored;
+            data.CANRESOLVEDISPUTE = model.canResolveDispute;
             data.ISACTIVE = model.isActive;
             data.CANEDIT = model.canEdit;
             data.CANDORISKASSESSMENT = model.canDoRiskAssessment;

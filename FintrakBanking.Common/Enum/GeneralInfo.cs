@@ -194,6 +194,11 @@ namespace FintrakBanking.Common.Enum
         SectorAdded = 183,
         SectorDeleted = 184,
         SectorUpdated = 185,
+
+        LoanBookingRequested = 186,
+        CollateralSearchJob = 187,
+        CollateralChartJob = 188,
+        MiddleOfficeVerification = 189,
     };
 
 

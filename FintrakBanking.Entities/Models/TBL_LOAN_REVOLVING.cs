@@ -161,6 +161,8 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_REVOLVING_ARCHIVE> TBL_LOAN_REVOLVING_ARCHIVE { get; set; }
 
+        public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
+
         public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
     }
 }

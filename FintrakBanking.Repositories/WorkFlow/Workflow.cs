@@ -276,7 +276,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var levelStaff = approvalLevels.SelectMany(x => x.Staff).Where(x => x.STAFFID == this.staffId).FirstOrDefault(); // doing
                 if (levelStaff == null)
                 {
-                    throw new Exception("Unable to resolve initiating level OR ther ma be no setup for this operation!");
+                    throw new Exception("Unable to resolve initiating level OR there may be no setup for this operation!");
                 }
                 this.fromLevelId = levelStaff.APPROVALLEVELID;
                 this.neededNumberOfApproval = levelStaff.TBL_APPROVAL_LEVEL.NUMBEROFAPPROVALS;
