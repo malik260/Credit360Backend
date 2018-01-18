@@ -1039,6 +1039,11 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                  new { success = false, message = "Please select a checklist to continue" });
                 }
+                if (model.deferedDate < DateTime.Now )
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Deferred date cannot be less than today's date" });
+                }
                 model.userBranchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
                 model.createdBy = token.GetStaffId;
