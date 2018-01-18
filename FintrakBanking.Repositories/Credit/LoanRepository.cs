@@ -264,7 +264,7 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Covenant..........
                         AddLoanCovenant(model.loanCovenant, model.loanApplicationDetailId, loan.REVOLVINGLOANID, (short)model.productTypeId);
                         //............save Loan Fees..........
-                        AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)model.productTypeId, model.companyId, model.feeOverride);
+                        AddLoanFees(model.loanChargeFee, model.createdBy, loan.REVOLVINGLOANID, (short)model.productTypeId, model.companyId, model.feeOverride);
                         if (!model.feeOverride) PostLoanFees(model);
 
                         context.SaveChanges();
@@ -412,7 +412,7 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Covenant..........
                         AddLoanCovenant(entity.loanCovenant, entity.loanApplicationDetailId, loan.CONTINGENTLOANID, (short)entity.productTypeId);
                         //............save Loan Fees..........
-                        AddLoanFees(entity.loanChargeFee, loan.CONTINGENTLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
+                        AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.CONTINGENTLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
 
                         if (!entity.feeOverride) PostLoanFees(entity);
                         context.SaveChanges();
@@ -628,7 +628,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }
                             AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)entity.productTypeId);
-                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
+                            AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                             if (!entity.feeOverride) PostLoanFees(entity);
@@ -2263,7 +2263,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="loanId">The loan identifier.</param>
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
-        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short productTypeId, int companyId, bool feeOverride)
+        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride)
         {
             var feeAmount = 0;
             foreach (var ent in feeModel)
@@ -2280,7 +2280,7 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTTYPEID = productTypeId,
                     ISRECURRING = ent.recurring, 
                     RECURRINGPAYMENTDAY = 28,
-                    CREATEDBY = ent.createdBy,
+                    CREATEDBY = staffId, // ent.createdBy,
                     DATETIMECREATED = DateTime.Now.Date,
                     ISPOSTED = ent.isPosted
                 };
@@ -2293,13 +2293,14 @@ namespace FintrakBanking.Repositories.Credit
                     context.SaveChanges();
                     var approvalModel = new ForwardViewModel
                     {
+
                         createdBy = fee.CREATEDBY,
                         companyId = companyId,
                         applicationId = fee.LOANCHARGEFEEID,
                         comment = "Please approve this fee ",
                         amount = fee.FEEAMOUNT,
                     };
-                    LogApproval(approvalModel, (int)OperationsEnum.LoanBookingFeeDeferral, false, (int)ApprovalStatusEnum.Pending);
+                    LogApproval(approvalModel, (int)OperationsEnum.LoanBookingFeeDeferral, true, (int)ApprovalStatusEnum.Pending);
                 } else
                 {
                     context.SaveChanges();
