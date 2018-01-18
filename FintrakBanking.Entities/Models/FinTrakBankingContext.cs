@@ -3864,15 +3864,15 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_LOAN_STATUS)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_LOAN_STATUS>()
-                .HasMany(e => e.TBL_LOAN_CONTINGENT)
-                .WithRequired(e => e.TBL_LOAN_STATUS)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_LOAN_STATUS>()
+            //    .HasMany(e => e.TBL_LOAN_CONTINGENT)
+            //    .WithRequired(e => e.TBL_LOAN_STATUS)
+            //    .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_LOAN_STATUS>()
-                .HasMany(e => e.TBL_LOAN_REVOLVING)
-                .WithRequired(e => e.TBL_LOAN_STATUS)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_LOAN_STATUS>()
+            //    .HasMany(e => e.TBL_LOAN_REVOLVING)
+            //    .WithRequired(e => e.TBL_LOAN_STATUS)
+            //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_TRANSACTION_TYPE>()
                 .HasMany(e => e.TBL_DAILY_ACCRUAL)

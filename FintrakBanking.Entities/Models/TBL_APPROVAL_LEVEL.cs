@@ -105,6 +105,6 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CHECKLIST_DEFINITION> TBL_CHECKLIST_DEFINITION { get; set; }
         public bool CANRESOLVEDISPUTE { get; set; }
-        public bool CANAUTHORIZEUNTENORED { get; set; }
+        public bool CANAPPROVEUNTENORED { get; set; }
     }
 }

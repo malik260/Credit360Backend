@@ -118,6 +118,7 @@ namespace FintrakBanking.Repositories.Credit
             //...................CHECK IF THE LOAN RECORD IS A SCHEDULED LOAN..................//
             if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating)
             {
+                
                 return this.AddTermLoan(entity);
             }
 
@@ -159,8 +160,8 @@ namespace FintrakBanking.Repositories.Credit
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.loanBookingRequestId);
-            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
-                throw new Exception("This Loan Request has already been booked by another staff");
+            //if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+            //    throw new Exception("This Loan Request has already been booked by another staff");
 
             var CurrRatings = context.TBL_CURRENCY_RATE.Where(x => x.CURRENCYID == model.currencyId).FirstOrDefault();
             var currentExchangeRate = 1.0;
@@ -263,7 +264,7 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Covenant..........
                         AddLoanCovenant(model.loanCovenant, model.loanApplicationDetailId, loan.REVOLVINGLOANID, (short)model.productTypeId);
                         //............save Loan Fees..........
-                        AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)model.productTypeId, model.companyId, model.feeOverride);
+                        AddLoanFees(model.loanChargeFee, model.createdBy, loan.REVOLVINGLOANID, (short)model.productTypeId, model.companyId, model.feeOverride);
                         if (!model.feeOverride) PostLoanFees(model);
 
                         context.SaveChanges();
@@ -309,8 +310,8 @@ namespace FintrakBanking.Repositories.Credit
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
-            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
-                throw new Exception("This Loan Request has already been booked by another staff");
+            //if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+            //    throw new Exception("This Loan Request has already been booked by another staff");
 
             var CurrRatings = context.TBL_CURRENCY_RATE.Where(x => x.CURRENCYID == contingentLoanInput.currencyId).FirstOrDefault();
             var currentExchangeRate = 1.0;
@@ -413,7 +414,7 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Covenant..........
                         AddLoanCovenant(entity.loanCovenant, entity.loanApplicationDetailId, loan.CONTINGENTLOANID, (short)entity.productTypeId);
                         //............save Loan Fees..........
-                        AddLoanFees(entity.loanChargeFee, loan.CONTINGENTLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
+                        AddLoanFees(entity.loanChargeFee,entity.createdBy, loan.CONTINGENTLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
 
                         if (!entity.feeOverride) PostLoanFees(entity);
                         context.SaveChanges();
@@ -452,8 +453,8 @@ namespace FintrakBanking.Repositories.Credit
                 throw new Exception("Loan terminal date should be more than effective date");
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
-            if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
-                throw new Exception("This Loan Request has already been booked by another staff");
+            //if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+            //    throw new Exception("This Loan Request has already been booked by another staff");
 
             var principalAmount  = from a in context.TBL_LOAN where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
                                    let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
@@ -628,8 +629,10 @@ namespace FintrakBanking.Repositories.Credit
                                 }
 
                             }
+
                             AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)entity.productTypeId);
-                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
+                            
+                            AddLoanFees(entity.loanChargeFee,entity.createdBy,loan.TERMLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                             if (!entity.feeOverride) PostLoanFees(entity);
@@ -2264,7 +2267,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="loanId">The loan identifier.</param>
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
-        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short productTypeId, int companyId, bool feeOverride)
+        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel,int staffId, int loanId, short productTypeId, int companyId, bool feeOverride)
         {
             var feeAmount = 0;
             foreach (var ent in feeModel)
@@ -2281,7 +2284,7 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTTYPEID = productTypeId,
                     ISRECURRING = ent.recurring, 
                     RECURRINGPAYMENTDAY = 28,
-                    CREATEDBY = ent.createdBy,
+                    CREATEDBY = staffId,
                     DATETIMECREATED = DateTime.Now.Date,
                     ISPOSTED = ent.isPosted
                 };
@@ -3202,7 +3205,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = AvailedLoanApplicationsDetails(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted);
 
-            data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+           // data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
             return data;
         }
