@@ -374,6 +374,7 @@
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TransactionDynamicsController.cs" />
     <Compile Include="core\ApiControllerBase.cs" />
     <Compile Include="Filters\DeflateCompressionAttribute.cs" />
     <Compile Include="Filters\JWTAuthorizeAttribute.cs" />
@@ -729,6 +730,7 @@
     <Folder Include="Views\EndOfDay\" />
     <Folder Include="Views\LoanOperation\" />
     <Folder Include="Views\Override\" />
+    <Folder Include="Views\TransactionDynamics\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

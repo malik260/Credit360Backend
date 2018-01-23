@@ -23,7 +23,9 @@ namespace FintrakBanking.Entities.Models
                 throw new System.Data.Entity.Validation.DbEntityValidationException(errorMessages);
             }
         }
+
         public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
+        public virtual DbSet<TBL_COMPLIANCE_TIMELINE> TBL_COMPLIANCE_TIMELINE { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_TYPE> TBL_ACCREDITEDCONSULTANT_TYPE { get; set; }
@@ -207,6 +209,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_VALUER_TYPE> TBL_COLLATERAL_VALUER_TYPE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_VEHICLE> TBL_COLLATERAL_VEHICLE { get; set; }
         public virtual DbSet<TBL_CONDITION_PRECEDENT> TBL_CONDITION_PRECEDENT { get; set; }
+        public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
+        public virtual DbSet<TBL_LOAN_TRANSACTION_DYNAMICS> TBL_LOAN_TRANSACTION_DYNAMICS { get; set; }
         public virtual DbSet<TBL_CREDIT_APPRAISAL_MEMO_DETL> TBL_CREDIT_APPRAISAL_MEMO_DETL { get; set; }
         public virtual DbSet<TBL_CREDIT_APPRAISAL_MEMO_DOCU> TBL_CREDIT_APPRAISAL_MEMO_DOCU { get; set; }
         public virtual DbSet<TBL_CREDIT_APPRAISAL_MEMORANDM> TBL_CREDIT_APPRAISAL_MEMORANDM { get; set; }
