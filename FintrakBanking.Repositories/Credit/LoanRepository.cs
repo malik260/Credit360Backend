@@ -158,7 +158,7 @@ namespace FintrakBanking.Repositories.Credit
             var totaloverdraftLimit = totalPreviouslyBookedAmount + revolvingLoanInput.overdraftLimit;
 
             if (totaloverdraftLimit > model.customerAvailableAmount)
-                throw new Exception("The loan amount cannot greater than the availiable amount");
+                throw new Exception("The loan amount cannot be greater than the availiable amount");
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.loanBookingRequestId);
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
@@ -260,14 +260,17 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, true, (int)ApprovalStatusEnum.Pending))
                     {
-                        trans.Commit();
                         //............save Loan Covenant..........
                         AddLoanCovenant(model.loanCovenant, model.loanApplicationDetailId, loan.REVOLVINGLOANID, (short)model.productTypeId);
                         //............save Loan Fees..........
                         AddLoanFees(model.loanChargeFee, model.createdBy, loan.REVOLVINGLOANID, (short)model.productTypeId, model.companyId, model.feeOverride);
-                        if (!model.feeOverride) PostLoanFees(model);
 
+                        model.loanReferenceNumber = loanReferenceNumber;
+                        if (!model.feeOverride) PostLoanFees(model);
                         context.SaveChanges();
+
+                        //.....Commit transaction ............
+                        trans.Commit();
                     }
 
 
@@ -407,15 +410,17 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (LogApproval(approvalModel, (int)OperationsEnum.ContigentLoanBooking, true, (int)ApprovalStatusEnum.Pending))
                     {
-                        //.....Commit transaction ............
-                        trans.Commit();
                         //............save Loan Covenant..........
                         AddLoanCovenant(entity.loanCovenant, entity.loanApplicationDetailId, loan.CONTINGENTLOANID, (short)entity.productTypeId);
                         //............save Loan Fees..........
                         AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.CONTINGENTLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
-
+                        entity.loanReferenceNumber = loanReferenceNumber;
                         if (!entity.feeOverride) PostLoanFees(entity);
+
                         context.SaveChanges();
+
+                        //.....Commit transaction ............
+                        trans.Commit();
                     }
 
 
@@ -608,9 +613,6 @@ namespace FintrakBanking.Repositories.Credit
                         //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
                         if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending))
                         {
-                            //.....Commit transaction ............
-                            trans.Commit();
-
                             if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.IrregularSchedule)
                             {
                                 foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
@@ -634,6 +636,9 @@ namespace FintrakBanking.Repositories.Credit
                             if (!entity.feeOverride) PostLoanFees(entity);
 
                             context.SaveChanges();
+
+                            //.....Commit transaction ............
+                            trans.Commit();
                         }
 
                         //.......................END OF APPROVAL LOG......................................................
