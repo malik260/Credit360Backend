@@ -71,17 +71,17 @@ namespace FintrakBanking.Repositories.Credit
                               on s.CHECKLISTDEFINITIONID equals k.CHECKLISTDEFINITIONID
                               where s.TARGETID == loanTargetId && k.CHECKLIST_TYPEID == checkListTypeId
                               select s.CHECKLISTDEFINITIONID).ToList();
-
+            var proposedProductId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == loanTargetId && productId == 0 select (short?)id.PROPOSEDPRODUCTID).ToList();
             var isproductBased = context.TBL_CHECKLIST_TYPE.FirstOrDefault(x => x.CHECKLIST_TYPEID == checkListTypeId).ISPRODUCT_BASED;
             if (isproductBased)
             {
                 var data = (from a in context.TBL_CHECKLIST_DEFINITION
                             join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
-                            // join b in context.TBL_APPROVAL_LEVEL_STAFF on
-                            // a.APPROVALLEVELID equals b.APPROVALLEVELID
-                            // where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
+                            join b in context.TBL_APPROVAL_LEVEL_STAFF on
+                            a.APPROVALLEVELID equals b.APPROVALLEVELID
+                            where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
                             where a.CHECKLIST_TYPEID == checkListTypeId
-                            && a.OPERATIONID == operationId && a.DELETED == false && (productId == a.PRODUCTID || productId == null)
+                            && a.OPERATIONID == operationId && a.DELETED == false // && (productId == a.PRODUCTID || productId == null)
                             select new ChecklistDefinitionViewModel
                             {
                                 checkListDefinitionId = a.CHECKLISTDEFINITIONID,
@@ -107,15 +107,24 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     data = data.Where(x => !detailItem.Contains(x.checkListDefinitionId));
                 }
+                if (productId > 0)
+                {
+                    data = data.Where(x => x.productId == productId);
+                }
+                else if (proposedProductId.Any())
+                {
+                    data = data.Where(x => proposedProductId.Contains(x.productId));
+                }
+
                 return data;
             }
             else
             {
                 var data = (from a in context.TBL_CHECKLIST_DEFINITION
                             join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
-                            // join b in context.TBL_APPROVAL_LEVEL_STAFF on
-                            // a.APPROVALLEVELID equals b.APPROVALLEVELID
-                            // where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
+                            join b in context.TBL_APPROVAL_LEVEL_STAFF on
+                            a.APPROVALLEVELID equals b.APPROVALLEVELID
+                            where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
                             where a.CHECKLIST_TYPEID == checkListTypeId
                         && a.OPERATIONID == operationId && a.DELETED == false
                             select new ChecklistDefinitionViewModel

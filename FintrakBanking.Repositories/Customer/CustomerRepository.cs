@@ -1657,7 +1657,7 @@ namespace FintrakBanking.Repositories.Customer
                                electricMeterNumber = x.ELECTRICMETERNUMBER,
                                pobox = x.POBOX,
                                stateId = x.STATEID,
-                               addressId = x.ADDRESSID, 
+                               addressId = x.ADDRESSID,
                                active = x.ACTIVE
                            }).ToList();
             return address;
@@ -1987,6 +1987,31 @@ namespace FintrakBanking.Repositories.Customer
                 itemExist = true;
             }
             return itemExist;
+        }
+        public bool CustomerInformationCompleted(int customerId, UserInfo user)
+        {
+            var data = (from a in context.TBL_CUSTOMER where a.CUSTOMERID == customerId select a).FirstOrDefault();
+            if (data == null) return false;
+            data.LASTUPDATEDBY = user.staffId;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.ACCOUNTCREATIONCOMPLETE = true;
+            // Audit Section ----------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = "Updated customer information for : + (" + data.FIRSTNAME + " " + data.LASTNAME + ") ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            var response = context.SaveChanges() != 0;
+            return response;
         }
         #endregion
     }
