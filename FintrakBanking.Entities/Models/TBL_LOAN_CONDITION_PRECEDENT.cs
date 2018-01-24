@@ -32,6 +32,8 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
+        public int? TIMELINEID { get; set; }
+
         public short? RESPONSE_TYPEID { get; set; }
 
         public short? CHECKLISTSTATUSID1 { get; set; }

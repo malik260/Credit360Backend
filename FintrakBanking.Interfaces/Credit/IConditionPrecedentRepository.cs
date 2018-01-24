@@ -21,5 +21,12 @@ namespace FintrakBanking.Interfaces.Credit
         bool RemoveLoanConditionPrecedent(int id, UserInfo user);
 
         bool EditLoanConditionPrecedent(int id, ConditionPrecedentViewModel entity);
+
+        IEnumerable<ComplianceTimelineViewModel> GetComplianceTimelineTemplate();
+
+        bool AddComplianceTimelineTemplate(ComplianceTimelineViewModel model);
+
+        bool UpdateComplianceTimelineTemplate(ComplianceTimelineViewModel model, int timelineId);
+
     }
 }
