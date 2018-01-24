@@ -1,4 +1,4 @@
-﻿namespace FintrakBanking.Entities.Models
+namespace FintrakBanking.Entities.Models
 {
     using System;
     using System.Collections.Generic;
@@ -13,7 +13,7 @@
         public int TIMELINEID { get; set; }
 
         [Required]
-        [StringLength(150)]
+        [StringLength(1000)]
         public string TIMELINE { get; set; }
 
         public int CREATEDBY { get; set; }

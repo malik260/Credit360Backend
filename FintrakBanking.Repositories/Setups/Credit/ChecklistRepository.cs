@@ -1095,13 +1095,13 @@ namespace FintrakBanking.Repositories.Credit
             if (isAvailment)
             {
                 var condition = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                                 where c.LOANAPPLICATIONID == loanApplicationId && c.ISSUBSEQUENT == false &&
+                                 where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId && c.ISSUBSEQUENT == false &&
                                   c.CHECKLISTSTATUSID2 == null
                                  select new ConditionPrecedentViewModel()
                                  {
                                      condition = c.CONDITION,
                                      conditionId = c.CONDITIONID,
-                                     loanApplicationId = c.LOANAPPLICATIONID,
+                                     loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                      loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                                      isExternal = c.ISEXTERNAL,
                                      responseTypeId = c.RESPONSE_TYPEID,
@@ -1115,13 +1115,13 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var condition = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                                 where c.LOANAPPLICATIONID == loanApplicationId && c.ISSUBSEQUENT == false &&
+                                 where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId && c.ISSUBSEQUENT == false &&
                                   c.CHECKLISTSTATUSID1 == null
                                  select new ConditionPrecedentViewModel()
                                  {
                                      condition = c.CONDITION,
                                      conditionId = c.CONDITIONID,
-                                     loanApplicationId = c.LOANAPPLICATIONID,
+                                     loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                      loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                                      isExternal = c.ISEXTERNAL,
                                      responseTypeId = c.RESPONSE_TYPEID,
@@ -1138,7 +1138,7 @@ namespace FintrakBanking.Repositories.Credit
             if (isAvailment)
             {
                 var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                              where c.LOANAPPLICATIONID == loanApplicationId && c.ISSUBSEQUENT == false &&
+                              where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId && c.ISSUBSEQUENT == false &&
                                c.CHECKLISTSTATUSID2 != null
                               select new ConditionPrecedentViewModel()
                               {
@@ -1153,7 +1153,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                              where c.LOANAPPLICATIONID == loanApplicationId && c.ISSUBSEQUENT == false &&
+                              where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId && c.ISSUBSEQUENT == false &&
                                c.CHECKLISTSTATUSID1 != null
                               select new ConditionPrecedentViewModel()
                               {
@@ -1257,7 +1257,7 @@ namespace FintrakBanking.Repositories.Credit
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             var data = (from a in context.TBL_LOAN_APPLICATION
-                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on b.CONDITIONID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                         && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
@@ -1274,7 +1274,7 @@ namespace FintrakBanking.Repositories.Credit
                             cummulativeDays = 1,
                             condition = b.CONDITION,
                             conditionId = b.CONDITIONID,
-                            loanApplicationId = b.LOANAPPLICATIONID,
+                            loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
 
                         }).ToList();
@@ -1325,7 +1325,7 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_CONDITION_DEFERRAL
                         on a.CONDITIONID equals b.CONDITIONID
                         join c in context.TBL_LOAN_APPLICATION
-                        on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                        on a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         where (a.CHECKLISTSTATUSID1 == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID2 == (int)CheckListStatusEnum.Deferred)
                         select new DeferredChecklistViewModel()
                         {

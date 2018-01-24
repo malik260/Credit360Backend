@@ -1467,7 +1467,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 i = 0;
-                var conditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                var conditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONDETAILID == appl.LOANAPPLICATIONID);
                 foreach (var x in conditions)
                 {
                     context.TBL_LOAN_CONDITION_PRECEDENT.Add(new TBL_LOAN_CONDITION_PRECEDENT
@@ -1475,7 +1475,7 @@ namespace FintrakBanking.Repositories.Credit
                         CONDITION = x.CONDITION,
                         ISEXTERNAL = x.ISEXTERNAL,
                         ISSUBSEQUENT = x.ISSUBSEQUENT,
-                        LOANAPPLICATIONID = request.LOANAPPLICATIONID,
+                        //LOANAPPLICATIONID = request.LOANAPPLICATIONID,
                         LOANAPPLICATIONDETAILID = rejectedDetails[i], // ?
                         CREATEDBY = model.createdBy,
                         DATETIMECREATED = applicationDate,

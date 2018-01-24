@@ -30,7 +30,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 DYNAMICS = model.dynamics,
                 CREATEDBY = model.createdBy,
-                LOANAPPLICATIONID = model.loanApplicationId,
+                //LOANAPPLICATIONID = model.loanApplicationId,
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.Credit
                         dynamicsId = c.DYNAMICSID,
                         dynamics = c.DYNAMICS,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
-                        loanApplicationId = c.LOANAPPLICATIONID,
+                        //loanApplicationId = c.LOANAPPLICATIONID,
                         loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
