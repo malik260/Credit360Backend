@@ -15,23 +15,23 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/credit")]
-    public class ConditionPrecedentController : ApiControllerBase
+    public class TransactionDynamicsController : ApiControllerBase
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
-        private IConditionPrecedentRepository repo;
+        private ITransactionDynamicsRepository repo;
 
-        public ConditionPrecedentController(IConditionPrecedentRepository repo)
+        public TransactionDynamicsController(ITransactionDynamicsRepository repo)
         {
             this.repo = repo;
         }
 
         [HttpGet]
-        [Route("condition-precedent")]
-        public HttpResponseMessage GetConditionPrecedent()
+        [Route("transaction-dynamics")]
+        public HttpResponseMessage GetTransactionDynamics()
         {
             try
             {
-                var data = repo.GetAllConditionPrecedent();
+                var data = repo.GetAllTransactionDynamics();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -41,12 +41,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("condition-precedent/application/{applicationId}")]
-        public HttpResponseMessage GetConditionPrecedentByApplicationId(int applicationId)
+        [Route("transaction-dynamics/application/{applicationId}")]
+        public HttpResponseMessage GetTransactionDynamicsByApplicationId(int applicationId)
         {
             try
             {
-                var data = repo.GetConditionPrecedentByApplicationId(applicationId);
+                var data = repo.GetTransactionDynamicsByApplicationId(applicationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -56,8 +56,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("condition-precedent")]
-        public HttpResponseMessage AddConditionPrecedent([FromBody] ConditionPrecedentViewModel entity)
+        [Route("transaction-dynamics")]
+        public HttpResponseMessage AddTransactionDynamics([FromBody] TransactionDynamicsViewModel entity)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddConditionPrecedent(entity);
+                var data = repo.AddTransactionDynamics(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
@@ -83,12 +83,12 @@ namespace FintrakBanking.APICore.Controllers
         #region CP template
 
         [HttpGet]
-        [Route("condition-precedent-template")]
-        public HttpResponseMessage GetConditionPrecedentTemplate()
+        [Route("transaction-dynamics-template")]
+        public HttpResponseMessage GetTransactionDynamicsTemplate()
         {
             try
             {
-                var data = repo.GetConditionPrecedentTemplate();
+                var data = repo.GetTransactionDynamicsTemplate();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -98,8 +98,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("condition-precedent-template")]
-        public HttpResponseMessage AddConditionPrecedentTemplate([FromBody] ConditionPrecedentViewModel entity)
+        [Route("transaction-dynamics-template")]
+        public HttpResponseMessage AddTransactionDynamicsTemplate([FromBody] TransactionDynamicsViewModel entity)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddConditionPrecedentTemplate(entity);
+                var data = repo.AddTransactionDynamicsTemplate(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
@@ -123,8 +123,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("condition-precedent-template/{conditionId}")]
-        public HttpResponseMessage UpdateConditionPrecedentTemplate([FromBody] ConditionPrecedentViewModel entity, int conditionId)
+        [Route("transaction-dynamics-template/{conditionId}")]
+        public HttpResponseMessage UpdateTransactionDynamicsTemplate([FromBody] TransactionDynamicsViewModel entity, int conditionId)
         {
             try
             {
@@ -133,7 +133,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.UpdateConditionPrecedentTemplate(entity, conditionId);
+                var data = repo.UpdateTransactionDynamicsTemplate(entity, conditionId);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
@@ -150,8 +150,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion CP template
 
         [HttpPut]
-        [Route("condition-precedent-edit/{id}")]
-        public HttpResponseMessage EditLoanCditionPrecedent([FromBody] ConditionPrecedentViewModel entity, int id)
+        [Route("transaction-dynamics-edit/{id}")]
+        public HttpResponseMessage EditLoanCditionPrecedent([FromBody] TransactionDynamicsViewModel entity, int id)
         {
             try
             {
@@ -161,7 +161,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.EditLoanConditionPrecedent(id, entity);
+                var data = repo.EditLoanTransactionDynamics(id, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been modified successfully" });
@@ -176,8 +176,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [Route("condition-precedent-remove/{id}")]
-        public HttpResponseMessage RemoveLoanConditionPrecedent(int id)
+        [Route("transaction-dynamics-remove/{id}")]
+        public HttpResponseMessage RemoveLoanTransactionDynamics(int id)
         {
             try
             {
@@ -188,7 +188,7 @@ namespace FintrakBanking.APICore.Controllers
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
                 };
-                var data = repo.RemoveLoanConditionPrecedent(id, user);
+                var data = repo.RemoveLoanTransactionDynamics(id, user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been removed successfully" });
             }
             catch (Exception ex)
@@ -197,73 +197,5 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        #region Compliance Timeline template
-
-        [HttpGet]
-        [Route("compliance-timeline-template")]
-        public HttpResponseMessage GetComplianceTimelineTemplate()
-        {
-            try
-            {
-                var data = repo.GetComplianceTimelineTemplate();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        [Route("compliance-timeline-template")]
-        public HttpResponseMessage AddComplianceTimelineTemplate([FromBody] ComplianceTimelineViewModel entity)
-        {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-
-                var data = repo.AddComplianceTimelineTemplate(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
-            }
-        }
-
-        [HttpPut]
-        [Route("compliance-timeline-template/{conditionId}")]
-        public HttpResponseMessage UpdateComplianceTimelineTemplate([FromBody] ComplianceTimelineViewModel entity, int conditionId)
-        {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.lastUpdatedBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-
-                var data = repo.UpdateComplianceTimelineTemplate(entity, conditionId);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}", error = ex.InnerException });
-            }
-        }
-
-        #endregion Compliance Timeline template
     }
 }

@@ -337,9 +337,9 @@ namespace FintrakBanking.ReportObjects
             {
                 var data = from a in context.TBL_LOAN_CONDITION_DEFERRAL
                            join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.CONDITIONID equals b.CONDITIONID
-                           join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                           join d in context.TBL_LOAN_APPLICATION on b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                            join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
-                           join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                           join e in context.TBL_LOAN_APPLICATION_DETAIL on b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
 
                            where
                            // c.COMPANYID == companyId
@@ -356,7 +356,7 @@ namespace FintrakBanking.ReportObjects
                                facilityProduct = e.TBL_PRODUCT.PRODUCTNAME,
                                customerCode = c.CUSTOMERCODE,
                                initialDefferalDate = a.DEFERREDDATE,
-                               applicationRefrenceNumber = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               applicationRefrenceNumber = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                defferalDocument = b.CONDITION,
                                facilityAmount = d.APPROVEDAMOUNT,
                                facilityExpirationDate = e.TBL_LOAN.Select(c => c.MATURITYDATE).FirstOrDefault(),
@@ -380,9 +380,9 @@ namespace FintrakBanking.ReportObjects
             {
                 var data = from a in context.TBL_LOAN_CONDITION_DEFERRAL
                            join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.CONDITIONID equals b.CONDITIONID
-                           join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                           join d in context.TBL_LOAN_APPLICATION on b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                            join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
-                           join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                           join e in context.TBL_LOAN_APPLICATION_DETAIL on b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
 
                            where
                             d.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted

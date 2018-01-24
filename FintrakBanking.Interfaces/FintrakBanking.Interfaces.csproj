@@ -78,6 +78,7 @@
     <Compile Include="Credit\ILoanRepository.cs" />
     <Compile Include="Credit\ILoanScheduleRepository.cs" />
     <Compile Include="Credit\IOfferLetterAndAvailmentRepository.cs" />
+    <Compile Include="Credit\ITransactionDynamicsRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionGroupRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionRepository.cs" />

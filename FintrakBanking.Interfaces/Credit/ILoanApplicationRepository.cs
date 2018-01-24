@@ -62,6 +62,13 @@ namespace FintrakBanking.Interfaces.Credit
         dynamic GetCollateralRequirements(int applicationID, int? collateralCurrencyId, int companyId);
 
         bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
+
+        bool AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity);
+
+        IEnumerable<CreditBereauViewModel> GetCreditBureauInformation();
+
+        List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId);
+
        // decimal GetCustomerTotalOutstandingBalance(int customerId);
     }
 }
