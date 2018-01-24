@@ -25,6 +25,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string SOURCE_REFERENCE_NUMBER { get; set; }
 
+        [Required]
+        [StringLength(2000)]
+        public string REASON { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

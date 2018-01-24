@@ -157,7 +157,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LoadConditionPrecedent(int loanApplicationId) // AND TRANSACTION DYNAMICS
         {
-            if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Any() == false)
+            if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId).Any() == false)
             {
                 var conditions = context.TBL_CONDITION_PRECEDENT.ToList(); // TEMPLATE
                 var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
@@ -170,7 +170,7 @@ namespace FintrakBanking.Repositories.Credit
                             CONDITION = c.CONDITION,
                             ISEXTERNAL = c.ISEXTERNAL,
                             CREATEDBY = c.CREATEDBY,
-                            LOANAPPLICATIONID = loanApplicationId,
+                            //LOANAPPLICATIONID = loanApplicationId,
                             TIMELINEID = c.TIMELINEID,
                             LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
                             DATETIMECREATED = DateTime.Now
@@ -181,7 +181,7 @@ namespace FintrakBanking.Repositories.Credit
                 context.SaveChanges();
             }
 
-            if (context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Any() == false)
+            if (context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId).Any() == false)
             {
                 var dynamics = context.TBL_TRANSACTION_DYNAMICS.ToList(); // TEMPLATE
                 var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
@@ -194,7 +194,7 @@ namespace FintrakBanking.Repositories.Credit
                             DYNAMICS = c.DYNAMICS,
                             DYNAMICSID = c.DYNAMICSID,
                             CREATEDBY = c.CREATEDBY,
-                            LOANAPPLICATIONID = loanApplicationId,
+                            //LOANAPPLICATIONID = loanApplicationId,
                             LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
                             DATETIMECREATED = DateTime.Now
                         };

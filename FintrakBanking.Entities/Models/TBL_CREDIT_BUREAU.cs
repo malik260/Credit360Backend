@@ -27,9 +27,17 @@ namespace FintrakBanking.Entities.Models
         public decimal CORPORATE_CHARGEAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal RETAIL_CHARGEAMOUNT { get; set; }
+        public decimal INDIVIDUAL_CHARGEAMOUNT { get; set; }
 
         public bool INUSE { get; set; }
+
+        public int GLACCOUNTID { get; set; }
+
+        public bool ISMANDATORY { get; set; }
+
+        public bool USEINTEGRATION { get; set; }
+
+        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_APPLTN_CREDIT_BUREAU> TBL_LOAN_APPLTN_CREDIT_BUREAU { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace FintrakBanking.Entities.Models
+namespace FintrakBanking.Entities.Models
 {
     using System;
     using System.Collections.Generic;
@@ -16,11 +16,9 @@
         [StringLength(1000)]
         public string DYNAMICS { get; set; }
 
-        public int CREATEDBY { get; set; }
-
-        public int LOANAPPLICATIONID { get; set; }
-
         public int LOANAPPLICATIONDETAILID { get; set; }
+
+        public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
 
@@ -28,9 +26,6 @@
 
         public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
-
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
-
     }
 }

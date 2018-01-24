@@ -210,7 +210,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetLoanApplicationsDetails(id, token.GetCompanyId);
-                if (!data.Any())
+                if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
@@ -222,6 +222,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        
 
         [HttpGet]
         [Route("loan-applications-details")]
@@ -299,7 +301,7 @@ namespace FintrakBanking.APICore.Controllers
                 //model.companyId = token.GetCompanyId;
                 //model.branchId = (short)token.GetBranchId;
 
-                var response = repo.UpdateApprovalStatusForApplication(id);              
+                var response = repo.UpdateApprovalStatusForApplication(id, token.GetStaffId);              
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
               
             }
@@ -477,6 +479,83 @@ namespace FintrakBanking.APICore.Controllers
                     new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        [Route("credit-bureau-information")]
+        public HttpResponseMessage GetCreditBureauInformation()
+        {
+            try
+            {
+                var data = repo.GetCreditBureauInformation();
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data.Count(), result = data.ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("credit-bureau-charges/{customerId}application/{loanApplicationId}")]
+        public HttpResponseMessage GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetCustomerLoanCreditBureauReportChargesByApplicationId(customerId, loanApplicationId);
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data.Count(), result = data.ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan/customer/credit-bureau-charge")]
+        public HttpResponseMessage AddCustomerCreditBureauCharge(LoanCreditBereauViewModel model)
+        {
+            try
+            {
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.staffId = token.GetStaffId;
+
+                var any = repo.AddCustomerCreditBureauCharge(model);
+
+                if (any)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, message = model.creditBureauName + " Search for Credit Bureau Report Activated" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = model.creditBureauName + " Search failed" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
 
         [HttpGet]
         [Route("loan-preliminary-evaluation/loan-type/{loanTypeId}")]

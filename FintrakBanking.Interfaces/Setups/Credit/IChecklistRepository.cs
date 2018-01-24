@@ -68,6 +68,7 @@ namespace FintrakBanking.Interfaces.Setups
         bool GoForApproval(ApprovalViewModel entity);
         bool ExtendChecklistDeferralDate(ConditionPrecedentViewModel model);
         bool UpdateProvidedChecklist(ConditionPrecedentViewModel model);
+        bool ValidateDeferralDateExpiration(int conditionId);
         IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int companyId);
         IEnumerable<DeferredChecklistViewModel> GetAllDeferralChecklist();
         IEnumerable<DeferredChecklistViewModel> GetDeferralChecklistByConditionId(int conditionId);

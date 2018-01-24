@@ -206,6 +206,7 @@ namespace FintrakBanking.ViewModels.Credit
         public  TraderLoanViewModel  traderLoan { get; set; }
 
         public BondsAndGuranty bondDetails { get; set; }
+        public IEnumerable<LoanCreditBereauViewModel> LoanCreditBereauReport { get; set; }
     }
 
     public class BondsAndGuranty

@@ -89,12 +89,12 @@ namespace FintrakBanking.ReportObjects.Credit
             FinTrakBankingContext context = new FinTrakBankingContext();
 
             var conditionPrecedent = (from a in context.TBL_LOAN_APPLICATION
-                                      join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                      join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISEXTERNAL == true
                                       select new OfferLetterConditionPrecidentViewModel()
                                       {
                                           conditionPrecident = b.CONDITION,
-                                          loanApplicationId = b.LOANAPPLICATIONID
+                                          loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
                                       }).ToList();
 
             if (conditionPrecedent != null)
@@ -180,12 +180,12 @@ namespace FintrakBanking.ReportObjects.Credit
             var finalLoanDetails = loanDetailsTable + "</table>";
 
             var conditionPrecedent = (from a in context.TBL_LOAN_APPLICATION
-                                      join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                      join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISEXTERNAL == true
                                       select new OfferLetterConditionPrecidentViewModel()
                                       {
                                           conditionPrecident = b.CONDITION,
-                                          loanApplicationId = b.LOANAPPLICATIONID
+                                          loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
                                       }).ToList();
 
             var conditions = string.Empty;

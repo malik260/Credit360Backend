@@ -6,21 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COMPLIANCE_TIMELINE")]
-    public partial class TBL_COMPLIANCE_TIMELINE
+    [Table("credit.TBL_LOAN_RECOVERY_PLAN_PAYMNT")]
+    public partial class TBL_LOAN_RECOVERY_PLAN_PAYMNT
     {
         [Key]
-        public int TIMELINEID { get; set; }
+        public int RECOVERYPLANPAYMENTID { get; set; }
 
-        [Required]
-        [StringLength(1000)]
-        public string TIMELINE { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime PAYMENTDATE { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal PAYMENTAMOUNT { get; set; }
 
         public int CREATEDBY { get; set; }
 
-        public int? LASTUPDATEDBY { get; set; }
-
         public DateTime DATETIMECREATED { get; set; }
+
+        public int? LASTUPDATEDBY { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
 
