@@ -257,7 +257,7 @@ namespace FintrakBanking.Repositories.Credit
                     };
 
                     //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-
+                     
                     if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, true, (int)ApprovalStatusEnum.Pending))
                     {
                         //............save Loan Covenant..........
