@@ -50,6 +50,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CollateralValueBaseTypeViewModel> GetCollateralValueBaseType();
         IEnumerable<CollateralValuersViewModel> GetCollateralValuer(int companyId);
         IEnumerable<CollateralValuerTypeViewModel> GetCollateralValuerType();
+        IEnumerable<CollateralPerfectionStatusViewModel> GetCollateralPerfectionStatus();
         #endregion End Of Listing Functions
 
         IEnumerable<LoanApplicationCollateralViewModel> MapApplicationCollateral(ApplicationCollateralMapping entity);
