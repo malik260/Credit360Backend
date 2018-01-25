@@ -425,8 +425,8 @@ namespace FintrakBanking.APICore.Controllers
                 var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId);
 
                 allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page)
-                    .Where(x => x.auditType.ToLower().Contains(searchQuery.ToLower()) 
-                   // || x.firstName.ToLower().Contains(searchQuery) || x.lastName.ToLower().Contains(searchQuery)
+                    .Where(x => x.auditType.ToLower().Contains(searchQuery.ToLower())
+                    || x.firstName.ToLower().Contains(searchQuery) || x.lastName.ToLower().Contains(searchQuery)
                     );
 
                 var data = allAuditLog.ToList();

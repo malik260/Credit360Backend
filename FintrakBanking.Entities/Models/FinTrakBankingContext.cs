@@ -2115,6 +2115,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_PRODUCT_TYPE)
                 .WillCascadeOnDelete(false);
 
+            //modelBuilder.Entity<TBL_PRODUCT_TYPE>()
+            //    .HasMany(e => e.TBL_LOAN_RECOVERY_PLAN)
+            //    .WithRequired(e => e.TBL_PRODUCT_TYPE)
+            //    .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_PRODUCT_TYPE>()
                 .HasMany(e => e.TBL_LOAN_RECOVERY_PLAN)
                 .WithRequired(e => e.TBL_PRODUCT_TYPE)
@@ -3106,6 +3111,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION>()
+                .HasMany(e => e.TBL_LOAN_APPLTN_CREDIT_BUREAU)
+                .WithRequired(e => e.TBL_LOAN_APPLICATION)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION>()
                 .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION)
                 .WillCascadeOnDelete(false);
@@ -3418,7 +3428,7 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_RECOVERY_PLAN>()
                 .Property(e => e.AMOUNTOWED)
-                .IsFixedLength();
+               .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_RECOVERY_PLAN>()
                 .Property(e => e.WRITEOFFAMOUNT)
