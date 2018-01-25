@@ -16,7 +16,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatus { get; set; }
         public string condition { get; set; }
         public int conditionId { get; set; }
-        public DateTime deferredDate { get; set; }
+        public DateTime? deferredDate { get; set; }
         public int deferralDuration { get; set; }
         public int cummulativeDays { get; set; }
     }

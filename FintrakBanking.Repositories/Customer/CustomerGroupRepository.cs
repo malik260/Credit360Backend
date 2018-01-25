@@ -1067,6 +1067,7 @@ namespace FintrakBanking.Repositories.Customer
                                 isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == s.CUSTOMERID)),
                                 taxIdentificationNumber = s.TBL_CUSTOMER.TAXNUMBER,
                                 registrationNumber = s.TBL_CUSTOMER.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).REGISTRATIONNUMBER,
+                                completedInformation = s.TBL_CUSTOMER.ACCOUNTCREATIONCOMPLETE,
                                 customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == s.CUSTOMERID).Select(b => new CustomerBvnViewModels()
                                 {
                                     bankVerificationNumber = b.BANKVERIFICATIONNUMBER,

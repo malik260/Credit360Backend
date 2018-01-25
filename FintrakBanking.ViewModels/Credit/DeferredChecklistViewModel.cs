@@ -9,6 +9,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class DeferredChecklistViewModel
     {
         public int checklistDeferralId { get; set; }
+        public int loanApplicationId { get; set; }
         public DateTime deferredDate { get; set; }
         public int conditionId { get; set; }
         public string condition { get; set; }

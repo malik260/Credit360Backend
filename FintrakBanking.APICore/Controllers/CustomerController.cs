@@ -1456,7 +1456,35 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+        [HttpGet]
+        [Route("customer-information-completed/{customerId}")]
+        public HttpResponseMessage CustomerInformationCompleted(int customerId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
 
+                var data = repo.CustomerInformationCompleted(customerId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                          new { success = true, message = "The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+        }
         [HttpDelete]
         [Route("customer-product-fee/{customerProductFeeId}")]
         public HttpResponseMessage DeleteCustomerProductFee(int customerProductFeeId)

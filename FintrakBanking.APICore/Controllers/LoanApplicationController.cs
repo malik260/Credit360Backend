@@ -301,7 +301,7 @@ namespace FintrakBanking.APICore.Controllers
                 //model.companyId = token.GetCompanyId;
                 //model.branchId = (short)token.GetBranchId;
 
-                var response = repo.UpdateApprovalStatusForApplication(id);              
+                var response = repo.UpdateApprovalStatusForApplication(id, token.GetStaffId);              
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
               
             }

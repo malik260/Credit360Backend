@@ -468,7 +468,7 @@ namespace FintrakBanking.Repositories.Credit
                 .ACCOUNTSTATUS;
         }
 
-        public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId)//, object entity)
+        public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
             string str = string.Empty;
@@ -512,6 +512,9 @@ namespace FintrakBanking.Repositories.Credit
                         var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
 
                         var definition = from a in context.TBL_CHECKLIST_DEFINITION
+                                         join b in context.TBL_APPROVAL_LEVEL_STAFF on
+                      a.APPROVALLEVELID equals b.APPROVALLEVELID
+                                         where b.STAFFID == staffId
                                          where a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID &&
                                         a.PRODUCTID == PRODUCTID &&
                                          a.OPERATIONID == (int)OperationsEnum.LoanApplication
