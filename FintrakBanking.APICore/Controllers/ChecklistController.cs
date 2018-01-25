@@ -15,6 +15,8 @@ using System.Web;
 using FintrakBanking.Common;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -151,7 +153,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [Route("checklist-definition-checklisttype/")]
-        public HttpResponseMessage GetChecklistDefinitionByApprovalLevelCheckListType(int operationId,int checklistTypeId ,int? productId, int loanTargetId)
+        public HttpResponseMessage GetChecklistDefinitionByApprovalLevelCheckListType(int operationId, int checklistTypeId, int? productId, int loanTargetId)
         {
             try
             {
@@ -910,7 +912,7 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage ValidateChecklistDetail([FromBody] ValidateChecklistDetailViewModel model)
         {
             try
-            {  
+            {
                 var data = repo.ValidateChecklistDetail(model);
                 if (data)
                 {
@@ -928,5 +930,245 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         #endregion
+
+        #region Condition Precedence Checklist
+        [HttpGet]
+        [Route("condition-prededence-checklist")]
+        public HttpResponseMessage GetConditionPrecedenceChecklist(int loanApplicationId, bool isAvailment)
+        {
+            try
+            {
+                var data = repo.GetConditionPrecedenceChecklist(loanApplicationId, isAvailment);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("condition-prededence-checklist-status")]
+        public HttpResponseMessage GetConditionPrecedenceChecklistStatus(int loanApplicationId, bool isAvailment)
+        {
+            try
+            {
+                var data = repo.GetConditionPrecedenceChecklistStatus(loanApplicationId, isAvailment);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("deferred-checklist-awaiting-approval")]
+        public HttpResponseMessage GetChecklistAwaitingApproval()
+        {
+            try
+            {
+                var data = repo.GetChecklistAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("deferred-checklist")]
+        public HttpResponseMessage GetAllDeferralChecklist()
+        {
+            try
+            {
+                var data = repo.GetAllDeferralChecklist();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("deferred-checklist-byContionId/")]
+        public HttpResponseMessage GetAllDeferralChecklist(int conditionId)
+        {
+            try
+            {
+                var data = repo.GetDeferralChecklistByConditionId(conditionId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("update-loan-condition-precedence-status")]
+        public HttpResponseMessage UpdateLoanConditionPrecedenceStatus([FromBody] ConditionPrecedentViewModel model)
+        {
+            try
+            {
+                if (model.conditionId == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Please select a checklist to continue" });
+                }
+                if (model.deferedDate < DateTime.Now )
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Deferred date cannot be less than today's date" });
+                }
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+
+                var data = repo.UpdateLoanConditionPrecedenceStatus(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = true, message = "The Checklist Status has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = "There was an error updating this Checklist" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("extend-checklist-deferral-date")]
+        public HttpResponseMessage ExtendChecklistDeferralDate([FromBody] ConditionPrecedentViewModel model)
+        {
+            try
+            {
+                if (model.conditionId == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Please select a checklist to continue" });
+                }
+                if (repo.ValidateDeferralDateExpiration(model.conditionId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Extention terminated, deferral not expired" });
+                }
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+
+                var data = repo.ExtendChecklistDeferralDate(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = true, message = "The Deferral Date has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = "There was an error extending checklist deferral" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("update-provided-checklist")]
+        public HttpResponseMessage UpdateProvidedChecklist([FromBody] ConditionPrecedentViewModel model)
+        {
+            try
+            {
+                if (model.conditionId == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Please select a checklist to continue" });
+                }
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+
+                var data = repo.UpdateProvidedChecklist(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = true, message = "The Deferral Date has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = "There was an error extending checklist deferral" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("checklist-approval")]
+        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.operationId = (int)OperationsEnum.ChecklistApproval;
+                var data = repo.GoForApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next office" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Operation failed, there was an error submitting this record" });
+            }
+            catch (System.Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error submitting this record {e.Message}" });
+            }
+        }
+        #endregion
+
     }
 }

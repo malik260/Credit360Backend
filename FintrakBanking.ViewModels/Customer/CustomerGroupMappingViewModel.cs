@@ -28,6 +28,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string productAccountNumber { get; set; }
         public string accountHolder { get; set; }
         public short branchId { get; set; }
+        public bool completedInformation { get; set; }
 
         public List<CustomerBvnViewModels> customerBvnInformation { get; set; }
         public List<CustomerCompanyShareholdersViewModels> customerCompanyShareholders { get; set; }

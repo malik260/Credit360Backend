@@ -118,7 +118,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         };
                         TBL_CASA casaAccount = context.TBL_CASA.Find(loanApplication.CASAACCOUNTID);
                         collateralLocationState = context.TBL_STATE.Find(city.STATEID);
-                        int crdGL;
+                        int crdGL; 
 
                         switch (actionName)
                         {
@@ -149,22 +149,24 @@ namespace FintrakBanking.Repositories.WorkFlow
                 else throw new Exception("The collateral details information is incomplete");
             }
             else throw new Exception(" Collateral cannot be traced to an active application in the system");
-                // Audit Section ---------------------------
-                //var audit = new TBL_AUDIT
-                //{
-                //    AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
-                //    STAFFID = model.createdBy,
-                //    BRANCHID = (short)model.userBranchId,
-                //    DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
-                //    IPADDRESS = model.userIPAddress,
-                //    URL = model.applicationUrl,
-                //    APPLICATIONDATE = applicationDate,
-                //    SYSTEMDATETIME = DateTime.Now
-                //};
-                //this.audit.AddAuditTrail(audit);
-                // End of Audit Section ---------------------
+            //Audit Section ---------------------------
+           var audit = new TBL_AUDIT
+           {
+              // AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
+               STAFFID = model.createdBy,
+               BRANCHID = (short)model.userBranchId,
+               ///DETAIL = $"{actionType}  '{ model.jobRequestCode }' ",
+               IPADDRESS = model.userIPAddress,
+               URL = model.applicationUrl,
+               APPLICATIONDATE = general.GetApplicationDate(),
+               SYSTEMDATETIME = DateTime.Now
+           };
+            if(actionName == "Verification") audit.DETAIL = $"{actionType} Verification Charge for loan application with ref. '{ loanApplication.APPLICATIONREFERENCENUMBER }' " ;
+            else audit.DETAIL = $"{actionType} Collateral {actionName} Charge for loan application with ref. '{ loanApplication.APPLICATIONREFERENCENUMBER }' ";
+            this.audit.AddAuditTrail(audit);
+           // End of Audit Section ---------------------
 
-                return false; // context.SaveChanges() != 0;
+            return false; // context.SaveChanges() != 0;
         }
 
         public string AddGlobalJobRequest(JobRequestViewModel model)
@@ -843,7 +845,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool AddJobDocument(RequestDocumentViewModel model, byte[] file)
         {
-            var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENTS
+            var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENT
             {
                 FILEDATA = file,
                 //LoanApplicationNumber = model.targetId,
@@ -860,7 +862,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 CREATEDBY = (int)model.createdBy,
             };
 
-            docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Add(data);
+            docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Add(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -884,7 +886,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool UpdateJobDocument(RequestDocumentViewModel model, int documentId)
         {
-            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Find(documentId);
+            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Find(documentId);
             if (data == null)
             {
                 return false;
@@ -923,7 +925,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<RequestDocumentViewModel> GetAllJobDocument()
         {
-            return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Select(x => new RequestDocumentViewModel
+            return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Select(x => new RequestDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
                 //loanApplicationNumber = x.LoanApplicationNumber,
@@ -942,7 +944,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public RequestDocumentViewModel GetJobDocument(int documentId)
         {
-            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Find(documentId);
+            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Find(documentId);
 
             if (data == null)
             {

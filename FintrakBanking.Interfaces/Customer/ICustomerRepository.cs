@@ -100,6 +100,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool ValidateClientSupplierEmail(int customerId, string email);
         bool ValidateClientSupplierRCnumber(int customerId, string rcNumber);
         bool ValidateClientSupplierTIN(int customerId, string taxNumber);
+        bool CustomerInformationCompleted(int customerId, UserInfo user);
         #endregion
     }
 }

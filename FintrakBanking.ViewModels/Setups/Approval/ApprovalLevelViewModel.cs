@@ -32,5 +32,8 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public int groupId { get; set; }
 
         public int operationId { get; set; }
+        public bool canResolveDispute { get; set; }
+        public bool canApproveUntenored { get; set; }
+        public bool canEscalate { get; set; }
     }
 }

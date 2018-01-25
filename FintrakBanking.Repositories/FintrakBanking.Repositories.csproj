@@ -77,6 +77,7 @@
     <Compile Include="Admin\CurrencyRateRepository.cs" />
     <Compile Include="AppEmail\EmailRepository.cs" />
     <Compile Include="CASA\CasaRepository.cs" />
+    <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="CreditLimitValidations\CreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\AppraisalMemorandumRepository.cs" />
     <Compile Include="Credit\CallMemoRepository.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Credit\LoanScheduleRepository.cs" />
     <Compile Include="Credit\CustomException.cs" />
     <Compile Include="Credit\OfferLetterAndAvailmentRepository.cs" />
+    <Compile Include="Credit\TransactionDynamicsRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionGroupRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionRepository.cs" />
@@ -104,6 +106,7 @@
     <Compile Include="Customer\CustomerRepository.cs" />
     <Compile Include="Customer\CustomerStagingRepository.cs" />
     <Compile Include="Customer\KYCDocumentUploadRepository.cs" />
+    <Compile Include="Dashboard\DashboardRepository.cs" />
     <Compile Include="Finance\EndOfDayRepository.cs" />
     <Compile Include="Helper\ErrorLogger\ErrorLogRepository.cs" />
     <Compile Include="Finance\FinanceTransactionRepository.cs" />

@@ -151,7 +151,6 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IChecklistRepository>().To<ChecklistRepository>();
             kernel.Bind<ILoanRepository>().To<LoanRepository>();
             kernel.Bind<IApprovalGroupMappingRepository>().To<ApprovalGroupMappingRepository>();
-            //kernel.Bind<IWorkFlowRepository>().To<WorkFlowRepository>();
             kernel.Bind<IWorkflow>().To<Workflow>();
             kernel.Bind<IApprovalGroupRepository>().To<ApprovalGroupRepository>();
             kernel.Bind<IApprovalLevelRepository>().To<ApprovalLevelRepository>();
@@ -178,6 +177,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IReportRoutes>().To<ReportRoutes>();
             kernel.Bind<ICallMemoRepository>().To<CallMemoRepository>();
             kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
+            kernel.Bind<ITransactionDynamicsRepository>().To<TransactionDynamicsRepository>();
             kernel.Bind<IEmailAndAlertsRepository>().To<EmailAndAlertsRepository>();
             kernel.Bind<IEndOfDayRepository>().To<EndOfDayRepository>();
             kernel.Bind<IFinanceTransactionsReport>().To<FinanceTransactionsReport>();

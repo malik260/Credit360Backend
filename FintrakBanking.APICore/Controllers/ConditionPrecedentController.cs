@@ -80,31 +80,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpPut]
-        //[Route("condition-precedent/{conditionPrecedentId}")]
-        //public HttpResponseMessage UpdateConditionPrecedent([FromBody] ConditionPrecedentViewModel entity, int conditionPrecedentId)
-        //{
-        //    try
-        //    {
-        //        entity.userBranchId = (short)token.GetBranchId;
-        //        entity.companyId = token.GetCompanyId;
-        //        entity.lastUpdatedBy = token.GetStaffId;
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
-
-        //        var data = repo.UpdateConditionPrecedent(entity, conditionPrecedentId);
-        //        if (data)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
-        //        }
-
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}", error = ex.InnerException });
-        //    }
-        //}
-
         #region CP template
 
         [HttpGet]
@@ -222,5 +197,73 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        #region Compliance Timeline template
+
+        [HttpGet]
+        [Route("compliance-timeline-template")]
+        public HttpResponseMessage GetComplianceTimelineTemplate()
+        {
+            try
+            {
+                var data = repo.GetComplianceTimelineTemplate();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("compliance-timeline-template")]
+        public HttpResponseMessage AddComplianceTimelineTemplate([FromBody] ComplianceTimelineViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.AddComplianceTimelineTemplate(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpPut]
+        [Route("compliance-timeline-template/{conditionId}")]
+        public HttpResponseMessage UpdateComplianceTimelineTemplate([FromBody] ComplianceTimelineViewModel entity, int conditionId)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.UpdateComplianceTimelineTemplate(entity, conditionId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        #endregion Compliance Timeline template
     }
 }

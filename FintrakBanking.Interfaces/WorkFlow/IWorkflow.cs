@@ -31,7 +31,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool ExternalInitialization { set; }
         bool DeferredExecution { set; }
         bool KeepPending { set; }
-        string Message { get; }
+        //string Message { get; }
         bool Saved { get; }
 
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!

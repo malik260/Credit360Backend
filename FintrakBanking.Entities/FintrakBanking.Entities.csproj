@@ -58,11 +58,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\TBL_LOAN_CONDITION_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_CHECKLIST_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_COLLATERAL_DOCUMENTS.cs" />
-    <Compile Include="DocumentModels\TBL_MEDIA_JOB_REQUEST_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_JOB_REQUEST_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_KYC_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_LOAN_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_STAFF_PICTURE.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_SIGNATURE.cs" />
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
@@ -138,6 +140,7 @@
     <Compile Include="Models\TBL_COMPANY.cs" />
     <Compile Include="Models\TBL_COMPANY_CLASS.cs" />
     <Compile Include="Models\TBL_COMPANY_TYPE.cs" />
+    <Compile Include="Models\TBL_COMPLIANCE_TIMELINE.cs" />
     <Compile Include="Models\TBL_CONDITION_PRECEDENT.cs" />
     <Compile Include="Models\TBL_CONTENT_PLACEHOLDER.cs" />
     <Compile Include="Models\TBL_COT.cs" />
@@ -288,6 +291,7 @@
     <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE_PRODUCT.cs" />
     <Compile Include="Models\TBL_LOAN_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_TYPE.cs" />
     <Compile Include="Models\TBL_MACHINEVALUE_BASE.cs" />
@@ -376,6 +380,7 @@
     <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
+    <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />

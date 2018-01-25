@@ -25,6 +25,8 @@ namespace FintrakBanking.Repositories.Customer
             this.general = general;
             this.audit = audit;
         }
+
+        #region KYC Document Upload
         public bool KYCDocumentUpload(CustomerDocumentUploadViewModel model, byte[] file)
         {
             try
@@ -87,7 +89,9 @@ namespace FintrakBanking.Repositories.Customer
                 physicalLocation = x.PHYSICALLOCATION,
             });
         }
+        #endregion
 
+        #region CheckList Document Upload
         public bool CheckListDocumentUpload(CheckListDocumentUploadViewModel model, byte[] file)
         {
             try
@@ -135,7 +139,7 @@ namespace FintrakBanking.Repositories.Customer
         }
         public CheckListDocumentUploadViewModel CheckListDocumentUploadViewModel(int definitionId, int statusId, int detailId, bool isProductBased)
         {
-           
+
             if (isProductBased)
             {
                 var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
@@ -163,7 +167,7 @@ namespace FintrakBanking.Repositories.Customer
                                         fileExtension = ck.FILEEXTENSION
                                     }).FirstOrDefault();
                 return checklistDoc;
-            }   
+            }
         }
         public bool RemoveCheckListDocument(int definitionId, int statusId, int detailId, bool isProductBased)
         {
@@ -173,7 +177,7 @@ namespace FintrakBanking.Repositories.Customer
                                     where ck.CHECKLISTDEFINITIONID == definitionId
                                      && ck.CHECKLISTSTATUSID == statusId
                                      && ck.LOANDETAILSID == detailId
-                                   select ck).FirstOrDefault();
+                                    select ck).FirstOrDefault();
                 if (checklistDoc != null)
                 {
                     this.context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Remove(checklistDoc);
@@ -195,5 +199,78 @@ namespace FintrakBanking.Repositories.Customer
             }
             return false;
         }
+        #endregion
+
+        #region Conditions Precedent Document Upload
+        public ConditionsPrecedentUploadViewModel GetLoanConditionDocumentBydocumentId(int documentId)
+        {
+            var checklistDoc = (from ck in context.TBL_LOAN_CONDITION_DOCUMENTS
+                                where ck.DOCUMENTID == documentId
+                                select new ConditionsPrecedentUploadViewModel()
+                                {
+                                    fileData = ck.FILEDATA,
+                                    fileName = ck.FILENAME,
+                                    fileExtension = ck.FILEEXTENSION
+                                }).FirstOrDefault();
+            return checklistDoc;
+        }
+        public IEnumerable<ConditionsPrecedentUploadViewModel> GetLoanConditionDocumentByContionId(int conditionId)
+        {
+            return this.context.TBL_LOAN_CONDITION_DOCUMENTS.Where(x => x.CONDITIONID == conditionId).Select(x => new ConditionsPrecedentUploadViewModel
+            {
+                documentId = x.DOCUMENTID,
+                conditionId = x.CONDITIONID,
+                loanApplicationId = x.LOANAPPLICATIONID,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                systemDateTime = x.SYSTEMDATETIME,
+                physicalFileNumber = x.PHYSICALFILENUMBER,
+                physicalLocation = x.PHYSICALLOCATION,
+            });
+        }
+        public bool ConditionsPrecedentDocumentUpload(ConditionsPrecedentUploadViewModel model, byte[] file)
+        {
+            try
+            {
+                var data = new TBL_LOAN_CONDITION_DOCUMENTS()
+                {
+                    FILEDATA = file,
+                    CONDITIONID = model.conditionId,
+                    LOANAPPLICATIONID = model.loanApplicationId,
+                    FILENAME = model.fileName,
+                    FILEEXTENSION = model.fileExtension,
+                    SYSTEMDATETIME = DateTime.Now,
+                    PHYSICALFILENUMBER = model.physicalFileNumber,
+                    PHYSICALLOCATION = model.physicalLocation,
+                    CREATEDBY = (int)model.createdBy,
+                    DATECREATED = DateTime.Now
+                };
+
+                context.TBL_LOAN_CONDITION_DOCUMENTS.Add(data);
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added Condition Precedent Document for condition with ID: '{ model.conditionId }' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.audit.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+
+                return context.SaveChanges() != 0;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        #endregion
     }
 }
