@@ -797,8 +797,6 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
 
-
-
         public bool UpdateFinalOfferLetter (string applicationRef, OfferLetterTemplateViewModel model)
         {
             if (model != null)

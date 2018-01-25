@@ -194,6 +194,9 @@ namespace FintrakBanking.Common.Enum
         SectorAdded = 183,
         SectorDeleted = 184,
         SectorUpdated = 185,
+        LoanRecoverySetupAdded = 186,
+        LoanRecoverySetupUpdated = 187,
+        LoanRecoverySetupDeleted = 188,
     };
 
 

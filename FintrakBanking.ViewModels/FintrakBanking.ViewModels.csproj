@@ -158,6 +158,7 @@
     <Compile Include="Setups\General\CountryViewModel.cs" />
     <Compile Include="Setups\General\EmployerType.cs" />
     <Compile Include="Setups\General\EmployerViewModel.cs" />
+    <Compile Include="Setups\General\LoanRecoverySetupViewModel.cs" />
     <Compile Include="Setups\General\MonitoringSetupViewModel.cs" />
     <Compile Include="Setups\General\MessageLogViewModel.cs" />
     <Compile Include="Setups\General\ProductChargeFeeViewModel.cs" />
