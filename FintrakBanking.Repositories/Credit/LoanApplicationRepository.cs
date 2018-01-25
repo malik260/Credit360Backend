@@ -209,6 +209,7 @@ namespace FintrakBanking.Repositories.Credit
                             productClassName = a.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             relationshipOfficerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPOFFICERID,
                             relationshipManagerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPMANAGERID,
+                            customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             invoiceDiscountDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                      select new LoanApplicationDetailInvoiceViewModel
                                                      {
@@ -811,7 +812,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
         {
-            var data = new TBL_LOAN_APPLTN_CREDIT_BUREAU()
+            var previousSearch = this.GetCustomerLoanCreditBureauReportChargesByApplicationId(entity.customerId, entity.loanApplicationId);
+            bool hascrms = false;
+            foreach(var i in previousSearch)
+            {
+                if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
+            };
+            if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
+                throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
+
+                var data = new TBL_LOAN_APPLTN_CREDIT_BUREAU()
             {
                 LOANAPPLICATIONID = entity.loanApplicationId,
                 CHARGEAMOUNT = entity.chargeAmount,
@@ -1034,6 +1044,7 @@ namespace FintrakBanking.Repositories.Credit
                             proposedAmount = b.PROPOSEDAMOUNT,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
                             productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                            // LoanCreditBereauReport = GetCustomerLoanCreditBureauReportChargesByApplicationId(b.CUSTOMERID, a.LOANAPPLICATIONID).ToList()
                         });
             

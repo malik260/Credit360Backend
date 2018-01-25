@@ -604,4 +604,16 @@ namespace FintrakBanking.ViewModels.Credit
         public string refNo  { get; set; }
 
     }
+
+
+    public class CleanUpViewModel : GeneralEntity
+    {
+        public int loanId { get; set; }
+        public decimal casaBalance { get; set; }
+        public DateTime? nextCovenantDate { get; set; }
+        public short freqValue  { get; set; }
+        public int casaAccountId { get; set; }
+        public short branchId { get; set; }
+
+    }
 }

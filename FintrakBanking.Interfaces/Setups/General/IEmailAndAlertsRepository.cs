@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         void SendAlertsOnSelfLiquidatingLoanExpiry();
 
-        void SendEmailAlertsForWorkflow(string[] emails, string operation, bool group, string link);
+        //void SendEmailAlertsForWorkflow(string[] emails, string operation, bool group, string link);
 
         bool CreateEmailMessageAndSend(MessageLogViewModel model);
 
@@ -26,6 +26,11 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<MessageLogViewModel> GetSmsMailingList();
 
         bool UpdateMailDeliveryStatus(int messageId, short statusId);
+
         void SendAlertsOnOverDraftLoansAlmostDue();
+
+        void SaveWorkflowEmail(string name, string address, int operationid, int targetid);
+
+        void SaveWorkflowSMS(string name, string address, int operationid, int targetid);
     }
 }

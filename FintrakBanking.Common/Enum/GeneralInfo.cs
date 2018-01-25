@@ -203,6 +203,9 @@ namespace FintrakBanking.Common.Enum
         TransactionDynamicsUpdated = 191,
         ComplianceTimelineAdded = 192,
         ComplianceTimelineUpdated = 193,
+        LoanRecoverySetupAdded = 186,
+        LoanRecoverySetupUpdated = 187,
+        LoanRecoverySetupDeleted = 188,
     };
 
 

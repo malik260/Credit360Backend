@@ -113,6 +113,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string nearestBusStop { get; set; }
         public decimal? longitude { get; set; }
         public decimal? latitude { get; set; }
+        public byte? perfectionStatusId { get; set; }
+        public string perfectionStatusReason { get; set; }
 
         // marketableSecurities
         public int collateralMarketableSecurityId { get; set; }
@@ -563,6 +565,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string address { get; set; }
     }
 
+    public class CollateralPerfectionStatusViewModel : GeneralEntity
+    {
+        public byte perfectionStatusId { get; set; }
+        public string perfectionStatusName { get; set; }
+    }
     public class CollateralValuerTypeViewModel : GeneralEntity
     {
         public short valuerTypeId { get; set; }

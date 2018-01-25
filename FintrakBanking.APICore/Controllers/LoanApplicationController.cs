@@ -503,7 +503,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("credit-bureau-charges/{customerId}application/{loanApplicationId}")]
+        [Route("credit-bureau-charges/{customerId}/application/{loanApplicationId}")]
         public HttpResponseMessage GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId)
         {
             try

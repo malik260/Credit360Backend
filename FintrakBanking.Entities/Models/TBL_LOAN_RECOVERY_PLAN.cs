@@ -20,8 +20,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? AGENTID { get; set; }
 
-        [StringLength(10)]
-        public string AMOUNTOWED { get; set; }
+        [Column(TypeName = "money")]
+        public decimal AMOUNTOWED { get; set; }
 
         [Column(TypeName = "money")]
         public decimal WRITEOFFAMOUNT { get; set; }
