@@ -195,5 +195,25 @@ namespace FintrakBanking.Repositories.Credit
             }
             return false;
         }
+
+        #region COMMITTEE MINUTES
+
+        public bool AddCommitteeDocument(LoanDocumentViewModel entity, byte[] buffer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<LoanDocumentViewModel> GetCommitteeDocument(string applicationNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public LoanDocumentViewModel GetCommitteeDocument(int documentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion COMMITTEE MINUTES
+
     }
 }
