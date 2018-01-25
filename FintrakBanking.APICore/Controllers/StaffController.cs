@@ -449,7 +449,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 foreach (var item in data)
                 {
-                    var staffName = staffInfo.FirstOrDefault(x => x.StaffCode == item.StaffCode);
+                    var staffName = staffInfo.FirstOrDefault(x => x.StaffCode == item.staffCode);
 
                     item.StaffName = staffName.FirstName + " " + staffName.MiddleName + " " + staffName.LastName;
                 }
@@ -490,7 +490,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var entity = new StaffDocumentViewModel
                 {
-                    StaffCode = provider.FormData["staffCode"],
+                    staffCode = provider.FormData["staffCode"],
                     documentTitle = provider.FormData["documentTitle"],
                     fileName = provider.FormData["fileName"],
                     fileExtension = provider.FormData["fileExtension"],
