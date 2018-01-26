@@ -14,7 +14,9 @@ namespace FintrakBanking.ViewModels.Admin
         public DateTime applicationDate { get; set; }
         public string details { get; set; }
         public string url { get; set; }
-
+        public string username { get; set; }
+        public string branchName { get; set; }
+        public string  fullName { get { return firstName + " " + lastName;  }}
         public string formattedSystemDate { get { return this.systemDate.ToString("dd/MM/yyy"); } }
         public string formattedApplicationDate { get { return this.systemDate.ToString("dd/MM/yyy"); } }
 

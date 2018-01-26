@@ -52,8 +52,9 @@ namespace FintrakBanking.ViewModels.Reports
     {
         public decimal  outstandingInterest { get; set; }
         public double approvedInterestRate { get; set; }
-        private int da { get { return (maturitydate - effectiveDate).Days; } }
-        public int approvedTenor { get { return (int)(Math.Round(da * (decimal)(12.0 / 365.0))); } }
+        private int tenor { get { return (maturitydate - effectiveDate).Days; } }
+        public int tenorToDate { get; set; }
+        public int approvedTenor { get { return (int)(Math.Round(tenor * (decimal)(12.0 / 365.0))); } }
         public double exchangeValue { get; set; }
         public decimal productId { get; set; }
         public string companyName { get; set; }
@@ -74,7 +75,22 @@ namespace FintrakBanking.ViewModels.Reports
         public string status { get; set; }
         public string bookingRef { get; set; }
         public short branchId { get; set; }
-
+        public string branchName { get; set; }
+        public string productClassName { get; set; }
+        public decimal interest { get; set; }
+        public DateTime dealDate { get; set; }
+        public string interestType { get; set; }
+        public decimal pricipalAmount { get; set; }
+        public double rate { get; set; }
+        public decimal interestRateChange { get; set; }
+        public decimal interestToDate { get; set; }
+        public string accountPayTo { get; set; }
+        public string accountReceiveFrom { get; set; }
+        public string naration { get; set; }
+        public string remark { get; set; }
+        public string current { get; set; }
+        public string businessGroup { get; set; }
+        public int loanTenor { get; set; }
     }
 
     public class DateRange
@@ -84,6 +100,8 @@ namespace FintrakBanking.ViewModels.Reports
         public short? branchId { get; set; }
         public string loanRefNo { get; set; }
         public int productClassId { get; set; }
+        public string username { get; set; }
+        public string branchCode { get; set; }
     }
 
     public class ReportSearchEntity
@@ -100,6 +118,8 @@ namespace FintrakBanking.ViewModels.Reports
         public string customerName { get; set; }
         public int pageNo { get; set; }
         public int pageSize { get; set; }
+        public string searchParamemter { get; set; }
+        public int? productClassId { get; set; }
     }
 
     public class AllLoanViewModel

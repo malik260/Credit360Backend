@@ -19,15 +19,17 @@ namespace FintrakBanking.Interfaces.Reports
         string GetLoanAnniversery(DateRange dateRange, int companyId);
         string GetLoanDocumentWaived(int companyId, DateRange dateRange);
         string GetLoanDocumentDeferrals(int companyId, DateRange dateRange);
+        string GetLoanDocumentDeferralsMCC(int companyId, DateRange dateRange);
         string GetCollateralEstimated(int companyId, string collateralCode);
         string GetFCYScheuledLoan(int companyId, int loanId);
-
+        string GetRuningLoansByLoanType(ReportSearchEntity searchEntity, int companyId);
+        string GetLoanInterestReceivableAndPayable(ReportSearchEntity searchEntity, int companyId);
         #region Offer Letter Generation & Loan Monitoring Reports
 
         string GetGeneratedOfferLetter(string applicationRefNumber);
 
         string GetCovenantsApproachingDueDateReport(int companyId);
-        string GetCollateralPropertyRevaluationReport(int companyId);
+        string GetCollateralPropertyRevaluationReport(int companyId,int value);
         string GetExpiredSelfLiquidatingLoansReport(int companyId);
         string GetNonPerformingLoansReport(int companyId);
         string GetExpiredOverdraftLoansReport(int companyId);
@@ -39,5 +41,8 @@ namespace FintrakBanking.Interfaces.Reports
         string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
         string GetAccountWithLein(int staffId, short? branchId, string customerName, int companyId);
         string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId);
+        string GetAuditTrail(DateRange dateRange, int companyId);
+        string GetFacilityApprovedNotUtilized(ReportSearchEntity searchEntity, int companyId);
+
     }
 }

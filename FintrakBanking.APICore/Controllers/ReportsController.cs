@@ -181,12 +181,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("monitoring/collateral-property-revaluation")]
-        public HttpResponseMessage GetCollateralPropertyRevaluationReport()
+        [Route("monitoring/collateral-property-revaluation/{value}")]
+        public HttpResponseMessage GetCollateralPropertyRevaluationReport(int value)
         {
             try
             {
-                var data = repo.GetCollateralPropertyRevaluationReport(token.GetCompanyId);
+                var data = repo.GetCollateralPropertyRevaluationReport(token.GetCompanyId, value);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -359,6 +359,27 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        [Route("audit-trail")]
+        public HttpResponseMessage GetAuditTrail(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetAuditTrail(dateRange, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpPost]
         [Route("posted-transactions-staff/date")]
@@ -492,6 +513,30 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("loan/document-deferrals-mcc")]
+        public HttpResponseMessage GetLoanDocumentDeferralsForMCC(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+
+                var data = repo.GetLoanDocumentDeferralsMCC(token.GetCompanyId, dateRange);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         //[HttpPost]
         //[Route("loan/collateral-estimated")]
         //public HttpResponseMessage GetCollateralEstimated(string acctNumber, string collateralCode)
@@ -587,6 +632,69 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetStakeholdersOnExpirationOfFTP(reportSearchEntity, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("loan/facility-approved-not-utilized")]
+        public HttpResponseMessage FacilityApprovedNotUtilized(ReportSearchEntity reportSearchEntity)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetFacilityApprovedNotUtilized(reportSearchEntity, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("loan/runing-loans-by-loantype")]
+        public HttpResponseMessage RuningLoansByLoanType(ReportSearchEntity reportSearchEntity)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetRuningLoansByLoanType(reportSearchEntity, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("loan/loan-interest-receivable-and-payable")]
+        public HttpResponseMessage LoansInterestReceivabelAndPayable(ReportSearchEntity reportSearchEntity)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetLoanInterestReceivableAndPayable(reportSearchEntity, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
