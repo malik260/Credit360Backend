@@ -61,6 +61,7 @@
     <Compile Include="Admin\ICurrencyRateRepository.cs" />
     <Compile Include="AppEmail\IEmailRepository.cs" />
     <Compile Include="CASA\ICasaRepository.cs" />
+    <Compile Include="CASA\IOverRideRepository.cs" />
     <Compile Include="CreditLimitValidations\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IAppraisalMemorandumRepository.cs" />
     <Compile Include="Credit\ICallMemoRepository.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Credit\ILoanRepository.cs" />
     <Compile Include="Credit\ILoanScheduleRepository.cs" />
     <Compile Include="Credit\IOfferLetterAndAvailmentRepository.cs" />
+    <Compile Include="Credit\ITransactionDynamicsRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionGroupRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionRepository.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="Setups\General\ICountryRepository.cs" />
     <Compile Include="Setups\General\ICustomFieldsRepository.cs" />
     <Compile Include="Setups\General\IEmployerRepository.cs" />
+    <Compile Include="Setups\General\ILoanRecoverySetupRepository.cs" />
     <Compile Include="Setups\General\IMonitoringSetupRepository.cs" />
     <Compile Include="Setups\General\IDepartmentRepository.cs" />
     <Compile Include="Setups\General\IEmailAndAlertsRepository.cs" />

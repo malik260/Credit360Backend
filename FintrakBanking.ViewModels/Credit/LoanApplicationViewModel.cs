@@ -144,6 +144,8 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
+        public string customerType;
+
         public LoanApplicationDetailViewModel()
         {
             invoiceDetails = new List<InvoiceDetailViewModel>();
@@ -195,7 +197,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short sectorId { get; set; }
 
-        public short productClassId { get; set; }
+        public short? productClassId { get; set; }
 
         public string loanPurpose { get; set; }
 
@@ -206,6 +208,7 @@ namespace FintrakBanking.ViewModels.Credit
         public  TraderLoanViewModel  traderLoan { get; set; }
 
         public BondsAndGuranty bondDetails { get; set; }
+        public IEnumerable<LoanCreditBereauViewModel> LoanCreditBereauReport { get; set; }
     }
 
     public class BondsAndGuranty
@@ -229,6 +232,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class jobLoanApplicationDetailViewModel : LoanApplicationViewModel
     {
+        public string customerType;
+
         public string applicationRefNo { get; set; }
 
         public short proposedProductId { get; set; }

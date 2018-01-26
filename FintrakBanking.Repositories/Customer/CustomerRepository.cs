@@ -1266,6 +1266,52 @@ namespace FintrakBanking.Repositories.Customer
 
         }
 
+        IQueryable<CustomerViewModels> GetCustomersLite()
+        {
+            return context.TBL_CUSTOMER.Where(x => x.DELETED == false).Select(a => new CustomerViewModels
+            {
+                accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
+                branchId = a.BRANCHID,
+                branchName = a.TBL_BRANCH.BRANCHNAME,
+                companyMainId = a.COMPANYID,
+                createdBy = a.CREATEDBY,
+                creationMailSent = a.CREATIONMAILSENT,
+                customerCode = a.CUSTOMERCODE,
+                customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                customerTypeId = (short)a.CUSTOMERTYPEID,
+                dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                customerId = a.CUSTOMERID,
+                emailAddress = a.EMAILADDRESS,
+                firstName = a.FIRSTNAME,
+                gender = a.GENDER,
+                lastName = a.LASTNAME,
+                maidenName = a.MAIDENNAME,
+                maritalStatus = a.MARITALSTATUS.Value,
+                title = a.TITLE,
+                middleName = a.MIDDLENAME,
+                customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                misCode = a.MISCODE,
+                misStaff = a.MISSTAFF,
+                nationality = a.NATIONALITY,
+                occupation = a.OCCUPATION,
+                placeOfBirth = a.PLACEOFBIRTH,
+                isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
+                         + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
+                spouse = a.SPOUSE,
+                sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
+                sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                subSectorId = (short)a.SUBSECTORID,
+                subSectorName = a.TBL_SUB_SECTOR.NAME,
+                taxNumber = a.TAXNUMBER,
+                riskRatingId = a.RISKRATINGID,
+                riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                customerBVN = a.CUSTOMERBVN,
+            });
+        }
+
         public IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId)
         {
             var data = (from cs in context.TBL_CUSTOMER_GROUP_MAPPING
@@ -1440,18 +1486,18 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search)
         {
-            var customer = GetCustomerByCompanyId(companyId).ToList();
+            var customers = GetCustomersLite();
             if (!string.IsNullOrWhiteSpace(search))
             {
-                customer = customer.Where(x =>
-               x.firstName.ToLower().Contains(search.ToLower())
-                //|| x.lastName.ToLower().Contains(search.ToLower())
-                //|| x.middleName.ToLower().Contains(search.ToLower())
-                //|| x.customerCode.Contains(search.ToLower())
-                ).ToList();
+                customers = customers.Where(x =>
+                x.firstName.ToLower().Contains(search.ToLower())
+                || x.lastName.ToLower().Contains(search.ToLower())
+                || x.middleName.ToLower().Contains(search.ToLower())
+                || x.customerCode.Contains(search.ToLower())
+                );
             }
 
-            return customer;
+            return customers;
         }
 
         public IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string searchQuery)
@@ -1494,7 +1540,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search)
         {
-            var customers = GetCustomerByCompanyId(companyId);
+            var customers = GetCustomersLite();
 
             if (search.branchId != null)
             {
@@ -1657,7 +1703,7 @@ namespace FintrakBanking.Repositories.Customer
                                electricMeterNumber = x.ELECTRICMETERNUMBER,
                                pobox = x.POBOX,
                                stateId = x.STATEID,
-                               addressId = x.ADDRESSID, 
+                               addressId = x.ADDRESSID,
                                active = x.ACTIVE
                            }).ToList();
             return address;
@@ -1987,6 +2033,31 @@ namespace FintrakBanking.Repositories.Customer
                 itemExist = true;
             }
             return itemExist;
+        }
+        public bool CustomerInformationCompleted(int customerId, UserInfo user)
+        {
+            var data = (from a in context.TBL_CUSTOMER where a.CUSTOMERID == customerId select a).FirstOrDefault();
+            if (data == null) return false;
+            data.LASTUPDATEDBY = user.staffId;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.ACCOUNTCREATIONCOMPLETE = true;
+            // Audit Section ----------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = "Updated customer information for : + (" + data.FIRSTNAME + " " + data.LASTNAME + ") ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            var response = context.SaveChanges() != 0;
+            return response;
         }
         #endregion
     }

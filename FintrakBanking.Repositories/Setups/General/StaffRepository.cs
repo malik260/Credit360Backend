@@ -215,7 +215,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.DATEOFBIRTH = staffModel.DateOfBirth;
                 tempStaffToUpdate.DATETIMEUPDATED = DateTime.Now;
                 tempStaffToUpdate.DEPARTMENTID = staffModel.DepartmentId;
-                tempStaffToUpdate.DEPARTMENTUNITID = staffModel.DepartmentUnitId;
+                tempStaffToUpdate.DEPARTMENTUNITID = (short)staffModel.DepartmentUnitId;
                 tempStaffToUpdate.EMAIL = staffModel.Email;
                 tempStaffToUpdate.EMAILOFNOK = staffModel.EmailOfNok;
                 tempStaffToUpdate.GENDER = staffModel.Gender;
@@ -486,7 +486,7 @@ namespace FintrakBanking.Repositories.Setups.General
             temp.DATETIMEUPDATED = DateTime.Now;
             temp.LASTUPDATEDBY = user.createdBy;
 
-            if (temp.RELIEF_STAFFID != entity.RELIEF_STAFFID) { UpdateDelegateStaff(entity.STAFFID, temp.RELIEF_STAFFID); }
+            if (temp.TEMPSTAFFID != entity.RELIEF_STAFFID) { UpdateDelegateStaff(entity.STAFFID, temp.TEMPSTAFFID); }
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -651,7 +651,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     select new StaffInfoViewModel
                     {
                         DelegateName = context.TBL_STAFF
-                                                .Where(x => x.STAFFID == c.RELIEF_STAFFID)
+                                                .Where(x => x.STAFFID == c.TEMPSTAFFID)
                                                 .Select(x => new { name = x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME })
                                                 .FirstOrDefault().name ?? "",
                         StaffId = c.TEMPSTAFFID,
@@ -1032,7 +1032,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var temp = context.TBL_TEMP_STAFF.Add(new TBL_TEMP_STAFF()
             {
-                RELIEF_STAFFID = model.relieverId, // <-------- real item changing here
+                TEMPSTAFFID = (int)model.relieverId, // <-------- real item changing here
                 FIRSTNAME = staff.FIRSTNAME,
                 MIDDLENAME = staff.MIDDLENAME,
                 LASTNAME = staff.LASTNAME,
@@ -1049,7 +1049,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 DATEOFBIRTH = staff.DATEOFBIRTH,
                 DATETIMECREATED = DateTime.Now,
                 DEPARTMENTID = staff.DEPARTMENTID,
-                DEPARTMENTUNITID = staff.DEPARTMENT_UNITID, // ----------------- TYPE MISMATCH ERROR PRONE!!!!!
+                DEPARTMENTUNITID = (short)staff.DEPARTMENT_UNITID, // ----------------- TYPE MISMATCH ERROR PRONE!!!!!
                 EMAIL = staff.EMAIL,
                 EMAILOFNOK = staff.EMAILOFNOK,
                 GENDER = staff.GENDER,

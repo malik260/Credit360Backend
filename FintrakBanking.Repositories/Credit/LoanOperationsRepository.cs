@@ -526,6 +526,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return data;
         }
+
         public IEnumerable<LoanClassificationViewModel> CalLoanClassification(DateTime applicationDate)
 
         {
@@ -610,6 +611,120 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
+
+        public IEnumerable<CleanUpViewModel> OverdraftCleanUp(DateTime applicationDate)
+
+        {
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+
+            var data = (from a in context.TBL_LOAN_REVOLVING
+                       join b in context.TBL_CASA on a.CASAACCOUNTID equals b.CASAACCOUNTID
+                       join d in context.TBL_LOAN_COVENANT_DETAIL on a.REVOLVINGLOANID equals d.LOANID
+                       join e in context.TBL_LOAN_COVENANT_TYPE on d.COVENANTTYPEID equals e.COVENANTTYPEID
+                       where a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                        && d.NEXTCOVENANTDATE == DbFunctions.TruncateTime(applicationDate)
+                       select new CleanUpViewModel()
+                           {
+                            loanId = a.REVOLVINGLOANID,
+                            nextCovenantDate = d.NEXTCOVENANTDATE,
+                            casaBalance = b.AVAILABLEBALANCE,
+                            freqValue =  (short)d.FREQUENCYTYPEID,
+                           casaAccountId = b.CASAACCOUNTID,
+                           branchId = a.BRANCHID,
+                       }).ToList(); 
+
+            foreach (var item in data)
+            {
+               if (item.casaBalance < 0)
+                {
+                    //Change during integration
+                    // financeTransaction.PostDailyAuthorisedOverdraftInterestAccrual(item);
+                    var casa  = context.TBL_CASA.FirstOrDefault(a => a.CASAACCOUNTID == item.casaAccountId);
+                    var refNo = context.TBL_LOAN_REVOLVING.FirstOrDefault(a => a.CASAACCOUNTID == item.casaAccountId);
+                    var model  = new TBL_CASA_LIEN
+                    {
+                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                        SOURCEREFERENCENUMBER = refNo.LOANREFERENCENUMBER,
+                        BRANCHID = item.branchId,
+                        COMPANYID = item.companyId,
+                        LIENCREDITAMOUNT = 0,
+                        LIENDEBITAMOUNT = item.casaBalance,
+                        LIENTYPEID = (short)LienTypeEnum.OverdraftCleanUp,
+                        CREATEDBY = (int)SystemStaff.System,
+                        DESCRIPTION = "lien placed due to Account not swing to positive", // model.description,
+                        DATECREATED = generalSetup.GetApplicationDate()
+
+                    };
+
+                    context.TBL_CASA_LIEN.Add(model);
+
+                    context.SaveChanges();
+                }
+                else
+                {
+                    int freqValue = context.TBL_FREQUENCY_TYPE.FirstOrDefault(a => a.FREQUENCYTYPEID == item.freqValue).NUMBEROFDAYS;
+
+                    TBL_LOAN_COVENANT_DETAIL result = (from p in context.TBL_LOAN_COVENANT_DETAIL
+                                                       where p.LOANID == item.loanId select p).SingleOrDefault();
+
+                    result.NEXTCOVENANTDATE = result.NEXTCOVENANTDATE.Value.Date.AddDays(freqValue);
+                    context.SaveChanges();
+                }
+
+            }
+           return data;
+        }
+
+        //public void OverdraftCleanUp(int loanId)
+        //{
+
+        //    bool output = false;
+        //    var systemDate = generalSetup.GetApplicationDate();
+
+        //    var covenant = from a in context.TBL_LOAN
+        //                   join b in context.TBL_LOAN_COVENANT_DETAIL on a.TERMLOANID equals b.LOANID
+        //                   where a.TERMLOANID == loanId
+        //                   let percentage = b.ISPERCENTAGE
+        //                   select percentage;
+
+        //    if (covenant.FirstOrDefault() == false)
+        //    {
+        //        var covenantAmount = from a in context.TBL_LOAN
+        //                             join b in context.TBL_LOAN_COVENANT_DETAIL on a.TERMLOANID equals b.LOANID
+        //                             join c in context.TBL_LOAN_COVENANT_TYPE on b.COVENANTTYPEID equals c.COVENANTTYPEID
+        //                             where b.COVENANTTYPEID == c.COVENANTTYPEID && a.TERMLOANID == b.LOANID
+        //                             && c.COVENANTTYPEID == (short)LoanCovenantTypeEnum.SinkingFund && a.TERMLOANID == loanId
+        //                             && b.NEXTCOVENANTDATE == DbFunctions.TruncateTime(systemDate)
+        //                             select b.COVENANTAMOUNT;
+        //    }
+        //    else
+        //    {
+        //        var covenantRate = from a in context.TBL_LOAN
+        //                           join b in context.TBL_LOAN_COVENANT_DETAIL on a.TERMLOANID equals b.LOANID
+        //                           join c in context.TBL_LOAN_COVENANT_TYPE on b.COVENANTTYPEID equals c.COVENANTTYPEID
+        //                           where b.COVENANTTYPEID == c.COVENANTTYPEID && a.TERMLOANID == b.LOANID
+        //                           && c.COVENANTTYPEID == (short)LoanCovenantTypeEnum.SinkingFund && a.TERMLOANID == loanId
+        //                           && b.NEXTCOVENANTDATE == DbFunctions.TruncateTime(systemDate)
+        //                           select b.COVENANTAMOUNT;
+        //    };
+
+
+        //    var desc = "Overdraft Top";
+
+        //    TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
+        //                                 where p.REVOLVINGLOANID == loanId
+        //                                 && p.LOANSTATUSID == (short)LoanStatusEnum.Active
+        //                                 select p).SingleOrDefault();
+
+        //    result.OVERDRAFTLIMIT = result.OVERDRAFTLIMIT + amount;
+
+
+        //    AddCASAOverdraft(result.CASAACCOUNTID, amount, desc);
+
+        //    context.SaveChanges();
+        //}
 
 
         #endregion
@@ -2620,6 +2735,8 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+     
+
         #endregion
 
         #region Re-phasement  Operation
@@ -4128,7 +4245,6 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
         }
-
 
         public void updateLoanFrequency (short PrincipalFrequency, short InterestFrequency, int loanId)
         {
@@ -6284,13 +6400,35 @@ namespace FintrakBanking.Repositories.Credit
                            let percentage  = b.ISPERCENTAGE
                            select percentage;
 
-            var covenantAmount  = from a in context.TBL_LOAN
-                                 join b in context.TBL_LOAN_COVENANT_DETAIL on a.TERMLOANID equals b.LOANID
-                                 join c in context.TBL_LOAN_COVENANT_TYPE on b.COVENANTTYPEID equals c.COVENANTTYPEID
-                                 where b.COVENANTTYPEID == c.COVENANTTYPEID && a.TERMLOANID == b.LOANID
-                                 && c.COVENANTTYPEID == (short)LoanCovenantTypeEnum.SinkingFund && a.TERMLOANID == loanId
-                                 && b.NEXTCOVENANTDATE == DbFunctions.TruncateTime(systemDate)
-                                 select b.COVENANTAMOUNT;
+            //var covenantAmount  = from a in context.TBL_LOAN
+            //                     join b in context.TBL_LOAN_COVENANT_DETAIL on a.TERMLOANID equals b.LOANID
+            //                     join c in context.TBL_LOAN_COVENANT_TYPE on b.COVENANTTYPEID equals c.COVENANTTYPEID
+            //                     where b.COVENANTTYPEID == c.COVENANTTYPEID && a.TERMLOANID == b.LOANID
+            //                     && c.COVENANTTYPEID == (short)LoanCovenantTypeEnum.SinkingFund && a.TERMLOANID == loanId
+            //                     && b.NEXTCOVENANTDATE == DbFunctions.TruncateTime(systemDate)
+            //                     select b.COVENANTAMOUNT;
+
+
+            if (covenant.FirstOrDefault() == false)
+            {
+                var covenantAmount = from a in context.TBL_LOAN
+                                     join b in context.TBL_LOAN_COVENANT_DETAIL on a.TERMLOANID equals b.LOANID
+                                     join c in context.TBL_LOAN_COVENANT_TYPE on b.COVENANTTYPEID equals c.COVENANTTYPEID
+                                     where b.COVENANTTYPEID == c.COVENANTTYPEID && a.TERMLOANID == b.LOANID
+                                     && c.COVENANTTYPEID == (short)LoanCovenantTypeEnum.SinkingFund && a.TERMLOANID == loanId
+                                     && b.NEXTCOVENANTDATE == DbFunctions.TruncateTime(systemDate)
+                                     select b.COVENANTAMOUNT;
+            }
+            else
+            {
+                var covenantRate  = from a in context.TBL_LOAN
+                                     join b in context.TBL_LOAN_COVENANT_DETAIL on a.TERMLOANID equals b.LOANID
+                                     join c in context.TBL_LOAN_COVENANT_TYPE on b.COVENANTTYPEID equals c.COVENANTTYPEID
+                                     where b.COVENANTTYPEID == c.COVENANTTYPEID && a.TERMLOANID == b.LOANID
+                                     && c.COVENANTTYPEID == (short)LoanCovenantTypeEnum.SinkingFund && a.TERMLOANID == loanId
+                                     && b.NEXTCOVENANTDATE == DbFunctions.TruncateTime(systemDate)
+                                     select b.COVENANTAMOUNT;
+            }
 
 
             //select sumPrincipalAmount;
@@ -6913,6 +7051,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return data;
         }
+
 
         #endregion
     }

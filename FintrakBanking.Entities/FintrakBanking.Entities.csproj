@@ -58,14 +58,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\TBL_LOAN_CONDITION_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_CHECKLIST_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_COLLATERAL_DOCUMENTS.cs" />
-    <Compile Include="DocumentModels\TBL_MEDIA_JOB_REQUEST_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_JOB_REQUEST_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_KYC_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_LOAN_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_STAFF_PICTURE.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_SIGNATURE.cs" />
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
+    <Compile Include="Models\SYSDIAGRAM.cs" />
     <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
@@ -122,6 +125,7 @@
     <Compile Include="Models\TBL_COLLATERAL_MISCELLANEOUS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_MISC_NOTES.cs" />
     <Compile Include="Models\TBL_COLLATERAL_MKT_SECURITY.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_PERFECTN_STAT.cs" />
     <Compile Include="Models\TBL_COLLATERAL_PLANT_AND_EQUIP.cs" />
     <Compile Include="Models\TBL_COLLATERAL_POLICY.cs" />
     <Compile Include="Models\TBL_COLLATERAL_PRECIOUSMETAL.cs" />
@@ -136,6 +140,7 @@
     <Compile Include="Models\TBL_COMPANY.cs" />
     <Compile Include="Models\TBL_COMPANY_CLASS.cs" />
     <Compile Include="Models\TBL_COMPANY_TYPE.cs" />
+    <Compile Include="Models\TBL_COMPLIANCE_TIMELINE.cs" />
     <Compile Include="Models\TBL_CONDITION_PRECEDENT.cs" />
     <Compile Include="Models\TBL_CONTENT_PLACEHOLDER.cs" />
     <Compile Include="Models\TBL_COT.cs" />
@@ -143,6 +148,7 @@
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMORANDM.cs" />
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_DETL.cs" />
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_DOCU.cs" />
+    <Compile Include="Models\TBL_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_CREDIT_TEMPLATE.cs" />
     <Compile Include="Models\TBL_CURRENCY.cs" />
     <Compile Include="Models\TBL_CURRENCY_RATE.cs" />
@@ -241,6 +247,7 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_STA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_TRA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLTN_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_BOOKING_REQUEST.cs" />
     <Compile Include="Models\TBL_LOAN_BULK_INTEREST_REVIEW.cs" />
@@ -266,6 +273,8 @@
     <Compile Include="Models\TBL_LOAN_PRICEINDEX_EXCEPTION.cs" />
     <Compile Include="Models\TBL_LOAN_PRINCIPAL.cs" />
     <Compile Include="Models\TBL_LOAN_PRUDENTIALGUIDELINE.cs" />
+    <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN.cs" />
+    <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN_PAYMNT.cs" />
     <Compile Include="Models\TBL_LOAN_RELATIONSHIP_OFF_HIST.cs" />
     <Compile Include="Models\TBL_LOAN_REVIEW_OPERATION.cs" />
     <Compile Include="Models\TBL_LOAN_REVIEW_OPRATN_IREG_SC.cs" />
@@ -282,6 +291,7 @@
     <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE_PRODUCT.cs" />
     <Compile Include="Models\TBL_LOAN_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_TYPE.cs" />
     <Compile Include="Models\TBL_MACHINEVALUE_BASE.cs" />
@@ -310,6 +320,7 @@
     <Compile Include="Models\TBL_PRODUCT_CURRENCY.cs" />
     <Compile Include="Models\TBL_PRODUCT_GROUP.cs" />
     <Compile Include="Models\TBL_PRODUCT_PRICE_INDEX.cs" />
+    <Compile Include="Models\TBL_PRODUCT_PRICE_INDEX_DAILY.cs" />
     <Compile Include="Models\TBL_PRODUCT_TYPE.cs" />
     <Compile Include="Models\TBL_PROFILE_ACTIVITY.cs" />
     <Compile Include="Models\TBL_PROFILE_ACTIVITY_PARENT.cs" />
@@ -370,6 +381,7 @@
     <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
+    <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />

@@ -20,7 +20,6 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Repositories.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Credit;
-using FinTrakMail;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 
@@ -43,7 +42,7 @@ namespace WinApp
         //IGeneralSetupRepository _genSetup )
         {
             InitializeComponent();
-          //  this.context = _context;
+           this.context = _context;
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
             this.loanSchedule = _loanSchedule;

@@ -25,21 +25,19 @@ namespace FintrakBanking.Repositories.AppEmail
         private readonly string supportEmail = ConfigurationManager.AppSettings["SupportEmailAddr"];
 
         public EmailAndAlertsRepository(
-              //  FinTrakBankingContext _context,
+                FinTrakBankingContext _context,
                 IAuditTrailRepository _auditTrail,
                 EmailHelpers _emailHelpers,
                 IGeneralSetupRepository _general,
                 IStaffRepository _staffRepo
-            ) {
-             //   context = _context;
-                auditTrail = _auditTrail;
-                emailHelpers = _emailHelpers;
-                genSetup = _general;
-                staffRepo = _staffRepo;
-            }
-
-
-
+            )
+        {
+            context = _context;
+            auditTrail = _auditTrail;
+            emailHelpers = _emailHelpers;
+            genSetup = _general;
+            staffRepo = _staffRepo;
+        }
 
 
         #region Covenant Monitoring
@@ -106,7 +104,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         dataTable = dataTable + "</table>";
                     }
 
-                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] +  " (REMINDER) - LOAN COVENANTS APPROACHING DUE DATE";
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " (REMINDER) - LOAN COVENANTS APPROACHING DUE DATE";
 
                     string messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
                                      "This is to bring your attention the following loan covenants " +
@@ -632,7 +630,6 @@ namespace FintrakBanking.Repositories.AppEmail
 
         #endregion Overdraft Monitoring
 
-
         #region Collateral Monitoring
 
         public void SendAlertsForExpiredInsurance()
@@ -661,7 +658,7 @@ namespace FintrakBanking.Repositories.AppEmail
                             startDate = p.STARTDATE,
                             endDate = p.ENDDATE
 
-                            
+
                         }).ToList();
 
             try
@@ -733,8 +730,6 @@ namespace FintrakBanking.Repositories.AppEmail
 
         #endregion Collateral Monitoring
 
-
-
         #region LOAN CASA WITH PND
         //#######################        LOAN CASA WITH PND         ############################ 
         public void SendAlertsOnLoanCASAwithPND()
@@ -794,7 +789,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     {
                         dataTable = dataTable +
                             $"<tr><td>{item.loanReferenceNumber}</td><td>{item.customerName}</td><td>{item.principalAmount}</td><td>{item.outstandingPrincipal}</td>" +
-                            $"<td style='text-align:right;'>{item.tenor:f}</td>" + $"<td style='text-align:right;'>{item.interestRate:f}</td>" + 
+                            $"<td style='text-align:right;'>{item.tenor:f}</td>" + $"<td style='text-align:right;'>{item.interestRate:f}</td>" +
                             $"<td>{item.bookingDate:d}</td><td>{item.effectiveDate:d}</td><td>{item.maturityDate:d}</td></tr>";
                     }
 
@@ -838,7 +833,6 @@ namespace FintrakBanking.Repositories.AppEmail
         }
 
         #endregion LOAN CASA WITH PND
-
 
         #region INACTIVE BOND AND GUARANTEE
         //#######################        INACTIVE BOND AND GUARANTEE         ############################ 
@@ -943,75 +937,73 @@ namespace FintrakBanking.Repositories.AppEmail
         #endregion INACTIVE BOND AND GUARANTEE
 
 
-
-
         #region WORKFLOW
 
-        public void SendEmailAlertsForWorkflow(string[] emails, string operation, bool group, string link)
-        {
-            string recipients = string.Join(";", emails);
-            string messageSubject = "PENDING APPROVAL FOR " + operation;
-            string templateUrl = "~/EmailTemplates/ApprovalWorkflow.html";
-            string messageContent;
+        //public void SendEmailAlertsForWorkflow(string[] emails, string operation, bool group, string link)
+        //{
+        //    string recipients = string.Join(";", emails);
+        //    string messageSubject = "PENDING APPROVAL FOR " + operation;
+        //    string templateUrl = "~/EmailTemplates/ApprovalWorkflow.html";
+        //    string messageContent;
 
-            try
-            {
-                if (group)
-                {
-                    messageContent =    "Dear Sir/Madam, <br /><br />" +
-                                       $"You have a new pending {operation} approval request. <br /><br />" +
-                                       $"See details here {link}";
+        //    try
+        //    {
+        //        if (group)
+        //        {
+        //            messageContent =    "Dear Sir/Madam, <br /><br />" +
+        //                               $"You have a new pending {operation} approval request. <br /><br />" +
+        //                               $"See details here {link}";
 
-                    var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+        //            var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
 
-                    var message = new TBL_MESSAGE_LOG
-                    {
-                        MESSAGESUBJECT = messageSubject,
-                        MESSAGEBODY = mailBody,
-                        MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-                        MESSAGETYPEID = (short)MessageTypeEnum.Email,
-                        FROMADDRESS = this.supportEmail,
-                        TOADDRESS = recipients,
-                        DATETIMERECEIVED = DateTime.Now,
-                        SENDONDATETIME = DateTime.Now,
-                    };
+        //            var message = new TBL_MESSAGE_LOG
+        //            {
+        //                MESSAGESUBJECT = messageSubject,
+        //                MESSAGEBODY = mailBody,
+        //                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+        //                MESSAGETYPEID = (short)MessageTypeEnum.Email,
+        //                FROMADDRESS = this.supportEmail,
+        //                TOADDRESS = recipients,
+        //                DATETIMERECEIVED = DateTime.Now,
+        //                SENDONDATETIME = DateTime.Now,
+        //            };
 
-                    context.TBL_MESSAGE_LOG.Add(message);
-                }
-                else
-                {
-                    foreach (var recipient in emails)
-                    {
-                        messageContent = "Dear Sir/Madam, <br /><br />" + // TODO Sir/Madam with firstname
-                                           $"You have a new pending {operation} approval request. <br /><br />" +
-                                           $"See details here {link}";
+        //            context.TBL_MESSAGE_LOG.Add(message);
+        //        }
+        //        else
+        //        {
+        //            foreach (var recipient in emails)
+        //            {
+        //                messageContent = "Dear Sir/Madam, <br /><br />" + // TODO Sir/Madam with firstname
+        //                                   $"You have a new pending {operation} approval request. <br /><br />" +
+        //                                   $"See details here {link}";
 
-                        var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+        //                var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
 
-                        var message = new TBL_MESSAGE_LOG
-                        {
-                            MESSAGESUBJECT = messageSubject,
-                            MESSAGEBODY = mailBody,
-                            MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-                            MESSAGETYPEID = (short)MessageTypeEnum.Email,
-                            FROMADDRESS = this.supportEmail,
-                            TOADDRESS = recipient,
-                            DATETIMERECEIVED = DateTime.Now,
-                            SENDONDATETIME = DateTime.Now,
-                        };
+        //                var message = new TBL_MESSAGE_LOG
+        //                {
+        //                    MESSAGESUBJECT = messageSubject,
+        //                    MESSAGEBODY = mailBody,
+        //                    MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+        //                    MESSAGETYPEID = (short)MessageTypeEnum.Email,
+        //                    FROMADDRESS = this.supportEmail,
+        //                    TOADDRESS = recipient,
+        //                    DATETIMERECEIVED = DateTime.Now,
+        //                    SENDONDATETIME = DateTime.Now,
+        //                };
 
-                        context.TBL_MESSAGE_LOG.Add(message);
-                    }
-                }
+        //                context.TBL_MESSAGE_LOG.Add(message);
+        //            }
+        //        }
 
-                context.SaveChanges();
+        //        context.SaveChanges();
 
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
 
         #endregion WORKFLOW
 
@@ -1149,6 +1141,16 @@ namespace FintrakBanking.Repositories.AppEmail
             }
 
             return false;
+        }
+
+        public void SaveWorkflowEmail(string name, string address, int operationid, int targetid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveWorkflowSMS(string name, string address, int operationid, int targetid)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Helper Methods

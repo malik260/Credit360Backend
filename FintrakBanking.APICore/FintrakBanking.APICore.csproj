@@ -358,9 +358,11 @@
     <Compile Include="Controllers\LoanOperationController.cs" />
     <Compile Include="Controllers\LoanPrincipalController.cs" />
     <Compile Include="Controllers\MisInfoController.cs" />
+    <Compile Include="Controllers\LoanRecoveryController.cs" />
     <Compile Include="Controllers\MonitoringSetupController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\OfferLetterAndAvailmentController.cs" />
+    <Compile Include="Controllers\OverrideController.cs" />
     <Compile Include="Controllers\ProductCollateralTypeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductFeeController.cs" />
@@ -373,6 +375,7 @@
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TransactionDynamicsController.cs" />
     <Compile Include="core\ApiControllerBase.cs" />
     <Compile Include="Filters\DeflateCompressionAttribute.cs" />
     <Compile Include="Filters\JWTAuthorizeAttribute.cs" />
@@ -767,6 +770,8 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\EndOfDay\" />
     <Folder Include="Views\LoanOperation\" />
+    <Folder Include="Views\Override\" />
+    <Folder Include="Views\TransactionDynamics\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

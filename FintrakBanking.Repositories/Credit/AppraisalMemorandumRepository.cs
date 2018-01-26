@@ -155,9 +155,9 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        private void LoadConditionPrecedent(int loanApplicationId)
+        private void LoadConditionPrecedent(int loanApplicationId) // AND TRANSACTION DYNAMICS
         {
-            if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Any() == false)
+            if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId).Any() == false)
             {
                 var conditions = context.TBL_CONDITION_PRECEDENT.ToList(); // TEMPLATE
                 var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
@@ -165,16 +165,40 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     foreach (var c in conditions)
                     {
-                        var condition = new TBL_LOAN_CONDITION_PRECEDENT
+                        var row = new TBL_LOAN_CONDITION_PRECEDENT
                         {
                             CONDITION = c.CONDITION,
                             ISEXTERNAL = c.ISEXTERNAL,
                             CREATEDBY = c.CREATEDBY,
-                            LOANAPPLICATIONID = loanApplicationId,
+                            //LOANAPPLICATIONID = loanApplicationId,
+                            TIMELINEID = c.TIMELINEID,
                             LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
                             DATETIMECREATED = DateTime.Now
                         };
-                        context.TBL_LOAN_CONDITION_PRECEDENT.Add(condition);
+                        context.TBL_LOAN_CONDITION_PRECEDENT.Add(row);
+                    }
+                }
+                context.SaveChanges();
+            }
+
+            if (context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId).Any() == false)
+            {
+                var dynamics = context.TBL_TRANSACTION_DYNAMICS.ToList(); // TEMPLATE
+                var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+                foreach (var f in facilities)
+                {
+                    foreach (var c in dynamics)
+                    {
+                        var row = new TBL_LOAN_TRANSACTION_DYNAMICS
+                        {
+                            DYNAMICS = c.DYNAMICS,
+                            DYNAMICSID = c.DYNAMICSID,
+                            CREATEDBY = c.CREATEDBY,
+                            //LOANAPPLICATIONID = loanApplicationId,
+                            LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
+                            DATETIMECREATED = DateTime.Now
+                        };
+                        context.TBL_LOAN_TRANSACTION_DYNAMICS.Add(row);
                     }
                 }
                 context.SaveChanges();
@@ -328,7 +352,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // UPDATE APPLICATION
             appl.APPROVALSTATUSID = workflow.StatusId;
-            if (model.vote == 2) { appl.DISPUTED = true; }
+            if (model.vote == 1) { appl.DISPUTED = true; }
             appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
             if (appl.SUBMITTEDFORAPPRAISAL == false) { appl.SUBMITTEDFORAPPRAISAL = true; } // for product programs
             if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
@@ -414,26 +438,18 @@ namespace FintrakBanking.Repositories.Credit
                 }).OrderByDescending(x => x.approvalTrailId);
         }
 
-        public PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId, int operationId = (int)OperationsEnum.CAM)
+        public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {
-            operationId = (int)OperationsEnum.CAM; // <--------------------- overide incoming for now
-
+            var operationId = entity.operationId; // (int)OperationsEnum.CAM; // <--------------------- overide incoming for now
             var privilege = new PrivilegeViewModel();
+            var application = this.context.TBL_LOAN_APPLICATION.Find(entity.targetId);
 
-            var application = this.context.TBL_LOAN_APPLICATION.Find(applicationId);
-            /*
-            var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
-                                //.Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.tbl_Product.ProductClassId) // REFACTOR!!!!!!!!!!!!
-                                .Select(x => x.TBL_APPROVAL_GROUP)
-                                .SelectMany(x => x.TBL_APPROVAL_LEVEL)
-                                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId);*/
-
-            var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+            var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
                 .Join(context.TBL_APPROVAL_GROUP,
                     m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                .Join(context.TBL_APPROVAL_LEVEL,
+                .Join(context.TBL_APPROVAL_LEVEL,//.Where(x => x.APPROVALLEVELID == entity.levelId),
                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })//, u=l.TBL_APPROVAL_LEVEL_STAFF })
-                .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId),
+                .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == entity.createdBy),
                     gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
                     {
                         viewCamDocument = s.CANVIEWCAMDOCUMENT,
@@ -447,16 +463,12 @@ namespace FintrakBanking.Repositories.Credit
                         approvalLimit = s.MAXIMUMAMOUNT,
                         approvalLevelId = s.APPROVALLEVELID,
                         groupRoleId = gl.mg.g.ROLEID,
+                        canEscalate = gl.l.CANESCALATE,
                     });
 
-            var grant = grants.FirstOrDefault();
-            //var staffApprovalLevelIds = grants.Select(x => x.ApprovalLevelId).ToList();
-
-            if (grant != null)
-            {
-                grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
-                return grant;
-            }
+            var grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
+            if (grant != null) privilege = grant;
+            privilege.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
             return privilege;
         }
 

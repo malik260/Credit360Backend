@@ -266,7 +266,15 @@ namespace FintrakBanking.Common
         {
             get
             {
-                return  ConfigurationManager.AppSettings["DomainName"];
+                return ConfigurationManager.AppSettings["DomainName"];
+            }
+        }
+
+        public static string ReportPath
+        {
+            get
+            {
+                return  ConfigurationManager.AppSettings["reportPath"];
             }
         }
 

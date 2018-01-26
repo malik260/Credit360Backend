@@ -398,19 +398,11 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.CustomerSearch(token.GetCompanyId, search);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, result = data, count = data.Count() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
 
@@ -1464,7 +1456,57 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+        [HttpGet]
+        [Route("validate-new-customer/{customerCode}")]
+        public HttpResponseMessage ValidateNewCustomerCode(string customerCode)
+        {
+            try
+            {
+              
+                var data = repo.ValidateCustomerCode(customerCode);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                         new { success = true, message = $"Customer with code {customerCode} already exist on Fintrak" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("customer-information-completed/{customerId}")]
+        public HttpResponseMessage CustomerInformationCompleted(int customerId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
 
+                var data = repo.CustomerInformationCompleted(customerId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                          new { success = true, message = "The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+        }
         [HttpDelete]
         [Route("customer-product-fee/{customerProductFeeId}")]
         public HttpResponseMessage DeleteCustomerProductFee(int customerProductFeeId)

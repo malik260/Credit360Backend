@@ -336,12 +336,15 @@ namespace FintrakBanking.Repositories.Credit
             var collateral = context.TBL_COLLATERAL_ITEM_POLICY
                 .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
                 .FirstOrDefault();
-
-            collateral.POLICYREFERENCENUMBER = entity.referenceNumber;
-            collateral.INSURANCECOMPANYNAME = entity.insuranceCompany;
-            collateral.SUMINSURED = entity.sumInsured;
-            collateral.STARTDATE = (DateTime)entity.startDate;
-            collateral.ENDDATE = (DateTime)entity.expiryDate;
+            if(collateral != null)
+            {
+                collateral.POLICYREFERENCENUMBER = entity.referenceNumber;
+                collateral.INSURANCECOMPANYNAME = entity.insuranceCompany;
+                collateral.SUMINSURED = entity.sumInsured;
+                collateral.STARTDATE = (DateTime)entity.startDate;
+                collateral.ENDDATE = (DateTime)entity.expiryDate;
+            } 
+           
         }
 
         // GET MAIN INFO
@@ -854,7 +857,9 @@ namespace FintrakBanking.Repositories.Credit
                 NEARESTBUSSTOP = entity.nearestBusStop,
                 LONGITUDE = entity.longitude,
                 LATITUDE = entity.latitude,
-            });
+                PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
+                PERFECTIONSTATUSREASON = entity.perfectionStatusReason
+        });
         }
 
         private void UpdateImmovablePropertyCollateral(CollateralViewModel entity)
@@ -887,6 +892,8 @@ namespace FintrakBanking.Repositories.Credit
             collateral.NEARESTBUSSTOP = entity.nearestBusStop;
             collateral.LONGITUDE = entity.longitude;
             collateral.LATITUDE = entity.latitude;
+            collateral.PERFECTIONSTATUSID = (byte)entity.perfectionStatusId;
+            collateral.PERFECTIONSTATUSREASON = entity.perfectionStatusReason;
         }
 
         private CollateralViewModel GetCollateralImmovableProperty(int collateralId)
@@ -921,6 +928,8 @@ namespace FintrakBanking.Repositories.Credit
                 nearestBusStop = specifics.NEARESTBUSSTOP,
                 longitude = specifics.LONGITUDE,
                 latitude = specifics.LATITUDE,
+                perfectionStatusId = specifics.PERFECTIONSTATUSID,
+                perfectionStatusReason = specifics.PERFECTIONSTATUSREASON
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -2558,6 +2567,16 @@ namespace FintrakBanking.Repositories.Credit
                         phoneNumber = m.PHONENUMBER,
                         address = m.ADDRESS,
 
+                    });
+        }
+
+        public IEnumerable<CollateralPerfectionStatusViewModel> GetCollateralPerfectionStatus()
+        {
+            return (from m in context.TBL_COLLATERAL_PERFECTN_STAT
+                    select new CollateralPerfectionStatusViewModel
+                    {
+                        perfectionStatusId = m.PERFECTIONSTATUSID,
+                        perfectionStatusName = m.PERFECTIONSTATUSNAME
                     });
         }
 

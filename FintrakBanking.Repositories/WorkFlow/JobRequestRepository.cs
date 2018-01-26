@@ -85,8 +85,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool ChargeCustomerJob(CollateralViewModel model, string actionName, string actionType, int loanApplicationDetailId)
         {
-           //if(actionName != null) throw new Exception(actionName  + " "+ actionType + " on customer's account was successful");
-
             TBL_LOAN_APPLICATION loanApplication;
             TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail;
             TBL_STATE collateralLocationState;
@@ -97,11 +95,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (loanApplication != null)
             {
                 var collateralData = context.TBL_COLLATERAL_CUSTOMER.Find(model.collateralId);
-                // var propertyDetails = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == collateralData.COLLATERALCUSTOMERID);
                 var propertyDetails = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == 34).FirstOrDefault();
                 if (propertyDetails != null)
                 {
-
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                     var city = context.TBL_CITY.Find(propertyDetails.CITYID);
@@ -118,26 +114,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                         };
                         TBL_CASA casaAccount = context.TBL_CASA.Find(loanApplication.CASAACCOUNTID);
                         collateralLocationState = context.TBL_STATE.Find(city.STATEID);
-                        int crdGL;
+                        var crdGL = context.TBL_SETUP_GLOBAL.FirstOrDefault().LEGAL_CHARGE_GLACCOUNTID;
 
                         switch (actionName)
                         {
                             case "Search":
-                                crdGL = 11; //TODO: get the norminated GL account. Nice to have a setup to map all dynamic GL
                                 if(actionType.ToLower() == "debit")inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge"));
                                 else if(actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge Reversal"));
 
                                 break;
                             case "Chart":
-                                crdGL = 11; //TODO: get the norminated GL account. Nice to have a setup to map all dynamic GL
                                 if (actionType.ToLower() == "debit") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.CHARTINGAMOUNT, crdGL, "Collateral Charting Charge"));
                                 else if (actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.CHARTINGAMOUNT, crdGL, "Collateral Charting Charge Reversal"));
 
-                                break;
-                            case "Verification":
-                                crdGL = 11; //TODO: get the norminated GL account. Nice to have a setup to map all dynamic GL
-                                if (actionType.ToLower() == "debit") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.VERIFICATIONAMOUNT, crdGL, "Invoice Verification Charge"));
-                                else if (actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.VERIFICATIONAMOUNT, crdGL, "Invoice Verification Charge Reversal"));
                                 break;
                             default:
                                 throw new Exception("Debit charge type is not specified.");
@@ -149,22 +138,23 @@ namespace FintrakBanking.Repositories.WorkFlow
                 else throw new Exception("The collateral details information is incomplete");
             }
             else throw new Exception(" Collateral cannot be traced to an active application in the system");
-                // Audit Section ---------------------------
-                //var audit = new TBL_AUDIT
-                //{
-                //    AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
-                //    STAFFID = model.createdBy,
-                //    BRANCHID = (short)model.userBranchId,
-                //    DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
-                //    IPADDRESS = model.userIPAddress,
-                //    URL = model.applicationUrl,
-                //    APPLICATIONDATE = applicationDate,
-                //    SYSTEMDATETIME = DateTime.Now
-                //};
-                //this.audit.AddAuditTrail(audit);
-                // End of Audit Section ---------------------
+            //Audit Section ---------------------------
+           var audit = new TBL_AUDIT
+           {
+               AUDITTYPEID = actionName.ToLower() == "chart" ? (short)AuditTypeEnum.CollateralChartJob : (short)AuditTypeEnum.CollateralSearchJob,
+               STAFFID = model.createdBy,
+               BRANCHID = (short)model.userBranchId,
+               DETAIL = $"{actionType} Collateral {actionName} Charge for loan application with ref. '{ loanApplication.APPLICATIONREFERENCENUMBER }' ",
+               IPADDRESS = model.userIPAddress,
+               URL = model.applicationUrl, 
+               APPLICATIONDATE = general.GetApplicationDate(),
+               SYSTEMDATETIME = DateTime.Now
+           };
 
-                return false; // context.SaveChanges() != 0;
+            this.audit.AddAuditTrail(audit);
+           // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
         }
 
         public string AddGlobalJobRequest(JobRequestViewModel model)
@@ -843,7 +833,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool AddJobDocument(RequestDocumentViewModel model, byte[] file)
         {
-            var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENTS
+            var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENT
             {
                 FILEDATA = file,
                 //LoanApplicationNumber = model.targetId,
@@ -860,7 +850,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 CREATEDBY = (int)model.createdBy,
             };
 
-            docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Add(data);
+            docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Add(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -884,7 +874,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool UpdateJobDocument(RequestDocumentViewModel model, int documentId)
         {
-            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Find(documentId);
+            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Find(documentId);
             if (data == null)
             {
                 return false;
@@ -923,7 +913,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<RequestDocumentViewModel> GetAllJobDocument()
         {
-            return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Select(x => new RequestDocumentViewModel
+            return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Select(x => new RequestDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
                 //loanApplicationNumber = x.LoanApplicationNumber,
@@ -942,7 +932,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public RequestDocumentViewModel GetJobDocument(int documentId)
         {
-            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENTS.Find(documentId);
+            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Find(documentId);
 
             if (data == null)
             {
