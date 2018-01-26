@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
+namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class CollateralPropertyRevaluation {
+    public partial class AuditTrail {
         
         /// <summary>
         /// form1 control.
@@ -31,30 +31,57 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// collPropRv control.
+        /// ReportViewer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer collPropRv;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer;
         
         /// <summary>
-        /// value control.
+        /// ObjectDataSourceAudit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label value;
+        protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSourceAudit;
         
         /// <summary>
-        /// odsCollPropRev control.
+        /// endDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsCollPropRev;
+        protected global::System.Web.UI.WebControls.Label endDate;
+        
+        /// <summary>
+        /// startDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label startDate;
+        
+        /// <summary>
+        /// companyId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label companyId;
+        
+        /// <summary>
+        /// username control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label username;
     }
 }

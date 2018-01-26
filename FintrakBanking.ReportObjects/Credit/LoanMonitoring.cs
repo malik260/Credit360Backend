@@ -10,7 +10,7 @@ namespace FintrakBanking.ReportObjects.Credit
 {
     public class LoanMonitoring
     {
-        public static IEnumerable<CollateralViewModel> CollateralPropertyRevaluation(int companyId)
+        public static IEnumerable<CollateralViewModel> CollateralPropertyRevaluation(int companyId, int value)
         {
             var context = new FinTrakBankingContext();
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
@@ -22,7 +22,8 @@ namespace FintrakBanking.ReportObjects.Credit
                         join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
                         join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f
                             .COLLATERALCUSTOMERID
-                        where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LASTVALUATIONDATE, a.VALUATIONCYCLE), applDate) <= 30)
+                        where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LASTVALUATIONDATE, a.VALUATIONCYCLE), applDate) <= value)
+                        
                         && a.COMPANYID == companyId
                         select new CollateralViewModel
                         {
@@ -35,7 +36,9 @@ namespace FintrakBanking.ReportObjects.Credit
                             lastValuationDate = f.LASTVALUATIONDATE,
                             relationshipManagerId = a.CREATEDBY,
                             relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
-                            relationshipManagerEmail = c.EMAIL
+                            relationshipManagerEmail = c.EMAIL,
+                            valuationAmount = a.COLLATERALVALUE
+
                         }).ToList();
 
             if (data != null)
