@@ -220,10 +220,11 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetAccountWithLein(short? branchId, string customerName, int companyId)
+        public string GetAccountWithLein(int staffId, short? branchId, string customerName, int companyId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/LoanCASAaccountWithLein.aspx?companyId=" + companyId.ToString() + "&branchId=" + branchId + "&customerName=" + customerName;
+            path = reportPath + "ReportViews/LoanCASAaccountWithLein.aspx?companyId=" + companyId.ToString() + "&branchId=" + branchId + "&customerName=" + customerName
+                + "&staffId=" + staffId;
             return path;
         }
 
