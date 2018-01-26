@@ -123,6 +123,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         switch (actionName)
                         {
                             case "Search":
+                                //context.TBL_SETUP_GLOBAL.FirstOrDefault()
                                 crdGL = 11; //TODO: get the norminated GL account. Nice to have a setup to map all dynamic GL
                                 if(actionType.ToLower() == "debit")inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge"));
                                 else if(actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge Reversal"));

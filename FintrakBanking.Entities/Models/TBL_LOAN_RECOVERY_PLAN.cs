@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.TBL_LOAN_RECOVERY_PLAN")]
     public partial class TBL_LOAN_RECOVERY_PLAN
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_LOAN_RECOVERY_PLAN()
+        {
+            TBL_LOAN_RECOVERY_PLAN_PAYMNT = new HashSet<TBL_LOAN_RECOVERY_PLAN_PAYMNT>();
+        }
+
         [Key]
         public int RECOVERYPLANID { get; set; }
 
@@ -21,7 +27,7 @@ namespace FintrakBanking.Entities.Models
         public int? AGENTID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AMOUNTOWED { get; set; }
+        public decimal? AMOUNTOWED { get; set; }
 
         [Column(TypeName = "money")]
         public decimal WRITEOFFAMOUNT { get; set; }
@@ -43,5 +49,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CASA TBL_CASA { get; set; }
 
         public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_RECOVERY_PLAN_PAYMNT> TBL_LOAN_RECOVERY_PLAN_PAYMNT { get; set; }
     }
 }

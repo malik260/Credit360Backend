@@ -866,7 +866,7 @@ namespace FintrakBanking.Repositories.Credit
                                                    customerId = a.CUSTOMERID,
                                                    creditBureauId = a.CREDITBUREAUID,
                                                    isComplete = a.ISCOMPLETED,
-                                                   dateCompleted = a.DATECOMPLETED,
+                                                   dateCompleted = (DateTime)a.DATECOMPLETED,
                                                    dateTimeCreated = a.DATETIMECREATED,
                                                    createdBy = a.CREATEDBY
                                                };

@@ -35,6 +35,8 @@ namespace FintrakBanking.Entities.Models
 
         public int TARGETID { get; set; }
 
+        public virtual TBL_AUDIT_TYPE TBL_AUDIT_TYPE { get; set; }
+
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF { get; set; }
