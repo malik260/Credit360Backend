@@ -594,17 +594,21 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
-        public IList<LoanViewModel> GetLoanWithLein(short branchId, string customerName)
+        public IList<LoanViewModel> GetLoanWithLein(short branchId, string customerName, int staffId)
         {
+           
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
+                var sensitivity = context.TBL_STAFF.Find(staffId);
+                var sensitivityLevel = sensitivity != null ? sensitivity.CUSTOMERSENSITIVITYLEVEL : 0;
                 var data = (from a in context.TBL_LOAN
                             join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                             join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                             join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                             where (s.HASLIEN == true || (s.POSTNOSTATUSID == (short)CASAPostNoStatusEnum.PostNoDebit || s.POSTNOSTATUSID == (short)CASAPostNoStatusEnum.PostNoDebitandCredit)
-                            && (a.LOANREFERENCENUMBER.StartsWith(customerName.Trim()) || cs.FIRSTNAME.StartsWith(customerName.Trim()) || cs.MIDDLENAME.StartsWith(customerName.Trim()) || cs.LASTNAME.StartsWith(customerName.Trim()) || customerName == "undefined")
-                            && (a.BRANCHID == branchId || branchId == 0)
+                            && (a.LOANREFERENCENUMBER.StartsWith(customerName.Trim()) || cs.FIRSTNAME.StartsWith(customerName.Trim()) || cs.MIDDLENAME.StartsWith(customerName.Trim()) || cs.LASTNAME.StartsWith(customerName.Trim()) || customerName== "undefined")
+                            && (a.BRANCHID==branchId || branchId==0) && a.TBL_CUSTOMER_SENSITIVITY_LEVEL.LEVEL <= sensitivityLevel
+
                             )
 
 

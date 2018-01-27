@@ -610,7 +610,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetAccountWithLein(branchId, customerName,token.GetCompanyId);
+                var data = repo.GetAccountWithLein( token.GetStaffId, branchId, customerName,token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
