@@ -2334,6 +2334,7 @@ namespace FintrakBanking.Repositories.Credit
         private IQueryable<LoanViewModel> GetAllLoans()
         {
             var data = (from l in context.TBL_LOAN
+                      
                         select new LoanViewModel
                         {
                             loanId = l.TERMLOANID,
@@ -4107,9 +4108,19 @@ namespace FintrakBanking.Repositories.Credit
             return loanSchedule;
         }
 
-        public IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, ReportSearchEntity param)
+        public IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, string param)
         {
-            throw new NotImplementedException();
+            var loans = BookedLoan(companyId);
+               // .Where(x => x.loanReferenceNumber == param || x.firstName.StartsWith(param) || x.lastName.StartsWith(param) || x.middleName.StartsWith(param ) || param==null || param=="undefined");
+            foreach (var loan in loans)
+            {
+                loan.loanCovenant = GetLoanCovenant(loan.loanId);
+                loan.loanChargeFee = GetLoanChargeFee(loan.loanId);
+                loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
+                // loan.loanCollateral = GetLoanCollaterals(loan.loanId);
+            }
+
+            return loans;
         }
     }
 

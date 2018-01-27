@@ -9,6 +9,8 @@ namespace FintrakBanking.ReportObjects
     {
         //private static FinTrakBankingContext context;
 
+
+             
         public BranchInfo()
         {
             

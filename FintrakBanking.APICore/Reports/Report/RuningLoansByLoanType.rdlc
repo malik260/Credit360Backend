@@ -955,7 +955,7 @@
                                   <Value>=Fields!tenorToDate.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
-                                    <Format>M/d/yyyy</Format>
+                                    <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -974,6 +974,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1402,7 +1403,7 @@
             </TablixRowHierarchy>
             <DataSetName>CommercialLoan</DataSetName>
             <Height>0.5in</Height>
-            <Width>25.82291in</Width>
+            <Width>25.82292in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1413,7 +1414,7 @@
         <Height>1.47917in</Height>
         <Style />
       </Body>
-      <Width>25.82291in</Width>
+      <Width>25.82292in</Width>
       <Page>
         <PageHeader>
           <Height>1.06612in</Height>

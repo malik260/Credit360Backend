@@ -107,7 +107,8 @@ namespace FintrakBanking.ReportObjects
                 IQueryable<LoanStatementViewModel> Loandata = from a in context.TBL_LOAN
                                                               join b in context.TBL_FINANCE_TRANSACTION on a.LOANREFERENCENUMBER equals b.SOURCEREFERENCENUMBER
                                                               where a.COMPANYID == companyId && a.LOANSTATUSID == 1
-                                                              && a.TERMLOANID == loanId && b.CASAACCOUNTID == a.CASAACCOUNTID
+                                                              && a.TERMLOANID == loanId 
+                                                              //&& b.CASAACCOUNTID == a.CASAACCOUNTID
                                                               select new LoanStatementViewModel()
                                                               {
                                                                   balance = a.OUTSTANDINGPRINCIPAL,
@@ -410,9 +411,9 @@ namespace FintrakBanking.ReportObjects
             {
                 var data = from a in context.TBL_LOAN_CONDITION_DEFERRAL
                            join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.CONDITIONID equals b.CONDITIONID
-                           join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                           join d in context.TBL_LOAN_APPLICATION on b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                            join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
-                           join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                           join e in context.TBL_LOAN_APPLICATION_DETAIL on b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
 
                            where
                             d.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
@@ -851,6 +852,7 @@ namespace FintrakBanking.ReportObjects
 
             }
         }
+
     }
 }
     
