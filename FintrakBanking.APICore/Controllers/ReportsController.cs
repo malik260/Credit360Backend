@@ -708,6 +708,27 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        [Route("loan/loan-repayment")]
+        public HttpResponseMessage LoansRepaymentSchedule(ReportSearchEntity reportSearchEntity)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetLoanInterestReceivableAndPayable(reportSearchEntity, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
 

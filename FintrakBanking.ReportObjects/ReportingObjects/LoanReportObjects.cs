@@ -107,7 +107,8 @@ namespace FintrakBanking.ReportObjects
                 IQueryable<LoanStatementViewModel> Loandata = from a in context.TBL_LOAN
                                                               join b in context.TBL_FINANCE_TRANSACTION on a.LOANREFERENCENUMBER equals b.SOURCEREFERENCENUMBER
                                                               where a.COMPANYID == companyId && a.LOANSTATUSID == 1
-                                                              && a.TERMLOANID == loanId && b.CASAACCOUNTID == a.CASAACCOUNTID
+                                                              && a.TERMLOANID == loanId 
+                                                              //&& b.CASAACCOUNTID == a.CASAACCOUNTID
                                                               select new LoanStatementViewModel()
                                                               {
                                                                   balance = a.OUTSTANDINGPRINCIPAL,
@@ -855,6 +856,7 @@ namespace FintrakBanking.ReportObjects
 
             }
         }
+
     }
 }
     
