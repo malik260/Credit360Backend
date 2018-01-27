@@ -634,7 +634,6 @@ namespace FintrakBanking.Repositories.Credit
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                             if (!entity.feeOverride) PostLoanFees(entity);
-
                             context.SaveChanges();
 
                             //.....Commit transaction ............
@@ -736,7 +735,7 @@ namespace FintrakBanking.Repositories.Credit
                         join req in context.TBL_LOAN_BOOKING_REQUEST on ln.LOANAPPLICATIONDETAILID equals req.LOANAPPLICATIONDETAILID
                         join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on ln.TERMLOANID equals atrail.TARGETID
-                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                        where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                               && atrail.OPERATIONID == (int)OperationsEnum.TermLoanBooking
                               && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                               && atrail.RESPONSESTAFFID == null
@@ -906,7 +905,7 @@ namespace FintrakBanking.Repositories.Credit
                         join req in context.TBL_LOAN_BOOKING_REQUEST on ln.LOANAPPLICATIONDETAILID equals req.LOANAPPLICATIONDETAILID
                         join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on ln.REVOLVINGLOANID equals atrail.TARGETID
-                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                        where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                               && atrail.OPERATIONID == (int)OperationsEnum.RevolvingLoanBooking
                               && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                               && atrail.RESPONSESTAFFID == null
@@ -1036,7 +1035,7 @@ namespace FintrakBanking.Repositories.Credit
                         join req in context.TBL_LOAN_BOOKING_REQUEST on ln.LOANAPPLICATIONDETAILID equals req.LOANAPPLICATIONDETAILID
                         join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on ln.CONTINGENTLOANID equals atrail.TARGETID
-                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                        where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                               && atrail.OPERATIONID == (int)OperationsEnum.ContigentLoanBooking
                               && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                               && atrail.RESPONSESTAFFID == null
