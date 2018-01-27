@@ -32,7 +32,8 @@ namespace FintrakBanking.Repositories.Credit
                 ISEXTERNAL = (bool)model.isExternal,
                 ISSUBSEQUENT = model.isSubsequent,
                 CREATEDBY = model.createdBy,
-                LOANAPPLICATIONID = model.loanApplicationId,
+                //LOANAPPLICATIONID = model.loanApplicationId,
+                TIMELINEID = model.timelineId,
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
@@ -70,6 +71,7 @@ namespace FintrakBanking.Repositories.Credit
             data.ISSUBSEQUENT = (bool)model.isSubsequent;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+            data.TIMELINEID = model.timelineId;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
 
@@ -109,6 +111,7 @@ namespace FintrakBanking.Repositories.Credit
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
                         loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                         loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                        timelineId = c.TIMELINEID,
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
                     });
@@ -133,6 +136,7 @@ namespace FintrakBanking.Repositories.Credit
                 corporate = c.CORPORATE,
                 retail = c.RETAIL,
                 productId = c.PRODUCTID,
+                timelineId = c.TIMELINEID,
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
             });
@@ -146,6 +150,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISEXTERNAL = model.isExternal,
                 ISSUBSEQUENT = model.isSubsequent,
                 PRODUCTID = (short)model.productId,
+                TIMELINEID = model.timelineId,
                 CORPORATE = model.corporate,
                 RETAIL = model.retail,
                 CREATEDBY = model.createdBy,
@@ -184,6 +189,7 @@ namespace FintrakBanking.Repositories.Credit
             data.ISEXTERNAL = model.isExternal;
             data.ISSUBSEQUENT = model.isSubsequent;
             data.PRODUCTID = (short)model.productId;
+            data.TIMELINEID = model.timelineId;
             data.CORPORATE = model.corporate;
             data.RETAIL = model.retail;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
@@ -238,5 +244,81 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion CP Template
 
+        #region Timeline for Compliance
+
+        public IEnumerable<ComplianceTimelineViewModel> GetComplianceTimelineTemplate()
+        {
+            return this.context.TBL_COMPLIANCE_TIMELINE
+            .Select(c => new ComplianceTimelineViewModel
+            {
+                timelineId = c.TIMELINEID,
+                timeline = c.TIMELINE,
+                dateTimeCreated = c.DATETIMECREATED,
+                dateTimeUpdated = c.DATETIMEUPDATED,
+            });
+        }
+
+        public bool AddComplianceTimelineTemplate(ComplianceTimelineViewModel model)
+        {
+            var data = new TBL_COMPLIANCE_TIMELINE
+            {
+                TIMELINE = model.timeline,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_COMPLIANCE_TIMELINE.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ComplianceTimelineAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Condition Precedent template '{ model.timelineId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateComplianceTimelineTemplate(ComplianceTimelineViewModel model, int timelineId)
+        {
+            var data = this.context.TBL_COMPLIANCE_TIMELINE.Find(timelineId);
+            if (data == null)
+            {
+                return false;
+            }
+
+            data.TIMELINE = model.timeline;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ComplianceTimelineUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Condition Precedent template '{ model.timelineId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        #endregion Timeline for Compliance
     }
 }

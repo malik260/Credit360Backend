@@ -28,6 +28,21 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationId { get; set; }
     }
 
+    public class FacilityReport
+    {
+        public string loanType { get; set; }
+        public string facilityType { get; set; }
+        public string refNo { get; set; }
+        public string customerNames { get; set; }
+        public decimal approvedAmount { get; set; }
+        public decimal unitlizedAmount { get; set; }
+        public double accountBalance { get; set; }
+        public double tenor { get; set; }
+        public double interest { get; set; }
+        public DateTime dateApproved { get; set; }
+        public string branchName { get; set; }
+    }
+
     public class LoanViewModel : GeneralEntity
     {
         public int loanId { get; set; }
@@ -602,6 +617,18 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public decimal amount { get; set; }
         public string refNo  { get; set; }
+
+    }
+
+
+    public class CleanUpViewModel : GeneralEntity
+    {
+        public int loanId { get; set; }
+        public decimal casaBalance { get; set; }
+        public DateTime? nextCovenantDate { get; set; }
+        public short freqValue  { get; set; }
+        public int casaAccountId { get; set; }
+        public short branchId { get; set; }
 
     }
 }

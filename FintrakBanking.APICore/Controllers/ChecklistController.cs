@@ -1078,6 +1078,11 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                  new { success = false, message = "Please select a checklist to continue" });
                 }
+                if (repo.ValidateDeferralDateExpiration(model.conditionId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Extention terminated, deferral not expired" });
+                }
                 model.userBranchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
                 model.createdBy = token.GetStaffId;

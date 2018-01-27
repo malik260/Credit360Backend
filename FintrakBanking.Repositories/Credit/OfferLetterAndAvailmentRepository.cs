@@ -438,6 +438,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        join c in context.TBL_LOAN_CONDITION_PRECEDENT on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                      
                         where a.COMPANYID == companyId && a.DELETED == false
                               && b.STATUSID == (int)ApprovalStatusEnum.Approved &&
                                (a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted
@@ -461,8 +463,9 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatusId = a.APPLICATIONSTATUSID,
                             subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
-                        }).ToList();
-            return data;
+                        });
+
+            return data.GroupBy(x => x.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
         }
         public Form3800ViewModel GenerateForm3800Template(string applicationRefNumber)
         {
@@ -493,6 +496,7 @@ namespace FintrakBanking.Repositories.Credit
                                        }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
             var conditionSubsequents = (from a in context.TBL_LOAN_APPLICATION
+                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                                         join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                         join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
                                         where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == true

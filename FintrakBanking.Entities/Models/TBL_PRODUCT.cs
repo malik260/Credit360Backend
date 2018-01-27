@@ -37,6 +37,7 @@ namespace FintrakBanking.Entities.Models
             TBL_PRODUCT_CHARGE_FEE = new HashSet<TBL_PRODUCT_CHARGE_FEE>();
             TBL_RISK_RATING = new HashSet<TBL_RISK_RATING>();
             TBL_TEMP_OFFERLETTER = new HashSet<TBL_TEMP_OFFERLETTER>();
+            TBL_TRANSACTION_DYNAMICS = new HashSet<TBL_TRANSACTION_DYNAMICS>();
         }
 
         [Key]
@@ -243,5 +244,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_OFFERLETTER> TBL_TEMP_OFFERLETTER { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
     }
 }

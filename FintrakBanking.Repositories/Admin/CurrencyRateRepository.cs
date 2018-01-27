@@ -131,7 +131,7 @@ namespace FintrakBanking.Repositories.Admin
                 AUDITTYPEID = (short)AuditTypeEnum.CurrencyRateAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added Currency Rate :  { data.BUYINGRATE } for date: '{data.DATE}' on {audit_BaseCurrency} to: {audit_Currency} conversion",
+                DETAIL = $"Added Currency Rate :  { data.BUYINGRATE } for date : '{data.DATE} ' on {audit_BaseCurrency} to: {audit_Currency} conversion",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),

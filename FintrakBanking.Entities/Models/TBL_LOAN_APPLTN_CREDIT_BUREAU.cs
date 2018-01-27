@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISCOMPLETED { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime DATECOMPLETED { get; set; }
+        public DateTime? DATECOMPLETED { get; set; }
 
         public int CREATEDBY { get; set; }
 

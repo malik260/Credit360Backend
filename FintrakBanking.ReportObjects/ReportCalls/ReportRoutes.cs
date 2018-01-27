@@ -85,6 +85,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/LoanDocumentDeferral.aspx?companyId=" + companyId + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&branchId=" + dateRange.branchId;
             return path;
         }
+        public string GetLoanDocumentDeferralsMCC(int companyId, DateRange dateRange)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanDocumentDeferalsForMCC.aspx?companyId=" + companyId + "&startDate=" + dateRange.startDate.ToShortDateString() + "&branchCode=" + dateRange.branchCode;
+            return path;
+        }
         public string GetCollateralEstimated(int companyId, string collateralCode)
         {
             string path = string.Empty;
@@ -135,12 +141,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        public string GetCollateralPropertyRevaluationReport(int companyId)
+        public string GetCollateralPropertyRevaluationReport(int companyId,int value)
         {
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/CollateralPropertyRevaluation.aspx?companyId=" + companyId.ToString();
+                path = reportPath + "Credit/Monitoring/CollateralPropertyRevaluation.aspx?companyId=" + companyId.ToString() + "&value="+value;
                 return path;
             }
             catch (Exception ex)
@@ -220,10 +226,11 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetAccountWithLein(short? branchId, string customerName, int companyId)
+        public string GetAccountWithLein(int staffId, short? branchId, string customerName, int companyId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/LoanCASAaccountWithLein.aspx?companyId=" + companyId.ToString() + "&branchId=" + branchId + "&customerName=" + customerName;
+            path = reportPath + "ReportViews/LoanCASAaccountWithLein.aspx?companyId=" + companyId.ToString() + "&branchId=" + branchId + "&customerName=" + customerName
+                + "&staffId=" + staffId;
             return path;
         }
 
@@ -231,6 +238,33 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         {
             string path = string.Empty;
             path = reportPath + "ReportViews/GetStakeholdersOnExpirationOfFTP.aspx?companyId=" + companyId.ToString() + "&branchId=" + searchEntity.branchId + "&customerName=" + searchEntity.customerName + "&startDate="+ searchEntity.startDate;
+            return path;
+        }
+
+        public string GetFacilityApprovedNotUtilized(ReportSearchEntity searchEntity, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/FacilityApprovedNotUntilized.aspx?companyId=" + companyId.ToString() + "&branchId=" + searchEntity.branchId + "&customerName=" + searchEntity.customerName + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate;
+            return path;
+        }
+        public string GetRuningLoansByLoanType(ReportSearchEntity searchEntity, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RuningLoansByLoanType.aspx?companyId=" + companyId.ToString() + "&branchId=" + searchEntity.branchId + "&loanRefNo=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&productClassId=" + searchEntity.productClassId;
+            return path;
+        }
+
+        public string GetAuditTrail(DateRange dateRange, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/AuditTrailView.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+
+           return path; ;
+        }
+       public string GetLoanInterestReceivableAndPayable(ReportSearchEntity searchEntity, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanInterestReceivableAndPayable.aspx?companyId=" + companyId.ToString() + "&branchId=" + searchEntity.branchId + "&loanRefNo=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&productClassId=" + searchEntity.productClassId;
             return path;
         }
     }

@@ -358,6 +358,7 @@
     <Compile Include="Controllers\LoanOperationController.cs" />
     <Compile Include="Controllers\LoanPrincipalController.cs" />
     <Compile Include="Controllers\MisInfoController.cs" />
+    <Compile Include="Controllers\LoanRecoveryController.cs" />
     <Compile Include="Controllers\MonitoringSetupController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\OfferLetterAndAvailmentController.cs" />
@@ -374,6 +375,7 @@
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TransactionDynamicsController.cs" />
     <Compile Include="core\ApiControllerBase.cs" />
     <Compile Include="Filters\DeflateCompressionAttribute.cs" />
     <Compile Include="Filters\JWTAuthorizeAttribute.cs" />
@@ -471,6 +473,13 @@
     <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx.designer.cs">
       <DependentUpon>ApprovalTrailWithSLA1.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\AuditTrailView.aspx.cs">
+      <DependentUpon>AuditTrailView.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\AuditTrailView.aspx.designer.cs">
+      <DependentUpon>AuditTrailView.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CollateralEstimated.aspx.cs">
       <DependentUpon>CollateralEstimated.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -478,12 +487,33 @@
     <Compile Include="Reports\ReportViews\CollateralEstimated.aspx.designer.cs">
       <DependentUpon>CollateralEstimated.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx.cs">
+      <DependentUpon>LoanInterestReceivableAndPayable.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx.designer.cs">
+      <DependentUpon>LoanInterestReceivableAndPayable.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RuningLoansByLoanType.aspx.cs">
+      <DependentUpon>RuningLoansByLoanType.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RuningLoansByLoanType.aspx.designer.cs">
+      <DependentUpon>RuningLoansByLoanType.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\DisbursedLoans.aspx.cs">
       <DependentUpon>DisbursedLoans.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\DisbursedLoans.aspx.designer.cs">
       <DependentUpon>DisbursedLoans.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\FacilityApprovedNotUntilized.aspx.cs">
+      <DependentUpon>FacilityApprovedNotUntilized.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\FacilityApprovedNotUntilized.aspx.designer.cs">
+      <DependentUpon>FacilityApprovedNotUntilized.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\FCYScheuledLoan.aspx.cs">
       <DependentUpon>FCYScheuledLoan.aspx</DependentUpon>
@@ -519,6 +549,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx.designer.cs">
       <DependentUpon>LoanCASAaccountWithLein.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.cs">
+      <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.designer.cs">
+      <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\LoanDocumentDeferral.aspx.cs">
       <DependentUpon>LoanDocumentDeferral.aspx</DependentUpon>
@@ -606,13 +643,18 @@
     <Content Include="Reports\Credit\TestReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx" />
+    <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
     <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
+    <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
+    <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
+    <Content Include="Reports\ReportViews\FacilityApprovedNotUntilized.aspx" />
     <Content Include="Reports\ReportViews\FCYScheuledLoan.aspx" />
     <Content Include="Reports\ReportViews\GetStakeholdersOnExpirationOfFTP.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanAnniversery.aspx" />
     <Content Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx" />
+    <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferral.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentWaived.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
@@ -729,6 +771,7 @@
     <Folder Include="Views\EndOfDay\" />
     <Folder Include="Views\LoanOperation\" />
     <Folder Include="Views\Override\" />
+    <Folder Include="Views\TransactionDynamics\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -779,19 +822,24 @@
     <EmbeddedResource Include="Reports\Credit\Monitoring\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
+    <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralEstimated.rdlc" />
+    <EmbeddedResource Include="Reports\Report\FacilityApprovedNotUtilised.rdlc" />
     <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanCASAAccountWithLein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanDocumentDeferralForMCC.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />

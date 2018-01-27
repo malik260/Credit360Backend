@@ -199,6 +199,13 @@ namespace FintrakBanking.Common.Enum
         CollateralSearchJob = 187,
         CollateralChartJob = 188,
         MiddleOfficeVerification = 189,
+        TransactionDynamicsAdded = 190,
+        TransactionDynamicsUpdated = 191,
+        ComplianceTimelineAdded = 192,
+        ComplianceTimelineUpdated = 193,
+        LoanRecoverySetupAdded = 186,
+        LoanRecoverySetupUpdated = 187,
+        LoanRecoverySetupDeleted = 188,
     };
 
 

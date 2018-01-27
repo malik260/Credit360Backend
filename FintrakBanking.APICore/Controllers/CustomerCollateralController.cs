@@ -590,6 +590,21 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("collateral-perfection-status")]
+        public HttpResponseMessage GetCollateralPerfectionStatus()
+        {
+            try
+            {
+                var response = repo.GetCollateralPerfectionStatus();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("collateral-valuer-type")]
         public HttpResponseMessage GetCollateralValuerType()
         {

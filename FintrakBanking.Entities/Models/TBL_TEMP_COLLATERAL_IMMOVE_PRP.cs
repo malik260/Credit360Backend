@@ -86,9 +86,5 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_COLLATERAL_TYPE_SUB TBL_COLLATERAL_TYPE_SUB { get; set; }
 
         public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
-
-        public virtual TBL_TEMP_COLLATERAL_IMMOVE_PRP TBL_TEMP_COLLATERAL_IMMOVE_PRP1 { get; set; }
-
-        public virtual TBL_TEMP_COLLATERAL_IMMOVE_PRP TBL_TEMP_COLLATERAL_IMMOVE_PRP2 { get; set; }
     }
 }
