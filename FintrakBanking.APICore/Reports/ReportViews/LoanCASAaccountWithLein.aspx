@@ -28,12 +28,14 @@
             <SelectParameters>
                 <asp:ControlParameter ControlID="branchId" Name="branchId" PropertyName="Text" Type="Int16" />
                 <asp:ControlParameter ControlID="customerName" Name="customerName" PropertyName="Text" Type="String" />
+                <asp:ControlParameter ControlID="staffId" Name="staffId" PropertyName="Text" Type="Int32" />
             </SelectParameters>
         </asp:ObjectDataSource>
         </div> 
         <asp:Label ID="customerName" runat="server"  Visible="false" ></asp:Label>       
         <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>
         <asp:Label ID="branchId" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="staffId" runat="server"  Visible="false" ></asp:Label>
     </form>
 </body>
 </html>

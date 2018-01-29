@@ -16,7 +16,12 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
+
+
             {
+
+                value.Text = Request.QueryString["value"];
+
                 FinTrakBankingContext context = new FinTrakBankingContext();
                 GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
                 ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToShortDateString());

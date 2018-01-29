@@ -320,6 +320,7 @@
     <Compile Include="Models\TBL_PRODUCT_CURRENCY.cs" />
     <Compile Include="Models\TBL_PRODUCT_GROUP.cs" />
     <Compile Include="Models\TBL_PRODUCT_PRICE_INDEX.cs" />
+    <Compile Include="Models\TBL_PRODUCT_PRICE_INDEX_DAILY.cs" />
     <Compile Include="Models\TBL_PRODUCT_TYPE.cs" />
     <Compile Include="Models\TBL_PROFILE_ACTIVITY.cs" />
     <Compile Include="Models\TBL_PROFILE_ACTIVITY_PARENT.cs" />

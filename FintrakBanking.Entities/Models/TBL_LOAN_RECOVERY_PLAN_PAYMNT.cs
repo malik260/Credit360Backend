@@ -12,6 +12,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int RECOVERYPLANPAYMENTID { get; set; }
 
+        public int RECOVERYPLANID { get; set; }
+
         [Column(TypeName = "date")]
         public DateTime PAYMENTDATE { get; set; }
 
@@ -31,5 +33,7 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual TBL_LOAN_RECOVERY_PLAN TBL_LOAN_RECOVERY_PLAN { get; set; }
     }
 }

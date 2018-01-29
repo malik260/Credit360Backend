@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                   casaAccountName = d.TBL_CASA.PRODUCTACCOUNTNAME,
                                   agentId = (int)d.AGENTID,
                                   agentName = context.TBL_ACCREDITEDCONSULTANT.FirstOrDefault(x => x.ACCREDITEDCONSULTANTID == (int)d.AGENTID).NAME,
-                                  amountOwed = d.AMOUNTOWED,
+                                  amountOwed = (decimal)d.AMOUNTOWED,
                                   writeOffAmount = d.WRITEOFFAMOUNT,
 
                                    }).ToList();
@@ -157,7 +157,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                   casaAccountId = d.CASAACCOUNTID,
                                   agentId = (int)d.AGENTID,
                                   agentName = context.TBL_ACCREDITEDCONSULTANT.FirstOrDefault(x => x.ACCREDITEDCONSULTANTID == (int)d.AGENTID).NAME,
-                                  amountOwed = d.AMOUNTOWED,
+                                  amountOwed = (decimal)d.AMOUNTOWED,
                                   writeOffAmount = d.WRITEOFFAMOUNT,
                               }).SingleOrDefault();
             return LoanRecoverySetup;

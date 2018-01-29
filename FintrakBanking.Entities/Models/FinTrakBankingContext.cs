@@ -147,6 +147,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PRODUCT_CURRENCY> TBL_PRODUCT_CURRENCY { get; set; }
         public virtual DbSet<TBL_PRODUCT_GROUP> TBL_PRODUCT_GROUP { get; set; }
         public virtual DbSet<TBL_PRODUCT_PRICE_INDEX> TBL_PRODUCT_PRICE_INDEX { get; set; }
+        public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_DAILY> TBL_PRODUCT_PRICE_INDEX_DAILY { get; set; }
         public virtual DbSet<TBL_PRODUCT_TYPE> TBL_PRODUCT_TYPE { get; set; }
         public virtual DbSet<TBL_PROFILE_ACTIVITY> TBL_PROFILE_ACTIVITY { get; set; }
         public virtual DbSet<TBL_PROFILE_ACTIVITY_PARENT> TBL_PROFILE_ACTIVITY_PARENT { get; set; }
@@ -482,6 +483,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_APPROVAL_TRAIL)
                 .WithOptional(e => e.TBL_APPROVAL_VOTE_OPTION)
                 .HasForeignKey(e => e.VOTE);
+
+            modelBuilder.Entity<TBL_AUDIT_TYPE>()
+                .HasMany(e => e.TBL_AUDIT)
+                .WithRequired(e => e.TBL_AUDIT_TYPE)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_BRANCH>()
                 .Property(e => e.NPL_LIMIT)
@@ -2065,6 +2071,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_PRODUCT_PRICE_INDEX)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_PRODUCT_PRICE_INDEX>()
+                .HasMany(e => e.TBL_PRODUCT_PRICE_INDEX_DAILY)
+                .WithRequired(e => e.TBL_PRODUCT_PRICE_INDEX)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_PRODUCT_TYPE>()
                 .HasMany(e => e.TBL_CHARGE_FEE)
                 .WithRequired(e => e.TBL_PRODUCT_TYPE)
@@ -2114,11 +2125,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_PAST_DUE)
                 .WithRequired(e => e.TBL_PRODUCT_TYPE)
                 .WillCascadeOnDelete(false);
-
-            //modelBuilder.Entity<TBL_PRODUCT_TYPE>()
-            //    .HasMany(e => e.TBL_LOAN_RECOVERY_PLAN)
-            //    .WithRequired(e => e.TBL_PRODUCT_TYPE)
-            //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT_TYPE>()
                 .HasMany(e => e.TBL_LOAN_RECOVERY_PLAN)
@@ -3111,11 +3117,6 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION>()
-                .HasMany(e => e.TBL_LOAN_APPLTN_CREDIT_BUREAU)
-                .WithRequired(e => e.TBL_LOAN_APPLICATION)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_APPLICATION>()
                 .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION)
                 .WillCascadeOnDelete(false);
@@ -3428,11 +3429,16 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_RECOVERY_PLAN>()
                 .Property(e => e.AMOUNTOWED)
-               .HasPrecision(19, 4);
+                .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_RECOVERY_PLAN>()
                 .Property(e => e.WRITEOFFAMOUNT)
                 .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_RECOVERY_PLAN>()
+                .HasMany(e => e.TBL_LOAN_RECOVERY_PLAN_PAYMNT)
+                .WithRequired(e => e.TBL_LOAN_RECOVERY_PLAN)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_RECOVERY_PLAN_PAYMNT>()
                 .Property(e => e.PAYMENTAMOUNT)
@@ -4372,10 +4378,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_IMMOVE_PRP>()
                 .Property(e => e.LATITUDE)
                 .HasPrecision(12, 9);
-
-            modelBuilder.Entity<TBL_TEMP_COLLATERAL_IMMOVE_PRP>()
-                .HasOptional(e => e.TBL_TEMP_COLLATERAL_IMMOVE_PRP1)
-                .WithRequired(e => e.TBL_TEMP_COLLATERAL_IMMOVE_PRP2);
 
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_MISC>()
                 .Property(e => e.SECURITYVALUE)
