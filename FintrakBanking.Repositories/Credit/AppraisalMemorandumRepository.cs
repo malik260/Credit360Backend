@@ -138,7 +138,6 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             this.FlagSubmittedForAppraisal(model.loanApplicationId);
-            this.LoadConditionPrecedent(model.loanApplicationId);
 
             context.SaveChanges();
 
@@ -284,6 +283,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = general.GetApplicationDate();
             List<TBL_LOAN_APPLICATION_DETAIL> items = null;
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+            this.LoadConditionPrecedent(model.applicationId);
 
             // WORKFLOW
             workflow.StaffId = model.createdBy;

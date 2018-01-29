@@ -247,8 +247,8 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     items = repo.GetPendingLoanApplicationsClass(token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
 
-                var data = items.OrderByDescending(x => x.applicationDate)
-                    .ThenByDescending(x => x.loanApplicationId)
+                var data = items
+                    //.OrderByDescending(x => x.applicationDate).ThenByDescending(x => x.loanApplicationId)
                     .Skip(page).Take(itemsPerPage)
                     .ToList();
 

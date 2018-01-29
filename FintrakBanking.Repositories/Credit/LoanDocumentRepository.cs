@@ -198,19 +198,88 @@ namespace FintrakBanking.Repositories.Credit
 
         #region COMMITTEE MINUTES
 
-        public bool AddCommitteeDocument(LoanDocumentViewModel entity, byte[] buffer)
+        public bool AddCommitteeDocument(LoanDocumentViewModel model, byte[] file)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var data = new Entities.DocumentModels.TBL_MEDIA_LOAN_DOCUMENTS
+                {
+                    FILEDATA = file,
+                    LOANAPPLICATIONNUMBER = model.loanApplicationNumber,
+                    LOANREFERENCENUMBER = model.loanReferenceNumber,
+                    DOCUMENTTITLE = model.documentTitle,
+                    DOCUMENTTYPEID = model.documentTypeId,
+                    LOAN_BOOKING_REQUESTID = model.SourceId,
+                    FILENAME = model.fileName,
+                    FILEEXTENSION = model.fileExtension,
+                    SYSTEMDATETIME = DateTime.Now,
+                    PHYSICALFILENUMBER = model.physicalFileNumber,
+                    PHYSICALLOCATION = model.physicalLocation,
+                    CREATEDBY = (int)model.createdBy,
+                };
+
+                context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added Committee Minutes '{ model.documentTitle }' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.audit.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+
+                return context.SaveChanges() != 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public IEnumerable<LoanDocumentViewModel> GetCommitteeDocument(string applicationNumber)
         {
-            throw new NotImplementedException();
+            return this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x => x.LOANAPPLICATIONNUMBER == applicationNumber).Select(x => new LoanDocumentViewModel
+            {
+                documentId = x.DOCUMENTID,
+                loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                loanReferenceNumber = x.LOANREFERENCENUMBER,
+                documentTitle = x.DOCUMENTTITLE,
+                documentTypeId = x.DOCUMENTTYPEID,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                systemDateTime = x.SYSTEMDATETIME,
+                physicalFileNumber = x.PHYSICALFILENUMBER,
+                physicalLocation = x.PHYSICALLOCATION,
+            });
         }
 
         public LoanDocumentViewModel GetCommitteeDocument(int documentId)
         {
-            throw new NotImplementedException();
+            var data = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
+
+            if (data == null) { return null; }
+
+            return new LoanDocumentViewModel
+            {
+                documentId = data.DOCUMENTID,
+                loanApplicationNumber = data.LOANAPPLICATIONNUMBER,
+                loanReferenceNumber = data.LOANREFERENCENUMBER,
+                documentTitle = data.DOCUMENTTITLE,
+                documentTypeId = data.DOCUMENTTYPEID,
+                fileData = data.FILEDATA,
+                fileName = data.FILENAME,
+                fileExtension = data.FILEEXTENSION,
+                systemDateTime = data.SYSTEMDATETIME,
+                physicalFileNumber = data.PHYSICALFILENUMBER,
+                physicalLocation = data.PHYSICALLOCATION,
+            };
         }
 
         #endregion COMMITTEE MINUTES

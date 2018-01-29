@@ -109,7 +109,7 @@ namespace FintrakBanking.Repositories.Credit
                         isExternal = c.ISEXTERNAL,
                         isSubsequent = c.ISSUBSEQUENT,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
-                        //loanApplicationId = c.LOANAPPLICATIONID,
+                        loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                         loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                         timelineId = c.TIMELINEID,
                         dateTimeCreated = c.DATETIMECREATED,

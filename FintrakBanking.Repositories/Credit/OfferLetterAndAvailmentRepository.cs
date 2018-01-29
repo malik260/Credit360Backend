@@ -336,7 +336,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 // meaning it does not exist on the approval trail yet
                 data = GetCamProcessedLoanApplications(companyId).Where(x =>
-                x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted 
+                || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
 
                 //foreach (var i in data)
@@ -372,7 +373,7 @@ namespace FintrakBanking.Repositories.Credit
                         from e in apprTrail.DefaultIfEmpty()
                         where a.COMPANYID == companyId && a.DELETED == false
                               && b.STATUSID == (int)ApprovalStatusEnum.Approved &&
-                              e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                              (e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                                 && e.RESPONSESTAFFID == null
                           && e.OPERATIONID == (int)OperationsEnum.LoanAvailment && e.TOAPPROVALLEVELID == staffApprovalLevelId
                         select new CamProcessedLoanViewModel
