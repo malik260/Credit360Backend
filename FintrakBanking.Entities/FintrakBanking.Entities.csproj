@@ -114,6 +114,7 @@
     <Compile Include="Models\TBL_CHECKLIST_STATUS.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TARGETTYPE.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TYPE.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_TYPE_APROV_LEVL.cs" />
     <Compile Include="Models\TBL_CITY.cs" />
     <Compile Include="Models\TBL_CITY_CLASS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_CASA.cs" />
