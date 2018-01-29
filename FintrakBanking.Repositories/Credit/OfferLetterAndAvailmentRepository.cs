@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Credit
         
                             operationId = e.OPERATIONID,
                             currentApprovalStateId = e.APPROVALSTATEID,
-                            approvalStatusId = e.APPROVALSTATUSID,
+                            //approvalStatusId = e.APPROVALSTATUSID,
                         });
 
             var forDebugging = data.ToList();

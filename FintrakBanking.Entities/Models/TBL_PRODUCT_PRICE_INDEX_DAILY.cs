@@ -6,25 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_RECOVERY_PLAN_PAYMNT")]
-    public partial class TBL_LOAN_RECOVERY_PLAN_PAYMNT
+    [Table("core.TBL_PRODUCT_PRICE_INDEX_DAILY")]
+    public partial class TBL_PRODUCT_PRICE_INDEX_DAILY
     {
         [Key]
-        public int RECOVERYPLANPAYMENTID { get; set; }
+        public int DAILYPRODUCTPRICEINDEXID { get; set; }
 
-        public int RECOVERYPLANID { get; set; }
+        public short PRODUCTPRICEINDEXID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime PAYMENTDATE { get; set; }
+        public DateTime DATE { get; set; }
 
-        [Column(TypeName = "money")]
-        public decimal PAYMENTAMOUNT { get; set; }
+        public double PRICEINDEXRATE { get; set; }
 
         public int CREATEDBY { get; set; }
 
-        public DateTime DATETIMECREATED { get; set; }
-
         public int? LASTUPDATEDBY { get; set; }
+
+        public DateTime DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
 
@@ -34,6 +33,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual TBL_LOAN_RECOVERY_PLAN TBL_LOAN_RECOVERY_PLAN { get; set; }
+        public virtual TBL_PRODUCT_PRICE_INDEX TBL_PRODUCT_PRICE_INDEX { get; set; }
     }
 }
