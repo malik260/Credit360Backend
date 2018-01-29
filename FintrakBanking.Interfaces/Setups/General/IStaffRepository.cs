@@ -13,8 +13,6 @@ namespace FintrakBanking.Interfaces.Setups.General
     {
         Task<bool> UpdateStaff(int staffid, StaffInfoViewModel staffModel);
 
-        //bool AddStaff(StaffInfoViewModel staffModel);
-
         Task<bool> AddTempStaff(StaffInfoViewModel staffModel);
 
         bool GoForApproval(ApprovalViewModel entity);
@@ -36,23 +34,27 @@ namespace FintrakBanking.Interfaces.Setups.General
         StaffInfoViewModel GetStaffById(int staffId);
 
         StaffDetailsModel GetTempStaffDetail(int staffId);
+
         IEnumerable<StaffDetailsModel> GetStaffDetails(int companyId);
+
         StaffDetailsModel GetStaffDetail(string staffCode, int companyId);
 
-        //IEnumerable<StaffDetailsModel> GetTempStaffDetails();
-        
-
         IEnumerable<simpleStaffModel> GetStaffNames(); 
+
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
 
         IQueryable<simpleStaffModel> SearchStaff(string searchString, int companyId); 
+
         IQueryable<simpleStaffModel> SearchStaffbyDepartmentId(string searchString, int companyId, int departmentId);
 
-
         bool AddStaffSignature(StaffDocumentViewModel model, byte[] file);
+
         bool UpdateStaffSignature(StaffDocumentViewModel model, int documentId);
+
         IEnumerable<StaffDocumentViewModel> GetAllStaffSignatures(int companyId);
+
         StaffDocumentViewModel GetStaffSignatureByStaffCode(string staffCode, int companyId);
+
         bool UpdateReliever(RelieverViewModel entity);
     }
 }

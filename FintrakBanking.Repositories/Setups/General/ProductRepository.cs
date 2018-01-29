@@ -1049,17 +1049,17 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingProduct.APPROVED = true;
                     existingProduct.DELETED = false;
                     existingProduct.APPROVEDBY = productModel.CREATEDBY;
-                }
 
-                var existingProductBehaviour = productBehaviourToUpdate;
-                if (productBehaviourModel != null && productBehaviourToUpdate != null)
-                {
-                    existingProductBehaviour.PRODUCTID = productModel.PRODUCTID;
-                    existingProductBehaviour.PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT;
-                    existingProductBehaviour.CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT;
-                    existingProductBehaviour.COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT;
-                    existingProductBehaviour.COLLATERAL_LCY_LIMIT = productBehaviourModel.COLLATERAL_LCY_LIMIT;
-                    existingProductBehaviour.ISINVOICEBASED = productBehaviourModel.ISINVOICEBASED;
+                    var existingProductBehaviour = productBehaviourToUpdate;
+                    if (productBehaviourModel != null && productBehaviourToUpdate != null)
+                    {
+                        existingProductBehaviour.PRODUCTID = productModel.PRODUCTID;
+                        existingProductBehaviour.PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT;
+                        existingProductBehaviour.CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT;
+                        existingProductBehaviour.COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT;
+                        existingProductBehaviour.COLLATERAL_LCY_LIMIT = productBehaviourModel.COLLATERAL_LCY_LIMIT;
+                        existingProductBehaviour.ISINVOICEBASED = productBehaviourModel.ISINVOICEBASED;
+                    }
                 }
                 else //Insert a new product record into the real product table
                 {

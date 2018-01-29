@@ -12,5 +12,6 @@ namespace FintrakBanking.Common.Enum
         LevelTwo = 100000000,
         LevelThree = 999999999,
         LevelFour = 1000000000
+
     }
 }

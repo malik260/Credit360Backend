@@ -634,7 +634,6 @@ namespace FintrakBanking.Repositories.Credit
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                             if (!entity.feeOverride) PostLoanFees(entity);
-
                             context.SaveChanges();
 
                             //.....Commit transaction ............
