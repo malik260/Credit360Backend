@@ -56,7 +56,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isAccepted { get; set; }
         public decimal approvedAmount { get; set; }
         public bool isFinal { get; set; }
-
+        public bool saveOnly { get; set; }
     }
 
     public class Form3800ViewModel: GeneralEntity

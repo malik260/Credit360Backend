@@ -83,7 +83,7 @@ namespace FintrakBanking.Repositories.Credit
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             dateTimeCreated = a.DATETIMECREATED,
                             availmentlDate = a.AVAILMENTDATE,
-                            // approvalDate = a.APPROVEDDATE,
+                            approvalDate = a.APPROVEDDATE,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
                                 .Select(camDoc => new CamDocumentViewModel
                                 {
@@ -110,10 +110,10 @@ namespace FintrakBanking.Repositories.Credit
         
                             operationId = e.OPERATIONID,
                             currentApprovalStateId = e.APPROVALSTATEID,
-                            //approvalStatusId = e.APPROVALSTATUSID,
+                            approvalStatusId = e.APPROVALSTATUSID,
                         });
 
-            var forDebugging = data.ToList();
+            //var forDebugging = data.ToList();
 
             return data;
         }
@@ -229,7 +229,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(y => y.FirstOrDefault())
                 .OrderByDescending(b => b.loanApplicationId);
 
-            var test = camProcessedData.ToList();
+            //var test = camProcessedData.ToList();
 
             return camProcessedData;
         }
@@ -962,7 +962,7 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_OFFERLETTER.Add(document);
                 }
 
-                if (model.isAccepted == false)
+                if (model.isAccepted == false && model.saveOnly != true)
                 {
                     var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
                     if (appl == null) throw new Exception("Loan application with the given reference number not found!");
