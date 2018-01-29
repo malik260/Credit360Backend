@@ -202,7 +202,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var data = new Entities.DocumentModels.TBL_MEDIA_LOAN_DOCUMENTS
+                var data = new Entities.DocumentModels.TBL_LOAN_COMMITTEE_MINUTES
                 {
                     FILEDATA = file,
                     LOANAPPLICATIONNUMBER = model.loanApplicationNumber,
@@ -218,7 +218,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = (int)model.createdBy,
                 };
 
-                context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+                context.TBL_LOAN_COMMITTEE_MINUTES.Add(data);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -245,7 +245,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanDocumentViewModel> GetCommitteeDocument(string applicationNumber)
         {
-            return this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x => x.LOANAPPLICATIONNUMBER == applicationNumber).Select(x => new LoanDocumentViewModel
+            return this.context.TBL_LOAN_COMMITTEE_MINUTES.Where(x => x.LOANAPPLICATIONNUMBER == applicationNumber).Select(x => new LoanDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
                 loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
@@ -262,7 +262,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanDocumentViewModel GetCommitteeDocument(int documentId)
         {
-            var data = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
+            var data = this.context.TBL_LOAN_COMMITTEE_MINUTES.Find(documentId);
 
             if (data == null) { return null; }
 
