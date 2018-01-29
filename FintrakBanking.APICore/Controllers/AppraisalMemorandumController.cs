@@ -236,7 +236,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("loan-application-approval-process")]
-        public HttpResponseMessage GetPendingLoanApplications([FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId)
+        public HttpResponseMessage GetPendingLoanApplications([FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString)
         {
             try
             {
@@ -247,10 +247,16 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     items = repo.GetPendingLoanApplicationsClass(token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
 
-                var data = items
-                    //.OrderByDescending(x => x.applicationDate).ThenByDescending(x => x.loanApplicationId)
-                    .Skip(page).Take(itemsPerPage)
-                    .ToList();
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    items = items.Where(x => 
+                        x.applicationReferenceNumber.Contains(searchString)
+                        || x.applicationAmount.ToString().Contains(searchString)
+                        || x.customerName.Contains(searchString)
+                        ).Take(itemsPerPage);
+                }
+
+                var data = items.Skip(page).Take(itemsPerPage).ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
             }
