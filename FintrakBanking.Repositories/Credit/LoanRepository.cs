@@ -200,7 +200,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANTYPEID = model.loanTypeId,
                 DISCHARGELETTER = false,
                 SUSPENDINTEREST = false,
-                CUSTOMERSENSITIVITYLEVELID = model.customerSensitivityLevelId,
+                //CUSTOMERSENSITIVITYLEVELID = model.customerSensitivityLevelId,
                 COMPANYID = model.companyId,
                 CREATEDBY=model.createdBy,
                 DATETIMECREATED = DateTime.Now, 
@@ -351,7 +351,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERGROUPID = entity.customerGroupId == 0 ? null : entity.customerGroupId,
                 LOANTYPEID = entity.loanTypeId,
                 DISCHARGELETTER = false,
-                CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId,
+                //CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId,
                 COMPANYID = entity.companyId,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now 
@@ -545,7 +545,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRINCIPALREDUCTIONCOUNT = 0,
                 FIXEDPRINCIPAL = false,
                 PROFILELOAN = false,
-                CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId,
+                //CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId,
 
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
 
@@ -805,8 +805,8 @@ namespace FintrakBanking.Repositories.Credit
                             scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
                             scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
 
-                            customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
-                            customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
+                            //customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
+                            //customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
                             firstName = ln.TBL_CUSTOMER.FIRSTNAME,
                             middleName = ln.TBL_CUSTOMER.MIDDLENAME,
                             lastName = ln.TBL_CUSTOMER.LASTNAME,
@@ -952,8 +952,8 @@ namespace FintrakBanking.Repositories.Credit
                             dischargeLetter = ln.DISCHARGELETTER,
                             suspendInterest = ln.SUSPENDINTEREST,
 
-                            customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
-                            customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
+                            //customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
+                            //customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
                             firstName = ln.TBL_CUSTOMER.FIRSTNAME,
                             middleName = ln.TBL_CUSTOMER.MIDDLENAME,
                             lastName = ln.TBL_CUSTOMER.LASTNAME,
@@ -1078,8 +1078,8 @@ namespace FintrakBanking.Repositories.Credit
                             //SectorName = ln.tbl_Sub_Sector.tbl_Sector.Name,
                             dischargeLetter = ln.DISCHARGELETTER,
 
-                            customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
-                            customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
+                            //customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
+                            //customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
                             firstName = ln.TBL_CUSTOMER.FIRSTNAME,
                             middleName = ln.TBL_CUSTOMER.MIDDLENAME,
                             lastName = ln.TBL_CUSTOMER.LASTNAME,
@@ -2343,7 +2343,7 @@ namespace FintrakBanking.Repositories.Credit
                             profileLoan = l.PROFILELOAN,
                             dischargeLetter = l.DISCHARGELETTER,
                             suspendInterest = l.SUSPENDINTEREST,
-                            customerSensitivityLevelId = l.CUSTOMERSENSITIVITYLEVELID,
+                            //customerSensitivityLevelId = l.CUSTOMERSENSITIVITYLEVELID,
                             createdBy = l.CREATEDBY,
                             dateTimeCreated = l.DATETIMECREATED,
                             isCamsol = context.TBL_LOAN_CAMSOL.Any(x => x.LOANID == l.TERMLOANID),
@@ -2492,7 +2492,7 @@ namespace FintrakBanking.Repositories.Credit
                         profileLoan = data.PROFILELOAN,
                         dischargeLetter = data.DISCHARGELETTER,
                         suspendInterest = data.SUSPENDINTEREST,
-                        customerSensitivityLevelId = data.CUSTOMERSENSITIVITYLEVELID,
+                        //customerSensitivityLevelId = data.CUSTOMERSENSITIVITYLEVELID,
                         createdBy = data.CREATEDBY,
                         dateTimeCreated = data.DATETIMECREATED
                     }).FirstOrDefault();
@@ -2562,7 +2562,7 @@ namespace FintrakBanking.Repositories.Credit
                         profileLoan = data.PROFILELOAN,
                         dischargeLetter = data.DISCHARGELETTER,
                         suspendInterest = data.SUSPENDINTEREST,
-                        customerSensitivityLevelId = data.CUSTOMERSENSITIVITYLEVELID,
+                        //customerSensitivityLevelId = data.CUSTOMERSENSITIVITYLEVELID,
                         createdBy = data.CREATEDBY,
                         dateTimeCreated = data.DATETIMECREATED
 
@@ -4002,7 +4002,7 @@ namespace FintrakBanking.Repositories.Credit
                                            profileLoan = a.PROFILELOAN,
                                            dischargeLetter = a.DISCHARGELETTER,
                                            suspendInterest = a.SUSPENDINTEREST,
-                                           customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                                           //customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                                            createdBy = a.CREATEDBY,
                                            dateTimeCreated = a.DATETIMECREATED,
                                            isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),

@@ -113,6 +113,7 @@
     <Compile Include="Models\TBL_CHECKLIST_STATUS.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TARGETTYPE.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TYPE.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_TYPE_APROV_LEVL.cs" />
     <Compile Include="Models\TBL_CITY.cs" />
     <Compile Include="Models\TBL_CITY_CLASS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_CASA.cs" />
@@ -383,6 +384,7 @@
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\view_Approval_Setup.cs" />
+    <Compile Include="Models\view_Checklist_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />

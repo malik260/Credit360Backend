@@ -5,6 +5,8 @@ namespace FintrakBanking.Finance.ViewModels
 {
     public class TransactionViewModel
     {
+        public int customerId;
+
         public string branch { get; set; }
         public int branchId { get; set; }
         public string batchNo { get; set; }

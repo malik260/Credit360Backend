@@ -133,8 +133,6 @@ namespace FintrakBanking.Entities.Models
 
         public short? APROVALSTATUSID { get; set; }
 
-        public short CUSTOMERSENSITIVITYLEVELID { get; set; }
-
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -149,8 +147,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
-
-        public virtual TBL_CUSTOMER_SENSITIVITY_LEVEL TBL_CUSTOMER_SENSITIVITY_LEVEL { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 

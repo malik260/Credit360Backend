@@ -43,6 +43,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CHECKLIST_STATUS> TBL_CHECKLIST_STATUS { get; set; }
         public virtual DbSet<TBL_CHECKLIST_TARGETTYPE> TBL_CHECKLIST_TARGETTYPE { get; set; }
         public virtual DbSet<TBL_CHECKLIST_TYPE> TBL_CHECKLIST_TYPE { get; set; }
+        public virtual DbSet<TBL_CHECKLIST_TYPE_APROV_LEVL> TBL_CHECKLIST_TYPE_APROV_LEVL { get; set; }
         public virtual DbSet<TBL_CITY> TBL_CITY { get; set; }
         public virtual DbSet<TBL_CITY_CLASS> TBL_CITY_CLASS { get; set; }
         public virtual DbSet<TBL_COMPANY> TBL_COMPANY { get; set; }
@@ -327,6 +328,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
         public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
+        public virtual DbSet<view_Checklist_Setup> view_Checklist_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -372,6 +374,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_APPROVAL_TRAIL1)
                 .WithOptional(e => e.TBL_APPROVAL_LEVEL1)
                 .HasForeignKey(e => e.TOAPPROVALLEVELID);
+
+            modelBuilder.Entity<TBL_APPROVAL_LEVEL>()
+                .HasMany(e => e.TBL_CHECKLIST_TYPE_APROV_LEVL)
+                .WithRequired(e => e.TBL_APPROVAL_LEVEL)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_APPROVAL_LEVEL>()
                 .HasMany(e => e.TBL_CREDIT_APPRAISAL_MEMO_DOCU)
@@ -782,6 +789,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_CHECKLIST_TYPE>()
                 .HasMany(e => e.TBL_CHECKLIST_DEFINITION)
+                .WithRequired(e => e.TBL_CHECKLIST_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CHECKLIST_TYPE>()
+                .HasMany(e => e.TBL_CHECKLIST_TYPE_APROV_LEVL)
                 .WithRequired(e => e.TBL_CHECKLIST_TYPE)
                 .WillCascadeOnDelete(false);
 
@@ -1526,32 +1538,12 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_CASA)
+                .HasMany(e => e.TBL_CUSTOMER)
                 .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_LOAN_ARCHIVE)
-                .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_LOAN_CONTINGENT)
-                .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_LOAN)
-                .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_LOAN_REVOLVING_ARCHIVE)
-                .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_LOAN_REVOLVING)
+                .HasMany(e => e.TBL_STAFF)
                 .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
                 .WillCascadeOnDelete(false);
 
@@ -4135,6 +4127,12 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_PRODUCT5)
                 .WithOptional(e => e.TBL_CHART_OF_ACCOUNT5)
                 .HasForeignKey(e => e.OVERDRAWNGL);
+
+            modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
+                .HasMany(e => e.TBL_SETUP_GLOBAL)
+                .WithRequired(e => e.TBL_CHART_OF_ACCOUNT)
+                .HasForeignKey(e => e.LEGAL_CHARGE_GLACCOUNTID)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
                 .HasMany(e => e.TBL_TAX)
