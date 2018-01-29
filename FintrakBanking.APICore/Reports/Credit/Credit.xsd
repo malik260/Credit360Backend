@@ -116,6 +116,11 @@
               <xs:element name="companyName" msdata:Caption="sectorId" msprop:Generator_ColumnVarNameInTable="columncompanyName" msprop:Generator_ColumnPropNameInRow="companyName" msprop:Generator_ColumnPropNameInTable="companyNameColumn" msprop:Generator_UserColumnName="companyName" type="xs:string" minOccurs="0" />
               <xs:element name="balance" msprop:Generator_ColumnVarNameInTable="columnbalance" msprop:Generator_ColumnPropNameInRow="balance" msprop:Generator_ColumnPropNameInTable="balanceColumn" msprop:Generator_UserColumnName="balance" type="xs:string" minOccurs="0" />
               <xs:element name="allowOverride" msprop:Generator_ColumnVarNameInTable="columnallowOverride" msprop:Generator_ColumnPropNameInRow="allowOverride" msprop:Generator_ColumnPropNameInTable="allowOverrideColumn" msprop:Generator_UserColumnName="allowOverride" type="xs:string" minOccurs="0" />
+              <xs:element name="Name" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" type="xs:string" minOccurs="0" />
+              <xs:element name="Code" msprop:Generator_ColumnVarNameInTable="columnCode" msprop:Generator_ColumnPropNameInRow="Code" msprop:Generator_ColumnPropNameInTable="CodeColumn" msprop:Generator_UserColumnName="Code" type="xs:string" minOccurs="0" />
+              <xs:element name="Limit" msprop:Generator_ColumnVarNameInTable="columnLimit" msprop:Generator_ColumnPropNameInRow="Limit" msprop:Generator_ColumnPropNameInTable="LimitColumn" msprop:Generator_UserColumnName="Limit" type="xs:string" minOccurs="0" />
+              <xs:element name="Usage" msprop:Generator_ColumnVarNameInTable="columnUsage" msprop:Generator_ColumnPropNameInRow="Usage" msprop:Generator_ColumnPropNameInTable="UsageColumn" msprop:Generator_UserColumnName="Usage" type="xs:string" minOccurs="0" />
+              <xs:element name="Balance" msprop:Generator_ColumnVarNameInTable="columnBalance" msprop:Generator_ColumnPropNameInRow="Balance" msprop:Generator_ColumnPropNameInTable="BalanceColumn" msprop:Generator_UserColumnName="Balance" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -246,6 +251,7 @@
               <xs:element name="customerName" msprop:Generator_ColumnVarNameInTable="columncustomerName" msprop:Generator_ColumnPropNameInRow="customerName" msprop:Generator_ColumnPropNameInTable="customerNameColumn" msprop:Generator_UserColumnName="customerName" type="xs:string" minOccurs="0" />
               <xs:element name="propertyName" msprop:Generator_ColumnVarNameInTable="columnpropertyName" msprop:Generator_ColumnPropNameInRow="propertyName" msprop:Generator_ColumnPropNameInTable="propertyNameColumn" msprop:Generator_UserColumnName="propertyName" type="xs:string" minOccurs="0" />
               <xs:element name="lastValuationDate" msprop:Generator_ColumnVarNameInTable="columnlastValuationDate" msprop:Generator_ColumnPropNameInRow="lastValuationDate" msprop:Generator_ColumnPropNameInTable="lastValuationDateColumn" msprop:Generator_UserColumnName="lastValuationDate" type="xs:string" minOccurs="0" />
+              <xs:element name="valuationAmount" msprop:Generator_ColumnVarNameInTable="columnvaluationAmount" msprop:Generator_ColumnPropNameInRow="valuationAmount" msprop:Generator_ColumnPropNameInTable="valuationAmountColumn" msprop:Generator_UserColumnName="valuationAmount" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

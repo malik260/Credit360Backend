@@ -935,78 +935,7 @@ namespace FintrakBanking.Repositories.AppEmail
         }
 
         #endregion INACTIVE BOND AND GUARANTEE
-
-
-        #region WORKFLOW
-
-        //public void SendEmailAlertsForWorkflow(string[] emails, string operation, bool group, string link)
-        //{
-        //    string recipients = string.Join(";", emails);
-        //    string messageSubject = "PENDING APPROVAL FOR " + operation;
-        //    string templateUrl = "~/EmailTemplates/ApprovalWorkflow.html";
-        //    string messageContent;
-
-        //    try
-        //    {
-        //        if (group)
-        //        {
-        //            messageContent =    "Dear Sir/Madam, <br /><br />" +
-        //                               $"You have a new pending {operation} approval request. <br /><br />" +
-        //                               $"See details here {link}";
-
-        //            var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
-
-        //            var message = new TBL_MESSAGE_LOG
-        //            {
-        //                MESSAGESUBJECT = messageSubject,
-        //                MESSAGEBODY = mailBody,
-        //                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-        //                MESSAGETYPEID = (short)MessageTypeEnum.Email,
-        //                FROMADDRESS = this.supportEmail,
-        //                TOADDRESS = recipients,
-        //                DATETIMERECEIVED = DateTime.Now,
-        //                SENDONDATETIME = DateTime.Now,
-        //            };
-
-        //            context.TBL_MESSAGE_LOG.Add(message);
-        //        }
-        //        else
-        //        {
-        //            foreach (var recipient in emails)
-        //            {
-        //                messageContent = "Dear Sir/Madam, <br /><br />" + // TODO Sir/Madam with firstname
-        //                                   $"You have a new pending {operation} approval request. <br /><br />" +
-        //                                   $"See details here {link}";
-
-        //                var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
-
-        //                var message = new TBL_MESSAGE_LOG
-        //                {
-        //                    MESSAGESUBJECT = messageSubject,
-        //                    MESSAGEBODY = mailBody,
-        //                    MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-        //                    MESSAGETYPEID = (short)MessageTypeEnum.Email,
-        //                    FROMADDRESS = this.supportEmail,
-        //                    TOADDRESS = recipient,
-        //                    DATETIMERECEIVED = DateTime.Now,
-        //                    SENDONDATETIME = DateTime.Now,
-        //                };
-
-        //                context.TBL_MESSAGE_LOG.Add(message);
-        //            }
-        //        }
-
-        //        context.SaveChanges();
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
-
-        #endregion WORKFLOW
-
+        
         #region Helper Methods
 
         public void SaveMessageDetails(MessageLogViewModel model)
@@ -1141,16 +1070,6 @@ namespace FintrakBanking.Repositories.AppEmail
             }
 
             return false;
-        }
-
-        public void SaveWorkflowEmail(string name, string address, int operationid, int targetid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SaveWorkflowSMS(string name, string address, int operationid, int targetid)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion Helper Methods

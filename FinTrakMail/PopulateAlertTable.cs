@@ -24,7 +24,7 @@ namespace FinTrakMail
         private static IStaffRepository staffRepo;
 
         EmailAndAlertsRepository repo = new EmailAndAlertsRepository(
-               // context,
+                context,
                 auditTrail,
                 emailHelpers,
                 genSetup,

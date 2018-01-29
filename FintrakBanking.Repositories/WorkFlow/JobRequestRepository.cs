@@ -85,8 +85,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool ChargeCustomerJob(CollateralViewModel model, string actionName, string actionType, int loanApplicationDetailId)
         {
-           //if(actionName != null) throw new Exception(actionName  + " "+ actionType + " on customer's account was successful");
-
             TBL_LOAN_APPLICATION loanApplication;
             TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail;
             TBL_STATE collateralLocationState;
@@ -97,11 +95,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (loanApplication != null)
             {
                 var collateralData = context.TBL_COLLATERAL_CUSTOMER.Find(model.collateralId);
-                // var propertyDetails = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == collateralData.COLLATERALCUSTOMERID);
                 var propertyDetails = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == 34).FirstOrDefault();
                 if (propertyDetails != null)
                 {
-
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                     var city = context.TBL_CITY.Find(propertyDetails.CITYID);
@@ -118,26 +114,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                         };
                         TBL_CASA casaAccount = context.TBL_CASA.Find(loanApplication.CASAACCOUNTID);
                         collateralLocationState = context.TBL_STATE.Find(city.STATEID);
-                        int crdGL; 
+                        var crdGL = context.TBL_SETUP_GLOBAL.FirstOrDefault().LEGAL_CHARGE_GLACCOUNTID;
 
                         switch (actionName)
                         {
                             case "Search":
-                                crdGL = 11; //TODO: get the norminated GL account. Nice to have a setup to map all dynamic GL
                                 if(actionType.ToLower() == "debit")inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge"));
                                 else if(actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge Reversal"));
 
                                 break;
                             case "Chart":
-                                crdGL = 11; //TODO: get the norminated GL account. Nice to have a setup to map all dynamic GL
                                 if (actionType.ToLower() == "debit") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.CHARTINGAMOUNT, crdGL, "Collateral Charting Charge"));
                                 else if (actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.CHARTINGAMOUNT, crdGL, "Collateral Charting Charge Reversal"));
 
-                                break;
-                            case "Verification":
-                                crdGL = 11; //TODO: get the norminated GL account. Nice to have a setup to map all dynamic GL
-                                if (actionType.ToLower() == "debit") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.VERIFICATIONAMOUNT, crdGL, "Invoice Verification Charge"));
-                                else if (actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.VERIFICATIONAMOUNT, crdGL, "Invoice Verification Charge Reversal"));
                                 break;
                             default:
                                 throw new Exception("Debit charge type is not specified.");
@@ -152,21 +141,20 @@ namespace FintrakBanking.Repositories.WorkFlow
             //Audit Section ---------------------------
            var audit = new TBL_AUDIT
            {
-              // AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
+               AUDITTYPEID = actionName.ToLower() == "chart" ? (short)AuditTypeEnum.CollateralChartJob : (short)AuditTypeEnum.CollateralSearchJob,
                STAFFID = model.createdBy,
                BRANCHID = (short)model.userBranchId,
-               ///DETAIL = $"{actionType}  '{ model.jobRequestCode }' ",
+               DETAIL = $"{actionType} Collateral {actionName} Charge for loan application with ref. '{ loanApplication.APPLICATIONREFERENCENUMBER }' ",
                IPADDRESS = model.userIPAddress,
-               URL = model.applicationUrl,
+               URL = model.applicationUrl, 
                APPLICATIONDATE = general.GetApplicationDate(),
                SYSTEMDATETIME = DateTime.Now
            };
-            if(actionName == "Verification") audit.DETAIL = $"{actionType} Verification Charge for loan application with ref. '{ loanApplication.APPLICATIONREFERENCENUMBER }' " ;
-            else audit.DETAIL = $"{actionType} Collateral {actionName} Charge for loan application with ref. '{ loanApplication.APPLICATIONREFERENCENUMBER }' ";
+
             this.audit.AddAuditTrail(audit);
            // End of Audit Section ---------------------
 
-            return false; // context.SaveChanges() != 0;
+            return context.SaveChanges() != 0;
         }
 
         public string AddGlobalJobRequest(JobRequestViewModel model)

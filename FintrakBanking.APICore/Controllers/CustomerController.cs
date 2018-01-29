@@ -1457,6 +1457,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
+        [Route("validate-new-customer/{customerCode}")]
+        public HttpResponseMessage ValidateNewCustomerCode(string customerCode)
+        {
+            try
+            {
+              
+                var data = repo.ValidateCustomerCode(customerCode);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                         new { success = true, message = $"Customer with code {customerCode} already exist on Fintrak" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+        }
+        [HttpGet]
         [Route("customer-information-completed/{customerId}")]
         public HttpResponseMessage CustomerInformationCompleted(int customerId)
         {

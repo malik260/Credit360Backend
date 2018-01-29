@@ -11,9 +11,9 @@ namespace FintrakBanking.Entities.DocumentModels
         [Key]
         public int DOCUMENTID { get; set; }
 
-        public int CONDITIONID { get; set; }
-
         public int LOANAPPLICATIONID { get; set; }
+
+        public int CONDITIONID { get; set; }
 
         [Required]
         [StringLength(400)]

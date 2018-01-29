@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.ViewModels.Admin;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,6 +31,8 @@ namespace FintrakBanking.Repositories.Admin
             return from _audit in context.TBL_AUDIT
                    join atype in context.TBL_AUDIT_TYPE on _audit.AUDITTYPEID equals atype.AUDITTYPEID
                    join st in context.TBL_STAFF on _audit.STAFFID equals st.STAFFID
+                   join u in context.TBL_PROFILE_USER on st.STAFFID equals u.STAFFID
+                   join b in context.TBL_BRANCH on _audit.BRANCHID equals b.BRANCHID
                    where _audit.BRANCHID == branchId
                    select new AuditViewModel
                    {
@@ -40,8 +43,11 @@ namespace FintrakBanking.Repositories.Admin
                        firstName = st.FIRSTNAME,
                        lastName = st.LASTNAME,
                        systemDate = _audit.SYSTEMDATETIME,
-                       url = _audit.URL
+                       username = u.USERNAME,
+                       url = _audit.URL,
+                       branchName = b.BRANCHNAME
                    };
         }
+       
     }
 }

@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.Credit
                         dynamicsId = c.DYNAMICSID,
                         dynamics = c.DYNAMICS,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
-                        //loanApplicationId = c.LOANAPPLICATIONID,
+                        loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                         loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,

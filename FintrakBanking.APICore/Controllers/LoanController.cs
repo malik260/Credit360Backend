@@ -771,27 +771,27 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        //[HttpPost]
-        //[Route("detail")]
-        //public HttpResponseMessage GetBookedLoanDetails([FromBody]ReportSearchEntity param)
-        //{
-        //    try
-        //    {
-        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        [HttpGet]
+        [Route("detail/{param}")]
+        public HttpResponseMessage GetBookedLoanDetails(string param)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        //        var data = repo.GetBookedLoanDetailsWithParameters(token.GetCompanyId, param).ToList();
+                var data = repo.GetBookedLoanDetailsWithParameters(token.GetCompanyId, param).ToList();
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpGet]
         [Route("details/customer/{customerCode}")]
-        public HttpResponseMessage GetBookedLoanDetails(string customerCode)
+        public HttpResponseMessage GetBookedLoanDetail(string customerCode)
         {
             try
             {

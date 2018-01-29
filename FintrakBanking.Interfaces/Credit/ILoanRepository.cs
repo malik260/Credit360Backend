@@ -3,6 +3,7 @@ using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,5 +82,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
 
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> GetLoanScheduleByLoanId(int loanId);
+         IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, string param);
+        
     }
 }

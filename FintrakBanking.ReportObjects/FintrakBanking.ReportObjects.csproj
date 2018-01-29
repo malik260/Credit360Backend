@@ -55,6 +55,7 @@
     <Compile Include="Credit\OfferLetterInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportCalls\IReportRouts.cs" />
+    <Compile Include="ReportingObjects\Audit.cs" />
     <Compile Include="ReportingObjects\FinanceRepotObject.cs" />
     <Compile Include="ReportCalls\ReportRoutes.cs" />
     <Compile Include="ReportingObjects\LimitsMonitoringReportsObjects.cs" />
