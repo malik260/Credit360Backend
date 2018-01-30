@@ -39,6 +39,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime TIMEUTC { get; set; }
 
+        [Column(TypeName = "ntext")]
         public string ALLXML { get; set; }
     }
 }

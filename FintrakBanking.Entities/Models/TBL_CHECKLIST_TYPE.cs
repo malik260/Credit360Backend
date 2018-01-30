@@ -13,7 +13,6 @@ namespace FintrakBanking.Entities.Models
         public TBL_CHECKLIST_TYPE()
         {
             TBL_CHECKLIST_DEFINITION = new HashSet<TBL_CHECKLIST_DEFINITION>();
-            TBL_CHECKLIST_TYPE_APROV_LEVL = new HashSet<TBL_CHECKLIST_TYPE_APROV_LEVL>();
         }
 
         [Key]
@@ -28,8 +27,5 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CHECKLIST_DEFINITION> TBL_CHECKLIST_DEFINITION { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CHECKLIST_TYPE_APROV_LEVL> TBL_CHECKLIST_TYPE_APROV_LEVL { get; set; }
     }
 }

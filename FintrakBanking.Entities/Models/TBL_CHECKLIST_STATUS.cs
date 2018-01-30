@@ -13,8 +13,6 @@ namespace FintrakBanking.Entities.Models
         public TBL_CHECKLIST_STATUS()
         {
             TBL_CHECKLIST_DETAIL = new HashSet<TBL_CHECKLIST_DETAIL>();
-            TBL_LOAN_CONDITION_PRECEDENT = new HashSet<TBL_LOAN_CONDITION_PRECEDENT>();
-            TBL_LOAN_CONDITION_PRECEDENT1 = new HashSet<TBL_LOAN_CONDITION_PRECEDENT>();
         }
 
         [Key]
@@ -24,8 +22,6 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string CHECKLISTSTATUSNAME { get; set; }
-
-        public short RESPONSE_TYPEID { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -43,13 +39,5 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CHECKLIST_DETAIL> TBL_CHECKLIST_DETAIL { get; set; }
-
-        public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_CONDITION_PRECEDENT> TBL_LOAN_CONDITION_PRECEDENT { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_CONDITION_PRECEDENT> TBL_LOAN_CONDITION_PRECEDENT1 { get; set; }
     }
 }

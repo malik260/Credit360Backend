@@ -25,9 +25,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(10)]
         public string CODE { get; set; }
 
-        [Column(TypeName = "money")]
-        public decimal? LOAN_LIMIT { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_SUB_SECTOR> TBL_SUB_SECTOR { get; set; }
     }

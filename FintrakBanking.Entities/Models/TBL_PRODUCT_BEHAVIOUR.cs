@@ -14,16 +14,14 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCTID { get; set; }
 
-        public double? COLLATERAL_LCY_LIMIT { get; set; }
+        public double? LCY_LIMIT { get; set; }
 
-        public double? COLLATERAL_FCY_LIMIT { get; set; }
+        public double? FCY_LIMIT { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? CUSTOMER_LIMIT { get; set; }
 
         public double? PRODUCT_LIMIT { get; set; }
-
-        public bool? ISINVOICEBASED { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
     }

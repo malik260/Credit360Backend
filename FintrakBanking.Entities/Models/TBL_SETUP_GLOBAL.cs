@@ -19,10 +19,6 @@ namespace FintrakBanking.Entities.Models
 
         public double PASTDUEINDEFAULT_INTERESTRATE { get; set; }
 
-        public int LEGAL_CHARGE_GLACCOUNTID { get; set; }
-
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
-
-        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
     }
 }

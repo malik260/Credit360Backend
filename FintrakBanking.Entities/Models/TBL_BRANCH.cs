@@ -63,9 +63,6 @@ namespace FintrakBanking.Entities.Models
 
         public bool NPL_LIMITEXCEEDED { get; set; }
 
-        [Column(TypeName = "money")]
-        public decimal NPL_LIMIT { get; set; }
-
         public bool DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }

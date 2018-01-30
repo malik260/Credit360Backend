@@ -23,7 +23,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string FSCAPTIONGROUPNAME { get; set; }
 
-        public int POSITION { get; set; }
+        public int COMPANYID { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -38,6 +38,8 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }

@@ -6,25 +6,21 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_APPLTN_CREDIT_BUREAU")]
-    public partial class TBL_LOAN_APPLTN_CREDIT_BUREAU
+    [Table("core.TBL_PRODUCT_CHARGE_FEE_CUSTMER")]
+    public partial class TBL_PRODUCT_CHARGE_FEE_CUSTMER
     {
         [Key]
-        public int APPLICATIONCREDITBUREAUID { get; set; }
+        public int CUSTOMER_PRODUCT_FEEID { get; set; }
 
-        public int LOANAPPLICATIONID { get; set; }
+        public int PRODUCTFEEID { get; set; }
 
         public int CUSTOMERID { get; set; }
 
-        public short CREDITBUREAUID { get; set; }
+        [Column(TypeName = "money")]
+        public decimal RATEVALUE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal CHARGEAMOUNT { get; set; }
-
-        public bool ISCOMPLETED { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? DATECOMPLETED { get; set; }
+        public decimal? DEPENDENTAMOUNT { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -34,7 +30,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool DELETED { get; set; }
+        public bool? DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }
 
@@ -42,8 +38,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual TBL_CREDIT_BUREAU TBL_CREDIT_BUREAU { get; set; }
-
-        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
+        public virtual TBL_PRODUCT_CHARGE_FEE TBL_PRODUCT_CHARGE_FEE { get; set; }
     }
 }

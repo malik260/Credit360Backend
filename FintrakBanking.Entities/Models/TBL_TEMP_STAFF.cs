@@ -10,7 +10,7 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_TEMP_STAFF
     {
         [Key]
-        public int TEMPSTAFFID { get; set; }
+        public int STAFFID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -81,7 +81,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CITYID { get; set; }
 
-        public short CUSTOMERSENSITIVITYLEVELID { get; set; }
+        public short CUSTOMERSENSITIVITYLEVEL { get; set; }
 
         public int? CREATEDBY { get; set; }
 

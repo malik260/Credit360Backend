@@ -29,10 +29,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool CHECKLISTSTATUSID3 { get; set; }
 
-        [Column(TypeName = "date")]
         public DateTime? DEFEREDDATE { get; set; }
 
-        [Column(TypeName = "date")]
         public DateTime? INITIAL_DEFEREDDATE { get; set; }
 
         public int? CREATEDBY { get; set; }

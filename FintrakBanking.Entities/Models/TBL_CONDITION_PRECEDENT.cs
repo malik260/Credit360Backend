@@ -24,9 +24,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool RETAIL { get; set; }
 
-        public short? PRODUCTID { get; set; }
-
-        public short? RESPONSE_TYPEID { get; set; }
+        public int? PRODUCTID { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -35,11 +33,5 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
-
-        public int? TIMELINEID { get; set; }
-
-        public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
-
-        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
     }
 }
