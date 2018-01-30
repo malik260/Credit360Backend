@@ -32,7 +32,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool SaveFinalOfferLetter(OfferLetterTemplateViewModel model);
 
-        bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity);
+        bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity );
 
         IEnumerable<OfferLetterTemplateViewModel> GetAllFinalOfferLetters();
 
