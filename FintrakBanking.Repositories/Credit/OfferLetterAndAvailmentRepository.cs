@@ -87,15 +87,15 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = a.DATETIMECREATED,
                             availmentlDate = a.AVAILMENTDATE,
                             approvalDate = a.APPROVEDDATE,
-                            //camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
-                            //    .Select(camDoc => new CamDocumentViewModel
-                            //    {
-                            //        appraisalMemorandumId = camDoc.APPRAISALMEMORANDUMID,
-                            //        approvalLevelId = camDoc.APPROVALLEVELID,
-                            //        approvalLevelName = camDoc.TBL_APPROVAL_LEVEL.LEVELNAME,
-                            //        camDocumentation = camDoc.CAMDOCUMENTATION
-                            //    }
-                            //).ToList(),
+                            camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
+                                .Select(camDoc => new CamDocumentViewModel
+                                {
+                                    appraisalMemorandumId = camDoc.APPRAISALMEMORANDUMID,
+                                    approvalLevelId = camDoc.APPROVALLEVELID,
+                                    approvalLevelName = camDoc.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                    camDocumentation = camDoc.CAMDOCUMENTATION
+                                }
+                            ).ToList(),
                             loanApplicationCollateral = (from e in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
                                                          select new LoanApplicationCollateralViewModel
                                                          {
@@ -113,7 +113,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             operationId = e.OPERATIONID,
                             currentApprovalStateId = e.APPROVALSTATEID,
-                            //approvalStatusId = e.APPROVALSTATUSID,
+                            approvalStatusId = e.APPROVALSTATUSID,
                         });
 
             //var forDebugging = data.ToList();
@@ -232,7 +232,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(y => y.FirstOrDefault())
                 .OrderByDescending(b => b.loanApplicationId);
 
-            var test = camProcessedData.ToList();
+            //var test = camProcessedData.ToList();
 
             return camProcessedData;
         }
@@ -947,7 +947,7 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_OFFERLETTER.Add(document);
                 }
 
-                if (model.isAccepted == false)
+                if (model.isAccepted == false && model.saveOnly != true)
                 {
                     var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
                     if (appl == null) throw new Exception("Loan application with the given reference number not found!");
