@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_CONDITION_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_CHECKLIST_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_COLLATERAL_DOCUMENTS.cs" />
@@ -385,6 +386,7 @@
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\view_Approval_Setup.cs" />
+    <Compile Include="Models\view_Checklist_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />

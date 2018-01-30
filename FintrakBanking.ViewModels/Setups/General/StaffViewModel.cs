@@ -142,7 +142,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class StaffDocumentViewModel : DocumentViewModel
     {
-        public string StaffCode { get; set; }
+        public string staffCode { get; set; }
         public string documentTitle { get; set; }
         public short documentTypeId { get; set; }
         public DateTime SystemDateTime { get; set; }

@@ -8,8 +8,7 @@ using System.Linq;
 namespace FintrakBanking.Repositories.Setups.General
 {
 
-    [Export(typeof(IAccountSensitivityRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+    
     public class AccountSensitivityRepository : IAccountSensitivityRepository
     {
         private FinTrakBankingContext context;
@@ -27,7 +26,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                       {
                                           SensitivityDescription = a.DESCRIPTION,
                                           SensitivityId = a.CUSTOMERSENSITIVITYLEVELID,
-                                          SensitivityLevel = a.LEVEL
+                                          SensitivityLevel = a.CUSTOMERSENSITIVITYLEVELID
                                       }).SingleOrDefault();
             return accountSensitivity;
         }
@@ -39,7 +38,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                       {
                                           SensitivityDescription = a.DESCRIPTION,
                                           SensitivityId = a.CUSTOMERSENSITIVITYLEVELID,
-                                          SensitivityLevel = a.LEVEL
+                                          SensitivityLevel = a.CUSTOMERSENSITIVITYLEVELID
                                       });
             return accountSensitivity;
         }

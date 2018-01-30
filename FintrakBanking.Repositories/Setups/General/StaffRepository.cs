@@ -102,7 +102,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              BranchId = br.BRANCHID,
                              Comment = c.COMMENT,
                              //createdBy = c.CreatedBy.Value,
-                             CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVELID,
+                             CustomerSensitivityLevel = c.TBL_CUSTOMER_SENSITIVITY_LEVEL.CUSTOMERSENSITIVITYLEVELID,
                              DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                              //dateTimeCreated = c.DateTimeCreated,
                              DepartmentId = c.DEPARTMENTID,
@@ -907,47 +907,65 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddStaffSignature(StaffDocumentViewModel model, byte[] file)
         {
-            try
+            var audit = new TBL_AUDIT();
+            var appdate = genSetup.GetApplicationDate();
+            var staffInfo = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == model.staffCode.ToLower());
+            var signature = documentsContext.TBL_MEDIA_STAFF_SIGNATURE.FirstOrDefault(x => x.STAFFCODE.ToLower() == model.staffCode.ToLower());
+
+            if (signature == null)
             {
                 var document = new Entities.DocumentModels.TBL_MEDIA_STAFF_SIGNATURE()
                 {
-                    //DOCUMENT_TITLE = model.documentTitle,
-                    FILENAME = $"{model.StaffCode}-{model.fileName}",
+                    FILENAME = $"{model.staffCode}-{model.fileName}",
                     FILEEXTENSION = model.fileExtension,
                     FILEDATA = file,
                     SYSTEMDATETIME = DateTime.Now,
                     COMPANYID = model.companyId,
-                    STAFFCODE = model.StaffCode,
+                    STAFFCODE = model.staffCode,
                     CREATEDBY = model.createdBy,
-                    DATETIMECREATED = genSetup.GetApplicationDate()
+                    DATETIMECREATED = appdate
                 };
-
                 documentsContext.TBL_MEDIA_STAFF_SIGNATURE.Add(document);
 
-                var staffInfo = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == model.StaffCode.ToLower());
-
                 // Audit Section ---------------------------
-                var audit = new TBL_AUDIT
+                audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.StaffSignatureUploaded,
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Added Signature for staff {staffInfo?.FIRSTNAME + ' ' + staffInfo?.LASTNAME} with code '{ model.StaffCode }' ",
+                    DETAIL = $"Added Signature for staff {staffInfo?.FIRSTNAME + ' ' + staffInfo?.LASTNAME} with code '{ model.staffCode }' ",
                     IPADDRESS = model.userIPAddress,
                     URL = model.applicationUrl,
-                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    APPLICATIONDATE = appdate,
                     SYSTEMDATETIME = DateTime.Now
                 };
-
-                auditTrail.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
-
-                return documentsContext.SaveChanges() != 0;
             }
-            catch (Exception ex)
+            else
             {
-                throw ex;
+                signature.FILEDATA = file;
+                signature.STAFFCODE = model.staffCode;
+                signature.FILEEXTENSION = model.fileExtension;
+                signature.SYSTEMDATETIME = DateTime.Now;
+                signature.DATETIMEUPDATED = appdate;
+
+                // Audit Section ---------------------------
+                audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.StaffSignatureUpdated,
+                    STAFFID = model.lastUpdatedBy,
+                    BRANCHID = model.userBranchId,
+                    DETAIL = $"Updated Signature for staff {staffInfo?.FIRSTNAME + ' ' + staffInfo?.LASTNAME} with code '{ model.staffCode }' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = appdate,
+                    SYSTEMDATETIME = DateTime.Now
+                };
             }
+
+            auditTrail.AddAuditTrail(audit);
+
+            return documentsContext.SaveChanges() != 0;
         }
 
         public bool UpdateStaffSignature(StaffDocumentViewModel model, int documentId)
@@ -958,14 +976,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 return false;
             }
 
-            data.STAFFCODE = model.StaffCode;
-            //data.DOCUMENT_TITLE = model.documentTitle;
-            //data.FILENAME = model.fileName;
+            data.STAFFCODE = model.staffCode;
             data.FILEEXTENSION = model.fileExtension;
             data.SYSTEMDATETIME = DateTime.Now;
             data.DATETIMEUPDATED = genSetup.GetApplicationDate();
 
-            var staffInfo = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == model.StaffCode.ToLower());
+            var staffInfo = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == model.staffCode.ToLower());
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -973,7 +989,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 AUDITTYPEID = (short)AuditTypeEnum.StaffSignatureUpdated,
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = model.userBranchId,
-                DETAIL = $"Updated Signature for staff {staffInfo?.FIRSTNAME + ' ' + staffInfo?.LASTNAME} with code '{ model.StaffCode }' ",
+                DETAIL = $"Updated Signature for staff {staffInfo?.FIRSTNAME + ' ' + staffInfo?.LASTNAME} with code '{ model.staffCode }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
@@ -994,7 +1010,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              {
                                  documentId = doc.DOCUMENTID,
                                  companyId = doc.COMPANYID,
-                                 StaffCode = doc.STAFFCODE,
+                                 staffCode = doc.STAFFCODE,
                                  //documentTitle = doc.DOCUMENT_TITLE,
                                  fileData = doc.FILEDATA,
                                  fileName = doc.FILENAME,
@@ -1009,7 +1025,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public StaffDocumentViewModel GetStaffSignatureByStaffCode(string staffCode, int companyId)
         {
             var data = GetAllStaffSignatures(companyId).FirstOrDefault(x =>
-                string.Equals(x.StaffCode.ToLower(), staffCode.ToLower(), StringComparison.Ordinal));
+                string.Equals(x.staffCode.ToLower(), staffCode.ToLower(), StringComparison.Ordinal));
             return data;
         }
 

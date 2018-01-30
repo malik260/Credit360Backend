@@ -20,6 +20,12 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanDocumentViewModel> GetLoanDocumentByReferenceNumber(string referenceNumber);
 
-       LoanDocumentViewModel GetLoanDocumentByAppNoRefNo(string refNo, string applicationNumber);
+        LoanDocumentViewModel GetLoanDocumentByAppNoRefNo(string refNo, string applicationNumber);
+
+        bool AddCommitteeDocument(LoanDocumentViewModel entity, byte[] buffer);
+
+        IEnumerable<LoanDocumentViewModel> GetCommitteeDocument(string applicationNumber);
+
+        LoanDocumentViewModel GetCommitteeDocument(int documentId);
     }
 }

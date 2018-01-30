@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.DocumentModels
         {
         }
 
+        public virtual DbSet<TBL_LOAN_COMMITTEE_MINUTES> TBL_LOAN_COMMITTEE_MINUTES { get; set; }
         public virtual DbSet<TBL_LOAN_CONDITION_DOCUMENTS> TBL_LOAN_CONDITION_DOCUMENTS { get; set; }
         public virtual DbSet<TBL_MEDIA_CHECKLIST_DOCUMENTS> TBL_MEDIA_CHECKLIST_DOCUMENTS { get; set; }
         public virtual DbSet<TBL_MEDIA_COLLATERAL_DOCUMENTS> TBL_MEDIA_COLLATERAL_DOCUMENTS { get; set; }

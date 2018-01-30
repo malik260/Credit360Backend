@@ -415,6 +415,7 @@ namespace FintrakBanking.ViewModels.Credit
         public CustomerCompanyInfomationViewModels companyInformation { get; set; }
         public List<CamDocumentViewModel> camDocuments { get; set; }
         public short? productClassProcessId { get; set; }
+        public DateTime? approvalDate { get; set; }
 
         //......End f Loan Relational Table View Mapping Models......//
     }

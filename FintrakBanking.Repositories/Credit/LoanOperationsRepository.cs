@@ -2735,8 +2735,6 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-     
-
         #endregion
 
         #region Re-phasement  Operation
@@ -2880,7 +2878,6 @@ namespace FintrakBanking.Repositories.Credit
                              scheduledPrepaymentAmount = a.SCHEDULEDPREPAYMENTAMOUNT,
                              scheduledPrepaymentDate = a.SCHEDULEDPREPAYMENTDATE,
                              scheduledPrepaymentFrequencyTypeId = a.SCH_PREPAYMENT_FREQUENCY_TYPID,
-                             //customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                              internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
                              externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
                              nplDate = a.NPLDATE,
@@ -2964,7 +2961,6 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.SCHEDULEDPREPAYMENTAMOUNT = item.scheduledPrepaymentAmount;
                 addLoanArchive.SCHEDULEDPREPAYMENTDATE = item.scheduledPrepaymentDate;
                 addLoanArchive.SCH_PREPAYMENT_FREQUENCY_TYPID = item.principalFrequencyTypeId;//scheduledPrepaymentFrequencyTypeId;
-                addLoanArchive.CUSTOMERSENSITIVITYLEVELID = item.customerSensitivityLevelId;
                 addLoanArchive.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
                 addLoanArchive.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
                 addLoanArchive.NPLDATE = item.nplDate;
@@ -4035,7 +4031,6 @@ namespace FintrakBanking.Repositories.Credit
                              scheduledPrepaymentAmount = a.SCHEDULEDPREPAYMENTAMOUNT,
                              scheduledPrepaymentDate = a.SCHEDULEDPREPAYMENTDATE,
                              scheduledPrepaymentFrequencyTypeId = a.SCH_PREPAYMENT_FREQUENCY_TYPID,
-                             customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                              internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
                              externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
                              nplDate = a.NPLDATE,
@@ -4119,7 +4114,6 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.SCHEDULEDPREPAYMENTAMOUNT = item.scheduledPrepaymentAmount;
                 addLoanArchive.SCHEDULEDPREPAYMENTDATE = item.scheduledPrepaymentDate;
                 addLoanArchive.SCH_PREPAYMENT_FREQUENCY_TYPID = item.principalFrequencyTypeId;//scheduledPrepaymentFrequencyTypeId;
-                addLoanArchive.CUSTOMERSENSITIVITYLEVELID = item.customerSensitivityLevelId;
                 addLoanArchive.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
                 addLoanArchive.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
                 addLoanArchive.NPLDATE = item.nplDate;
@@ -5811,8 +5805,8 @@ namespace FintrakBanking.Repositories.Credit
                             scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
                             scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
 
-                            customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
-                            customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
+                            //customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
+                            //customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
                             customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
                             productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
                             productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
@@ -5907,8 +5901,8 @@ namespace FintrakBanking.Repositories.Credit
                             scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
                             scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
 
-                            customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
-                            customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
+                            //customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
+                            //customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
                             customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
                             productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
                             productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
@@ -6791,7 +6785,6 @@ namespace FintrakBanking.Repositories.Credit
                              trancheBatchCode = a.TRANCHEBATCHCODE,
                              dischargeLetter = a.DISCHARGELETTER,
                              suspendInterest = a.SUSPENDINTEREST,
-                             customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                              internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
                              externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
                              nplDate = a.NPLDATE,
@@ -6854,7 +6847,6 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanRevolvingArchive.TRANCHEBATCHCODE = item.trancheBatchCode;
                 addLoanRevolvingArchive.DISCHARGELETTER = item.dischargeLetter;
                 addLoanRevolvingArchive.SUSPENDINTEREST = item.suspendInterest;
-                addLoanRevolvingArchive.CUSTOMERSENSITIVITYLEVELID = item.customerSensitivityLevelId;
                 addLoanRevolvingArchive.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
                 addLoanRevolvingArchive.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
                 addLoanRevolvingArchive.NPLDATE = item.nplDate;
@@ -7052,6 +7044,30 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool AutomaticInterestRepricing (DateTime applicationDate)
+        {
+            bool output = false;
+            //var systemDate = generalSetup.GetApplicationDate();
+
+
+            var dailyRepricing = (from d in context.TBL_PRODUCT_PRICE_INDEX_DAILY
+                                               where d.DATE >= DbFunctions.TruncateTime(applicationDate.AddDays(-90)) && d.DATE <= DbFunctions.TruncateTime(applicationDate)
+                                  select new
+                                               {
+                                                  d.PRICEINDEXRATE
+                                               }).ToList();
+            var sumdailyRepricing  = dailyRepricing.Select(c => c.PRICEINDEXRATE).Sum();
+
+
+            /// update the price index rate
+            //context.SaveChanges();
+
+            output = true;
+
+            return output;
+
+        }
 
         #endregion
     }
