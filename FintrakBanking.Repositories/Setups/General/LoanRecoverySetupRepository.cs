@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     AUDITTYPEID = (short)AuditTypeEnum.LoanRecoverySetupAdded,
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
-                    DETAIL = "Added new tbl_LoanRecoverySetup ",
+                    DETAIL = "Added new TBL_LOAN_RECOVERY_PLAN ",
                     IPADDRESS = entity.userIPAddress,
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -193,6 +193,123 @@ namespace FintrakBanking.Repositories.Setups.General
 
             auditTrail.AddAuditTrail(audit);
             return SaveAll();
+        }
+
+        public bool AddLoanRecoveryPaymentPlan(LoanRecoverySetupViewModel entity)
+        {
+            //int loanId = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == entity.loanId).TERMLOANID;
+            //int recoveryId = context.TBL_LOAN_RECOVERY_PLAN.FirstOrDefault(x => x.LOANID == loanId).RECOVERYPLANID;
+            try
+            {
+                var LoanRecoveryPaymentPlan = new TBL_LOAN_RECOVERY_PLAN_PAYMNT
+                {
+
+                    RECOVERYPLANID = entity.recoveryPlanId,
+                    PAYMENTDATE = entity.paymentDate,
+                    PAYMENTAMOUNT = entity.paymentAmount,
+                    CREATEDBY = entity.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                    LASTUPDATEDBY = entity.createdBy,
+                    DELETED = false,
+                };
+
+                this.context.TBL_LOAN_RECOVERY_PLAN_PAYMNT.Add(LoanRecoveryPaymentPlan);
+                context.SaveChanges();
+
+                // Audit Section ----------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanRecoveryPaymentPlanAdded,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = "Added new TBL_LOAN_RECOVERY_PLAN_PAYMNT ",
+                    IPADDRESS = entity.userIPAddress,
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                auditTrail.AddAuditTrail(audit);
+                return SaveAll();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public LoanRecoverySetupViewModel GetLoanRecoveryPaymentPlan(int recoveryPaymentPlanId)
+        {
+            var LoanRecoveryPaymentPlan  = (from d in context.TBL_LOAN_RECOVERY_PLAN_PAYMNT
+                                            where d.RECOVERYPLANPAYMENTID == recoveryPaymentPlanId
+                                     select new LoanRecoverySetupViewModel()
+                                     {
+                                         recoveryPaymentPlanId = d.RECOVERYPLANPAYMENTID,
+                                         recoveryPlanId = d.RECOVERYPLANID,//context.TBL_LOAN_RECOVERY_PLAN_PAYMNT.FirstOrDefault(x => x.RECOVERYPLANPAYMENTID == d.RECOVERYPLANID).RECOVERYPLANID,
+                                         paymentloanId = context.TBL_LOAN_RECOVERY_PLAN.FirstOrDefault(x => x.RECOVERYPLANID == d.RECOVERYPLANID).LOANID,
+                                         loanRefNo = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == d.TBL_LOAN_RECOVERY_PLAN.LOANID).LOANREFERENCENUMBER,
+                                         paymentAmount = d.PAYMENTAMOUNT,
+                                         paymentDate = d.PAYMENTDATE,
+                                     }).SingleOrDefault();
+            return LoanRecoveryPaymentPlan;
+        }
+
+        public IEnumerable<LoanRecoverySetupViewModel> GetAllLoanRecoveryPaymentPlan ()
+        {
+            var LoanRecoveryPaymentPlan = (from d in context.TBL_LOAN_RECOVERY_PLAN_PAYMNT
+                                           select new LoanRecoverySetupViewModel()
+                                           {
+                                               recoveryPaymentPlanId = d.RECOVERYPLANPAYMENTID,
+                                               recoveryPlanId = d.RECOVERYPLANID,//context.TBL_LOAN_RECOVERY_PLAN_PAYMNT.FirstOrDefault(x => x.RECOVERYPLANPAYMENTID == d.RECOVERYPLANID).RECOVERYPLANID,
+                                               paymentloanId = context.TBL_LOAN_RECOVERY_PLAN.FirstOrDefault(x => x.RECOVERYPLANID == d.RECOVERYPLANID).LOANID,
+                                               loanRefNo = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == d.TBL_LOAN_RECOVERY_PLAN.LOANID).LOANREFERENCENUMBER,
+                                               paymentAmount = d.PAYMENTAMOUNT,
+                                               paymentDate = d.PAYMENTDATE,
+                                           }).ToList();
+            return LoanRecoveryPaymentPlan;
+        }
+
+        public bool UpdateLoanRecoveryPaymentPlan(int recoveryPaymentPlanId , LoanRecoverySetupViewModel entity)
+        {
+            var LoanRecoveryPaymentPlan  = context.TBL_LOAN_RECOVERY_PLAN_PAYMNT.Find(recoveryPaymentPlanId);
+
+            LoanRecoveryPaymentPlan.RECOVERYPLANID = LoanRecoveryPaymentPlan.RECOVERYPLANID;
+            LoanRecoveryPaymentPlan.PAYMENTDATE = entity.paymentDate;
+            LoanRecoveryPaymentPlan.PAYMENTAMOUNT = entity.paymentAmount;
+            LoanRecoveryPaymentPlan.CREATEDBY = entity.createdBy;
+            LoanRecoveryPaymentPlan.DATETIMECREATED = DateTime.Now;
+            LoanRecoveryPaymentPlan.LASTUPDATEDBY = entity.createdBy;
+            LoanRecoveryPaymentPlan.DELETED = false;
+
+            //this.context.TBL_LOAN_RECOVERY_PLAN_PAYMNT.Add(LoanRecoveryPaymentPlan);
+            //context.SaveChanges();
+            //Audit Section ----------------------------
+           var audit = new TBL_AUDIT
+           {
+               AUDITTYPEID = (short)AuditTypeEnum.LoanRecoveryPaymentPlanUpdated,
+               STAFFID = entity.createdBy,
+               BRANCHID = (short)entity.userBranchId,
+               DETAIL = $"Updated TBL_LOAN_RECOVERY_PLAN_PAYMNT with Id: {entity.recoveryPaymentPlanId} ",
+               IPADDRESS = entity.userIPAddress,
+               URL = entity.applicationUrl,
+               APPLICATIONDATE = _genSetup.GetApplicationDate(),
+               SYSTEMDATETIME = DateTime.Now,
+           };
+
+            auditTrail.AddAuditTrail(audit);
+            return SaveAll();
+        }
+
+        public IEnumerable<LoanRecoverySetupViewModel> GetDistinctLoanRecoveryPaymentPlan()
+        {
+            var LoanRecoveryPaymentPlan = (from d in context.TBL_LOAN_RECOVERY_PLAN
+                                     select new LoanRecoverySetupViewModel()
+                                     {
+                                         recoveryPlanId = d.RECOVERYPLANID,
+                                         loanRefNo = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == d.LOANID).LOANREFERENCENUMBER,
+
+                                     }).ToList();
+            return LoanRecoveryPaymentPlan;
         }
     }
 }

@@ -519,6 +519,28 @@ namespace FintrakBanking.Repositories.Credit
                                 productClassProcessId = productClassProcess.PRODUCT_CLASS_PROCESSID //a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID
                             }).ToList();
 
+            //var data    = (from a in context.TBL_LOAN_APPLICATION
+            //                join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+            //                join d in context.TBL_CUSTOMER on a.CUSTOMERID equals d.CUSTOMERID
+            //                join e in context.TBL_BRANCH on a.BRANCHID equals e.BRANCHID
+            //                where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+            //                select new CamProcessedLoanViewModel()
+            //                {
+            //                    productId = c.TBL_PRODUCT.PRODUCTID,
+            //                    productName = c.TBL_PRODUCT.PRODUCTNAME,
+            //                    productClassId = a.PRODUCTCLASSID,
+            //                    productClassProcessId = productClassProcess.PRODUCT_CLASS_PROCESSID, //a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID
+            //                    branchId = e.BRANCHID,
+            //                    branchName = e.BRANCHNAME,
+            //                    customerId = d.CUSTOMERID,
+            //                    customerCode = d.CUSTOMERCODE,
+            //                    customerName = d.LASTNAME + ' ' + d.MIDDLENAME + ' ' +  d.FIRSTNAME
+            //                }).ToList();
+
+
+
+
+
             var conditions = string.Empty;
 
             var internalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == false).ToList();
@@ -672,7 +694,11 @@ namespace FintrakBanking.Repositories.Credit
 
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
 
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink);
+            var customer = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_CUSTOMER.FIRSTNAME ;
+            var branch  = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_BRANCH.BRANCHNAME;
+            //var info = data;
+
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer);
 
             if (preparedTemplate != null)
             {
@@ -724,15 +750,15 @@ namespace FintrakBanking.Repositories.Credit
                         break;
 
                     case (short)ProductClassEnum.FirstTrader:
-                        templateLink = links.BondsAndGuarantees;
+                        templateLink = links.FirstTrader;
                         break;
 
                     case (short)ProductClassEnum.ImportFinance:
-                        templateLink = links.CashBackedOnly;
+                        templateLink = links.ImportFinance;
                         break;
 
                     case (short)ProductClassEnum.InvoiceDiscountingFacility:
-                        templateLink = links.FirstEdu;
+                        templateLink = links.IDF;
                         break;
 
                     default:
@@ -748,7 +774,7 @@ namespace FintrakBanking.Repositories.Credit
             //return templateLink;
         }
 
-        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template)
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template,string branch, string customer)
         {
             string body;
 
@@ -761,6 +787,8 @@ namespace FintrakBanking.Repositories.Credit
 
             body = body.Replace("{@ApplicationDate}", applicationDate.ToLongDateString());
             body = body.Replace("{@ConditionPrecedents}", conditionPrecedent);
+            body = body.Replace("{@Branch}", branch);
+            body = body.Replace("{@Customer}", customer);
 
             return body;
         }
