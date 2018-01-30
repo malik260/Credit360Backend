@@ -244,6 +244,7 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_ARCH.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_BG.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_EDU.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_FEE.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_INV.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_LOG.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_STA.cs" />

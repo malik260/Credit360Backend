@@ -377,7 +377,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public decimal requestedAmount;
+        public decimal requestedAmount { get; set; }
+        public DateTime? approvalDate { get; set; }
 
         public DateTime? availmentlDate { get; set; }
 
@@ -415,7 +416,7 @@ namespace FintrakBanking.ViewModels.Credit
         public CustomerCompanyInfomationViewModels companyInformation { get; set; }
         public List<CamDocumentViewModel> camDocuments { get; set; }
         public short? productClassProcessId { get; set; }
-        public DateTime? approvalDate { get; set; }
+       
 
         //......End f Loan Relational Table View Mapping Models......//
     }
@@ -604,6 +605,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short applicationStatusId { get; set; }
         public int? toStaffId { get; set; }
         public short? productClassId { get; set; }
+        public short? productClassProcessId { get; set; }
 
     }
 
