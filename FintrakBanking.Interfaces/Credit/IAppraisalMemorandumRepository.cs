@@ -29,7 +29,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool Confirmation(int type, int applicationId);
 
-        IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId);
+        IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId, int? classId);
 
         IEnumerable<CurrentCommitteeViewModel> GetCurrentCommittee(int loanApplicationId);
 
