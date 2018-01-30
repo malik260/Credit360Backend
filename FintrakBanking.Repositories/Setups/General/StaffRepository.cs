@@ -102,7 +102,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              BranchId = br.BRANCHID,
                              Comment = c.COMMENT,
                              //createdBy = c.CreatedBy.Value,
-                             CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
+                          //   CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
                              DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                              //dateTimeCreated = c.DateTimeCreated,
                              DepartmentId = c.DEPARTMENTID,
@@ -128,7 +128,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              DepartmentUnitId = (short)c.DEPARTMENT_UNITID,
                              DepartmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
                              //MisInfoCode = c.MISC,
-                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
+                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => 
+                             x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                              //State = c.State.StateName
                              CityId = c.CITYID,
                          }).ToList();
@@ -146,7 +147,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              BranchId = c.BRANCHID,
                              Comment = c.COMMENT,
                              createdBy = c.CREATEDBY.Value,
-                             CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
+                           //  CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
                              DateOfBirth = c.DATEOFBIRTH,
                              dateTimeCreated = (DateTime)c.DATETIMECREATED,
                              DepartmentId = c.DEPARTMENTID,
@@ -170,7 +171,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
                              //DepartmentName = c.Department.DepartmentName,
                              //MisInfoCode = c.Misinfo.Misname,
-                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
+                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x =>
+                             x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                              //State = c.State.StateName
                          }).SingleOrDefault();
             return staff;
@@ -211,7 +213,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.BRANCHID = staffModel.BranchId;
                 tempStaffToUpdate.COMMENT = staffModel.Comment;
                 tempStaffToUpdate.CREATEDBY = staffModel.createdBy;
-                tempStaffToUpdate.CUSTOMERSENSITIVITYLEVEL = staffModel.CustomerSensitivityLevel;
+              // tempStaffToUpdate.CUSTOMERSENSITIVITYLEVELID = staffModel.CustomerSensitivityLevel;
                 tempStaffToUpdate.DATEOFBIRTH = staffModel.DateOfBirth;
                 tempStaffToUpdate.DATETIMEUPDATED = DateTime.Now;
                 tempStaffToUpdate.DEPARTMENTID = staffModel.DepartmentId;
@@ -250,7 +252,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     BRANCHID = staffModel.BranchId,
                     COMMENT = staffModel.Comment,
                     CREATEDBY = staffModel.createdBy,
-                    CUSTOMERSENSITIVITYLEVEL = staffModel.CustomerSensitivityLevel,
+                 //   CUSTOMERSENSITIVITYLEVEL = staffModel.CustomerSensitivityLevel,
                     DATEOFBIRTH = staffModel.DateOfBirth,
                     DATETIMECREATED = DateTime.Now,
                     DEPARTMENTID = staffModel.DepartmentId,
@@ -429,7 +431,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.BRANCHID = temp.BRANCHID;
                 entity.COMMENT = temp.COMMENT;
                 entity.CREATEDBY = temp.CREATEDBY;
-                entity.CUSTOMERSENSITIVITYLEVEL = temp.CUSTOMERSENSITIVITYLEVEL;
+               // entity.CUSTOMERSENSITIVITYLEVEL = temp.CUSTOMERSENSITIVITYLEVEL;
                 entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                 entity.DATETIMEUPDATED = DateTime.Now;
                 entity.DEPARTMENTID = temp.DEPARTMENTID;
@@ -462,7 +464,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     BRANCHID = temp.BRANCHID,
                     COMMENT = temp.COMMENT,
                     CREATEDBY = temp.CREATEDBY,
-                    CUSTOMERSENSITIVITYLEVEL = temp.CUSTOMERSENSITIVITYLEVEL,
+                   // CUSTOMERSENSITIVITYLEVEL = temp.CUSTOMERSENSITIVITYLEVEL,
                     DATEOFBIRTH = temp.DATEOFBIRTH,
                     DATETIMECREATED = DateTime.Now,
                     DEPARTMENTID = temp.DEPARTMENTID,
@@ -551,7 +553,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 BRANCHID = staffModel.BranchId,
                 COMMENT = staffModel.Comment,
                 CREATEDBY = staffModel.createdBy,
-                CUSTOMERSENSITIVITYLEVEL = staffModel.CustomerSensitivityLevel,
+              //  CUSTOMERSENSITIVITYLEVEL = staffModel.CustomerSensitivityLevel,
                 DATEOFBIRTH = staffModel.DateOfBirth,
                 DATETIMECREATED = DateTime.Now,
                 DEPARTMENTID = staffModel.DepartmentId,
@@ -660,7 +662,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         AddressOfNok = c.ADDRESSOFNOK,
                         BranchId = br.BRANCHID,
                         Comment = c.COMMENT,
-                        CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
+                     //   CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
                         DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                         DepartmentId = c.DEPARTMENTID,
                         Email = c.EMAIL,
@@ -691,7 +693,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         DepartmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
 
                         OperationId = t.OPERATIONID,
-                        SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION
+                        SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => 
+                        
+                        x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION
                     }).GroupBy(x => x.StaffId).Select(g => g.FirstOrDefault());
         }
 
@@ -713,7 +717,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         BranchId = br.BRANCHID,
                         BranchName = br.BRANCHNAME,
                         Comment = c.COMMENT,
-                        CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
+                        CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVELID,
                         DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                         DepartmentId = c.DEPARTMENTID ?? 0,
                         CityId = c.CITYID ?? 0,
@@ -744,7 +748,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         DepartmentUnitId = c.DEPARTMENTUNITID,
                         DepartmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
                         ApprovalStatusId = c.APPROVALSTATUSID,
-                        SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
+                        SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                     }).FirstOrDefault();
         }
 
@@ -769,7 +773,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             BranchId = br.BRANCHID,
                             BranchName = br.BRANCHNAME,
                             Comment = c.COMMENT,
-                            CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
+                            CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVELID,
                             DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                             DepartmentId = c.DEPARTMENTID ?? 0,
                             CityId = c.CITYID ?? 0,
@@ -799,7 +803,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             DepartmentName = dept.DEPARTMENTNAME,
                             DepartmentUnitId = (short)c.DEPARTMENT_UNITID,
                             DepartmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
-                            SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
+                            SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                         });
 
             return data;
@@ -1061,7 +1065,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 BRANCHID = staff.BRANCHID,
                 COMMENT = comment,
                 CREATEDBY = model.createdBy,
-                CUSTOMERSENSITIVITYLEVEL = staff.CUSTOMERSENSITIVITYLEVEL,
+                CUSTOMERSENSITIVITYLEVELID = staff.CUSTOMERSENSITIVITYLEVELID,
                 DATEOFBIRTH = staff.DATEOFBIRTH,
                 DATETIMECREATED = DateTime.Now,
                 DEPARTMENTID = staff.DEPARTMENTID,

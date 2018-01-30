@@ -81,7 +81,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CITYID { get; set; }
 
-        public short CUSTOMERSENSITIVITYLEVEL { get; set; }
+        public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
         public int? CREATEDBY { get; set; }
 

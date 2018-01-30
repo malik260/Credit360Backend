@@ -138,6 +138,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string CUSTOMERBVN { get; set; }
 
+        [StringLength(50)]
+        public string CUSTOMERNIN { get; set; }
+
         public short? RISKRATINGID { get; set; }
 
         public bool? VALIDATED { get; set; }
@@ -251,6 +254,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CUSTOMER_FS_CAPTION_GROUP TBL_CUSTOMER_FS_CAPTION_GROUP { get; set; }
 
         public virtual TBL_CUSTOMER_RISK_RATING TBL_CUSTOMER_RISK_RATING { get; set; }
+
+        public virtual TBL_CUSTOMER_SENSITIVITY_LEVEL TBL_CUSTOMER_SENSITIVITY_LEVEL { get; set; }
 
         public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
 

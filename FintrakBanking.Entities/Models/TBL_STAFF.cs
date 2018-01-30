@@ -126,7 +126,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CITYID { get; set; }
 
-        public short CUSTOMERSENSITIVITYLEVEL { get; set; }
+        public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
         public bool NPL_LIMITEXCEEDED { get; set; }
 
@@ -180,6 +180,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
+
+        public virtual TBL_CUSTOMER_SENSITIVITY_LEVEL TBL_CUSTOMER_SENSITIVITY_LEVEL { get; set; }
 
         public virtual TBL_DEPARTMENT_UNIT TBL_DEPARTMENT_UNIT { get; set; }
 
