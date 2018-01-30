@@ -2880,7 +2880,7 @@ namespace FintrakBanking.Repositories.Credit
                              scheduledPrepaymentAmount = a.SCHEDULEDPREPAYMENTAMOUNT,
                              scheduledPrepaymentDate = a.SCHEDULEDPREPAYMENTDATE,
                              scheduledPrepaymentFrequencyTypeId = a.SCH_PREPAYMENT_FREQUENCY_TYPID,
-                             customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                             //customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                              internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
                              externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
                              nplDate = a.NPLDATE,

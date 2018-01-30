@@ -43,6 +43,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CHECKLIST_STATUS> TBL_CHECKLIST_STATUS { get; set; }
         public virtual DbSet<TBL_CHECKLIST_TARGETTYPE> TBL_CHECKLIST_TARGETTYPE { get; set; }
         public virtual DbSet<TBL_CHECKLIST_TYPE> TBL_CHECKLIST_TYPE { get; set; }
+        public virtual DbSet<TBL_CHECKLIST_TYPE_APROV_LEVL> TBL_CHECKLIST_TYPE_APROV_LEVL { get; set; }
         public virtual DbSet<TBL_CITY> TBL_CITY { get; set; }
         public virtual DbSet<TBL_CITY_CLASS> TBL_CITY_CLASS { get; set; }
         public virtual DbSet<TBL_COMPANY> TBL_COMPANY { get; set; }
@@ -217,6 +218,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_ARCH> TBL_LOAN_APPLICATION_DETL_ARCH { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_BG> TBL_LOAN_APPLICATION_DETL_BG { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_EDU> TBL_LOAN_APPLICATION_DETL_EDU { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_DETL_FEE> TBL_LOAN_APPLICATION_DETL_FEE { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_INV> TBL_LOAN_APPLICATION_DETL_INV { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_LOG> TBL_LOAN_APPLICATION_DETL_LOG { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_STA> TBL_LOAN_APPLICATION_DETL_STA { get; set; }
@@ -326,7 +328,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DEAL_TYPE> TBL_DEAL_TYPE { get; set; }
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
-        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -374,6 +375,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.TOAPPROVALLEVELID);
 
             modelBuilder.Entity<TBL_APPROVAL_LEVEL>()
+                .HasMany(e => e.TBL_CHECKLIST_TYPE_APROV_LEVL)
+                .WithRequired(e => e.TBL_APPROVAL_LEVEL)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_APPROVAL_LEVEL>()
                 .HasMany(e => e.TBL_CREDIT_APPRAISAL_MEMO_DOCU)
                 .WithRequired(e => e.TBL_APPROVAL_LEVEL)
                 .WillCascadeOnDelete(false);
@@ -407,6 +413,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_ARCH)
                 .WithRequired(e => e.TBL_APPROVAL_STATUS)
                 .HasForeignKey(e => e.STATUSID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_APPROVAL_STATUS>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_FEE)
+                .WithRequired(e => e.TBL_APPROVAL_STATUS)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_APPROVAL_STATUS>()
@@ -726,6 +737,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CHARGE_FEE>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_FEE)
+                .WithRequired(e => e.TBL_CHARGE_FEE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CHARGE_FEE>()
                 .HasMany(e => e.TBL_LOAN_FEE)
                 .WithRequired(e => e.TBL_CHARGE_FEE)
                 .WillCascadeOnDelete(false);
@@ -782,6 +798,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_CHECKLIST_TYPE>()
                 .HasMany(e => e.TBL_CHECKLIST_DEFINITION)
+                .WithRequired(e => e.TBL_CHECKLIST_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CHECKLIST_TYPE>()
+                .HasMany(e => e.TBL_CHECKLIST_TYPE_APROV_LEVL)
                 .WithRequired(e => e.TBL_CHECKLIST_TYPE)
                 .WillCascadeOnDelete(false);
 
@@ -1526,32 +1547,7 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_CASA)
-                .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_LOAN_ARCHIVE)
-                .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_LOAN_CONTINGENT)
-                .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_LOAN)
-                .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_LOAN_REVOLVING_ARCHIVE)
-                .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
-                .HasMany(e => e.TBL_LOAN_REVOLVING)
+                .HasMany(e => e.TBL_STAFF)
                 .WithRequired(e => e.TBL_CUSTOMER_SENSITIVITY_LEVEL)
                 .WillCascadeOnDelete(false);
 
@@ -3187,6 +3183,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_FEE)
+                .WithRequired(e => e.TBL_LOAN_APPLICATION_DETAIL)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_LOG)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WillCascadeOnDelete(false);
@@ -3239,6 +3240,14 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETL_EDU>()
                 .Property(e => e.TOTAL_PREVIOUS_TERM_SCHOL_FEES)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_DETL_FEE>()
+                .Property(e => e.PROPOSED_FEERATEVALUE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_DETL_FEE>()
+                .Property(e => e.APPROVED_FEERATEVALUE)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETL_INV>()
@@ -4137,6 +4146,12 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.OVERDRAWNGL);
 
             modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
+                .HasMany(e => e.TBL_SETUP_GLOBAL)
+                .WithRequired(e => e.TBL_CHART_OF_ACCOUNT)
+                .HasForeignKey(e => e.LEGAL_CHARGE_GLACCOUNTID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
                 .HasMany(e => e.TBL_TAX)
                 .WithRequired(e => e.TBL_CHART_OF_ACCOUNT)
                 .WillCascadeOnDelete(false);
@@ -4568,18 +4583,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_PRODUCT_TYPE)
                 .WithRequired(e => e.TBL_DEAL_CLASSIFICATION)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LEVELMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.INVESTMENTGRADEAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.STAFFMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
         }
     }
 }
