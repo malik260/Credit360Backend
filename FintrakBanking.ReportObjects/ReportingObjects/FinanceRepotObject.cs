@@ -12,14 +12,14 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
     public partial class FinanceRepotObject
     {
         public  List<TransactionViewModel> FinanceTransaction(DateTime endDate, DateTime startDate, int? staffId, int companyId, int? branchId, bool excludeSystem)
-        {
-           
+        { 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
+                var staffSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
                 IQueryable< TransactionViewModel > data  = (from a in context.TBL_FINANCE_TRANSACTION
-                            where a.COMPANYID == companyId && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)   
-
-                            orderby a.POSTEDDATE, a.TRANSACTIONID descending
+                            where a.COMPANYID == companyId && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)  
+                            && a.TBL_CASA.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID == staffSensitivityLevelId
+                                                            orderby a.POSTEDDATE, a.TRANSACTIONID descending
                             select new TransactionViewModel()
                             {
                                 postedByStaffId = a.POSTEDBY ,

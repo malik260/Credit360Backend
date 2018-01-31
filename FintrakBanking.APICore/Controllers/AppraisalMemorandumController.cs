@@ -236,20 +236,27 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("loan-application-approval-process")]
-        public HttpResponseMessage GetPendingLoanApplications([FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId)
+        public HttpResponseMessage GetPendingLoanApplications([FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString)
         {
             try
             {
                 IQueryable<LoanApplicationViewModel> items;
+                items = repo.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
 
-                if (classId == null)
-                    items = repo.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId);
-                else
-                    items = repo.GetPendingLoanApplicationsClass(token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    items = items.Where(x => 
+                        x.applicationReferenceNumber.Contains(searchString)
+                        || x.applicationAmount.ToString().Contains(searchString)
+                        || x.customerName.Contains(searchString)
+                        ).Take(itemsPerPage);
+                }
 
                 var data = items
-                    //.OrderByDescending(x => x.applicationDate).ThenByDescending(x => x.loanApplicationId)
-                    .Skip(page).Take(itemsPerPage)
+                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
+                    .ThenByDescending(x => x.loanApplicationId)
+                    .Skip(page)
+                    .Take(itemsPerPage)
                     .ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
@@ -368,7 +375,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 

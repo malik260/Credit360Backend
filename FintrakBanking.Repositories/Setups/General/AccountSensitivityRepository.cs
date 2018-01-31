@@ -8,8 +8,7 @@ using System.Linq;
 namespace FintrakBanking.Repositories.Setups.General
 {
 
-    [Export(typeof(IAccountSensitivityRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+    
     public class AccountSensitivityRepository : IAccountSensitivityRepository
     {
         private FinTrakBankingContext context;

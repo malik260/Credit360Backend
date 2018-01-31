@@ -199,7 +199,8 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERGROUPID = model.customerGroupId == 0 ? null : model.customerGroupId,
                 LOANTYPEID = model.loanTypeId,
                 DISCHARGELETTER = false,
-                SUSPENDINTEREST = false, 
+                SUSPENDINTEREST = false,
+                //CUSTOMERSENSITIVITYLEVELID = model.customerSensitivityLevelId,
                 COMPANYID = model.companyId,
                 CREATEDBY=model.createdBy,
                 DATETIMECREATED = DateTime.Now, 
@@ -349,7 +350,8 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONID = (int)OperationsEnum.ContigentLoanBooking,
                 CUSTOMERGROUPID = entity.customerGroupId == 0 ? null : entity.customerGroupId,
                 LOANTYPEID = entity.loanTypeId,
-                DISCHARGELETTER = false, 
+                DISCHARGELETTER = false,
+                //CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId,
                 COMPANYID = entity.companyId,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now 
@@ -542,7 +544,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRINCIPALADDITIONCOUNT = 0,
                 PRINCIPALREDUCTIONCOUNT = 0,
                 FIXEDPRINCIPAL = false,
-                PROFILELOAN = false, 
+                PROFILELOAN = false,
+                //CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId,
 
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
 
@@ -801,8 +804,8 @@ namespace FintrakBanking.Repositories.Credit
                             scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
                             scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
 
-                            customerSensitivityLevelId = ln.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
-                            customerSensitivityLevelName = ln.TBL_CUSTOMER.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
+                            //customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
+                            //customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
                             firstName = ln.TBL_CUSTOMER.FIRSTNAME,
                             middleName = ln.TBL_CUSTOMER.MIDDLENAME,
                             lastName = ln.TBL_CUSTOMER.LASTNAME,
@@ -1056,8 +1059,8 @@ namespace FintrakBanking.Repositories.Credit
                             approvedBy = ln.APPROVEDBY,
                             approverComment = ln.APPROVERCOMMENT,
                             dateApproved = ln.DATEAPPROVED,
-                            //loanStatusId = ln.LoanStatusId,
-
+                            loanStatusId = ln.LOANSTATUSID,
+                            loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
                             isDisbursed = ln.ISDISBURSED,
                             disbursedBy = ln.DISBURSEDBY,
                             disburserComment = ln.DISBURSERCOMMENT,
@@ -1442,9 +1445,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-                    
-                    workflow.LogForApproval(entity);
+                    var loanFee = context.TBL_LOAN_FEE.Where(x=>x.LOANID==entity.targetId);
+                    foreach (var fee in loanFee)
+                    {
+                        //if (fee.ISPOSTED == false) throw new Exception("This Loan has unapproved fee deferral which must be approved first");
+                    }
 
+                    workflow.LogForApproval(entity);
                     var b = workflow.NextLevelId ?? 0;
 
                     if (b == 0 && workflow.NewState != (int)ApprovalState.Ended)
@@ -2339,7 +2346,7 @@ namespace FintrakBanking.Repositories.Credit
                             profileLoan = l.PROFILELOAN,
                             dischargeLetter = l.DISCHARGELETTER,
                             suspendInterest = l.SUSPENDINTEREST,
-                            customerSensitivityLevelId = l.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+                            //customerSensitivityLevelId = l.CUSTOMERSENSITIVITYLEVELID,
                             createdBy = l.CREATEDBY,
                             dateTimeCreated = l.DATETIMECREATED,
                             isCamsol = context.TBL_LOAN_CAMSOL.Any(x => x.LOANID == l.TERMLOANID),
@@ -2488,7 +2495,7 @@ namespace FintrakBanking.Repositories.Credit
                         profileLoan = data.PROFILELOAN,
                         dischargeLetter = data.DISCHARGELETTER,
                         suspendInterest = data.SUSPENDINTEREST,
-                        customerSensitivityLevelId = data.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+                        //customerSensitivityLevelId = data.CUSTOMERSENSITIVITYLEVELID,
                         createdBy = data.CREATEDBY,
                         dateTimeCreated = data.DATETIMECREATED
                     }).FirstOrDefault();
@@ -2558,7 +2565,7 @@ namespace FintrakBanking.Repositories.Credit
                         profileLoan = data.PROFILELOAN,
                         dischargeLetter = data.DISCHARGELETTER,
                         suspendInterest = data.SUSPENDINTEREST,
-                        customerSensitivityLevelId = data.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+                        //customerSensitivityLevelId = data.CUSTOMERSENSITIVITYLEVELID,
                         createdBy = data.CREATEDBY,
                         dateTimeCreated = data.DATETIMECREATED
 
@@ -3143,7 +3150,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId)
         {
-            var data = AvailedLoanApplicationsDetails(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted);
+            var data = AvailedLoanApplicationsDetails(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted
+            && x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased);
 
             data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
@@ -3315,7 +3323,7 @@ namespace FintrakBanking.Repositories.Credit
                             productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
                             productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                             productName = d.TBL_PRODUCT.PRODUCTNAME,
-
+                            productClassProcessId = m.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             misCode = m.MISCODE,
                             teamMisCode = m.TEAMMISCODE,
 
@@ -3998,7 +4006,7 @@ namespace FintrakBanking.Repositories.Credit
                                            profileLoan = a.PROFILELOAN,
                                            dischargeLetter = a.DISCHARGELETTER,
                                            suspendInterest = a.SUSPENDINTEREST,
-                                           customerSensitivityLevelId = a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+                                           //customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                                            createdBy = a.CREATEDBY,
                                            dateTimeCreated = a.DATETIMECREATED,
                                            isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
