@@ -268,6 +268,17 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.SaveAll();
         }
 
+        public IEnumerable<dynamic> GetFeesByProductId(int productId)
+        {
+            return GetAllMappedFeeByProduct(productId).Where((c) => c.productId == productId)
+                .Select(c => new
+                {
+                    feeId = c.feeId,
+                    feeName = c.feeName,
+                    rate = c.rateValue
+                });
+        }
+
         public IEnumerable<ProductFeeViewModel> GetAllMappedFeeByProduct(int productId)
         {
             return (from data in context.TBL_PRODUCT_CHARGE_FEE
