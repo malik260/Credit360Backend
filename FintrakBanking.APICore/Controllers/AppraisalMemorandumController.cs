@@ -241,11 +241,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 IQueryable<LoanApplicationViewModel> items;
-
-                if (classId == null)
-                    items = repo.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId);
-                else
-                    items = repo.GetPendingLoanApplicationsClass(token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
+                items = repo.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
@@ -256,7 +252,12 @@ namespace FintrakBanking.APICore.Controllers
                         ).Take(itemsPerPage);
                 }
 
-                var data = items.Skip(page).Take(itemsPerPage).ToList();
+                var data = items
+                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
+                    .ThenByDescending(x => x.loanApplicationId)
+                    .Skip(page)
+                    .Take(itemsPerPage)
+                    .ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
             }
@@ -374,7 +375,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 

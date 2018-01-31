@@ -951,8 +951,8 @@ namespace FintrakBanking.Repositories.Credit
                             dischargeLetter = ln.DISCHARGELETTER,
                             suspendInterest = ln.SUSPENDINTEREST,
 
-                            //customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
-                            //customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
+                            customerSensitivityLevelId = ln.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+                            customerSensitivityLevelName = ln.TBL_CUSTOMER.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
                             firstName = ln.TBL_CUSTOMER.FIRSTNAME,
                             middleName = ln.TBL_CUSTOMER.MIDDLENAME,
                             lastName = ln.TBL_CUSTOMER.LASTNAME,
@@ -1059,8 +1059,8 @@ namespace FintrakBanking.Repositories.Credit
                             approvedBy = ln.APPROVEDBY,
                             approverComment = ln.APPROVERCOMMENT,
                             dateApproved = ln.DATEAPPROVED,
-                            //loanStatusId = ln.LoanStatusId,
-
+                            loanStatusId = ln.LOANSTATUSID,
+                            loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
                             isDisbursed = ln.ISDISBURSED,
                             disbursedBy = ln.DISBURSEDBY,
                             disburserComment = ln.DISBURSERCOMMENT,
@@ -1077,8 +1077,8 @@ namespace FintrakBanking.Repositories.Credit
                             //SectorName = ln.tbl_Sub_Sector.tbl_Sector.Name,
                             dischargeLetter = ln.DISCHARGELETTER,
 
-                            //customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
-                            //customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
+                            customerSensitivityLevelId = ln.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+                            customerSensitivityLevelName = ln.TBL_CUSTOMER.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
                             firstName = ln.TBL_CUSTOMER.FIRSTNAME,
                             middleName = ln.TBL_CUSTOMER.MIDDLENAME,
                             lastName = ln.TBL_CUSTOMER.LASTNAME,
@@ -1445,9 +1445,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-                    
-                    workflow.LogForApproval(entity);
+                    var loanFee = context.TBL_LOAN_FEE.Where(x=>x.LOANID==entity.targetId);
+                    foreach (var fee in loanFee)
+                    {
+                        //if (fee.ISPOSTED == false) throw new Exception("This Loan has unapproved fee deferral which must be approved first");
+                    }
 
+                    workflow.LogForApproval(entity);
                     var b = workflow.NextLevelId ?? 0;
 
                     if (b == 0 && workflow.NewState != (int)ApprovalState.Ended)
@@ -3146,7 +3150,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId)
         {
-            var data = AvailedLoanApplicationsDetails(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted);
+            var data = AvailedLoanApplicationsDetails(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted
+            && x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased);
 
             data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
@@ -3318,7 +3323,7 @@ namespace FintrakBanking.Repositories.Credit
                             productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
                             productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                             productName = d.TBL_PRODUCT.PRODUCTNAME,
-
+                            productClassProcessId = m.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             misCode = m.MISCODE,
                             teamMisCode = m.TEAMMISCODE,
 

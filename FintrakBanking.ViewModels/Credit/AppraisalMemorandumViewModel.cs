@@ -181,7 +181,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class PendingProductProgramViewModel
     {
-        public int productClassId { get; set; }
+        public short? productClassId { get; set; }
         public string productClassName { get; set; }
         public int pendingNumber { get; set; }
     }
