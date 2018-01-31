@@ -18,13 +18,16 @@ namespace FintrakBanking.Entities.Models
 
         public bool HASCONSESSION { get; set; }
 
+        [StringLength(3000)]
+        public string CONSESSIONREASON { get; set; }
+
         public short APPROVALSTATUSID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal PROPOSED_FEERATEVALUE { get; set; }
+        public decimal DEFAULT_FEERATEVALUE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal APPROVED_FEERATEVALUE { get; set; }
+        public decimal RECOMMENDED_FEERATEVALUE { get; set; }
 
         public int CREATEDBY { get; set; }
 

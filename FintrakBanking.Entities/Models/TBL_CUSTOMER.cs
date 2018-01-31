@@ -138,6 +138,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string CUSTOMERBVN { get; set; }
 
+        [StringLength(50)]
+        public string CUSTOMERNIN { get; set; }
+
         public short? RISKRATINGID { get; set; }
 
         public bool? VALIDATED { get; set; }

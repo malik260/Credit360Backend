@@ -20,5 +20,15 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LoanRecoverySetupViewModel> GetAllAgent();
 
         IEnumerable<LoanRecoverySetupViewModel> GetAllProductType();
+
+        bool AddLoanRecoveryPaymentPlan(LoanRecoverySetupViewModel entity);
+
+        LoanRecoverySetupViewModel GetLoanRecoveryPaymentPlan(int recoveryPaymentPlanId);
+
+        bool UpdateLoanRecoveryPaymentPlan(int recoveryPaymentPlanId, LoanRecoverySetupViewModel entity);
+
+        IEnumerable<LoanRecoverySetupViewModel> GetDistinctLoanRecoveryPaymentPlan();
+
+        IEnumerable<LoanRecoverySetupViewModel> GetAllLoanRecoveryPaymentPlan();
     }
 }
