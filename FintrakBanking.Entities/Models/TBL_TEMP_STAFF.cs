@@ -95,7 +95,7 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }
 
-        public short DEPARTMENTUNITID { get; set; }
+        public short? DEPARTMENTUNITID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
