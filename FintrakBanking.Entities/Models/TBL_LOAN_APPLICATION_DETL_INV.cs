@@ -28,6 +28,10 @@ namespace FintrakBanking.Entities.Models
 
         public short INVOICE_CURRENCYID { get; set; }
 
+        [Required]
+        [StringLength(50)]
+        public string CONTRACTNO { get; set; }
+
         [Column(TypeName = "date")]
         public DateTime CONTRACT_STARTDATE { get; set; }
 

@@ -23,7 +23,7 @@ namespace FintrakBanking.ViewModels.Customer
 
     }
 
-  
+
     public class CustomerCompanyShareholderViewModels
     {
         public int companyDirectorId { get; set; }
@@ -72,9 +72,10 @@ namespace FintrakBanking.ViewModels.Customer
         public string taxNumber { get; set; }
         public string contactPerson { get; set; }
         public bool? hasCASAAccount { get; set; }
+        public string bankName { get; set; }
         public string casaAccountNumber { get; set; }
         public string natureOfBusiness { get; set; }
-        public string client_SupplierAddress { get; set; } 
+        public string client_SupplierAddress { get; set; }
         public string client_SupplierPhoneNumber { get; set; }
         public string client_SupplierEmail { get; set; }
         public short client_SupplierTypeId { get; set; }
@@ -102,5 +103,5 @@ namespace FintrakBanking.ViewModels.Customer
         public string client_SupplierTypeName { get; set; }
     }
 
-    public class CustomerCompanyShareholdersViewModels: CustomerCompanyDirectorsViewModels { }
+    public class CustomerCompanyShareholdersViewModels : CustomerCompanyDirectorsViewModels { }
 }

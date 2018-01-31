@@ -1170,5 +1170,72 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
+        #region Checklist Type Mapping
+
+        [HttpGet]
+        [Route("mapped-checklist-type")]
+        public HttpResponseMessage GetAllChecklistTypeMapping()
+        {
+            try
+            {
+                var data = repo.GetAllChecklistTypeMapping();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("checklist-type-mapping")]
+        public HttpResponseMessage AddChecklistTypeMapping([FromBody] CheckListTypeMappingViewModel model)
+        {
+            try
+            {
+                string createUpdate = "";
+                if (model.checklistTypeMappingId != 0 || model.checklistTypeMappingId > 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                    if (repo.ValidateChecklistTypeMapping(model.checklistTypeId, model.approvalLevelId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "This Checklist Type has already be mapped with the Approval Level" });
+                    }
+                }
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+        
+                var data = repo.AddChecklistTypeMapping(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = true, message = $"The record has been {createUpdate} successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = $"There was an error {createUpdate} this Mapping" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = $"There was an error: {e.Message}" });
+            }
+        }
+        #endregion
     }
 }

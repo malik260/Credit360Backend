@@ -184,8 +184,6 @@ namespace FintrakBanking.ViewModels.Credit
         public short? productClassId { get; set; }
         public string productClassName { get; set; }
         public int pendingNumber { get; set; }
-        public object currentApprovalLevelId { get; set; }
-        public int? responseStaffId { get; set; }
     }
 
     public class AuthoritySignatureViewModel : GeneralEntity

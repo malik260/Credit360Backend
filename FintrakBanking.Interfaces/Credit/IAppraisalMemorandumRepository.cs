@@ -25,8 +25,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationDetailLogViewModel> GetLoanDetailChangeLog(int applicationId);
 
-        //PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId, int operationId);
-
         bool Confirmation(int type, int applicationId);
 
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId, int? classId);
@@ -39,12 +37,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user);
 
-        IQueryable<LoanApplicationViewModel> GetPendingLoanApplicationsClass(int countryId, int branchId, int staffId, int? classId);
-
         bool GetUntenoredStatus(int applicationId);
 
         PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity);
-
-        //IEnumerable<ApprovalLevelStaffViewModel> GetNextLevelStaff(int getStaffId, int loanApplicationId, int operationId);
     }
 }
