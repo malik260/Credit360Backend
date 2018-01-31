@@ -1,4 +1,6 @@
-﻿namespace FintrakBanking.ViewModels.Setups.General
+﻿using System;
+
+namespace FintrakBanking.ViewModels.Setups.General
 {
     public class LoanRecoverySetupViewModel  : GeneralEntity
     {
@@ -13,6 +15,10 @@
         public string agentName  { get; set; }
         public decimal amountOwed  { get; set; }
         public decimal writeOffAmount { get; set; }
+        public decimal paymentAmount{ get; set; }
+        public DateTime paymentDate{ get; set; }
+        public int recoveryPaymentPlanId{ get; set; }
+        public int paymentloanId { get; set; }
 
     }
 
