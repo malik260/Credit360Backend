@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Credit
                               on s.CHECKLISTDEFINITIONID equals k.CHECKLISTDEFINITIONID
                               where s.TARGETID == loanTargetId && k.CHECKLIST_TYPEID == checkListTypeId
                               select s.CHECKLISTDEFINITIONID).ToList();
-            var proposedProductId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == loanTargetId && productId == 0 select (short?)id.PROPOSEDPRODUCTID).ToList();
+            var proposedProductId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == loanTargetId select (short?)id.PROPOSEDPRODUCTID).ToList();
             var isproductBased = context.TBL_CHECKLIST_TYPE.FirstOrDefault(x => x.CHECKLIST_TYPEID == checkListTypeId).ISPRODUCT_BASED;
             if (isproductBased)
             {
@@ -170,36 +170,14 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId)
         {
             List<CheckListTargetTypeViewModel> check = new List<CheckListTargetTypeViewModel>();
-            var approvalLevel = (from a in context.TBL_CHECKLIST_DEFINITION
+            var canValidate = (from a in context.TBL_CHECKLIST_TYPE_APROV_LEVL
                                  join b in context.TBL_APPROVAL_LEVEL_STAFF on
                                  a.APPROVALLEVELID equals b.APPROVALLEVELID
-                                 where b.STAFFID == staffId && a.APPROVALLEVELID != 30
-                                 select a.CHECKLIST_TYPEID).ToList();
+                                 where b.STAFFID == staffId 
+                                 select a.CANVALIDATE).FirstOrDefault();
 
             var checkListTypeList = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
-
-            // CheckListTargetTypeViewModel checkListTeList;
-            //if (approvalLevel != null)
-            //{
-            //    foreach (var id in approvalLevel)
-            //    {
-            //        checkListTeList = (from a in context.TBL_CHECKLIST_TYPE
-            //                           where a.CHECKLIST_TYPEID == id
-            //                           select new CheckListTargetTypeViewModel
-            //                           {
-            //                               targetTypeId = a.CHECKLIST_TYPEID,
-            //                               targetTypeName = a.CHECKLIST_TYPE_NAME,
-            //                               isproductbased = a.ISPRODUCT_BASED
-
-            //                           }).FirstOrDefault();
-            //        check.Add(checkListTeList);
-            //    }
-            //}
-            bool canDoChecklist = false;
-            if (approvalLevel.Count > 0)
-            {
-                canDoChecklist = true;
-            }
+           
             var checkType = (from a in context.TBL_CHECKLIST_TYPE
                              join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
                              join c in context.TBL_APPROVAL_LEVEL_STAFF on b.APPROVALLEVELID equals c.APPROVALLEVELID
@@ -209,7 +187,7 @@ namespace FintrakBanking.Repositories.Credit
                                  targetTypeId = a.CHECKLIST_TYPEID,
                                  targetTypeName = a.CHECKLIST_TYPE_NAME,
                                  isproductbased = a.ISPRODUCT_BASED,
-                                 canDoChecklist = canDoChecklist
+                                 canValidateChecklist = canValidate
                              }).ToList();
             return checkType;
         }
@@ -1512,9 +1490,9 @@ namespace FintrakBanking.Repositories.Credit
                           approvalLevelId = a.APPROVALLEVELID,
                           checklistTypeId = a.CHECKLIST_TYPEID,
                           checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
-                          approvalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME
-
-                        }).ToList();
+                          approvalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                          validateChecklist = a.CANVALIDATE
+        }).ToList();
             return data;
         }
 
@@ -1529,6 +1507,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     typeLevel.CHECKLIST_TYPEID = model.checklistTypeId;
                     typeLevel.APPROVALLEVELID = model.approvalLevelId;
+                    typeLevel.CANVALIDATE = model.validateChecklist;
                 }
               
             }
@@ -1537,6 +1516,7 @@ namespace FintrakBanking.Repositories.Credit
                 typeLevel = new TBL_CHECKLIST_TYPE_APROV_LEVL();
                 typeLevel.CHECKLIST_TYPEID = model.checklistTypeId;
                 typeLevel.APPROVALLEVELID = model.approvalLevelId;
+                typeLevel.CANVALIDATE = model.validateChecklist;
                 context.TBL_CHECKLIST_TYPE_APROV_LEVL.Add(typeLevel);
             }
             //Audit Section --------------------------

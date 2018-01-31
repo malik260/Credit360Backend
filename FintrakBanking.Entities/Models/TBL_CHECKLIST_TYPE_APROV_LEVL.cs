@@ -16,6 +16,8 @@ namespace FintrakBanking.Entities.Models
 
         public int APPROVALLEVELID { get; set; }
 
+       public bool CANVALIDATE { get; set; }
+
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
         public virtual TBL_CHECKLIST_TYPE TBL_CHECKLIST_TYPE { get; set; }

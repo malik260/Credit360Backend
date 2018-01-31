@@ -1208,17 +1208,18 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
+                    if (repo.ValidateChecklistTypeMapping(model.checklistTypeId, model.approvalLevelId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "This Checklist Type has already be mapped with the Approval Level" });
+                    }
                 }
                 model.userBranchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
                 model.createdBy = token.GetStaffId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.userIPAddress = CommonHelpers.GetUserIP();
-                if (repo.ValidateChecklistTypeMapping(model.checklistTypeId, model.approvalLevelId))
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                new { success = false, message = "This Checklist Type has already be mapped with the Approval Level" });
-                }
+        
                 var data = repo.AddChecklistTypeMapping(model);
                 if (data)
                 {

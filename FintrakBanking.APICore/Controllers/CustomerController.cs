@@ -853,11 +853,15 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
-                    if (repo.ValidateCustomerBVN(entity.customerId, entity.bankVerificationNumber))
+                    if(entity.customerTypeId == (short)CustomerTypeEnum.Individual)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = false, message = "The BVN you entered already exist" });
+                        if (repo.ValidateCustomerBVN(entity.customerId, entity.bankVerificationNumber))
+                        {
+                            return Request.CreateResponse(HttpStatusCode.OK,
+                               new { success = false, message = "The BVN you entered already exist" });
+                        }
                     }
+                   
                     if (entity.rcNumber != null)
                     {
                         if (repo.ValidateCustomerRCnumber(entity.customerId, entity.rcNumber))
