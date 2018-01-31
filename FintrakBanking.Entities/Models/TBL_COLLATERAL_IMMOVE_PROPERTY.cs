@@ -79,8 +79,15 @@ namespace FintrakBanking.Entities.Models
 
         public decimal? LATITUDE { get; set; }
 
+        public byte PERFECTIONSTATUSID { get; set; }
+
+        [StringLength(200)]
+        public string PERFECTIONSTATUSREASON { get; set; }
+
         public virtual TBL_CITY TBL_CITY { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+
+        public virtual TBL_COLLATERAL_PERFECTN_STAT TBL_COLLATERAL_PERFECTN_STAT { get; set; }
     }
 }

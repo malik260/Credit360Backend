@@ -707,8 +707,10 @@ namespace FintrakBanking.Repositories.Customer
                             directors.CUSTOMERID = entity.customerId;
                             directors.SURNAME = entity.surname;
                             directors.FIRSTNAME = entity.firstname;
+                            directors.MIDDLENAME = entity.middlename;
                             directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                             directors.CUSTOMERBVN = entity.bankVerificationNumber;
+                            directors.CUSTOMERNIN = entity.customerNIN;
                             directors.NUMBEROFSHARES = entity.numberOfShares;
                             //directors.REGISTRATION_NUMBER = entity.rcNumber;
                             //directors.TAX_NUMBER = entity.taxNumber;
@@ -726,9 +728,11 @@ namespace FintrakBanking.Repositories.Customer
                         directors.CUSTOMERID = entity.customerId;
                         directors.SURNAME = entity.surname;
                         directors.FIRSTNAME = entity.firstname;
+                        directors.MIDDLENAME = entity.middlename;
                         directors.CUSTOMERTYPEID = entity.customerTypeId;
                         directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                         directors.CUSTOMERBVN = entity.bankVerificationNumber;
+                        directors.CUSTOMERNIN = entity.customerNIN;
                         //directors.REGISTRATION_NUMBER = entity.rcNumber;
                         //directors.TAX_NUMBER = entity.taxNumber;
                         directors.NUMBEROFSHARES = entity.numberOfShares;
@@ -874,6 +878,7 @@ namespace FintrakBanking.Repositories.Customer
                             clientSupplier.TAX_NUMBER = entity.taxNumber;
                             clientSupplier.REGISTRATION_NUMBER = entity.rcNumber;
                             clientSupplier.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
+                            clientSupplier.BANKNAME = entity.bankName;
                             clientSupplier.CASA_ACCOUNTNO = entity.casaAccountNumber;
                             clientSupplier.NATURE_OF_BUSINESS = entity.natureOfBusiness;
                             clientSupplier.CONTACT_PERSON = entity.contactPerson;
@@ -899,6 +904,7 @@ namespace FintrakBanking.Repositories.Customer
                         clientSupplier.TAX_NUMBER = entity.taxNumber;
                         clientSupplier.REGISTRATION_NUMBER = entity.rcNumber;
                         clientSupplier.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
+                        clientSupplier.BANKNAME = entity.bankName;
                         clientSupplier.CASA_ACCOUNTNO = entity.casaAccountNumber;
                         clientSupplier.NATURE_OF_BUSINESS = entity.natureOfBusiness;
                         clientSupplier.CONTACT_PERSON = entity.contactPerson;
@@ -1206,6 +1212,7 @@ namespace FintrakBanking.Repositories.Customer
                            taxNumber = cs.TAX_NUMBER,
                            rcNumber = cs.REGISTRATION_NUMBER,
                            hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
+                           bankName = cs.BANKNAME,
                            casaAccountNumber = cs.CASA_ACCOUNTNO,
                            natureOfBusiness = cs.NATURE_OF_BUSINESS,
                            contactPerson = cs.CONTACT_PERSON,
@@ -1780,9 +1787,11 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorId = s.COMPANYDIRECTORID,
                                         surname = s.SURNAME,
                                         firstname = s.FIRSTNAME,
+                                        middlename = s.MIDDLENAME,
                                         numberOfShares = s.NUMBEROFSHARES,
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                                         bankVerificationNumber = s.CUSTOMERBVN,
+                                        customerNIN = s.CUSTOMERNIN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
                                         taxNumber = s.TAX_NUMBER,
@@ -1818,9 +1827,11 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorId = s.COMPANYDIRECTORID,
                                         surname = s.SURNAME,
                                         firstname = s.FIRSTNAME,
+                                        middlename = s.MIDDLENAME,
                                         numberOfShares = s.NUMBEROFSHARES,
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                                         bankVerificationNumber = s.CUSTOMERBVN,
+                                        customerNIN = s.CUSTOMERNIN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
                                         taxNumber = s.TAX_NUMBER,
@@ -1849,6 +1860,7 @@ namespace FintrakBanking.Repositories.Customer
                                         taxNumber = cs.TAX_NUMBER,
                                         rcNumber = cs.REGISTRATION_NUMBER,
                                         hasCASAAccount = cs.HAS_CASA_ACCOUNT,
+                                        bankName = cs.BANKNAME,
                                         casaAccountNumber = cs.CASA_ACCOUNTNO,
                                         contactPerson = cs.CONTACT_PERSON,
                                         natureOfBusiness = cs.NATURE_OF_BUSINESS,

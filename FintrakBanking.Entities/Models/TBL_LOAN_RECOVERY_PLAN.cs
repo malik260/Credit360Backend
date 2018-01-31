@@ -6,27 +6,31 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_FS_RATIO_CAPTION")]
-    public partial class TBL_CUSTOMER_FS_RATIO_CAPTION
+    [Table("credit.TBL_LOAN_RECOVERY_PLAN")]
+    public partial class TBL_LOAN_RECOVERY_PLAN
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_CUSTOMER_FS_RATIO_CAPTION()
+        public TBL_LOAN_RECOVERY_PLAN()
         {
-            TBL_CUSTOMER_FS_RATIO_DETAIL = new HashSet<TBL_CUSTOMER_FS_RATIO_DETAIL>();
+            TBL_LOAN_RECOVERY_PLAN_PAYMNT = new HashSet<TBL_LOAN_RECOVERY_PLAN_PAYMNT>();
         }
 
         [Key]
-        public short RATIOCAPTIONID { get; set; }
+        public int RECOVERYPLANID { get; set; }
 
-        [Required]
-        [StringLength(200)]
-        public string RATIOCAPTION { get; set; }
+        public int LOANID { get; set; }
 
-        public int COMPANYID { get; set; }
+        public short PRODUCTTYPEID { get; set; }
 
-        public bool ANNUALISED { get; set; }
+        public int CASAACCOUNTID { get; set; }
 
-        public int POSITION { get; set; }
+        public int? AGENTID { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? AMOUNTOWED { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal WRITEOFFAMOUNT { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -42,9 +46,11 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+        public virtual TBL_CASA TBL_CASA { get; set; }
+
+        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CUSTOMER_FS_RATIO_DETAIL> TBL_CUSTOMER_FS_RATIO_DETAIL { get; set; }
+        public virtual ICollection<TBL_LOAN_RECOVERY_PLAN_PAYMNT> TBL_LOAN_RECOVERY_PLAN_PAYMNT { get; set; }
     }
 }

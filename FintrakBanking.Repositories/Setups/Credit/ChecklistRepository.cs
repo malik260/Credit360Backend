@@ -201,6 +201,9 @@ namespace FintrakBanking.Repositories.Credit
                 canDoChecklist = true;
             }
             var checkType = (from a in context.TBL_CHECKLIST_TYPE
+                             join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
+                             join c in context.TBL_APPROVAL_LEVEL_STAFF on b.APPROVALLEVELID equals c.APPROVALLEVELID
+                             where c.STAFFID == staffId
                              select new CheckListTargetTypeViewModel
                              {
                                  targetTypeId = a.CHECKLIST_TYPEID,
@@ -1496,6 +1499,67 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
             return false;
+        }
+        #endregion
+
+        #region Checklist Type Mapping
+        public IEnumerable<CheckListTypeMappingViewModel> GetAllChecklistTypeMapping()
+        {
+            var data = (from a in context.TBL_CHECKLIST_TYPE_APROV_LEVL
+                       orderby a.APPROVALLEVELID descending select new CheckListTypeMappingViewModel()
+                        {
+                          checklistTypeMappingId = a.CHECKLISTTYPE_APPROVALLEVEL,
+                          approvalLevelId = a.APPROVALLEVELID,
+                          checklistTypeId = a.CHECKLIST_TYPEID,
+                          checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+                          approvalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME
+
+                        }).ToList();
+            return data;
+        }
+
+        public bool AddChecklistTypeMapping(CheckListTypeMappingViewModel model)
+        {
+            if (model == null) return false;
+            TBL_CHECKLIST_TYPE_APROV_LEVL typeLevel;
+            if (model.checklistTypeMappingId > 0)
+            {
+                typeLevel = context.TBL_CHECKLIST_TYPE_APROV_LEVL.Find(model.checklistTypeMappingId);
+                if (typeLevel != null)
+                {
+                    typeLevel.CHECKLIST_TYPEID = model.checklistTypeId;
+                    typeLevel.APPROVALLEVELID = model.approvalLevelId;
+                }
+              
+            }
+            else
+            {
+                typeLevel = new TBL_CHECKLIST_TYPE_APROV_LEVL();
+                typeLevel.CHECKLIST_TYPEID = model.checklistTypeId;
+                typeLevel.APPROVALLEVELID = model.approvalLevelId;
+                context.TBL_CHECKLIST_TYPE_APROV_LEVL.Add(typeLevel);
+            }
+            //Audit Section --------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = "Added Checklist Type Mapping",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+            return context.SaveChanges() != 0;
+        }
+        public bool ValidateChecklistTypeMapping(short checklistTypeId, int approvallevelId)
+        {
+            var data = (from a in context.TBL_CHECKLIST_TYPE_APROV_LEVL
+                        where a.APPROVALLEVELID == approvallevelId && a.CHECKLIST_TYPEID == checklistTypeId select a).ToList();
+            return data.Any();
         }
         #endregion
     }

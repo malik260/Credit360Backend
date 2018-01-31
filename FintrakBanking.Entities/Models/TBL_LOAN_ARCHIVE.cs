@@ -160,8 +160,6 @@ namespace FintrakBanking.Entities.Models
 
         public short? SCH_PREPAYMENT_FREQUENCY_TYPID { get; set; }
 
-        public short CUSTOMERSENSITIVITYLEVELID { get; set; }
-
         public int? INT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
         public int? EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
@@ -186,8 +184,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
         public virtual TBL_CUSTOMER_GROUP TBL_CUSTOMER_GROUP { get; set; }
-
-        public virtual TBL_CUSTOMER_SENSITIVITY_LEVEL TBL_CUSTOMER_SENSITIVITY_LEVEL { get; set; }
 
         public virtual TBL_DAY_COUNT_CONVENTION TBL_DAY_COUNT_CONVENTION { get; set; }
 
@@ -216,8 +212,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE1 { get; set; }
 
         public virtual TBL_LOAN_SCHEDULE_TYPE TBL_LOAN_SCHEDULE_TYPE { get; set; }
-
-        public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
 
         public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
     }

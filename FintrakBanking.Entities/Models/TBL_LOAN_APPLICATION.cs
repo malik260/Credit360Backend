@@ -13,11 +13,11 @@ namespace FintrakBanking.Entities.Models
         public TBL_LOAN_APPLICATION()
         {
             TBL_CREDIT_APPRAISAL_MEMORANDM = new HashSet<TBL_CREDIT_APPRAISAL_MEMORANDM>();
-            TBL_LOAN_CONDITION_PRECEDENT = new HashSet<TBL_LOAN_CONDITION_PRECEDENT>();
             TBL_LOAN_APPLICATION_ARCHIVE = new HashSet<TBL_LOAN_APPLICATION_ARCHIVE>();
             TBL_LOAN_APPLICATION_COLLATERL = new HashSet<TBL_LOAN_APPLICATION_COLLATERL>();
             TBL_LOAN_APPLICATION_DETAIL = new HashSet<TBL_LOAN_APPLICATION_DETAIL>();
             TBL_LOAN_APPLICATION_DETL_ARCH = new HashSet<TBL_LOAN_APPLICATION_DETL_ARCH>();
+            TBL_LOAN_APPLTN_CREDIT_BUREAU = new HashSet<TBL_LOAN_APPLTN_CREDIT_BUREAU>();
             TBL_LOAN_COLLATERAL_MAPPING = new HashSet<TBL_LOAN_COLLATERAL_MAPPING>();
             TBL_LOAN_GUARANTOR = new HashSet<TBL_LOAN_GUARANTOR>();
             TBL_RISK_ASSESSMENT = new HashSet<TBL_RISK_ASSESSMENT>();
@@ -31,6 +31,9 @@ namespace FintrakBanking.Entities.Models
         public string APPLICATIONREFERENCENUMBER { get; set; }
 
         public int? LOANPRELIMINARYEVALUATIONID { get; set; }
+
+        [StringLength(50)]
+        public string RELATEDREFERENCENUMBER { get; set; }
 
         public int COMPANYID { get; set; }
 
@@ -70,6 +73,9 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "money")]
         public decimal APPROVEDAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal TOTALEXPOSUREAMOUNT { get; set; }
 
         [Required]
         public string LOANINFORMATION { get; set; }
@@ -116,15 +122,13 @@ namespace FintrakBanking.Entities.Models
 
         public bool CUSTOMERINFOVALIDATED { get; set; }
 
-        public bool NOTINNEGATIVECRMS { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime? APPROVEDDATE { get; set; }
 
-        public bool NOTINBLACKBOOK { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime? AVAILMENTDATE { get; set; }
 
-        public bool NOTINCAMSOL { get; set; }
-
-        public bool NOTINXDS { get; set; }
-
-        public bool NOTINCRC { get; set; }
+        public bool DISPUTED { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
@@ -148,9 +152,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMORANDM> TBL_CREDIT_APPRAISAL_MEMORANDM { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_CONDITION_PRECEDENT> TBL_LOAN_CONDITION_PRECEDENT { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_APPLICATION_ARCHIVE> TBL_LOAN_APPLICATION_ARCHIVE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -167,6 +168,9 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_PRELIMINARY_EVALUATN TBL_LOAN_PRELIMINARY_EVALUATN { get; set; }
 
         public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_APPLTN_CREDIT_BUREAU> TBL_LOAN_APPLTN_CREDIT_BUREAU { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }

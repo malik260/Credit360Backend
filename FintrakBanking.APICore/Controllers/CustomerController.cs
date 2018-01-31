@@ -846,7 +846,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 string createUpdate = "";
-                if (entity.companyDirectorId != 0 || entity.companyDirectorId < 0)
+                if (entity.companyDirectorId != 0 || entity.companyDirectorId > 0)
                 {
                     createUpdate = "updated";
                 }
