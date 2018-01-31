@@ -3248,11 +3248,11 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETL_FEE>()
-                .Property(e => e.PROPOSED_FEERATEVALUE)
+                .Property(e => e.DEFAULT_FEERATEVALUE)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETL_FEE>()
-                .Property(e => e.APPROVED_FEERATEVALUE)
+                .Property(e => e.RECOMMENDED_FEERATEVALUE)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETL_INV>()

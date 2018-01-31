@@ -15,11 +15,11 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         { 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var staffSensitivityLevel = context.TBL_STAFF.Find(staffId);
-                var customterSensitivityLevel = context.TBL_STAFF.Find(staffId);
+                var staffSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
                 IQueryable< TransactionViewModel > data  = (from a in context.TBL_FINANCE_TRANSACTION
                             where a.COMPANYID == companyId && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)  
-                             orderby a.POSTEDDATE, a.TRANSACTIONID descending
+                            && a.TBL_CASA.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID == staffSensitivityLevelId
+                                                            orderby a.POSTEDDATE, a.TRANSACTIONID descending
                             select new TransactionViewModel()
                             {
                                 postedByStaffId = a.POSTEDBY ,

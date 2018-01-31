@@ -531,14 +531,22 @@ namespace FintrakBanking.Repositories.Credit
             }
             if (isCheckListDone)
             {
-                var data = this.context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.LOANAPPLICATIONID == applicationId);
-                {
-                    //data.LoanStatusId = (short)entity.approvalStatusId;
-                    //data.ActedOnaBy = entity.staffId;
-                    //data.DateActedOn = genSetup.GetApplicaionDate();
+                var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+                appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
 
-                    data.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
-                }
+                // ----------------Drop into CAM-------------------
+                workflow.StaffId = staffId;
+                workflow.OperationId = (int)OperationsEnum.CAM;
+                workflow.TargetId = appl.LOANAPPLICATIONID;
+                workflow.CompanyId = appl.COMPANYID;
+                workflow.ProductClassId = appl.PRODUCTCLASSID;
+                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                workflow.Comment = "New Loan Application";
+                workflow.ExternalInitialization = true;
+                workflow.DeferredExecution = true;
+                workflow.LogActivity();
+                // ----------------Drop into CAM ends-------------------
+                
             }
             else
             {
