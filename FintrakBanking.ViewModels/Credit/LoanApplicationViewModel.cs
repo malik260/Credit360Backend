@@ -10,7 +10,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public LoanApplicationViewModel()
         {
-             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
+            LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
         }
 
         public int loanApplicationId { get; set; }
@@ -74,7 +74,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanPreliminaryEvaluationId { get; set; }
         public double exchangeRate { get; set; }
         public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
-        public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; } 
+        public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }
         public List<ApprovedLoanDetailViewModel> details { get; set; }
         public int? currentApprovalStateId { get; set; }
         public int? currentApprovalLevelId { get; set; }
@@ -132,7 +132,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int productId { get; set; }
         public DateTime date { get; set; }
-        public int? dayInterval { get; set;}
+        public int? dayInterval { get; set; }
         public bool InvoiceStatus { get; set; }
     }
     public class ValidateNumberViewModel
@@ -149,8 +149,8 @@ namespace FintrakBanking.ViewModels.Credit
         public LoanApplicationDetailViewModel()
         {
             invoiceDetails = new List<InvoiceDetailViewModel>();
-            
-           
+            productFees = new List<ProductFeesViewModel>();
+
         }
 
         public int loanApplicationDetailId { get; set; }
@@ -203,12 +203,20 @@ namespace FintrakBanking.ViewModels.Credit
 
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
 
-        public  EducationLoanViewModel  educationLoan { get; set; }
+        public EducationLoanViewModel educationLoan { get; set; }
 
-        public  TraderLoanViewModel  traderLoan { get; set; }
-
+        public TraderLoanViewModel traderLoan { get; set; }
+        public List<ProductFeesViewModel> productFees { get; set; }
         public BondsAndGuranty bondDetails { get; set; }
         public IEnumerable<LoanCreditBereauViewModel> LoanCreditBereauReport { get; set; }
+    }
+
+    public class ProductFeesViewModel : GeneralEntity
+    {
+        public int loanApplicationDetailId { get; set; }
+        public int feeId { get; set; }
+        public int rate { get; set; }
+        public string comment { get; set; }
     }
 
     public class BondsAndGuranty
@@ -286,7 +294,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short invoiceCurrencyId { get; set; }
 
-        public string invoiceCurrencyCode{ get; set; }
+        public string invoiceCurrencyCode { get; set; }
 
         public DateTime contractStartDate { get; set; }
 
@@ -310,7 +318,7 @@ namespace FintrakBanking.ViewModels.Credit
         public RegionLoanApplicationViewModel()
         {
             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
-       
+
         }
 
         public int loanApplicationId { get; set; }
@@ -335,13 +343,15 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? timeOut { get; set; }
         public string responsiblePerson { get; set; }
     }
-    public class InvoiceDetailViewModel  
+    public class InvoiceDetailViewModel
     {
         public int invoiceId { get; set; }
 
         public int loanApplicationDetailId { get; set; }
 
         public int principalId { get; set; }
+
+        public string contractNo { get; set; }
 
         public string invoiceNo { get; set; }
 
@@ -363,7 +373,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int productClassId { get; set; }
 
-      }
+    }
 
     public class EducationLoanViewModel
     {
@@ -382,7 +392,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal productClassId { get; set; }
         public string productClassName { get; set; }
 
-}
+    }
 
     public class TraderLoanViewModel
     {

@@ -802,11 +802,25 @@ namespace FintrakBanking.Repositories.Credit
                     ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
                 }
 
-
-
+        
             }
         }
+        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
+        {
+            var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
+            {
+                CHARGEFEEID = c.feeId,
+                RECOMMENDED_FEERATEVALUE = c.rate,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = createdBy,
+                HASCONSESSION = false,
+                LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
+                DEFAULT_FEERATEVALUE = c.rate
+            });
 
+            context.TBL_LOAN_APPLICATION_DETL_FEE.AddRange(data);
+
+        }
         private void BondDetails(BondsAndGuranty entity, int loanApplicationId, int createdBy)
         {
             var data = new TBL_LOAN_APPLICATION_DETL_BG()
