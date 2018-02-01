@@ -38,7 +38,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? CityId { get; set; }
         public string CityName { get; set; }
         public string StateName { get; set; }
-        public short customerSensitivityLevelId { get; set; }
+        public short CustomerSensitivityLevelId { get; set; }
         public string SensitivityLevel { get; set; }
         public string CreatedByStaffName { get; set; }
         public bool IsUpdate { get; set; }

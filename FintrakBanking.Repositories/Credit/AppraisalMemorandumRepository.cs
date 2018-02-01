@@ -676,10 +676,10 @@ namespace FintrakBanking.Repositories.Credit
                 .ThenByDescending(x => x.loanApplicationId)
                 ;
 
-            //var list = applications.ToList();
-            //var count = applications.Count();
-            //var levs = levelIds.ToList();
-            
+            var list = applications.ToList();
+            var count = applications.Count();
+            var levs = levelIds.ToList();
+
             return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId));
         }
 

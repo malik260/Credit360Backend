@@ -312,38 +312,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("application-details")]
-        public HttpResponseMessage UpdateLoanApplicationDetails([FromBody]LoanApplicationDatailViewModel entity)
-        {
-            try
-            {
-
-                var user = new UserInfo
-                {
-                    BranchId = (short)token.GetBranchId,
-                    createdBy = token.GetStaffId,
-                    companyId = token.GetCompanyId,
-                };
-
-
-                var response = repo.UpdateLoanApplicationDetails(entity, user);
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (Exception e)
-
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error Occured =>  {e.Message}" });
-            }
-        }
-
-
-
+       
         [HttpGet]
         [Route("loan/collateralrequirement/{applicationId}/{collateralCurrencyId}")]
         public HttpResponseMessage GetCollateralRequirements(int applicationId, int? collateralCurrencyId)
@@ -891,54 +860,6 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: { e.InnerException }" });
-            }
-        }
-
-        [HttpGet][Route("loan-application-fees/{loanDetailId}")]
-        public HttpResponseMessage GetLoanApplicationFees(int loanDetailId)
-        {
-            try
-            {
-                var response = repo.GetLoanApplicationFees(loanDetailId);
-                if (response == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-
-        [HttpPut]
-        [Route("fee-concession-request")]
-        public HttpResponseMessage ProductFeesConcession([FromBody]ProductFeesViewModel entity)
-        {
-            try
-            {
-                var user = new UserInfo
-                {
-                    BranchId = (short)token.GetBranchId,
-                    createdBy = token.GetStaffId,
-                    companyId = token.GetCompanyId,
-                };
-
-
-                var response = repo.ProductFeesConcession(entity, user);
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Fee concession completed successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (Exception e)
-
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error Occured =>  {e.Message}" });
             }
         }
     }
