@@ -1017,11 +1017,11 @@ namespace FintrakBanking.Repositories.Credit
                 appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
                 appl.AVAILMENTDATE = DateTime.Now;
 
-                var loanApplication = appl; // context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+                var loanApplication = appl;
 
-                if(loanApplication.PRODUCTCLASSID != 0 || loanApplication.PRODUCTCLASSID != null)
+                if (loanApplication.PRODUCTCLASSID != 0 || loanApplication.PRODUCTCLASSID != null)
                 {
-                    if(loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                    if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                     {
                         var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
                         foreach (var record in loanApplicationDetails)
@@ -1036,11 +1036,12 @@ namespace FintrakBanking.Repositories.Credit
                             };
                             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
                         };
-                        
+
                     }
                 }
 
             }
+            else return false;
 
             //if (entity.amount > (long)LoanAvailmentApprovalFlowEnum.LevelOne && staffApprovalLevelId == approvalLvlStaff[0].approvalLevelId)
             //{
