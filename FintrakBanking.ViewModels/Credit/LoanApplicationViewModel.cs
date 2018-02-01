@@ -213,17 +213,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ProductFeesViewModel: GeneralEntity
     {
-        public int loanChargeFeeId { get; set; }
         public int loanApplicationDetailId { get; set; }
-        public bool hasConsession { get; set; }
-        public string consessionReason { get; set; }
-        public decimal defaultfeeRateValue { get; set; }
-        public decimal recommededFeeRateValue { get; set; }
-        public string productName { get; set; }
-        public string customerName { get; set; }
         public int feeId { get; set; }
-        public string feeName { get; set; }
-        public decimal  rate { get; set; } 
+        public int rate { get; set; }
+        public string comment { get; set; }
     }
 
     public class BondsAndGuranty

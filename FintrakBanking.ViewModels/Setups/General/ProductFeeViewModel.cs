@@ -2,16 +2,6 @@
 {
     public class ProductFeeViewModel : GeneralEntity
     {
-        public short approvalStatusId;
-
-        public int loanChargeFeeId { get; set; }
-        public int loanApplicationDetailId { get; set; }
-        public int chargeFeeId { get; set; }
-        public bool hasConsession { get; set; }
-        public string consessionReason { get; set; }
-        public decimal defaultfeeRateValue { get; set; }
-        public decimal recommededFeeRateValue { get; set; }
-
         public int productFeeId { get; set; }
         public short productId { get; set; }
         public string productName { get; set; }
