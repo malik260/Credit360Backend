@@ -70,7 +70,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId);
 
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
-        // decimal GetCustomerTotalOutstandingBalance(int customerId);
+
         bool ProductFeesConcession(ProductFeesViewModel fees, UserInfo user);
+       // decimal GetCustomerTotalOutstandingBalance(int customerId);
     }
 }

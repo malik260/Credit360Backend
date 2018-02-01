@@ -1804,7 +1804,7 @@ namespace FintrakBanking.Repositories.Credit
                  feeId = c.CHARGEFEEID,
                 feeName = c.TBL_CHARGE_FEE.CHARGEFEENAME,
                 customerName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME,
-                productName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME,
+                productName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME
             });
             return data;
         }
