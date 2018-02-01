@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -735,7 +736,6 @@ namespace FintrakBanking.Repositories.Credit
                 CONTRACT_ENDDATE = c.contractEndDate,
                 CONTRACT_STARTDATE = c.contractStartDate,
                 INVOICENO = c.invoiceNo,
-                CONTRACTNO = c.contractNo,
                 INVOICE_AMOUNT = c.invoiceAmount,
                 INVOICE_CURRENCYID = c.invoiceCurrencyId,
                 INVOICE_DATE = c.invoiceDate,
@@ -796,16 +796,16 @@ namespace FintrakBanking.Repositories.Credit
                     BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
                 }
 
+
                 if(a.productFees != null && a.productFees.Count > 0 )
                 {
                     ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
                 }
 
-
+        
             }
         }
-
-        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId,int createdBy)
+        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
         {
             var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
             {
@@ -822,7 +822,6 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETL_FEE.AddRange(data);
 
         }
-
         private void BondDetails(BondsAndGuranty entity, int loanApplicationId, int createdBy)
         {
             var data = new TBL_LOAN_APPLICATION_DETL_BG()
@@ -1163,7 +1162,6 @@ namespace FintrakBanking.Repositories.Credit
                                principalId = a.PRINCIPALID,
                                principalName = a.TBL_LOAN_PRINCIPAL.NAME,
                                invoiceNo = a.INVOICENO,
-                               contractNo = a.CONTRACTNO,
                                invoiceDate = a.INVOICE_DATE,
                                invoiceAmount = a.INVOICE_AMOUNT,
                                invoiceCurrencyId = a.INVOICE_CURRENCYID,
@@ -1732,7 +1730,7 @@ namespace FintrakBanking.Repositories.Credit
             return totalBalance;
         }
 
-        private void ProductFeesConcession(ProductFeesViewModel fees, int loanApplicationId, int createdBy)
+        public List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId)
         {
             var entity = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(c=> c.CHARGEFEEID ==fees.feeId && c.LOANAPPLICATIONDETAILID == fees.loanApplicationDetailId).FirstOrDefault();
 
@@ -1763,6 +1761,5 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
-        }
     }
 }

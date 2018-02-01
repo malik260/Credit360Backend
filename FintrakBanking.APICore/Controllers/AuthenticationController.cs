@@ -225,7 +225,8 @@ namespace FintrakBanking.APICore.Controllers
                         UserName = currUser.username,
                         activities = userActivities,
                         staffId = currUser.staffId,
-                        staffName = currUser.staffName
+                        staffName = currUser.staffName,
+                        applicationDate = _genSetup.GetApplicationDate(),
                     }
                 });
 
