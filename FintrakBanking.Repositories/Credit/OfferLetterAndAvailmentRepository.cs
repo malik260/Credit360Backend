@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.Credit
                 //x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted 
                 //|| x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress
                 //)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(b => b.loanApplicationId); ;
 
             return applicationDueForReview;
         }
@@ -415,7 +415,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 loanAvailmentData = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(b => b.loanApplicationId); ;
             }
 
             return loanAvailmentData;
@@ -504,6 +504,18 @@ namespace FintrakBanking.Repositories.Credit
                                 productClassProcessId = productClassProcess.PRODUCT_CLASS_PROCESSID //a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID
                             }).ToList();
 
+
+            var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
+                        join d in context.TBL_LOAN_APPLICATION  on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                        where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                            select new ProductFeeViewModel()
+                            {
+                                feeName = c.CHARGEFEENAME,
+                                rateValue = a.RECOMMENDED_FEERATEVALUE
+                            }).ToList();
+
             //var data    = (from a in context.TBL_LOAN_APPLICATION
             //                join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
             //                join d in context.TBL_CUSTOMER on a.CUSTOMERID equals d.CUSTOMERID
@@ -528,6 +540,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var conditions = string.Empty;
 
+            var fee  = string.Empty;
+
             var internalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == false).ToList();
 
             var externalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == true).ToList();
@@ -543,6 +557,10 @@ namespace FintrakBanking.Repositories.Credit
             var finalConditionPrecedents = string.Empty;
 
             var finalConditionSubsequents = string.Empty;
+
+            var loanfee = string.Empty;
+
+            int noOfFees  = 0;
 
             foreach (var prod in products)
             {
@@ -677,13 +695,46 @@ namespace FintrakBanking.Repositories.Credit
                 finalConditionSubsequents += conditions;
             }
 
+            fee = $"<p><strong> Fee Deatils: </strong></p>";
+
+            fee = fee +
+                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                        $"<strong> S/No </strong></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> Name </strong></p></td>" +
+
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> Rate </strong></td></tr>";
+
+
+
+            foreach (var item in fees)
+            {
+                fee = fee +
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.feeName}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.rateValue}</p></td>" +
+                    $"</tr>";
+            }
+
+            noOfFees = 0;
+
+            fee = fee + "</tbody></table><p> &nbsp;</p>";
+
+            loanfee += fee;
+
+            var feeData = $"{loanfee}";
+
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
 
             var customer = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_CUSTOMER.FIRSTNAME ;
             var branch  = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_BRANCH.BRANCHNAME;
             //var info = data;
 
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData);
 
             if (preparedTemplate != null)
             {
@@ -759,7 +810,7 @@ namespace FintrakBanking.Repositories.Credit
             //return templateLink;
         }
 
-        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template,string branch, string customer)
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template,string branch, string customer,string feecondition)
         {
             string body;
 
@@ -774,6 +825,7 @@ namespace FintrakBanking.Repositories.Credit
             body = body.Replace("{@ConditionPrecedents}", conditionPrecedent);
             body = body.Replace("{@Branch}", branch);
             body = body.Replace("{@Customer}", customer);
+            body = body.Replace("{@Fees}", feecondition);
 
             return body;
         }
@@ -979,7 +1031,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
                     if (appl == null) throw new Exception("Loan application with the given reference number not found!");
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
+                    //appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
                 }
 
                 return context.SaveChanges() > 0;
@@ -1003,108 +1055,44 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = operationId;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = entity.companyId;
-            workflow.ProductClassId = entity.productClassId;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = null;
             workflow.StatusId = entity.approvalStatusId;
             workflow.Comment = entity.comment;
             workflow.Amount = entity.amount;
             workflow.DeferredExecution = true;
-
-            if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelTwo && entity.amount <= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
-            {
-                if (staffApprovalLevelId != approvalLvlStaff[2].approvalLevelId) // forward only if the approval level Id is not the third level
-                {
-                    workflow.NextLevelId = approvalLvlStaff[2].approvalLevelId;
-                    workflow.ToStaffId = approvalLvlStaff[2].staffId;
-                }
-                else
-                {
-                    workflow.ForcefullyEndProcess = true;
-                }
-            }
-            else if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
-            {
-                if (staffApprovalLevelId != approvalLvlStaff[3].approvalLevelId)
-                {
-                    workflow.NextLevelId = approvalLvlStaff[3].approvalLevelId;
-                    workflow.ToStaffId = approvalLvlStaff[3].staffId;
-                }
-                else
-                {
-                    workflow.ForcefullyEndProcess = true;
-                }
-            }
-            else
-            {
-                if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
-                {
-                    workflow.ForcefullyEndProcess = true;
-                }
-            }
-
+            
             workflow.LogActivity(); // ------------------- LOG ONCE
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
                 appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
-                
-                var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == entity.targetId);
-                var productClassId = loanApplicationDetails.FirstOrDefault().TBL_LOAN_APPLICATION.PRODUCTCLASSID;
-                if (productClassId != 0 || productClassId != null)
+                appl.AVAILMENTDATE = DateTime.Now;
+
+                var loanApplication = appl; // context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+                if (loanApplication.PRODUCTCLASSID != 0 || loanApplication.PRODUCTCLASSID != null)
                 {
-                    var productClassProcess = context.TBL_PRODUCT_CLASS.FirstOrDefault();
-                    if(productClassProcess != null)
+                    if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                     {
-                        if (productClassProcess.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                        var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
+                        foreach (var record in loanApplicationDetails)
                         {
-                            foreach (var record in loanApplicationDetails)
+                            var request = new TBL_LOAN_BOOKING_REQUEST
                             {
-                                var requestModel = new LoanBookingRequestViewModel
-                                {
-                                    amount_Requested = entity.amount,
-                                    approvalStatusId = (short)ApprovalStatusEnum.Pending,
-                                    loanApplicationDetailId = record.LOANAPPLICATIONDETAILID,
-                                    createdBy = entity.staffId,
-                                };
-                                loans.AddLoanBookingRequest((short)ApprovalStatusEnum.Pending, requestModel);
+                                AMOUNT_REQUESTED = entity.amount,
+                                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                                LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                                DATETIMECREATED = DateTime.Now,
+                                CREATEDBY = entity.staffId,
                             };
-                        }
+                            context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                        };
 
                     }
                 }
+
             }
-
-            //if (entity.amount > (long)LoanAvailmentApprovalFlowEnum.LevelOne && staffApprovalLevelId == approvalLvlStaff[0].approvalLevelId)
-            //{
-            //    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
-            //}
-            //else
-            //{
-            //    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
-            //}
-
-            //if (entity.amount > (long)LoanAvailmentApprovalFlowEnum.LevelTwo)
-            //{
-            //    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
-            //}
-            //else
-            //{
-            //    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
-            //}
-
-            //if(entity.amount > (long)LoanAvailmentApprovalFlowEnum.LevelThree)
-            //{
-            //    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
-            //}
-            //else
-            //{
-            //    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
-            //}
-            //if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelFour)
-            //{
-            //    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
-            //}
-
+            
             return context.SaveChanges() > 0;
         }
 

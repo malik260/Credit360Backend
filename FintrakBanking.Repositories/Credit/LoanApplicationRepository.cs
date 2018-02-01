@@ -796,7 +796,7 @@ namespace FintrakBanking.Repositories.Credit
                     BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
                 }
 
-                if(a.productFees.Count > 0 )
+                if(a.productFees != null && a.productFees.Count > 0 )
                 {
                     ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
                 }
