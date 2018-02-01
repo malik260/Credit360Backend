@@ -25,9 +25,9 @@ namespace FintrakBanking.Entities.Models
 
         public short CHECKLISTSTATUSID { get; set; }
 
-        public bool CHECKLISTSTATUSID2 { get; set; }
+        public bool? CHECKLISTSTATUSID2 { get; set; }
 
-        public bool CHECKLISTSTATUSID3 { get; set; }
+        public bool? CHECKLISTSTATUSID3 { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? DEFEREDDATE { get; set; }
