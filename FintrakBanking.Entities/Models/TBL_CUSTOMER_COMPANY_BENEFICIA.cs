@@ -22,15 +22,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string FIRSTNAME { get; set; }
 
-        [StringLength(200)]
-        public string MIDDLENAME { get; set; }
-
         [Required]
         [StringLength(20)]
         public string CUSTOMERBVN { get; set; }
-
-        [StringLength(50)]
-        public string CUSTOMERNIN { get; set; }
 
         public int NUMBEROFSHARES { get; set; }
 
