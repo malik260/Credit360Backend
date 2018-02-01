@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.Credit
                 //x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted 
                 //|| x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress
                 //)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(b => b.loanApplicationId); ;
 
             return applicationDueForReview;
         }
@@ -415,7 +415,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 loanAvailmentData = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(b => b.loanApplicationId); ;
             }
 
             return loanAvailmentData;
@@ -979,7 +979,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
                     if (appl == null) throw new Exception("Loan application with the given reference number not found!");
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
+                    //appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
                 }
 
                 return context.SaveChanges() > 0;
@@ -1003,45 +1003,13 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = operationId;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = entity.companyId;
-            workflow.ProductClassId = entity.productClassId;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = null;
             workflow.StatusId = entity.approvalStatusId;
             workflow.Comment = entity.comment;
             workflow.Amount = entity.amount;
             workflow.DeferredExecution = true;
-
-            if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelTwo && entity.amount <= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
-            {
-                if (staffApprovalLevelId != approvalLvlStaff[2].approvalLevelId) // forward only if the approval level Id is not the third level
-                {
-                    workflow.NextLevelId = approvalLvlStaff[2].approvalLevelId;
-                    workflow.ToStaffId = approvalLvlStaff[2].staffId;
-                }
-                else
-                {
-                    workflow.ForcefullyEndProcess = true;
-                }
-            }
-            else if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
-            {
-                if (staffApprovalLevelId != approvalLvlStaff[3].approvalLevelId)
-                {
-                    workflow.NextLevelId = approvalLvlStaff[3].approvalLevelId;
-                    workflow.ToStaffId = approvalLvlStaff[3].staffId;
-                }
-                else
-                {
-                    workflow.ForcefullyEndProcess = true;
-                }
-            }
-            else
-            {
-                if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
-                {
-                    workflow.ForcefullyEndProcess = true;
-                }
-            }
-
+            
             workflow.LogActivity(); // ------------------- LOG ONCE
 
             if (workflow.NewState == (int)ApprovalState.Ended)
@@ -1050,9 +1018,15 @@ namespace FintrakBanking.Repositories.Credit
                 appl.AVAILMENTDATE = DateTime.Now;
 
                 var loanApplication = appl; // context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+<<<<<<< HEAD
                 if(loanApplication.PRODUCTCLASSID != 0 || loanApplication.PRODUCTCLASSID != null)
                 {
                     if(loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+=======
+                if (loanApplication.PRODUCTCLASSID != 0 || loanApplication.PRODUCTCLASSID != null)
+                {
+                    if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+>>>>>>> a6eae90d708da213ea2a3df29405a32df3711c53
                     {
                         var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
                         foreach (var record in loanApplicationDetails)
@@ -1067,6 +1041,7 @@ namespace FintrakBanking.Repositories.Credit
                             };
                             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
                         };
+<<<<<<< HEAD
                         
                     }
                 }
@@ -1103,7 +1078,14 @@ namespace FintrakBanking.Repositories.Credit
             //{
             //    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
             //}
+=======
 
+                    }
+                }
+>>>>>>> a6eae90d708da213ea2a3df29405a32df3711c53
+
+            }
+            
             return context.SaveChanges() > 0;
         }
 

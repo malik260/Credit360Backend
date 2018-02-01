@@ -796,6 +796,14 @@ namespace FintrakBanking.Repositories.Credit
                     BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
                 }
 
+<<<<<<< HEAD
+=======
+                if(a.productFees != null && a.productFees.Count > 0 )
+                {
+                    ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
+                }
+
+>>>>>>> a6eae90d708da213ea2a3df29405a32df3711c53
 
             }
         }

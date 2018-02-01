@@ -221,12 +221,12 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpGet]
-        [Route("checklist-detail-valitation")]
-        public HttpResponseMessage GetChecklistByCheckListTypeAndTargetId(int targetId, int checklistTypeId)
+        [Route("checklist-detail-valitation/")]
+        public HttpResponseMessage GetChecklistByCheckListTypeAndTargetId(int targetId, int checklistTypeId, bool isCamChecklist)
         {
             try
             {
-                var data = repo.GetChecklistByCheckListTypeAndTargetId(targetId, checklistTypeId);
+                var data = repo.GetChecklistByCheckListTypeAndTargetId(targetId, checklistTypeId, isCamChecklist);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
