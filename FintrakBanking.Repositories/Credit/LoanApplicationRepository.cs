@@ -814,6 +814,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = createdBy,
                 HASCONSESSION = false,
+                 APPROVALSTATUSID =(short)ApprovalStatusEnum.Approved,
                 LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
                 DEFAULT_FEERATEVALUE = c.rate
             });
@@ -1739,6 +1740,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.DATETIMEUPDATED = DateTime.Now;
             entity.LASTUPDATEDBY = createdBy;
             entity.HASCONSESSION = true;
+            entity.APPROVALSTATUSID =(short)ApprovalStatusEnum.Pending;
             entity.LOANAPPLICATIONDETAILID = fees.loanApplicationDetailId;
             entity.RECOMMENDED_FEERATEVALUE = fees.rate;
 
