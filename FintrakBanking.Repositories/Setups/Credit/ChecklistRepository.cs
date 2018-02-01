@@ -171,10 +171,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             List<CheckListTargetTypeViewModel> check = new List<CheckListTargetTypeViewModel>();
             var canValidate = (from a in context.TBL_CHECKLIST_TYPE_APROV_LEVL
-                                 join b in context.TBL_APPROVAL_LEVEL_STAFF on
-                                 a.APPROVALLEVELID equals b.APPROVALLEVELID
-                                 where b.STAFFID == staffId 
-                                 select a.CANVALIDATE).FirstOrDefault();
+                               join b in context.TBL_APPROVAL_LEVEL_STAFF on
+                               a.APPROVALLEVELID equals b.APPROVALLEVELID
+                               where b.STAFFID == staffId
+                               select a.CANVALIDATE).FirstOrDefault();
 
             var checkListTypeList = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
 
@@ -189,7 +189,7 @@ namespace FintrakBanking.Repositories.Credit
                                  isproductbased = a.ISPRODUCT_BASED,
                                  canValidateChecklist = canValidate
                              });
-            return checkType.GroupBy(x=> x.targetTypeId).Select(y=> y.FirstOrDefault()).ToList();
+            return checkType.GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
         }
         public IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId)
         {
@@ -1493,15 +1493,16 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CheckListTypeMappingViewModel> GetAllChecklistTypeMapping()
         {
             var data = (from a in context.TBL_CHECKLIST_TYPE_APROV_LEVL
-                       orderby a.APPROVALLEVELID descending select new CheckListTypeMappingViewModel()
+                        orderby a.APPROVALLEVELID descending
+                        select new CheckListTypeMappingViewModel()
                         {
-                          checklistTypeMappingId = a.CHECKLISTTYPE_APPROVALLEVEL,
-                          approvalLevelId = a.APPROVALLEVELID,
-                          checklistTypeId = a.CHECKLIST_TYPEID,
-                          checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
-                          approvalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
-                          validateChecklist = a.CANVALIDATE
-        }).ToList();
+                            checklistTypeMappingId = a.CHECKLISTTYPE_APPROVALLEVEL,
+                            approvalLevelId = a.APPROVALLEVELID,
+                            checklistTypeId = a.CHECKLIST_TYPEID,
+                            checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+                            approvalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                            validateChecklist = a.CANVALIDATE
+                        }).ToList();
             return data;
         }
 
@@ -1518,7 +1519,7 @@ namespace FintrakBanking.Repositories.Credit
                     typeLevel.APPROVALLEVELID = model.approvalLevelId;
                     typeLevel.CANVALIDATE = model.validateChecklist;
                 }
-              
+
             }
             else
             {
@@ -1547,7 +1548,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool ValidateChecklistTypeMapping(short checklistTypeId, int approvallevelId)
         {
             var data = (from a in context.TBL_CHECKLIST_TYPE_APROV_LEVL
-                        where a.APPROVALLEVELID == approvallevelId && a.CHECKLIST_TYPEID == checklistTypeId select a).ToList();
+                        where a.APPROVALLEVELID == approvallevelId && a.CHECKLIST_TYPEID == checklistTypeId
+                        select a).ToList();
             return data.Any();
         }
         #endregion

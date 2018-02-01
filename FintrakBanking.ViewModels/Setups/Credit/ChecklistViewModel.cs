@@ -79,16 +79,6 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string targetTypeName { get; set; }
         public bool isproductbased { get; set; }
         public bool canDoChecklist { get; set; }
-        public bool canValidateChecklist { get; set; }
-    }
-    public class CheckListTypeMappingViewModel : GeneralEntity
-    {
-        public int checklistTypeMappingId { get; set; }
-        public short checklistTypeId { get; set; }
-        public int approvalLevelId { get; set; }
-        public bool validateChecklist { get; set; }
-        public string checkListTypeName { get; set; }
-        public string approvalLevel { get; set; }
     }
     public class MultipleChecklistItemsViewModel: ChecklistDefinitionViewModel
     {

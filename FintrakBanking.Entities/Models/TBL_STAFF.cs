@@ -50,6 +50,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN_REVOLVING1 = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_STAFF1 = new HashSet<TBL_STAFF>();
+            TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
 
         [Key]
@@ -277,5 +278,8 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_STAFF> TBL_STAFF1 { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF2 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
     }
 }
