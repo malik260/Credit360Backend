@@ -912,7 +912,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (scope == 2)
             {
-                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.GROUPID)).Select(x => x.GROUPID).Distinct();
+                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
                 return context.TBL_APPROVAL_LEVEL.Where(x => groups.Contains(x.GROUPID)).Select(x => x.APPROVALLEVELID).Distinct();
             }
 
