@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -735,7 +736,6 @@ namespace FintrakBanking.Repositories.Credit
                 CONTRACT_ENDDATE = c.contractEndDate,
                 CONTRACT_STARTDATE = c.contractStartDate,
                 INVOICENO = c.invoiceNo,
-                CONTRACTNO = c.contractNo,
                 INVOICE_AMOUNT = c.invoiceAmount,
                 INVOICE_CURRENCYID = c.invoiceCurrencyId,
                 INVOICE_DATE = c.invoiceDate,
@@ -796,30 +796,8 @@ namespace FintrakBanking.Repositories.Credit
                     BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
                 }
 
-                if(a.productFees.Count > 0 )
-                {
-                    ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
-                }
-
 
             }
-        }
-
-        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId,int createdBy)
-        {
-            var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
-            {
-                CHARGEFEEID = c.feeId,
-                RECOMMENDED_FEERATEVALUE = c.rate,
-                DATETIMECREATED = DateTime.Now,
-                CREATEDBY = createdBy,
-                HASCONSESSION = false,
-                LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
-                DEFAULT_FEERATEVALUE = c.rate
-            });
-
-            context.TBL_LOAN_APPLICATION_DETL_FEE.AddRange(data);
-
         }
 
         private void BondDetails(BondsAndGuranty entity, int loanApplicationId, int createdBy)
@@ -1162,7 +1140,6 @@ namespace FintrakBanking.Repositories.Credit
                                principalId = a.PRINCIPALID,
                                principalName = a.TBL_LOAN_PRINCIPAL.NAME,
                                invoiceNo = a.INVOICENO,
-                               contractNo = a.CONTRACTNO,
                                invoiceDate = a.INVOICE_DATE,
                                invoiceAmount = a.INVOICE_AMOUNT,
                                invoiceCurrencyId = a.INVOICE_CURRENCYID,
@@ -1731,36 +1708,24 @@ namespace FintrakBanking.Repositories.Credit
             return totalBalance;
         }
 
-        private void ProductFeesConcession(ProductFeesViewModel fees, int loanApplicationId, int createdBy)
+        public List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId)
         {
-            var entity = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(c=> c.CHARGEFEEID ==fees.feeId && c.LOANAPPLICATIONDETAILID == fees.loanApplicationDetailId).FirstOrDefault();
-
-            entity.RECOMMENDED_FEERATEVALUE = fees.rate;
-            entity.DATETIMEUPDATED = DateTime.Now;
-            entity.LASTUPDATEDBY = createdBy;
-            entity.HASCONSESSION = true;
-            entity.LOANAPPLICATIONDETAILID = fees.loanApplicationDetailId;
-            entity.RECOMMENDED_FEERATEVALUE = fees.rate;
-
-            
-   
-        // Audit Section ---------------------------
-        var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanApplication,
-                STAFFID = fees.staffId,
-                BRANCHID = (short)fees.userBranchId,
-                DETAIL = $"Concession request",
-                IPADDRESS = fees.userIPAddress,
-                URL = fees.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = fees.loanApplicationDetailId 
-            };
-            this.auditTrail.AddAuditTrail(audit);
-
-            context.SaveChanges();
-
+            var loanAppProdFee = (from fa in context.TBL_LOAN_APPLICATION_DETL_FEE
+                                  where fa.LOANAPPLICATIONDETAILID == loanApplicationDeatilId
+                                  && fa.DELETED == false
+                                  select new ProductFeeViewModel
+                                  {
+                                      loanChargeFeeId = fa.LOANCHARGEFEEID,
+                                      loanApplicationDetailId = fa.LOANAPPLICATIONDETAILID,
+                                      chargeFeeId = fa.CHARGEFEEID,
+                                      hasConsession = fa.HASCONSESSION,
+                                      consessionReason = fa.CONSESSIONREASON,
+                                      approvalStatusId = fa.APPROVALSTATUSID,
+                                      defaultfeeRateValue = fa.DEFAULT_FEERATEVALUE,
+                                      recommededFeeRateValue = fa.RECOMMENDED_FEERATEVALUE
+                                  }).ToList();
+            return loanAppProdFee;
         }
+
     }
 }

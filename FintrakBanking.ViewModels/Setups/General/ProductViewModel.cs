@@ -6,8 +6,8 @@ namespace FintrakBanking.ViewModels.Setups.General
 {
     public class ProductViewModel : GeneralEntity
     {
-        public int productId { get; set; }
 
+        public int productId { get; set; }
         public short productTypeId { get; set; }
         public string productTypeName { get; set; }
         public string productGroupName { get; set; }
@@ -79,7 +79,10 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public ProductBehaviourViewModel ProductBehaviour { get;set;}
         public short productClassProcessId { get; set; }
+
     }
+
+
 
     public class ProductCurrencyViewModel : GeneralEntity
     {

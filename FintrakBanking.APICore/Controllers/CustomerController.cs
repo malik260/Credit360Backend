@@ -846,22 +846,18 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 string createUpdate = "";
-                if (entity.companyDirectorId != 0 || entity.companyDirectorId > 0)
+                if (entity.companyDirectorId != 0 || entity.companyDirectorId < 0)
                 {
                     createUpdate = "updated";
                 }
                 else
                 {
                     createUpdate = "created";
-                    if(entity.customerTypeId == (short)CustomerTypeEnum.Individual)
+                    if (repo.ValidateCustomerBVN(entity.customerId, entity.bankVerificationNumber))
                     {
-                        if (repo.ValidateCustomerBVN(entity.customerId, entity.bankVerificationNumber))
-                        {
-                            return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "The BVN you entered already exist" });
-                        }
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "The BVN you entered already exist" });
                     }
-                   
                     if (entity.rcNumber != null)
                     {
                         if (repo.ValidateCustomerRCnumber(entity.customerId, entity.rcNumber))
