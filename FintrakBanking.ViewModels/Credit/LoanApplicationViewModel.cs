@@ -149,7 +149,7 @@ namespace FintrakBanking.ViewModels.Credit
         public LoanApplicationDetailViewModel()
         {
             invoiceDetails = new List<InvoiceDetailViewModel>();
-            
+            productFees = new List<ProductFeesViewModel>();
            
         }
 
@@ -206,9 +206,24 @@ namespace FintrakBanking.ViewModels.Credit
         public  EducationLoanViewModel  educationLoan { get; set; }
 
         public  TraderLoanViewModel  traderLoan { get; set; }
-
+        public List<ProductFeesViewModel> productFees { get; set; }
         public BondsAndGuranty bondDetails { get; set; }
         public IEnumerable<LoanCreditBereauViewModel> LoanCreditBereauReport { get; set; }
+    }
+
+    public class ProductFeesViewModel: GeneralEntity
+    {
+        public int loanChargeFeeId { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public bool hasConsession { get; set; }
+        public string consessionReason { get; set; }
+        public decimal defaultfeeRateValue { get; set; }
+        public decimal recommededFeeRateValue { get; set; }
+        public string productName { get; set; }
+        public string customerName { get; set; }
+        public int feeId { get; set; }
+        public string feeName { get; set; }
+        public decimal  rate { get; set; } 
     }
 
     public class BondsAndGuranty
@@ -342,6 +357,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationDetailId { get; set; }
 
         public int principalId { get; set; }
+
+        public string contractNo { get; set; }
 
         public string invoiceNo { get; set; }
 

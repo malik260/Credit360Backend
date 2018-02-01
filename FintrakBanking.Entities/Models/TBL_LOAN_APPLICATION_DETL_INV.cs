@@ -20,6 +20,11 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string INVOICENO { get; set; }
 
+        [Required]
+        [StringLength(50)]
+        public string CONTRACTNO { get; set; }
+
+        
         [Column(TypeName = "date")]
         public DateTime INVOICE_DATE { get; set; }
 
