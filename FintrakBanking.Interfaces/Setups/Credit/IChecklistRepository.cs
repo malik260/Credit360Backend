@@ -73,10 +73,5 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int companyId);
         IEnumerable<DeferredChecklistViewModel> GetAllDeferralChecklist();
         IEnumerable<DeferredChecklistViewModel> GetDeferralChecklistByConditionId(int conditionId);
-        #region Checklist Type Mapping
-        IEnumerable<CheckListTypeMappingViewModel> GetAllChecklistTypeMapping();
-        bool AddChecklistTypeMapping(CheckListTypeMappingViewModel model);
-        bool ValidateChecklistTypeMapping(short checklistTypeId, int approvallevelId);
-        #endregion
     }
 }

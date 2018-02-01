@@ -31,6 +31,10 @@ namespace FintrakBanking.Entities.Models
 
         public int REVALUATIONDURATION { get; set; }
 
+        public bool ALLOWSHARING { get; set; }
+
+        public bool ISLOCATIONBASED { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
