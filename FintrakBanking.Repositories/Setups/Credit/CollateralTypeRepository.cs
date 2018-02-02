@@ -48,20 +48,30 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
         public IEnumerable<CollateralTypeViewModel> CollateralTypesByLoanApplication(int? applicationId)
         {
-            var list = context.TBL_COLLATERAL_TYPE_SUB
-                        .Select(m => new CollateralTypeViewModel
-                        {
-                            collateralTypeId = m.COLLATERALTYPEID,
-                            collateralTypeName = m.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                            chargeGLAccountId = m.TBL_COLLATERAL_TYPE.CHARGEGLACCOUNTID,
-                            requireInsurancePolicy = m.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
-                            details = m.TBL_COLLATERAL_TYPE.DETAILS,
-                            position = m.TBL_COLLATERAL_TYPE.POSITION,
-                            collateralSubTypeName = m.COLLATERALSUBTYPENAME,
-                            collateralSubTypeId = m.COLLATERALSUBTYPEID,
-                        })
-                        .Distinct()
-                        .OrderBy(m => m.position);
+            //var list = context.TBL_COLLATERAL_TYPE_SUB
+            //            .Select(m => new CollateralTypeViewModel
+            //            {
+            //                collateralTypeId = m.COLLATERALTYPEID,
+            //                collateralTypeName = m.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+            //                chargeGLAccountId = m.TBL_COLLATERAL_TYPE.CHARGEGLACCOUNTID,
+            //                requireInsurancePolicy = m.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
+            //                details = m.TBL_COLLATERAL_TYPE.DETAILS,
+            //                position = m.TBL_COLLATERAL_TYPE.POSITION,
+            //                collateralSubTypeName = m.COLLATERALSUBTYPENAME,
+            //                collateralSubTypeId = m.COLLATERALSUBTYPEID,
+
+            //            })
+            //            .Distinct()
+            //            .OrderBy(m => m.position);
+
+            var list = context.TBL_COLLATERAL_TYPE
+                       .Select(m => new CollateralTypeViewModel
+                       {
+                           collateralTypeId = m.COLLATERALTYPEID,
+                           collateralTypeName = m.COLLATERALTYPENAME,
+                       }).ToList();
+                      // .Distinct();
+                      ///.OrderBy(m => m.position);
 
             if (applicationId == null) { return list; }
 
@@ -96,6 +106,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             type.REQUIREINSURANCEPOLICY = entity.requireInsurancePolicy;
             type.DATETIMEUPDATED = genSetup.GetApplicationDate();
             type.LASTUPDATEDBY = entity.lastUpdatedBy;
+
             var respose = await context.SaveChangesAsync() != 0;
 
             // Audit Section ---------------------------
@@ -131,10 +142,27 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         haircut = m.HAIRCUT,
                         revaluationDuration = m.REVALUATIONDURATION,
                         dateTimeCreated = m.DATETIMECREATED.Date,
+                        isLocationBased = m.ISLOCATIONBASED,
+                        allowSharing=m.ALLOWSHARING,
                         createdBy = m.CREATEDBY
                     }).ToList();
         }
+       
+        #region Collateral SubTypes By ID
+        public CollateralSubTypeViewModel CollateralSubType(int Id)
+        {
+            return (from m in context.TBL_COLLATERAL_TYPE_SUB
+                    where m.COLLATERALSUBTYPEID == Id
+                    select new CollateralSubTypeViewModel
+                    {
+                        haircut = m.HAIRCUT,
+                        revaluationDuration = m.REVALUATIONDURATION,
+                        isLocationBased = m.ISLOCATIONBASED,
+                        allowSharing = m.ALLOWSHARING,
 
+                    }).FirstOrDefault();
+        }
+        #endregion End od Collateral SubType by ID
         public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes()
         {
             return (from m in context.TBL_COLLATERAL_TYPE_SUB
@@ -145,6 +173,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         collateralSubTypeName = m.COLLATERALSUBTYPENAME,
                         haircut = m.HAIRCUT,
                         revaluationDuration = m.REVALUATIONDURATION,
+                        isLocationBased = m.ISLOCATIONBASED,
+                        allowSharing = m.ALLOWSHARING
                     }).ToList();
         }
         
@@ -164,6 +194,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             subType.REVALUATIONDURATION = entity.revaluationDuration;
             subType.DATETIMEUPDATED = genSetup.GetApplicationDate();
             subType.LASTUPDATEDBY = entity.lastUpdatedBy;
+            subType.ISLOCATIONBASED = entity.isLocationBased;
+            subType.ALLOWSHARING = entity.allowSharing;
             var respose = await context.SaveChangesAsync() != 0;
 
             // Audit Section ---------------------------
@@ -222,6 +254,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 REVALUATIONDURATION = entity.revaluationDuration,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
+                ISLOCATIONBASED = entity.isLocationBased,
+                ALLOWSHARING = entity.allowSharing
             };
             context.TBL_COLLATERAL_TYPE_SUB.Add(type);
 
@@ -244,6 +278,10 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
             return respose;
         }
+
+       
+
+
 
         #endregion End od Collateral SubType
 
