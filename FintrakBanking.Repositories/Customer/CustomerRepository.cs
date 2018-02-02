@@ -1662,7 +1662,7 @@ namespace FintrakBanking.Repositories.Customer
                             sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
-                            taxNumber = a.TAXNUMBER
+                            taxNumber = a.TAXNUMBER,
                         }).FirstOrDefault();
 
             return data;
