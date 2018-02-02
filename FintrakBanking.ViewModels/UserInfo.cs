@@ -18,6 +18,7 @@ namespace FintrakBanking.ViewModels
         public string companyName { get; set; }
         public string branchName { get; set; }
         public string staffName { get; set; }
+        public DateTime applicationDate { get; set; }
     }
 
 }
