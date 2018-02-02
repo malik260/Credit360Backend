@@ -1663,6 +1663,10 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
+                            relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
+                      + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
+                            riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                            customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
 
             return data;

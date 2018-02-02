@@ -528,14 +528,16 @@ namespace FintrakBanking.Repositories.Credit
                             isCheckListDone = false;
                             str = str + "<br/>" + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
                         }
-
-                        foreach (var ab in detail)
+                        else
                         {
-                            if (ab.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No)
+                            foreach (var ab in detail)
                             {
-                                isCheckListDone = false;
-                                str = str + "<br/> One or More " + item.CHECKLIST_TYPE_NAME + " " + "item(s) did not meet up with the condition." 
-                                    + " Please Check your response to confirm." ;
+                                if (ab.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No)
+                                {
+                                    isCheckListDone = false;
+                                    str = str + "<br/> One or More " + item.CHECKLIST_TYPE_NAME + " " + "item(s) did not meet up with the condition."
+                                        + " Please Check your response to confirm.";
+                                }
                             }
                         }
                     }
