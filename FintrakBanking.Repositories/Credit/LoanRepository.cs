@@ -3361,7 +3361,7 @@ namespace FintrakBanking.Repositories.Credit
                             ),
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
-                            applicationDate = m.APPLICATIONDATE,
+                            newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentlDate = m.AVAILMENTDATE,
 
@@ -3417,6 +3417,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         private IEnumerable<CamProcessedLoanViewModel> AppraisalMemorandumProcessedLoanApplications(int companyId)
         {
+            var newApplicationDate = generalSetup.GetApplicationDate();
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
@@ -3453,6 +3454,7 @@ namespace FintrakBanking.Repositories.Credit
                             
                             isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                             isInvestmentGrade = m.ISINVESTMENTGRADE,
+                            newApplicationDate = newApplicationDate,
                             
                             customerAccounts = (from k in context.TBL_CASA
                                                 where k.DELETED == false
@@ -3561,7 +3563,7 @@ namespace FintrakBanking.Repositories.Credit
                             ),
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
-                            applicationDate =m.APPLICATIONDATE,
+                            applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
 
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -3742,7 +3744,7 @@ namespace FintrakBanking.Repositories.Credit
                             ),
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
-                            applicationDate = m.APPLICATIONDATE,
+                            newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
 
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,

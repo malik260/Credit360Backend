@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeId = a.LOANTYPEID,
                             loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
                             createdBy = a.CREATEDBY,
-                            applicationDate = a.APPLICATIONDATE,
+                            newApplicationDate = a.APPLICATIONDATE,
                             dateTimeCreated = a.DATETIMECREATED,
                             LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
                              .Select(c => new LoanApplicationDetailViewModel()
@@ -160,7 +160,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return applications
-                .OrderByDescending(x => x.applicationDate)
+                .OrderByDescending(x => x.newApplicationDate)
                 .ThenByDescending(x => x.loanApplicationId)
                 .ToList();
         }
@@ -457,7 +457,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeId = a.LOANTYPEID,
                             //loanStatusId = a.LoanStatusId,
                             createdBy = a.CREATEDBY,
-                            applicationDate = a.APPLICATIONDATE,
+                            newApplicationDate = a.APPLICATIONDATE,
                             dateTimeCreated = a.DATETIMECREATED
                         }).ToList();
             return data;
@@ -1109,7 +1109,7 @@ namespace FintrakBanking.Repositories.Credit
                         loanTypeId = x.o.g.a.LOANTYPEID,
                         relationshipOfficerId = x.o.g.a.RELATIONSHIPOFFICERID,
                         relationshipManagerId = x.o.g.a.RELATIONSHIPMANAGERID,
-                        applicationDate = x.o.g.a.APPLICATIONDATE,
+                        newApplicationDate = x.o.g.a.APPLICATIONDATE,
                         applicationAmount = x.o.g.a.APPLICATIONAMOUNT,
                         approvedAmount = x.o.g.a.APPROVEDAMOUNT,
                         interestRate = x.o.g.a.INTERESTRATE,
@@ -1302,7 +1302,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanTypeId = x.a.LOANTYPEID,
                 relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
                 relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
-                applicationDate = x.a.APPLICATIONDATE,
+                newApplicationDate = x.a.APPLICATIONDATE,
                 applicationAmount = x.a.APPLICATIONAMOUNT,
                 approvedAmount = x.a.APPROVEDAMOUNT,
                 interestRate = x.a.INTERESTRATE,
@@ -1332,7 +1332,7 @@ namespace FintrakBanking.Repositories.Credit
             })
             .GroupBy(d => d.loanApplicationId)
             .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-            .OrderByDescending(x => x.applicationDate)
+            .OrderByDescending(x => x.newApplicationDate)
             .ThenByDescending(x => x.loanApplicationId)
             ;
 
@@ -1364,7 +1364,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanTypeId = x.LOANTYPEID,
                 relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                 relationshipManagerId = x.RELATIONSHIPMANAGERID,
-                applicationDate = x.APPLICATIONDATE,
+                newApplicationDate = x.APPLICATIONDATE,
                 applicationAmount = x.APPLICATIONAMOUNT,
                 approvedAmount = x.APPROVEDAMOUNT,
                 interestRate = x.INTERESTRATE,
@@ -1411,7 +1411,7 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .ToList()
             })
-            .OrderByDescending(x => x.applicationDate)
+            .OrderByDescending(x => x.newApplicationDate)
             .ThenByDescending(x => x.loanApplicationId)
             ;
 
@@ -1745,7 +1745,12 @@ namespace FintrakBanking.Repositories.Credit
                                       consessionReason = fa.CONSESSIONREASON,
                                       approvalStatusId = fa.APPROVALSTATUSID,
                                       defaultfeeRateValue = fa.DEFAULT_FEERATEVALUE,
-                                      recommededFeeRateValue = fa.RECOMMENDED_FEERATEVALUE
+                                      recommededFeeRateValue = fa.RECOMMENDED_FEERATEVALUE,
+                                      feeAmount = 0,
+                                      feeIntervalName = fa.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                                      isIntegralFee = fa.TBL_CHARGE_FEE.ISINTEGRALFEE,
+                                      isRecurring = fa.TBL_CHARGE_FEE.RECURRING, 
+                                      
                                   }).ToList();
             return loanAppProdFee;
         }
