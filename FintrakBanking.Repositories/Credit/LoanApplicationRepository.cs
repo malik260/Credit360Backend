@@ -1732,7 +1732,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId)
         {
-<<<<<<< HEAD
             var loanAppProdFee = (from fa in context.TBL_LOAN_APPLICATION_DETL_FEE
                                   where fa.LOANAPPLICATIONDETAILID == loanApplicationDeatilId
                                   && fa.DELETED == false
@@ -1750,36 +1749,7 @@ namespace FintrakBanking.Repositories.Credit
                                   }).ToList();
             return loanAppProdFee;
         }
-=======
-            var entity = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(c=> c.CHARGEFEEID ==fees.feeId && c.LOANAPPLICATIONDETAILID == fees.loanApplicationDetailId).FirstOrDefault();
 
-            entity.RECOMMENDED_FEERATEVALUE = fees.rate;
-            entity.DATETIMEUPDATED = DateTime.Now;
-            entity.LASTUPDATEDBY = createdBy;
-            entity.HASCONSESSION = true;
-            entity.APPROVALSTATUSID =(short)ApprovalStatusEnum.Pending;
-            entity.LOANAPPLICATIONDETAILID = fees.loanApplicationDetailId;
-            entity.RECOMMENDED_FEERATEVALUE = fees.rate;
-
-            
-   
-        // Audit Section ---------------------------
-        var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanApplication,
-                STAFFID = fees.staffId,
-                BRANCHID = (short)fees.userBranchId,
-                DETAIL = $"Concession request",
-                IPADDRESS = fees.userIPAddress,
-                URL = fees.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = fees.loanApplicationDetailId 
-            };
-            this.auditTrail.AddAuditTrail(audit);
-
-            context.SaveChanges();
->>>>>>> 70eae4b0123b5d835b0d7a1fc7c4617ccd4fff07
 
     }
 }
