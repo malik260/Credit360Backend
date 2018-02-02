@@ -231,14 +231,16 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
-        private bool ResolveLevelConfigurations()
+        private bool ResolveLevelConfigurations() // REFACTOR!!!
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
             approvalGrid = approvalLevels;
             next = approvalLevels.FirstOrDefault();
+            if (this.nextLevelId != null) next = approvalLevels.FirstOrDefault(x => x.ApprovalLevelId == (int)this.nextLevelId);
 
             if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
             {
+
                 if (next != null)
                 {
                     this.smsNotification = next.CanRecieveSMS;
