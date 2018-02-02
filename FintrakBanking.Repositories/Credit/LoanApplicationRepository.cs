@@ -1739,6 +1739,7 @@ namespace FintrakBanking.Repositories.Credit
                                       loanChargeFeeId = fa.LOANCHARGEFEEID,
                                       loanApplicationDetailId = fa.LOANAPPLICATIONDETAILID,
                                       chargeFeeId = fa.CHARGEFEEID,
+                                      chargeFeeName = fa.TBL_CHARGE_FEE.CHARGEFEENAME,
                                       hasConsession = fa.HASCONSESSION,
                                       consessionReason = fa.CONSESSIONREASON,
                                       approvalStatusId = fa.APPROVALSTATUSID,

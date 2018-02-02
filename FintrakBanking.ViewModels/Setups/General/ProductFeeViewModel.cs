@@ -3,6 +3,7 @@
     public class ProductFeeViewModel : GeneralEntity
     {
         public short approvalStatusId;
+        public string chargeFeeName;
 
         public int loanChargeFeeId { get; set; }
         public int loanApplicationDetailId { get; set; }
