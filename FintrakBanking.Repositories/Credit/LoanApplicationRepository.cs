@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -796,9 +797,31 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
+                if(a.productFees != null && a.productFees.Count > 0 )
+                {
+                    ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
+                }
+
+        
             }
         }
+        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
+        {
+            var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
+            {
+                CHARGEFEEID = c.feeId,
+                RECOMMENDED_FEERATEVALUE = c.rate,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = createdBy,
+                HASCONSESSION = false,
+                 APPROVALSTATUSID =(short)ApprovalStatusEnum.Approved,
+                LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
+                DEFAULT_FEERATEVALUE = c.rate
+            });
 
+            context.TBL_LOAN_APPLICATION_DETL_FEE.AddRange(data);
+
+        }
         private void BondDetails(BondsAndGuranty entity, int loanApplicationId, int createdBy)
         {
             var data = new TBL_LOAN_APPLICATION_DETL_BG()
@@ -1706,6 +1729,27 @@ namespace FintrakBanking.Repositories.Credit
 
             return totalBalance;
         }
+
+        public List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId)
+        {
+            var loanAppProdFee = (from fa in context.TBL_LOAN_APPLICATION_DETL_FEE
+                                  where fa.LOANAPPLICATIONDETAILID == loanApplicationDeatilId
+                                  && fa.DELETED == false
+                                  select new ProductFeeViewModel
+                                  {
+                                      loanChargeFeeId = fa.LOANCHARGEFEEID,
+                                      loanApplicationDetailId = fa.LOANAPPLICATIONDETAILID,
+                                      chargeFeeId = fa.CHARGEFEEID,
+                                      chargeFeeName = fa.TBL_CHARGE_FEE.CHARGEFEENAME,
+                                      hasConsession = fa.HASCONSESSION,
+                                      consessionReason = fa.CONSESSIONREASON,
+                                      approvalStatusId = fa.APPROVALSTATUSID,
+                                      defaultfeeRateValue = fa.DEFAULT_FEERATEVALUE,
+                                      recommededFeeRateValue = fa.RECOMMENDED_FEERATEVALUE
+                                  }).ToList();
+            return loanAppProdFee;
+        }
+
 
     }
 }

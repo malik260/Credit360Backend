@@ -2429,6 +2429,11 @@ namespace FintrakBanking.Entities.Models
                 .WithOptional(e => e.TBL_STAFF2)
                 .HasForeignKey(e => e.RELIEF_STAFFID);
 
+            modelBuilder.Entity<TBL_STAFF>()
+                .HasMany(e => e.TBL_TEMP_STAFF)
+                .WithOptional(e => e.TBL_STAFF)
+                .HasForeignKey(e => e.RELIEF_STAFFID);
+
             modelBuilder.Entity<TBL_STAFF_JOBTITLE>()
                 .HasMany(e => e.TBL_STAFF)
                 .WithRequired(e => e.TBL_STAFF_JOBTITLE)

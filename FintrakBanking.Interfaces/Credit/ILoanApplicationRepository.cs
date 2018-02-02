@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -69,6 +70,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId);
 
+        List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
        // decimal GetCustomerTotalOutstandingBalance(int customerId);
     }
 }
