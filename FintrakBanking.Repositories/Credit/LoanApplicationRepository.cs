@@ -736,7 +736,6 @@ namespace FintrakBanking.Repositories.Credit
                 CONTRACT_ENDDATE = c.contractEndDate,
                 CONTRACT_STARTDATE = c.contractStartDate,
                 INVOICENO = c.invoiceNo,
-                CONTRACTNO = c.contractNo,
                 INVOICE_AMOUNT = c.invoiceAmount,
                 INVOICE_CURRENCYID = c.invoiceCurrencyId,
                 INVOICE_DATE = c.invoiceDate,
@@ -797,16 +796,16 @@ namespace FintrakBanking.Repositories.Credit
                     BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
                 }
 
-                if(a.productFees.Count > 0 )
+
+                if(a.productFees != null && a.productFees.Count > 0 )
                 {
                     ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
                 }
 
-
+        
             }
         }
-
-        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId,int createdBy)
+        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
         {
             var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
             {
@@ -815,7 +814,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = createdBy,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
-                HASCONSESSION = false,
+                HASCONSESSION = false, 
                 LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
                 DEFAULT_FEERATEVALUE = c.rate
             });
@@ -1174,7 +1173,6 @@ namespace FintrakBanking.Repositories.Credit
                                principalId = a.PRINCIPALID,
                                principalName = a.TBL_LOAN_PRINCIPAL.NAME,
                                invoiceNo = a.INVOICENO,
-                               contractNo = a.CONTRACTNO,
                                invoiceDate = a.INVOICE_DATE,
                                invoiceAmount = a.INVOICE_AMOUNT,
                                invoiceCurrencyId = a.INVOICE_CURRENCYID,
