@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.Credit
                 //x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted 
                 //|| x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress
                 //)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(c => c.loanApplicationId);
 
             return applicationDueForReview;
         }
@@ -415,7 +415,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 loanAvailmentData = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(c => c.loanApplicationId);
             }
 
             return loanAvailmentData;
@@ -451,7 +451,7 @@ namespace FintrakBanking.Repositories.Credit
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                         });
 
-            return data.GroupBy(x => x.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
+            return data.GroupBy(x => x.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanApplicationId).ToList();
         }
         public Form3800ViewModel GenerateForm3800Template(string applicationRefNumber)
         {
