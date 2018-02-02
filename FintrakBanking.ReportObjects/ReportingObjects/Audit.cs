@@ -38,7 +38,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     systemDate = _audit.SYSTEMDATETIME,
                     username = u.USERNAME,
                     url = _audit.URL,
-                    branchName = b.BRANCHNAME
+                    branchName = b.BRANCHNAME,
+                    ipAddress = _audit.IPADDRESS
                 };
                 return data.ToList();
             }

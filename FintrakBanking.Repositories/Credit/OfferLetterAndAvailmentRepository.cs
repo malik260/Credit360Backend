@@ -1018,7 +1018,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
                 appl.AVAILMENTDATE = DateTime.Now;
 
-                var loanApplication = appl; // context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+                var loanApplication = appl;
                 if (loanApplication.PRODUCTCLASSID != 0 || loanApplication.PRODUCTCLASSID != null)
                 {
                     if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)

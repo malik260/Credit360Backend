@@ -59,7 +59,7 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanApplicationViewModel> GetRejectedLoanApplications(UserInfo user);
 
         string ReviewRequest(ForwardViewModel model);
-         
+
         dynamic GetCollateralRequirements(int applicationID, int? collateralCurrencyId, int companyId);
 
         bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
@@ -70,7 +70,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId);
 
-        List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
-       // decimal GetCustomerTotalOutstandingBalance(int customerId);
+        IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
+
+        bool ProductFeesConcession(ProductFeesViewModel fees, UserInfo user);
+        // decimal GetCustomerTotalOutstandingBalance(int customerId);
     }
 }
