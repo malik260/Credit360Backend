@@ -484,6 +484,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.untenored == true) { return level.CANAPPROVEUNTENORED == true ? true : false; } 
             if (tenor == 0 && level.TENOR == 0) { return true; } // setup
+            if (tenor == 0 && level.TENOR == null) { return true; } // setup
             if (tenor > 0 && level.TENOR >= tenor) { return true; } // gen cam
             return false;
         }
