@@ -147,21 +147,17 @@ namespace FintrakBanking.Repositories.Setups.General
                 cityId = (int)x.CITYID,
                 companyId = x.COMPANYID,
                 stateName = x.TBL_STATE.STATENAME,
-                regionId = x.REGIONID,
-                regionName = x.TBL_BRANCH_REGION.REGION_NAME,
-                cityName = context.TBL_CITY.FirstOrDefault(c => c.CITYID == x.CITYID).CITYNAME ?? string.Empty,
+                cityName = context.TBL_CITY.FirstOrDefault(c => c.CITYID == x.CITYID).CITYNAME ?? "",
                 branchName = x.BRANCHNAME,
                 branchCode = x.BRANCHCODE,
                 addressLine1 = x.ADDRESSLINE1,
                 addressLine2 = x.ADDRESSLINE2,
-                branchLimit = x.NPL_LIMIT,
                 comment = x.COMMENT,
                 deleted = x.DELETED,
-            }).ToList();
+            });
 
-            return branches;
+            return branches.ToList();
         }
-
         public IEnumerable<BranchViewModel> GetAllBranchByCompanyId(int id)
         {
             var branches = context.TBL_BRANCH.Where(x => x.COMPANYID == id).Select(x => new BranchViewModel

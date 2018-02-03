@@ -9,6 +9,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -178,5 +179,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return "The record has not been updated";
         }
+
+        
     }
 }

@@ -1176,7 +1176,14 @@ namespace FintrakBanking.Repositories.Credit
                             loanId = ln.TERMLOANID,
                             operationId = (int)OperationsEnum.LoanBookingFeeDeferral,
                             productId = ln.PRODUCTID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            customerName = ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME + " " + ln.TBL_CUSTOMER.LASTNAME,
+                            productTypeId = ln.TBL_PRODUCT.PRODUCTTYPEID,
+                            productTypeName =ln.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
                             casaAccountId = ln.CASAACCOUNTID,
+                            casaAccountName = ln.TBL_CASA.PRODUCTACCOUNTNAME,
+                            casaAccountBalance = ln.TBL_CASA.AVAILABLEBALANCE,
                             feeAmount = (decimal)(from tot in context.TBL_LOAN_FEE.Where(x => x.LOANID == ln.TERMLOANID) select tot).Sum(x => x.FEEAMOUNT),
                             loanAmount = (from m in context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID) select m).Sum(x => x.APPROVEDAMOUNT),
                             //loanDeferredFeeList = new List<LoanChargeFeeViewModel>()
@@ -1213,9 +1220,7 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanBookingFeeDeferral);
-            //var levelResult = level.GetAllAssignedApprovalLevelStaff(companyId);
             int staffApprovalLevelId = 0;
-
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             var data = (from ln in context.TBL_LOAN_REVOLVING
@@ -1232,14 +1237,18 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanChargeFeeViewModel()
                         {
                             loanId = ln.REVOLVINGLOANID,
-                            operationId = (int)OperationsEnum.RevolvingLoanBooking,
+                            operationId = (int)OperationsEnum.LoanBookingFeeDeferral,
                             productId = ln.PRODUCTID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            customerName = ln.TBL_CUSTOMER.FIRSTNAME + " "+ ln.TBL_CUSTOMER.MIDDLENAME+" "+ln.TBL_CUSTOMER.LASTNAME,
+                            productTypeId = ln.TBL_PRODUCT.PRODUCTTYPEID,
+                            productTypeName = ln.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
                             casaAccountId = ln.CASAACCOUNTID,
+                            casaAccountName = ln.TBL_CASA.PRODUCTACCOUNTNAME,
+                            casaAccountBalance = ln.TBL_CASA.AVAILABLEBALANCE,
                             feeAmount = (decimal)(from tot in context.TBL_LOAN_FEE.Where(x => x.LOANID == ln.REVOLVINGLOANID) select tot).Sum(x => x.FEEAMOUNT),
                             loanAmount = (from m in context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID) select m).Sum(x => x.APPROVEDAMOUNT),
-
-                            
-
                         });
 
             foreach(var a in data)
@@ -1281,7 +1290,6 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanBookingFeeDeferral);
-            //var levelResult = level.GetAllAssignedApprovalLevelStaff(companyId);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -1300,9 +1308,16 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanChargeFeeViewModel()
                         {
                             loanId = ln.CONTINGENTLOANID,
-                            operationId = (int)OperationsEnum.ContigentLoanBooking,
+                            operationId = (int)OperationsEnum.LoanBookingFeeDeferral,
                             productId = ln.PRODUCTID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            customerName = ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME + " " + ln.TBL_CUSTOMER.LASTNAME,
+                            productTypeId = ln.TBL_PRODUCT.PRODUCTTYPEID,
+                            productTypeName = ln.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
                             casaAccountId = ln.CASAACCOUNTID,
+                            casaAccountName = ln.TBL_CASA.PRODUCTACCOUNTNAME,
+                            casaAccountBalance = ln.TBL_CASA.AVAILABLEBALANCE,
                             feeAmount = (decimal)(from tot in context.TBL_LOAN_FEE.Where(x => x.LOANID == ln.CONTINGENTLOANID) select tot).Sum(x => x.FEEAMOUNT),
                             loanAmount = (from m in context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID) select m).Sum(x => x.APPROVEDAMOUNT),
                             
@@ -3346,7 +3361,7 @@ namespace FintrakBanking.Repositories.Credit
                             ),
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
-                            applicationDate = m.APPLICATIONDATE,
+                            newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentlDate = m.AVAILMENTDATE,
 
@@ -3402,6 +3417,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         private IEnumerable<CamProcessedLoanViewModel> AppraisalMemorandumProcessedLoanApplications(int companyId)
         {
+            var newApplicationDate = generalSetup.GetApplicationDate();
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
@@ -3438,6 +3454,7 @@ namespace FintrakBanking.Repositories.Credit
                             
                             isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                             isInvestmentGrade = m.ISINVESTMENTGRADE,
+                            newApplicationDate = newApplicationDate,
                             
                             customerAccounts = (from k in context.TBL_CASA
                                                 where k.DELETED == false
@@ -3546,7 +3563,7 @@ namespace FintrakBanking.Repositories.Credit
                             ),
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
-                            applicationDate =m.APPLICATIONDATE,
+                            applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
 
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -3727,7 +3744,7 @@ namespace FintrakBanking.Repositories.Credit
                             ),
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
-                            applicationDate = m.APPLICATIONDATE,
+                            newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
 
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -4006,7 +4023,7 @@ namespace FintrakBanking.Repositories.Credit
                                            profileLoan = a.PROFILELOAN,
                                            dischargeLetter = a.DISCHARGELETTER,
                                            suspendInterest = a.SUSPENDINTEREST,
-                                           //customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                                           customerSensitivityLevelId = a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
                                            createdBy = a.CREATEDBY,
                                            dateTimeCreated = a.DATETIMECREATED,
                                            isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
@@ -4067,8 +4084,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return loans;
         }
+
     }
-
-
 }
 

@@ -18,10 +18,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string customerName { get; set; }
         public string surname { get; set; }
         public string firstname { get; set; }
-        public string middlename { get; set; }
         public string fullname { get; set; }
         public string bankVerificationNumber { get; set; }
-        public string customerNIN { get; set; }
         public short companyDirectorTypeId { get; set; }
         public string companyDirectorTypeName { get; set; }
         public string rcNumber { get; set; }
@@ -40,8 +38,6 @@ namespace FintrakBanking.ViewModels.Customer
         public int companyDirectorId { get; set; }
         public string surname { get; set; }
         public string firstname { get; set; }
-        public string middlename { get; set; }
-        public string customerNIN { get; set; }
         public string bankVerificationNumber { get; set; }
         public int numberOfShares { get; set; }
         public bool isPoliticallyExposed { get; set; }

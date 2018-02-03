@@ -600,11 +600,11 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region CAM Pending Applications
-        
+
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int companyId, int branchId, int staffId, int? classId)
         {
             // var declarations
-            IQueryable < LoanApplicationViewModel > applications = null;
+            IQueryable<LoanApplicationViewModel> applications = null;
             int operationId = (int)OperationsEnum.CAM;
             bool isHeadOffice = (branchId == 1) ? true : false;
 
@@ -619,8 +619,8 @@ namespace FintrakBanking.Repositories.Credit
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                 )
             .GroupJoin(
-                context.TBL_APPROVAL_TRAIL.Where(x => 
-                    x.OPERATIONID == operationId 
+                context.TBL_APPROVAL_TRAIL.Where(x =>
+                    x.OPERATIONID == operationId
                     && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
                 ),
                 a => a.LOANAPPLICATIONID,
@@ -642,7 +642,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanTypeId = x.a.LOANTYPEID,
                     relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
-                    applicationDate = x.a.APPLICATIONDATE,
+                    newApplicationDate = x.a.APPLICATIONDATE,
                     applicationAmount = x.a.APPLICATIONAMOUNT,
                     approvedAmount = x.a.APPROVEDAMOUNT,
                     interestRate = x.a.INTERESTRATE,
@@ -672,14 +672,14 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .OrderByDescending(x => x.applicationDate)
+                .OrderByDescending(x => x.newApplicationDate)
                 .ThenByDescending(x => x.loanApplicationId)
                 ;
 
             //var list = applications.ToList();
             //var count = applications.Count();
             //var levs = levelIds.ToList();
-            
+
             return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId));
         }
 
@@ -884,7 +884,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return productClasses;
         }
-        
+
         public bool GetUntenoredStatus(int applicationId)
         {
             var detail = context.TBL_LOAN_APPLICATION_DETL_BG
@@ -912,7 +912,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (scope == 2)
             {
-                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.GROUPID)).Select(x => x.GROUPID).Distinct();
+                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
                 return context.TBL_APPROVAL_LEVEL.Where(x => groups.Contains(x.GROUPID)).Select(x => x.APPROVALLEVELID).Distinct();
             }
 

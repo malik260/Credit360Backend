@@ -79,7 +79,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralCustomerId { get; set; }
         public string institutionName { get; set; }
         public string guarantorAddress { get; set; }
-        public string guarantorReferenceNumber { get; set; }
+      //  public string guarantorReferenceNumber { get; set; }
         public decimal guaranteeValue { get; set; }
         public DateTime? endDate { get; set; }
 
@@ -593,6 +593,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralTypeId { get; set; }
         public double haircut { get; set; }
         public int revaluationDuration { get; set; }
+        public bool isLocationBased { get; set; }
+        public bool allowSharing { get; set; }
     }
 
     public class CustomerCollateralSearch
