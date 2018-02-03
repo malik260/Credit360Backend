@@ -638,24 +638,11 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_ARCHIVE)
                 .WithRequired(e => e.TBL_CASA)
-                .HasForeignKey(e => e.CASAACCOUNTID)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CASA>()
-                .HasMany(e => e.TBL_LOAN_ARCHIVE1)
-                .WithRequired(e => e.TBL_CASA1)
-                .HasForeignKey(e => e.CASAACCOUNTID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_CONTINGENT)
                 .WithRequired(e => e.TBL_CASA)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CASA>()
-                .HasMany(e => e.TBL_LOAN)
-                .WithRequired(e => e.TBL_CASA)
-                .HasForeignKey(e => e.CASAACCOUNTID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CASA>()
@@ -686,9 +673,8 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.CASAACCOUNTID2);
 
             modelBuilder.Entity<TBL_CASA>()
-                .HasMany(e => e.TBL_LOAN1)
-                .WithRequired(e => e.TBL_CASA1)
-                .HasForeignKey(e => e.CASAACCOUNTID)
+                .HasMany(e => e.TBL_LOAN)
+                .WithRequired(e => e.TBL_CASA)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CASA_ACCOUNTSTATUS>()
@@ -1051,7 +1037,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_TEMP_PRODUCT_COLLATERALTYP)
                 .WithRequired(e => e.TBL_COMPANY)
-                .HasForeignKey(e => e.COMPANYID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COMPANY>()
@@ -1112,12 +1097,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_TEMP_PRODUCT_CHARGE_FEE)
                 .WithRequired(e => e.TBL_COMPANY)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_COMPANY>()
-                .HasMany(e => e.TBL_TEMP_PRODUCT_COLLATERALTYP1)
-                .WithRequired(e => e.TBL_COMPANY1)
-                .HasForeignKey(e => e.COMPANYID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COMPANY>()
@@ -2933,13 +2912,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_COLLATERAL_TYPE>()
                 .HasMany(e => e.TBL_TEMP_PRODUCT_COLLATERALTYP)
                 .WithRequired(e => e.TBL_COLLATERAL_TYPE)
-                .HasForeignKey(e => e.COLLATERALTYPEID)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_COLLATERAL_TYPE>()
-                .HasMany(e => e.TBL_TEMP_PRODUCT_COLLATERALTYP1)
-                .WithRequired(e => e.TBL_COLLATERAL_TYPE1)
-                .HasForeignKey(e => e.COLLATERALTYPEID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COLLATERAL_TYPE_SUB>()

@@ -46,6 +46,10 @@ namespace FintrakBanking.Entities.Models
 
         public int SLAINTERVAL { get; set; }
 
+        public double FEERATE { get; set; }
+
+        public double INTERESTRATE { get; set; }
+
         public bool CANROUTEBACK { get; set; }
 
         public bool ISPOLITICALLYEXPOSED { get; set; }

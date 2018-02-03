@@ -240,7 +240,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
             {
-
                 if (next != null)
                 {
                     this.smsNotification = next.CanRecieveSMS;
@@ -484,6 +483,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.untenored == true) { return level.CANAPPROVEUNTENORED == true ? true : false; } 
             if (tenor == 0 && level.TENOR == 0) { return true; } // setup
+            if (tenor == 0 && level.TENOR == null) { return true; } // setup
             if (tenor > 0 && level.TENOR >= tenor) { return true; } // gen cam
             return false;
         }
