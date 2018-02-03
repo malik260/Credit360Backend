@@ -457,6 +457,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [Route("collateral-sub-type/{id}")]
+        public HttpResponseMessage GetCollateralSubTypes(int id)
+        {
+            try
+            {
+                var response = type.CollateralSubType(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [Route("collateral-sub-type/collateral-type/{collateralTypeId}")]

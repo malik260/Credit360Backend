@@ -728,9 +728,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 COLLATERALCUSTOMERID = collateralId,
                 ACCOUNTNUMBER = entity.accountNumber,
-                ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
+              //  ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 AVAILABLEBALANCE = entity.availableBalance,
-                EXISTINGLIENAMOUNT = entity.existingLienAmount,
+               // EXISTINGLIENAMOUNT = entity.existingLienAmount,
                 LIENAMOUNT = entity.lienAmount,
                 SECURITYVALUE = entity.securityValue,
                 REMARK = entity.remark,
@@ -744,9 +744,9 @@ namespace FintrakBanking.Repositories.Credit
                 .FirstOrDefault();
 
             collateral.ACCOUNTNUMBER = entity.accountNumber;
-            collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
+           // collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
             collateral.AVAILABLEBALANCE = entity.availableBalance;
-            collateral.EXISTINGLIENAMOUNT = entity.existingLienAmount;
+           // collateral.EXISTINGLIENAMOUNT = entity.existingLienAmount;
             collateral.LIENAMOUNT = entity.lienAmount;
             collateral.SECURITYVALUE = entity.securityValue;
             collateral.REMARK = entity.remark;
@@ -760,9 +760,9 @@ namespace FintrakBanking.Repositories.Credit
                 collateralId = specifics.COLLATERALCUSTOMERID,
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
                 accountNumber = specifics.ACCOUNTNUMBER,
-                isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
+              //  isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
                 availableBalance = specifics.AVAILABLEBALANCE,
-                existingLienAmount = specifics.EXISTINGLIENAMOUNT,
+              //  existingLienAmount = specifics.EXISTINGLIENAMOUNT,
                 lienAmount = specifics.LIENAMOUNT,
                 securityValue = specifics.SECURITYVALUE,
                 remark = specifics.REMARK,
@@ -781,7 +781,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 INSTITUTIONNAME = entity.institutionName,
                 GUARANTORADDRESS = entity.guarantorAddress,
-                GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber,
+               // GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber,
                 GUARANTEEVALUE = entity.guaranteeValue,
                 STARTDATE = (DateTime)entity.startDate,
                 ENDDATE = entity.endDate,
@@ -798,7 +798,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
             collateral.INSTITUTIONNAME = entity.institutionName;
             collateral.GUARANTORADDRESS = entity.guarantorAddress;
-            collateral.GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber;
+         //   collateral.GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber;
             collateral.GUARANTEEVALUE = entity.guaranteeValue;
             collateral.STARTDATE = (DateTime)entity.startDate;
             collateral.ENDDATE = entity.endDate;
@@ -816,7 +816,7 @@ namespace FintrakBanking.Repositories.Credit
                 isOwnedByCustomer = (bool)specifics.ISOWNEDBYCUSTOMER,
                 institutionName = specifics.INSTITUTIONNAME,
                 guarantorAddress = specifics.GUARANTORADDRESS,
-                guarantorReferenceNumber = specifics.GUARANTORREFERENCENUMBER,
+            //    guarantorReferenceNumber = specifics.GUARANTORREFERENCENUMBER,
                 guaranteeValue = specifics.GUARANTEEVALUE,
                 startDate = specifics.STARTDATE,
                 endDate = specifics.ENDDATE,

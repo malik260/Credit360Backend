@@ -14,7 +14,7 @@
         public bool hasConsession { get; set; }
         public string consessionReason { get; set; }
         public decimal defaultfeeRateValue { get; set; }
-        public decimal recommededFeeRateValue { get; set; } 
+        public decimal recommededFeeRateValue { get; set; }
 
         public int productFeeId { get; set; }
         public short productId { get; set; }
@@ -25,7 +25,7 @@
         public string feeIntervalName { get; set; }
         public string feeTypeName { get; set; }
         public string glAccountCode { get; set; }
-        public string glAccountName { get; set; }        
+        public string glAccountName { get; set; }
 
         public decimal rateValue { get; set; }
         public decimal? dependentAmount { get; set; }
