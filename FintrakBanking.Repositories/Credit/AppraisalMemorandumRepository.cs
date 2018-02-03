@@ -642,7 +642,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanTypeId = x.a.LOANTYPEID,
                     relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
-                    applicationDate = x.a.APPLICATIONDATE,
+                    newApplicationDate = x.a.APPLICATIONDATE,
                     applicationAmount = x.a.APPLICATIONAMOUNT,
                     approvedAmount = x.a.APPROVEDAMOUNT,
                     interestRate = x.a.INTERESTRATE,
@@ -672,7 +672,7 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .OrderByDescending(x => x.applicationDate)
+                .OrderByDescending(x => x.newApplicationDate)
                 .ThenByDescending(x => x.loanApplicationId)
                 ;
 

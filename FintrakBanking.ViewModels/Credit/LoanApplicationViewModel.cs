@@ -33,7 +33,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatus { get; set; }
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
-        public DateTime applicationDate { get; set; }
+        public DateTime newApplicationDate { get; set; }
         public decimal applicationAmount { get; set; }
         public decimal approvedAmount { get; set; }
         public double applicationTenor { get; set; }
