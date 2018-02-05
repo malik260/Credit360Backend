@@ -32,5 +32,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool DeleteMultipleProductFee(List<int> productFeeIds);
 
         bool DoesProductFeeExist(int productFeeId);
+
+        IEnumerable<dynamic> GetFeesByProductId(int productId);
     }
 }

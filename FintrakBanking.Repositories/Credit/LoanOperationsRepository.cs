@@ -358,7 +358,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
-
             var data = (from a in context.TBL_LOAN
                         join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
                         join c in context.TBL_DAY_COUNT_CONVENTION on a.SCHEDULEDAYCOUNTCONVENTIONID equals c.DAYCOUNTCONVENTIONID

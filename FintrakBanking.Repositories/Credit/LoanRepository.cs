@@ -2067,19 +2067,21 @@ namespace FintrakBanking.Repositories.Credit
         {
             foreach (LoanMonitoringTrigger entity in monitoringTriggersModel)
             {
-                var data = new TBL_LOAN_MONITORING_TRIGGER
+                if(entity.monitoringTrigger != null && entity.monitoringTrigger != string.Empty)
                 {
-                    MONITORING_TRIGGER = entity.monitoringTrigger,
-                    MONITORING_TRIGGERID = entity.monitoringTriggerId,
-                    LOANID = loanId,
-                    PRODUCTTYPEID = productTypeId,
-                    CREATEDBY = entity.createdBy,
-                    DATETIMECREATED = DateTime.Now,
-                    DELETED = false
-                   
-                };
+                    var data = new TBL_LOAN_MONITORING_TRIGGER
+                    {
+                        MONITORING_TRIGGER = entity.monitoringTrigger,
+                        MONITORING_TRIGGERID = entity.monitoringTriggerId,
+                        LOANID = loanId,
+                        PRODUCTTYPEID = productTypeId,
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                        DELETED = false
 
-                context.TBL_LOAN_MONITORING_TRIGGER.Add(data);
+                    };
+                    context.TBL_LOAN_MONITORING_TRIGGER.Add(data);
+                }
             }
             //var result = context.SaveChanges() > 0;
             return true;
