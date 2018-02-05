@@ -31,8 +31,9 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool ExternalInitialization { set; }
         bool DeferredExecution { set; }
         bool KeepPending { set; }
-        //string Message { get; }
         bool Saved { get; }
+        float? InterestRateConcession { set; }
+        float? FeeRateConcession { set; }
 
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!
         bool ForcefullyEndProcess { set; } // <------------ this property is deprecated!!!

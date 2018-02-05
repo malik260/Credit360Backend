@@ -38,11 +38,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual TBL_COMPANY TBL_COMPANY1 { get; set; }
-
         public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE { get; set; }
-
-        public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE1 { get; set; }
 
         public virtual TBL_TEMP_PRODUCT TBL_TEMP_PRODUCT { get; set; }
     }
