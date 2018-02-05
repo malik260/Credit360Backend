@@ -11,18 +11,24 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short GLOBALSETUPID { get; set; }
+        public short APPLICATIONSETUPID { get; set; }
 
-        public int COMPANYID { get; set; }
+        [StringLength(500)]
+        public string REPORTPATH { get; set; }
 
-        public double UNAUTHORISD_OVERDRAFT_INT_RATE { get; set; }
+        public bool USE_ACTIVE_DIRECTORY { get; set; }
 
-        public double PASTDUEINDEFAULT_INTERESTRATE { get; set; }
+        [StringLength(100)]
+        public string ACTIVE_DIRECTORY_DOMAIN_NAME { get; set; }
 
-        public int LEGAL_CHARGE_GLACCOUNTID { get; set; }
+        [StringLength(50)]
+        public string ACTIVE_DIRECTORY_USERNAME { get; set; }
 
-        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+        [StringLength(50)]
+        public string ACTIVE_DIRECTORY_PASSWORD { get; set; }
 
-        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
+        public bool REQUIRE_ADUSER { get; set; }
+
+        public bool USE_THIRD_PARTY_INTEGRATION { get; set; }
     }
 }

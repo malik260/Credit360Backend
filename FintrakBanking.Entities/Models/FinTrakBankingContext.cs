@@ -16,7 +16,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_TYPE> TBL_ACCREDITEDCONSULTANT_TYPE { get; set; }
-        public virtual DbSet<TBL_APPLICATION_SETUP> TBL_APPLICATION_SETUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_GROUP> TBL_APPROVAL_GROUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
@@ -162,6 +161,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PUBLIC_HOLIDAY> TBL_PUBLIC_HOLIDAY { get; set; }
         public virtual DbSet<TBL_REGION> TBL_REGION { get; set; }
         public virtual DbSet<TBL_SECTOR> TBL_SECTOR { get; set; }
+        public virtual DbSet<TBL_SETUP_COMPANY> TBL_SETUP_COMPANY { get; set; }
         public virtual DbSet<TBL_SETUP_GLOBAL> TBL_SETUP_GLOBAL { get; set; }
         public virtual DbSet<TBL_SOURCE_APPLICATION> TBL_SOURCE_APPLICATION { get; set; }
         public virtual DbSet<TBL_STAFF> TBL_STAFF { get; set; }
@@ -1055,7 +1055,7 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COMPANY>()
-                .HasMany(e => e.TBL_SETUP_GLOBAL)
+                .HasMany(e => e.TBL_SETUP_COMPANY)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
 
@@ -4128,7 +4128,7 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.OVERDRAWNGL);
 
             modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
-                .HasMany(e => e.TBL_SETUP_GLOBAL)
+                .HasMany(e => e.TBL_SETUP_COMPANY)
                 .WithRequired(e => e.TBL_CHART_OF_ACCOUNT)
                 .HasForeignKey(e => e.LEGAL_CHARGE_GLACCOUNTID)
                 .WillCascadeOnDelete(false);

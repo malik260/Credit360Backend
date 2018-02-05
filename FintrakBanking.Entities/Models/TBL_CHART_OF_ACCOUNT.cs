@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
             TBL_PRODUCT3 = new HashSet<TBL_PRODUCT>();
             TBL_PRODUCT4 = new HashSet<TBL_PRODUCT>();
             TBL_PRODUCT5 = new HashSet<TBL_PRODUCT>();
-            TBL_SETUP_GLOBAL = new HashSet<TBL_SETUP_GLOBAL>();
+            TBL_SETUP_COMPANY = new HashSet<TBL_SETUP_COMPANY>();
             TBL_TAX = new HashSet<TBL_TAX>();
             TBL_COLLATERAL_TYPE = new HashSet<TBL_COLLATERAL_TYPE>();
             TBL_CREDIT_BUREAU = new HashSet<TBL_CREDIT_BUREAU>();
@@ -113,7 +113,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT5 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_SETUP_GLOBAL> TBL_SETUP_GLOBAL { get; set; }
+        public virtual ICollection<TBL_SETUP_COMPANY> TBL_SETUP_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TAX> TBL_TAX { get; set; }

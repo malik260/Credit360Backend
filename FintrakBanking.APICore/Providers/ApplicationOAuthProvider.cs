@@ -19,7 +19,7 @@ namespace FintrakBanking.APICore.Providers
     {
         private readonly string _publicClientId;
         private FinTrakBankingContext _bankingContext;
-        private TBL_APPLICATION_SETUP appSetup;
+        private TBL_SETUP_GLOBAL appSetup;
 
         public ApplicationOAuthProvider(string publicClientId)
         {
@@ -43,7 +43,7 @@ namespace FintrakBanking.APICore.Providers
             ClaimsIdentity identity;
             var _authRepo = new AuthenticationRepository(_bankingContext);
 
-            appSetup = _bankingContext.TBL_APPLICATION_SETUP.Single();
+            appSetup = _bankingContext.TBL_SETUP_GLOBAL.Single();
 
             if (appSetup.USE_ACTIVE_DIRECTORY)
             {
@@ -166,7 +166,7 @@ namespace FintrakBanking.APICore.Providers
 
         public bool ValidateActiveDirectoryCredentials(string userName, string password, out ClaimsIdentity identity)
         {
-            appSetup = _bankingContext.TBL_APPLICATION_SETUP.FirstOrDefault();
+            appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
 
             if (appSetup.REQUIRE_ADUSER == true)
             {

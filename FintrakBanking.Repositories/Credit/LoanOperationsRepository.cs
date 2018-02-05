@@ -276,7 +276,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN
                         join b in context.TBL_CASA on a.CASAACCOUNTID equals b.CASAACCOUNTID
                         join c in context.TBL_DAY_COUNT_CONVENTION on a.SCHEDULEDAYCOUNTCONVENTIONID equals c.DAYCOUNTCONVENTIONID
-                        join d in context.TBL_SETUP_GLOBAL on a.COMPANYID equals d.COMPANYID
+                        join d in context.TBL_SETUP_COMPANY on a.COMPANYID equals d.COMPANYID
                         //where b.ActionDate == DbFunctions.TruncateTime(applicationDate) && a.LoanStatusId == (short)LoanStatusEnum.Active
                         where a.LOANSTATUSID == (short)LoanStatusEnum.Active
                         && b.AVAILABLEBALANCE < 0 && a.ALLOWFORCEDEBITREPAYMENT == false && a.SUSPENDINTEREST == false
@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN
                         join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
                         join c in context.TBL_DAY_COUNT_CONVENTION on a.SCHEDULEDAYCOUNTCONVENTIONID equals c.DAYCOUNTCONVENTIONID
-                        join d in context.TBL_SETUP_GLOBAL on a.COMPANYID equals d.COMPANYID
+                        join d in context.TBL_SETUP_COMPANY on a.COMPANYID equals d.COMPANYID
                         where b.DATE == DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                        && (b.CREDITAMOUNT - b.DEBITAMOUNT) < 0 && a.ALLOWFORCEDEBITREPAYMENT == false
                         && b.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest && a.SUSPENDINTEREST == false
@@ -450,7 +450,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN
                         join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
                         join c in context.TBL_DAY_COUNT_CONVENTION on a.SCHEDULEDAYCOUNTCONVENTIONID equals c.DAYCOUNTCONVENTIONID
-                        join d in context.TBL_SETUP_GLOBAL on a.COMPANYID equals d.COMPANYID
+                        join d in context.TBL_SETUP_COMPANY on a.COMPANYID equals d.COMPANYID
                         where b.DATE == DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                        && (b.CREDITAMOUNT - b.DEBITAMOUNT) < 0 && a.ALLOWFORCEDEBITREPAYMENT == false
                         && b.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal && a.SUSPENDINTEREST == false
@@ -536,7 +536,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN
                         join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
                         join c in context.TBL_DAY_COUNT_CONVENTION on a.SCHEDULEDAYCOUNTCONVENTIONID equals c.DAYCOUNTCONVENTIONID
-                        join d in context.TBL_SETUP_GLOBAL on a.COMPANYID equals d.COMPANYID
+                        join d in context.TBL_SETUP_COMPANY on a.COMPANYID equals d.COMPANYID
                         where b.DATE <= DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                        && (b.CREDITAMOUNT - b.DEBITAMOUNT) <= 0 && a.ALLOWFORCEDEBITREPAYMENT == false
                         group b by new { b.LOANID, b.PARENT_PASTDUECODE } into groupedQ

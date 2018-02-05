@@ -342,6 +342,7 @@
     <Compile Include="Models\TBL_RISK_ASSESSMENT_TITLE.cs" />
     <Compile Include="Models\TBL_RISK_RATING.cs" />
     <Compile Include="Models\TBL_SECTOR.cs" />
+    <Compile Include="Models\TBL_SETUP_COMPANY.cs" />
     <Compile Include="Models\TBL_SETUP_GLOBAL.cs" />
     <Compile Include="Models\TBL_SOLICITOR.cs" />
     <Compile Include="Models\TBL_SOLICITOR_STATE_MAPPING.cs" />

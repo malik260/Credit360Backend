@@ -207,8 +207,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int chargeFeeId { get; set; }
         public string concessionReason { get; set; }
         public decimal recommendedFeeRate { get; set; }
-        public decimal proposedFeeRate { get; set; }
+        public decimal defaultFeeRate { get; set; }
         public bool hasConcession { get; set; }
+        public string approvalStatus { get; set; }
+        public string feeName { get; set; }
     }
 
 }
