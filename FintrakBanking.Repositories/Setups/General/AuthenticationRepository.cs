@@ -148,7 +148,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
 
-            var appSetup = context.TBL_APPLICATION_SETUP.Single();
+            var appSetup = context.TBL_SETUP_GLOBAL.Single();
 
             UserViewModel data;
 

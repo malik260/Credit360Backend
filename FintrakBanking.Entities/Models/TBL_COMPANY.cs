@@ -58,7 +58,7 @@ namespace FintrakBanking.Entities.Models
             TBL_FEE = new HashSet<TBL_FEE>();
             TBL_PRODUCT_CHARGE_FEE = new HashSet<TBL_PRODUCT_CHARGE_FEE>();
             TBL_PRODUCT_PRICE_INDEX = new HashSet<TBL_PRODUCT_PRICE_INDEX>();
-            TBL_SETUP_GLOBAL = new HashSet<TBL_SETUP_GLOBAL>();
+            TBL_SETUP_COMPANY = new HashSet<TBL_SETUP_COMPANY>();
             TBL_SOLICITOR = new HashSet<TBL_SOLICITOR>();
             TBL_STAFF_ORGANOGRAM = new HashSet<TBL_STAFF_ORGANOGRAM>();
             TBL_STAFF = new HashSet<TBL_STAFF>();
@@ -68,7 +68,6 @@ namespace FintrakBanking.Entities.Models
             TBL_TEMP_CUSTOMER_GROUP_MAPPNG = new HashSet<TBL_TEMP_CUSTOMER_GROUP_MAPPNG>();
             TBL_TEMP_CUSTOMER_GROUP = new HashSet<TBL_TEMP_CUSTOMER_GROUP>();
             TBL_TEMP_PRODUCT_CHARGE_FEE = new HashSet<TBL_TEMP_PRODUCT_CHARGE_FEE>();
-            TBL_TEMP_PRODUCT_COLLATERALTYP1 = new HashSet<TBL_TEMP_PRODUCT_COLLATERALTYP>();
             TBL_TEMP_FEE = new HashSet<TBL_TEMP_FEE>();
             TBL_TEMP_PRODUCT_FEE = new HashSet<TBL_TEMP_PRODUCT_FEE>();
             TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
@@ -329,7 +328,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_PRODUCT_PRICE_INDEX> TBL_PRODUCT_PRICE_INDEX { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_SETUP_GLOBAL> TBL_SETUP_GLOBAL { get; set; }
+        public virtual ICollection<TBL_SETUP_COMPANY> TBL_SETUP_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
@@ -357,9 +356,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PRODUCT_CHARGE_FEE> TBL_TEMP_PRODUCT_CHARGE_FEE { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_PRODUCT_COLLATERALTYP> TBL_TEMP_PRODUCT_COLLATERALTYP1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_FEE> TBL_TEMP_FEE { get; set; }
