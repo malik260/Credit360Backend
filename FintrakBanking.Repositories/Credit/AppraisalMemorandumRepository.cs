@@ -276,7 +276,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public bool ForwardAppraisalMemorandum(ForwardViewModel model)
+        public int ForwardAppraisalMemorandum(ForwardViewModel model)
         {
             bool updateApprovedAmount = false;
             int operationId = (int)OperationsEnum.CAM;
@@ -303,6 +303,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
             workflow.Untenored = model.untenored;
+            workflow.InterestRateConcession = model.interestRateConcession;
+            workflow.FeeRateConcession = model.feeRateConcession;
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
@@ -399,7 +401,12 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             if (model.comment == "debug_test") throw new Exception("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
-            return context.SaveChanges() > 0;
+
+            context.SaveChanges();
+
+            if (workflow.NewState == (int)ApprovalState.Ended) { return workflow.StatusId; }
+
+            return (int)ApprovalStatusEnum.Processing; // default for now
         }
 
         private string LineItemChanges(List<RecommendedChangesViewModel> recommendedChanges)
@@ -518,6 +525,26 @@ namespace FintrakBanking.Repositories.Credit
                 });
 
             return details;
+        }
+
+        public IEnumerable<LoanDetailsFeeViewModel> GetLoanDetailsFee(int applicationId)
+        {
+            var fees = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .SelectMany(x => x.TBL_LOAN_APPLICATION_DETAIL)
+                .SelectMany(x => x.TBL_LOAN_APPLICATION_DETL_FEE)
+                .Select(x => new LoanDetailsFeeViewModel
+                {
+                    loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    loanChargeFeeId = x.LOANCHARGEFEEID,
+                    chargeFeeId = x.CHARGEFEEID,
+                    hasConcession = x.HASCONSESSION,
+                    concessionReason = x.CONSESSIONREASON,
+                    proposedFeeRate = x.DEFAULT_FEERATEVALUE,
+                    recommendedFeeRate = x.RECOMMENDED_FEERATEVALUE,
+                    statusId = x.APPROVALSTATUSID,
+                });
+
+            return fees;
         }
 
         public IEnumerable<LoanApplicationDetailLogViewModel> GetLoanDetailChangeLog(int applicationId)

@@ -35,5 +35,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public bool canResolveDispute { get; set; }
         public bool canApproveUntenored { get; set; }
         public bool canEscalate { get; set; }
+        public double? feeRate { get; set; }
+        public double? interestRate { get; set; }
     }
 }
