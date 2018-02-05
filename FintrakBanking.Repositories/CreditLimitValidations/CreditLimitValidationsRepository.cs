@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         {
             var camsol = (from a in context.TBL_LOAN_CAMSOL
                           join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                          where b.CUSTOMERID == customerId
+                          where b.CUSTOMERID == customerId 
                           select a);
             int camsolresults = camsol.Count();
 

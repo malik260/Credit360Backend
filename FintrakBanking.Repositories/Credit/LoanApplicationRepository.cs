@@ -169,6 +169,22 @@ namespace FintrakBanking.Repositories.Credit
         {
             return GetLoanApplications(companyId).Where(c => c.loanApplicationId == loanApplicationId).ToList();
         }
+        public dynamic GetLoanAppById(int loanApplicationDetailId, int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION
+                        where a.LOANAPPLICATIONID == loanApplicationDetailId  &&  a.TBL_COMPANY.COMPANYID  == companyId && a.DELETED == false 
+                        select new 
+                        {
+                            applicationAmount = a.APPLICATIONAMOUNT ,
+                            tenor = a.APPLICATIONTENOR,
+                            customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerId = a.CUSTOMERID, 
+                            customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            applicationDate = a.APPLICATIONDATE,
+                            applicationRef = a.APPLICATIONREFERENCENUMBER
+                        }).FirstOrDefault();
+            return data;
+        }
 
         public IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationDetailId, int companyId)
         {
@@ -468,7 +484,6 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == loanStatusId).SingleOrDefault()
                 .ACCOUNTSTATUS;
         }
-
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
@@ -509,7 +524,7 @@ namespace FintrakBanking.Repositories.Credit
                                      equals b.CHECKLISTDEFINITIONID
                                      where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
                                      && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
-                                     select a;
+                                     select b;
                         var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
 
                         var definition = from a in context.TBL_CHECKLIST_DEFINITION
@@ -522,10 +537,23 @@ namespace FintrakBanking.Repositories.Credit
                                          select a;
                         int i, j;
                         i = definition.Count(); j = detail.Count();
+
                         if (definition.Count() != detail.Count())
                         {
                             isCheckListDone = false;
                             str = str + "<br/>" + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                        }
+                        else
+                        {
+                            foreach (var ab in detail)
+                            {
+                                if (ab.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No)
+                                {
+                                    isCheckListDone = false;
+                                    str = str + "<br/> One or More " + item.CHECKLIST_TYPE_NAME + " " + "item(s) did not meet up with the condition."
+                                        + " Please Check your response to confirm.";
+                                }
+                            }
                         }
                     }
                 }
@@ -547,7 +575,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.DeferredExecution = true;
                 workflow.LogActivity();
                 // ----------------Drop into CAM ends-------------------
-                
+
             }
             else
             {
@@ -569,7 +597,6 @@ namespace FintrakBanking.Repositories.Credit
             }
             return result;
         }
-
 
         public int AddLoanApplication(LoanApplicationViewModel loan)
         {

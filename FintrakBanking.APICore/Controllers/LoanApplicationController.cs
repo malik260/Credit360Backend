@@ -204,6 +204,27 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("loan-application/{id}")]
+        public HttpResponseMessage GetLoanAppById(int id)
+        {
+            try
+            { 
+                var data = repo.GetLoanAppById(id, token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
         [Route("loan-application-eligibility/loanApplicationId/{id}")]
         public HttpResponseMessage GetLoanApplicationsDetails(int id)
         {
@@ -382,6 +403,16 @@ namespace FintrakBanking.APICore.Controllers
                     {
                         throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
                     }
+
+
+                  var customerLimit =  creditLimitValidationsRepository.ValidateNPLByCustomer((int)entity.customerId.Value);
+                    if( (customerLimit.outstandingBalance + (double)entity.LoanApplicationDetail.Sum(c=> c.proposedAmount)) > customerLimit.limit)
+                    {
+                        throw new Exception("Total amount excides customer Limit");
+                    }
+
+
+
                 }
 
                 //var model =  creditLimitValidationsRepository.ValidateAmountByBranch1(entity.branchId).Difference;
