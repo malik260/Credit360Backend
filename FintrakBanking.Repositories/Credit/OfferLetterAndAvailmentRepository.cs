@@ -415,7 +415,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 loanAvailmentData = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(c => c.loanApplicationId);
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
             }
 
             return loanAvailmentData;
@@ -1030,7 +1030,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
                     if (appl == null) throw new Exception("Loan application with the given reference number not found!");
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
+                   // appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
                 }
 
                 return context.SaveChanges() > 0;
@@ -1089,10 +1089,18 @@ namespace FintrakBanking.Repositories.Credit
                         };
 
                     }
-                }
+                }               
             }
+           // else { return false; }
 
-            return context.SaveChanges() > 0;
+            context.SaveChanges();
+
+            if (workflow.NewState == (int)ApprovalState.Ended)
+                return true;
+            else
+                return false;
+
+
         }
 
         private bool ReferApplicationToSpecificLevel(LoanAvailmentApprovalViewModel model)
