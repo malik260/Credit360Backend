@@ -45,6 +45,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             tenor = x.TENOR,
                             maximumAmount = x.MAXIMUMAMOUNT,
                             investmentGradeAmount = x.INVESTMENTGRADEAMOUNT,
+                            feeRate = x.FEERATE,
+                            interestRate = x.INTERESTRATE,
                             numberOfUsers = x.NUMBEROFUSERS,
                             numberOfApprovals = x.NUMBEROFAPPROVALS,
                             slaInterval = x.SLAINTERVAL,
@@ -91,6 +93,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             tenor = a.TENOR,
                             maximumAmount = a.MAXIMUMAMOUNT,
                             investmentGradeAmount = a.INVESTMENTGRADEAMOUNT,
+                            feeRate = a.FEERATE,
+                            interestRate = a.INTERESTRATE,
                             numberOfUsers = a.NUMBEROFUSERS,
                             numberOfApprovals = a.NUMBEROFAPPROVALS,
                             slaInterval = a.SLAINTERVAL,
@@ -160,6 +164,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 TENOR = model.tenor,
                 MAXIMUMAMOUNT = model.maximumAmount,
                 INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+                FEERATE = model.feeRate,
+                INTERESTRATE = model.interestRate,
                 NUMBEROFUSERS = model.numberOfUsers,
                 NUMBEROFAPPROVALS = model.numberOfApprovals,
                 SLAINTERVAL = model.slaInterval,
@@ -228,6 +234,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
             //data.TenorModeId = 1; // model.tenorModeId;
             data.MAXIMUMAMOUNT = model.maximumAmount;
             data.INVESTMENTGRADEAMOUNT = model.investmentGradeAmount;
+            data.FEERATE = model.feeRate;
+            data.INTERESTRATE = model.interestRate;
             data.NUMBEROFUSERS = model.numberOfUsers;
             data.NUMBEROFAPPROVALS = model.numberOfApprovals;
             data.SLAINTERVAL = model.slaInterval;
@@ -374,7 +382,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               ResponseStaffName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                               ResponseApprovalLevel = b.LEVELNAME,
                               TargetId = a.TARGETID
-                          })
+                        })
                         .ToList().AsQueryable();
 
             return (result.Select(c => new WorkflowTrackerViewModel

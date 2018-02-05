@@ -33,11 +33,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int statusId = (int)ApprovalStatusEnum.Processing;
         private int groupStatusId = (int)ApprovalStatusEnum.Processing;
         private int? nextLevelId = null; // for refer backs
-        //private int? minimumLevelId = null; // for dispute resolution
         private bool emailNotification = false;
         private bool smsNotification = false;
 
-        //private string message;
         private int? fromLevelId = null;
         private int? requestLevelId = null;
         private int currentStateId;
@@ -61,6 +59,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? toStaffId = null;
         private bool endProcess = false;
 
+        private float? interestRateConcession = null;
+        private float? feeRateConcession = null;
+
         public int StaffId { set { staffId = value; } }
         public int? ToStaffId { set { toStaffId = value; } }
         public int TargetId { set { targetId = value; } }
@@ -72,9 +73,12 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool InvestmentGrade { set { investmentGrade = value; } }
         public bool Untenored { set { untenored = value; } }
         public bool Disputed { set { disputed = value; } }
-        //public int? MinimumLevelId { set { minimumLevelId = value; } }
         public bool PoliticallyExposed { set { politicallyExposed = value; } }
         public short? Vote { set { vote = value; } }
+
+        public float? InterestRateConcession { set { interestRateConcession = value; } }
+        public float? FeeRateConcession { set { feeRateConcession = value; } }
+
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int GroupStatusId { get { return groupStatusId; } }
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
@@ -83,7 +87,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool EmailNotification { set { emailNotification = value; } }
         public bool SmsNotification { set { smsNotification = value; } }
         public bool ExternalInitialization { set { externalInitialization = value; } }
-        //public string Message { get { return message; } }
         public bool Saved { get { return saved; } }
         public int NewState { get { return newStateId; } }
         public bool KeepPending { set { keepPending = value; } }
@@ -125,7 +128,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 this.currentStateId = request.APPROVALSTATEID;
                 this.requestStaffId = request.REQUESTSTAFFID;
-                //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }this.requestLevelId = request.FROMAPPROVALLEVELID;
                 this.fromLevelId = request.TOAPPROVALLEVELID;
                 this.requestLevelId = request.FROMAPPROVALLEVELID;
                 if (this.statusId == (int)ApprovalStatusEnum.Reroute && request.REQUESTSTAFFID == this.staffId) { this.fromLevelId = request.FROMAPPROVALLEVELID; }
@@ -240,7 +242,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
             {
-
                 if (next != null)
                 {
                     this.smsNotification = next.CanRecieveSMS;
@@ -416,10 +417,27 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void EndProcess(int status)
         {
-            this.statusId = status;
+            this.statusId = ResolveLastStatus(status);
             this.newStateId = (int)ApprovalState.Ended;
             this.nextLevelId = null; // even if there are other higher level which have been resolve prior
             this.keepPending = false;
+        }
+
+        private int ResolveLastStatus(int statusId)
+        {
+            switch (statusId)
+            {
+                case 0: return 2;
+                case 1: return 2;
+                case 2: return 2;
+                case 3: return 3;
+                case 4: return 2;
+                case 5: return 3;
+                case 6: return 2;
+                case 7: return 2; 
+                default: break;
+            }
+            return statusId;
         }
 
         private void ValidateCall()
@@ -484,6 +502,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.untenored == true) { return level.CANAPPROVEUNTENORED == true ? true : false; } 
             if (tenor == 0 && level.TENOR == 0) { return true; } // setup
+            if (tenor == 0 && level.TENOR == null) { return true; } // setup
             if (tenor > 0 && level.TENOR >= tenor) { return true; } // gen cam
             return false;
         }
@@ -532,7 +551,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.nextLevelId == null && this.amount == 0)
             {
-                this.EndProcess((int)ApprovalStatusEnum.Approved);
+                this.EndProcess(this.statusId);
             }
 
             if (this.keepPending == true)
