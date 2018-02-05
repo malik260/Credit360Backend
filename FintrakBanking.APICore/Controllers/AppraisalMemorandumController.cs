@@ -266,7 +266,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
+                    .OrderByDescending(x => x.newApplicationDate) // OrderBy() must be called for Skip() to work!
                     .ThenByDescending(x => x.loanApplicationId)
                     .Skip(page)
                     .Take(itemsPerPage)

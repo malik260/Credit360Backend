@@ -6564,7 +6564,7 @@ namespace FintrakBanking.Repositories.Credit
                              relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                              relationshipManagerId = a.RELATIONSHIPMANAGERID,
                              casaAccountId = a.CASAACCOUNTID,
-                             applicationDate =  a.APPLICATIONDATE,
+                             newApplicationDate =  a.APPLICATIONDATE,
                              interestRate = a.INTERESTRATE,
                              applicationTenor = a.APPLICATIONTENOR,
                              effectiveDate = a.EFFECTIVEDATE,
@@ -6617,7 +6617,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanApplicationArchive.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
                 addLoanApplicationArchive.RELATIONSHIPMANAGERID = item.relationshipManagerId;
                 addLoanApplicationArchive.CASAACCOUNTID = item.casaAccountId;
-                addLoanApplicationArchive.APPLICATIONDATE = item.applicationDate;
+                addLoanApplicationArchive.APPLICATIONDATE = item.newApplicationDate;
                 addLoanApplicationArchive.INTERESTRATE = item.interestRate;
                 addLoanApplicationArchive.APPLICATIONTENOR = (int)item.applicationTenor;
                 addLoanApplicationArchive.EFFECTIVEDATE = item.effectiveDate;
