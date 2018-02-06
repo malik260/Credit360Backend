@@ -778,7 +778,7 @@ namespace FintrakBanking.Repositories.Credit
                             disbursedBy = ln.DISBURSEDBY,
                             disburserComment = ln.DISBURSERCOMMENT,
                             disburseDate = ln.DISBURSEDATE,
-
+                            disbursableAmount = ln.PRINCIPALAMOUNT,
                             approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
 
                             customerGroupId = ln.CUSTOMERGROUPID,
@@ -804,8 +804,6 @@ namespace FintrakBanking.Repositories.Credit
                             scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
                             scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
 
-                            //customerSensitivityLevelId = ln.CUSTOMERSENSITIVITYLEVELID,
-                            //customerSensitivityLevelName = ln.TBL_CUSTOMER_SENSITIVITY_LEVEL.DESCRIPTION,
                             firstName = ln.TBL_CUSTOMER.FIRSTNAME,
                             middleName = ln.TBL_CUSTOMER.MIDDLENAME,
                             lastName = ln.TBL_CUSTOMER.LASTNAME,
@@ -821,6 +819,8 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
 
                             productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            productTypeName = ln.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
 
                             createdBy = ln.CREATEDBY,
                             creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
@@ -938,10 +938,11 @@ namespace FintrakBanking.Repositories.Credit
                             disbursedBy = ln.DISBURSEDBY,
                             disburserComment = ln.DISBURSERCOMMENT,
                             disburseDate = ln.DISBURSEDATE,
+                            loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
 
                             overdraftLimit = ln.OVERDRAFTLIMIT,
                             approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-
+                            disbursableAmount = ln.OVERDRAFTLIMIT,
                             customerGroupId = ln.CUSTOMERGROUPID,
                             loanTypeId = ln.LOANTYPEID,
 
@@ -968,6 +969,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
 
                             productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            productTypeName = ln.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
 
                             createdBy = ln.CREATEDBY,
                             creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
@@ -1067,6 +1069,7 @@ namespace FintrakBanking.Repositories.Credit
                             disburseDate = ln.DISBURSEDATE,
 
                             approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                            disbursableAmount = ln.CONTINGENTAMOUNT,
 
                             customerGroupId = ln.CUSTOMERGROUPID,
                             //operationId = ln.OperationId,
@@ -1094,7 +1097,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
 
                             productName = ln.TBL_PRODUCT.PRODUCTNAME,
-
+                            productTypeName = ln.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                             createdBy = ln.CREATEDBY,
                             creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
                             dateTimeCreated = ln.DATETIMECREATED,
@@ -1205,7 +1208,6 @@ namespace FintrakBanking.Repositories.Credit
                         feeDependentAmount = tot.FEEDEPENDENTAMOUNT
                     }).ToList();
             }
-
             return data;
              
         }
