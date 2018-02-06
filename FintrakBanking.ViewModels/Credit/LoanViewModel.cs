@@ -377,6 +377,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public DateTime applicationDate;
+
         public decimal requestedAmount { get; set; }
         public DateTime? approvalDate { get; set; }
 
@@ -437,6 +439,13 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanChargeFeeViewModel : ChargeRangeViewModel //GeneralEntity //ChargeRangeViewModel
 
     {
+        public string productName;
+        public string casaAccountName;
+        public decimal casaAccountBalance;
+        public string productTypeName;
+        public string customerName;
+        public string loanReferenceNumber;
+
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
         public short productTypeId { get; set; }

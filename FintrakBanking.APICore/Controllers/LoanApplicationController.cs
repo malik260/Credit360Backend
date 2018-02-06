@@ -189,7 +189,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetLoanApplicationById(id, token.GetCompanyId);
-              
+
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -244,7 +244,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        
+
 
         [HttpGet]
         [Route("loan-applications-details")]
@@ -322,9 +322,9 @@ namespace FintrakBanking.APICore.Controllers
                 //model.companyId = token.GetCompanyId;
                 //model.branchId = (short)token.GetBranchId;
 
-                var response = repo.UpdateApprovalStatusForApplication(id, token.GetStaffId);              
+                var response = repo.UpdateApprovalStatusForApplication(id, token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-              
+
             }
             catch (Exception ex)
             {
@@ -363,7 +363,25 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan-application-product-fees/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetLoanApplicationProductFees(int loanApplicationDetailId)
+        {
+            try
+            {
+                var response = repo.GetLoanApplicationProductFees(loanApplicationDetailId);
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpGet]
         [Route("loan/collateralrequirement/{applicationId}/{collateralCurrencyId}")]
@@ -874,7 +892,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        
+
         [HttpGet, Route("loan-application-and-offer/rejected")]
         public HttpResponseMessage GetRejectedLoanApplications()
         {
@@ -901,6 +919,25 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+        
+        [HttpPut]
+        [Route("loan-application-for-cam")]
+        public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] dynamic model)
+        {
+            try
+            {
+                var response = repo.SubmitLoanApplicationForCam(model.id, token.GetStaffId, model.checkListIndex);
+
+                bool ok = !response.isdone  ? false : true;
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = ok, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: { e.InnerException }" });
+            }
+        }
+
 
         [HttpPost]
         [Route("loan-application/review-request")]
@@ -925,7 +962,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("loan-application-fees/{loanDetailId}")]
+        [HttpGet]
+        [Route("loan-application-fees/{loanDetailId}")]
         public HttpResponseMessage GetLoanApplicationFees(int loanDetailId)
         {
             try

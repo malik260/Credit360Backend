@@ -115,14 +115,12 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var response = repo.ForwardAppraisalMemorandum(entity);
+                int response = repo.ForwardAppraisalMemorandum(entity);
 
-                if (response == true)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-                }
+                if (response == 0)
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "There was an error creating this record" });
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
             }
             catch (Exception ex)
             {
@@ -206,6 +204,21 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("appraisal-memorandum/loan-detail-fees/{loanApplicationId}")]
+        public HttpResponseMessage GetLoanDetailsFee(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetLoanDetailsFee(loanApplicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("appraisal-memorandum/loan-detail-change-log/{loanApplicationId}")]
         public HttpResponseMessage GetLoanDetailChangeLog(int loanApplicationId)
         {
@@ -253,7 +266,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
+                    .OrderByDescending(x => x.newApplicationDate) // OrderBy() must be called for Skip() to work!
                     .ThenByDescending(x => x.loanApplicationId)
                     .Skip(page)
                     .Take(itemsPerPage)

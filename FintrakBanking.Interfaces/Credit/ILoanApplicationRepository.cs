@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -58,7 +59,7 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanApplicationViewModel> GetRejectedLoanApplications(UserInfo user);
 
         string ReviewRequest(ForwardViewModel model);
-         
+
         dynamic GetCollateralRequirements(int applicationID, int? collateralCurrencyId, int companyId);
 
         bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
@@ -70,6 +71,9 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId);
 
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
+
+        LoanApplicationUpdateMessage SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
+        List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
 
         bool ProductFeesConcession(ProductFeesViewModel fees, UserInfo user);
         // decimal GetCustomerTotalOutstandingBalance(int customerId);

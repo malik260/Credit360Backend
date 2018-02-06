@@ -57,6 +57,10 @@
           <DataField>fullName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="ipAddress">
+          <DataField>ipAddress</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>LoanDataSet</rd:DataSetName>
@@ -317,7 +321,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>User's Branch</Value>
+                                  <Value>Branch</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontWeight>Bold</FontWeight>
@@ -351,7 +355,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>url</Value>
+                                  <Value>IP Adress</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontWeight>Bold</FontWeight>
@@ -607,14 +611,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="url">
+                        <Textbox Name="ipAddress">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!url.Value</Value>
+                                  <Value>=Fields!ipAddress.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                   </Style>
@@ -623,7 +627,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>url</rd:DefaultName>
+                          <rd:DefaultName>ipAddress</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>

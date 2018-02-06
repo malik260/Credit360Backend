@@ -3,6 +3,10 @@
     public class ProductFeeViewModel : GeneralEntity
     {
         public short approvalStatusId;
+        public string chargeFeeName;
+        public int feeAmount;
+        public bool isIntegralFee;
+        public bool? isRecurring;
 
         public int loanChargeFeeId { get; set; }
         public int loanApplicationDetailId { get; set; }
@@ -21,7 +25,7 @@
         public string feeIntervalName { get; set; }
         public string feeTypeName { get; set; }
         public string glAccountCode { get; set; }
-        public string glAccountName { get; set; }        
+        public string glAccountName { get; set; }
 
         public decimal rateValue { get; set; }
         public decimal? dependentAmount { get; set; }

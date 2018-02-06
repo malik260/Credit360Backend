@@ -17,15 +17,13 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_APPLICATION_ARCHIVE = new HashSet<TBL_LOAN_APPLICATION_ARCHIVE>();
             TBL_LOAN_APPLICATION = new HashSet<TBL_LOAN_APPLICATION>();
             TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
-            TBL_LOAN_ARCHIVE1 = new HashSet<TBL_LOAN_ARCHIVE>();
             TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
-            TBL_LOAN = new HashSet<TBL_LOAN>();
             TBL_LOAN_RECOVERY_PLAN = new HashSet<TBL_LOAN_RECOVERY_PLAN>();
             TBL_LOAN_REVOLVING_ARCHIVE = new HashSet<TBL_LOAN_REVOLVING_ARCHIVE>();
             TBL_LOAN_REVOLVING_ARCHIVE1 = new HashSet<TBL_LOAN_REVOLVING_ARCHIVE>();
             TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN_REVOLVING1 = new HashSet<TBL_LOAN_REVOLVING>();
-            TBL_LOAN1 = new HashSet<TBL_LOAN>();
+            TBL_LOAN = new HashSet<TBL_LOAN>();
         }
 
         [Key]
@@ -167,13 +165,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE1 { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_CONTINGENT> TBL_LOAN_CONTINGENT { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_RECOVERY_PLAN> TBL_LOAN_RECOVERY_PLAN { get; set; }
@@ -191,6 +183,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN> TBL_LOAN1 { get; set; }
+        public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
     }
 }

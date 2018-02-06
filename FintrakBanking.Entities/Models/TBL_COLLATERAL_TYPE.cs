@@ -18,7 +18,6 @@ namespace FintrakBanking.Entities.Models
             TBL_COLLATERAL_VALUEBASE_TYPE = new HashSet<TBL_COLLATERAL_VALUEBASE_TYPE>();
             TBL_PRODUCT_COLLATERALTYPE = new HashSet<TBL_PRODUCT_COLLATERALTYPE>();
             TBL_TEMP_PRODUCT_COLLATERALTYP = new HashSet<TBL_TEMP_PRODUCT_COLLATERALTYP>();
-            TBL_TEMP_PRODUCT_COLLATERALTYP1 = new HashSet<TBL_TEMP_PRODUCT_COLLATERALTYP>();
         }
 
         [Key]
@@ -72,8 +71,5 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PRODUCT_COLLATERALTYP> TBL_TEMP_PRODUCT_COLLATERALTYP { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_PRODUCT_COLLATERALTYP> TBL_TEMP_PRODUCT_COLLATERALTYP1 { get; set; }
     }
 }

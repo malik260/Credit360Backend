@@ -26,13 +26,14 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
+
         [HttpGet]
-        [Route("product-fee/all/{productId}")]
-        public HttpResponseMessage GetFeeByProduct(int productId)
+        [Route("fee/product/{id}")]
+        public HttpResponseMessage GetFee(int id)
         {
             try
             {
-                var data = repo.GetAllMappedFeeByProduct(productId);
+                var data = repo.GetFeesByProductId(id);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -46,14 +47,13 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
         [HttpGet]
-        [Route("fee/product/{id}")]
-        public HttpResponseMessage GetFee(int id)
+        [Route("product-fee/all/{productId}")]
+        public HttpResponseMessage GetFeeByProduct(int productId)
         {
             try
             {
-                var data = repo.GetFeesByProductId(id);
+                var data = repo.GetAllMappedFeeByProduct(productId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

@@ -32,7 +32,8 @@ namespace FintrakBanking.Interfaces.Setups
         #region Loan Checklist Detail
         IEnumerable<ChecklistDetailViewModel> GetAllChecklistDetail();
         IEnumerable<ChecklistDetailViewModel> GetChecklistByTargetId(int targetId);
-        IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId);
+        IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId, bool isCamChecklist);
+       // IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailById(int ChecklistId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailByProductAndTargetId(int targetTypeId, int productId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailByProductId(int targetId);

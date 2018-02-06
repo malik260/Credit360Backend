@@ -276,7 +276,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public bool ForwardAppraisalMemorandum(ForwardViewModel model)
+        public int ForwardAppraisalMemorandum(ForwardViewModel model)
         {
             bool updateApprovedAmount = false;
             int operationId = (int)OperationsEnum.CAM;
@@ -303,6 +303,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
             workflow.Untenored = model.untenored;
+            workflow.InterestRateConcession = model.interestRateConcession;
+            workflow.FeeRateConcession = model.feeRateConcession;
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
@@ -399,7 +401,12 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             if (model.comment == "debug_test") throw new Exception("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
-            return context.SaveChanges() > 0;
+
+            context.SaveChanges();
+
+            if (workflow.NewState == (int)ApprovalState.Ended) { return workflow.StatusId; }
+
+            return (int)ApprovalStatusEnum.Processing; // default for now
         }
 
         private string LineItemChanges(List<RecommendedChangesViewModel> recommendedChanges)
@@ -520,6 +527,28 @@ namespace FintrakBanking.Repositories.Credit
             return details;
         }
 
+        public IEnumerable<LoanDetailsFeeViewModel> GetLoanDetailsFee(int applicationId)
+        {
+            var fees = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .SelectMany(x => x.TBL_LOAN_APPLICATION_DETAIL)
+                .SelectMany(x => x.TBL_LOAN_APPLICATION_DETL_FEE)
+                .Select(x => new LoanDetailsFeeViewModel
+                {
+                    loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    loanChargeFeeId = x.LOANCHARGEFEEID,
+                    chargeFeeId = x.CHARGEFEEID,
+                    hasConcession = x.HASCONSESSION,
+                    concessionReason = x.CONSESSIONREASON,
+                    defaultFeeRate = x.DEFAULT_FEERATEVALUE,
+                    recommendedFeeRate = x.RECOMMENDED_FEERATEVALUE,
+                    statusId = x.APPROVALSTATUSID,
+                    approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                    feeName = x.TBL_CHARGE_FEE.CHARGEFEENAME,
+                });
+
+            return fees;
+        }
+
         public IEnumerable<LoanApplicationDetailLogViewModel> GetLoanDetailChangeLog(int applicationId)
         {
             var details = context.TBL_LOAN_APPLICATION_DETL_LOG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
@@ -600,11 +629,11 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region CAM Pending Applications
-        
+
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int companyId, int branchId, int staffId, int? classId)
         {
             // var declarations
-            IQueryable < LoanApplicationViewModel > applications = null;
+            IQueryable<LoanApplicationViewModel> applications = null;
             int operationId = (int)OperationsEnum.CAM;
             bool isHeadOffice = (branchId == 1) ? true : false;
 
@@ -619,8 +648,8 @@ namespace FintrakBanking.Repositories.Credit
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                 )
             .GroupJoin(
-                context.TBL_APPROVAL_TRAIL.Where(x => 
-                    x.OPERATIONID == operationId 
+                context.TBL_APPROVAL_TRAIL.Where(x =>
+                    x.OPERATIONID == operationId
                     && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
                 ),
                 a => a.LOANAPPLICATIONID,
@@ -642,7 +671,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanTypeId = x.a.LOANTYPEID,
                     relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
-                    applicationDate = x.a.APPLICATIONDATE,
+                    newApplicationDate = x.a.APPLICATIONDATE,
                     applicationAmount = x.a.APPLICATIONAMOUNT,
                     approvedAmount = x.a.APPROVEDAMOUNT,
                     interestRate = x.a.INTERESTRATE,
@@ -672,14 +701,14 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .OrderByDescending(x => x.applicationDate)
+                .OrderByDescending(x => x.newApplicationDate)
                 .ThenByDescending(x => x.loanApplicationId)
                 ;
 
             //var list = applications.ToList();
             //var count = applications.Count();
             //var levs = levelIds.ToList();
-            
+
             return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId));
         }
 
@@ -884,7 +913,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return productClasses;
         }
-        
+
         public bool GetUntenoredStatus(int applicationId)
         {
             var detail = context.TBL_LOAN_APPLICATION_DETL_BG
@@ -912,7 +941,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (scope == 2)
             {
-                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.GROUPID)).Select(x => x.GROUPID).Distinct();
+                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
                 return context.TBL_APPROVAL_LEVEL.Where(x => groups.Contains(x.GROUPID)).Select(x => x.APPROVALLEVELID).Distinct();
             }
 
