@@ -4128,6 +4128,12 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.OVERDRAWNGL);
 
             modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
+                .HasMany(e => e.TBL_SETUP_COMPANY)
+                .WithRequired(e => e.TBL_CHART_OF_ACCOUNT)
+                .HasForeignKey(e => e.LEGAL_CHARGE_GLACCOUNTID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
                 .HasMany(e => e.TBL_TAX)
                 .WithRequired(e => e.TBL_CHART_OF_ACCOUNT)
                 .WillCascadeOnDelete(false);

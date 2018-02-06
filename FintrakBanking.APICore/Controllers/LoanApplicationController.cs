@@ -342,7 +342,25 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan-application-product-fees/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetLoanApplicationProductFees(int loanApplicationDetailId)
+        {
+            try
+            {
+                var response = repo.GetLoanApplicationProductFees(loanApplicationDetailId);
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpGet]
         [Route("loan/collateralrequirement/{applicationId}/{collateralCurrencyId}")]
@@ -790,28 +808,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion Loan Collateral
-
-       
-        [HttpGet]
-        [Route("loan-application-product-fees/{loanApplicationDetailId}")]
-        public HttpResponseMessage GetLoanApplicationProductFees(int loanApplicationDetailId)
-        {
-            try
-            {
-                var response = repo.GetLoanApplicationProductFees(loanApplicationDetailId);
-                if (response == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-
 
         [HttpGet]
         [Route("loan-application-details-product/{loanApplicationDetailId}")]

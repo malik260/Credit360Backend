@@ -19,6 +19,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerId { get; set; }
         public int? operationId { get; set; }
 
+        public DateTime newApplicationDate { get; set; }
+        
         public short? branchId { get; set; }
         public short? productClassId { get; set; }
         public string productClassName { get; set; }
@@ -33,7 +35,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatus { get; set; }
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
-        public DateTime newApplicationDate { get; set; }
+        public DateTime applicationDate { get; set; }
         public decimal applicationAmount { get; set; }
         public decimal approvedAmount { get; set; }
         public double applicationTenor { get; set; }
@@ -223,7 +225,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerName { get; set; }
         public int feeId { get; set; }
         public string feeName { get; set; }
-        public decimal  rate { get; set; } 
+        public decimal rate { get; set; }
     }
 
     public class BondsAndGuranty

@@ -539,9 +539,11 @@ namespace FintrakBanking.Repositories.Credit
                     chargeFeeId = x.CHARGEFEEID,
                     hasConcession = x.HASCONSESSION,
                     concessionReason = x.CONSESSIONREASON,
-                    proposedFeeRate = x.DEFAULT_FEERATEVALUE,
+                    defaultFeeRate = x.DEFAULT_FEERATEVALUE,
                     recommendedFeeRate = x.RECOMMENDED_FEERATEVALUE,
                     statusId = x.APPROVALSTATUSID,
+                    approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                    feeName = x.TBL_CHARGE_FEE.CHARGEFEENAME,
                 });
 
             return fees;
