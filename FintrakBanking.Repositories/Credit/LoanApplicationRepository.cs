@@ -169,6 +169,22 @@ namespace FintrakBanking.Repositories.Credit
         {
             return GetLoanApplications(companyId).Where(c => c.loanApplicationId == loanApplicationId).ToList();
         }
+        public dynamic GetLoanAppById(int loanApplicationDetailId, int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION
+                        where a.LOANAPPLICATIONID == loanApplicationDetailId  &&  a.TBL_COMPANY.COMPANYID  == companyId && a.DELETED == false 
+                        select new 
+                        {
+                            applicationAmount = a.APPLICATIONAMOUNT ,
+                            tenor = a.APPLICATIONTENOR,
+                            customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerId = a.CUSTOMERID, 
+                            customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            applicationDate = a.APPLICATIONDATE,
+                            applicationRef = a.APPLICATIONREFERENCENUMBER
+                        }).FirstOrDefault();
+            return data;
+        }
 
         public IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationDetailId, int companyId)
         {
@@ -468,113 +484,11 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == loanStatusId).SingleOrDefault()
                 .ACCOUNTSTATUS;
         }
-
-        //public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
-        //{
-        //    LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
-        //    string str = string.Empty;
-
-        //    bool isCheckListDone = true;
-        //    var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
-        //    if (dat != null)
-        //    {
-        //        foreach (var d in dat)
-        //        {
-        //            var types = from a in context.TBL_CHECKLIST_TYPE select a;
-        //            foreach (var item in types)
-        //            {
-        //                //var detail = from a in context.TBL_CHECKLIST_DEFINITION
-        //                //             join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
-        //                //             equals b.CHECKLISTDEFINITIONID
-        //                //             where b.TARGETID == applicationId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
-        //                //             && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID == d.TBL_LOAN_APPLICATION.OPERATIONID
-        //                //             select a;
-        //                //var definition = from a in context.TBL_CHECKLIST_DEFINITION
-        //                //                 where a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID &&
-        //                //                 (a.PRODUCTID == d.APPROVEDPRODUCTID || a.PRODUCTID == null) &&
-        //                //                 a.OPERATIONID == d.TBL_LOAN_APPLICATION.OPERATIONID
-        //                //                 select a;
-        //                int targetId = 0;
-        //                if (item.ISPRODUCT_BASED)
-        //                {
-        //                    targetId = d.LOANAPPLICATIONDETAILID;
-        //                }
-        //                else
-        //                {
-        //                    targetId = applicationId;
-        //                }
-
-        //                var detail = from a in context.TBL_CHECKLIST_DEFINITION
-        //                             join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
-        //                             equals b.CHECKLISTDEFINITIONID
-        //                             where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
-        //                             && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
-        //                             select a;
-        //                var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
-
-        //                var definition = from a in context.TBL_CHECKLIST_DEFINITION
-        //                                 join b in context.TBL_APPROVAL_LEVEL_STAFF on
-        //              a.APPROVALLEVELID equals b.APPROVALLEVELID
-        //                                 where b.STAFFID == staffId
-        //                                 where a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID &&
-        //                                a.PRODUCTID == PRODUCTID &&
-        //                                 a.OPERATIONID == (int)OperationsEnum.LoanApplication
-        //                                 select a;
-        //                int i, j;
-        //                i = definition.Count(); j = detail.Count();
-        //                if (definition.Count() != detail.Count())
-        //                {
-        //                    isCheckListDone = false;
-        //                    str = str + "<br/>" + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
-        //                }
-        //            }
-        //        }
-        //    }
-        //    if (isCheckListDone)
-        //    {
-        //        var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
-        //        appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
-
-        //        // ----------------Drop into CAM-------------------
-        //        workflow.StaffId = staffId;
-        //        workflow.OperationId = (int)OperationsEnum.CAM;
-        //        workflow.TargetId = appl.LOANAPPLICATIONID;
-        //        workflow.CompanyId = appl.COMPANYID;
-        //        workflow.ProductClassId = appl.PRODUCTCLASSID;
-        //        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-        //        workflow.Comment = "New Loan Application";
-        //        workflow.ExternalInitialization = true;
-        //        workflow.DeferredExecution = true;
-        //        workflow.LogActivity();
-        //        // ----------------Drop into CAM ends-------------------
-
-        //    }
-        //    else
-        //    {
-        //        return new LoanApplicationUpdateMessage
-        //        {
-        //            isdone = isCheckListDone,
-        //            messageStr = str
-
-        //        };
-        //    }
-        //    if (context.SaveChanges() != 0)
-        //    {
-        //        result = new LoanApplicationUpdateMessage
-        //        {
-        //            isdone = isCheckListDone,
-        //            messageStr = str
-
-        //        };
-        //    }
-        //    return result;
-        //}
-
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
             string str = string.Empty;
-
+            int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             bool isCheckListDone = true;
             var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
             if (dat != null)
@@ -628,6 +542,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             isCheckListDone = false;
                             str = str + "<br/>" + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                            checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
                         }
                         else
                         {
@@ -639,6 +554,7 @@ namespace FintrakBanking.Repositories.Credit
                                     str = str + "<br/> One or More " + item.CHECKLIST_TYPE_NAME + " " + "item(s) did not meet up with the condition."
                                         + " Please Check your response to confirm.";
                                 }
+                                checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
                             }
                         }
                     }
@@ -646,20 +562,8 @@ namespace FintrakBanking.Repositories.Credit
             }
             if (isCheckListDone)
             {
-                var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
-                appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+                return SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex);
 
-                // ----------------Drop into CAM-------------------
-                workflow.StaffId = staffId;
-                workflow.OperationId = (int)OperationsEnum.CAM;
-                workflow.TargetId = appl.LOANAPPLICATIONID;
-                workflow.CompanyId = appl.COMPANYID;
-                workflow.ProductClassId = appl.PRODUCTCLASSID;
-                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                workflow.Comment = "New Loan Application";
-                workflow.ExternalInitialization = true;
-                workflow.DeferredExecution = true;
-                workflow.LogActivity();
                 // ----------------Drop into CAM ends-------------------
 
             }
@@ -668,10 +572,39 @@ namespace FintrakBanking.Repositories.Credit
                 return new LoanApplicationUpdateMessage
                 {
                     isdone = isCheckListDone,
-                    messageStr = str
+                    messageStr = str,
+                    checkListIndex = checkListIndex ,
 
                 };
             }
+           
+        }
+     
+            
+
+        public LoanApplicationUpdateMessage SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
+        {
+            LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
+            string str = string.Empty;
+
+            bool isCheckListDone = true;
+            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+            appl.PRODUCTCLASSID = (checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist ? null : appl.PRODUCTCLASSID);
+
+            // ----------------Drop into CAM-------------------
+            workflow.StaffId = staffId;
+            workflow.OperationId = (int)OperationsEnum.CAM;
+            workflow.TargetId = appl.LOANAPPLICATIONID;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.Comment = "New Loan Application";
+            workflow.ExternalInitialization = true;
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
             if (context.SaveChanges() != 0)
             {
                 result = new LoanApplicationUpdateMessage
@@ -681,9 +614,17 @@ namespace FintrakBanking.Repositories.Credit
 
                 };
             }
+            else
+            {
+                result = new LoanApplicationUpdateMessage
+                {
+                    isdone = false,
+                    messageStr = str
+
+                };
+            }
             return result;
         }
-
 
         public int AddLoanApplication(LoanApplicationViewModel loan)
         {

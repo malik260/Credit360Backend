@@ -112,6 +112,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public bool isdone { get; set; }
         public string messageStr { get; set; }
+        public int checkListIndex { get; set; }
     }
 
     public class CollateralLenPlacementViewModel : GeneralEntity
