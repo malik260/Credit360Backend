@@ -249,6 +249,7 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_STA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_TRA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATN_DETL_MTRIG.cs" />
     <Compile Include="Models\TBL_LOAN_APPLTN_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_BOOKING_REQUEST.cs" />
