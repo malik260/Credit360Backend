@@ -1091,7 +1091,6 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }               
             }
-           // else { return false; }
 
             context.SaveChanges();
 
