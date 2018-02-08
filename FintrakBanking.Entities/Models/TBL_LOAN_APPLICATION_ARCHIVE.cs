@@ -23,8 +23,6 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOANPRELIMINARYEVALUATIONID { get; set; }
 
-        //public DateTime? newApplicationDate { get; set; }
-
         public int COMPANYID { get; set; }
 
         public int? CUSTOMERID { get; set; }
