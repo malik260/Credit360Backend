@@ -33,7 +33,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ChecklistDetailViewModel> GetAllChecklistDetail();
         IEnumerable<ChecklistDetailViewModel> GetChecklistByTargetId(int targetId);
         IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId, bool isCamChecklist);
-       // IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId);
+        // IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailById(int ChecklistId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailByProductAndTargetId(int targetTypeId, int productId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailByProductId(int targetId);
@@ -73,5 +73,11 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int companyId);
         IEnumerable<DeferredChecklistViewModel> GetAllDeferralChecklist();
         IEnumerable<DeferredChecklistViewModel> GetDeferralChecklistByConditionId(int conditionId);
+
+        #region Checklist Type Mapping
+        IEnumerable<CheckListTypeMappingViewModel> GetAllChecklistTypeMapping();
+        bool AddChecklistTypeMapping(CheckListTypeMappingViewModel model);
+        bool ValidateChecklistTypeMapping(short checklistTypeId, int approvallevelId);
+        #endregion
     }
 }
