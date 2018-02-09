@@ -39,6 +39,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerCreditBureauId;
         public int? companyDirectorId;
         public string companyDirectorName;
+        public bool usedIntegration;
+        public bool isReportOkay;
 
         public int applicationCreditBureauId { get; set; }
         public int loanApplicationId { get; set; }

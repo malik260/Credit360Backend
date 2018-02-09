@@ -925,7 +925,9 @@ namespace FintrakBanking.Repositories.Credit
                 CHARGEAMOUNT = entity.chargeAmount,
                 CREDITBUREAUID = entity.creditBureauId,
                 CUSTOMERID = entity.customerId,
-                ISCOMPLETED = entity.isComplete,
+                ISREPORTOKAY = entity.isReportOkay,
+                USEDINTEGRATION = entity.usedIntegration,
+                //ISCOMPLETED = entity.isComplete,
                 DATECOMPLETED = entity.dateCompleted,
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = entity.createdBy
@@ -965,7 +967,8 @@ namespace FintrakBanking.Repositories.Credit
                                                    chargeAmount = a.CHARGEAMOUNT,
                                                    customerId = a.CUSTOMERID,
                                                    creditBureauId = a.CREDITBUREAUID,
-                                                   isComplete = a.ISCOMPLETED,
+                                                   isReportOkay = a.ISREPORTOKAY,
+                                                   usedIntegration = a.USEDINTEGRATION,
                                                    dateCompleted = (DateTime)a.DATECOMPLETED,
                                                    dateTimeCreated = a.DATETIMECREATED,
                                                    createdBy = a.CREATEDBY
