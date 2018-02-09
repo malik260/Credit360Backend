@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
@@ -91,6 +92,7 @@ namespace FintrakBanking.Repositories.Customer
                 CUSTOMERBVN = entity.customerBVN
             };
             context.TBL_CUSTOMER.Add(customer);
+
             //customerId = customer.CUSTOMERID;
 
             //status = 1;
@@ -1285,7 +1287,7 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerViewModels> GetSimpleCustomerDetailsByCustomerId(int customerId)
         {
             return from a in context.TBL_CUSTOMER
-                   where a.DELETED == false && a.CUSTOMERID ==customerId
+                   where a.DELETED == false && a.CUSTOMERID == customerId
                    select
                    new CustomerViewModels
                    {
@@ -1584,9 +1586,29 @@ namespace FintrakBanking.Repositories.Customer
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
-
+            List<ChangeTrackingViewModel> kk = new List<ChangeTrackingViewModel>();
             auditTrail.AddAuditTrail(audit);
 
+            var currentData = context.Entry(customer).CurrentValues;
+            var originalData = context.Entry(customer).OriginalValues;
+            foreach (string propertyName in originalData.PropertyNames)
+            {
+                var original = originalData[propertyName];
+                var current = currentData[propertyName];
+
+                if (!Equals(original, current))
+                {
+                    kk.Add(new ChangeTrackingViewModel()
+                    {
+                        customerId = customer.CUSTOMERID,
+                        propertyName = propertyName,
+                        propertyOriginalValue = original.ToString(),
+                        propertyCurrentValue = current.ToString(),
+                    });
+                }
+            }
+
+            var diff = kk.ToList();
             return context.SaveChanges() != 0;
 
         }
@@ -1899,7 +1921,7 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
                                         taxNumber = s.TAX_NUMBER,
-                                       
+
                                         companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                         customerId = s.CUSTOMERID,
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
@@ -2177,6 +2199,8 @@ namespace FintrakBanking.Repositories.Customer
             return response;
         }
         #endregion
+
+
     }
 }
 
