@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_CUSTOMER_COMPANY_DIRECTOR()
         {
             TBL_CUSTOMER_COMPANY_BENEFICIA = new HashSet<TBL_CUSTOMER_COMPANY_BENEFICIA>();
+            TBL_CUSTOMER_CREDIT_BUREAU = new HashSet<TBL_CUSTOMER_CREDIT_BUREAU>();
         }
 
         [Key]
@@ -76,5 +77,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CUSTOMER_COMPANY_DIREC_TYP TBL_CUSTOMER_COMPANY_DIREC_TYP { get; set; }
 
         public virtual TBL_CUSTOMER_TYPE TBL_CUSTOMER_TYPE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CUSTOMER_CREDIT_BUREAU> TBL_CUSTOMER_CREDIT_BUREAU { get; set; }
     }
 }

@@ -18,10 +18,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string SECURITYTYPE { get; set; }
 
-        [Required]
-        [StringLength(20)]
-        public string DEALREFERENCENUMBER { get; set; }
-
         public DateTime EFFECTIVEDATE { get; set; }
 
         public DateTime MATURITYDATE { get; set; }
@@ -42,6 +38,9 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string ISSUERREFERENCENUMBER { get; set; }
+
+        [StringLength(150)]
+        public string FUNDNAME { get; set; }
 
         [Column(TypeName = "money")]
         public decimal UNITVALUE { get; set; }

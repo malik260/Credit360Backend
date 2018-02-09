@@ -14,8 +14,6 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
-        public bool ISOWNEDBYCUSTOMER { get; set; }
-
         [Required]
         [StringLength(50)]
         public string INSTITUTIONNAME { get; set; }
@@ -23,9 +21,6 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(250)]
         public string GUARANTORADDRESS { get; set; }
-
-        [StringLength(50)]
-        public string GUARANTORREFERENCENUMBER { get; set; }
 
         [Column(TypeName = "money")]
         public decimal GUARANTEEVALUE { get; set; }

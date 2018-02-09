@@ -583,12 +583,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("credit-bureau-charges/{customerId}/application/{loanApplicationId}")]
-        public HttpResponseMessage GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId)
+        [Route("credit-bureau-charges/{customerId}")]
+        public HttpResponseMessage GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId)
         {
             try
             {
-                var data = repo.GetCustomerLoanCreditBureauReportChargesByApplicationId(customerId, loanApplicationId);
+                var data = repo.GetCustomerLoanCreditBureauReportChargesByApplicationId(customerId);
 
                 if (!data.Any())
                 {

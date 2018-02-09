@@ -910,7 +910,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
         {
-            var previousSearch = this.GetCustomerLoanCreditBureauReportChargesByApplicationId(entity.customerId, entity.loanApplicationId);
+            var previousSearch = this.GetCustomerLoanCreditBureauReportChargesByApplicationId(entity.customerId);
             bool hascrms = false;
             foreach (var i in previousSearch)
             {
@@ -919,9 +919,9 @@ namespace FintrakBanking.Repositories.Credit
             if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
                 throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
 
-            var data = new TBL_LOAN_APPLTN_CREDIT_BUREAU()
+            var data = new TBL_CUSTOMER_CREDIT_BUREAU()
             {
-                LOANAPPLICATIONID = entity.loanApplicationId,
+                COMPANYDIRECTORID = entity.companyDirectorId,
                 CHARGEAMOUNT = entity.chargeAmount,
                 CREDITBUREAUID = entity.creditBureauId,
                 CUSTOMERID = entity.customerId,
@@ -930,7 +930,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = entity.createdBy
             };
-            context.TBL_LOAN_APPLTN_CREDIT_BUREAU.Add(data);
+            context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
             return context.SaveChanges() > 0;
         }
 
@@ -949,17 +949,17 @@ namespace FintrakBanking.Repositories.Credit
                                        useIntegration = a.USEINTEGRATION,
                                        appliedSearchForLoan = false,
                                    };
-
             return creditBureauList;
         }
 
-        public List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId)
+        public List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId)
         {
-            var customerLoanCreditBureauData = from a in context.TBL_LOAN_APPLTN_CREDIT_BUREAU
-                                               where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == loanApplicationId
+            var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
+                                               where a.CUSTOMERID == customerId && a.DELETED == false
                                                select new LoanCreditBereauViewModel
                                                {
-                                                   loanApplicationId = a.LOANAPPLICATIONID,
+                                                   companyDirectorId = a.COMPANYDIRECTORID,
+                                                   companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
                                                    chargeAmount = a.CHARGEAMOUNT,
                                                    customerId = a.CUSTOMERID,
                                                    creditBureauId = a.CREDITBUREAUID,
