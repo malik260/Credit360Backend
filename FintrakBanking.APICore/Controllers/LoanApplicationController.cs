@@ -423,11 +423,11 @@ namespace FintrakBanking.APICore.Controllers
                     }
 
 
-                  var customerLimit =  creditLimitValidationsRepository.ValidateNPLByCustomer((int)entity.customerId.Value);
-                    if( (customerLimit.outstandingBalance + (double)entity.LoanApplicationDetail.Sum(c=> c.proposedAmount)) > customerLimit.limit)
-                    {
-                        throw new Exception("Total amount excides customer Limit");
-                    }
+                  //var customerLimit =  creditLimitValidationsRepository.ValidateNPLByCustomer((int)entity.customerId.Value);
+                  //  if( (customerLimit.outstandingBalance + (double)entity.LoanApplicationDetail.Sum(c=> c.proposedAmount)) > customerLimit.limit)
+                  //  {
+                  //      throw new Exception("Total amount excides customer Limit");
+                  //  }
 
 
 

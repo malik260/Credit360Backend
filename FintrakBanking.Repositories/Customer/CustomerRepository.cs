@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
@@ -91,6 +92,7 @@ namespace FintrakBanking.Repositories.Customer
                 CUSTOMERBVN = entity.customerBVN
             };
             context.TBL_CUSTOMER.Add(customer);
+
             //customerId = customer.CUSTOMERID;
 
             //status = 1;
@@ -680,6 +682,8 @@ namespace FintrakBanking.Repositories.Customer
                                 {
                                     SURNAME = item.surname,
                                     FIRSTNAME = item.firstname,
+                                    MIDDLENAME = item.middlename,
+                                    CUSTOMERNIN = item.customerNIN,
                                     CUSTOMERBVN = item.bankVerificationNumber,
                                     NUMBEROFSHARES = item.numberOfShares,
                                     ISPOLITICALLYEXPOSED = item.isPoliticallyExposed,
@@ -707,6 +711,8 @@ namespace FintrakBanking.Repositories.Customer
                             directors.CUSTOMERID = entity.customerId;
                             directors.SURNAME = entity.surname;
                             directors.FIRSTNAME = entity.firstname;
+                            directors.MIDDLENAME = entity.middlename;
+                            directors.CUSTOMERNIN = entity.customerNIN;
                             directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                             directors.CUSTOMERBVN = entity.bankVerificationNumber;
                             directors.SHAREHOLDINGPERCENTAGE = entity.numberOfShares;
@@ -726,6 +732,8 @@ namespace FintrakBanking.Repositories.Customer
                         directors.CUSTOMERID = entity.customerId;
                         directors.SURNAME = entity.surname;
                         directors.FIRSTNAME = entity.firstname;
+                        directors.MIDDLENAME = entity.middlename;
+                        directors.CUSTOMERNIN = entity.customerNIN;
                         directors.CUSTOMERTYPEID = entity.customerTypeId;
                         directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                         directors.CUSTOMERBVN = entity.bankVerificationNumber;
@@ -875,6 +883,7 @@ namespace FintrakBanking.Repositories.Customer
                             clientSupplier.REGISTRATION_NUMBER = entity.rcNumber;
                             clientSupplier.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
                             clientSupplier.CASA_ACCOUNTNO = entity.casaAccountNumber;
+                            clientSupplier.BANKNAME = entity.bankName;
                             clientSupplier.NATURE_OF_BUSINESS = entity.natureOfBusiness;
                             clientSupplier.CONTACT_PERSON = entity.contactPerson;
                             clientSupplier.ADDRESS = entity.client_SupplierAddress;
@@ -898,6 +907,7 @@ namespace FintrakBanking.Repositories.Customer
                         clientSupplier.EMAILADDRESS = entity.client_SupplierEmail;
                         clientSupplier.TAX_NUMBER = entity.taxNumber;
                         clientSupplier.REGISTRATION_NUMBER = entity.rcNumber;
+                        clientSupplier.BANKNAME = entity.bankName;
                         clientSupplier.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
                         clientSupplier.CASA_ACCOUNTNO = entity.casaAccountNumber;
                         clientSupplier.NATURE_OF_BUSINESS = entity.natureOfBusiness;
@@ -1150,6 +1160,8 @@ namespace FintrakBanking.Repositories.Customer
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
+                           middlename = s.MIDDLENAME,
+                           customerNIN = s.CUSTOMERNIN,
                            numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
@@ -1167,6 +1179,8 @@ namespace FintrakBanking.Repositories.Customer
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
+                           middlename = s.MIDDLENAME,
+                           customerNIN = s.CUSTOMERNIN,
                            numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
@@ -1184,6 +1198,8 @@ namespace FintrakBanking.Repositories.Customer
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
+                           middlename = s.MIDDLENAME,
+                           customerNIN = s.CUSTOMERNIN,
                            numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
@@ -1199,13 +1215,14 @@ namespace FintrakBanking.Repositories.Customer
                        .Select(cs => new CustomerClientOrSupplierViewModels()
                        {
                            client_SupplierId = cs.CLIENT_SUPPLIERID,
-                           clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                           clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
                            firstName = cs.FIRSTNAME,
                            middleName = cs.MIDDLENAME,
                            lastName = cs.LASTNAME,
                            taxNumber = cs.TAX_NUMBER,
                            rcNumber = cs.REGISTRATION_NUMBER,
                            hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
+                           bankName = cs.BANKNAME,
                            casaAccountNumber = cs.CASA_ACCOUNTNO,
                            natureOfBusiness = cs.NATURE_OF_BUSINESS,
                            contactPerson = cs.CONTACT_PERSON,
@@ -1219,13 +1236,14 @@ namespace FintrakBanking.Repositories.Customer
                        .Select(cs => new CustomerSupplierViewModels()
                        {
                            client_SupplierId = cs.CLIENT_SUPPLIERID,
-                           clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                           clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
                            firstName = cs.FIRSTNAME,
                            middleName = cs.MIDDLENAME,
                            lastName = cs.LASTNAME,
                            taxNumber = cs.TAX_NUMBER,
                            rcNumber = cs.REGISTRATION_NUMBER,
                            hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
+                           bankName = cs.BANKNAME,
                            casaAccountNumber = cs.CASA_ACCOUNTNO,
                            contactPerson = cs.CONTACT_PERSON,
                            natureOfBusiness = cs.NATURE_OF_BUSINESS,
@@ -1269,7 +1287,7 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerViewModels> GetSimpleCustomerDetailsByCustomerId(int customerId)
         {
             return from a in context.TBL_CUSTOMER
-                   where a.DELETED == false && a.CUSTOMERID ==customerId
+                   where a.DELETED == false && a.CUSTOMERID == customerId
                    select
                    new CustomerViewModels
                    {
@@ -1568,9 +1586,29 @@ namespace FintrakBanking.Repositories.Customer
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
-
+            List<ChangeTrackingViewModel> kk = new List<ChangeTrackingViewModel>();
             auditTrail.AddAuditTrail(audit);
 
+            var currentData = context.Entry(customer).CurrentValues;
+            var originalData = context.Entry(customer).OriginalValues;
+            foreach (string propertyName in originalData.PropertyNames)
+            {
+                var original = originalData[propertyName];
+                var current = currentData[propertyName];
+
+                if (!Equals(original, current))
+                {
+                    kk.Add(new ChangeTrackingViewModel()
+                    {
+                        customerId = customer.CUSTOMERID,
+                        propertyName = propertyName,
+                        propertyOriginalValue = original.ToString(),
+                        propertyCurrentValue = current.ToString(),
+                    });
+                }
+            }
+
+            var diff = kk.ToList();
             return context.SaveChanges() != 0;
 
         }
@@ -1875,12 +1913,15 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorId = s.COMPANYDIRECTORID,
                                         surname = s.SURNAME,
                                         firstname = s.FIRSTNAME,
+                                        middlename = s.MIDDLENAME,
+                                        customerNIN = s.CUSTOMERNIN,
                                         numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                                         bankVerificationNumber = s.CUSTOMERBVN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
                                         taxNumber = s.TAX_NUMBER,
+
                                         companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                         customerId = s.CUSTOMERID,
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
@@ -1913,6 +1954,8 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorId = s.COMPANYDIRECTORID,
                                         surname = s.SURNAME,
                                         firstname = s.FIRSTNAME,
+                                        middlename = s.MIDDLENAME,
+                                        customerNIN = s.CUSTOMERNIN,
                                         numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                                         bankVerificationNumber = s.CUSTOMERBVN,
@@ -1937,13 +1980,14 @@ namespace FintrakBanking.Repositories.Customer
                                         customerTypeId = cs.CUSTOMERTYPEID,
                                         customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
                                         client_SupplierId = cs.CLIENT_SUPPLIERID,
-                                        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                                        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
                                         firstName = cs.FIRSTNAME,
                                         middleName = cs.MIDDLENAME,
                                         lastName = cs.LASTNAME,
                                         taxNumber = cs.TAX_NUMBER,
                                         rcNumber = cs.REGISTRATION_NUMBER,
                                         hasCASAAccount = cs.HAS_CASA_ACCOUNT,
+                                        bankName = cs.BANKNAME,
                                         casaAccountNumber = cs.CASA_ACCOUNTNO,
                                         contactPerson = cs.CONTACT_PERSON,
                                         natureOfBusiness = cs.NATURE_OF_BUSINESS,
@@ -2155,6 +2199,8 @@ namespace FintrakBanking.Repositories.Customer
             return response;
         }
         #endregion
+
+
     }
 }
 
