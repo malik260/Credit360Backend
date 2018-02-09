@@ -105,12 +105,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountNumber { get; set; }
         public string applicationStatus { get; set; }
         public string relatedReferenceNumber { get; set; }
+        public int? toStaffId { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
     {
         public bool isdone { get; set; }
         public string messageStr { get; set; }
+        public int checkListIndex { get; set; }
     }
 
     public class CollateralLenPlacementViewModel : GeneralEntity

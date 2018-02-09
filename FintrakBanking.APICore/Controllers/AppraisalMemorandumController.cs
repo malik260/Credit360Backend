@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Http;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -406,5 +407,42 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        #region MONITORING TRIGGERS
+
+        [HttpGet]
+        [Route("application-monitoring-triggers/{applicationId}")]
+        public HttpResponseMessage GetApplicationMonitoringTriggers(int applicationId)
+        {
+            try
+            {
+                var response = repo.GetApplicationMonitoringTriggers(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("application-monitoring-triggers/{applicationId}")]
+        public HttpResponseMessage SaveApplicationMonitoringTriggers(int applicationId, [FromBody] List<MonitoringTriggersViewModel> entity)
+        {
+            try
+            {
+                var response = repo.SaveApplicationMonitoringTriggers(applicationId, entity, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion MONITORING TRIGGERS
+
+
+
     }
 }

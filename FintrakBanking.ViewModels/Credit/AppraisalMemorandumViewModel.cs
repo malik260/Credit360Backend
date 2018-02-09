@@ -213,4 +213,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string feeName { get; set; }
     }
 
+    public class MonitoringTriggersViewModel
+    {
+        public int applicationDetailId { get; set; }
+        public string monitoringTrigger { get; set; }
+        public int? monitoringTriggerId { get; set; }
+        public string productCustomerName { get; set; }
+    }
+
 }
