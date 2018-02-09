@@ -73,6 +73,7 @@
     <Compile Include="Enum\CompanyDirectorTypeEnum.cs" />
     <Compile Include="Enum\CreditBureauEnum.cs" />
     <Compile Include="Enum\CustomerInformationEnum.cs" />
+    <Compile Include="Enum\CustomerInformationTrackerEnum.cs" />
     <Compile Include="Enum\DailyAccuralCategory.cs" />
     <Compile Include="Enum\DayCountConventionEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />

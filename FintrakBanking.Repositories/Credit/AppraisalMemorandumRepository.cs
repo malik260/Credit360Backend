@@ -648,10 +648,7 @@ namespace FintrakBanking.Repositories.Credit
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                 )
             .GroupJoin(
-                context.TBL_APPROVAL_TRAIL.Where(x =>
-                    x.OPERATIONID == operationId
-                    && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                ),
+                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,
                 (x, y) => new { a = x, bs = y })
@@ -681,6 +678,7 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalLevelId = y.TOAPPROVALLEVELID,
                     currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                     approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
+                    toStaffId = y.TOSTAFFID,
                     loanInformation = x.a.LOANINFORMATION,
                     submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                     customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
@@ -709,7 +707,7 @@ namespace FintrakBanking.Repositories.Credit
             //var count = applications.Count();
             //var levs = levelIds.ToList();
 
-            return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId));
+            return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
         #endregion CAM Pending Applications
@@ -869,20 +867,23 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user)
         {
+            int staffId = user.staffId;
             bool isHeadOffice = (user.BranchId == 1) ? true : false;
             int operationId = (int)OperationsEnum.CAM;
             var levelIds = GetStaffApprovalLevelIds(user.staffId, operationId);// new int[] {3,1,5};
             int productBasedId = (int)ProductClassProcessEnum.ProductBased;
 
             var applications = context.TBL_LOAN_APPLICATION.Where(x =>
-                x.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == productBasedId
+                x.DELETED == false
+                && x.COMPANYID == user.companyId
                 && (x.BRANCHID == user.BranchId || isHeadOffice) // branch filter
-                && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                && x.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == productBasedId
                 && x.PRODUCTCLASSID != null
+                //&& x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                //&& x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
             )
             .GroupJoin(
-                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.RESPONSESTAFFID == null),
+                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,
                 (x, y) => new { a = x, bs = y })
@@ -890,15 +891,20 @@ namespace FintrakBanking.Repositories.Credit
                 xy => xy.bs.DefaultIfEmpty(),
                 (x, y) => new
                 {
+                    loanApplicationId = x.a.LOANAPPLICATIONID,
+                    approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
                     productClassId = x.a.PRODUCTCLASSID,
                     currentApprovalLevelId = y.TOAPPROVALLEVELID,
-                });
+                    toStaffId = y.TOSTAFFID,
+                })
+                .GroupBy(d => d.loanApplicationId)
+                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
             //var levs = levelIds.ToList();
 
             //var test = applications.ToList();
 
-            applications = applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId));
+            applications = applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
 
             //var test2 = applications.ToList();
 
@@ -946,6 +952,43 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return staffLevels;
+        }
+
+        public IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggers(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATN_DETL_MTRIG
+                .Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
+                .Select(x => new MonitoringTriggersViewModel
+                {
+                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    monitoringTriggerId = x.MONITORING_TRIGGERID,
+                    monitoringTrigger = x.MONITORING_TRIGGER
+                })
+                .ToList();
+        }
+
+        public IEnumerable<MonitoringTriggersViewModel> SaveApplicationMonitoringTriggers(int applicationId, List<MonitoringTriggersViewModel> items, int staffId)
+        {
+            context.TBL_LOAN_APPLICATN_DETL_MTRIG
+                .RemoveRange(
+                    context.TBL_LOAN_APPLICATN_DETL_MTRIG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId) 
+                );
+            context.SaveChanges();
+
+            foreach (var o in items)
+            {
+                context.TBL_LOAN_APPLICATN_DETL_MTRIG.Add(new TBL_LOAN_APPLICATN_DETL_MTRIG
+                {
+                    LOANAPPLICATIONDETAILID = o.applicationDetailId,
+                    MONITORING_TRIGGERID = o.monitoringTriggerId,
+                    MONITORING_TRIGGER = o.monitoringTrigger,
+                    CREATEDBY = staffId,
+                    DATETIMECREATED = DateTime.Now
+                });
+            }
+            context.SaveChanges();
+
+            return GetApplicationMonitoringTriggers(applicationId);
         }
     }
 }

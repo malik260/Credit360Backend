@@ -129,4 +129,12 @@ namespace FintrakBanking.ViewModels.Customer
         public string sectorCode { get; set; }
 
     }
+
+    public class ChangeTrackingViewModel
+    {
+        public int customerId { get; set; }
+        public string propertyName { get; set; }
+        public string propertyOriginalValue { get; set; }
+        public string propertyCurrentValue { get; set; }
+    }
 }

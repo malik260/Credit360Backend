@@ -45,6 +45,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public decimal disbursableAmount;
+        public string loanStatusName;
+
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
@@ -196,6 +199,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public decimal disbursableAmount;
+        public string loanStatus;
+
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
@@ -280,6 +286,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ContingentLoanViewModel : GeneralEntity
     {
+        public decimal disbursableAmount;
+
         public int loanId { get; set; }
         public int loanApplicationId { get; set; }
         public int customerId { get; set; }
@@ -378,6 +386,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
         public DateTime applicationDate;
+        public DateTime? approvedDate;
 
         public decimal requestedAmount { get; set; }
         public DateTime? approvalDate { get; set; }

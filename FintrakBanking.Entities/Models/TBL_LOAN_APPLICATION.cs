@@ -68,6 +68,8 @@ namespace FintrakBanking.Entities.Models
 
         public short? PRODUCTCLASSID { get; set; }
 
+        public short PRODUCT_CLASS_PROCESSID { get; set; }
+
         [Column(TypeName = "money")]
         public decimal APPLICATIONAMOUNT { get; set; }
 
@@ -143,6 +145,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
         public virtual TBL_PRODUCT_CLASS TBL_PRODUCT_CLASS { get; set; }
+
+        public virtual TBL_PRODUCT_CLASS_PROCESS TBL_PRODUCT_CLASS_PROCESS { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF { get; set; }
 

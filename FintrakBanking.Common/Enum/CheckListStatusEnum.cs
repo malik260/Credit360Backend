@@ -15,4 +15,11 @@ namespace FintrakBanking.Common.Enum
        Yes = 5,
        No = 6
     }
+
+   public  enum ChecklistErrorEnum
+    {
+        NegetiveChecklist = 3,
+        IncompleteChecklist = 2,
+        GoodChecklist = 1
+    }
 }
