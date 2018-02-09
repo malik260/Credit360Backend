@@ -910,7 +910,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
         {
-            var previousSearch = this.GetCustomerLoanCreditBureauReportChargesByApplicationId(entity.customerId);
+            var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId);
             bool hascrms = false;
             foreach (var i in previousSearch)
             {
@@ -948,11 +948,13 @@ namespace FintrakBanking.Repositories.Credit
                                        isMandatory = a.ISMANDATORY,
                                        useIntegration = a.USEINTEGRATION,
                                        appliedSearchForLoan = false,
+                                       hasFile = false,
+                                       fileName = string.Empty,
                                    };
             return creditBureauList;
         }
 
-        public List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId)
+        public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId)
         {
             var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false

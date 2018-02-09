@@ -12,6 +12,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool appliedSearchForLoan;
         public bool isMandatory;
         public bool useIntegration;
+        public bool hasFile;
+        public string fileName;
 
         public int customerId { get; set; }
         public string accountNumber { get; set; }
