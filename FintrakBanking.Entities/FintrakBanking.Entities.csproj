@@ -166,6 +166,7 @@
     <Compile Include="Models\TBL_CUSTOMER_COMPANY_BENEFICIA.cs" />
     <Compile Include="Models\TBL_CUSTOMER_COMPANY_DIRECTOR.cs" />
     <Compile Include="Models\TBL_CUSTOMER_COMPANY_DIREC_TYP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_CUSTOMER_CUSTOM_FIELD.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EDIT_HISTORY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EDUCATIONLEVELTYP.cs" />

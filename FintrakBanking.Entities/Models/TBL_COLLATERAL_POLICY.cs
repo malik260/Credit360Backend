@@ -16,10 +16,6 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISOWNEDBYCUSTOMER { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string INSURANCEPOLICYNUMBER { get; set; }
-
         [Column(TypeName = "money")]
         public decimal PREMIUMAMOUNT { get; set; }
 
@@ -29,6 +25,9 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(10)]
         public string INSURANCECOMPANYNAME { get; set; }
+
+        [StringLength(100)]
+        public string INSURANCETYPE { get; set; }
 
         [Required]
         [StringLength(300)]

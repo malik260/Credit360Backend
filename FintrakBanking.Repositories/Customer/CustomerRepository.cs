@@ -709,7 +709,7 @@ namespace FintrakBanking.Repositories.Customer
                             directors.FIRSTNAME = entity.firstname;
                             directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                             directors.CUSTOMERBVN = entity.bankVerificationNumber;
-                            directors.NUMBEROFSHARES = entity.numberOfShares;
+                            directors.SHAREHOLDINGPERCENTAGE = entity.numberOfShares;
                             //directors.REGISTRATION_NUMBER = entity.rcNumber;
                             //directors.TAX_NUMBER = entity.taxNumber;
                             directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
@@ -731,7 +731,7 @@ namespace FintrakBanking.Repositories.Customer
                         directors.CUSTOMERBVN = entity.bankVerificationNumber;
                         //directors.REGISTRATION_NUMBER = entity.rcNumber;
                         //directors.TAX_NUMBER = entity.taxNumber;
-                        directors.NUMBEROFSHARES = entity.numberOfShares;
+                        directors.SHAREHOLDINGPERCENTAGE = entity.numberOfShares;
                         directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
                         directors.ADDRESS = entity.address;
                         directors.PHONENUMBER = entity.phoneNumber;
@@ -1150,7 +1150,7 @@ namespace FintrakBanking.Repositories.Customer
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
-                           numberOfShares = s.NUMBEROFSHARES,
+                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
@@ -1167,7 +1167,7 @@ namespace FintrakBanking.Repositories.Customer
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
-                           numberOfShares = s.NUMBEROFSHARES,
+                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
@@ -1184,7 +1184,7 @@ namespace FintrakBanking.Repositories.Customer
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
-                           numberOfShares = s.NUMBEROFSHARES,
+                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
@@ -1326,7 +1326,7 @@ namespace FintrakBanking.Repositories.Customer
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
-                           numberOfShares = s.NUMBEROFSHARES,
+                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
@@ -1343,7 +1343,7 @@ namespace FintrakBanking.Repositories.Customer
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
-                           numberOfShares = s.NUMBEROFSHARES,
+                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
@@ -1875,7 +1875,7 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorId = s.COMPANYDIRECTORID,
                                         surname = s.SURNAME,
                                         firstname = s.FIRSTNAME,
-                                        numberOfShares = s.NUMBEROFSHARES,
+                                        numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                                         bankVerificationNumber = s.CUSTOMERBVN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
@@ -1913,7 +1913,7 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorId = s.COMPANYDIRECTORID,
                                         surname = s.SURNAME,
                                         firstname = s.FIRSTNAME,
-                                        numberOfShares = s.NUMBEROFSHARES,
+                                        numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                                         bankVerificationNumber = s.CUSTOMERBVN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,

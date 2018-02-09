@@ -24,7 +24,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string companyDirectorTypeName { get; set; }
         public string rcNumber { get; set; }
         public string taxNumber { get; set; }
-        public int numberOfShares { get; set; }
+        public double numberOfShares { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public string address { get; set; }
         public string phoneNumber { get; set; }

@@ -33,6 +33,10 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal SECURITYVALUE { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime EFFECTIVEDATE { get; set; }
+
+        [Column(TypeName = "date")]
         public DateTime MATURITYDATE { get; set; }
 
         [Column(TypeName = "money")]
