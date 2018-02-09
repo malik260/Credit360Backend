@@ -3075,7 +3075,7 @@ namespace FintrakBanking.Repositories.Credit
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
-                           numberOfShares = s.NUMBEROFSHARES,
+                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
@@ -3092,7 +3092,7 @@ namespace FintrakBanking.Repositories.Credit
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
-                           numberOfShares = s.NUMBEROFSHARES,
+                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
@@ -3292,7 +3292,7 @@ namespace FintrakBanking.Repositories.Credit
                                     || (b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember_Shareholder))
                                                                           select new CustomerCompanyDirectorsViewModels
                                                                           {
-                                                                              numberOfShares = b.NUMBEROFSHARES,
+                                                                              numberOfShares = b.SHAREHOLDINGPERCENTAGE,
                                                                               companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                               fullname = b.FIRSTNAME + " " + b.SURNAME,
                                                                               isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
@@ -3302,7 +3302,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder
                                                                              select new CustomerCompanyShareholdersViewModels
                                                                              {
-                                                                                 numberOfShares = e.NUMBEROFSHARES,
+                                                                                 numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                                  companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                  fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                  isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
@@ -3312,7 +3312,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                    && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory
                                                                                    select new CustomerCompanyAccountSignatoryViewModels
                                                                                    {
-                                                                                       numberOfShares = e.NUMBEROFSHARES,
+                                                                                       numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                                        companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                        fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                        isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
@@ -3493,7 +3493,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                     || (b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember_Shareholder) )
                                                                           select new CustomerCompanyDirectorsViewModels
                                                                           {
-                                                                             numberOfShares = b.NUMBEROFSHARES,
+                                                                             numberOfShares = b.SHAREHOLDINGPERCENTAGE,
                                                                              companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                              fullname = b.FIRSTNAME +" "+ b.SURNAME,
                                                                              isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
@@ -3503,7 +3503,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder
                                                                              select new CustomerCompanyShareholdersViewModels
                                                                           {
-                                                                              numberOfShares = e.NUMBEROFSHARES,
+                                                                              numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                               companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                               fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                               isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
@@ -3513,7 +3513,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory
                                                                              select new CustomerCompanyAccountSignatoryViewModels
                                                                              {
-                                                                                 numberOfShares = e.NUMBEROFSHARES,
+                                                                                 numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                                  companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                  fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                  isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
@@ -3675,7 +3675,7 @@ namespace FintrakBanking.Repositories.Credit
                                     || (b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember_Shareholder))
                                                                           select new CustomerCompanyDirectorsViewModels
                                                                           {
-                                                                              numberOfShares = b.NUMBEROFSHARES,
+                                                                              numberOfShares = b.SHAREHOLDINGPERCENTAGE,
                                                                               companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                               fullname = b.FIRSTNAME + " " + b.SURNAME,
                                                                               isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
@@ -3685,7 +3685,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder
                                                                              select new CustomerCompanyShareholdersViewModels
                                                                              {
-                                                                                 numberOfShares = e.NUMBEROFSHARES,
+                                                                                 numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                                  companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                  fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                  isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
@@ -3695,7 +3695,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                    && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory
                                                                                    select new CustomerCompanyAccountSignatoryViewModels
                                                                                    {
-                                                                                       numberOfShares = e.NUMBEROFSHARES,
+                                                                                       numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                                        companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                        fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                        isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,

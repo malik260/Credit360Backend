@@ -40,7 +40,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string CUSTOMERNIN { get; set; }
 
-        public int NUMBEROFSHARES { get; set; }
+        public double SHAREHOLDINGPERCENTAGE { get; set; }
 
         public bool ISPOLITICALLYEXPOSED { get; set; }
 
