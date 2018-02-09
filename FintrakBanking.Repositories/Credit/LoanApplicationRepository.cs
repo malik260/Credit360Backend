@@ -584,46 +584,60 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationUpdateMessage SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
         {
-            LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
-            string str = string.Empty;
-
-            bool isCheckListDone = true;
-            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
-            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
-            appl.PRODUCTCLASSID = (checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist ? null : appl.PRODUCTCLASSID);
-
-            // ----------------Drop into CAM-------------------
-            workflow.StaffId = staffId;
-            workflow.OperationId = (int)OperationsEnum.CAM;
-            workflow.TargetId = appl.LOANAPPLICATIONID;
-            workflow.CompanyId = appl.COMPANYID;
-            workflow.ProductClassId = appl.PRODUCTCLASSID;
-            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-            workflow.Comment = "New Loan Application";
-            workflow.ExternalInitialization = true;
-            workflow.DeferredExecution = true;
-            workflow.LogActivity();
-
-            if (context.SaveChanges() != 0)
+            try
             {
-                result = new LoanApplicationUpdateMessage
-                {
-                    isdone = isCheckListDone,
-                    messageStr = str
+                LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
+                string str = string.Empty;
 
-                };
+                bool isCheckListDone = true;
+                var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+                var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+                appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+
+                if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
+                {
+                    appl.PRODUCT_CLASS_PROCESSID = (int)ProductClassProcessEnum.CAMBased;
+                }
+
+
+                // ----------------Drop into CAM-------------------
+                workflow.StaffId = staffId;
+                workflow.OperationId = (int)OperationsEnum.CAM;
+                workflow.TargetId = appl.LOANAPPLICATIONID;
+                workflow.CompanyId = appl.COMPANYID;
+                workflow.ProductClassId = appl.PRODUCTCLASSID;
+                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                workflow.Comment = "New Loan Application";
+                workflow.ExternalInitialization = true;
+                workflow.DeferredExecution = true;
+                workflow.LogActivity();
+
+                if (context.SaveChanges() != 0)
+                {
+                    result = new LoanApplicationUpdateMessage
+                    {
+                        isdone = isCheckListDone,
+                        messageStr = str
+
+                    };
+                }
+                else
+                {
+                    result = new LoanApplicationUpdateMessage
+                    {
+                        isdone = false,
+                        messageStr = str
+
+                    };
+                }
+                return result;
             }
-            else
+            catch (Exception ex)
             {
-                result = new LoanApplicationUpdateMessage
-                {
-                    isdone = false,
-                    messageStr = str
 
-                };
+                throw new Exception(ex.Message);
             }
-            return result;
+            
         }
 
         public int AddLoanApplication(LoanApplicationViewModel loan)

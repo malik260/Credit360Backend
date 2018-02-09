@@ -68,6 +68,8 @@ namespace FintrakBanking.Entities.Models
 
         public short? PRODUCTCLASSID { get; set; }
 
+        public short PRODUCT_CLASS_PROCESSID { get; set; }
+
         [Column(TypeName = "money")]
         public decimal APPLICATIONAMOUNT { get; set; }
 
