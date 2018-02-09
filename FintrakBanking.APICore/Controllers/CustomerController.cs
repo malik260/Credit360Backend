@@ -115,6 +115,30 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("simple-details/{customerId}")]
+        public HttpResponseMessage GetSimpleCustomerDetailsByCustomerId(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSimpleCustomerDetailsByCustomerId(customerId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+        [HttpGet]
         [Route("{customerId}")]
         public HttpResponseMessage GetCustomer(int custormerId)
         {

@@ -423,11 +423,11 @@ namespace FintrakBanking.APICore.Controllers
                     }
 
 
-                  var customerLimit =  creditLimitValidationsRepository.ValidateNPLByCustomer((int)entity.customerId.Value);
-                    if( (customerLimit.outstandingBalance + (double)entity.LoanApplicationDetail.Sum(c=> c.proposedAmount)) > customerLimit.limit)
-                    {
-                        throw new Exception("Total amount excides customer Limit");
-                    }
+                  //var customerLimit =  creditLimitValidationsRepository.ValidateNPLByCustomer((int)entity.customerId.Value);
+                  //  if( (customerLimit.outstandingBalance + (double)entity.LoanApplicationDetail.Sum(c=> c.proposedAmount)) > customerLimit.limit)
+                  //  {
+                  //      throw new Exception("Total amount excides customer Limit");
+                  //  }
 
 
 
@@ -583,12 +583,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("credit-bureau-charges/{customerId}/application/{loanApplicationId}")]
-        public HttpResponseMessage GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId)
+        [Route("credit-bureau-report-log/{customerId}")]
+        public HttpResponseMessage GetCustomerCreditBureauReportLog(int customerId)
         {
             try
             {
-                var data = repo.GetCustomerLoanCreditBureauReportChargesByApplicationId(customerId, loanApplicationId);
+                var data = repo.GetCustomerCreditBureauReportLog(customerId);
 
                 if (!data.Any())
                 {

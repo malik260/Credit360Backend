@@ -76,7 +76,6 @@
     <Compile Include="Models\TBL_ACCREDITEDCONSULTANT.cs" />
     <Compile Include="Models\TBL_ACCREDITEDCONSULTANT_STATE.cs" />
     <Compile Include="Models\TBL_ACCREDITEDCONSULTANT_TYPE.cs" />
-    <Compile Include="Models\TBL_APPLICATION_SETUP.cs" />
     <Compile Include="Models\TBL_APPROVAL_GROUP.cs" />
     <Compile Include="Models\TBL_APPROVAL_GROUP_MAPPING.cs" />
     <Compile Include="Models\TBL_APPROVAL_LEVEL.cs" />
@@ -166,6 +165,7 @@
     <Compile Include="Models\TBL_CUSTOMER_COMPANY_BENEFICIA.cs" />
     <Compile Include="Models\TBL_CUSTOMER_COMPANY_DIRECTOR.cs" />
     <Compile Include="Models\TBL_CUSTOMER_COMPANY_DIREC_TYP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_CUSTOMER_CUSTOM_FIELD.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EDIT_HISTORY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EDUCATIONLEVELTYP.cs" />
@@ -186,6 +186,8 @@
     <Compile Include="Models\TBL_CUSTOMER_GUARDIAN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_IDENTIFICATION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_IDENTI_MODE_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_MODIFICATION.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_MODIFICATN_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_NEXTOFKIN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_PHONECONTACT.cs" />
     <Compile Include="Models\TBL_CUSTOMER_PRODUCT_FEE.cs" />
@@ -249,6 +251,7 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_STA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_TRA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATN_DETL_MTRIG.cs" />
     <Compile Include="Models\TBL_LOAN_APPLTN_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_BOOKING_REQUEST.cs" />
@@ -372,6 +375,7 @@
     <Compile Include="Models\TBL_TEMP_COLLATERAL_PREC_METAL.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_STOCK.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_VEHICLE.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP_MAPPNG.cs" />
     <Compile Include="Models\TBL_TEMP_FEE.cs" />

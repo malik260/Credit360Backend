@@ -14,8 +14,6 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
-        public bool ISOWNEDBYCUSTOMER { get; set; }
-
         [Required]
         [StringLength(100)]
         public string PRECIOUSMETALNAME { get; set; }
@@ -34,6 +32,9 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(500)]
         public string REMARK { get; set; }
+
+        [StringLength(150)]
+        public string METALTYPE { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
