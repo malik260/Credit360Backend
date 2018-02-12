@@ -768,5 +768,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("fixeddeposit-lien-amount")]
+        public HttpResponseMessage GetLienAmountForFD([FromBody]string accountNumber)
+        {
+            try
+            {
+                var response = repo.GetAccountLeinAmountForFD(accountNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
     }
 }

@@ -33,6 +33,8 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId);
         bool AssignCollateral(ActiveCustomerCollateralViewModel entity);
 
+        decimal GetAccountLeinAmountForFD(string accountNumber);
+
         #endregion Collateral
 
         #region Collateral Type
@@ -62,6 +64,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         #region Collateral Information View
         IEnumerable<AllCollateralViewModel> GetCollateralInformationById(int customercollateralId);
+
+
         #endregion
     }
 }

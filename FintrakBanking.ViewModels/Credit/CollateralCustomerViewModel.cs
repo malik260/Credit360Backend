@@ -29,9 +29,13 @@ namespace FintrakBanking.ViewModels.Credit
         public double haircut { get; set; }
         public bool hasInsurance { get; set; }
         public string collateralSubTypeName { get; set; }
+        public string fundName { get; set; }
+        public string insuranceType { get; set; }
+        public string metalType { get; set; }
+        public string machineType { get; set; }
 
-    // presentation
-    public int approvalStatus { get; set; }
+        // presentation
+        public int approvalStatus { get; set; }
 
         // insurance
         public string referenceNumber { get; set; }
@@ -79,7 +83,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralCustomerId { get; set; }
         public string institutionName { get; set; }
         public string guarantorAddress { get; set; }
-      //  public string guarantorReferenceNumber { get; set; }
+        //  public string guarantorReferenceNumber { get; set; }
         public decimal guaranteeValue { get; set; }
         public DateTime? endDate { get; set; }
 
@@ -213,7 +217,7 @@ namespace FintrakBanking.ViewModels.Credit
 
 
         //collateral value calculation
-        public double  securityCollateralValue { get { return (double)collateralValue - ((double)collateralValue * (float)(haircut * 0.01)); } }
+        public double securityCollateralValue { get { return (double)collateralValue - ((double)collateralValue * (float)(haircut * 0.01)); } }
     }
 
     public class MiscellaneousNote
@@ -277,7 +281,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-        public class CollateralDepositViewModel
+    public class CollateralDepositViewModel
     {
         public string collateralSubTypeName;
 
@@ -673,7 +677,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int loanApplicationCollateralId { get; set; }
         public double haircut { get; set; }
-        public string collateralCode { get; set; }  
+        public string collateralCode { get; set; }
         public double collateralValue { get; set; }
         public int collateralId { get; set; }
         public string collateralType { get; set; }
