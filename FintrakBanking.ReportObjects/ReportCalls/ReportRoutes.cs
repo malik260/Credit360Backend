@@ -113,7 +113,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/TestReport.aspx?applicationRefNumber=" + applicationRefNumber;
+                path = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber;
                 return path;
             }
             catch (Exception ex)

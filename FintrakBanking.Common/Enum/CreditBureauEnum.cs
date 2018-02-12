@@ -13,4 +13,16 @@ namespace FintrakBanking.Common.Enum
         CRCCreditBureau = 3,
         CRSCreditBureau = 4
     }
+
+    public enum XDSConnectProductEnum
+    {
+        ConsumerSnapCheckReport = 42,
+        ConsumerBasicTraceReport = 43,
+        ConsumerBasicCreditReport = 44,
+        DetailedCreditProfileReport = 45,
+        XScoreConsumerFullCreditReport = 50,
+        BusinessEnquiryBasicCredit = 46,
+        DetailedBusinessEnquiryReport = 47
+    }
+
 }

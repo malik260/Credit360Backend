@@ -68,7 +68,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CreditBereauViewModel> GetCreditBureauInformation();
 
-        List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId);
+        List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId);
 
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
 

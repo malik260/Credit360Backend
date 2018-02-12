@@ -209,6 +209,9 @@ namespace FintrakBanking.Common.Enum
         LoanRecoveryPaymentPlanAdded = 189,
         LoanRecoveryPaymentPlanUpdated = 190,
         LoanRecoveryPaymentPlanDeleted = 191,
+        CreditBureauReportDocumentAdded = 192,
+        CreditBureauReportDocumentDeleted = 193,
+        CreditBureauReportDocumentUpdated = 194,
     };
 
 
