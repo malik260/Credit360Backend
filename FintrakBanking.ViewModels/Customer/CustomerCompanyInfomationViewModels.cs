@@ -31,11 +31,13 @@ namespace FintrakBanking.ViewModels.Customer
         public string customerName { get; set; }
         public string surname { get; set; }
         public string firstname { get; set; }
+        public string middlename { get; set; }
+        public string customerNIN { get; set; }
         public string fullname { get; set; }
         public string bankVerificationNumber { get; set; }
         public short companyDirectorTypeId { get; set; }
         public string companyDirectorTypeName { get; set; }
-        public int numberOfShares { get; set; }
+        public double numberOfShares { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public string address { get; set; }
         public string phoneNumber { get; set; }
@@ -49,10 +51,12 @@ namespace FintrakBanking.ViewModels.Customer
         public string fullname { get; set; }
         public string surname { get; set; }
         public string firstname { get; set; }
+        public string customerNIN { get; set; }
+        public string middlename { get; set; }
         public string bankVerificationNumber { get; set; }
         public short companyDirectorTypeId { get; set; }
         public string companyDirectorTypeName { get; set; }
-        public int numberOfShares { get; set; }
+        public double numberOfShares { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public string address { get; set; }
         public string phoneNumber { get; set; }
@@ -72,6 +76,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string taxNumber { get; set; }
         public string contactPerson { get; set; }
         public bool? hasCASAAccount { get; set; }
+        public string bankName { get; set; }
         public string casaAccountNumber { get; set; }
         public string natureOfBusiness { get; set; }
         public string client_SupplierAddress { get; set; } 
@@ -93,6 +98,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string taxNumber { get; set; }
         public string contactPerson { get; set; }
         public string natureOfBusiness { get; set; }
+        public string bankName { get; set; }
         public bool? hasCASAAccount { get; set; }
         public string casaAccountNumber { get; set; }
         public string client_SupplierAddress { get; set; }

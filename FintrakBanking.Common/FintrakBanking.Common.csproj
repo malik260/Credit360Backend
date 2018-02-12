@@ -40,6 +40,10 @@
     <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.SqlServerCompact.6.2.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -62,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonHelpers.cs" />
+    <Compile Include="CreditBureauHelp.cs" />
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />
     <Compile Include="Enum\ApprovalState.cs" />
@@ -73,6 +78,7 @@
     <Compile Include="Enum\CompanyDirectorTypeEnum.cs" />
     <Compile Include="Enum\CreditBureauEnum.cs" />
     <Compile Include="Enum\CustomerInformationEnum.cs" />
+    <Compile Include="Enum\CustomerInformationTrackerEnum.cs" />
     <Compile Include="Enum\DailyAccuralCategory.cs" />
     <Compile Include="Enum\DayCountConventionEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />

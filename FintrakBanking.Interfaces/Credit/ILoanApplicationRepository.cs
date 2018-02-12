@@ -68,11 +68,16 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CreditBereauViewModel> GetCreditBureauInformation();
 
-        List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId, int loanApplicationId);
+        List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId);
 
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
 
-        bool ProductFeesConcession(ProductFeesViewModel fees, UserInfo user);
+        LoanApplicationUpdateMessage SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
         List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
+
+        bool ProductFeesConcession(ProductFeesViewModel fees, UserInfo user);
+        // decimal GetCustomerTotalOutstandingBalance(int customerId);
+
+        dynamic GetLoanAppById(int loanApplicationDetailId, int companyId);
     }
 }

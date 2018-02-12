@@ -202,6 +202,8 @@ namespace FintrakBanking.Repositories.Credit
                 REPLACEMENTVALUE = entity.replacementValue,
                 EQUIPMENTSIZE = entity.equipmentSize,
                 INTENDEDUSE = entity.intendedUse,
+                REMARK = entity.remark,
+
             });
         }
 
@@ -223,6 +225,8 @@ namespace FintrakBanking.Repositories.Credit
             collateral.REPLACEMENTVALUE = model.replacementValue;
             collateral.EQUIPMENTSIZE = model.equipmentSize;
             collateral.INTENDEDUSE = model.intendedUse;
+            collateral.REMARK = model.remark;
+
         }
 
         // FIX DEPOSIT collateral
@@ -240,6 +244,7 @@ namespace FintrakBanking.Repositories.Credit
                 SECURITYVALUE = entity.securityValue,
                 MATURITYDATE = entity.maturityDate,
                 MATURITYAMOUNT = entity.maturityAmount,
+                EFFECTIVEDATE = entity.effectiveDate,
                 REMARK = entity.remark,
             });
         }
@@ -258,6 +263,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.SECURITYVALUE = entity.securityValue;
             collateral.MATURITYDATE = entity.maturityDate;
             collateral.MATURITYAMOUNT = entity.maturityAmount;
+            collateral.EFFECTIVEDATE = entity.effectiveDate;
             collateral.REMARK = entity.remark;
         }
 
@@ -336,15 +342,15 @@ namespace FintrakBanking.Repositories.Credit
             var collateral = context.TBL_COLLATERAL_ITEM_POLICY
                 .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
                 .FirstOrDefault();
-            if(collateral != null)
+            if (collateral != null)
             {
                 collateral.POLICYREFERENCENUMBER = entity.referenceNumber;
                 collateral.INSURANCECOMPANYNAME = entity.insuranceCompany;
                 collateral.SUMINSURED = entity.sumInsured;
                 collateral.STARTDATE = (DateTime)entity.startDate;
                 collateral.ENDDATE = (DateTime)entity.expiryDate;
-            } 
-           
+            }
+
         }
 
         // GET MAIN INFO
@@ -422,7 +428,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-       
+
         // GET TYPE SPICIFIC & INSURANCE DETAILS
 
         public CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId)
@@ -675,12 +681,13 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_COLLATERAL_PRECIOUSMETAL.Add(new TBL_COLLATERAL_PRECIOUSMETAL
             {
                 COLLATERALCUSTOMERID = collateralId,
-                ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
+                //ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 PRECIOUSMETALNAME = entity.preciousMetalName,
                 WEIGHTINGRAMMES = entity.weightInGrammes,
                 VALUATIONAMOUNT = entity.valuationAmount,
                 UNITRATE = entity.unitRate,
                 PRECIOUSMETALFORM = entity.preciousMetalForm,
+                METALTYPE = entity.metalType,
                 REMARK = entity.remark,
             });
         }
@@ -691,12 +698,13 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
                 .FirstOrDefault();
 
-            collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
+            //collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
             collateral.PRECIOUSMETALNAME = entity.preciousMetalName;
             collateral.WEIGHTINGRAMMES = entity.weightInGrammes;
             collateral.VALUATIONAMOUNT = entity.valuationAmount;
             collateral.UNITRATE = entity.unitRate;
             collateral.PRECIOUSMETALFORM = entity.preciousMetalForm;
+            collateral.METALTYPE = entity.metalType;
             collateral.REMARK = entity.remark;
         }
 
@@ -708,12 +716,13 @@ namespace FintrakBanking.Repositories.Credit
                 collateralId = specifics.COLLATERALCUSTOMERID,
                 collateralPreciousMetalId = specifics.COLLATERALPRECIOUSMETALID,
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
-                isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
+                //isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
                 preciousMetalName = specifics.PRECIOUSMETALNAME,
                 weightInGrammes = specifics.WEIGHTINGRAMMES,
                 valuationAmount = specifics.VALUATIONAMOUNT,
                 unitRate = specifics.UNITRATE,
                 preciousMetalForm = specifics.PRECIOUSMETALFORM,
+                metalType = specifics.METALTYPE,
                 remark = specifics.REMARK,
             };
             details = GetCollateralInsurancePolicy(details);
@@ -728,9 +737,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 COLLATERALCUSTOMERID = collateralId,
                 ACCOUNTNUMBER = entity.accountNumber,
-              //  ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
+                //  ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 AVAILABLEBALANCE = entity.availableBalance,
-               // EXISTINGLIENAMOUNT = entity.existingLienAmount,
+                // EXISTINGLIENAMOUNT = entity.existingLienAmount,
                 LIENAMOUNT = entity.lienAmount,
                 SECURITYVALUE = entity.securityValue,
                 REMARK = entity.remark,
@@ -744,9 +753,9 @@ namespace FintrakBanking.Repositories.Credit
                 .FirstOrDefault();
 
             collateral.ACCOUNTNUMBER = entity.accountNumber;
-           // collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
+            // collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
             collateral.AVAILABLEBALANCE = entity.availableBalance;
-           // collateral.EXISTINGLIENAMOUNT = entity.existingLienAmount;
+            // collateral.EXISTINGLIENAMOUNT = entity.existingLienAmount;
             collateral.LIENAMOUNT = entity.lienAmount;
             collateral.SECURITYVALUE = entity.securityValue;
             collateral.REMARK = entity.remark;
@@ -760,9 +769,9 @@ namespace FintrakBanking.Repositories.Credit
                 collateralId = specifics.COLLATERALCUSTOMERID,
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
                 accountNumber = specifics.ACCOUNTNUMBER,
-              //  isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
+                //  isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
                 availableBalance = specifics.AVAILABLEBALANCE,
-              //  existingLienAmount = specifics.EXISTINGLIENAMOUNT,
+                //  existingLienAmount = specifics.EXISTINGLIENAMOUNT,
                 lienAmount = specifics.LIENAMOUNT,
                 securityValue = specifics.SECURITYVALUE,
                 remark = specifics.REMARK,
@@ -778,10 +787,10 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_COLLATERAL_GAURANTEE.Add(new TBL_COLLATERAL_GAURANTEE
             {
                 COLLATERALCUSTOMERID = collateralId,
-                ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
+                // ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 INSTITUTIONNAME = entity.institutionName,
                 GUARANTORADDRESS = entity.guarantorAddress,
-               // GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber,
+                // GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber,
                 GUARANTEEVALUE = entity.guaranteeValue,
                 STARTDATE = (DateTime)entity.startDate,
                 ENDDATE = entity.endDate,
@@ -795,10 +804,10 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
                 .FirstOrDefault();
 
-            collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
+            // collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
             collateral.INSTITUTIONNAME = entity.institutionName;
             collateral.GUARANTORADDRESS = entity.guarantorAddress;
-         //   collateral.GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber;
+            //   collateral.GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber;
             collateral.GUARANTEEVALUE = entity.guaranteeValue;
             collateral.STARTDATE = (DateTime)entity.startDate;
             collateral.ENDDATE = entity.endDate;
@@ -813,10 +822,10 @@ namespace FintrakBanking.Repositories.Credit
                 collateralId = specifics.COLLATERALCUSTOMERID,
                 collateralGauranteeId = specifics.COLLATERALGAURANTEEID,
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
-                isOwnedByCustomer = (bool)specifics.ISOWNEDBYCUSTOMER,
+                //isOwnedByCustomer = (bool)specifics.ISOWNEDBYCUSTOMER,
                 institutionName = specifics.INSTITUTIONNAME,
                 guarantorAddress = specifics.GUARANTORADDRESS,
-            //    guarantorReferenceNumber = specifics.GUARANTORREFERENCENUMBER,
+                //    guarantorReferenceNumber = specifics.GUARANTORREFERENCENUMBER,
                 guaranteeValue = specifics.GUARANTEEVALUE,
                 startDate = specifics.STARTDATE,
                 endDate = specifics.ENDDATE,
@@ -859,7 +868,7 @@ namespace FintrakBanking.Repositories.Credit
                 LATITUDE = entity.latitude,
                 PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
                 PERFECTIONSTATUSREASON = entity.perfectionStatusReason
-        });
+            });
         }
 
         private void UpdateImmovablePropertyCollateral(CollateralViewModel entity)
@@ -943,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 COLLATERALCUSTOMERID = collateralId,
                 SECURITYTYPE = entity.securityType,
-                DEALREFERENCENUMBER = entity.dealReferenceNumber,
+                //    DEALREFERENCENUMBER = entity.dealReferenceNumber,
                 EFFECTIVEDATE = entity.effectiveDate,
                 MATURITYDATE = entity.maturityDate,
                 DEALAMOUNT = entity.dealAmount,
@@ -957,6 +966,7 @@ namespace FintrakBanking.Repositories.Credit
                 PERCENTAGEINTEREST = entity.percentageInterest,
                 INTERESTPAYMENTFREQUENCY = entity.interestPaymentFrequency,
                 REMARK = entity.remark,
+                FUNDNAME = entity.fundName,
             });
         }
 
@@ -967,7 +977,7 @@ namespace FintrakBanking.Repositories.Credit
                 .FirstOrDefault();
 
             collateral.SECURITYTYPE = entity.securityType;
-            collateral.DEALREFERENCENUMBER = entity.dealReferenceNumber;
+            //    collateral.DEALREFERENCENUMBER = entity.dealReferenceNumber;
             collateral.EFFECTIVEDATE = entity.effectiveDate;
             collateral.MATURITYDATE = entity.maturityDate;
             collateral.DEALAMOUNT = entity.dealAmount;
@@ -981,6 +991,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.PERCENTAGEINTEREST = entity.percentageInterest;
             collateral.INTERESTPAYMENTFREQUENCY = entity.interestPaymentFrequency;
             collateral.REMARK = entity.remark;
+            collateral.FUNDNAME = entity.fundName;
         }
 
         private CollateralViewModel GetCollateralMarketableSecurities(int collateralId)
@@ -992,7 +1003,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralMarketableSecurityId = specifics.COLLATERALMARKETABLESECURITYID,
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
                 securityType = specifics.SECURITYTYPE,
-                dealReferenceNumber = specifics.DEALREFERENCENUMBER,
+                //   dealReferenceNumber = specifics.DEALREFERENCENUMBER,
                 effectiveDate = specifics.EFFECTIVEDATE,
                 maturityDate = specifics.MATURITYDATE,
                 dealAmount = specifics.DEALAMOUNT,
@@ -1006,6 +1017,7 @@ namespace FintrakBanking.Repositories.Credit
                 percentageInterest = specifics.PERCENTAGEINTEREST,
                 interestPaymentFrequency = specifics.INTERESTPAYMENTFREQUENCY,
                 remark = specifics.REMARK,
+                fundName = specifics.FUNDNAME,
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -1020,7 +1032,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 COLLATERALCUSTOMERID = collateralId,
                 ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
-                INSURANCEPOLICYNUMBER = entity.insurancePolicyNumber,
+                //  INSURANCEPOLICYNUMBER = entity.insurancePolicyNumber,
                 PREMIUMAMOUNT = entity.premiumAmount,
                 POLICYAMOUNT = entity.policyAmount,
                 INSURANCECOMPANYNAME = entity.insuranceCompanyName,
@@ -1031,6 +1043,7 @@ namespace FintrakBanking.Repositories.Credit
                 INSURERDETAILS = entity.insurerDetails,
                 POLICYRENEWALDATE = entity.policyRenewalDate,
                 REMARK = entity.remark,
+                INSURANCETYPE = entity.insuranceType,
             });
         }
 
@@ -1041,7 +1054,7 @@ namespace FintrakBanking.Repositories.Credit
                 .FirstOrDefault();
 
             collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
-            collateral.INSURANCEPOLICYNUMBER = entity.insurancePolicyNumber;
+            // collateral.INSURANCEPOLICYNUMBER = entity.insurancePolicyNumber;
             collateral.PREMIUMAMOUNT = entity.premiumAmount;
             collateral.POLICYAMOUNT = entity.policyAmount;
             collateral.INSURANCECOMPANYNAME = entity.insuranceCompanyName;
@@ -1052,6 +1065,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.INSURERDETAILS = entity.insurerDetails;
             collateral.POLICYRENEWALDATE = entity.policyRenewalDate;
             collateral.REMARK = entity.remark;
+            collateral.INSURANCETYPE = entity.insuranceType;
         }
 
         private CollateralViewModel GetCollateralPolicy(int collateralId)
@@ -1063,7 +1077,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralInsurancePolicyId = specifics.COLLATERALINSURANCEPOLICYID,
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
                 isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
-                insurancePolicyNumber = specifics.INSURANCEPOLICYNUMBER,
+                //   insurancePolicyNumber = specifics.INSURANCEPOLICYNUMBER,
                 premiumAmount = specifics.PREMIUMAMOUNT,
                 policyAmount = specifics.POLICYAMOUNT,
                 insuranceCompanyName = specifics.INSURANCECOMPANYNAME,
@@ -1074,6 +1088,7 @@ namespace FintrakBanking.Repositories.Credit
                 insurerDetails = specifics.INSURERDETAILS,
                 policyRenewalDate = specifics.POLICYRENEWALDATE,
                 remark = specifics.REMARK,
+                insuranceType = specifics.INSURANCETYPE,
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -1989,7 +2004,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.Add(new TBL_COLLATERAL_MKT_SECURITY
             {
                 SECURITYTYPE = entity.securityType,
-                DEALREFERENCENUMBER = entity.dealReferenceNumber,
+                //    DEALREFERENCENUMBER = entity.dealReferenceNumber,
                 EFFECTIVEDATE = entity.effectiveDate,
                 MATURITYDATE = entity.maturityDate,
                 DEALAMOUNT = entity.dealAmount,
@@ -2019,7 +2034,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralMarketableSecurityId = m.COLLATERALMARKETABLESECURITYID,
                         collateralCustomerId = m.COLLATERALCUSTOMERID,
                         securityType = m.SECURITYTYPE,
-                        dealReferenceNumber = m.DEALREFERENCENUMBER,
+                        //   dealReferenceNumber = m.DEALREFERENCENUMBER,
                         effectiveDate = m.EFFECTIVEDATE,
                         maturityDate = m.MATURITYDATE,
                         dealAmount = m.DEALAMOUNT,
@@ -2058,7 +2073,7 @@ namespace FintrakBanking.Repositories.Credit
 
             collateral.Add(new TBL_COLLATERAL_PRECIOUSMETAL
             {
-                ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
+                //ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 PRECIOUSMETALNAME = entity.preciousMetalName,
                 WEIGHTINGRAMMES = entity.weightInGrammes,
                 VALUATIONAMOUNT = entity.valuationAmount,
@@ -2080,7 +2095,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         collateralPreciousMetalId = m.COLLATERALPRECIOUSMETALID,
                         collateralCustomerId = m.COLLATERALCUSTOMERID,
-                        isOwnedByCustomer = m.ISOWNEDBYCUSTOMER,
+                       // isOwnedByCustomer = m.ISOWNEDBYCUSTOMER,
                         preciousMetalName = m.PRECIOUSMETALNAME,
                         weightInGrammes = m.WEIGHTINGRAMMES,
                         valuationAmount = m.VALUATIONAMOUNT,
@@ -2112,7 +2127,7 @@ namespace FintrakBanking.Repositories.Credit
                 //CollateralInsurancePolicyId = entity.collateralInsurancePolicyId,
                 //CollateralCustomerId = entity.collateralCustomerId,
                 ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
-                INSURANCEPOLICYNUMBER = entity.insurancePolicyNumber,
+                //   INSURANCEPOLICYNUMBER = entity.insurancePolicyNumber,
                 PREMIUMAMOUNT = entity.premiumAmount,
                 POLICYAMOUNT = entity.policyAmount,
                 INSURANCECOMPANYNAME = entity.insuranceCompanyName,
@@ -2139,7 +2154,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralInsurancePolicyId = m.COLLATERALINSURANCEPOLICYID,
                         collateralCustomerId = m.COLLATERALCUSTOMERID,
                         isOwnedByCustomer = m.ISOWNEDBYCUSTOMER,
-                        insurancePolicyNumber = m.INSURANCEPOLICYNUMBER,
+                        //     insurancePolicyNumber = m.INSURANCEPOLICYNUMBER,
                         premiumAmount = m.PREMIUMAMOUNT,
                         policyAmount = m.POLICYAMOUNT,
                         insuranceCompanyName = m.INSURANCECOMPANYNAME,
@@ -2169,10 +2184,8 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         collateralGauranteeId = m.COLLATERALGAURANTEEID,
                         collateralCustomerId = m.COLLATERALCUSTOMERID,
-                        isOwnedByCustomer = m.ISOWNEDBYCUSTOMER,
                         institutionName = m.INSTITUTIONNAME,
                         guarantorAddress = m.GUARANTORADDRESS,
-                        guarantorReferenceNumber = m.GUARANTORREFERENCENUMBER,
                         guaranteeValue = m.GUARANTEEVALUE,
                         startDate = m.STARTDATE,
                         endDate = m.ENDDATE,
@@ -2613,7 +2626,7 @@ namespace FintrakBanking.Repositories.Credit
                          !context.TBL_LOAN_APPLICATION_COLLATERL.Any(c => c.COLLATERALCUSTOMERID == a.COLLATERALCUSTOMERID && c.LOANAPPLICATIONID == loanApplicationId)
                         select new CollateralLoanApplication()
                         {
-                           
+
                             haircut = a.HAIRCUT,
                             collateralId = a.COLLATERALCUSTOMERID,
                             collateralCode = a.COLLATERALCODE,
@@ -2653,6 +2666,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+
         #region Collateral Information View
         // .....COMPLETE COLLATERAL INFORMATION VIEW............
         public IEnumerable<AllCollateralViewModel> GetCollateralInformationById(int customercollateralId)
@@ -2691,7 +2705,7 @@ namespace FintrakBanking.Repositories.Credit
                                             endDate = p.ENDDATE,
 
                                         }).ToList(),
-                })
+            })
             .OrderByDescending(x => x.collateralId)
 
             .ToList();
@@ -2722,24 +2736,24 @@ namespace FintrakBanking.Repositories.Credit
                 else if (record.collateralTypeId == (int)CollateralTypeEnum.TermDeposit)
                 {
                     record.collateralDeposit = (from x in context.TBL_COLLATERAL_DEPOSIT.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
-                                             select new CollateralDepositViewModel
-                                             {
-                                                 collateralCustomerId = x.COLLATERALCUSTOMERID,
-                                                 collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
-                                                 collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
-                                                                                                                    x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
-                                                                                                                                             .FirstOrDefault().COLLATERALSUBTYPENAME,
-                                                 accountNumber = x.ACCOUNTNUMBER,
-                                                 collateralDepositId = x.COLLATERALDEPOSITID,
-                                                 dealReferenceNumber = x.DEALREFERENCENUMBER,
-                                                 maturityDate = x.MATURITYDATE,
-                                                 maturityAmount = x.MATURITYAMOUNT,
-                                                 availableBalance = x.AVAILABLEBALANCE,
-                                                 existingLienAmount = x.EXISTINGLIENAMOUNT,
-                                                 lienAmount = x.LIENAMOUNT,
-                                                 securityValue = x.SECURITYVALUE,
-                                                 remark = x.REMARK,
-                                             }).FirstOrDefault();
+                                                select new CollateralDepositViewModel
+                                                {
+                                                    collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                                    collateralSubTypeId = x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID,
+                                                    collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
+                                                                                                                       x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
+                                                                                                                                                .FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                    accountNumber = x.ACCOUNTNUMBER,
+                                                    collateralDepositId = x.COLLATERALDEPOSITID,
+                                                    dealReferenceNumber = x.DEALREFERENCENUMBER,
+                                                    maturityDate = x.MATURITYDATE,
+                                                    maturityAmount = x.MATURITYAMOUNT,
+                                                    availableBalance = x.AVAILABLEBALANCE,
+                                                    existingLienAmount = x.EXISTINGLIENAMOUNT,
+                                                    lienAmount = x.LIENAMOUNT,
+                                                    securityValue = x.SECURITYVALUE,
+                                                    remark = x.REMARK,
+                                                }).FirstOrDefault();
 
                 }
                 else if (record.collateralTypeId == (int)CollateralTypeEnum.Property)
@@ -2790,7 +2804,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                                                                   x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
                                                                                                                                   .FirstOrDefault().COLLATERALSUBTYPENAME,
                                                                securityType = x.SECURITYTYPE,
-                                                               dealReferenceNumber = x.DEALREFERENCENUMBER,
+                                                               //    dealReferenceNumber = x.DEALREFERENCENUMBER,
                                                                effectiveDate = x.EFFECTIVEDATE,
                                                                maturityDate = x.MATURITYDATE,
                                                                dealAmount = x.DEALAMOUNT,
@@ -2817,11 +2831,11 @@ namespace FintrakBanking.Repositories.Credit
                                                       collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID ==
                                                                                                                          x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
                                                                                                                                                   .FirstOrDefault().COLLATERALSUBTYPENAME,
-                                                      isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
+                                                      // isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
                                                       collateralGauranteeId = x.COLLATERALGAURANTEEID,
                                                       institutionName = x.INSTITUTIONNAME,
                                                       guarantorAddress = x.GUARANTORADDRESS,
-                                                      guarantorReferenceNumber = x.GUARANTORREFERENCENUMBER,
+                                                      //  guarantorReferenceNumber = x.GUARANTORREFERENCENUMBER,
                                                       guaranteeValue = x.GUARANTEEVALUE,
                                                       startDate = x.STARTDATE,
                                                       endDate = x.ENDDATE,
@@ -2918,7 +2932,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                                                              x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
                                                                                                                                                       .FirstOrDefault().COLLATERALSUBTYPENAME,
                                                           collateralPreciousMetalId = x.COLLATERALPRECIOUSMETALID,
-                                                          isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
+                                                        //  isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
                                                           preciousMetalName = x.PRECIOUSMETALNAME,
                                                           weightInGrammes = x.WEIGHTINGRAMMES,
                                                           valuationAmount = x.VALUATIONAMOUNT,
@@ -2941,7 +2955,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                                             collateralInsurancePolicyId = x.COLLATERALINSURANCEPOLICYID,
                                                             isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
-                                                            insurancePolicyNumber = x.INSURANCEPOLICYNUMBER,
+                                                            //           insurancePolicyNumber = x.INSURANCEPOLICYNUMBER,
                                                             premiumAmount = x.PREMIUMAMOUNT,
                                                             policyAmount = x.POLICYAMOUNT,
                                                             insuranceCompanyName = x.INSURANCECOMPANYNAME,
@@ -2960,6 +2974,15 @@ namespace FintrakBanking.Repositories.Credit
 
             return collateral;
         }
+
+        public decimal GetAccountLeinAmountForFD(string accountNumber)
+        {
+            return context.TBL_COLLATERAL_DEPOSIT.Where(x => x.ACCOUNTNUMBER == accountNumber).Select(x => x.LIENAMOUNT).FirstOrDefault();
+        }
+
+
+
+
         // .....END OF COMPLETE COLLATERAL INFORMATION VIEW......
         #endregion Collateral Information View
     }

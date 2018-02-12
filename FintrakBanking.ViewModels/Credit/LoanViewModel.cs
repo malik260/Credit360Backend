@@ -45,6 +45,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public decimal disbursableAmount;
+        public string loanStatusName;
+
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
@@ -187,7 +190,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
-        public List<LoanMonitoringTrigger> monitoringTriggers { get; set; }
+        public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         public decimal overdraftLimit { get; set; }
         
 
@@ -196,6 +199,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public decimal disbursableAmount;
+        public string loanStatus;
+
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
@@ -274,12 +280,14 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
-        public List<LoanMonitoringTrigger> monitoringTriggers { get; set; }
+        public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         //......End f Loan Relational Table View Mapping Models......//
     }
 
     public class ContingentLoanViewModel : GeneralEntity
     {
+        public decimal disbursableAmount;
+
         public int loanId { get; set; }
         public int loanApplicationId { get; set; }
         public int customerId { get; set; }
@@ -348,7 +356,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
-        public List<LoanMonitoringTrigger> monitoringTriggers { get; set; }
+        public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         //......End f Loan Relational Table View Mapping Models......//
     }
 
@@ -377,7 +385,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public DateTime applicationDate;
+        //public DateTime applicationDate { get; set; }
+        public DateTime? approvedDate { get; set; }
+        public List<LoanMonitoringTriggerViewModel> loanMonitoringTrigger { get; set; }
 
         public decimal requestedAmount { get; set; }
         public DateTime? approvalDate { get; set; }
@@ -555,7 +565,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipManagerId { get; set; }
     }
 
-    public class LoanMonitoringTrigger : GeneralEntity
+    public class LoanMonitoringTriggerViewModel : GeneralEntity
     {
         public int loanMonitoringTriggerId { get; set; }
         public int loanId { get; set; }
