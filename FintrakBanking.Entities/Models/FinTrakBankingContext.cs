@@ -256,6 +256,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_RECOVERY_PLAN> TBL_LOAN_RECOVERY_PLAN { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_PLAN_PAYMNT> TBL_LOAN_RECOVERY_PLAN_PAYMNT { get; set; }
         public virtual DbSet<TBL_LOAN_RELATIONSHIP_OFF_HIST> TBL_LOAN_RELATIONSHIP_OFF_HIST { get; set; }
+        public virtual DbSet<TBL_LOAN_REVIEW_APPLICATION> TBL_LOAN_REVIEW_APPLICATION { get; set; }
+        public virtual DbSet<TBL_LOAN_REVIEW_APPLICATN_CAM> TBL_LOAN_REVIEW_APPLICATN_CAM { get; set; }
         public virtual DbSet<TBL_LOAN_REVIEW_OPERATION> TBL_LOAN_REVIEW_OPERATION { get; set; }
         public virtual DbSet<TBL_LOAN_REVIEW_OPRATN_IREG_SC> TBL_LOAN_REVIEW_OPRATN_IREG_SC { get; set; }
         public virtual DbSet<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; }
@@ -1021,6 +1023,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_LOAN_PRINCIPAL)
+                .WithRequired(e => e.TBL_COMPANY)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_COMPANY>()
+                .HasMany(e => e.TBL_LOAN_REVIEW_APPLICATN_CAM)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
 
@@ -3474,6 +3481,23 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_LOAN_RECOVERY_PLAN_PAYMNT>()
                 .Property(e => e.PAYMENTAMOUNT)
                 .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
+                .Property(e => e.PREPAYMENT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
+                .Property(e => e.OVERDRAFTTOPUP)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
+                .Property(e => e.FEE_CHARGES)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
+                .HasMany(e => e.TBL_LOAN_REVIEW_APPLICATN_CAM)
+                .WithRequired(e => e.TBL_LOAN_REVIEW_APPLICATION)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_REVIEW_OPERATION>()
                 .Property(e => e.PREPAYMENT)

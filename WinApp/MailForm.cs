@@ -10,6 +10,9 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Windows.Forms;
+using TextmagicRest;
+using TextmagicRest.Model;
+using System.Net.Http;
 
 
 namespace WinApp
@@ -68,8 +71,20 @@ namespace WinApp
         private void button1_Click(object sender, EventArgs e)
         {
 
-
-
+            //  var client = new Client("test", "oxlUazdcSpiJTnlHAc42rA");
+            //  var link = client.SendMessage("Hello from TextMagic API", "2348062417211");
+            //  if (link.Success)
+            //  {
+            //      Console.WriteLine("Message ID {0} has been successfully sent", link.Id);
+            //  }
+            //  else
+            //  {
+            //      Console.WriteLine("Message was not sent due to following exception: {0}", link.ClientException.Message);
+            //}
+            var client2 = new HttpClient();
+            //client2.GetAsync("https://platform.clickatell.com/messages/http/send?apiKey=oxlUazdcSpiJTnlHAc42rA==&to=2348062417211&content=This+is+from+Gbenga");
+            client2.GetAsync("https://sms.bbnplace.com/bulksms/bulksms.php?username=tayoomoemma@gmail.com&password=wine123&sender=Gbenga&message=This+is+from+Gbenga&mobile=07032424623");
+            MessageBox.Show("SMS SEND!");
         }
     }
 }
