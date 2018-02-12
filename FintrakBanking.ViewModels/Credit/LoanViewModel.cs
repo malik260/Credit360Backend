@@ -385,6 +385,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public bool isFirstApprover;
+
         //public DateTime applicationDate { get; set; }
         public DateTime? approvedDate { get; set; }
         public List<LoanMonitoringTriggerViewModel> loanMonitoringTrigger { get; set; }
