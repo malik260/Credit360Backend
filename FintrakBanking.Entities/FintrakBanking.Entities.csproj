@@ -166,6 +166,7 @@
     <Compile Include="Models\TBL_CUSTOMER_COMPANY_BENEFICIA.cs" />
     <Compile Include="Models\TBL_CUSTOMER_COMPANY_DIRECTOR.cs" />
     <Compile Include="Models\TBL_CUSTOMER_COMPANY_DIREC_TYP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_CUSTOMER_CUSTOM_FIELD.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EDIT_HISTORY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EDUCATIONLEVELTYP.cs" />
@@ -186,6 +187,8 @@
     <Compile Include="Models\TBL_CUSTOMER_GUARDIAN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_IDENTIFICATION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_IDENTI_MODE_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_MODIFICATION.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_MODIFICATN_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_NEXTOFKIN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_PHONECONTACT.cs" />
     <Compile Include="Models\TBL_CUSTOMER_PRODUCT_FEE.cs" />
@@ -279,6 +282,8 @@
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN_PAYMNT.cs" />
     <Compile Include="Models\TBL_LOAN_RELATIONSHIP_OFF_HIST.cs" />
+    <Compile Include="Models\TBL_LOAN_REVIEW_APPLICATION.cs" />
+    <Compile Include="Models\TBL_LOAN_REVIEW_APPLICATN_CAM.cs" />
     <Compile Include="Models\TBL_LOAN_REVIEW_OPERATION.cs" />
     <Compile Include="Models\TBL_LOAN_REVIEW_OPRATN_IREG_SC.cs" />
     <Compile Include="Models\TBL_LOAN_REVOLVING.cs" />
@@ -373,6 +378,7 @@
     <Compile Include="Models\TBL_TEMP_COLLATERAL_PREC_METAL.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_STOCK.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_VEHICLE.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP_MAPPNG.cs" />
     <Compile Include="Models\TBL_TEMP_FEE.cs" />
