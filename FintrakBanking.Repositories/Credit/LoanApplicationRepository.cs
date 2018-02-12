@@ -971,6 +971,8 @@ namespace FintrakBanking.Repositories.Credit
                                                    usedIntegration = a.USEDINTEGRATION,
                                                    dateCompleted = (DateTime)a.DATECOMPLETED,
                                                    dateTimeCreated = a.DATETIMECREATED,
+                                                   searchCount = 0,
+                                                   uploadCount = 0,
                                                    createdBy = a.CREATEDBY
                                                };
 

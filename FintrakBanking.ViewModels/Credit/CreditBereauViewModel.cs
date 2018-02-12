@@ -41,6 +41,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string companyDirectorName;
         public bool usedIntegration;
         public bool isReportOkay;
+        public int searchCount;
+        public int uploadCount;
 
         public int applicationCreditBureauId { get; set; }
         public int loanApplicationId { get; set; }

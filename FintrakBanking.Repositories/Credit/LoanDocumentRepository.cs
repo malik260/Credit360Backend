@@ -73,7 +73,6 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-
         public bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId)
         {
             var data = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
@@ -131,33 +130,48 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanDocumentViewModel GetLoanDocument(int documentId)
         {
-            var data = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
+            var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
+                        where x.DOCUMENTID == documentId
+                        select new LoanDocumentViewModel
+                        {
+                            documentId = x.DOCUMENTID,
+                            loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                            loanReferenceNumber = x.LOANREFERENCENUMBER,
+                            documentTitle = x.DOCUMENTTITLE,
+                            documentTypeId = x.DOCUMENTTYPEID,
+                            // fileData = x.FILEDATA,
+                            fileName = x.FILENAME,
+                            fileExtension = x.FILEEXTENSION,
+                            systemDateTime = x.SYSTEMDATETIME,
+                            physicalFileNumber = x.PHYSICALFILENUMBER,
+                            physicalLocation = x.PHYSICALLOCATION,
+                        });
 
-            if (data == null)
-            {
-                return null;
-            }
-
-            return new LoanDocumentViewModel
-            {
-                documentId = data.DOCUMENTID,
-                loanApplicationNumber = data.LOANAPPLICATIONNUMBER,
-                loanReferenceNumber = data.LOANREFERENCENUMBER,
-                documentTitle = data.DOCUMENTTITLE,
-                documentTypeId = data.DOCUMENTTYPEID,
-                fileData = data.FILEDATA,
-                fileName = data.FILENAME,
-                fileExtension = data.FILEEXTENSION,
-                systemDateTime = data.SYSTEMDATETIME,
-                physicalFileNumber = data.PHYSICALFILENUMBER,
-                physicalLocation = data.PHYSICALLOCATION,
-            };
+            return data.FirstOrDefault();
         }
 
         public IEnumerable<LoanDocumentViewModel> GetApplicationLoanDocument(string applicationNumber)
         {
-            return this.GetAllLoanDocument().Where(x => x.loanApplicationNumber == applicationNumber);
+            var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
+                        where x.LOANAPPLICATIONNUMBER == applicationNumber
+                        select new LoanDocumentViewModel
+                        {
+                            documentId = x.DOCUMENTID,
+                            loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                            loanReferenceNumber = x.LOANREFERENCENUMBER,
+                            documentTitle = x.DOCUMENTTITLE,
+                            documentTypeId = x.DOCUMENTTYPEID,
+                            // fileData = x.FILEDATA,
+                            fileName = x.FILENAME,
+                            fileExtension = x.FILEEXTENSION,
+                            systemDateTime = x.SYSTEMDATETIME,
+                            physicalFileNumber = x.PHYSICALFILENUMBER,
+                            physicalLocation = x.PHYSICALLOCATION,
+                        });
+
+            return data.ToList();
         }
+
         public LoanDocumentViewModel GetLoanDocumentByAppNoRefNo(string refNo, string applicationNumber)
         {
             var media =  this.context.TBL_MEDIA_LOAN_DOCUMENTS.
@@ -284,5 +298,104 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion COMMITTEE MINUTES
 
+        #region CREDIT BUREAU REPORTS
+        public List<LoanDocumentViewModel> GetCreditBureauReportDocument(int customerCreditBureauId)
+        {
+            var data = (from x in this.context.TBL_CUSTOMER_CREDIT_BUREAU
+                        where x.CUSTOMERCREDITBUREAUID == customerCreditBureauId
+                        select new LoanDocumentViewModel
+                        {
+                            documentId = x.DOCUMENTID,
+                            customerCreditBureauId = x.CUSTOMERCREDITBUREAUID,
+                            documentTitle = x.DOCUMENT_TITLE,
+                            fileName = x.FILENAME,
+                            fileExtension = x.FILEEXTENSION,
+                            systemDateTime = x.SYSTEMDATETIME,
+                        });
+
+            return data.ToList();
+        }
+
+        public LoanDocumentViewModel GetCreditBureauReportDocumentByDocumentID(int customerCreditBureauId, int documentId)
+        {
+            return GetCreditBureauReportDocument(customerCreditBureauId).Where(x => x.documentId == documentId).FirstOrDefault();
+        }
+
+        public bool AddCreditBureauReportDocument(LoanDocumentViewModel model, byte[] file)
+        {
+            try
+            {
+                var data = new Entities.DocumentModels.TBL_CUSTOMER_CREDIT_BUREAU
+                {
+                    FILEDATA = file,
+                    CUSTOMERCREDITBUREAUID = model.customerCreditBureauId,
+                    DOCUMENT_TITLE = model.documentTitle,
+                    FILENAME = model.fileName,
+                    FILEEXTENSION = model.fileExtension,
+                    SYSTEMDATETIME = DateTime.Now,
+                    CREATEDBY = (int)model.createdBy,
+                    DATETIMECREATED = DateTime.Now
+                };
+
+                context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CreditBureauReportDocumentAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Credit Bureau Report Document with title : '{ model.documentTitle }' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.audit.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+
+                return context.SaveChanges() != 0;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public bool UpdateCreditBureauReportDocument(LoanDocumentViewModel model, int documentId)
+        {
+            var data = this.context.TBL_CUSTOMER_CREDIT_BUREAU.Find(documentId);
+            if (data == null)
+            {
+                return false;
+            }
+
+            data.CUSTOMERCREDITBUREAUID = model.customerCreditBureauId;
+            data.DOCUMENT_TITLE = model.documentTitle;
+            data.FILENAME = model.fileName;
+            data.FILEEXTENSION = model.fileExtension;
+            data.SYSTEMDATETIME = DateTime.Now;
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CreditBureauReportDocumentUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Credit Bureau Report Document with title : '{ model.documentTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+
+        #endregion
     }
 }

@@ -27,5 +27,15 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanDocumentViewModel> GetCommitteeDocument(string applicationNumber);
 
         LoanDocumentViewModel GetCommitteeDocument(int documentId);
+
+        #region CREDIT BUREAU REPORT DOCUMENTS
+        List<LoanDocumentViewModel> GetCreditBureauReportDocument(int customerCreditBureauId);
+
+        LoanDocumentViewModel GetCreditBureauReportDocumentByDocumentID(int customerCreditBureauId, int documentId);
+
+        bool AddCreditBureauReportDocument(LoanDocumentViewModel model, byte[] file);
+
+        bool UpdateCreditBureauReportDocument(LoanDocumentViewModel model, int documentId);
+        #endregion
     }
 }

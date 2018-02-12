@@ -866,7 +866,7 @@ namespace FintrakBanking.Repositories.Credit
                                                        })).ToList(),
                             monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.TERMLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
                                                   select (
-                                                           new LoanMonitoringTrigger
+                                                           new LoanMonitoringTriggerViewModel
                                                            {
                                                                loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
                                                                productTypeId = i.PRODUCTTYPEID,
@@ -993,7 +993,7 @@ namespace FintrakBanking.Repositories.Credit
                                                        })).ToList(),
                             monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.REVOLVINGLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
                                                   select (
-                                                           new LoanMonitoringTrigger
+                                                           new LoanMonitoringTriggerViewModel
                                                            {
                                                                loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
                                                                productTypeId = i.PRODUCTTYPEID,
@@ -1121,7 +1121,7 @@ namespace FintrakBanking.Repositories.Credit
                                                        })).ToList(),
                             monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.CONTINGENTLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
                                                   select (
-                                                           new LoanMonitoringTrigger
+                                                           new LoanMonitoringTriggerViewModel
                                                            {
                                                                loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
                                                                productTypeId = i.PRODUCTTYPEID,
@@ -2064,9 +2064,9 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="loanId">The loan identifier.</param>
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
-        private bool AddLoanMonitoringTrigger(List<LoanMonitoringTrigger> monitoringTriggersModel, int loanId, short productTypeId)
+        private bool AddLoanMonitoringTrigger(List<LoanMonitoringTriggerViewModel> monitoringTriggersModel, int loanId, short productTypeId)
         {
-            foreach (LoanMonitoringTrigger entity in monitoringTriggersModel)
+            foreach (LoanMonitoringTriggerViewModel entity in monitoringTriggersModel)
             {
                 if(entity.monitoringTrigger != null && entity.monitoringTrigger != string.Empty)
                 {
@@ -2278,10 +2278,10 @@ namespace FintrakBanking.Repositories.Credit
             //return context.SaveChanges() > 0;
         }
 
-        public List<LoanMonitoringTrigger> GetLoanMonitoringTrigger()
+        public List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTrigger()
         {
             var data = (from c in context.TBL_LOAN_MONITORING_TRIG_SETUP
-                        select new LoanMonitoringTrigger
+                        select new LoanMonitoringTriggerViewModel
                         {
                            monitoringTriggerId = c.MONITORING_TRIGGERID,
                            monitoringTriggerSetupName = c.MONITORING_TRIGGER_NAME
@@ -3607,6 +3607,14 @@ namespace FintrakBanking.Repositories.Credit
                                                            currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
                                                            currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
                                                        })).ToList(),
+                            loanMonitoringTrigger = (from tr in context.TBL_LOAN_APPLICATN_DETL_MTRIG.Where(x => x.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID)
+                                           select (
+                                                    new LoanMonitoringTriggerViewModel
+                                                    {
+                                                        loanMonitoringTriggerId = tr.LOAN_MONITORING_TRIGGERID,
+                                                        monitoringTrigger = tr.MONITORING_TRIGGER,
+                                                        monitoringTriggerId = tr.MONITORING_TRIGGERID,
+                                                    })).ToList(),
                         }).ToList();
 
             return data.ToList();

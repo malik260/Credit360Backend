@@ -17,5 +17,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string physicalFileNumber { get; set; }
         public string physicalLocation { get; set; }
         public int SourceId { get; set; }
+
+        //Other references
+        public int customerCreditBureauId { get; set; }
     }
+
 }
