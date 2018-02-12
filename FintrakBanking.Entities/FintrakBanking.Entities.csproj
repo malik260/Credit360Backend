@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_CONDITION_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_CHECKLIST_DOCUMENTS.cs" />
@@ -281,6 +282,8 @@
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN_PAYMNT.cs" />
     <Compile Include="Models\TBL_LOAN_RELATIONSHIP_OFF_HIST.cs" />
+    <Compile Include="Models\TBL_LOAN_REVIEW_APPLICATION.cs" />
+    <Compile Include="Models\TBL_LOAN_REVIEW_APPLICATN_CAM.cs" />
     <Compile Include="Models\TBL_LOAN_REVIEW_OPERATION.cs" />
     <Compile Include="Models\TBL_LOAN_REVIEW_OPRATN_IREG_SC.cs" />
     <Compile Include="Models\TBL_LOAN_REVOLVING.cs" />
