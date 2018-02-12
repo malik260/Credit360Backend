@@ -114,6 +114,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = e.OPERATIONID,
                             currentApprovalStateId = e.APPROVALSTATEID,
                             approvalStatusId = e.APPROVALSTATUSID,
+                            
                         });
 
             //var forDebugging = data.ToList();
@@ -345,6 +346,11 @@ namespace FintrakBanking.Repositories.Credit
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted
                 || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                
+                foreach(var c in data)
+                {
+                    c.isFirstApprover = true;
+                };
 
                 loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId));
 
