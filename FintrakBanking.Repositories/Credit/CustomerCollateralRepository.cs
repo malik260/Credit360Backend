@@ -675,7 +675,7 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_COLLATERAL_PRECIOUSMETAL.Add(new TBL_COLLATERAL_PRECIOUSMETAL
             {
                 COLLATERALCUSTOMERID = collateralId,
-                ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
+              //  ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 PRECIOUSMETALNAME = entity.preciousMetalName,
                 WEIGHTINGRAMMES = entity.weightInGrammes,
                 VALUATIONAMOUNT = entity.valuationAmount,
@@ -691,7 +691,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
                 .FirstOrDefault();
 
-            collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
+           // collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
             collateral.PRECIOUSMETALNAME = entity.preciousMetalName;
             collateral.WEIGHTINGRAMMES = entity.weightInGrammes;
             collateral.VALUATIONAMOUNT = entity.valuationAmount;
@@ -708,7 +708,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralId = specifics.COLLATERALCUSTOMERID,
                 collateralPreciousMetalId = specifics.COLLATERALPRECIOUSMETALID,
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
-                isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
+                //isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
                 preciousMetalName = specifics.PRECIOUSMETALNAME,
                 weightInGrammes = specifics.WEIGHTINGRAMMES,
                 valuationAmount = specifics.VALUATIONAMOUNT,
@@ -2058,7 +2058,7 @@ namespace FintrakBanking.Repositories.Credit
 
             collateral.Add(new TBL_COLLATERAL_PRECIOUSMETAL
             {
-                ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
+             //   ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 PRECIOUSMETALNAME = entity.preciousMetalName,
                 WEIGHTINGRAMMES = entity.weightInGrammes,
                 VALUATIONAMOUNT = entity.valuationAmount,
@@ -2080,7 +2080,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         collateralPreciousMetalId = m.COLLATERALPRECIOUSMETALID,
                         collateralCustomerId = m.COLLATERALCUSTOMERID,
-                        isOwnedByCustomer = m.ISOWNEDBYCUSTOMER,
+                     //   isOwnedByCustomer = m.ISOWNEDBYCUSTOMER,
                         preciousMetalName = m.PRECIOUSMETALNAME,
                         weightInGrammes = m.WEIGHTINGRAMMES,
                         valuationAmount = m.VALUATIONAMOUNT,
@@ -2918,7 +2918,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                                                              x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
                                                                                                                                                       .FirstOrDefault().COLLATERALSUBTYPENAME,
                                                           collateralPreciousMetalId = x.COLLATERALPRECIOUSMETALID,
-                                                          isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
+                                                        //  isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
                                                           preciousMetalName = x.PRECIOUSMETALNAME,
                                                           weightInGrammes = x.WEIGHTINGRAMMES,
                                                           valuationAmount = x.VALUATIONAMOUNT,
