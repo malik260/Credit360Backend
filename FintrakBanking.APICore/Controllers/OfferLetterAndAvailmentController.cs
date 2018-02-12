@@ -205,7 +205,6 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #region Offer Letter & Availment
-
         [HttpGet]
         [Route("loan-application/prepared-offer-letter-template/{applicationRefNumber}")]
         public HttpResponseMessage GenerateOfferLetterTemplate([FromUri] string applicationRefNumber)

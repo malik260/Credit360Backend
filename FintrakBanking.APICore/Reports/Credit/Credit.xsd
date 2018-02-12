@@ -21,7 +21,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="OfferLetter" msprop:Generator_TableClassName="OfferLetterDataTable" msprop:Generator_TableVarName="tableOfferLetter" msprop:Generator_RowChangedName="OfferLetterRowChanged" msprop:Generator_TablePropName="OfferLetter" msprop:Generator_RowDeletingName="OfferLetterRowDeleting" msprop:Generator_RowChangingName="OfferLetterRowChanging" msprop:Generator_RowEvHandlerName="OfferLetterRowChangeEventHandler" msprop:Generator_RowDeletedName="OfferLetterRowDeleted" msprop:Generator_RowClassName="OfferLetterRow" msprop:Generator_UserTableName="OfferLetter" msprop:Generator_RowEvArgName="OfferLetterRowChangeEvent">
+        <xs:element name="OfferLetter" msprop:Generator_TableClassName="OfferLetterDataTable" msprop:Generator_TableVarName="tableOfferLetter" msprop:Generator_TablePropName="OfferLetter" msprop:Generator_RowDeletingName="OfferLetterRowDeleting" msprop:Generator_RowChangingName="OfferLetterRowChanging" msprop:Generator_RowEvHandlerName="OfferLetterRowChangeEventHandler" msprop:Generator_RowDeletedName="OfferLetterRowDeleted" msprop:Generator_UserTableName="OfferLetter" msprop:Generator_RowChangedName="OfferLetterRowChanged" msprop:Generator_RowEvArgName="OfferLetterRowChangeEvent" msprop:Generator_RowClassName="OfferLetterRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="customerName" msprop:Generator_ColumnVarNameInTable="columncustomerName" msprop:Generator_ColumnPropNameInRow="customerName" msprop:Generator_ColumnPropNameInTable="customerNameColumn" msprop:Generator_UserColumnName="customerName" type="xs:string" minOccurs="0" />
@@ -33,7 +33,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="loanInformation" msprop:Generator_TableClassName="loanInformationDataTable" msprop:Generator_TableVarName="tableloanInformation" msprop:Generator_RowChangedName="loanInformationRowChanged" msprop:Generator_TablePropName="loanInformation" msprop:Generator_RowDeletingName="loanInformationRowDeleting" msprop:Generator_RowChangingName="loanInformationRowChanging" msprop:Generator_RowEvHandlerName="loanInformationRowChangeEventHandler" msprop:Generator_RowDeletedName="loanInformationRowDeleted" msprop:Generator_RowClassName="loanInformationRow" msprop:Generator_UserTableName="loanInformation" msprop:Generator_RowEvArgName="loanInformationRowChangeEvent">
+        <xs:element name="loanInformation" msprop:Generator_TableClassName="loanInformationDataTable" msprop:Generator_TableVarName="tableloanInformation" msprop:Generator_TablePropName="loanInformation" msprop:Generator_RowDeletingName="loanInformationRowDeleting" msprop:Generator_RowChangingName="loanInformationRowChanging" msprop:Generator_RowEvHandlerName="loanInformationRowChangeEventHandler" msprop:Generator_RowDeletedName="loanInformationRowDeleted" msprop:Generator_UserTableName="loanInformation" msprop:Generator_RowChangedName="loanInformationRowChanged" msprop:Generator_RowEvArgName="loanInformationRowChangeEvent" msprop:Generator_RowClassName="loanInformationRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="productName" msdata:Caption="firstName" msprop:Generator_ColumnVarNameInTable="columnproductName" msprop:Generator_ColumnPropNameInRow="productName" msprop:Generator_ColumnPropNameInTable="productNameColumn" msprop:Generator_UserColumnName="productName" type="xs:string" minOccurs="0" />
@@ -103,7 +103,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="SectorialLimits" msprop:Generator_TableClassName="SectorialLimitsDataTable" msprop:Generator_TableVarName="tableSectorialLimits" msprop:Generator_RowChangedName="SectorialLimitsRowChanged" msprop:Generator_TablePropName="SectorialLimits" msprop:Generator_RowDeletingName="SectorialLimitsRowDeleting" msprop:Generator_RowChangingName="SectorialLimitsRowChanging" msprop:Generator_RowEvHandlerName="SectorialLimitsRowChangeEventHandler" msprop:Generator_RowDeletedName="SectorialLimitsRowDeleted" msprop:Generator_RowClassName="SectorialLimitsRow" msprop:Generator_UserTableName="SectorialLimits" msprop:Generator_RowEvArgName="SectorialLimitsRowChangeEvent">
+        <xs:element name="SectorialLimits" msprop:Generator_TableClassName="SectorialLimitsDataTable" msprop:Generator_TableVarName="tableSectorialLimits" msprop:Generator_TablePropName="SectorialLimits" msprop:Generator_RowDeletingName="SectorialLimitsRowDeleting" msprop:Generator_RowChangingName="SectorialLimitsRowChanging" msprop:Generator_RowEvHandlerName="SectorialLimitsRowChangeEventHandler" msprop:Generator_RowDeletedName="SectorialLimitsRowDeleted" msprop:Generator_UserTableName="SectorialLimits" msprop:Generator_RowChangedName="SectorialLimitsRowChanged" msprop:Generator_RowEvArgName="SectorialLimitsRowChangeEvent" msprop:Generator_RowClassName="SectorialLimitsRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="sectorName" msdata:Caption="sectorId" msprop:Generator_ColumnVarNameInTable="columnsectorName" msprop:Generator_ColumnPropNameInRow="sectorName" msprop:Generator_ColumnPropNameInTable="sectorNameColumn" msprop:Generator_UserColumnName="sectorName" type="xs:string" minOccurs="0" />
@@ -290,6 +290,14 @@
           <xs:complexType>
             <xs:sequence>
               <xs:element name="OfferLetterDetails" msprop:Generator_ColumnVarNameInTable="columnOfferLetterDetails" msprop:Generator_ColumnPropNameInRow="OfferLetterDetails" msprop:Generator_ColumnPropNameInTable="OfferLetterDetailsColumn" msprop:Generator_UserColumnName="OfferLetterDetails" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="OfferLetterConditionSubsequent" msprop:Generator_TableClassName="OfferLetterConditionSubsequentDataTable" msprop:Generator_TableVarName="tableOfferLetterConditionSubsequent" msprop:Generator_TablePropName="OfferLetterConditionSubsequent" msprop:Generator_RowDeletingName="OfferLetterConditionSubsequentRowDeleting" msprop:Generator_RowChangingName="OfferLetterConditionSubsequentRowChanging" msprop:Generator_RowEvHandlerName="OfferLetterConditionSubsequentRowChangeEventHandler" msprop:Generator_RowDeletedName="OfferLetterConditionSubsequentRowDeleted" msprop:Generator_UserTableName="OfferLetterConditionSubsequent" msprop:Generator_RowChangedName="OfferLetterConditionSubsequentRowChanged" msprop:Generator_RowEvArgName="OfferLetterConditionSubsequentRowChangeEvent" msprop:Generator_RowClassName="OfferLetterConditionSubsequentRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="loanApplicationId" msprop:Generator_ColumnVarNameInTable="columnloanApplicationId" msprop:Generator_ColumnPropNameInRow="loanApplicationId" msprop:Generator_ColumnPropNameInTable="loanApplicationIdColumn" msprop:Generator_UserColumnName="loanApplicationId" type="xs:int" minOccurs="0" />
+              <xs:element name="conditionPrecident" msdata:Caption="productName" msprop:Generator_ColumnVarNameInTable="columnconditionPrecident" msprop:Generator_ColumnPropNameInRow="conditionPrecident" msprop:Generator_ColumnPropNameInTable="conditionPrecidentColumn" msprop:Generator_UserColumnName="conditionPrecident" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
