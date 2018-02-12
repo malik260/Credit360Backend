@@ -473,7 +473,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>LOAN OFFER LETTER </Value>
+                    <Value>OFFER LETTER </Value>
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -486,7 +486,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>2.98482cm</Top>
+            <Top>3.0201cm</Top>
             <Left>0.51717cm</Left>
             <Height>0.67056cm</Height>
             <Width>9.50516cm</Width>
@@ -2089,7 +2089,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>14.79763in</Width>
+      <Width>7.50596in</Width>
       <Page>
         <PageHeader>
           <Height>1.14111in</Height>
