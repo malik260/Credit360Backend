@@ -866,7 +866,7 @@ namespace FintrakBanking.Repositories.Credit
                                                        })).ToList(),
                             monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.TERMLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
                                                   select (
-                                                           new LoanMonitoringTrigger
+                                                           new LoanMonitoringTriggerViewModel
                                                            {
                                                                loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
                                                                productTypeId = i.PRODUCTTYPEID,
@@ -993,7 +993,7 @@ namespace FintrakBanking.Repositories.Credit
                                                        })).ToList(),
                             monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.REVOLVINGLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
                                                   select (
-                                                           new LoanMonitoringTrigger
+                                                           new LoanMonitoringTriggerViewModel
                                                            {
                                                                loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
                                                                productTypeId = i.PRODUCTTYPEID,
@@ -1121,7 +1121,7 @@ namespace FintrakBanking.Repositories.Credit
                                                        })).ToList(),
                             monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.CONTINGENTLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
                                                   select (
-                                                           new LoanMonitoringTrigger
+                                                           new LoanMonitoringTriggerViewModel
                                                            {
                                                                loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
                                                                productTypeId = i.PRODUCTTYPEID,
@@ -2060,14 +2060,13 @@ namespace FintrakBanking.Repositories.Credit
         /// <summary>
         /// Adds the loan covenant.
         /// </summary>
-        /// <param name="covenantModel">The covenant model.</param>
         /// <param name="loanApplicationId">The loan application identifier.</param>
         /// <param name="loanId">The loan identifier.</param>
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
-        private bool AddLoanMonitoringTrigger(List<LoanMonitoringTrigger> monitoringTriggersModel, int loanId, short productTypeId)
+        private bool AddLoanMonitoringTrigger(List<LoanMonitoringTriggerViewModel> monitoringTriggersModel, int loanId, short productTypeId)
         {
-            foreach (LoanMonitoringTrigger entity in monitoringTriggersModel)
+            foreach (LoanMonitoringTriggerViewModel entity in monitoringTriggersModel)
             {
                 if(entity.monitoringTrigger != null && entity.monitoringTrigger != string.Empty)
                 {
@@ -2279,10 +2278,10 @@ namespace FintrakBanking.Repositories.Credit
             //return context.SaveChanges() > 0;
         }
 
-        public List<LoanMonitoringTrigger> GetLoanMonitoringTrigger()
+        public List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTrigger()
         {
             var data = (from c in context.TBL_LOAN_MONITORING_TRIG_SETUP
-                        select new LoanMonitoringTrigger
+                        select new LoanMonitoringTriggerViewModel
                         {
                            monitoringTriggerId = c.MONITORING_TRIGGERID,
                            monitoringTriggerSetupName = c.MONITORING_TRIGGER_NAME
@@ -3075,7 +3074,7 @@ namespace FintrakBanking.Repositories.Credit
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
-                           numberOfShares = s.NUMBEROFSHARES,
+                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
@@ -3092,7 +3091,7 @@ namespace FintrakBanking.Repositories.Credit
                            companyDirectorId = s.COMPANYDIRECTORID,
                            surname = s.SURNAME,
                            firstname = s.FIRSTNAME,
-                           numberOfShares = s.NUMBEROFSHARES,
+                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
@@ -3257,6 +3256,58 @@ namespace FintrakBanking.Repositories.Credit
                             isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                             isInvestmentGrade = m.ISINVESTMENTGRADE,
 
+                            companyId = m.COMPANYID,
+                            branchId = m.BRANCHID,
+                            branchName = m.TBL_BRANCH.BRANCHNAME,
+                            subSectorId = d.SUBSECTORID,
+                            subSectorName = d.TBL_SUB_SECTOR.NAME,
+                            sectorName = d.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                            applicationTenor = m.APPLICATIONTENOR,
+                            effectiveDate = (DateTime)m.EFFECTIVEDATE,
+                            expiryDate = (DateTime)m.EXPIRYDATE,
+                            relationshipOfficerId = m.RELATIONSHIPOFFICERID,
+                            relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
+                            relationshipManagerId = m.RELATIONSHIPMANAGERID,
+                            relationshipManagerName = m.TBL_STAFF1.FIRSTNAME + " " + m.TBL_STAFF1.MIDDLENAME + " " + m.TBL_STAFF1.LASTNAME,
+
+                            currencyId = d.CURRENCYID,
+                            currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                            exchangeRate = d.EXCHANGERATE,
+                            loanTypeId = m.LOANTYPEID,
+                            loanTypeName = m.TBL_LOAN_TYPE.LOANTYPENAME,
+                            camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault().CAMREF,
+                            productId = d.APPROVEDPRODUCTID,
+                            productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
+                            productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            productName = d.TBL_PRODUCT.PRODUCTNAME,
+                            productClassProcessId = m.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
+                            misCode = m.MISCODE,
+                            teamMisCode = m.TEAMMISCODE,
+
+                            interestRate = d.APPROVEDINTERESTRATE,
+                            submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
+                            approvedAmount = d.APPROVEDAMOUNT,
+                            approvedDate = m.APPROVEDDATE,
+                            groupApprovedAmount = m.APPROVEDAMOUNT,
+                            approvedTenor = d.APPROVEDTENOR,
+                            createdBy = m.CREATEDBY,
+                            newApplicationDate = m.APPLICATIONDATE,
+                            dateTimeCreated = d.DATETIMECREATED,
+                            availmentlDate = m.AVAILMENTDATE,
+
+                            loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
+                            customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
+                                                      || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
+                             ? (d.APPROVEDAMOUNT - d.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.PRINCIPALAMOUNT)) :
+                            (
+                                (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
+                                        ? (d.APPROVEDAMOUNT - d.TBL_LOAN_REVOLVING
+                                            .Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.OVERDRAFTLIMIT)) :
+                                (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
+                                        ? (d.APPROVEDAMOUNT - d.TBL_LOAN_CONTINGENT
+                                            .Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.CONTINGENTAMOUNT)) :
+                                            0)
+                            ),
                             customerAccounts = (from k in context.TBL_CASA
                                                 where k.DELETED == false
                                                 && k.CUSTOMERID == d.CUSTOMERID
@@ -3292,7 +3343,7 @@ namespace FintrakBanking.Repositories.Credit
                                     || (b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember_Shareholder))
                                                                           select new CustomerCompanyDirectorsViewModels
                                                                           {
-                                                                              numberOfShares = b.NUMBEROFSHARES,
+                                                                              numberOfShares = b.SHAREHOLDINGPERCENTAGE,
                                                                               companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                               fullname = b.FIRSTNAME + " " + b.SURNAME,
                                                                               isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
@@ -3302,7 +3353,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder
                                                                              select new CustomerCompanyShareholdersViewModels
                                                                              {
-                                                                                 numberOfShares = e.NUMBEROFSHARES,
+                                                                                 numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                                  companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                  fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                  isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
@@ -3312,64 +3363,12 @@ namespace FintrakBanking.Repositories.Credit
                                                                                    && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory
                                                                                    select new CustomerCompanyAccountSignatoryViewModels
                                                                                    {
-                                                                                       numberOfShares = e.NUMBEROFSHARES,
+                                                                                       numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                                        companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                        fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                        isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
                                                                                    }).ToList(),
                                                   }).FirstOrDefault(),
-                            companyId = m.COMPANYID,
-                            branchId = m.BRANCHID,
-                            branchName = m.TBL_BRANCH.BRANCHNAME,
-                            subSectorId = d.SUBSECTORID,
-                            subSectorName = d.TBL_SUB_SECTOR.NAME,
-                            sectorName = d.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                            applicationTenor = m.APPLICATIONTENOR,
-                            effectiveDate = (DateTime)m.EFFECTIVEDATE,
-                            expiryDate = (DateTime)m.EXPIRYDATE,
-                            relationshipOfficerId = m.RELATIONSHIPOFFICERID,
-                            relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
-                            relationshipManagerId = m.RELATIONSHIPMANAGERID,
-                            relationshipManagerName = m.TBL_STAFF1.FIRSTNAME + " " + m.TBL_STAFF1.MIDDLENAME + " " + m.TBL_STAFF1.LASTNAME,
-
-                            currencyId = d.CURRENCYID,
-                            currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
-                            exchangeRate = d.EXCHANGERATE,
-                            loanTypeId = m.LOANTYPEID,
-                            loanTypeName = m.TBL_LOAN_TYPE.LOANTYPENAME,
-                            camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault().CAMREF,
-                            productId = d.APPROVEDPRODUCTID,
-                            productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
-                            productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
-                            productName = d.TBL_PRODUCT.PRODUCTNAME,
-                            productClassProcessId = m.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
-                            misCode = m.MISCODE,
-                            teamMisCode = m.TEAMMISCODE,
-
-                            interestRate = d.APPROVEDINTERESTRATE,
-                            submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
-                            approvedAmount = d.APPROVEDAMOUNT,
-                            groupApprovedAmount = m.APPROVEDAMOUNT,
-
-                            customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
-                                                      || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
-                             ? (d.APPROVEDAMOUNT - d.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.PRINCIPALAMOUNT)) :
-                            (
-                                (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
-                                        ? (d.APPROVEDAMOUNT - d.TBL_LOAN_REVOLVING
-                                            .Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.OVERDRAFTLIMIT)) :
-                                (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
-                                        ? (d.APPROVEDAMOUNT - d.TBL_LOAN_CONTINGENT
-                                            .Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.CONTINGENTAMOUNT)) :
-                                            0)
-                            ),
-                            approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
-                            newApplicationDate = m.APPLICATIONDATE,
-                            dateTimeCreated = d.DATETIMECREATED,
-                            availmentlDate = m.AVAILMENTDATE,
-
-                            loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                             loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID && x.PRODUCTTYPEID == d.TBL_PRODUCT.PRODUCTTYPEID)
                                              select (
                                                       new LoanGuarantorViewModel
@@ -3391,7 +3390,6 @@ namespace FintrakBanking.Repositories.Credit
                                                           customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
                                                           relationshipDuration = g.RELATIONSHIPDURATION
                                                       })).ToList(),
-
                             loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID)
                                               select (
                                                        new LoanCollateralMappingViewModel
@@ -3493,7 +3491,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                     || (b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember_Shareholder) )
                                                                           select new CustomerCompanyDirectorsViewModels
                                                                           {
-                                                                             numberOfShares = b.NUMBEROFSHARES,
+                                                                             numberOfShares = b.SHAREHOLDINGPERCENTAGE,
                                                                              companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                              fullname = b.FIRSTNAME +" "+ b.SURNAME,
                                                                              isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
@@ -3503,7 +3501,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder
                                                                              select new CustomerCompanyShareholdersViewModels
                                                                           {
-                                                                              numberOfShares = e.NUMBEROFSHARES,
+                                                                              numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                               companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                               fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                               isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
@@ -3513,7 +3511,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory
                                                                              select new CustomerCompanyAccountSignatoryViewModels
                                                                              {
-                                                                                 numberOfShares = e.NUMBEROFSHARES,
+                                                                                 numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                                  companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                  fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                  isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
@@ -3609,6 +3607,14 @@ namespace FintrakBanking.Repositories.Credit
                                                            currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
                                                            currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
                                                        })).ToList(),
+                            loanMonitoringTrigger = (from tr in context.TBL_LOAN_APPLICATN_DETL_MTRIG.Where(x => x.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID)
+                                           select (
+                                                    new LoanMonitoringTriggerViewModel
+                                                    {
+                                                        loanMonitoringTriggerId = tr.LOAN_MONITORING_TRIGGERID,
+                                                        monitoringTrigger = tr.MONITORING_TRIGGER,
+                                                        monitoringTriggerId = tr.MONITORING_TRIGGERID,
+                                                    })).ToList(),
                         }).ToList();
 
             return data.ToList();
@@ -3675,7 +3681,7 @@ namespace FintrakBanking.Repositories.Credit
                                     || (b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember_Shareholder))
                                                                           select new CustomerCompanyDirectorsViewModels
                                                                           {
-                                                                              numberOfShares = b.NUMBEROFSHARES,
+                                                                              numberOfShares = b.SHAREHOLDINGPERCENTAGE,
                                                                               companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                               fullname = b.FIRSTNAME + " " + b.SURNAME,
                                                                               isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
@@ -3685,7 +3691,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder
                                                                              select new CustomerCompanyShareholdersViewModels
                                                                              {
-                                                                                 numberOfShares = e.NUMBEROFSHARES,
+                                                                                 numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                                  companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                  fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                  isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
@@ -3695,7 +3701,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                    && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory
                                                                                    select new CustomerCompanyAccountSignatoryViewModels
                                                                                    {
-                                                                                       numberOfShares = e.NUMBEROFSHARES,
+                                                                                       numberOfShares = e.SHAREHOLDINGPERCENTAGE,
                                                                                        companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                        fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                        isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,

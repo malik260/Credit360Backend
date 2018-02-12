@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_CONDITION_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_CHECKLIST_DOCUMENTS.cs" />
@@ -76,7 +77,6 @@
     <Compile Include="Models\TBL_ACCREDITEDCONSULTANT.cs" />
     <Compile Include="Models\TBL_ACCREDITEDCONSULTANT_STATE.cs" />
     <Compile Include="Models\TBL_ACCREDITEDCONSULTANT_TYPE.cs" />
-    <Compile Include="Models\TBL_APPLICATION_SETUP.cs" />
     <Compile Include="Models\TBL_APPROVAL_GROUP.cs" />
     <Compile Include="Models\TBL_APPROVAL_GROUP_MAPPING.cs" />
     <Compile Include="Models\TBL_APPROVAL_LEVEL.cs" />

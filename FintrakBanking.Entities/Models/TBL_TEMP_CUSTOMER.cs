@@ -14,10 +14,6 @@ namespace FintrakBanking.Entities.Models
 
         public int CUSTOMERID { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string CUSTOMERCODE { get; set; }
-
         public short BRANCHID { get; set; }
 
         public int COMPANYID { get; set; }

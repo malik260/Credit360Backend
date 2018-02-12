@@ -170,25 +170,48 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId)
         {
             List<CheckListTargetTypeViewModel> check = new List<CheckListTargetTypeViewModel>();
-            var canValidate = (from a in context.TBL_CHECKLIST_TYPE_APROV_LEVL
-                               join b in context.TBL_APPROVAL_LEVEL_STAFF on
-                               a.APPROVALLEVELID equals b.APPROVALLEVELID
-                               where b.STAFFID == staffId
-                               select a.CANVALIDATE).FirstOrDefault();
+            //var canValidate = (from a in context.TBL_CHECKLIST_TYPE_APROV_LEVL
+            //                    join b in context.TBL_APPROVAL_LEVEL_STAFF on
+            //                    a.APPROVALLEVELID equals b.APPROVALLEVELID
+            //                    where b.STAFFID == staffId
+            //                    select a.CANVALIDATE).FirstOrDefault();
 
-            var checkListTypeList = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
+            //    var checkListTypeList = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
+
+
+            //var checkType = (from a in context.TBL_CHECKLIST_TYPE
+            //                 join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
+            //                 join c in context.TBL_APPROVAL_LEVEL_STAFF on b.APPROVALLEVELID equals c.APPROVALLEVELID
+            //                 where c.STAFFID == staffId group new {  b, c} by new {
+            //                      b, c
+            //                 } into grouped
+            //                 // b by b.CHECKLIST_TYPEID into g 
+            //                 select new CheckListTargetTypeViewModel
+            //                 {
+            //                     targetTypeId = grouped.Key.b.TBL_CHECKLIST_TYPE .CHECKLIST_TYPEID,
+            //                     targetTypeName = grouped.Key.b.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+            //                     isproductbased = grouped.Key.b.TBL_CHECKLIST_TYPE.ISPRODUCT_BASED,
+            //                     canValidateChecklist = grouped.Key.b.CANVALIDATE
+            //                 });
+            //var debug = checkType.ToList();
+
+
+            //return debug;
+
+
 
             var checkType = (from a in context.TBL_CHECKLIST_TYPE
                              join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
                              join c in context.TBL_APPROVAL_LEVEL_STAFF on b.APPROVALLEVELID equals c.APPROVALLEVELID
-                             where c.STAFFID == staffId
+                             where c.STAFFID == staffId //group b by b.CHECKLIST_TYPEID into g 
                              select new CheckListTargetTypeViewModel
                              {
                                  targetTypeId = a.CHECKLIST_TYPEID,
                                  targetTypeName = a.CHECKLIST_TYPE_NAME,
                                  isproductbased = a.ISPRODUCT_BASED,
-                                 canValidateChecklist = canValidate
+                                 canValidateChecklist = b.CANVALIDATE
                              });
+            var debug = checkType.ToList();
             return checkType.GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
         }
         public IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId)
