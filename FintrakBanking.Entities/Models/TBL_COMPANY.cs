@@ -60,6 +60,7 @@ namespace FintrakBanking.Entities.Models
             TBL_PRODUCT_CHARGE_FEE = new HashSet<TBL_PRODUCT_CHARGE_FEE>();
             TBL_PRODUCT_PRICE_INDEX = new HashSet<TBL_PRODUCT_PRICE_INDEX>();
             TBL_SETUP_COMPANY = new HashSet<TBL_SETUP_COMPANY>();
+            TBL_SIGNATURE_DOCUMENT_STAFF = new HashSet<TBL_SIGNATURE_DOCUMENT_STAFF>();
             TBL_SOLICITOR = new HashSet<TBL_SOLICITOR>();
             TBL_STAFF_ORGANOGRAM = new HashSet<TBL_STAFF_ORGANOGRAM>();
             TBL_STAFF = new HashSet<TBL_STAFF>();
@@ -333,6 +334,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_SETUP_COMPANY> TBL_SETUP_COMPANY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_SIGNATURE_DOCUMENT_STAFF> TBL_SIGNATURE_DOCUMENT_STAFF { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }

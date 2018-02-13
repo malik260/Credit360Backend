@@ -84,11 +84,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
             return result;
         }
 
-        public bool IsticketActive(string userName, string password)
+        public bool IsticketActive(string userName)
         {
             string ticket = GetStoredTicket(userName);
-            return proxy.IsTicketValid(ticket);
-        }
+            if(ticket.Length > 0)
+            {
+                return proxy.IsTicketValid(ticket);
+            }
+          return false;
+                   }
 
         public List<dynamic> GetApprovedReasons()
         {
