@@ -2766,10 +2766,6 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
-                .Property(e => e.COLLATERALVALUE)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
                 .Property(e => e.FORCEDSALEVALUE)
                 .HasPrecision(19, 4);
 
@@ -2778,19 +2774,15 @@ namespace FintrakBanking.Entities.Models
                 .IsFixedLength();
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
-                .Property(e => e.ORIGINALVALUE)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
-                .Property(e => e.AVAILABLEVALUE)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
                 .Property(e => e.SECURITYVALUE)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
                 .Property(e => e.COLLATERALUSABLEAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
+                .Property(e => e.VALUATIONAMOUNT)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()

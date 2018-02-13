@@ -616,17 +616,17 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
                 model.staffId = token.GetStaffId;
 
-                var any = repo.AddCustomerCreditBureauCharge(model);
+                var result = repo.AddCustomerCreditBureauCharge(model);
 
-                if (any)
+                if (result > 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = model.creditBureauName + " Search for Credit Bureau Report Activated" });
+                                            new { success = true, date = result, message = model.creditBureauName + " Credit Bureau Report Successfully Saved" });
                 }
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = model.creditBureauName + " Search failed" });
+                        new { success = true, message = model.creditBureauName + " report upload failed" });
                 }
             }
             catch (Exception ex)
