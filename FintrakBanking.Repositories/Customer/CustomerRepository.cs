@@ -538,11 +538,12 @@ namespace FintrakBanking.Repositories.Customer
                 try
                 {
                     TBL_CUSTOMER_COMPANYINFOMATION company;
-                    if (entity.companyInfomationId != 0 || entity.companyInfomationId < 0)
+                    if (entity.companyInfomationId != 0 || entity.companyInfomationId < 0) //Check if record is new or modified record
                     {
                         company = context.TBL_CUSTOMER_COMPANYINFOMATION.Find(entity.companyInfomationId);
-                        if (company != null)
-                        {
+                        //If Customer main table ACCOUNTCREATIONCOMPLETE column equal false and entity.canModified equal true, record insert directly to the main table 
+                        if (company != null && company.TBL_CUSTOMER.ACCOUNTCREATIONCOMPLETE == false && entity.canModified == true)
+                        { 
                             company.ANNUALTURNOVER = entity.annualTurnOver;
                             company.COMPANYEMAIL = entity.companyEmail;
                             company.COMPANYNAME = entity.companyName;
@@ -554,8 +555,95 @@ namespace FintrakBanking.Repositories.Customer
                             company.AUTHORISEDCAPITAL = entity.authorizedCapital;
                             company.SHAREHOLDER_FUND = entity.shareholderFund;
                         }
+                        else  //If customer main table AccountCreationCompleted equals true then save record in temp table
+                        {
+                            //Check if customer company information has existing record being modified and approved
+                            var existingTempCompany = context.TBL_TEMP_CUSTOMER_COMPANYINFO.FirstOrDefault(x => x.CUSTOMERID == company.CUSTOMERID && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
+                            //If any company record in temp table is yet to be approved, throw an exception
+                            var unApprovedCompanyUpdate = context.TBL_TEMP_CUSTOMER_COMPANYINFO.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.CUSTOMERID == company.CUSTOMERID);
+                            if (unApprovedCompanyUpdate.Any())
+                            {
+                                throw new Exception("Customer is already undergoing approval");
+                            }
+
+                            if (existingTempCompany != null) //if customer company information has existing record being modified and approved, update it with the new change
+                            {
+                                existingTempCompany.ANNUALTURNOVER = entity.annualTurnOver;
+                                existingTempCompany.COMPANYEMAIL = entity.companyEmail;
+                                existingTempCompany.COMPANYNAME = entity.companyName;
+                                existingTempCompany.COMPANYWEBSITE = entity.companyWebsite;
+                                existingTempCompany.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
+                                existingTempCompany.REGISTEREDOFFICE = entity.registeredOffice;
+                                existingTempCompany.REGISTRATIONNUMBER = entity.registrationNumber;
+                                existingTempCompany.PAIDUPCAPITAL = entity.paidUpCapital;
+                                existingTempCompany.AUTHORISEDCAPITAL = entity.authorizedCapital;
+                                existingTempCompany.SHAREHOLDER_FUND = entity.shareholderFund;
+                                existingTempCompany.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                                existingTempCompany.ISCURRENT = true;
+                            }
+                            else //if customer company information has no existing record being modified and approved, insert new row
+                            {
+                                TBL_TEMP_CUSTOMER_COMPANYINFO temp = new TBL_TEMP_CUSTOMER_COMPANYINFO();
+                                temp.CUSTOMERID = entity.customerId;
+                                temp.ANNUALTURNOVER = entity.annualTurnOver;
+                                temp.COMPANYEMAIL = entity.companyEmail;
+                                temp.COMPANYNAME = entity.companyName;
+                                temp.COMPANYWEBSITE = entity.companyWebsite;
+                                temp.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
+                                temp.REGISTEREDOFFICE = entity.registeredOffice;
+                                temp.REGISTRATIONNUMBER = entity.registrationNumber;
+                                temp.PAIDUPCAPITAL = entity.paidUpCapital;
+                                temp.AUTHORISEDCAPITAL = entity.authorizedCapital;
+                                temp.SHAREHOLDER_FUND = entity.shareholderFund;
+                                temp.CREATEDBY = entity.createdBy;
+                                temp.DATETIMECREATED = DateTime.Now;
+                                temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                                temp.ISCURRENT = true;
+
+                                context.TBL_TEMP_CUSTOMER_COMPANYINFO.Add(temp);
+                            }
+                            //Insert new row to TBL_CUSTOMER_MODIFICATION 
+                            var modified = new TBL_CUSTOMER_MODIFICATION 
+                            {
+                                CUSTOMERID = entity.customerId,
+                                MODIFICATIONTYPEID = (int)CustomerInformationTrackerEnum.Corporate_Information,
+                                CREATEDBY = entity.createdBy,
+                                DATETIMECREATED = DateTime.Now
+                            };
+                            //Log to the approval workflow 
+                            using (var trans = context.Database.BeginTransaction())
+                            {
+                                try
+                                {
+                                    context.TBL_CUSTOMER_MODIFICATION.Add(modified);
+                                    var output = context.SaveChanges() > 0;
+                                    var targetId = modified.CUSTOMERMODIFICATIONID; //User the new inserted row in TBL_CUSTOMER_MODIFICATION as the approval trail targetId
+                                    var model = new ApprovalViewModel
+                                    {
+                                        staffId = entity.createdBy,
+                                        companyId = entity.companyId,
+                                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                                        targetId = targetId,
+                                        operationId = (int)OperationsEnum.CustomerInformationApproval,
+                                        BranchId = entity.userBranchId,
+                                        externalInitialization = true
+                                    };
+                                    var returnVal = workflow.LogForApproval(model);
+
+                                    if (returnVal)
+                                    {
+                                        trans.Commit();
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    trans.Rollback();
+                                    throw new Exception(ex.Message);
+                                }
+                            }
+                        }
                     }
-                    else
+                    else    //If this is a new record insert a new row in TBL_CUSTOMER_COMPANYINFOMATION
                     {
                         company = new TBL_CUSTOMER_COMPANYINFOMATION();
                         company.ANNUALTURNOVER = entity.annualTurnOver;
@@ -593,7 +681,6 @@ namespace FintrakBanking.Repositories.Customer
                 {
                     throw new Exception(ex.Message);
                 }
-
             }
             return false;
         }
@@ -1587,8 +1674,6 @@ namespace FintrakBanking.Repositories.Customer
                     throw new Exception("Customer is already undergoing approval");
                 }
 
-                //  var customer = context.TBL_CUSTOMER.Find(customerId);
-
                 if (existingTempCustomer != null)
                 {
                     customer = existingTempCustomer;
@@ -1612,14 +1697,11 @@ namespace FintrakBanking.Repositories.Customer
                     customer.NATIONALITY = entity.nationality;
                     customer.OCCUPATION = entity.occupation;
                     customer.PLACEOFBIRTH = entity.placeOfBirth;
-
                     customer.ISINVESTMENTGRADE = entity.isInvestmentGrade;
                     customer.ISREALATEDPARTY = entity.isRealatedParty;
-
                     customer.SPOUSE = entity.spouse;
                     customer.SUBSECTORID = entity.subSectorId;
                     customer.TAXNUMBER = entity.taxNumber;
-
                     customer.CUSTOMERBVN = entity.customerBVN;
                     customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                     customer.ISCURRENT = true;
@@ -1648,21 +1730,16 @@ namespace FintrakBanking.Repositories.Customer
                     customer.NATIONALITY = entity.nationality;
                     customer.OCCUPATION = entity.occupation;
                     customer.PLACEOFBIRTH = entity.placeOfBirth;
-
                     customer.ISINVESTMENTGRADE = entity.isInvestmentGrade;
                     customer.ISREALATEDPARTY = entity.isRealatedParty;
-
                     customer.SPOUSE = entity.spouse;
                     customer.SUBSECTORID = entity.subSectorId;
                     customer.TAXNUMBER = entity.taxNumber;
-
                     customer.CUSTOMERBVN = entity.customerBVN;
-
                     customer.CREATEDBY = entity.createdBy;
                     customer.DATETIMECREATED = DateTime.Now;
                     customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                     customer.ISCURRENT = true;
-
                     context.TBL_TEMP_CUSTOMER.Add(customer);
                 }
 
@@ -2346,6 +2423,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerInformationApprovalViemModel> GetAllCustomerInformationAwaitingApproval(int staffId, int companyId)
         {
+            //Get the approval level of the logon user
             var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.CustomerInformationApproval);
             int staffApprovalLevelId = 0;
 
@@ -2420,6 +2498,7 @@ namespace FintrakBanking.Repositories.Customer
         private bool ApproveCustomerInformation(int modifiedId, short approvalStatusId, UserInfo user)
         {
             bool returnVal = false;
+            //Check for the modified record 
             var modifiedData = context.TBL_CUSTOMER_MODIFICATION.Find(modifiedId);
             if (modifiedData != null)
             {
@@ -2427,9 +2506,13 @@ namespace FintrakBanking.Repositories.Customer
                 {
                     returnVal = ApproveGeneralInformation(modifiedData.CUSTOMERID, approvalStatusId, user);
                 }
+                else if (modifiedData.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Corporate_Information)
+                {
+                    returnVal = ApproveCompanyInformation(modifiedData.CUSTOMERID, approvalStatusId, user);
+                }
                 else if (modifiedData.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Address_Modification)
                 {
-
+                 
                 }
                 else if (modifiedData.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Phone_Number_Modification)
                 {
@@ -2454,13 +2537,14 @@ namespace FintrakBanking.Repositories.Customer
         private bool ApproveGeneralInformation(int customerId, short approvalStatusId, UserInfo user)
         {
             TBL_CUSTOMER entity = null;
+            //Check if Customer  exist in the temp table using the customerId
             var temp = context.TBL_TEMP_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == customerId);
-            if (temp != null)
+            if (temp != null)  //If temp record is not null select the information from the main table
             {
                 entity = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == customerId);
             }
 
-            if (entity != null) //Update existing staff with tempStaff record
+            if (entity != null) //Update existing customer information with temp record
             {
                 entity.ACCOUNTCREATIONCOMPLETE = temp.ACCOUNTCREATIONCOMPLETE;
                 entity.CREATIONMAILSENT = temp.CREATIONMAILSENT;
@@ -2487,6 +2571,7 @@ namespace FintrakBanking.Repositories.Customer
                 entity.TAXNUMBER = temp.TAXNUMBER;
                 entity.CUSTOMERBVN = temp.CUSTOMERBVN;
             }
+            //update the temp table, set ISCURRENT to false and APPROVALSTATUSID to approvalStatusId
             temp.ISCURRENT = false;
             temp.APPROVALSTATUSID = approvalStatusId;
             // Audit Section ----------------------------
@@ -2495,7 +2580,53 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = "Updated TBL_CUSTOMER:  with code: " + entity.CUSTOMERCODE,
+                DETAIL = "Approved Customer Information for customer with code: " + entity.CUSTOMERCODE,
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            return context.SaveChanges() > 0;
+        }
+
+        private bool ApproveCompanyInformation(int customerId, short approvalStatusId, UserInfo user)
+        {
+            TBL_CUSTOMER_COMPANYINFOMATION entity = null;
+            //Check if Customer company information exist in the temp table using the customerId
+            var temp = context.TBL_TEMP_CUSTOMER_COMPANYINFO.FirstOrDefault(x => x.CUSTOMERID == customerId);
+            if (temp != null) //If temp record is not null select the information from the main table
+            {
+                entity = context.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == customerId);
+            }
+
+            if (entity != null) //Update existing customer company information with temp record
+            { 
+                entity.ANNUALTURNOVER = temp.ANNUALTURNOVER;
+                entity.COMPANYEMAIL = temp.COMPANYEMAIL;
+                entity.COMPANYNAME = temp.COMPANYNAME;
+                entity.COMPANYWEBSITE = temp.COMPANYWEBSITE;
+                entity.CORPORATEBUSINESSCATEGORY = temp.CORPORATEBUSINESSCATEGORY;
+                entity.CUSTOMERID = temp.CUSTOMERID;
+                entity.REGISTEREDOFFICE = temp.REGISTEREDOFFICE;
+                entity.REGISTRATIONNUMBER = temp.REGISTRATIONNUMBER;
+                entity.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
+                entity.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
+                entity.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+            }
+            //update the temp table, set ISCURRENT to false and APPROVALSTATUSID to approvalStatusId
+            temp.ISCURRENT = false;
+            temp.APPROVALSTATUSID = approvalStatusId;
+            
+            // Audit Section ----------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = "Approved Customer Company Information:  with Id: " + entity.COMPANYINFOMATIONID,
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
