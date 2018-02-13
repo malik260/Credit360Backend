@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.DocumentModels
         {
         }
 
+        public virtual DbSet<TBL_CUSTOMER_CREDIT_BUREAU> TBL_CUSTOMER_CREDIT_BUREAU { get; set; }
         public virtual DbSet<TBL_LOAN_COMMITTEE_MINUTES> TBL_LOAN_COMMITTEE_MINUTES { get; set; }
         public virtual DbSet<TBL_LOAN_CONDITION_DOCUMENTS> TBL_LOAN_CONDITION_DOCUMENTS { get; set; }
         public virtual DbSet<TBL_MEDIA_CHECKLIST_DOCUMENTS> TBL_MEDIA_CHECKLIST_DOCUMENTS { get; set; }
@@ -24,6 +25,10 @@ namespace FintrakBanking.Entities.DocumentModels
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<TBL_CUSTOMER_CREDIT_BUREAU>()
+                .Property(e => e.DOCUMENT_TITLE)
+                .IsUnicode(false);
+
             modelBuilder.Entity<TBL_MEDIA_STAFF_PICTURE>()
                 .Property(e => e.DOCUMENT_TITLE)
                 .IsUnicode(false);

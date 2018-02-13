@@ -681,7 +681,7 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_COLLATERAL_PRECIOUSMETAL.Add(new TBL_COLLATERAL_PRECIOUSMETAL
             {
                 COLLATERALCUSTOMERID = collateralId,
-                // ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
+                //ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 PRECIOUSMETALNAME = entity.preciousMetalName,
                 WEIGHTINGRAMMES = entity.weightInGrammes,
                 VALUATIONAMOUNT = entity.valuationAmount,
@@ -698,7 +698,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
                 .FirstOrDefault();
 
-            // collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
+            //collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
             collateral.PRECIOUSMETALNAME = entity.preciousMetalName;
             collateral.WEIGHTINGRAMMES = entity.weightInGrammes;
             collateral.VALUATIONAMOUNT = entity.valuationAmount;
@@ -716,7 +716,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralId = specifics.COLLATERALCUSTOMERID,
                 collateralPreciousMetalId = specifics.COLLATERALPRECIOUSMETALID,
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
-                //  isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
+                //isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
                 preciousMetalName = specifics.PRECIOUSMETALNAME,
                 weightInGrammes = specifics.WEIGHTINGRAMMES,
                 valuationAmount = specifics.VALUATIONAMOUNT,
@@ -889,12 +889,16 @@ namespace FintrakBanking.Repositories.Credit
             collateral.VALUERREFERENCENUMBER = entity.valuerReferenceNumber;
             collateral.PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId;
             collateral.OPENMARKETVALUE = entity.openMarketValue;
+
            // collateral.COLLATERALVALUE = (decimal)entity.collateralValue;
+
             collateral.FORCEDSALEVALUE = entity.forcedSaleValue;
             collateral.STAMPTOCOVER = entity.stampToCover;
             //collateral.VALUATIONSOURCE = entity.valuationSource;
             //collateral.ORIGINALVALUE = entity.originalValue;
+
             //collateral.AVAILABLEVALUE = entity.availableValue;
+
             collateral.SECURITYVALUE = entity.securityValue;
             collateral.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
             collateral.REMARK = entity.remark;
@@ -929,9 +933,11 @@ namespace FintrakBanking.Repositories.Credit
                 //collateralValue = specifics.COLLATERALVALUE,
                 forcedSaleValue = specifics.FORCEDSALEVALUE,
                 stampToCover = specifics.STAMPTOCOVER,
+
                 //valuationSource = specifics.VALUATIONSOURCE,
                 //originalValue = specifics.ORIGINALVALUE,
                 //availableValue = specifics.AVAILABLEVALUE,
+
                 securityValue = (decimal)specifics.SECURITYVALUE,
                 collateralUsableAmount = specifics.COLLATERALUSABLEAMOUNT,
                 remark = specifics.REMARK,
@@ -1778,12 +1784,14 @@ namespace FintrakBanking.Repositories.Credit
                 VALUERID = entity.valuerId,
                 VALUERREFERENCENUMBER = entity.valuerReferenceNumber,
                 OPENMARKETVALUE = entity.openMarketValue,
+
               //  COLLATERALVALUE = entity.collateralValue,
                 FORCEDSALEVALUE = entity.forcedSaleValue,
                 STAMPTOCOVER = entity.stampToCover,
                // VALUATIONSOURCE = entity.valuationSource,
                // ORIGINALVALUE = entity.originalValue,
                // AVAILABLEVALUE = entity.availableValue,
+
                 SECURITYVALUE = entity.securityValue,
                 COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
                 REMARK = entity.remark,
@@ -1813,12 +1821,14 @@ namespace FintrakBanking.Repositories.Credit
                         valuerId = m.VALUERID,
                         valuerReferenceNumber = m.VALUERREFERENCENUMBER,
                         openMarketValue = m.OPENMARKETVALUE,
+
                         //   collateralValue = m.COLLATERALVALUE,
                         forcedSaleValue = m.FORCEDSALEVALUE,
                         stampToCover = m.STAMPTOCOVER,
                         //  valuationSource = m.VALUATIONSOURCE,
                         //  originalValue = m.ORIGINALVALUE,
                         //   availableValue = m.AVAILABLEVALUE,
+
                         collateralUsableAmount = m.COLLATERALUSABLEAMOUNT,
                         remark = m.REMARK,
                       //  valuationAmount = m.VALUATIONAMOUNT ,
@@ -2100,7 +2110,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         collateralPreciousMetalId = m.COLLATERALPRECIOUSMETALID,
                         collateralCustomerId = m.COLLATERALCUSTOMERID,
-                        // isOwnedByCustomer = m.ISOWNEDBYCUSTOMER,
+                       // isOwnedByCustomer = m.ISOWNEDBYCUSTOMER,
                         preciousMetalName = m.PRECIOUSMETALNAME,
                         weightInGrammes = m.WEIGHTINGRAMMES,
                         valuationAmount = m.VALUATIONAMOUNT,
@@ -2786,12 +2796,14 @@ namespace FintrakBanking.Repositories.Credit
                                                      valuerReferenceNumber = x.VALUERREFERENCENUMBER,
                                                      propertyValueBaseTypeId = x.PROPERTYVALUEBASETYPEID,
                                                      openMarketValue = x.OPENMARKETVALUE,
+
                                                     // collateralValue = x.COLLATERALVALUE,
                                                      forcedSaleValue = x.FORCEDSALEVALUE,
                                                      stampToCover = x.STAMPTOCOVER,
                                                     // valuationSource = x.VALUATIONSOURCE,
                                                    //  originalValue = x.ORIGINALVALUE,
                                                    //  availableValue = x.AVAILABLEVALUE,
+
                                                      securityValue = (decimal)x.SECURITYVALUE,
                                                      collateralUsableAmount = x.COLLATERALUSABLEAMOUNT,
                                                      remark = x.REMARK
@@ -2938,7 +2950,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                                                              x.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID)
                                                                                                                                                       .FirstOrDefault().COLLATERALSUBTYPENAME,
                                                           collateralPreciousMetalId = x.COLLATERALPRECIOUSMETALID,
-                                                          //  isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
+                                                        //  isOwnedByCustomer = x.ISOWNEDBYCUSTOMER,
                                                           preciousMetalName = x.PRECIOUSMETALNAME,
                                                           weightInGrammes = x.WEIGHTINGRAMMES,
                                                           valuationAmount = x.VALUATIONAMOUNT,
