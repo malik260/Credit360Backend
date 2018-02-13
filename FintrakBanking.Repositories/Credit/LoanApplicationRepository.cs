@@ -644,6 +644,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                short productClassProcessId = 0;
                 short? productClassId = null;
                 bool isGroupLoan = false;
                 int response = 0; int loanId = 0;
@@ -657,17 +658,19 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
                 }
-
+                
                 var dat = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == loan.productClassId).FirstOrDefault();
                 if (dat != null)
                 {
                     if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
                     {
                         productClassId = null;
+                        productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
                     }
                     if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                     {
                         productClassId = loan.productClassId;
+                        productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
                     }
                 }
                 decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
@@ -679,6 +682,7 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTCLASSID = productClassId,
                     APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                     LOANTYPEID = loan.loanTypeId,
+                      PRODUCT_CLASS_PROCESSID = productClassProcessId,
                     COMPANYID = loan.companyId,
                     BRANCHID = (short)loan.branchId,
                     RELATIONSHIPOFFICERID = loan.relationshipOfficerId,
