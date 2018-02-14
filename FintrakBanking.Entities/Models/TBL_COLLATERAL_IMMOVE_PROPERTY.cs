@@ -43,28 +43,19 @@ namespace FintrakBanking.Entities.Models
         public decimal? OPENMARKETVALUE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal COLLATERALVALUE { get; set; }
-
-        [Column(TypeName = "money")]
         public decimal? FORCEDSALEVALUE { get; set; }
 
         [StringLength(10)]
         public string STAMPTOCOVER { get; set; }
-
-        [StringLength(50)]
-        public string VALUATIONSOURCE { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal ORIGINALVALUE { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal AVAILABLEVALUE { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? SECURITYVALUE { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? COLLATERALUSABLEAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? VALUATIONAMOUNT { get; set; }
 
         [StringLength(500)]
         public string REMARK { get; set; }

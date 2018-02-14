@@ -16,6 +16,8 @@ namespace FintrakBanking.Entities.Models
 
         public short MODIFICATIONTYPEID { get; set; }
 
+        public bool APPROVALCOMPLETED { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

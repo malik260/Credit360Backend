@@ -72,7 +72,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
 
-        LoanApplicationUpdateMessage SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
+        LoanApplicationUpdateMessage SubmitLoanApplicationForCam(LoanApplicationUpdateViewModel loan);
+
         List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
 
         bool ProductFeesConcession(ProductFeesViewModel fees, UserInfo user);

@@ -292,7 +292,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
             workflow.Disputed = appl.DISPUTED;
-            workflow.ProductClassId = model.productClassId;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.receiverLevelId;
             workflow.ToStaffId = model.receiverStaffId;
