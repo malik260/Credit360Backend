@@ -50,6 +50,7 @@ namespace FintrakBanking.Common.Enum
         LoanBookingRequest = 39,
         LoanBookingFeeOveride = 40,
         BondsAndGuarantees = OfferLetterApproval,
-        ChecklistApproval = 42
+        ChecklistApproval = 42,
+            CustomerInformationApproval = 44
     }
 }

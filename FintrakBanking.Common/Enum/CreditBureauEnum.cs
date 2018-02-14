@@ -13,7 +13,12 @@ namespace FintrakBanking.Common.Enum
         CRCCreditBureau = 3,
         CRSCreditBureau = 4
     }
+    public enum CreditBureauTypeEnum
+    {
 
+        ConsumerSearch = 1,
+        CommercialSearch = 2
+    }
     public enum XDSConnectProductEnum
     {
         ConsumerSnapCheckReport = 42,

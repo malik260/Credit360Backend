@@ -920,7 +920,7 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETL_BG.Add(data);
         }
 
-        public bool AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
+        public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
         {
             var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId);
             bool hascrms = false;
@@ -930,6 +930,9 @@ namespace FintrakBanking.Repositories.Credit
             };
             if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
                 throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
+
+            if (previousSearch.Count() >= 3 )
+                throw new Exception("You have reached that maximum credit bureau search for this customer");
 
             var data = new TBL_CUSTOMER_CREDIT_BUREAU()
             {
@@ -945,7 +948,8 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy
             };
             context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
-            return context.SaveChanges() > 0;
+            if (context.SaveChanges() > 0) return data.CUSTOMERCREDITBUREAUID;
+            else return 0;
         }
 
         public IEnumerable<CreditBereauViewModel> GetCreditBureauInformation()
@@ -971,7 +975,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId)
         {
             var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
-                                               where a.CUSTOMERID == customerId && a.DELETED == false
+                                               where a.CUSTOMERID == customerId && a.DELETED == false //&& a.DATETIMECREATED.Day <= ((DateTime.Now - a.DATETIMECREATED).TotalDays  - 30)
                                                select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,
