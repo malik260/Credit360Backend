@@ -618,7 +618,8 @@ namespace FintrakBanking.Repositories.Credit
                     result = new LoanApplicationUpdateMessage
                     {
                         isdone = isCheckListDone,
-                        messageStr = str
+                        messageStr = str,
+                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist,
 
                     };
                 }
@@ -626,8 +627,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     result = new LoanApplicationUpdateMessage
                     {
-                        isdone = false,
-                        messageStr = str
+                        isdone = !isCheckListDone,
+                        messageStr = str,
+                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist,
 
                     };
                 }
@@ -826,6 +828,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             foreach (var a in entity)
             {
+                if( a.proposedTenor == 0)
+                {
+                    throw new Exception("Tenor can not be ZERO (0)");
+                }
 
                 var data = new TBL_LOAN_APPLICATION_DETAIL
                 {
@@ -870,11 +876,18 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
                 }
-
-                if (a.productFees.Count > 0)
+                if (a.productFees != null)
                 {
-                    ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
+                    if (a.productFees.Count > 0)
+                    {
+                        ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
+                    }
                 }
+                else
+                {
+                    throw new Exception("NO FEE is defined for this product(s)");
+                }
+               
 
 
             }
@@ -1160,7 +1173,7 @@ namespace FintrakBanking.Repositories.Credit
                         // && b.HASDONECHECKLIST == false
                         && a.COMPANYID == companyId && a.DELETED == false
                         select new LoanApplicationDetailViewModel()
-                        {
+                        { 
                             loanApplicationId = b.LOANAPPLICATIONID,
                             applicationRefNo = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
