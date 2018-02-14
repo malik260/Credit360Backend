@@ -18,7 +18,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
         public int? operationId { get; set; }
-
+        public bool requireCollateral { get; set; }
         public DateTime newApplicationDate { get; set; }
         
         public short? branchId { get; set; }
@@ -159,10 +159,13 @@ namespace FintrakBanking.ViewModels.Credit
 
         public LoanApplicationDetailViewModel()
         {
+          
             invoiceDetails = new List<InvoiceDetailViewModel>();
             productFees = new List<ProductFeesViewModel>();
 
         }
+
+        public bool requireCollateral { get; set; }
 
         public int loanApplicationDetailId { get; set; }
 

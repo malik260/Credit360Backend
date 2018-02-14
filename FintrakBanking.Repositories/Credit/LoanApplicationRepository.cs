@@ -77,6 +77,7 @@ namespace FintrakBanking.Repositories.Credit
                         where a.COMPANYID == companyId && a.DELETED == false
                         select new LoanApplicationViewModel
                         {
+                            requireCollateral = a.REQUIRECOLLATERAL,
                             approvalStatusId = a.APPROVALSTATUSID,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
@@ -169,6 +170,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             return GetLoanApplications(companyId).Where(c => c.loanApplicationId == loanApplicationId).ToList();
         }
+
         public dynamic GetLoanAppById(int loanApplicationDetailId, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
@@ -193,6 +195,7 @@ namespace FintrakBanking.Repositories.Credit
                         && a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                         select new jobLoanApplicationDetailViewModel
                         {
+                            requireCollateral = a.TBL_LOAN_APPLICATION.REQUIRECOLLATERAL,
                             approvedAmount = a.APPROVEDAMOUNT,
                             approvedInterestRate = a.APPROVEDINTERESTRATE,
                             approvedProductId = a.APPROVEDPRODUCTID,
@@ -328,6 +331,7 @@ namespace FintrakBanking.Repositories.Credit
                        //&& a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId
                        select new
                        {
+                           requireCollateral = a.REQUIRECOLLATERAL,
                            approvalStatusId = a.APPROVALSTATUSID,
                            loanApplicationId = a.LOANAPPLICATIONID,
                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
@@ -450,6 +454,7 @@ namespace FintrakBanking.Repositories.Credit
                         //&& (a.ApplicationReferenceNumber == referenceNumberOrName || $"{a.tbl_Customer.FirstName} {a.tbl_Customer.MiddleName} {a.tbl_Customer.LastName} {a.tbl_Customer.CustomerCode} ".Contains(referenceNumberOrName))
                         select new LoanApplicationViewModel
                         {
+                            requireCollateral = a.REQUIRECOLLATERAL,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = a.CUSTOMERID.Value,
@@ -681,6 +686,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var data = new TBL_LOAN_APPLICATION
                 {
+                    REQUIRECOLLATERAL =  loan .requireCollateral,
                     TOTALEXPOSUREAMOUNT = totalAmount,
                     PRODUCTCLASSID = productClassId,
                     APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
@@ -1191,7 +1197,8 @@ namespace FintrakBanking.Repositories.Credit
                         // && b.HASDONECHECKLIST == false
                         && a.COMPANYID == companyId && a.DELETED == false
                         select new LoanApplicationDetailViewModel()
-                        { 
+                        {
+                            requireCollateral = a.REQUIRECOLLATERAL,
                             loanApplicationId = b.LOANAPPLICATIONID,
                             applicationRefNo = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,

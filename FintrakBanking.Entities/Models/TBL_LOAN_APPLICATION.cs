@@ -122,6 +122,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool SUBMITTEDFORAPPRAISAL { get; set; }
 
+        public bool REQUIRECOLLATERAL { get; set; }         
+
         public bool CUSTOMERINFOVALIDATED { get; set; }
 
         [Column(TypeName = "date")]
