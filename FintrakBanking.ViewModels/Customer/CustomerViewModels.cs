@@ -6,7 +6,9 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerViewModels : GeneralEntity
     {
-         
+        public int creditBureauCount;
+        public bool isCreditBureauUploadCompleted;
+
         public CustomerViewModels()
         {
             CustomerAddresses = new List<CustomerAddressViewModels>();
