@@ -56,6 +56,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public List<LoanReviewIrregularScheduleViewModel> reviewIrregularSchedule { get; set; }
     }
+
     public class LoanReviewIrregularScheduleViewModel
     {
         public int IrregularScheduleInputId { get; set; }
@@ -70,7 +71,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public DateTime DateTimeCreated { get; set; }
     }
-        public class LoanReviewOperationApprovalViewModel
+
+    public class LoanReviewOperationApprovalViewModel
     {
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -201,5 +203,42 @@ namespace FintrakBanking.ViewModels.Credit
         public string terminationAndReBook { get; set; }
         public string completeWriteOff { get; set; }
         public string cancelUndisbursedLoan { get; set; }
+    }
+
+    public class LoanReviewApplicationViewModel : GeneralEntity
+    {
+        public int loanReviewApplicationId { get; set; }
+        public int loanId { get; set; }
+        public int productTypeId { get; set; }
+        public int operationTypeId { get; set; }
+        public string reviewDetails { get; set; }
+        public float interateRate { get; set; }
+        public decimal? prepayment { get; set; }
+        public int principalFrequencyTypeId { get; set; }
+        public int interestFrequencyTypeId { get; set; }
+        public DateTime? principalFirstPaymentDate { get; set; }
+        public DateTime? interestFirstPaymentDate { get; set; }
+        public DateTime? maturityDate { get; set; }
+        public int tenor { get; set; }
+        public int casaAccountId { get; set; }
+        public decimal? overDraftTopup { get; set; }
+        public decimal? feeCharges { get; set; }
+        public int approvalStatusId { get; set; }
+        public float isManagementInterestRate { get; set; }
+    }
+
+    public class SelectListViewModel
+    {
+        public List<DropDownSelect> casaAccounts { get; set; }
+        public List<DropDownSelect> productTypes { get; set; }
+        public List<DropDownSelect> operationTypes { get; set; }
+        public List<DropDownSelect> interestFrequencyTypes { get; set; }
+        public List<DropDownSelect> principalFrequencyTypes { get; set; }
+    }
+
+    public class DropDownSelect
+    {
+        public int id { get; set; }
+        public string name { get; set; }
     }
 }

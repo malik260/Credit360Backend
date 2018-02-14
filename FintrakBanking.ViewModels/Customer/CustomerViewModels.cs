@@ -35,7 +35,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string middleName { get; set; }
         public string customerTypeName { get; set; }
         public string customerName { get { return this.firstName + " " + this.middleName + " " + this.lastName; } }
-         public string fullName { get; set; }
+        public string fullName { get; set; }
         public string searchItem { get { return this.firstName + " " + this.middleName + " " + this.lastName + " " + this.customerCode; } }
         public string lastName { get; set; }
         public string gender { get; set; }
@@ -85,7 +85,7 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerSupplierViewModels> CustomerSupplier { get; set; }
         public List<CollateralViewModel> CustomerCollateral { get; set; }
         public List<CustomerChildrenViewModel> CustomerChildren { get; set; }
-       
+
     }
     public class CustomerInformationStagingViewModels
     {
@@ -130,6 +130,22 @@ namespace FintrakBanking.ViewModels.Customer
         public string sectorName { get; set; }
         public string sectorCode { get; set; }
 
+    }
+    public class CustomerInformationApprovalViemModel
+    {
+        public int customerId { get; set; }
+        public int customerModificationId { get; set; }
+        public string customerCode { get; set; }
+        public string customerName { get; set; }
+        public int modificationTyepId { get; set; }
+        public string modificationType { get; set; }
+        public string approvalStatus { get; set; }
+        public DateTime dateUpdated { set; get; }
+        public string createdBy { get; set; }
+        public string customerBranch { get; set; }
+        public int approvalStatusId { get; set; }
+        public string comment { get; set; }
+        public int operationId { get; set; }
     }
 
     public class ChangeTrackingViewModel

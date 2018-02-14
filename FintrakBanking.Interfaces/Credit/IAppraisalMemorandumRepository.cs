@@ -46,5 +46,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggers(int applicationId);
 
         IEnumerable<MonitoringTriggersViewModel> SaveApplicationMonitoringTriggers(int applicationId, List<MonitoringTriggersViewModel> entity, int staffId);
+
+        bool WorkflowTest();
     }
 }

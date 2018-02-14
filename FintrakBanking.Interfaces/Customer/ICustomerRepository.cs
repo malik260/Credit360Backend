@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -103,5 +104,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool ValidateClientSupplierTIN(int customerId, string taxNumber);
         bool CustomerInformationCompleted(int customerId, UserInfo user);
         #endregion
+        IEnumerable<CustomerInformationApprovalViemModel> GetAllCustomerInformationAwaitingApproval(int staffId, int companyId);
+        bool GoForApproval(ApprovalViewModel entity);
     }
 }

@@ -634,12 +634,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("collateral-value-base-type")]
-        public HttpResponseMessage GetCollateralValueBaseType()
+        [Route("collateral-value-base-type/{collateralType}")]
+        public HttpResponseMessage GetCollateralValueBaseType(short collateralType)
         {
             try
             {
-                var response = repo.GetCollateralValueBaseType();
+                var response = repo.GetCollateralValueBaseType(collateralType);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
@@ -783,5 +783,21 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("collateral-history/{collateralID}")]
+        public HttpResponseMessage GetCollateralHistory(short collateralID)
+        {
+            try
+            {
+                var response = repo.getCollateralHistory(collateralID);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
     }
 }
+
