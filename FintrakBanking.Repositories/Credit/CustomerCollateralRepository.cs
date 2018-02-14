@@ -1820,7 +1820,6 @@ namespace FintrakBanking.Repositories.Credit
                         lastValuationDate = m.LASTVALUATIONDATE,
                         valuerId = m.VALUERID,
                         valuerReferenceNumber = m.VALUERREFERENCENUMBER,
-                        openMarketValue = m.OPENMARKETVALUE,
 
                         //   collateralValue = m.COLLATERALVALUE,
                         forcedSaleValue = m.FORCEDSALEVALUE,
@@ -2796,13 +2795,6 @@ namespace FintrakBanking.Repositories.Credit
                                                      valuerReferenceNumber = x.VALUERREFERENCENUMBER,
                                                      propertyValueBaseTypeId = x.PROPERTYVALUEBASETYPEID,
                                                      openMarketValue = x.OPENMARKETVALUE,
-
-                                                    // collateralValue = x.COLLATERALVALUE,
-                                                     forcedSaleValue = x.FORCEDSALEVALUE,
-                                                     stampToCover = x.STAMPTOCOVER,
-                                                    // valuationSource = x.VALUATIONSOURCE,
-                                                   //  originalValue = x.ORIGINALVALUE,
-                                                   //  availableValue = x.AVAILABLEVALUE,
 
                                                      securityValue = (decimal)x.SECURITYVALUE,
                                                      collateralUsableAmount = x.COLLATERALUSABLEAMOUNT,

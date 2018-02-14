@@ -2775,6 +2775,7 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
                 .Property(e => e.SECURITYVALUE)
+
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
