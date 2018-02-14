@@ -27,6 +27,8 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal CHARGEAMOUNT { get; set; }
 
+        public bool ISREPORTOKAY { get; set; }
+
         public bool USEDINTEGRATION { get; set; }
 
         [Column(TypeName = "date")]

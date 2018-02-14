@@ -392,6 +392,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal securityValue { get; set; }
         public decimal? collateralUsableAmount { get; set; }
         public string remark { get; set; }
+        public decimal valuationAmount { get; set; }
     }
 
     public class CollateralSecurityViewModel

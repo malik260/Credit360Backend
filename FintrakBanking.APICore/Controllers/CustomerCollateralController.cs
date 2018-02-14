@@ -634,12 +634,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("collateral-value-base-type")]
-        public HttpResponseMessage GetCollateralValueBaseType()
+        [Route("collateral-value-base-type/{collateralType}")]
+        public HttpResponseMessage GetCollateralValueBaseType(short collateralType)
         {
             try
             {
-                var response = repo.GetCollateralValueBaseType();
+                var response = repo.GetCollateralValueBaseType(collateralType);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
