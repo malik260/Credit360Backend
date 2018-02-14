@@ -76,6 +76,7 @@
     <Compile Include="Credit\ILoanDocumentRepository.cs" />
     <Compile Include="Credit\ILoanPrincipalRepository.cs" />
     <Compile Include="Credit\ILoanRepository.cs" />
+    <Compile Include="Credit\ILoanReviewApplicationRepository.cs" />
     <Compile Include="Credit\ILoanScheduleRepository.cs" />
     <Compile Include="Credit\IOfferLetterAndAvailmentRepository.cs" />
     <Compile Include="Credit\ITransactionDynamicsRepository.cs" />

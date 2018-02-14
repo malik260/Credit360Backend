@@ -59,13 +59,20 @@ namespace FintrakBanking.ReportObjects.Credit
                                    select new OfferLetterDetailViewModel()
                                    {
                                        productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTNAME,
-                                       customerName = c.FIRSTNAME + " " + c.LASTNAME,
-                                       customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
+                                       //customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                                       //customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                        currencyName = b.TBL_CURRENCY.CURRENCYNAME,
                                        tenor = b.APPROVEDTENOR,
                                        interestRate = b.APPROVEDINTERESTRATE,
                                        loanAmount = b.APPROVEDAMOUNT,
-                                       exchangeRate = b.EXCHANGERATE
+                                       exchangeRate = b.EXCHANGERATE,
+                                       companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
+                                       customerName = a.LOANTYPEID != 3 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
+                                       customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
+                                       applicationDate = a.APPLICATIONDATE,
+                                       customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
+                                       customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+                                       customerPhoneNumber = a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
                                    }).ToList();
 
                 if (loanDetails != null)

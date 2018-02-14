@@ -115,6 +115,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int checkListIndex { get; set; }
     }
 
+    public class LoanApplicationUpdateViewModel
+    {
+        public int applicationId { get; set; }
+        public int staffId { get; set; }
+        public int checkListIndex { get; set; }
+    }
+
     public class CollateralLenPlacementViewModel : GeneralEntity
     {
         public string acountNumber { get; set; }

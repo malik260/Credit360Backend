@@ -1517,6 +1517,8 @@ namespace FintrakBanking.Repositories.Customer
                        riskRatingId = a.RISKRATINGID,
                        riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                        customerBVN = a.CUSTOMERBVN,
+                       isCreditBureauUploadCompleted = false,
+                       creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x=>x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false).Count(),
                        CustomerPhoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => new CustomerPhoneContactViewModels
                        {
                            active = c.ACTIVE,
