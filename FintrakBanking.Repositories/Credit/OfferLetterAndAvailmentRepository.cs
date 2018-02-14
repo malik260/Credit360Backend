@@ -87,6 +87,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = a.DATETIMECREATED,
                             availmentlDate = a.AVAILMENTDATE,
                             approvalDate = a.APPROVEDDATE,
+                            isFirstApprover = true,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
                                 .Select(camDoc => new CamDocumentViewModel
                                 {
@@ -114,6 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = e.OPERATIONID,
                             currentApprovalStateId = e.APPROVALSTATEID,
                             approvalStatusId = e.APPROVALSTATUSID,
+                            
                         });
 
             //var forDebugging = data.ToList();
@@ -345,6 +347,11 @@ namespace FintrakBanking.Repositories.Credit
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted
                 || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                
+                //foreach(var c in data)
+                //{
+                //    c.isFirstApprover = true;
+                //};
 
                 loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId));
 
@@ -388,6 +395,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = e.OPERATIONID,
                             currentApprovalStateId = e.APPROVALSTATEID,
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
+                            isFirstApprover = false,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
                                 .Select(camDoc => new CamDocumentViewModel
                                 {
@@ -1091,7 +1099,6 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }               
             }
-           // else { return false; }
 
             context.SaveChanges();
 

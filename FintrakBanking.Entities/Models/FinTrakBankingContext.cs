@@ -291,7 +291,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -2775,6 +2775,7 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
                 .Property(e => e.SECURITYVALUE)
+<<<<<<< HEAD
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
@@ -2784,6 +2785,18 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
                 .Property(e => e.VALUATIONAMOUNT)
                 .HasPrecision(19, 4);
+=======
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
+                .Property(e => e.COLLATERALUSABLEAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
+                .Property(e => e.VALUATIONAMOUNT)
+                .HasPrecision(19, 4);
+
+>>>>>>> 547bffbdb4dccc2b7670ce58118ba89e8a902080
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
                 .Property(e => e.REMARK)

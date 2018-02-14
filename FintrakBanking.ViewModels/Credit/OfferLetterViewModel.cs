@@ -11,7 +11,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public string customerName { get; set; }
         public string customerAddress { get; set; }
-
         public DateTime applicationDate { get; set; }
         public string customerGroupName { get; set; }
         public string customerEmailAddress { get; set; }
@@ -26,6 +25,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string currencyName { get; set; }
         public decimal loanAmount { get; set; }
         public double exchangeRate { get; set; }
+        public string customerAddress { get; set; }
+        public string customerEmailAddress { get; set; }
+        public string customerPhoneNumber { get; set; }
+        public DateTime applicationDate { get; set; }
 
         public decimal baseCurrencyLoanAmount
         {

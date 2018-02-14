@@ -29,7 +29,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
 
         LoanViewModel GetLoan(int loanId);
-        List<LoanMonitoringTrigger> GetLoanMonitoringTrigger();
+        List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTrigger();
 
         IEnumerable<LoanViewModel> FindLoan(string referenceNumberOrName, int companyId);
 

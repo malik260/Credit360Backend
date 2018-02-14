@@ -13,7 +13,7 @@ namespace FintrakBanking.ReportObjects.Credit
     public class OfferLetterInfo
     {
         public static OfferLetterViewModel GenerateOfferLetter(string applicationRefNumber)
-        {
+    {
             FinTrakBankingContext context = new FinTrakBankingContext();
 
             var offerLetterDetails = (from a in context.TBL_LOAN_APPLICATION
@@ -59,13 +59,20 @@ namespace FintrakBanking.ReportObjects.Credit
                                    select new OfferLetterDetailViewModel()
                                    {
                                        productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTNAME,
-                                       customerName = c.FIRSTNAME + " " + c.LASTNAME,
-                                       customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
+                                       //customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                                       //customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                        currencyName = b.TBL_CURRENCY.CURRENCYNAME,
                                        tenor = b.APPROVEDTENOR,
                                        interestRate = b.APPROVEDINTERESTRATE,
                                        loanAmount = b.APPROVEDAMOUNT,
-                                       exchangeRate = b.EXCHANGERATE
+                                       exchangeRate = b.EXCHANGERATE,
+                                       companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
+                                       customerName = a.LOANTYPEID != 3 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
+                                       customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
+                                       applicationDate = a.APPLICATIONDATE,
+                                       customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
+                                       customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+                                       customerPhoneNumber = a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
                                    }).ToList();
 
                 if (loanDetails != null)
@@ -84,24 +91,47 @@ namespace FintrakBanking.ReportObjects.Credit
 
         }
 
-        public static List<OfferLetterConditionPrecidentViewModel> GetLoanApplicationConditionPrecident(string applicationRefNumber)
+        //public static List<OfferLetterConditionPrecidentViewModel> GetLoanApplicationConditionPrecident(string applicationRefNumber)
+        public IEnumerable<OfferLetterConditionPrecidentViewModel> GetLoanApplicationConditionPrecident(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
 
-            var conditionPrecedent = (from a in context.TBL_LOAN_APPLICATION
+            var conditionPrecedentData  = (from a in context.TBL_LOAN_APPLICATION
+                                      join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                       join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
-                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISEXTERNAL == true
+                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
                                       select new OfferLetterConditionPrecidentViewModel()
                                       {
                                           conditionPrecident = b.CONDITION,
-                                          loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                          loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                          isExternal = b.ISEXTERNAL,
+                                          productName = c.TBL_PRODUCT.PRODUCTNAME
                                       }).ToList();
 
-            if (conditionPrecedent != null)
-            {
-                return conditionPrecedent;
-            }
-            return new List<OfferLetterConditionPrecidentViewModel>();
+
+            var forDebugging = conditionPrecedentData.ToList();
+            return conditionPrecedentData;
+        }
+
+        public IEnumerable<OfferLetterConditionPrecidentViewModel> GetLoanApplicationConditionSubsequent(string applicationRefNumber)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var conditionSubsequentData = (from a in context.TBL_LOAN_APPLICATION
+                                          join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                          join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                          where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == true && b.ISEXTERNAL == true
+                                          select new OfferLetterConditionPrecidentViewModel()
+                                          {
+                                              conditionPrecident = b.CONDITION,
+                                              loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                              isExternal = b.ISEXTERNAL,
+                                              productName = c.TBL_PRODUCT.PRODUCTNAME
+                                          }).ToList();
+
+
+            var forDebugging = conditionSubsequentData.ToList();
+            return conditionSubsequentData;
         }
 
         public static OfferLetterTemplateViewModel PrepareOfferLetterTemplate(string applicationRefNumber)
@@ -189,7 +219,6 @@ namespace FintrakBanking.ReportObjects.Credit
                                       }).ToList();
 
             var conditions = string.Empty;
-
             conditions = "<table><tr>Conditions</tr>";
 
             foreach (var item in conditionPrecedent)
@@ -198,7 +227,8 @@ namespace FintrakBanking.ReportObjects.Credit
                     $"<tr><td>{item.conditionPrecident}</td></tr>";
             }
 
-            var finalConditions = conditions + "</table>";
+           var  finalConditions = conditions + "</table>";
+
 
             var preparedTemplate = PopulateOfferLetterPlaceholders(applicant, applicantDetails,
                 applicantBeneficiaryDetails, facilityType, totalLoanAmount, facilityPurpose, facilityTenor);
@@ -227,6 +257,7 @@ namespace FintrakBanking.ReportObjects.Credit
             body = body.Replace("{TotalLoanAmount}", loanAmount);
             body = body.Replace("{Currency}", currency);
             body = body.Replace("{ConditionPrecedent}", loanDetails);
+            body = body.Replace("{ConditionPrecedent}", conditionPrecendent);
             body = body.Replace("{InterestRate}", interestRate);
 
             return body;

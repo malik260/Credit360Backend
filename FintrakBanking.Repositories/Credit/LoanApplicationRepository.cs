@@ -544,28 +544,29 @@ namespace FintrakBanking.Repositories.Credit
                             str = str + "<br/>" + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
                             checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
                         }
-                        else
+
+                        var ab = detail.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
+                        if (ab.Any())
                         {
-                            foreach (var ab in detail)
-                            {
-                                if (ab.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No)
-                                {
-                                    isCheckListDone = false;
-                                    str = str + "<br/> One or More " + item.CHECKLIST_TYPE_NAME + " " + "item(s) did not meet up with the condition."
-                                        + " Please Check your response to confirm.";
-                                }
-                                checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
-                            }
-                        }
+                            isCheckListDone = false;
+                            str = str + "One or More item(s) did not meet up with the condition."
+                                + " Please Check your response to confirm." + "<br/>";
+                            checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
+                        }                       
                     }
                 }
             }
             if (isCheckListDone)
             {
-                return SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex);
+                var data = new LoanApplicationUpdateViewModel
+                {
+                    applicationId = applicationId,
+                    staffId = staffId,
+                    checkListIndex = checkListIndex
+                };
 
-                // ----------------Drop into CAM ends-------------------
-
+                return SubmitLoanApplicationForCam(data);
+                
             }
             else
             {
@@ -582,54 +583,69 @@ namespace FintrakBanking.Repositories.Credit
      
             
 
-        public LoanApplicationUpdateMessage SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
+        public LoanApplicationUpdateMessage SubmitLoanApplicationForCam(LoanApplicationUpdateViewModel loan)
         {
-            LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
-            string str = string.Empty;
-
-            bool isCheckListDone = true;
-            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
-            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
-            appl.PRODUCTCLASSID = (checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist ? null : appl.PRODUCTCLASSID);
-
-            // ----------------Drop into CAM-------------------
-            workflow.StaffId = staffId;
-            workflow.OperationId = (int)OperationsEnum.CAM;
-            workflow.TargetId = appl.LOANAPPLICATIONID;
-            workflow.CompanyId = appl.COMPANYID;
-            workflow.ProductClassId = appl.PRODUCTCLASSID;
-            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-            workflow.Comment = "New Loan Application";
-            workflow.ExternalInitialization = true;
-            workflow.DeferredExecution = true;
-            workflow.LogActivity();
-
-            if (context.SaveChanges() != 0)
+            try
             {
-                result = new LoanApplicationUpdateMessage
-                {
-                    isdone = isCheckListDone,
-                    messageStr = str
+                LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
+                string str = string.Empty;
 
-                };
+                bool isCheckListDone = true;
+                var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.applicationId);
+                var appl = context.TBL_LOAN_APPLICATION.Find(loan.applicationId);
+
+                if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && loan.checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
+                {
+                    appl.PRODUCT_CLASS_PROCESSID = (int)ProductClassProcessEnum.CAMBased;
+                }
+
+                appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+                // ----------------Drop into CAM-------------------
+                workflow.StaffId =loan. staffId;
+                workflow.OperationId = (int)OperationsEnum.CAM;
+                workflow.TargetId = appl.LOANAPPLICATIONID;
+                workflow.CompanyId = appl.COMPANYID;
+                workflow.ProductClassId = appl.PRODUCTCLASSID;
+                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                workflow.Comment = "New loan application";
+                workflow.ExternalInitialization = true;
+                workflow.DeferredExecution = true;
+                workflow.LogActivity();
+                // ----------------Drop into CAM ends-------------------
+
+                if (context.SaveChanges() != 0)
+                {
+                    result = new LoanApplicationUpdateMessage
+                    {
+                        isdone = isCheckListDone,
+                        messageStr = str
+
+                    };
+                }
+                else
+                {
+                    result = new LoanApplicationUpdateMessage
+                    {
+                        isdone = false,
+                        messageStr = str
+
+                    };
+                }
+                return result;
             }
-            else
+            catch (Exception ex)
             {
-                result = new LoanApplicationUpdateMessage
-                {
-                    isdone = false,
-                    messageStr = str
 
-                };
+                throw new Exception(ex.Message);
             }
-            return result;
+            
         }
 
         public int AddLoanApplication(LoanApplicationViewModel loan)
         {
             try
             {
+                short productClassProcessId = 0;
                 short? productClassId = null;
                 bool isGroupLoan = false;
                 int response = 0; int loanId = 0;
@@ -643,17 +659,19 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
                 }
-
+                
                 var dat = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == loan.productClassId).FirstOrDefault();
                 if (dat != null)
                 {
                     if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
                     {
                         productClassId = null;
+                        productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
                     }
                     if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                     {
                         productClassId = loan.productClassId;
+                        productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
                     }
                 }
                 decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
@@ -665,6 +683,7 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTCLASSID = productClassId,
                     APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                     LOANTYPEID = loan.loanTypeId,
+                      PRODUCT_CLASS_PROCESSID = productClassProcessId,
                     COMPANYID = loan.companyId,
                     BRANCHID = (short)loan.branchId,
                     RELATIONSHIPOFFICERID = loan.relationshipOfficerId,
@@ -908,9 +927,9 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETL_BG.Add(data);
         }
 
-        public bool AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
+        public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
         {
-            var previousSearch = this.GetCustomerLoanCreditBureauReportChargesByApplicationId(entity.customerId);
+            var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId);
             bool hascrms = false;
             foreach (var i in previousSearch)
             {
@@ -919,19 +938,25 @@ namespace FintrakBanking.Repositories.Credit
             if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
                 throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
 
+            if (previousSearch.Count() >= 3 )
+                throw new Exception("You have reached that maximum credit bureau search for this customer");
+
             var data = new TBL_CUSTOMER_CREDIT_BUREAU()
             {
                 COMPANYDIRECTORID = entity.companyDirectorId,
                 CHARGEAMOUNT = entity.chargeAmount,
                 CREDITBUREAUID = entity.creditBureauId,
                 CUSTOMERID = entity.customerId,
-              //  ISCOMPLETED = entity.isComplete,
+                ISREPORTOKAY = entity.isReportOkay,
+                USEDINTEGRATION = entity.usedIntegration,
+                //ISCOMPLETED = entity.isComplete,
                 DATECOMPLETED = entity.dateCompleted,
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = entity.createdBy
             };
             context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
-            return context.SaveChanges() > 0;
+            if (context.SaveChanges() > 0) return data.CUSTOMERCREDITBUREAUID;
+            else return 0;
         }
 
         public IEnumerable<CreditBereauViewModel> GetCreditBureauInformation()
@@ -948,14 +973,16 @@ namespace FintrakBanking.Repositories.Credit
                                        isMandatory = a.ISMANDATORY,
                                        useIntegration = a.USEINTEGRATION,
                                        appliedSearchForLoan = false,
+                                       hasFile = false,
+                                       fileName = string.Empty,
                                    };
             return creditBureauList;
         }
 
-        public List<LoanCreditBereauViewModel> GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId)
+        public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId)
         {
             var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
-                                               where a.CUSTOMERID == customerId && a.DELETED == false
+                                               where a.CUSTOMERID == customerId && a.DELETED == false //&& a.DATETIMECREATED.Day <= ((DateTime.Now - a.DATETIMECREATED).TotalDays  - 30)
                                                select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,
@@ -963,9 +990,12 @@ namespace FintrakBanking.Repositories.Credit
                                                    chargeAmount = a.CHARGEAMOUNT,
                                                    customerId = a.CUSTOMERID,
                                                    creditBureauId = a.CREDITBUREAUID,
-                                                 //  isComplete = a.ISCOMPLETED,
+                                                   isReportOkay = a.ISREPORTOKAY,
+                                                   usedIntegration = a.USEDINTEGRATION,
                                                    dateCompleted = (DateTime)a.DATECOMPLETED,
                                                    dateTimeCreated = a.DATETIMECREATED,
+                                                   searchCount = 0,
+                                                   uploadCount = 0,
                                                    createdBy = a.CREATEDBY
                                                };
 

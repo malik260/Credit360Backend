@@ -693,4 +693,16 @@ namespace FintrakBanking.ViewModels.Credit
         public int staffId { get; set; }
         public string collateralCode { get; set; }
     }
+
+    public class CollateralHistory
+    {
+        public string customerName { get; set; }
+        public string  usedBy { get; set; }
+        public string loanRef { get; set; }
+        public string expirationDate { get; set; }
+        public decimal collateralValue { get; set; }
+        public decimal amountInUse { get; set; }
+        public decimal collateralBalance { get; set; }
+        public DateTime dateUsed { get; set; }
+    }
 }

@@ -308,7 +308,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("update-loan-application-application/application")]
+        [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
         {
             try
@@ -334,7 +334,34 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("application-details")]
+        [Route("update-loan-application")]
+        public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] LoanApplicationUpdateViewModel loan)
+        {
+            try
+            {
+                var responseMessage = string.Empty;
+
+                var data = new LoanApplicationUpdateViewModel
+                {
+                    applicationId = loan.applicationId,
+                    checkListIndex = loan.checkListIndex,
+                    staffId = token.GetStaffId
+                };
+
+                var response = repo.SubmitLoanApplicationForCam(data);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
+        [HttpPut]
+        [Route("loan-application-for-cam")]
         public HttpResponseMessage UpdateLoanApplicationDetails([FromBody]LoanApplicationDatailViewModel entity)
         {
             try
@@ -583,12 +610,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("credit-bureau-charges/{customerId}")]
-        public HttpResponseMessage GetCustomerLoanCreditBureauReportChargesByApplicationId(int customerId)
+        [Route("credit-bureau-report-log/{customerId}")]
+        public HttpResponseMessage GetCustomerCreditBureauReportLog(int customerId)
         {
             try
             {
-                var data = repo.GetCustomerLoanCreditBureauReportChargesByApplicationId(customerId);
+                var data = repo.GetCustomerCreditBureauReportLog(customerId);
 
                 if (!data.Any())
                 {
@@ -616,17 +643,17 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
                 model.staffId = token.GetStaffId;
 
-                var any = repo.AddCustomerCreditBureauCharge(model);
+                var result = repo.AddCustomerCreditBureauCharge(model);
 
-                if (any)
+                if (result > 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = model.creditBureauName + " Search for Credit Bureau Report Activated" });
+                                            new { success = true, date = result, message = model.creditBureauName + " Credit Bureau Report Successfully Saved" });
                 }
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = model.creditBureauName + " Search failed" });
+                        new { success = true, message = model.creditBureauName + " report upload failed" });
                 }
             }
             catch (Exception ex)
@@ -920,23 +947,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         
-        [HttpPut]
-        [Route("loan-application-for-cam")]
-        public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] dynamic model)
-        {
-            try
-            {
-                var response = repo.SubmitLoanApplicationForCam(model.id, token.GetStaffId, model.checkListIndex);
+        //[HttpPut]
+        //[Route("loan-application-for-cam")]
+        //public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] dynamic model)
+        //{
+        //    try
+        //    {
+        //        var response = repo.SubmitLoanApplicationForCam(model.id, token.GetStaffId, model.checkListIndex);
 
-                bool ok = !response.isdone  ? false : true;
+        //        bool ok = !response.isdone  ? false : true;
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = ok, result = response });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: { e.InnerException }" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = ok, result = response });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: { e.InnerException }" });
+        //    }
+        //}
 
 
         [HttpPost]

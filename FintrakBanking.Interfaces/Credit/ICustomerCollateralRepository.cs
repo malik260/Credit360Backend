@@ -35,6 +35,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         decimal GetAccountLeinAmountForFD(string accountNumber);
 
+        IEnumerable<CollateralHistory> getCollateralHistory(short collateralID);
+        
+
         #endregion Collateral
 
         #region Collateral Type
