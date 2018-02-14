@@ -3001,21 +3001,17 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CollateralHistory> getCollateralHistory(short collateralID)
         {
             var cHistory = (from c in context.TBL_LOAN_APPLICATION_COLLATERL
-                            join l in context.TBL_LOAN_COLLATERAL_MAPPING
-                            on c.COLLATERALCUSTOMERID equals l.COLLATERALCUSTOMERID
-                           // where c.COLLATERALCUSTOMERID == collateralID
+                            where c.TBL_COLLATERAL_CUSTOMER.COLLATERALCUSTOMERID == collateralID
                             select new CollateralHistory
                             {
                                 customerName = c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
-                                usedBy = l.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + l.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
+                                usedBy = c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
                                 loanRef = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                expirationDate = "",
-                                collateralValue = l.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                expirationDate = c.TBL_LOAN_APPLICATION.EXPIRYDATE.ToString(),
+                                collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                                 amountInUse = 0,
                                 collateralBalance = 0,
                                 dateUsed = c.DATETIMECREATED
-
-
                     }).ToList();
             return cHistory;
         }
