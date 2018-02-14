@@ -3013,7 +3013,7 @@ namespace FintrakBanking.Repositories.Credit
                                 collateralValue = l.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                                 amountInUse = 0,
                                 collateralBalance = 0,
-                                dateUsed = DateTime.Now
+                                dateUsed = c.DATETIMECREATED
 
 
                     }).ToList();
