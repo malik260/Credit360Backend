@@ -292,7 +292,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
             workflow.Disputed = appl.DISPUTED;
-            workflow.ProductClassId = model.productClassId;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.receiverLevelId;
             workflow.ToStaffId = model.receiverStaffId;
@@ -962,7 +962,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     applicationDetailId = x.LOANAPPLICATIONDETAILID,
                     monitoringTriggerId = x.MONITORING_TRIGGERID,
-                    monitoringTrigger = x.MONITORING_TRIGGER
+                    monitoringTrigger = x.MONITORING_TRIGGER,
+                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
                 })
                 .ToList();
         }
@@ -989,6 +990,22 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
 
             return GetApplicationMonitoringTriggers(applicationId);
+        }
+
+        public bool WorkflowTest()
+        {
+            workflow.StaffId = 1558; // RM-1558
+            workflow.TargetId = 2472;
+            workflow.CompanyId = 1;
+            workflow.ProductClassId = 5;
+            workflow.OperationId = (int)OperationsEnum.CAM;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.Comment = "flow_test";
+            workflow.ExternalInitialization = true;
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            return true;
         }
     }
 }
