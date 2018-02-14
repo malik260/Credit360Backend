@@ -972,6 +972,24 @@ namespace FintrakBanking.Repositories.Credit
             else return 0;
         }
 
+        public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model)
+        {
+            var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(c => c.CREDITBUREAUID == model.creditBureauId && c.CUSTOMERID == model.customerId).FirstOrDefault();
+
+            data.ISREPORTOKAY = status;
+            return context.SaveChanges() > 0;
+        }
+
+        public bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model)
+        {
+            foreach(var item in model)
+            {
+                if (UpdateCreditBureauCustomerReportStatus(status, item) == false) return false;
+            }
+
+            return true;
+        }
+
         public IEnumerable<CreditBereauViewModel> GetCreditBureauInformation()
         {
             var creditBureauList = from a in context.TBL_CREDIT_BUREAU

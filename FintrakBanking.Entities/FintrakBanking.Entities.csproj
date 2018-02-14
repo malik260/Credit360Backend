@@ -381,6 +381,7 @@
     <Compile Include="Models\TBL_TEMP_COLLATERAL_STOCK.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_VEHICLE.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_ADDRESS.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_COMPANYINFO.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP_MAPPNG.cs" />
