@@ -544,26 +544,29 @@ namespace FintrakBanking.Repositories.Credit
                             str = str + "<br/>" + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
                             checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
                         }
-                        else
+
+                        var ab = detail.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
+                        if (ab.Any())
                         {
-                            foreach (var ab in detail)
-                            {
-                                if (ab.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No)
-                                {
-                                    isCheckListDone = false;
-                                    str = str + "<br/> One or More " + item.CHECKLIST_TYPE_NAME + " " + "item(s) did not meet up with the condition."
-                                        + " Please Check your response to confirm.";
-                                }
-                                checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
-                            }
-                        }
+                            isCheckListDone = false;
+                            str = str + "One or More item(s) did not meet up with the condition."
+                                + " Please Check your response to confirm." + "<br/>";
+                            checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
+                        }                       
                     }
                 }
             }
             if (isCheckListDone)
             {
-                return SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex);
+                var data = new LoanApplicationUpdateViewModel
+                {
+                    applicationId = applicationId,
+                    staffId = staffId,
+                    checkListIndex = checkListIndex
+                };
 
+                return SubmitLoanApplicationForCam(data);
+                
             }
             else
             {
@@ -580,7 +583,7 @@ namespace FintrakBanking.Repositories.Credit
      
             
 
-        public LoanApplicationUpdateMessage SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
+        public LoanApplicationUpdateMessage SubmitLoanApplicationForCam(LoanApplicationUpdateViewModel loan)
         {
             try
             {
@@ -588,17 +591,17 @@ namespace FintrakBanking.Repositories.Credit
                 string str = string.Empty;
 
                 bool isCheckListDone = true;
-                var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
-                var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+                var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.applicationId);
+                var appl = context.TBL_LOAN_APPLICATION.Find(loan.applicationId);
 
-                if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
+                if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && loan.checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
                 {
                     appl.PRODUCT_CLASS_PROCESSID = (int)ProductClassProcessEnum.CAMBased;
                 }
 
                 appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
                 // ----------------Drop into CAM-------------------
-                workflow.StaffId = staffId;
+                workflow.StaffId =loan. staffId;
                 workflow.OperationId = (int)OperationsEnum.CAM;
                 workflow.TargetId = appl.LOANAPPLICATIONID;
                 workflow.CompanyId = appl.COMPANYID;
@@ -642,6 +645,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                short productClassProcessId = 0;
                 short? productClassId = null;
                 bool isGroupLoan = false;
                 int response = 0; int loanId = 0;
@@ -655,17 +659,19 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
                 }
-
+                
                 var dat = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == loan.productClassId).FirstOrDefault();
                 if (dat != null)
                 {
                     if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
                     {
                         productClassId = null;
+                        productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
                     }
                     if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                     {
                         productClassId = loan.productClassId;
+                        productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
                     }
                 }
                 decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
@@ -677,6 +683,7 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTCLASSID = productClassId,
                     APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                     LOANTYPEID = loan.loanTypeId,
+                      PRODUCT_CLASS_PROCESSID = productClassProcessId,
                     COMPANYID = loan.companyId,
                     BRANCHID = (short)loan.branchId,
                     RELATIONSHIPOFFICERID = loan.relationshipOfficerId,
