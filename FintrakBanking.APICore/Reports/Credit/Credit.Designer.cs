@@ -3881,6 +3881,16 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columncustomerGroupName;
             
+            private global::System.Data.DataColumn columncompanyName;
+            
+            private global::System.Data.DataColumn columncustomerAddress;
+            
+            private global::System.Data.DataColumn columnapplicationDate;
+            
+            private global::System.Data.DataColumn columncustomerEmailAddress;
+            
+            private global::System.Data.DataColumn columncustomerPhoneNumber;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public OfferLetterDetailDataTable() {
@@ -3996,6 +4006,46 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn companyNameColumn {
+                get {
+                    return this.columncompanyName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn customerAddressColumn {
+                get {
+                    return this.columncustomerAddress;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn applicationDateColumn {
+                get {
+                    return this.columnapplicationDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn customerEmailAddressColumn {
+                get {
+                    return this.columncustomerEmailAddress;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn customerPhoneNumberColumn {
+                get {
+                    return this.columncustomerPhoneNumber;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -4031,7 +4081,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public OfferLetterDetailRow AddOfferLetterDetailRow(int loanApplicationId, string productName, string customerName, string currencyName, string loanAmount, string exchangeRate, string baseCurrencyLoanAmount, string tenor, string interestRate, string customerGroupName) {
+            public OfferLetterDetailRow AddOfferLetterDetailRow(int loanApplicationId, string productName, string customerName, string currencyName, string loanAmount, string exchangeRate, string baseCurrencyLoanAmount, string tenor, string interestRate, string customerGroupName, string companyName, string customerAddress, string applicationDate, string customerEmailAddress, string customerPhoneNumber) {
                 OfferLetterDetailRow rowOfferLetterDetailRow = ((OfferLetterDetailRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         loanApplicationId,
@@ -4043,7 +4093,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         baseCurrencyLoanAmount,
                         tenor,
                         interestRate,
-                        customerGroupName};
+                        customerGroupName,
+                        companyName,
+                        customerAddress,
+                        applicationDate,
+                        customerEmailAddress,
+                        customerPhoneNumber};
                 rowOfferLetterDetailRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowOfferLetterDetailRow);
                 return rowOfferLetterDetailRow;
@@ -4076,6 +4131,11 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columntenor = base.Columns["tenor"];
                 this.columninterestRate = base.Columns["interestRate"];
                 this.columncustomerGroupName = base.Columns["customerGroupName"];
+                this.columncompanyName = base.Columns["companyName"];
+                this.columncustomerAddress = base.Columns["customerAddress"];
+                this.columnapplicationDate = base.Columns["applicationDate"];
+                this.columncustomerEmailAddress = base.Columns["customerEmailAddress"];
+                this.columncustomerPhoneNumber = base.Columns["customerPhoneNumber"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4101,6 +4161,16 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columninterestRate);
                 this.columncustomerGroupName = new global::System.Data.DataColumn("customerGroupName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncustomerGroupName);
+                this.columncompanyName = new global::System.Data.DataColumn("companyName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncompanyName);
+                this.columncustomerAddress = new global::System.Data.DataColumn("customerAddress", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerAddress);
+                this.columnapplicationDate = new global::System.Data.DataColumn("applicationDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapplicationDate);
+                this.columncustomerEmailAddress = new global::System.Data.DataColumn("customerEmailAddress", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerEmailAddress);
+                this.columncustomerPhoneNumber = new global::System.Data.DataColumn("customerPhoneNumber", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerPhoneNumber);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -10451,6 +10521,88 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string companyName {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.companyNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'companyName\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.companyNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string customerAddress {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.customerAddressColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerAddress\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.customerAddressColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string applicationDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.applicationDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'applicationDate\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.applicationDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string customerEmailAddress {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.customerEmailAddressColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerEmailAddress\' in table \'OfferLetterDetail\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.customerEmailAddressColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string customerPhoneNumber {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.customerPhoneNumberColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerPhoneNumber\' in table \'OfferLetterDetail\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.customerPhoneNumberColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsloanApplicationIdNull() {
                 return this.IsNull(this.tableOfferLetterDetail.loanApplicationIdColumn);
             }
@@ -10567,6 +10719,66 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcustomerGroupNameNull() {
                 this[this.tableOfferLetterDetail.customerGroupNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IscompanyNameNull() {
+                return this.IsNull(this.tableOfferLetterDetail.companyNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetcompanyNameNull() {
+                this[this.tableOfferLetterDetail.companyNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IscustomerAddressNull() {
+                return this.IsNull(this.tableOfferLetterDetail.customerAddressColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetcustomerAddressNull() {
+                this[this.tableOfferLetterDetail.customerAddressColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsapplicationDateNull() {
+                return this.IsNull(this.tableOfferLetterDetail.applicationDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetapplicationDateNull() {
+                this[this.tableOfferLetterDetail.applicationDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IscustomerEmailAddressNull() {
+                return this.IsNull(this.tableOfferLetterDetail.customerEmailAddressColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetcustomerEmailAddressNull() {
+                this[this.tableOfferLetterDetail.customerEmailAddressColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IscustomerPhoneNumberNull() {
+                return this.IsNull(this.tableOfferLetterDetail.customerPhoneNumberColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetcustomerPhoneNumberNull() {
+                this[this.tableOfferLetterDetail.customerPhoneNumberColumn] = global::System.Convert.DBNull;
             }
         }
         

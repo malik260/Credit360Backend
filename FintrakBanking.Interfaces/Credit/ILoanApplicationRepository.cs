@@ -64,7 +64,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
 
-        bool AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity);
+        int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity);
 
         IEnumerable<CreditBereauViewModel> GetCreditBureauInformation();
 

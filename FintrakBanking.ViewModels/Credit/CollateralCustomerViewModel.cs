@@ -392,6 +392,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal securityValue { get; set; }
         public decimal? collateralUsableAmount { get; set; }
         public string remark { get; set; }
+        public decimal valuationAmount { get; set; }
     }
 
     public class CollateralSecurityViewModel
@@ -691,5 +692,17 @@ namespace FintrakBanking.ViewModels.Credit
         public int? applicationDetailId { get; set; }
         public int staffId { get; set; }
         public string collateralCode { get; set; }
+    }
+
+    public class CollateralHistory
+    {
+        public string customerName { get; set; }
+        public string  usedBy { get; set; }
+        public string loanRef { get; set; }
+        public string expirationDate { get; set; }
+        public decimal collateralValue { get; set; }
+        public decimal amountInUse { get; set; }
+        public decimal collateralBalance { get; set; }
+        public DateTime dateUsed { get; set; }
     }
 }

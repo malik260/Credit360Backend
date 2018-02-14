@@ -615,9 +615,11 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Draft.png" />
     <Content Include="Content\first-bank-logo.png" />
     <Content Include="Content\first-bank-new-logo.jpg" />
     <Content Include="Content\firstbank.png" />
+    <Content Include="Content\Icons\Draft.png" />
     <Content Include="Content\Icons\first_bank_logo_kmH_icon.ico" />
     <Content Include="Content\Icons\first_bank_new_logo_2sm_icon.ico" />
     <Content Include="EmailTemplates\ApprovalWorkflow.html" />
