@@ -54,7 +54,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
+        
         [HttpPost]
         [Route("appraisal-memorandum")]
         public HttpResponseMessage AddAppraisalMemorandum([FromBody] AppraisalMemorandumViewModel entity)
@@ -443,6 +443,21 @@ namespace FintrakBanking.APICore.Controllers
         #endregion MONITORING TRIGGERS
 
 
+
+        [HttpGet]
+        [Route("appraisal-memorandum/workflow-test")]
+        public HttpResponseMessage WorkflowTest()
+        {
+            try
+            {
+                bool data = repo.WorkflowTest();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }

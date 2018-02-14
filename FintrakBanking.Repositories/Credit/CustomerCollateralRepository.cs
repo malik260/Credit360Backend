@@ -867,7 +867,8 @@ namespace FintrakBanking.Repositories.Credit
                 LONGITUDE = entity.longitude,
                 LATITUDE = entity.latitude,
                 PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
-                PERFECTIONSTATUSREASON = entity.perfectionStatusReason
+                PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
+                VALUATIONAMOUNT = entity.valuationAmount
             });
         }
 
@@ -888,12 +889,16 @@ namespace FintrakBanking.Repositories.Credit
             collateral.VALUERREFERENCENUMBER = entity.valuerReferenceNumber;
             collateral.PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId;
             collateral.OPENMARKETVALUE = entity.openMarketValue;
-            //collateral.COLLATERALVALUE = (decimal)entity.collateralValue;
+
+           // collateral.COLLATERALVALUE = (decimal)entity.collateralValue;
+
             collateral.FORCEDSALEVALUE = entity.forcedSaleValue;
             collateral.STAMPTOCOVER = entity.stampToCover;
             //collateral.VALUATIONSOURCE = entity.valuationSource;
             //collateral.ORIGINALVALUE = entity.originalValue;
-           // collateral.AVAILABLEVALUE = entity.availableValue;
+
+            //collateral.AVAILABLEVALUE = entity.availableValue;
+
             collateral.SECURITYVALUE = entity.securityValue;
             collateral.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
             collateral.REMARK = entity.remark;
@@ -903,6 +908,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.LATITUDE = entity.latitude;
             collateral.PERFECTIONSTATUSID = (byte)entity.perfectionStatusId;
             collateral.PERFECTIONSTATUSREASON = entity.perfectionStatusReason;
+            collateral.VALUATIONAMOUNT = entity.valuationAmount;
         }
 
         private CollateralViewModel GetCollateralImmovableProperty(int collateralId)
@@ -927,9 +933,11 @@ namespace FintrakBanking.Repositories.Credit
                 //collateralValue = specifics.COLLATERALVALUE,
                 forcedSaleValue = specifics.FORCEDSALEVALUE,
                 stampToCover = specifics.STAMPTOCOVER,
-               // valuationSource = specifics.VALUATIONSOURCE,
-               // originalValue = specifics.ORIGINALVALUE,
-               // availableValue = specifics.AVAILABLEVALUE,
+
+                //valuationSource = specifics.VALUATIONSOURCE,
+                //originalValue = specifics.ORIGINALVALUE,
+                //availableValue = specifics.AVAILABLEVALUE,
+
                 securityValue = (decimal)specifics.SECURITYVALUE,
                 collateralUsableAmount = specifics.COLLATERALUSABLEAMOUNT,
                 remark = specifics.REMARK,
@@ -938,7 +946,8 @@ namespace FintrakBanking.Repositories.Credit
                 longitude = specifics.LONGITUDE,
                 latitude = specifics.LATITUDE,
                 perfectionStatusId = specifics.PERFECTIONSTATUSID,
-                perfectionStatusReason = specifics.PERFECTIONSTATUSREASON
+                perfectionStatusReason = specifics.PERFECTIONSTATUSREASON,
+                valuationAmount = specifics.VALUATIONAMOUNT 
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -1775,15 +1784,18 @@ namespace FintrakBanking.Repositories.Credit
                 VALUERID = entity.valuerId,
                 VALUERREFERENCENUMBER = entity.valuerReferenceNumber,
                 OPENMARKETVALUE = entity.openMarketValue,
-                //COLLATERALVALUE = entity.collateralValue,
+
+              //  COLLATERALVALUE = entity.collateralValue,
                 FORCEDSALEVALUE = entity.forcedSaleValue,
                 STAMPTOCOVER = entity.stampToCover,
-                //VALUATIONSOURCE = entity.valuationSource,
-                //ORIGINALVALUE = entity.originalValue,
-                //AVAILABLEVALUE = entity.availableValue,
+               // VALUATIONSOURCE = entity.valuationSource,
+               // ORIGINALVALUE = entity.originalValue,
+               // AVAILABLEVALUE = entity.availableValue,
+
                 SECURITYVALUE = entity.securityValue,
                 COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
-                REMARK = entity.remark
+                REMARK = entity.remark,
+               VALUATIONAMOUNT = entity.valuationAmount
             });
 
             return collateral;
@@ -1808,15 +1820,17 @@ namespace FintrakBanking.Repositories.Credit
                         lastValuationDate = m.LASTVALUATIONDATE,
                         valuerId = m.VALUERID,
                         valuerReferenceNumber = m.VALUERREFERENCENUMBER,
-                        openMarketValue = m.OPENMARKETVALUE,
-                       // collateralValue = m.COLLATERALVALUE,
+
+                        //   collateralValue = m.COLLATERALVALUE,
                         forcedSaleValue = m.FORCEDSALEVALUE,
                         stampToCover = m.STAMPTOCOVER,
-                       // valuationSource = m.VALUATIONSOURCE,
-                        //originalValue = m.ORIGINALVALUE,
-                       // availableValue = m.AVAILABLEVALUE,
+                        //  valuationSource = m.VALUATIONSOURCE,
+                        //  originalValue = m.ORIGINALVALUE,
+                        //   availableValue = m.AVAILABLEVALUE,
+
                         collateralUsableAmount = m.COLLATERALUSABLEAMOUNT,
-                        remark = m.REMARK
+                        remark = m.REMARK,
+                      //  valuationAmount = m.VALUATIONAMOUNT ,
                     }).FirstOrDefault();
         }
 
@@ -2551,9 +2565,10 @@ namespace FintrakBanking.Repositories.Credit
         #endregion Seniority Of Claims
 
         #region Listing Functions
-        public IEnumerable<CollateralValueBaseTypeViewModel> GetCollateralValueBaseType()
+        public IEnumerable<CollateralValueBaseTypeViewModel> GetCollateralValueBaseType(short collateralType)
         {
             return (from m in context.TBL_COLLATERAL_VALUEBASE_TYPE
+                    where m.COLLATERALTYPEID == collateralType
                     select new CollateralValueBaseTypeViewModel
                     {
                         collateralValueBaseTypeId = m.COLLATERALVALUEBASETYPEID,
@@ -2780,12 +2795,7 @@ namespace FintrakBanking.Repositories.Credit
                                                      valuerReferenceNumber = x.VALUERREFERENCENUMBER,
                                                      propertyValueBaseTypeId = x.PROPERTYVALUEBASETYPEID,
                                                      openMarketValue = x.OPENMARKETVALUE,
-                                                     //collateralValue = x.COLLATERALVALUE,
-                                                     forcedSaleValue = x.FORCEDSALEVALUE,
-                                                     stampToCover = x.STAMPTOCOVER,
-                                                    // valuationSource = x.VALUATIONSOURCE,
-                                                    // originalValue = x.ORIGINALVALUE,
-                                                    // availableValue = x.AVAILABLEVALUE,
+
                                                      securityValue = (decimal)x.SECURITYVALUE,
                                                      collateralUsableAmount = x.COLLATERALUSABLEAMOUNT,
                                                      remark = x.REMARK
@@ -2980,8 +2990,25 @@ namespace FintrakBanking.Repositories.Credit
             return context.TBL_COLLATERAL_DEPOSIT.Where(x => x.ACCOUNTNUMBER == accountNumber).Select(x => x.LIENAMOUNT).FirstOrDefault();
         }
 
+        public IEnumerable<CollateralHistory> getCollateralHistory(short collateralID)
+        {
+            var cHistory = (from c in context.TBL_LOAN_APPLICATION_COLLATERL
+                            where c.TBL_COLLATERAL_CUSTOMER.COLLATERALCUSTOMERID == collateralID
+                            select new CollateralHistory
+                            {
+                                customerName = c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
+                                usedBy = c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
+                                loanRef = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                expirationDate = c.TBL_LOAN_APPLICATION.EXPIRYDATE.ToString(),
+                                collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                amountInUse = 0,
+                                collateralBalance = 0,
+                                dateUsed = c.DATETIMECREATED
+                    }).ToList();
+            return cHistory;
+        }
 
-
+       
 
         // .....END OF COMPLETE COLLATERAL INFORMATION VIEW......
         #endregion Collateral Information View

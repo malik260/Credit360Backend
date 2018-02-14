@@ -308,7 +308,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("update-loan-application-application/application")]
+        [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
         {
             try
@@ -334,7 +334,34 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("application-details")]
+        [Route("update-loan-application")]
+        public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] LoanApplicationUpdateViewModel loan)
+        {
+            try
+            {
+                var responseMessage = string.Empty;
+
+                var data = new LoanApplicationUpdateViewModel
+                {
+                    applicationId = loan.applicationId,
+                    checkListIndex = loan.checkListIndex,
+                    staffId = token.GetStaffId
+                };
+
+                var response = repo.SubmitLoanApplicationForCam(data);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
+        [HttpPut]
+        [Route("loan-application-for-cam")]
         public HttpResponseMessage UpdateLoanApplicationDetails([FromBody]LoanApplicationDatailViewModel entity)
         {
             try
@@ -559,7 +586,7 @@ namespace FintrakBanking.APICore.Controllers
                     new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-
+        #region CREDIT BUREAU REPORT
         [HttpGet]
         [Route("credit-bureau-information")]
         public HttpResponseMessage GetCreditBureauInformation()
@@ -635,6 +662,71 @@ namespace FintrakBanking.APICore.Controllers
                     new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
+        [HttpPut]
+        [Route("credit-bureau-customer-report-status/{status}")]
+        public HttpResponseMessage UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = (short)token.GetCompanyId;
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.UpdateCreditBureauCustomerReportStatus(status, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = entity.creditBureauName + "Validate Okay" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+
+        }
+
+        [HttpPut]
+        [Route("multiple-credit-bureau-customer-report-status/{status}")]
+        public HttpResponseMessage UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model)
+        {
+            try
+            {
+                foreach(var entity in model)
+                {
+                    entity.userBranchId = (short)token.GetBranchId;
+                    entity.companyId = (short)token.GetCompanyId;
+                    //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                    entity.applicationUrl = HttpContext.Current.Request.Path;
+                    entity.createdBy = token.GetStaffId;
+                }
+                
+
+                var data = repo.UpdateMultipleCreditBureauCustomerReportStatus(status, model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message =  "All Result Validate Okay" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+
+        }
+        #endregion
 
 
         [HttpGet]
@@ -920,23 +1012,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         
-        [HttpPut]
-        [Route("loan-application-for-cam")]
-        public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] dynamic model)
-        {
-            try
-            {
-                var response = repo.SubmitLoanApplicationForCam(model.id, token.GetStaffId, model.checkListIndex);
+        //[HttpPut]
+        //[Route("loan-application-for-cam")]
+        //public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] dynamic model)
+        //{
+        //    try
+        //    {
+        //        var response = repo.SubmitLoanApplicationForCam(model.id, token.GetStaffId, model.checkListIndex);
 
-                bool ok = !response.isdone  ? false : true;
+        //        bool ok = !response.isdone  ? false : true;
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = ok, result = response });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: { e.InnerException }" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = ok, result = response });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: { e.InnerException }" });
+        //    }
+        //}
 
 
         [HttpPost]
@@ -999,7 +1091,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response = repo.ProductFeesConcession(entity, user);
                 if (response)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Fee concession completed successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Fee concession request completed successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });

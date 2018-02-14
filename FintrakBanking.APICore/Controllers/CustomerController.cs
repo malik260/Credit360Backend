@@ -753,7 +753,7 @@ namespace FintrakBanking.APICore.Controllers
                     entity.addressTypeId = (int)CustomerAddressTypeEnum.Corporate;
                 }
                 entity.userBranchId = (short)token.GetBranchId;
-
+                entity.companyId = (short)token.GetCompanyId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
 
