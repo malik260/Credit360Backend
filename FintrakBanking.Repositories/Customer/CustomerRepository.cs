@@ -1104,7 +1104,6 @@ namespace FintrakBanking.Repositories.Customer
                         clientSupplier.DATECREATED = DateTime.Now;
                         context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
                     }
-
                     // Audit Section ----------------------------
                     var audit = new TBL_AUDIT
                     {
@@ -1117,9 +1116,7 @@ namespace FintrakBanking.Repositories.Customer
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now
                     };
-
                     this.auditTrail.AddAuditTrail(audit);
-
                     var response = context.SaveChanges() != 0;
                     return response;
                 }
@@ -1128,8 +1125,6 @@ namespace FintrakBanking.Repositories.Customer
                     throw new Exception(ex.Message);
                 }
             }
-
-
             return false;
         }
 
