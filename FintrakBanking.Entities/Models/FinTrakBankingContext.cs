@@ -2785,6 +2785,7 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.VALUATIONAMOUNT)
                 .HasPrecision(19, 4);
 
+
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
                 .Property(e => e.REMARK)
                 .IsUnicode(false);
