@@ -64,13 +64,19 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
 
+        #region CREDIT BUREAU REPORT
         int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity);
+
+       bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model);
+
+        bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model);
 
         IEnumerable<CreditBereauViewModel> GetCreditBureauInformation();
 
         List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId);
 
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
+        #endregion 
 
         LoanApplicationUpdateMessage SubmitLoanApplicationForCam(LoanApplicationUpdateViewModel loan);
 

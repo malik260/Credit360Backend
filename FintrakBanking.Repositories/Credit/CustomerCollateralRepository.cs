@@ -237,13 +237,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 COLLATERALCUSTOMERID = collateralId,
                 DEALREFERENCENUMBER = entity.dealReferenceNumber,
-                ACCOUNTNUMBER = entity.accountNumber,
-                EXISTINGLIENAMOUNT = entity.existingLienAmount,
+                 ACCOUNTNUMBER = "0",
+                  EXISTINGLIENAMOUNT = 0,
                 LIENAMOUNT = entity.lienAmount,
                 AVAILABLEBALANCE = entity.availableBalance,
                 SECURITYVALUE = entity.securityValue,
                 MATURITYDATE = entity.maturityDate,
-                MATURITYAMOUNT = entity.maturityAmount,
+                MATURITYAMOUNT = 0,
                 EFFECTIVEDATE = entity.effectiveDate,
                 REMARK = entity.remark,
             });
@@ -256,13 +256,13 @@ namespace FintrakBanking.Repositories.Credit
                 .FirstOrDefault();
 
             collateral.DEALREFERENCENUMBER = entity.dealReferenceNumber;
-            collateral.ACCOUNTNUMBER = entity.accountNumber;
-            collateral.EXISTINGLIENAMOUNT = entity.existingLienAmount;
+            collateral.ACCOUNTNUMBER = "0";
+            collateral.EXISTINGLIENAMOUNT = 0;
             collateral.LIENAMOUNT = entity.lienAmount;
             collateral.AVAILABLEBALANCE = entity.availableBalance;
             collateral.SECURITYVALUE = entity.securityValue;
             collateral.MATURITYDATE = entity.maturityDate;
-            collateral.MATURITYAMOUNT = entity.maturityAmount;
+            collateral.MATURITYAMOUNT = 0;
             collateral.EFFECTIVEDATE = entity.effectiveDate;
             collateral.REMARK = entity.remark;
         }
@@ -431,22 +431,23 @@ namespace FintrakBanking.Repositories.Credit
 
         // GET TYPE SPICIFIC & INSURANCE DETAILS
 
-        public CollateralViewModel GetCollateralTypeByCollateralId(CollateralViewModel form)
+
+        public CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId)
         {
             var data = new CollateralViewModel();
-            switch (form.collateralTypeId)
+            switch (typeId)
             {
-                case (int)CollateralTypeEnum.TermDeposit: data = GetCollateralDeposit(form.collateralId); break;
-                case (int)CollateralTypeEnum.PlantAndMachinery: data = GetCollateralMachinery(form.collateralId); break;
-                case (int)CollateralTypeEnum.Miscellaneous: data = GetCollateralMiscellaneous(form.collateralId); break;
-                case (int)CollateralTypeEnum.Gaurantee: data = GetCollateralGuarantee(form.collateralId); break;
-                case (int)CollateralTypeEnum.CASA: data = GetCollateralCasa(form.collateralId); break;
-                case (int)CollateralTypeEnum.Property: data = GetCollateralImmovableProperty(form.collateralId); break;
-                case (int)CollateralTypeEnum.MarketableSecurities: data = GetCollateralMarketableSecurities(form.collateralId); break;
-                case (int)CollateralTypeEnum.InsurancePolicy: data = GetCollateralPolicy(form.collateralId); break;
-                case (int)CollateralTypeEnum.PreciousMetal: data = GetCollateralPreciousMetal(form.collateralId); break;
-                case (int)CollateralTypeEnum.Stock: data = GetCollateralStock(form.collateralId); break;
-                case (int)CollateralTypeEnum.Vehicle: data = GetCollateralVehicle(form.collateralId); break;
+                case (int)CollateralTypeEnum.TermDeposit: data = GetCollateralDeposit(collateralId); break;
+                case (int)CollateralTypeEnum.PlantAndMachinery: data = GetCollateralMachinery(collateralId); break;
+                case (int)CollateralTypeEnum.Miscellaneous: data = GetCollateralMiscellaneous(collateralId); break;
+                case (int)CollateralTypeEnum.Gaurantee: data = GetCollateralGuarantee(collateralId); break;
+                case (int)CollateralTypeEnum.CASA: data = GetCollateralCasa(collateralId); break;
+                case (int)CollateralTypeEnum.Property: data = GetCollateralImmovableProperty(collateralId); break;
+                case (int)CollateralTypeEnum.MarketableSecurities: data = GetCollateralMarketableSecurities(collateralId); break;
+                case (int)CollateralTypeEnum.InsurancePolicy: data = GetCollateralPolicy(collateralId); break;
+                case (int)CollateralTypeEnum.PreciousMetal: data = GetCollateralPreciousMetal(collateralId); break;
+                case (int)CollateralTypeEnum.Stock: data = GetCollateralStock(collateralId); break;
+                case (int)CollateralTypeEnum.Vehicle: data = GetCollateralVehicle(collateralId); break;
 
                 default:
                     break;
@@ -736,7 +737,7 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_COLLATERAL_CASA.Add(new TBL_COLLATERAL_CASA
             {
                 COLLATERALCUSTOMERID = collateralId,
-                ACCOUNTNUMBER = entity.accountNumber,
+                ACCOUNTNUMBER = entity.collateralCode,
                 //  ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 AVAILABLEBALANCE = entity.availableBalance,
                 // EXISTINGLIENAMOUNT = entity.existingLienAmount,
@@ -752,7 +753,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
                 .FirstOrDefault();
 
-            collateral.ACCOUNTNUMBER = entity.accountNumber;
+            collateral.ACCOUNTNUMBER = entity.collateralCode;
             // collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
             collateral.AVAILABLEBALANCE = entity.availableBalance;
             // collateral.EXISTINGLIENAMOUNT = entity.existingLienAmount;
