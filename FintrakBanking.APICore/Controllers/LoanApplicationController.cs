@@ -678,8 +678,10 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.UpdateCreditBureauCustomerReportStatus(status, entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = entity.creditBureauName + "Validate Okay" });
+                   if(status) return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = entity.creditBureauName + " report is positive" });
+                    else return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = entity.creditBureauName + " report is negative" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
