@@ -1520,6 +1520,29 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
         }
+
+        [HttpGet]
+        [Route("validate-customer-modification/{customerId}")]
+        public HttpResponseMessage ValidateCustomerModification(int customerId)
+        {
+            try
+            {
+
+                var data = repo.ValidateCustomerModification(customerId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                         new { success = true, message = "Modified Customer Information is undergoing approval. Please contact approving authority." });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "" });
+            }
+        }
         [HttpGet]
         [Route("customer-information-completed/{customerId}")]
         public HttpResponseMessage CustomerInformationCompleted(int customerId)

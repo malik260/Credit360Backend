@@ -105,6 +105,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool CustomerInformationCompleted(int customerId, UserInfo user);
 
         //TEMP tables 
+        bool ValidateCustomerModification(int customerId);
         bool ValidateModifiedCustomerRecord(int customerId);
         bool ValidateModifiedCompanyRecord(int customerId);
         bool ValidateModifiedAddressRecord(int customerId);
