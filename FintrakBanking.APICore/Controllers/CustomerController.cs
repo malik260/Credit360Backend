@@ -1532,7 +1532,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                         new { success = true, message = "Customer Information is undergoing approval. Please contact approving authority." });
+                                         new { success = true, message = "Modified Customer Information is undergoing approval. Please contact approving authority." });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "" });
