@@ -1058,7 +1058,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repoCollateral.GetCustomerCollateral(customerId, token.GetCompanyId);
+                var response = repoCollateral.GetCustomerCollateral(customerId, null, token.GetCompanyId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
