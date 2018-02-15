@@ -963,7 +963,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(c => c.CREDITBUREAUID == model.creditBureauId && c.CUSTOMERID == model.customerId).FirstOrDefault();
 
+            if(data != null) 
             data.ISREPORTOKAY = status;
+
             return context.SaveChanges() > 0;
         }
 
