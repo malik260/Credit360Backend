@@ -916,6 +916,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
+                    SaveFinalOfferLetter(model);
                     TBL_OFFERLETTER result = (from p in context.TBL_OFFERLETTER
                                               where p.APPLICATIONREFERENCENUMBER == applicationRef
                                               select p).SingleOrDefault();
