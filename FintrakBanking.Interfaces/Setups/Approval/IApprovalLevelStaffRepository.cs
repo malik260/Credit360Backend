@@ -32,5 +32,6 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         IEnumerable<ApprovalLevelStaffViewModel> GetAllAssignedApprovalLevelStaff(int companyId);
 
         ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId);
+
     }
 }

@@ -161,6 +161,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        
         [HttpGet]
         [Route("work-flow-tracker/approval-trail/all")]
         public async Task<HttpResponseMessage> GetAllRecordsOnApprovalTrail([FromUri] int page, [FromUri] int itemsPerPage)

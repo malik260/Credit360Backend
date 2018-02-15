@@ -1154,7 +1154,7 @@ namespace FintrakBanking.Repositories.Credit
                                      approvalStatusId = c.APPROVALSTATUSID,
 
                                  }).ToList();
-                return condition;
+               return condition;
             }
         }
         public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklistStatus(int loanApplicationId, bool isAvailment)
