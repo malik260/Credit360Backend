@@ -171,6 +171,7 @@ namespace FintrakBanking.Repositories.Credit
                             CREATEDBY = c.CREATEDBY,
                             //LOANAPPLICATIONID = loanApplicationId,
                             TIMELINEID = c.TIMELINEID,
+                            RESPONSE_TYPEID = c.RESPONSE_TYPEID,
                             LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
                             DATETIMECREATED = DateTime.Now
                         };

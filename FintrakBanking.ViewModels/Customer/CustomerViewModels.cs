@@ -137,6 +137,7 @@ namespace FintrakBanking.ViewModels.Customer
         public int customerModificationId { get; set; }
         public string customerCode { get; set; }
         public string customerName { get; set; }
+        public int targetId { get; set; }
         public int modificationTyepId { get; set; }
         public string modificationType { get; set; }
         public string approvalStatus { get; set; }

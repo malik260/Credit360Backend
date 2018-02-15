@@ -510,12 +510,16 @@ namespace FintrakBanking.APICore.Controllers
                 //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
-
+                if (repo.ValidateModifiedCustomerRecord(entity.customerId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "Customer General Information is already undergoing approval." });
+                }
                 var data = repo.UpdateCustomer(customerId, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The record has been created successfully" });
+                        new { success = true, result = data, message = "The record has been updated successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -671,10 +675,16 @@ namespace FintrakBanking.APICore.Controllers
                 if (entity.companyInfomationId != 0 || entity.companyInfomationId < 0)
                 {
                     createUpdate = "updated";
+                   
                 }
                 else
                 {
                     createUpdate = "created";
+                }
+                if (repo.ValidateModifiedCompanyRecord(entity.customerId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "Customer Company Information is already undergoing approval." });
                 }
                 entity.companyId = (short)token.GetCompanyId;
                 entity.userBranchId = (short)token.GetBranchId;
@@ -751,6 +761,11 @@ namespace FintrakBanking.APICore.Controllers
                 if (entity.addressTypeId == 0)
                 {
                     entity.addressTypeId = (int)CustomerAddressTypeEnum.Corporate;
+                }
+                if (repo.ValidateModifiedCustomerRecord(entity.customerId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "Customer Address Information is already undergoing approval." });
                 }
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = (short)token.GetCompanyId;

@@ -355,35 +355,50 @@ namespace FintrakBanking.Repositories.Credit
 
         // GET MAIN INFO
 
-        public IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int companyId)
+        public IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId)
         {
-            var collateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false
-                && x.COMPANYID == companyId
-                && x.CUSTOMERID == customerId
-            )
-            .Select(x => new CollateralViewModel
-            {
-                collateralId = x.COLLATERALCUSTOMERID,
-                collateralTypeId = x.COLLATERALTYPEID,
-                collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                customerId = x.CUSTOMERID,
-                currencyId = x.CURRENCYID,
-                currency = x.TBL_CURRENCY.CURRENCYNAME,
-                collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                collateralSubTypeName = "not implimented",
-                collateralCode = x.COLLATERALCODE,
-                collateralValue = x.COLLATERALVALUE,
-                camRefNumber = x.CAMREFNUMBER,
-                allowSharing = x.ALLOWSHARING,
-                isLocationBased = x.ISLOCATIONBASED,
-                valuationCycle = x.VALUATIONCYCLE,
-                haircut = x.HAIRCUT,
-                approvalStatus = x.APPROVALSTATUS,
-            })
-            .OrderByDescending(x => x.collateralId)
-            .ToList();
+            var typeIds = new List<int>();
 
-            return collateral;
+            if (applicationId != null)
+            {
+                var productIds = context.TBL_LOAN_APPLICATION_DETAIL
+                    .Where(x => x.LOANAPPLICATIONID == applicationId)
+                    .Select(x => x.PROPOSEDPRODUCTID)
+                    .Distinct();
+
+                typeIds = context.TBL_PRODUCT_COLLATERALTYPE.Where(x => productIds.Contains(x.PRODUCTID))
+                   .Select(x => x.COLLATERALTYPEID)
+                   .Distinct().ToList();
+            }
+
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false
+                    && x.COMPANYID == companyId
+                    && x.CUSTOMERID == customerId
+                )
+                .Select(x => new CollateralViewModel
+                {
+                    collateralId = x.COLLATERALCUSTOMERID,
+                    collateralTypeId = x.COLLATERALTYPEID,
+                    collateralSubTypeId = x.COLLATERALSUBTYPEID,
+                    customerId = x.CUSTOMERID,
+                    currencyId = x.CURRENCYID,
+                    currency = x.TBL_CURRENCY.CURRENCYNAME,
+                    collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                    collateralSubTypeName = "not implimented",
+                    collateralCode = x.COLLATERALCODE,
+                    collateralValue = x.COLLATERALVALUE,
+                    camRefNumber = x.CAMREFNUMBER,
+                    allowSharing = x.ALLOWSHARING,
+                    isLocationBased = x.ISLOCATIONBASED,
+                    valuationCycle = x.VALUATIONCYCLE,
+                    haircut = x.HAIRCUT,
+                    approvalStatus = x.APPROVALSTATUS,
+                    allowApplicationMapping = typeIds.Contains((short)x.COLLATERALTYPEID),
+                })
+                .OrderByDescending(x => x.collateralId)
+                .ToList();
+
+            return collaterals;
         }
 
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)

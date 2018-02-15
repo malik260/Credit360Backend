@@ -183,7 +183,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanReferenceNumber = x.LOANREFERENCENUMBER,
                 documentTitle = x.DOCUMENTTITLE,
                 documentTypeId = x.DOCUMENTTYPEID,
-               // fileData = x.FILEDATA,
+                fileData = x.FILEDATA,
                 fileName = x.FILENAME,
                 fileExtension = x.FILEEXTENSION,
                 systemDateTime = x.SYSTEMDATETIME,

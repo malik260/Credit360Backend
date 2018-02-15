@@ -215,12 +215,13 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             //Check if customer address information has existing record being modified and approved
                             var existingTempAddress = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.ADDRESSID == address.ADDRESSID && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
+                            
                             //If any company record in temp table is yet to be approved, throw an exception
-                            var unApprovedAddressUpdate = context.TBL_TEMP_CUSTOMER_ADDRESS.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.ADDRESSID == address.ADDRESSID);
-                            if (unApprovedAddressUpdate.Any())
-                            {
-                                throw new Exception("Customer is already undergoing approval");
-                            }
+                            //////var unApprovedAddressUpdate = context.TBL_TEMP_CUSTOMER_ADDRESS.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.ADDRESSID == address.ADDRESSID);
+                            //////if (unApprovedAddressUpdate.Any())
+                            //////{
+                            //////    throw new Exception("Customer is already undergoing approval");
+                            //////}
 
                             if (existingTempAddress != null) //if customer address information has existing record being modified and approved, update it with the new change
                             {
@@ -649,12 +650,13 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             //Check if customer company information has existing record being modified and approved
                             var existingTempCompany = context.TBL_TEMP_CUSTOMER_COMPANYINFO.FirstOrDefault(x => x.CUSTOMERID == company.CUSTOMERID && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
-                            //If any company record in temp table is yet to be approved, throw an exception
-                            var unApprovedCompanyUpdate = context.TBL_TEMP_CUSTOMER_COMPANYINFO.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.CUSTOMERID == company.CUSTOMERID);
-                            if (unApprovedCompanyUpdate.Any())
-                            {
-                                throw new Exception("Customer is already undergoing approval");
-                            }
+                           
+                           ////////If any company record in temp table is yet to be approved, throw an exception
+                            //////var unApprovedCompanyUpdate = context.TBL_TEMP_CUSTOMER_COMPANYINFO.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.CUSTOMERID == company.CUSTOMERID);
+                            //////if (unApprovedCompanyUpdate.Any())
+                            //////{
+                            //////    throw new Exception("Customer is already undergoing approval");
+                            //////}
 
                             if (existingTempCompany != null) //if customer company information has existing record being modified and approved, update it with the new change
                             {
@@ -1513,7 +1515,7 @@ namespace FintrakBanking.Repositories.Customer
                        riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                        customerBVN = a.CUSTOMERBVN,
                        isCreditBureauUploadCompleted = false,
-                       creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x=>x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false).Count(),
+                       creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false).Count(),
                        CustomerPhoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => new CustomerPhoneContactViewModels
                        {
                            active = c.ACTIVE,
@@ -1722,10 +1724,12 @@ namespace FintrakBanking.Repositories.Customer
             var customerMain = context.TBL_CUSTOMER.Find(customerId);
             if (customerMain != null && customerMain.ACCOUNTCREATIONCOMPLETE == false && entity.canModified == true)
             {
-                customerMain.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
-                customerMain.CREATIONMAILSENT = entity.creationMailSent;
+
+                customerMain.BRANCHID = entity.userBranchId;
+                customerMain.COMPANYID = entity.companyId;
                 customerMain.CUSTOMERCODE = entity.customerCode;
                 customerMain.CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId;
+                customerMain.CUSTOMERTYPEID = entity.customerTypeId;
                 customerMain.DATEOFBIRTH = entity.dateOfBirth;
                 customerMain.EMAILADDRESS = entity.emailAddress;
                 customerMain.FIRSTNAME = entity.firstName;
@@ -1740,15 +1744,17 @@ namespace FintrakBanking.Repositories.Customer
                 customerMain.NATIONALITY = entity.nationality;
                 customerMain.OCCUPATION = entity.occupation;
                 customerMain.PLACEOFBIRTH = entity.placeOfBirth;
+                customerMain.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
                 customerMain.ISINVESTMENTGRADE = entity.isInvestmentGrade;
                 customerMain.ISREALATEDPARTY = entity.isRealatedParty;
+                customerMain.RELATIONSHIPOFFICERID = entity.relationshipOfficerId;
                 customerMain.SPOUSE = entity.spouse;
                 customerMain.SUBSECTORID = entity.subSectorId;
                 customerMain.TAXNUMBER = entity.taxNumber;
-                customerMain.DATETIMEUPDATED = DateTime.Now;
-                customerMain.LASTUPDATEDBY = entity.deletedBy;
                 customerMain.RISKRATINGID = entity.riskRatingId;
                 customerMain.CUSTOMERBVN = entity.customerBVN;
+                customerMain.DATETIMEUPDATED = DateTime.Now;
+                customerMain.LASTUPDATEDBY = entity.deletedBy;
                 return context.SaveChanges() != 0;
             }
             else
@@ -1757,20 +1763,19 @@ namespace FintrakBanking.Repositories.Customer
                 var existingTempCustomer = context.TBL_TEMP_CUSTOMER.FirstOrDefault(x => x.CUSTOMERCODE.ToLower() == entity.customerCode.ToLower() && x.COMPANYID == entity.companyId && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
                 var unApprovedCustomerUpdate = context.TBL_TEMP_CUSTOMER.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending &&
                  x.CUSTOMERCODE.ToLower() == entity.customerCode.ToLower());
-                if (unApprovedCustomerUpdate.Any())
-                {
-                    throw new Exception("Customer is already undergoing approval");
-                }
+                //////if (unApprovedCustomerUpdate.Any())
+                //////{
+                //////    throw new Exception("Customer is already undergoing approval");
+                //////}
 
                 if (existingTempCustomer != null)
                 {
                     customer = existingTempCustomer;
-                    customer.BRANCHID = entity.branchId;
-                    customer.CUSTOMERID = entity.customerId;
-                    customer.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
-                    customer.CREATIONMAILSENT = entity.creationMailSent;
+                    customer.BRANCHID = entity.userBranchId;
+                    customer.COMPANYID = entity.companyId;
                     customer.CUSTOMERCODE = entity.customerCode;
                     customer.CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId;
+                    customer.CUSTOMERTYPEID = entity.customerTypeId;
                     customer.DATEOFBIRTH = entity.dateOfBirth;
                     customer.EMAILADDRESS = entity.emailAddress;
                     customer.FIRSTNAME = entity.firstName;
@@ -1785,11 +1790,14 @@ namespace FintrakBanking.Repositories.Customer
                     customer.NATIONALITY = entity.nationality;
                     customer.OCCUPATION = entity.occupation;
                     customer.PLACEOFBIRTH = entity.placeOfBirth;
+                    customer.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
                     customer.ISINVESTMENTGRADE = entity.isInvestmentGrade;
                     customer.ISREALATEDPARTY = entity.isRealatedParty;
+                    customer.RELATIONSHIPOFFICERID = entity.relationshipOfficerId;
                     customer.SPOUSE = entity.spouse;
                     customer.SUBSECTORID = entity.subSectorId;
                     customer.TAXNUMBER = entity.taxNumber;
+                    customer.RISKRATINGID = entity.riskRatingId;
                     customer.CUSTOMERBVN = entity.customerBVN;
                     customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                     customer.ISCURRENT = true;
@@ -1797,13 +1805,12 @@ namespace FintrakBanking.Repositories.Customer
                 else
                 {
                     customer = new TBL_TEMP_CUSTOMER();
-                    customer.COMPANYID = entity.companyId;
-                    customer.BRANCHID = entity.branchId;
                     customer.CUSTOMERID = entity.customerId;
-                    customer.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
-                    customer.CREATIONMAILSENT = entity.creationMailSent;
+                    customer.BRANCHID = entity.userBranchId;
+                    customer.COMPANYID = entity.companyId;
                     customer.CUSTOMERCODE = entity.customerCode;
                     customer.CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId;
+                    customer.CUSTOMERTYPEID = entity.customerTypeId;
                     customer.DATEOFBIRTH = entity.dateOfBirth;
                     customer.EMAILADDRESS = entity.emailAddress;
                     customer.FIRSTNAME = entity.firstName;
@@ -1818,11 +1825,14 @@ namespace FintrakBanking.Repositories.Customer
                     customer.NATIONALITY = entity.nationality;
                     customer.OCCUPATION = entity.occupation;
                     customer.PLACEOFBIRTH = entity.placeOfBirth;
+                    customer.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
                     customer.ISINVESTMENTGRADE = entity.isInvestmentGrade;
                     customer.ISREALATEDPARTY = entity.isRealatedParty;
+                    customer.RELATIONSHIPOFFICERID = entity.relationshipOfficerId;
                     customer.SPOUSE = entity.spouse;
                     customer.SUBSECTORID = entity.subSectorId;
                     customer.TAXNUMBER = entity.taxNumber;
+                    customer.RISKRATINGID = entity.riskRatingId;
                     customer.CUSTOMERBVN = entity.customerBVN;
                     customer.CREATEDBY = entity.createdBy;
                     customer.DATETIMECREATED = DateTime.Now;
@@ -2452,8 +2462,8 @@ namespace FintrakBanking.Repositories.Customer
             }
             return itemExist;
         }
-        //TBL_CUSTOMER_CLIENT_SUPPLIER
-        public bool ValidateClientSupplierEmail(int customerId, string email)
+    //TBL_CUSTOMER_CLIENT_SUPPLIER
+    public bool ValidateClientSupplierEmail(int customerId, string email)
         {
             bool itemExist = false;
             var data = (from a in context.TBL_CUSTOMER_CLIENT_SUPPLIER where a.CUSTOMERID == customerId && a.EMAILADDRESS == email select a).ToList();
@@ -2508,6 +2518,37 @@ namespace FintrakBanking.Repositories.Customer
             var response = context.SaveChanges() != 0;
             return response;
         }
+       
+        public bool ValidateModifiedCustomerRecord(int customerId)
+        {
+            bool itemExist = false;   
+            var unApprovedCustomerUpdate = context.TBL_TEMP_CUSTOMER.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.CUSTOMERID == customerId);
+            if (unApprovedCustomerUpdate.Any())
+            {
+                itemExist = true;
+            }
+            return itemExist;   
+        }
+        public bool ValidateModifiedCompanyRecord(int customerId)
+        {
+            bool itemExist = false;
+            var unApprovedCustomerUpdate = context.TBL_TEMP_CUSTOMER_COMPANYINFO.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.CUSTOMERID == customerId);
+            if (unApprovedCustomerUpdate.Any())
+            {
+                itemExist = true;
+            }
+            return itemExist;
+        }
+        public bool ValidateModifiedAddressRecord(int customerId)
+        {
+            bool itemExist = false;
+            var unApprovedCustomerUpdate = context.TBL_TEMP_CUSTOMER_ADDRESS.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.CUSTOMERID == customerId);
+            if (unApprovedCustomerUpdate.Any())
+            {
+                itemExist = true;
+            }
+            return itemExist;
+        }
         #endregion
 
         public IEnumerable<CustomerInformationApprovalViemModel> GetAllCustomerInformationAwaitingApproval(int staffId, int companyId)
@@ -2532,6 +2573,7 @@ namespace FintrakBanking.Repositories.Customer
                         customerId = a.CUSTOMERID,
                         customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
                         customerModificationId = a.CUSTOMERMODIFICATIONID,
+                        targetId = a.TARGETID,
                         customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                         modificationTyepId = a.CUSTOMERMODIFICATIONID,
                         modificationType = a.TBL_CUSTOMER_MODIFICATN_TYPE.MODIFICATIONTYPENAME,
@@ -2593,15 +2635,15 @@ namespace FintrakBanking.Repositories.Customer
             {
                 if (modifiedData.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.General_Information)
                 {
-                    returnVal = ApproveGeneralInformation(modifiedData.TARGETID, approvalStatusId, user);
+                    returnVal = ApproveGeneralInformation(modifiedData.CUSTOMERMODIFICATIONID, modifiedData.TARGETID, approvalStatusId, user);
                 }
                 else if (modifiedData.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Corporate_Information)
                 {
-                    returnVal = ApproveCompanyInformation(modifiedData.TARGETID, approvalStatusId, user);
+                    returnVal = ApproveCompanyInformation(modifiedData.CUSTOMERMODIFICATIONID, modifiedData.TARGETID, approvalStatusId, user);
                 }
                 else if (modifiedData.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Address_Modification)
                 {
-                    returnVal = ApproveAddressInformation(modifiedData.TARGETID, approvalStatusId, user);
+                    returnVal = ApproveAddressInformation(modifiedData.CUSTOMERMODIFICATIONID, modifiedData.TARGETID, approvalStatusId, user);
                 }
                 else if (modifiedData.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Phone_Number_Modification)
                 {
@@ -2623,7 +2665,7 @@ namespace FintrakBanking.Repositories.Customer
             }
             return returnVal;
         }
-        private bool ApproveGeneralInformation(int targetId, short approvalStatusId, UserInfo user)
+        private bool ApproveGeneralInformation(int modifiedId, int targetId, short approvalStatusId, UserInfo user)
         {
             TBL_CUSTOMER entity = null;
             //Check if Customer  exist in the temp table using the customerId
@@ -2632,7 +2674,11 @@ namespace FintrakBanking.Repositories.Customer
             {
                 entity = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == targetId);
             }
-
+            var modified = context.TBL_CUSTOMER_MODIFICATION.Find(modifiedId);
+            if (modified != null)
+            {
+                modified.APPROVALCOMPLETED = true;
+            }
             if (entity != null) //Update existing customer information with temp record
             {
                 entity.ACCOUNTCREATIONCOMPLETE = temp.ACCOUNTCREATIONCOMPLETE;
@@ -2659,6 +2705,8 @@ namespace FintrakBanking.Repositories.Customer
                 entity.SUBSECTORID = temp.SUBSECTORID;
                 entity.TAXNUMBER = temp.TAXNUMBER;
                 entity.CUSTOMERBVN = temp.CUSTOMERBVN;
+                entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
+                entity.RELATIONSHIPOFFICERID = temp.RELATIONSHIPOFFICERID;
             }
             //update the temp table, set ISCURRENT to false and APPROVALSTATUSID to approvalStatusId
             temp.ISCURRENT = false;
@@ -2681,7 +2729,7 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() > 0;
         }
 
-        private bool ApproveCompanyInformation(int targetId, short approvalStatusId, UserInfo user)
+        private bool ApproveCompanyInformation(int modifiedId, int targetId, short approvalStatusId, UserInfo user)
         {
             TBL_CUSTOMER_COMPANYINFOMATION entity = null;
             //Check if Customer company information exist in the temp table using the customerId
@@ -2690,7 +2738,11 @@ namespace FintrakBanking.Repositories.Customer
             {
                 entity = context.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == targetId);
             }
-
+            var modified = context.TBL_CUSTOMER_MODIFICATION.Find(modifiedId);
+            if (modified != null)
+            {
+                modified.APPROVALCOMPLETED = true;
+            }
             if (entity != null) //Update existing customer company information with temp record
             {
                 entity.ANNUALTURNOVER = temp.ANNUALTURNOVER;
@@ -2726,7 +2778,7 @@ namespace FintrakBanking.Repositories.Customer
 
             return context.SaveChanges() > 0;
         }
-        private bool ApproveAddressInformation(int targetId, short approvalStatusId, UserInfo user)
+        private bool ApproveAddressInformation(int modifiedId, int targetId, short approvalStatusId, UserInfo user)
         {
             TBL_CUSTOMER_ADDRESS entity = null;
             //Check if Customer address information exist in the temp table using the customerId
@@ -2735,7 +2787,10 @@ namespace FintrakBanking.Repositories.Customer
             {
                 entity = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x => x.ADDRESSID == targetId);
             }
-
+            var modified = context.TBL_CUSTOMER_MODIFICATION.Find(modifiedId);
+            if(modified != null) {
+                modified.APPROVALCOMPLETED = true;
+            }
             if (entity != null) //Update existing customer company information with temp record
             {
                 entity.ACTIVE = temp.ACTIVE;

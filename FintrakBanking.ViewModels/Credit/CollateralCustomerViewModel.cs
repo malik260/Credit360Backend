@@ -218,6 +218,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         //collateral value calculation
         public double securityCollateralValue { get { return (double)collateralValue - ((double)collateralValue * (float)(haircut * 0.01)); } }
+
+        public bool canMappedToApplication { get; set; }
+        public bool allowApplicationMapping { get; set; }
     }
 
     public class MiscellaneousNote
