@@ -489,6 +489,7 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == loanStatusId).SingleOrDefault()
                 .ACCOUNTSTATUS;
         }
+
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();

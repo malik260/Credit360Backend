@@ -1281,11 +1281,14 @@ namespace FintrakBanking.Repositories.Credit
                 && x.RESPONSESTAFFID == null
                 && x.TARGETID == appl.LOANAPPLICATIONID
             );
-            currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
-            currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-            currentTrail.COMMENT = model.comment;
-            currentTrail.TOAPPROVALLEVELID = null;
-            currentTrail.TOSTAFFID = null;
+            if (currentTrail != null)
+            {
+                currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                currentTrail.COMMENT = model.comment;
+                currentTrail.TOAPPROVALLEVELID = null;
+                currentTrail.TOSTAFFID = null;
+            }
             appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
             appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
 

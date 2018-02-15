@@ -963,7 +963,7 @@ namespace FintrakBanking.Repositories.Credit
                     applicationDetailId = x.LOANAPPLICATIONDETAILID,
                     monitoringTriggerId = x.MONITORING_TRIGGERID,
                     monitoringTrigger = x.MONITORING_TRIGGER,
-                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
                 })
                 .ToList();
         }
