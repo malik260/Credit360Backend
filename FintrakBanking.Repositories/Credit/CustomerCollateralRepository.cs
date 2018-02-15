@@ -431,22 +431,22 @@ namespace FintrakBanking.Repositories.Credit
 
         // GET TYPE SPICIFIC & INSURANCE DETAILS
 
-        public CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId)
+        public CollateralViewModel GetCollateralTypeByCollateralId(CollateralViewModel form)
         {
             var data = new CollateralViewModel();
-            switch (typeId)
+            switch (form.collateralTypeId)
             {
-                case (int)CollateralTypeEnum.TermDeposit: data = GetCollateralDeposit(collateralId); break;
-                case (int)CollateralTypeEnum.PlantAndMachinery: data = GetCollateralMachinery(collateralId); break;
-                case (int)CollateralTypeEnum.Miscellaneous: data = GetCollateralMiscellaneous(collateralId); break;
-                case (int)CollateralTypeEnum.Gaurantee: data = GetCollateralGuarantee(collateralId); break;
-                case (int)CollateralTypeEnum.CASA: data = GetCollateralCasa(collateralId); break;
-                case (int)CollateralTypeEnum.Property: data = GetCollateralImmovableProperty(collateralId); break;
-                case (int)CollateralTypeEnum.MarketableSecurities: data = GetCollateralMarketableSecurities(collateralId); break;
-                case (int)CollateralTypeEnum.InsurancePolicy: data = GetCollateralPolicy(collateralId); break;
-                case (int)CollateralTypeEnum.PreciousMetal: data = GetCollateralPreciousMetal(collateralId); break;
-                case (int)CollateralTypeEnum.Stock: data = GetCollateralStock(collateralId); break;
-                case (int)CollateralTypeEnum.Vehicle: data = GetCollateralVehicle(collateralId); break;
+                case (int)CollateralTypeEnum.TermDeposit: data = GetCollateralDeposit(form.collateralId); break;
+                case (int)CollateralTypeEnum.PlantAndMachinery: data = GetCollateralMachinery(form.collateralId); break;
+                case (int)CollateralTypeEnum.Miscellaneous: data = GetCollateralMiscellaneous(form.collateralId); break;
+                case (int)CollateralTypeEnum.Gaurantee: data = GetCollateralGuarantee(form.collateralId); break;
+                case (int)CollateralTypeEnum.CASA: data = GetCollateralCasa(form.collateralId); break;
+                case (int)CollateralTypeEnum.Property: data = GetCollateralImmovableProperty(form.collateralId); break;
+                case (int)CollateralTypeEnum.MarketableSecurities: data = GetCollateralMarketableSecurities(form.collateralId); break;
+                case (int)CollateralTypeEnum.InsurancePolicy: data = GetCollateralPolicy(form.collateralId); break;
+                case (int)CollateralTypeEnum.PreciousMetal: data = GetCollateralPreciousMetal(form.collateralId); break;
+                case (int)CollateralTypeEnum.Stock: data = GetCollateralStock(form.collateralId); break;
+                case (int)CollateralTypeEnum.Vehicle: data = GetCollateralVehicle(form.collateralId); break;
 
                 default:
                     break;

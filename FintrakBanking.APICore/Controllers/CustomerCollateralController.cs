@@ -136,12 +136,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet, Route("customer-collateral/type/collateral/{collateralId}/type/{typeId}")]
-        public HttpResponseMessage GetCollateralTypeByCollateralId(int collateralId, int typeId)
+      //  [HttpGet, Route("customer-collateral/type/collateral/{collateralId}/type/{typeId}")]
+        [HttpPost, Route("customer-collateral/type/collateral")]
+        public HttpResponseMessage GetCollateralTypeByCollateralId(CollateralViewModel form)
         {
             try
             {
-                var response = repo.GetCollateralTypeByCollateralId(collateralId, typeId);
+                var response = repo.GetCollateralTypeByCollateralId(form);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
