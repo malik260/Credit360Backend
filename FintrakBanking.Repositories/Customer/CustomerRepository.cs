@@ -2518,7 +2518,18 @@ namespace FintrakBanking.Repositories.Customer
             var response = context.SaveChanges() != 0;
             return response;
         }
-       
+
+        public bool ValidateCustomerModification(int customerId)
+        {
+            bool itemExist = false;
+            var unApprovedCustomerUpdate = context.TBL_CUSTOMER_MODIFICATION.Where(x => x.APPROVALCOMPLETED == false && x.CUSTOMERID == customerId);
+            if (unApprovedCustomerUpdate.Any())
+            {
+                itemExist = true;
+            }
+            return itemExist;
+        }
+
         public bool ValidateModifiedCustomerRecord(int customerId)
         {
             bool itemExist = false;   
