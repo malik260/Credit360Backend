@@ -224,6 +224,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void ResolveReferred(int referrerId, int? fromId, int? toId)
         {
+            if (toId == null) throw new Exception("Unable to resolve destination level!");
+            if (fromId == null) throw new Exception("Unable to resolve originating level!");
             var referrerGroup = context.TBL_APPROVAL_LEVEL.Find(fromId);
             var recepientGroup = context.TBL_APPROVAL_LEVEL.Find(toId);
             if (referrerGroup.GROUPID != recepientGroup.GROUPID)
