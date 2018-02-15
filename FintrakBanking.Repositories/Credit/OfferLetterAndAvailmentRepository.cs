@@ -346,14 +346,14 @@ namespace FintrakBanking.Repositories.Credit
                 data = GetCamProcessedLoanApplications(companyId).Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted
                 || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(c => c.loanApplicationId);
                 
                 //foreach(var c in data)
                 //{
                 //    c.isFirstApprover = true;
                 //};
 
-                loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId));
+                loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId)).OrderByDescending(c => c.loanApplicationId);
 
             }
             else
@@ -423,7 +423,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 loanAvailmentData = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(c => c.loanApplicationId);
             }
 
             return loanAvailmentData;
@@ -1266,7 +1266,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = model.productId;
-            workflow.NextLevelId = trail.FROMAPPROVALLEVELID;
+            workflow.NextLevelId = trail.FROMAPPROVALLEVELID;//
             workflow.ToStaffId = o.REQUESTSTAFFID;
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;

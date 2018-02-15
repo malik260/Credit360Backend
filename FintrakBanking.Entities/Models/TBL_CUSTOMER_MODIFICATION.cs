@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CUSTOMERID { get; set; }
 
+        public int TARGETID { get; set; }
+
         public short MODIFICATIONTYPEID { get; set; }
 
         public bool APPROVALCOMPLETED { get; set; }
