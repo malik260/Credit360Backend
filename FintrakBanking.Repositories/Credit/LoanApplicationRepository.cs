@@ -77,7 +77,6 @@ namespace FintrakBanking.Repositories.Credit
                         where a.COMPANYID == companyId && a.DELETED == false
                         select new LoanApplicationViewModel
                         {
-                            requireCollateral = a.REQUIRECOLLATERAL,
                             approvalStatusId = a.APPROVALSTATUSID,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
@@ -170,7 +169,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             return GetLoanApplications(companyId).Where(c => c.loanApplicationId == loanApplicationId).ToList();
         }
-
         public dynamic GetLoanAppById(int loanApplicationDetailId, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
@@ -195,7 +193,6 @@ namespace FintrakBanking.Repositories.Credit
                         && a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                         select new jobLoanApplicationDetailViewModel
                         {
-                            requireCollateral = a.TBL_LOAN_APPLICATION.REQUIRECOLLATERAL,
                             approvedAmount = a.APPROVEDAMOUNT,
                             approvedInterestRate = a.APPROVEDINTERESTRATE,
                             approvedProductId = a.APPROVEDPRODUCTID,
@@ -331,7 +328,6 @@ namespace FintrakBanking.Repositories.Credit
                        //&& a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId
                        select new
                        {
-                           requireCollateral = a.REQUIRECOLLATERAL,
                            approvalStatusId = a.APPROVALSTATUSID,
                            loanApplicationId = a.LOANAPPLICATIONID,
                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
@@ -454,7 +450,6 @@ namespace FintrakBanking.Repositories.Credit
                         //&& (a.ApplicationReferenceNumber == referenceNumberOrName || $"{a.tbl_Customer.FirstName} {a.tbl_Customer.MiddleName} {a.tbl_Customer.LastName} {a.tbl_Customer.CustomerCode} ".Contains(referenceNumberOrName))
                         select new LoanApplicationViewModel
                         {
-                            requireCollateral = a.REQUIRECOLLATERAL,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = a.CUSTOMERID.Value,
@@ -489,7 +484,6 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == loanStatusId).SingleOrDefault()
                 .ACCOUNTSTATUS;
         }
-
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
@@ -624,8 +618,7 @@ namespace FintrakBanking.Repositories.Credit
                     result = new LoanApplicationUpdateMessage
                     {
                         isdone = isCheckListDone,
-                        messageStr = str,
-                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist,
+                        messageStr = str
 
                     };
                 }
@@ -633,9 +626,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     result = new LoanApplicationUpdateMessage
                     {
-                        isdone = !isCheckListDone,
-                        messageStr = str,
-                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist,
+                        isdone = false,
+                        messageStr = str
 
                     };
                 }
@@ -687,7 +679,6 @@ namespace FintrakBanking.Repositories.Credit
 
                 var data = new TBL_LOAN_APPLICATION
                 {
-                    REQUIRECOLLATERAL =  loan .requireCollateral,
                     TOTALEXPOSUREAMOUNT = totalAmount,
                     PRODUCTCLASSID = productClassId,
                     APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
@@ -835,10 +826,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             foreach (var a in entity)
             {
-                if( a.proposedTenor == 0)
-                {
-                    throw new Exception("Tenor can not be ZERO (0)");
-                }
 
                 var data = new TBL_LOAN_APPLICATION_DETAIL
                 {
@@ -883,18 +870,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
                 }
-                if (a.productFees != null)
+
+                if (a.productFees.Count > 0)
                 {
-                    if (a.productFees.Count > 0)
-                    {
-                        ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
-                    }
+                    ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
                 }
-                else
-                {
-                    throw new Exception("NO FEE is defined for this product(s)");
-                }
-               
 
 
             }
@@ -979,25 +959,27 @@ namespace FintrakBanking.Repositories.Credit
             else return 0;
         }
 
+
         public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model)
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(c => c.CREDITBUREAUID == model.creditBureauId && c.CUSTOMERID == model.customerId).FirstOrDefault();
 
-            if(data != null) 
-            data.ISREPORTOKAY = status;
+            if (data != null)
+                data.ISREPORTOKAY = status;
 
             return context.SaveChanges() > 0;
         }
 
         public bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model)
         {
-            foreach(var item in model)
+            foreach (var item in model)
             {
                 if (UpdateCreditBureauCustomerReportStatus(status, item) == false) return false;
             }
 
             return true;
         }
+
 
         public IEnumerable<CreditBereauViewModel> GetCreditBureauInformation()
         {
@@ -1201,7 +1183,7 @@ namespace FintrakBanking.Repositories.Credit
                         && a.COMPANYID == companyId && a.DELETED == false
                         select new LoanApplicationDetailViewModel()
                         {
-                            requireCollateral = a.REQUIRECOLLATERAL,
+                            
                             loanApplicationId = b.LOANAPPLICATIONID,
                             applicationRefNo = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,

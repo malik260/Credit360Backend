@@ -67,7 +67,7 @@ namespace FintrakBanking.Interfaces.Credit
         #region CREDIT BUREAU REPORT
         int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity);
 
-        bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model);
+       bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model);
 
         bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model);
 

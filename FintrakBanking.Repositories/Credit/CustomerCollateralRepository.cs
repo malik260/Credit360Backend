@@ -237,13 +237,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 COLLATERALCUSTOMERID = collateralId,
                 DEALREFERENCENUMBER = entity.dealReferenceNumber,
-                ACCOUNTNUMBER = entity.accountNumber,
-                EXISTINGLIENAMOUNT = entity.existingLienAmount,
+                 ACCOUNTNUMBER = "0",
+                  EXISTINGLIENAMOUNT = 0,
                 LIENAMOUNT = entity.lienAmount,
                 AVAILABLEBALANCE = entity.availableBalance,
                 SECURITYVALUE = entity.securityValue,
                 MATURITYDATE = entity.maturityDate,
-                MATURITYAMOUNT = entity.maturityAmount,
+                MATURITYAMOUNT = 0,
                 EFFECTIVEDATE = entity.effectiveDate,
                 REMARK = entity.remark,
             });
@@ -256,13 +256,13 @@ namespace FintrakBanking.Repositories.Credit
                 .FirstOrDefault();
 
             collateral.DEALREFERENCENUMBER = entity.dealReferenceNumber;
-            collateral.ACCOUNTNUMBER = entity.accountNumber;
-            collateral.EXISTINGLIENAMOUNT = entity.existingLienAmount;
+            collateral.ACCOUNTNUMBER = "0";
+            collateral.EXISTINGLIENAMOUNT = 0;
             collateral.LIENAMOUNT = entity.lienAmount;
             collateral.AVAILABLEBALANCE = entity.availableBalance;
             collateral.SECURITYVALUE = entity.securityValue;
             collateral.MATURITYDATE = entity.maturityDate;
-            collateral.MATURITYAMOUNT = entity.maturityAmount;
+            collateral.MATURITYAMOUNT = 0;
             collateral.EFFECTIVEDATE = entity.effectiveDate;
             collateral.REMARK = entity.remark;
         }
@@ -445,6 +445,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
         // GET TYPE SPICIFIC & INSURANCE DETAILS
+
 
         public CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId)
         {
@@ -751,7 +752,7 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_COLLATERAL_CASA.Add(new TBL_COLLATERAL_CASA
             {
                 COLLATERALCUSTOMERID = collateralId,
-                ACCOUNTNUMBER = entity.accountNumber,
+                ACCOUNTNUMBER = entity.collateralCode,
                 //  ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 AVAILABLEBALANCE = entity.availableBalance,
                 // EXISTINGLIENAMOUNT = entity.existingLienAmount,
@@ -767,7 +768,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
                 .FirstOrDefault();
 
-            collateral.ACCOUNTNUMBER = entity.accountNumber;
+            collateral.ACCOUNTNUMBER = entity.collateralCode;
             // collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
             collateral.AVAILABLEBALANCE = entity.availableBalance;
             // collateral.EXISTINGLIENAMOUNT = entity.existingLienAmount;
