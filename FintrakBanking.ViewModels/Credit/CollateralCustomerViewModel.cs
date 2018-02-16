@@ -216,8 +216,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManagerEmail { get; set; }
 
 
-        //collateral value calculation
-        public double securityCollateralValue { get { return (double)collateralValue - ((double)collateralValue * (float)(haircut * 0.01)); } }
+        //collateral value calculation ERROR PRONE
+        public double securityCollateralValue {
+            get {
+                return (collateralValue != null) ? (double)collateralValue - ((double)collateralValue * (float)(haircut * 0.01)) : 0;
+            }
+        }
 
         public bool canMappedToApplication { get; set; }
         public bool allowApplicationMapping { get; set; }
