@@ -1183,7 +1183,7 @@ namespace FintrakBanking.Repositories.Credit
                         && a.COMPANYID == companyId && a.DELETED == false
                         select new LoanApplicationDetailViewModel()
                         {
-                            
+                             requireCollateral = a.REQUIRECOLLATERAL ,
                             loanApplicationId = b.LOANAPPLICATIONID,
                             applicationRefNo = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
