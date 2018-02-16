@@ -103,6 +103,12 @@ namespace FintrakBanking.Interfaces.Customer
         bool ValidateClientSupplierRCnumber(int customerId, string rcNumber);
         bool ValidateClientSupplierTIN(int customerId, string taxNumber);
         bool CustomerInformationCompleted(int customerId, UserInfo user);
+
+        //TEMP tables 
+        bool ValidateCustomerModification(int customerId);
+        bool ValidateModifiedCustomerRecord(int customerId);
+        bool ValidateModifiedCompanyRecord(int customerId);
+        bool ValidateModifiedAddressRecord(int customerId);
         #endregion
         IEnumerable<CustomerInformationApprovalViemModel> GetAllCustomerInformationAwaitingApproval(int staffId, int companyId);
         bool GoForApproval(ApprovalViewModel entity);

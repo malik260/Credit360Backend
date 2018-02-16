@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         select new ApprovalLevelStaffViewModel
                         {
                             groupId = (int)a.TBL_APPROVAL_LEVEL.GROUPID,
-                           // operationId = b.OperationId,
+                            // operationId = b.OperationId,
                             maximumAmount = a.MAXIMUMAMOUNT,
                             processViewScope = a.PROCESSVIEWSCOPEID,
                             canViewDocument = a.CANVIEWCAMDOCUMENT,
@@ -114,7 +114,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaffByOperationId(int operationId, int companyId)
         {
-            var data =  GetApprovalLevelStaff(companyId).Where(c => c.operationId == operationId);
+            var data = GetApprovalLevelStaff(companyId).Where(c => c.operationId == operationId);
             return data;
         }
 
