@@ -625,7 +625,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         isdone = isCheckListDone,
                         messageStr = str,
-                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist,
+                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist, //okay
 
                     };
                 }
