@@ -3006,6 +3006,11 @@ namespace FintrakBanking.Repositories.Credit
             return context.TBL_COLLATERAL_DEPOSIT.Where(x => x.ACCOUNTNUMBER == accountNumber).Select(x => x.LIENAMOUNT).FirstOrDefault();
         }
 
+        public decimal GetAccountLeinAmountForCASA(string accountNumber)
+        {
+            return context.TBL_COLLATERAL_CASA.Where(x => x.ACCOUNTNUMBER == accountNumber).Select(x => x.LIENAMOUNT).FirstOrDefault();
+        }
+
         public IEnumerable<CollateralHistory> getCollateralHistory(short collateralID)
         {
             var cHistory = (from c in context.TBL_LOAN_APPLICATION_COLLATERL
