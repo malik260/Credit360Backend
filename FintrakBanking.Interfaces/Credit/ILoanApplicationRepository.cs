@@ -74,5 +74,7 @@ namespace FintrakBanking.Interfaces.Credit
         // decimal GetCustomerTotalOutstandingBalance(int customerId);
 
         dynamic GetLoanAppById(int loanApplicationDetailId, int companyId);
+
+        
     }
 }

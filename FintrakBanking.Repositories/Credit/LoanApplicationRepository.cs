@@ -489,6 +489,7 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == loanStatusId).SingleOrDefault()
                 .ACCOUNTSTATUS;
         }
+
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
@@ -624,7 +625,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         isdone = isCheckListDone,
                         messageStr = str,
-                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist,
+                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist, //okay
 
                     };
                 }
@@ -682,6 +683,70 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
                 decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 var loanStatusId = (short)LoanStatusEnum.Inactive;
 
                 var data = new TBL_LOAN_APPLICATION
@@ -883,6 +948,7 @@ namespace FintrakBanking.Repositories.Credit
                     BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
                 }
                 if (a.productFees != null)
+
                 {
                     if (a.productFees.Count > 0)
                     {
@@ -893,6 +959,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new Exception("NO FEE is defined for this product(s)");
                 }
+
                
 
 

@@ -171,6 +171,7 @@ namespace FintrakBanking.Repositories.Credit
                             CREATEDBY = c.CREATEDBY,
                             //LOANAPPLICATIONID = loanApplicationId,
                             TIMELINEID = c.TIMELINEID,
+                            RESPONSE_TYPEID = c.RESPONSE_TYPEID,
                             LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
                             DATETIMECREATED = DateTime.Now
                         };
@@ -963,7 +964,7 @@ namespace FintrakBanking.Repositories.Credit
                     applicationDetailId = x.LOANAPPLICATIONDETAILID,
                     monitoringTriggerId = x.MONITORING_TRIGGERID,
                     monitoringTrigger = x.MONITORING_TRIGGER,
-                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
                 })
                 .ToList();
         }
