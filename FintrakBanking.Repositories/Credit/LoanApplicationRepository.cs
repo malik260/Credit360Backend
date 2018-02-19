@@ -948,6 +948,7 @@ namespace FintrakBanking.Repositories.Credit
                     BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
                 }
                 if (a.productFees != null)
+
                 {
                     if (a.productFees.Count > 0)
                     {
@@ -958,6 +959,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new Exception("NO FEE is defined for this product(s)");
                 }
+
                
 
 

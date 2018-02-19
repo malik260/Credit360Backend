@@ -2120,6 +2120,53 @@ namespace FintrakBanking.Repositories.Customer
 
             return data;
         }
+        public CustomerViewModels GetSingleCustomerGeneralInfoByCustomerId(int customerId)
+        {
+            var data = (from a in context.TBL_CUSTOMER
+                        where a.DELETED == false && a.CUSTOMERID == customerId
+                        select new CustomerViewModels
+                        {
+                            accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
+                            branchId = a.BRANCHID,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            companyMainId = a.COMPANYID,
+                            createdBy = a.CREATEDBY,
+                            creationMailSent = a.CREATIONMAILSENT,
+                            customerCode = a.CUSTOMERCODE,
+                            customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                            customerTypeId = (short)a.CUSTOMERTYPEID,
+                            dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                            customerId = a.CUSTOMERID,
+                            emailAddress = a.EMAILADDRESS,
+                            firstName = a.FIRSTNAME,
+                            gender = a.GENDER,
+                            lastName = a.LASTNAME,
+                            maidenName = a.MAIDENNAME,
+                            maritalStatus = a.MARITALSTATUS.Value,
+                            title = a.TITLE,
+                            middleName = a.MIDDLENAME,
+                            customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                            misCode = a.MISCODE,
+                            misStaff = a.MISSTAFF,
+                            nationality = a.NATIONALITY,
+                            occupation = a.OCCUPATION,
+                            placeOfBirth = a.PLACEOFBIRTH,
+                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                            spouse = a.SPOUSE,
+                            sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
+                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                            subSectorId = (short)a.SUBSECTORID,
+                            subSectorName = a.TBL_SUB_SECTOR.NAME,
+                            taxNumber = a.TAXNUMBER,
+                            relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
+                      + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
+                            riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                            customerBVN = a.CUSTOMERBVN,
+                        }).FirstOrDefault();
+
+            return data;
+        }
         public CustomerCompanyInfomationViewModels GetSingleCustomerCompanyInfo(int customerId)
         {
             var comany = (from d in context.TBL_CUSTOMER_COMPANYINFOMATION
