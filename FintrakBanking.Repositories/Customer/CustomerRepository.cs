@@ -1468,6 +1468,7 @@ namespace FintrakBanking.Repositories.Customer
 
         }
 
+
         public IEnumerable<CustomerViewModels> GetSimpleCustomerDetailsByCustomerId(int customerId)
         {
             return from a in context.TBL_CUSTOMER

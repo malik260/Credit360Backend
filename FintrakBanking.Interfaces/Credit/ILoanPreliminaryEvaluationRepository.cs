@@ -19,7 +19,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllSingleCustomerLoanPreliminaryEvaluations();
-
+        
         IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllGroupCustomerLoanPreliminaryEvaluations();
 
         Task<bool> UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model);
