@@ -697,6 +697,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                     customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                     operationId = x.a.OPERATIONID,
+                    productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
                 })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
