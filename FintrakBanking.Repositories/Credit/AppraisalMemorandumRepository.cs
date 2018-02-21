@@ -523,6 +523,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     statusId = x.STATUSID,
                     exchangeRate = x.EXCHANGERATE,
+                    terms = x.REPAYMENTTERMS,
+                    schedule = x.REPAYMENTSCHEDULE
                 });
 
             return details;
@@ -1008,6 +1010,22 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
 
             return true;
+        }
+
+        public List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity)
+        {
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
+            detail.REPAYMENTTERMS = entity.terms;
+            detail.REPAYMENTSCHEDULE = entity.schedule;
+            context.SaveChanges();
+            return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID)
+                .Select(x => new RepaymentScheduleTermsViewModel
+                {
+                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    terms = x.REPAYMENTTERMS,
+                    schedule = x.REPAYMENTSCHEDULE,
+                    productCustomerName = x.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME
+                }).ToList();
         }
     }
 }

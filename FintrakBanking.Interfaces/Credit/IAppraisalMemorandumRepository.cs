@@ -48,5 +48,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<MonitoringTriggersViewModel> SaveApplicationMonitoringTriggers(int applicationId, List<MonitoringTriggersViewModel> entity, int staffId);
 
         bool WorkflowTest();
+
+        List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity);
     }
 }
