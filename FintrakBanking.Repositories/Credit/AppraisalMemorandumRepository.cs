@@ -214,9 +214,11 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         private IQueryable<int?> GetLoanApplicationProductIds(int applicationId)
-       //private int[] GetLoanApplicationProductIds(int loanApplicationId)
         {
-            throw new NotImplementedException();
+            return context.TBL_LOAN_APPLICATION_DETAIL
+                .Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Select(x => (int?)x.PROPOSEDPRODUCTID)
+                .Distinct();
         }
 
         private int GetFirstApprovalLevelId(/*short productId,*/ short? productClassId, int staffId = 0) // ---- REFACTOR when we have productId!!!
