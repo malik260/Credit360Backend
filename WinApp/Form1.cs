@@ -72,6 +72,7 @@ namespace WinApp
             short priceIndex = 1;
             double newRate = 20;
             int customeId = 1;
+
             //string vDesc = txtDesc.Text;
 
             //model.CountryId = 1;//(int)vCountry;
@@ -108,7 +109,7 @@ namespace WinApp
 
             //cust.GetCustomerFSRatioValues(customeId);
             //loan.GetCustomerTotalOutstandingBalance(customeId);
-            credit.ValidateAmountByCustomer(customeId);
+            //credit.ValidateAmountByCustomer(customeId);
             MessageBox.Show("Successful", "Fintrak");
 
 

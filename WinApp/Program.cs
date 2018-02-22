@@ -25,8 +25,8 @@ namespace WinApp
             //IAuditTrailRepository _auditTrail = new Form1();
             //FinTrakBankingContext _context = new FinTrakBankingContext();
             //Application.Run(new Form1(_context));
-            //Application.Run(CompositionRoot.Resolve<Form1>());
-            Application.Run(CompositionRoot.Resolve<MailForm>());
+            Application.Run(CompositionRoot.Resolve<Form1>());
+            //Application.Run(CompositionRoot.Resolve<MailForm>());
         }
     }
 }
