@@ -24,6 +24,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
             TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN_REVOLVING_ARCHIVE = new HashSet<TBL_LOAN_REVOLVING_ARCHIVE>();
+            TBL_TEMP_LOAN = new HashSet<TBL_TEMP_LOAN>();
             TBL_PRODUCT_COLLATERALTYPE = new HashSet<TBL_PRODUCT_COLLATERALTYPE>();
             TBL_CONDITION_PRECEDENT = new HashSet<TBL_CONDITION_PRECEDENT>();
             TBL_LOAN_APPLICATION_DETAIL = new HashSet<TBL_LOAN_APPLICATION_DETAIL>();
@@ -185,6 +186,9 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
 
         public virtual TBL_PRODUCT_CATEGORY TBL_PRODUCT_CATEGORY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PRODUCT_COLLATERALTYPE> TBL_PRODUCT_COLLATERALTYPE { get; set; }

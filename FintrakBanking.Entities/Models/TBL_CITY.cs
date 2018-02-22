@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_MARKET = new HashSet<TBL_LOAN_MARKET>();
             TBL_STAFF = new HashSet<TBL_STAFF>();
             TBL_TEMP_COLLATERAL_IMMOVE_PRP = new HashSet<TBL_TEMP_COLLATERAL_IMMOVE_PRP>();
+            TBL_TEMP_CUSTOMER_EMPLOYER = new HashSet<TBL_TEMP_CUSTOMER_EMPLOYER>();
             TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
 
@@ -59,6 +60,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVE_PRP> TBL_TEMP_COLLATERAL_IMMOVE_PRP { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_CUSTOMER_EMPLOYER> TBL_TEMP_CUSTOMER_EMPLOYER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }

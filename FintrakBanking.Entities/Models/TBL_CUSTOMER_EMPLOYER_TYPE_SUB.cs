@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_CUSTOMER_EMPLOYER_TYPE_SUB()
         {
             TBL_CUSTOMER_EMPLOYER = new HashSet<TBL_CUSTOMER_EMPLOYER>();
+            TBL_TEMP_CUSTOMER_EMPLOYER = new HashSet<TBL_TEMP_CUSTOMER_EMPLOYER>();
         }
 
         [Key]
@@ -29,5 +30,8 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_CUSTOMER_EMPLOYER> TBL_CUSTOMER_EMPLOYER { get; set; }
 
         public virtual TBL_CUSTOMER_EMPLOYER_TYPE TBL_CUSTOMER_EMPLOYER_TYPE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_CUSTOMER_EMPLOYER> TBL_TEMP_CUSTOMER_EMPLOYER { get; set; }
     }
 }
