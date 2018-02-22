@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS;
 using System;
@@ -11,7 +12,7 @@ using System.Xml;
 
 namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
 {
-    public class CreditBureauProcess
+    public class CreditBureauProcess : ICreditBureauProcess
     {
         XmlDocument xdoc = new XmlDocument();
         string ticket = string.Empty;

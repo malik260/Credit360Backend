@@ -162,6 +162,9 @@
               <xs:element name="customerAddress" msprop:Generator_ColumnVarNameInTable="columncustomerAddress" msprop:Generator_ColumnPropNameInRow="customerAddress" msprop:Generator_ColumnPropNameInTable="customerAddressColumn" msprop:Generator_UserColumnName="customerAddress" type="xs:string" minOccurs="0" />
               <xs:element name="applicationDate" msprop:Generator_ColumnVarNameInTable="columnapplicationDate" msprop:Generator_ColumnPropNameInRow="applicationDate" msprop:Generator_ColumnPropNameInTable="applicationDateColumn" msprop:Generator_UserColumnName="applicationDate" type="xs:string" minOccurs="0" />
               <xs:element name="customerEmailAddress" msprop:Generator_ColumnVarNameInTable="columncustomerEmailAddress" msprop:Generator_ColumnPropNameInRow="customerEmailAddress" msprop:Generator_ColumnPropNameInTable="customerEmailAddressColumn" msprop:Generator_UserColumnName="customerEmailAddress" type="xs:string" minOccurs="0" />
+              <xs:element name="applicationReferenceNumber" msprop:Generator_ColumnVarNameInTable="columnapplicationReferenceNumber" msprop:Generator_ColumnPropNameInRow="applicationReferenceNumber" msprop:Generator_ColumnPropNameInTable="applicationReferenceNumberColumn" msprop:Generator_UserColumnName="applicationReferenceNumber" type="xs:string" minOccurs="0" />
+              <xs:element name="repaymentTerms" msprop:Generator_ColumnVarNameInTable="columnrepaymentTerms" msprop:Generator_ColumnPropNameInRow="repaymentTerms" msprop:Generator_ColumnPropNameInTable="repaymentTermsColumn" msprop:Generator_UserColumnName="repaymentTerms" type="xs:string" minOccurs="0" />
+              <xs:element name="repaymentSchedule" msprop:Generator_ColumnVarNameInTable="columnrepaymentSchedule" msprop:Generator_ColumnPropNameInRow="repaymentSchedule" msprop:Generator_ColumnPropNameInTable="repaymentScheduleColumn" msprop:Generator_UserColumnName="repaymentSchedule" type="xs:string" minOccurs="0" />
               <xs:element name="customerPhoneNumber" msprop:Generator_ColumnVarNameInTable="columncustomerPhoneNumber" msprop:Generator_ColumnPropNameInRow="customerPhoneNumber" msprop:Generator_ColumnPropNameInTable="customerPhoneNumberColumn" msprop:Generator_UserColumnName="customerPhoneNumber" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
@@ -303,6 +306,22 @@
             <xs:sequence>
               <xs:element name="loanApplicationId" msprop:Generator_ColumnVarNameInTable="columnloanApplicationId" msprop:Generator_ColumnPropNameInRow="loanApplicationId" msprop:Generator_ColumnPropNameInTable="loanApplicationIdColumn" msprop:Generator_UserColumnName="loanApplicationId" type="xs:int" minOccurs="0" />
               <xs:element name="conditionPrecident" msdata:Caption="productName" msprop:Generator_ColumnVarNameInTable="columnconditionPrecident" msprop:Generator_ColumnPropNameInRow="conditionPrecident" msprop:Generator_ColumnPropNameInTable="conditionPrecidentColumn" msprop:Generator_UserColumnName="conditionPrecident" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="OfferLetterFee" msprop:Generator_TableClassName="OfferLetterFeeDataTable" msprop:Generator_TableVarName="tableOfferLetterFee" msprop:Generator_RowChangedName="OfferLetterFeeRowChanged" msprop:Generator_TablePropName="OfferLetterFee" msprop:Generator_RowDeletingName="OfferLetterFeeRowDeleting" msprop:Generator_RowChangingName="OfferLetterFeeRowChanging" msprop:Generator_RowEvHandlerName="OfferLetterFeeRowChangeEventHandler" msprop:Generator_RowDeletedName="OfferLetterFeeRowDeleted" msprop:Generator_RowClassName="OfferLetterFeeRow" msprop:Generator_UserTableName="OfferLetterFee" msprop:Generator_RowEvArgName="OfferLetterFeeRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="feeName" msprop:Generator_ColumnVarNameInTable="columnfeeName" msprop:Generator_ColumnPropNameInRow="feeName" msprop:Generator_ColumnPropNameInTable="feeNameColumn" msprop:Generator_UserColumnName="feeName" type="xs:string" minOccurs="0" />
+              <xs:element name="rateValue" msprop:Generator_ColumnVarNameInTable="columnrateValue" msprop:Generator_ColumnPropNameInRow="rateValue" msprop:Generator_ColumnPropNameInTable="rateValueColumn" msprop:Generator_UserColumnName="rateValue" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="OfferLetterSignatory" msprop:Generator_TableClassName="OfferLetterSignatoryDataTable" msprop:Generator_TableVarName="tableOfferLetterSignatory" msprop:Generator_TablePropName="OfferLetterSignatory" msprop:Generator_RowDeletingName="OfferLetterSignatoryRowDeleting" msprop:Generator_RowChangingName="OfferLetterSignatoryRowChanging" msprop:Generator_RowEvHandlerName="OfferLetterSignatoryRowChangeEventHandler" msprop:Generator_RowDeletedName="OfferLetterSignatoryRowDeleted" msprop:Generator_UserTableName="OfferLetterSignatory" msprop:Generator_RowChangedName="OfferLetterSignatoryRowChanged" msprop:Generator_RowEvArgName="OfferLetterSignatoryRowChangeEvent" msprop:Generator_RowClassName="OfferLetterSignatoryRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="rmStaffName" msprop:Generator_ColumnVarNameInTable="columnrmStaffName" msprop:Generator_ColumnPropNameInRow="rmStaffName" msprop:Generator_ColumnPropNameInTable="rmStaffNameColumn" msprop:Generator_UserColumnName="rmStaffName" type="xs:string" minOccurs="0" />
+              <xs:element name="bmStaffName" msprop:Generator_ColumnVarNameInTable="columnbmStaffName" msprop:Generator_ColumnPropNameInRow="bmStaffName" msprop:Generator_ColumnPropNameInTable="bmStaffNameColumn" msprop:Generator_UserColumnName="bmStaffName" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

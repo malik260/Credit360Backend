@@ -748,6 +748,7 @@ namespace FintrakBanking.Repositories.Credit
                             productId = ln.PRODUCTID,
                             casaAccountId = ln.CASAACCOUNTID,
                             loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
+                            loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
                             branchId = ln.BRANCHID,
                             loanReferenceNumber = ln.LOANREFERENCENUMBER,
@@ -915,6 +916,7 @@ namespace FintrakBanking.Repositories.Credit
                             productId = ln.PRODUCTID,
                             casaAccountId = ln.CASAACCOUNTID,
                             loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
+                            loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
                             branchId = ln.BRANCHID,
                             loanReferenceNumber = ln.LOANREFERENCENUMBER,
@@ -1044,6 +1046,7 @@ namespace FintrakBanking.Repositories.Credit
                             productId = ln.PRODUCTID,
                             casaAccountId = ln.CASAACCOUNTID,
                             loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
+                            loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
                             branchId = ln.BRANCHID,
                             loanReferenceNumber = ln.LOANREFERENCENUMBER,
