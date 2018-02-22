@@ -23,15 +23,14 @@ namespace FintrakBanking.APICore.Controllers
     {
         private ICustomerCreditBureauRepository repo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
-        private IErrorLogRepository errorLogger;
+        private ICreditBureauProcess creditBureau;
+        //private IErrorLogRepository errorLogger;
 
-        public CustomerCreditBureauController(
-            ICustomerCreditBureauRepository _repo,
-            IErrorLogRepository _errorLogger
-            )
+        public CustomerCreditBureauController(ICustomerCreditBureauRepository _repo, ICreditBureauProcess _creditBureau) //IErrorLogRepository _errorLogger
         {
             this.repo = _repo;
-            errorLogger = _errorLogger;
+            creditBureau = _creditBureau;
+           // errorLogger = _errorLogger;
         }
 
         #region CREDIT BUREAU REPORT
@@ -41,6 +40,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                var test = repo;
                 var data = repo.GetCreditBureauCustomerDetailsByCustomerId(customerId);
                 if (data == null)
                 {
@@ -64,6 +64,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                var test = repo;
                 var data = repo.GetCreditBureauInformation();
 
                 if (!data.Any())
@@ -208,7 +209,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                foreach(var model in searchInfoList)
+                foreach (var model in searchInfoList)
                 {
                     model.applicationUrl = HttpContext.Current.Request.Path;
                     model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -216,7 +217,7 @@ namespace FintrakBanking.APICore.Controllers
                     model.companyId = token.GetCompanyId;
                     model.staffId = token.GetStaffId;
                 }
-                
+
                 var result = repo.GetCustomerCreditMatch(searchInfoList);
 
                 if (result != null)
@@ -227,7 +228,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message =  " Search failed" });
+                        new { success = true, message = " Search failed" });
                 }
             }
             catch (Exception ex)

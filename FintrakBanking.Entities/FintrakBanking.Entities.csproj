@@ -71,6 +71,7 @@
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
+    <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -383,9 +384,12 @@
     <Compile Include="Models\TBL_TEMP_CUSTOMER.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_ADDRESS.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_COMPANYINFO.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_EMPLOYER.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP_MAPPNG.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_PHONCONTACT.cs" />
     <Compile Include="Models\TBL_TEMP_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_LOAN.cs" />
     <Compile Include="Models\TBL_TEMP_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_BEHAVIOUR.cs" />
