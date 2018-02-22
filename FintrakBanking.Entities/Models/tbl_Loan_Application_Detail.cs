@@ -69,10 +69,6 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(500)]
         public string LOANPURPOSE { get; set; }
-        [StringLength(500)]
-        public string REPAYMENTTERMS { get; set; }
-        [StringLength(500)]
-        public string REPAYMENTSCHEDULE { get; set; }
 
         public short CONSESSIONAPPROVALSTATUSID { get; set; }
 
