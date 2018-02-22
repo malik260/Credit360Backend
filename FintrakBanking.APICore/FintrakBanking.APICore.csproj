@@ -324,6 +324,7 @@
     <Compile Include="Controllers\CallMemoController.cs" />
     <Compile Include="Controllers\ConditionPrecedentController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
+    <Compile Include="Controllers\CustomerCreditBureauController.cs" />
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
     <Compile Include="Controllers\EndOfDayController.cs" />
@@ -771,6 +772,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\CustomerCreditBureau\" />
     <Folder Include="Views\EndOfDay\" />
     <Folder Include="Views\LoanOperation\" />
     <Folder Include="Views\Override\" />

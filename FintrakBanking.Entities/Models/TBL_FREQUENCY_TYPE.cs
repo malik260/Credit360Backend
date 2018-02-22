@@ -23,6 +23,9 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN1 = new HashSet<TBL_LOAN>();
             TBL_LOAN2 = new HashSet<TBL_LOAN>();
             TBL_TEMP_COLLATERAL_POLICY = new HashSet<TBL_TEMP_COLLATERAL_POLICY>();
+            TBL_TEMP_LOAN = new HashSet<TBL_TEMP_LOAN>();
+            TBL_TEMP_LOAN1 = new HashSet<TBL_TEMP_LOAN>();
+            TBL_TEMP_LOAN2 = new HashSet<TBL_TEMP_LOAN>();
         }
 
         [Key]
@@ -73,5 +76,14 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_COLLATERAL_POLICY> TBL_TEMP_COLLATERAL_POLICY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN2 { get; set; }
     }
 }

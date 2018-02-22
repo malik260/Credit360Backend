@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace FintrakBanking.APICore.Reports.Credit {
+namespace BankingApplicationTest.Reports {
     
     
     /// <summary>
@@ -59,6 +59,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
         private OfferLetterConditionSubsequentDataTable tableOfferLetterConditionSubsequent;
         
         private OfferLetterFeeDataTable tableOfferLetterFee;
+        
+        private OfferLetterSignatoryDataTable tableOfferLetterSignatory;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -141,6 +143,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 }
                 if ((ds.Tables["OfferLetterFee"] != null)) {
                     base.Tables.Add(new OfferLetterFeeDataTable(ds.Tables["OfferLetterFee"]));
+                }
+                if ((ds.Tables["OfferLetterSignatory"] != null)) {
+                    base.Tables.Add(new OfferLetterSignatoryDataTable(ds.Tables["OfferLetterSignatory"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -342,6 +347,16 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public OfferLetterSignatoryDataTable OfferLetterSignatory {
+            get {
+                return this.tableOfferLetterSignatory;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.BrowsableAttribute(true)]
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Visible)]
         public override global::System.Data.SchemaSerializationMode SchemaSerializationMode {
@@ -460,6 +475,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 }
                 if ((ds.Tables["OfferLetterFee"] != null)) {
                     base.Tables.Add(new OfferLetterFeeDataTable(ds.Tables["OfferLetterFee"]));
+                }
+                if ((ds.Tables["OfferLetterSignatory"] != null)) {
+                    base.Tables.Add(new OfferLetterSignatoryDataTable(ds.Tables["OfferLetterSignatory"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -602,6 +620,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
                     this.tableOfferLetterFee.InitVars();
                 }
             }
+            this.tableOfferLetterSignatory = ((OfferLetterSignatoryDataTable)(base.Tables["OfferLetterSignatory"]));
+            if ((initTable == true)) {
+                if ((this.tableOfferLetterSignatory != null)) {
+                    this.tableOfferLetterSignatory.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -648,6 +672,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             base.Tables.Add(this.tableOfferLetterConditionSubsequent);
             this.tableOfferLetterFee = new OfferLetterFeeDataTable();
             base.Tables.Add(this.tableOfferLetterFee);
+            this.tableOfferLetterSignatory = new OfferLetterSignatoryDataTable();
+            base.Tables.Add(this.tableOfferLetterSignatory);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -760,6 +786,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        private bool ShouldSerializeOfferLetterSignatory() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         private void SchemaChanged(object sender, global::System.ComponentModel.CollectionChangeEventArgs e) {
             if ((e.Action == global::System.ComponentModel.CollectionChangeAction.Remove)) {
                 this.InitVars();
@@ -866,6 +898,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         public delegate void OfferLetterFeeRowChangeEventHandler(object sender, OfferLetterFeeRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        public delegate void OfferLetterSignatoryRowChangeEventHandler(object sender, OfferLetterSignatoryRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -3926,6 +3961,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnapplicationReferenceNumber;
             
+            private global::System.Data.DataColumn columnrepaymentTerms;
+            
+            private global::System.Data.DataColumn columnrepaymentSchedule;
+            
             private global::System.Data.DataColumn columncustomerPhoneNumber;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4083,6 +4122,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn repaymentTermsColumn {
+                get {
+                    return this.columnrepaymentTerms;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn repaymentScheduleColumn {
+                get {
+                    return this.columnrepaymentSchedule;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public global::System.Data.DataColumn customerPhoneNumberColumn {
                 get {
                     return this.columncustomerPhoneNumber;
@@ -4142,6 +4197,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string applicationDate, 
                         string customerEmailAddress, 
                         string applicationReferenceNumber, 
+                        string repaymentTerms, 
+                        string repaymentSchedule, 
                         string customerPhoneNumber) {
                 OfferLetterDetailRow rowOfferLetterDetailRow = ((OfferLetterDetailRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
@@ -4160,6 +4217,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         applicationDate,
                         customerEmailAddress,
                         applicationReferenceNumber,
+                        repaymentTerms,
+                        repaymentSchedule,
                         customerPhoneNumber};
                 rowOfferLetterDetailRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowOfferLetterDetailRow);
@@ -4198,6 +4257,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnapplicationDate = base.Columns["applicationDate"];
                 this.columncustomerEmailAddress = base.Columns["customerEmailAddress"];
                 this.columnapplicationReferenceNumber = base.Columns["applicationReferenceNumber"];
+                this.columnrepaymentTerms = base.Columns["repaymentTerms"];
+                this.columnrepaymentSchedule = base.Columns["repaymentSchedule"];
                 this.columncustomerPhoneNumber = base.Columns["customerPhoneNumber"];
             }
             
@@ -4234,6 +4295,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columncustomerEmailAddress);
                 this.columnapplicationReferenceNumber = new global::System.Data.DataColumn("applicationReferenceNumber", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnapplicationReferenceNumber);
+                this.columnrepaymentTerms = new global::System.Data.DataColumn("repaymentTerms", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrepaymentTerms);
+                this.columnrepaymentSchedule = new global::System.Data.DataColumn("repaymentSchedule", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrepaymentSchedule);
                 this.columncustomerPhoneNumber = new global::System.Data.DataColumn("customerPhoneNumber", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncustomerPhoneNumber);
             }
@@ -8006,6 +8071,267 @@ namespace FintrakBanking.APICore.Reports.Credit {
         }
         
         /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class OfferLetterSignatoryDataTable : global::System.Data.TypedTableBase<OfferLetterSignatoryRow> {
+            
+            private global::System.Data.DataColumn columnrmStaffName;
+            
+            private global::System.Data.DataColumn columnbmStaffName;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public OfferLetterSignatoryDataTable() {
+                this.TableName = "OfferLetterSignatory";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal OfferLetterSignatoryDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected OfferLetterSignatoryDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn rmStaffNameColumn {
+                get {
+                    return this.columnrmStaffName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn bmStaffNameColumn {
+                get {
+                    return this.columnbmStaffName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public OfferLetterSignatoryRow this[int index] {
+                get {
+                    return ((OfferLetterSignatoryRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event OfferLetterSignatoryRowChangeEventHandler OfferLetterSignatoryRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event OfferLetterSignatoryRowChangeEventHandler OfferLetterSignatoryRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event OfferLetterSignatoryRowChangeEventHandler OfferLetterSignatoryRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event OfferLetterSignatoryRowChangeEventHandler OfferLetterSignatoryRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void AddOfferLetterSignatoryRow(OfferLetterSignatoryRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public OfferLetterSignatoryRow AddOfferLetterSignatoryRow(string rmStaffName, string bmStaffName) {
+                OfferLetterSignatoryRow rowOfferLetterSignatoryRow = ((OfferLetterSignatoryRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        rmStaffName,
+                        bmStaffName};
+                rowOfferLetterSignatoryRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowOfferLetterSignatoryRow);
+                return rowOfferLetterSignatoryRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                OfferLetterSignatoryDataTable cln = ((OfferLetterSignatoryDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new OfferLetterSignatoryDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal void InitVars() {
+                this.columnrmStaffName = base.Columns["rmStaffName"];
+                this.columnbmStaffName = base.Columns["bmStaffName"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            private void InitClass() {
+                this.columnrmStaffName = new global::System.Data.DataColumn("rmStaffName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrmStaffName);
+                this.columnbmStaffName = new global::System.Data.DataColumn("bmStaffName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbmStaffName);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public OfferLetterSignatoryRow NewOfferLetterSignatoryRow() {
+                return ((OfferLetterSignatoryRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new OfferLetterSignatoryRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(OfferLetterSignatoryRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.OfferLetterSignatoryRowChanged != null)) {
+                    this.OfferLetterSignatoryRowChanged(this, new OfferLetterSignatoryRowChangeEvent(((OfferLetterSignatoryRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.OfferLetterSignatoryRowChanging != null)) {
+                    this.OfferLetterSignatoryRowChanging(this, new OfferLetterSignatoryRowChangeEvent(((OfferLetterSignatoryRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.OfferLetterSignatoryRowDeleted != null)) {
+                    this.OfferLetterSignatoryRowDeleted(this, new OfferLetterSignatoryRowChangeEvent(((OfferLetterSignatoryRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.OfferLetterSignatoryRowDeleting != null)) {
+                    this.OfferLetterSignatoryRowDeleting(this, new OfferLetterSignatoryRowChangeEvent(((OfferLetterSignatoryRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void RemoveOfferLetterSignatoryRow(OfferLetterSignatoryRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                Credit ds = new Credit();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "OfferLetterSignatoryDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
         public partial class BranchRow : global::System.Data.DataRow {
@@ -10929,6 +11255,38 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string repaymentTerms {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.repaymentTermsColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'repaymentTerms\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.repaymentTermsColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string repaymentSchedule {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.repaymentScheduleColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'repaymentSchedule\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.repaymentScheduleColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public string customerPhoneNumber {
                 get {
                     try {
@@ -11122,6 +11480,30 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetapplicationReferenceNumberNull() {
                 this[this.tableOfferLetterDetail.applicationReferenceNumberColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsrepaymentTermsNull() {
+                return this.IsNull(this.tableOfferLetterDetail.repaymentTermsColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetrepaymentTermsNull() {
+                this[this.tableOfferLetterDetail.repaymentTermsColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsrepaymentScheduleNull() {
+                return this.IsNull(this.tableOfferLetterDetail.repaymentScheduleColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetrepaymentScheduleNull() {
+                this[this.tableOfferLetterDetail.repaymentScheduleColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -13780,6 +14162,77 @@ namespace FintrakBanking.APICore.Reports.Credit {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class OfferLetterSignatoryRow : global::System.Data.DataRow {
+            
+            private OfferLetterSignatoryDataTable tableOfferLetterSignatory;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal OfferLetterSignatoryRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableOfferLetterSignatory = ((OfferLetterSignatoryDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string rmStaffName {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterSignatory.rmStaffNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'rmStaffName\' in table \'OfferLetterSignatory\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterSignatory.rmStaffNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string bmStaffName {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterSignatory.bmStaffNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'bmStaffName\' in table \'OfferLetterSignatory\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterSignatory.bmStaffNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsrmStaffNameNull() {
+                return this.IsNull(this.tableOfferLetterSignatory.rmStaffNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetrmStaffNameNull() {
+                this[this.tableOfferLetterSignatory.rmStaffNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsbmStaffNameNull() {
+                return this.IsNull(this.tableOfferLetterSignatory.bmStaffNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetbmStaffNameNull() {
+                this[this.tableOfferLetterSignatory.bmStaffNameColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
@@ -14377,6 +14830,40 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public OfferLetterFeeRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        public class OfferLetterSignatoryRowChangeEvent : global::System.EventArgs {
+            
+            private OfferLetterSignatoryRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public OfferLetterSignatoryRowChangeEvent(OfferLetterSignatoryRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public OfferLetterSignatoryRow Row {
                 get {
                     return this.eventRow;
                 }

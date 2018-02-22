@@ -10,7 +10,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
 
 
-    public class CreditBureauSearchViewModel
+    public class CreditBureauSearchViewModel : GeneralEntity
     {
         public string productId;
 

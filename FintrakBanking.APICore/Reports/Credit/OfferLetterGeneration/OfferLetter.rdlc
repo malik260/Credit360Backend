@@ -113,6 +113,18 @@
           <DataField>customerEmailAddress</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="applicationReferenceNumber">
+          <DataField>applicationReferenceNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="repaymentTerms">
+          <DataField>repaymentTerms</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="repaymentSchedule">
+          <DataField>repaymentSchedule</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="customerPhoneNumber">
           <DataField>customerPhoneNumber</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -194,6 +206,30 @@
         <rd:DataSetName>Credit</rd:DataSetName>
         <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterFee</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="OfferLetterSignatory">
+      <Query>
+        <DataSourceName>Credit</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="rmStaffName">
+          <DataField>rmStaffName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="bmStaffName">
+          <DataField>bmStaffName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Credit</rd:DataSetName>
+        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
+        <rd:TableName>OfferLetterSignatory</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />
@@ -352,27 +388,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value />
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>FULL NAME                 </Value>
+                    <Value>=First(Fields!rmStaffName.Value, "OfferLetterSignatory")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -383,7 +399,18 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value xml:space="preserve">                                           </Value>
+                    <Value xml:space="preserve">           </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">                                                             </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -394,27 +421,27 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>FULL NAME</Value>
+                    <Value>=First(Fields!bmStaffName.Value, "OfferLetterSignatory")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                       <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
                 <LeftIndent>0cm</LeftIndent>
                 <RightIndent>0cm</RightIndent>
                 <Style>
-                  <TextAlign>Left</TextAlign>
                   <LineHeight>18pt</LineHeight>
                 </Style>
               </Paragraph>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Business Manager                                                           Business Development Manager</Value>
+                    <Value>Relationship Manager                                                                                    Business Manager</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -435,7 +462,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Signature:                                                                      Signature:</Value>
+                    <Value>Signature:                                                                                                      Signature:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -456,7 +483,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Date:                                                                            Date:</Value>
+                    <Value>Date:                                                                                                             Date:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -856,7 +883,7 @@
             <Top>47.68561cm</Top>
             <Left>0.50814cm</Left>
             <Height>2.55044cm</Height>
-            <Width>17.84044cm</Width>
+            <Width>16.7444cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -914,7 +941,7 @@
             <Top>37.9527cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.13518cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.7089cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -951,7 +978,7 @@
             <Top>35.09239cm</Top>
             <Left>0.53907cm</Left>
             <Height>1.90781cm</Height>
-            <Width>17.84061cm</Width>
+            <Width>16.71347cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -988,7 +1015,7 @@
             <Top>32.52312cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.51094cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.7089cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -1056,10 +1083,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>3.72594cm</Top>
+            <Top>3.69066cm</Top>
             <Left>0.51492cm</Left>
             <Height>1.01528cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.73762cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -1513,7 +1540,7 @@
             <Top>22.2423cm</Top>
             <Left>0.51029cm</Left>
             <Height>2.22005cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.74225cm</Width>
             <ZIndex>10</ZIndex>
             <Style>
               <Border>
@@ -1974,7 +2001,7 @@
             <Top>25.45013cm</Top>
             <Left>0.51029cm</Left>
             <Height>2.74922cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.74225cm</Width>
             <ZIndex>14</ZIndex>
             <Style>
               <Border>
@@ -2187,7 +2214,7 @@
             <Top>29.14703cm</Top>
             <Left>0.5126cm</Left>
             <Height>2.27366cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.73994cm</Width>
             <ZIndex>16</ZIndex>
             <Style>
               <Border>
@@ -2206,7 +2233,7 @@
                   <Width>2.76812in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.25212in</Width>
+                  <Width>3.82061in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -2825,14 +2852,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox31">
+                        <Textbox Name="repaymentTerms">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Bullet repayment of principal and interest upon receipt of contract proceeds</Value>
+                                  <Value>=Fields!repaymentTerms.Value</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Garamond</FontFamily>
@@ -2846,7 +2873,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox31</rd:DefaultName>
+                          <rd:DefaultName>repaymentTerms</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -3011,14 +3038,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox20">
+                        <Textbox Name="repaymentSchedule">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Bullet repayment of principal and interest</Value>
+                                  <Value>=Fields!repaymentSchedule.Value</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Garamond</FontFamily>
@@ -3032,7 +3059,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox20</rd:DefaultName>
+                          <rd:DefaultName>repaymentSchedule</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -3593,7 +3620,7 @@
             <Top>1.93607in</Top>
             <Left>0.20361in</Left>
             <Height>4in</Height>
-            <Width>7.02024in</Width>
+            <Width>6.58873in</Width>
             <ZIndex>17</ZIndex>
             <Style>
               <Border>
@@ -3790,7 +3817,7 @@
             <Top>40.04039cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.13518cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.7089cm</Width>
             <ZIndex>22</ZIndex>
             <Style>
               <Border>
@@ -3884,7 +3911,7 @@
             <Top>42.16337cm</Top>
             <Left>0.53907cm</Left>
             <Height>1.13518cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.71347cm</Width>
             <ZIndex>24</ZIndex>
             <Style>
               <Border>
@@ -3977,7 +4004,7 @@
             <Top>44.25107cm</Top>
             <Left>0.51029cm</Left>
             <Height>1.13518cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.74225cm</Width>
             <ZIndex>26</ZIndex>
             <Style>
               <Border>
@@ -4259,7 +4286,7 @@
             <Top>46.37404cm</Top>
             <Left>0.51028cm</Left>
             <Height>1.13518cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.74226cm</Width>
             <ZIndex>28</ZIndex>
             <Style>
               <Border>
@@ -4278,7 +4305,7 @@
                   <Width>2.76903in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.26435in</Width>
+                  <Width>3.8197in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -4391,7 +4418,7 @@
             <Top>5.97774in</Top>
             <Left>0.20361in</Left>
             <Height>0.25in</Height>
-            <Width>7.03338in</Width>
+            <Width>6.58873in</Width>
             <ZIndex>29</ZIndex>
             <Style>
               <Border>
@@ -4442,7 +4469,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>1.   Irrevocable domiciliation of contract proceeds by the principal () to customer’s account duly confirmed by                 Middle  office as valid with same account appropriately liened</Value>
+                    <Value>1.   Irrevocable domiciliation of contract proceeds by the principal () to customer’s account duly confirmed by               Middle  office as valid with same account appropriately liened</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -4458,7 +4485,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>2.  Personal Guarantee of the Prime Mover of the Company on form 3240 to cover the total exposure supported by notarized statement of networth.</Value>
+                    <Value>2.   Personal Guarantee of the Prime Mover of the Company on form 3240 to cover the total exposure supported by notarized statement of networth.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -4482,7 +4509,7 @@
             <Top>16.66512cm</Top>
             <Left>0.50814cm</Left>
             <Height>2.22005cm</Height>
-            <Width>17.8383cm</Width>
+            <Width>16.7444cm</Width>
             <ZIndex>31</ZIndex>
             <Style>
               <Border>
@@ -4529,9 +4556,9 @@
             </Paragraphs>
             <rd:DefaultName>Textbox9</rd:DefaultName>
             <Top>0.04167in</Top>
-            <Left>5.34608in</Left>
+            <Left>4.84608in</Left>
             <Height>0.25in</Height>
-            <Width>1.87692in</Width>
+            <Width>1.94626in</Width>
             <ZIndex>32</ZIndex>
             <Style>
               <Border>
@@ -4551,7 +4578,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>7.35502in</Width>
+      <Width>6.86333in</Width>
       <Page>
         <PageHeader>
           <Height>1.14111in</Height>
@@ -4562,7 +4589,7 @@
               <Source>Embedded</Source>
               <Value>firstbanknewlogo</Value>
               <Sizing>FitProportional</Sizing>
-              <Left>6.03936in</Left>
+              <Left>5.66436in</Left>
               <Height>1.14111in</Height>
               <Width>1.12798in</Width>
               <Style>
@@ -4623,9 +4650,9 @@
               <Value>firstbanklogo</Value>
               <Sizing>FitProportional</Sizing>
               <Top>0.06944in</Top>
-              <Left>6.21423in</Left>
+              <Left>5.71423in</Left>
               <Height>0.88677in</Height>
-              <Width>1.02276in</Width>
+              <Width>1.07811in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>

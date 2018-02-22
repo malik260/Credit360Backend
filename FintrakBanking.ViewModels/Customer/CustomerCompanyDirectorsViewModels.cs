@@ -8,6 +8,10 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerCompanyDirectorsViewModels : GeneralEntity
     {
+        public string customerTypeName;
+        public string emailAddress;
+        public string middleName;
+
         public CustomerCompanyDirectorsViewModels()
         {
             customerCompanyBeneficial = new List<CustomerCompanyBeneficiaryViewModels>();
