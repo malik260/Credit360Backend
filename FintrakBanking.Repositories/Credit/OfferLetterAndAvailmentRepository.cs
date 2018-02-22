@@ -529,23 +529,22 @@ namespace FintrakBanking.Repositories.Credit
                             rateValue = a.RECOMMENDED_FEERATEVALUE
                         }).ToList();
 
-            //var data    = (from a in context.TBL_LOAN_APPLICATION
-            //                join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-            //                join d in context.TBL_CUSTOMER on a.CUSTOMERID equals d.CUSTOMERID
-            //                join e in context.TBL_BRANCH on a.BRANCHID equals e.BRANCHID
-            //                where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
-            //                select new CamProcessedLoanViewModel()
-            //                {
-            //                    productId = c.TBL_PRODUCT.PRODUCTID,
-            //                    productName = c.TBL_PRODUCT.PRODUCTNAME,
-            //                    productClassId = a.PRODUCTCLASSID,
-            //                    productClassProcessId = productClassProcess.PRODUCT_CLASS_PROCESSID, //a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID
-            //                    branchId = e.BRANCHID,
-            //                    branchName = e.BRANCHNAME,
-            //                    customerId = d.CUSTOMERID,
-            //                    customerCode = d.CUSTOMERCODE,
-            //                    customerName = d.LASTNAME + ' ' + d.MIDDLENAME + ' ' +  d.FIRSTNAME
-            //                }).ToList();
+            var loanDetails = (from a in context.TBL_LOAN_APPLICATION
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
+                        from c in cc.DefaultIfEmpty()
+                        join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
+                        from d in cg.DefaultIfEmpty()
+                        where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower() &&
+                              b.STATUSID == (int)ApprovalStatusEnum.Approved
+                        select new CamProcessedLoanViewModel()
+                        {
+                            productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTNAME,
+                            tenor = b.APPROVEDTENOR,
+                            interestRate = b.APPROVEDINTERESTRATE,
+                            purpose = b.LOANPURPOSE,
+                            applicationDate = applDate,
+                        }).ToList();
 
 
 
@@ -554,6 +553,8 @@ namespace FintrakBanking.Repositories.Credit
             var conditions = string.Empty;
 
             var fee = string.Empty;
+
+            var loanDetail = string.Empty;
 
             var internalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == false).ToList();
 
@@ -572,6 +573,10 @@ namespace FintrakBanking.Repositories.Credit
             var finalConditionSubsequents = string.Empty;
 
             var loanfee = string.Empty;
+
+            var detail  = string.Empty;
+
+            int noOfDetails = 0;
 
             int noOfFees = 0;
 
@@ -741,13 +746,53 @@ namespace FintrakBanking.Repositories.Credit
 
             var feeData = $"{loanfee}";
 
+
+
+            loanDetail = $" ";//<p><strong> Facility Deatils: </strong></p>
+
+            loanDetail = loanDetail +
+                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:1.25in'><p> &nbsp;</p>" +
+                    $"<strong> Facility Type </strong></p></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:130.5pt'><p> &nbsp;</p>" +
+                    $"<strong> Purpose </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:49.5pt'><p> &nbsp;</p>" +
+                    $"<strong> Tenor </strong></p></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
+                    $"<strong> Interest </strong></p></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
+                    $"<strong> Review Date </strong></td></tr>";
+
+
+
+            foreach (var item in loanDetails)
+            {
+                loanDetail = loanDetail +
+                    $"<tr>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate}</p></td>" +
+                    $"</tr>";
+            }
+
+            noOfDetails = 0;
+
+            loanDetail = loanDetail + "</tbody></table><p> &nbsp;</p>";
+
+            detail += loanDetail;
+
+            var loanDetailData  = $"{detail}";
+
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
 
             var customer = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_CUSTOMER.FIRSTNAME;
             var branch = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_BRANCH.BRANCHNAME;
             //var info = data;
 
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData);
 
             if (preparedTemplate != null)
             {
@@ -823,7 +868,7 @@ namespace FintrakBanking.Repositories.Credit
             //return templateLink;
         }
 
-        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition)
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition)
         {
             string body;
 
@@ -839,6 +884,7 @@ namespace FintrakBanking.Repositories.Credit
             body = body.Replace("{@Branch}", branch);
             body = body.Replace("{@Customer}", customer);
             body = body.Replace("{@Fees}", feecondition);
+            body = body.Replace("{@facility}", facilitycondition);
             return body;
         }
 
@@ -1298,6 +1344,26 @@ namespace FintrakBanking.Repositories.Credit
             appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
 
             return context.SaveChanges() > 0;
+        }
+
+        public IEnumerable<CommentOnLoanAvailmentViewModel> GetCommentOnLoanAvailment(string applicationRefNumber)
+        {
+            var data = (from a in context.TBL_APPROVAL_TRAIL
+                        join b in context.TBL_LOAN_APPLICATION on a.TARGETID equals b.LOANAPPLICATIONID
+                        join c in context.TBL_STAFF on a.REQUESTSTAFFID equals c.STAFFID 
+                        join d in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals d.APPROVALSTATEID 
+                        where b.APPLICATIONREFERENCENUMBER == applicationRefNumber && a.OPERATIONID == (int)OperationsEnum.LoanAvailment
+                        select new CommentOnLoanAvailmentViewModel
+                        {
+                            name = c.FIRSTNAME + " "+ c.LASTNAME + " "+ c.MIDDLENAME,
+                            comments = a.COMMENT,
+                            date = a.SYSTEMARRIVALDATETIME,
+                            approvalState = d.APPROVALSTATE,
+                            approvalTrailId = a.APPROVALTRAILID,
+                        }).ToList();
+                        //().OrderByDescending(a =>a.approvalTrailId); 
+
+            return data;
         }
 
     }

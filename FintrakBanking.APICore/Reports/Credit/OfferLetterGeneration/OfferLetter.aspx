@@ -23,6 +23,8 @@
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterDetails" Name="OfferLetterLoanDetail" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterConditionPrecedent" Name="OfferLetterConditionPrecident" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterConditionSubsequent" Name="OfferLetterConditionSubsequent" />
+                    <rsweb:ReportDataSource DataSourceId="odsOfferLetterFee" Name="OfferLetterFee" />
+                    <rsweb:ReportDataSource DataSourceId="odsOfferLetterSignatory" Name="OfferLetterSignatory" />
                 </DataSources>
             </LocalReport>
         </rsweb:ReportViewer>
@@ -44,6 +46,18 @@
             </SelectParameters>
         </asp:ObjectDataSource>
        <asp:ObjectDataSource ID="odsOfferLetterConditionSubsequent" runat="server" SelectMethod="GetLoanApplicationConditionSubsequent" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfo">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+            </SelectParameters>
+        </asp:ObjectDataSource>
+
+         <asp:ObjectDataSource ID="odsOfferLetterFee" runat="server" SelectMethod="GetLoanApplicationFee" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfo">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+            </SelectParameters>
+        </asp:ObjectDataSource>
+
+                 <asp:ObjectDataSource ID="odsOfferLetterSignatory" runat="server" SelectMethod="GetLoanApplicationSignatory" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfo">
             <SelectParameters>
                 <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
             </SelectParameters>

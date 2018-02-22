@@ -1549,6 +1549,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER_EMPLOYER_TYPE_SUB)
                 .WillCascadeOnDelete(false);
 
+            //modelBuilder.Entity<TBL_CUSTOMER_EMPLOYER_TYPE_SUB>()
+            //    .HasMany(e => e.TBL_TEMP_CUSTOMER_EMPLOYER)
+            //    .WithRequired(e => e.TBL_CUSTOMER_EMPLOYER_TYPE_SUB)
+            //    .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION>()
                 .HasMany(e => e.TBL_CUSTOMER_FS_CAPTION_DETAIL)
                 .WithRequired(e => e.TBL_CUSTOMER_FS_CAPTION)
