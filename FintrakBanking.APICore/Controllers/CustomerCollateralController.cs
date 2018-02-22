@@ -770,12 +770,27 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("fixeddeposit-lien-amount")]
+        [Route("get-fixeddeposit-lien-amount")]
         public HttpResponseMessage GetLienAmountForFD([FromBody]string accountNumber)
         {
             try
             {
                 var response = repo.GetAccountLeinAmountForFD(accountNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("get-casa-lien-amount")]
+        public HttpResponseMessage GetLienAmountForCASA([FromBody]string accountNumber)
+        {
+            try
+            {
+                var response = repo.GetAccountLeinAmountForCASA(accountNumber);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)

@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class OfferLetterDetailViewModel : GeneralEntity
     {
-        public int loanApplicationId { get; set; }
+        public string loanApplicationId { get; set; }
         public string productName { get; set; }
         public string customerName { get; set; }
         public string currencyName { get; set; }
