@@ -25,14 +25,14 @@ namespace FintrakBanking.Repositories.Credit
         public CustomerCreditBureauRepository(
             //IAuditTrailRepository _auditTrail
             //, IGeneralSetupRepository _genSetup, 
-            FinTrakBankingContext _context,
-            ICreditBureauProcess _creditBureau
+            FinTrakBankingContext _context
+            //ICreditBureauProcess _creditBureau
             )
         {
             this.context = _context;
             //auditTrail = _auditTrail;
             //this.genSetup = _genSetup;
-            creditBureau = _creditBureau;
+           // creditBureau = _creditBureau;
         }
 
         #region Credit Bureau 
@@ -229,7 +229,7 @@ namespace FintrakBanking.Repositories.Credit
             List<string> searchResult = new List<string>();
             foreach (var searchInfo in searchInfoList)
             {
-                searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfo));
+               // searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfo));
             }
             return searchResult;
         }
