@@ -73,7 +73,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
                             loanTypeId = a.LOANTYPEID,
                             loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
-                            camReference = c.CAMREF,
+                            camReference = c.CAMREF != null ? c.CAMREF : "N/A",
                             camDocumentation = d.CAMDOCUMENTATION,
                             approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.Sum(x => x.APPROVEDAMOUNT),
                             newApplicationDate = a.APPLICATIONDATE,
@@ -82,6 +82,8 @@ namespace FintrakBanking.Repositories.Credit
                             branchId = a.BRANCHID,
                             productClassId = b.TBL_PRODUCT.PRODUCTCLASSID,
                             productTypeId = b.TBL_PRODUCT.PRODUCTTYPEID,
+                            productTypeName = b.TBL_PRODUCT.PRODUCTNAME,
+                            productName = b.TBL_PRODUCT.PRODUCTNAME,
                             productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             dateTimeCreated = a.DATETIMECREATED,
@@ -112,9 +114,10 @@ namespace FintrakBanking.Repositories.Credit
                                                              currencyCode = e.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE
                                                          }).ToList(),
 
-                            operationId = e.OPERATIONID,
+                            operationId = (short)OperationsEnum.LoanAvailment,
                             currentApprovalStateId = e.APPROVALSTATEID,
                             approvalStatusId = e.APPROVALSTATUSID,
+
                             
                         });
 
@@ -384,15 +387,17 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
                             loanTypeId = a.LOANTYPEID,
                             productTypeId = b.TBL_PRODUCT.PRODUCTTYPEID,
+                            productTypeName = b.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            productName = b.TBL_PRODUCT.PRODUCTNAME,
                             loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
-                            camReference = c.CAMREF,
+                            camReference = c.CAMREF != null ? c.CAMREF : "N/A",
                             camDocumentation = d.CAMDOCUMENTATION,
                             approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.Sum(x => x.APPROVEDAMOUNT),
                             newApplicationDate = a.APPLICATIONDATE,
                             applicationStatusId = a.APPLICATIONSTATUSID,
                             subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
                             approvalLevelId = staffApprovalLevelId,
-                            operationId = e.OPERATIONID,
+                            operationId = (short)OperationsEnum.LoanAvailment,
                             currentApprovalStateId = e.APPROVALSTATEID,
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             isFirstApprover = false,

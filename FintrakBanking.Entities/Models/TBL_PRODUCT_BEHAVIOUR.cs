@@ -25,6 +25,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISINVOICEBASED { get; set; }
 
+        public bool? REQUIRECASAACCOUNT { get; set; }
+
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
     }
 }

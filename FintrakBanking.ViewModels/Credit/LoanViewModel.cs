@@ -47,6 +47,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public decimal disbursableAmount;
         public string loanStatusName;
+        public bool isBidbond;
+        public bool isOverdraft;
 
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -201,6 +203,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public decimal disbursableAmount;
         public string loanStatus;
+        public bool isOverdraft;
+        public bool isBidbond;
 
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -287,6 +291,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class ContingentLoanViewModel : GeneralEntity
     {
         public decimal disbursableAmount;
+        public bool isBidbond;
+        public bool isOverdraft;
 
         public int loanId { get; set; }
         public int loanApplicationId { get; set; }
@@ -385,7 +391,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public bool isFirstApprover;
+        public string repaymentTerms;
+        public string repaymentSchedule;
+
+        public bool isFirstApprover { get; set; }
+        public bool isBidbond { get; set; }
+        public bool isOverdraft { get; set; }
 
         //public DateTime applicationDate { get; set; }
         public DateTime? approvedDate { get; set; }

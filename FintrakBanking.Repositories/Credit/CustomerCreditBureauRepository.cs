@@ -17,18 +17,22 @@ namespace FintrakBanking.Repositories.Credit
     public class CustomerCreditBureauRepository : ICustomerCreditBureauRepository
     {
         private FinTrakBankingContext context;
-        private IAuditTrailRepository auditTrail;
-        private IGeneralSetupRepository genSetup;
+        //private IAuditTrailRepository auditTrail;
+        //private IGeneralSetupRepository genSetup;
         private ICreditBureauProcess creditBureau;
-        private IWorkflow workflow;
+        //private IWorkflow workflow;
         
-        public CustomerCreditBureauRepository(IAuditTrailRepository _auditTrail, IGeneralSetupRepository _genSetup, 
-            FinTrakBankingContext _context, ICreditBureauProcess _creditBureau)
+        public CustomerCreditBureauRepository(
+            //IAuditTrailRepository _auditTrail
+            //, IGeneralSetupRepository _genSetup, 
+            FinTrakBankingContext _context
+            //ICreditBureauProcess _creditBureau
+            )
         {
             this.context = _context;
-            auditTrail = _auditTrail;
-            this.genSetup = _genSetup;
-            creditBureau = _creditBureau;
+            //auditTrail = _auditTrail;
+            //this.genSetup = _genSetup;
+           // creditBureau = _creditBureau;
         }
 
         #region Credit Bureau 
@@ -85,34 +89,34 @@ namespace FintrakBanking.Repositories.Credit
                 allCorporate.Add(item);
             }
 
-            if (customerType == (short)CustomerTypeEnum.Corporate)
-            {
-                var shareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).ToList();
-                foreach (var director in shareholders)
-                {
-                    CustomerViewModels shareholdersData = new CustomerViewModels
-                    {
-                        companyDirectorId = director.COMPANYDIRECTORID,
-                        customerTypeId = director.CUSTOMERTYPEID,
-                        customerTypeName = director.TBL_CUSTOMER_TYPE.NAME,
-                        numberOfShares = director.SHAREHOLDINGPERCENTAGE,
-                        isPoliticallyExposed = director.ISPOLITICALLYEXPOSED,
-                        customerBVN = director.CUSTOMERBVN,
-                        companyDirectorTypeId = director.COMPANYDIRECTORTYPEID,
-                        companyDirectorTypeName = director.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                        address = director.ADDRESS,
-                        phoneNumber = director.PHONENUMBER,
-                        customerId = customerId,
-                        emailAddress = director.EMAILADDRESS,
-                        firstName = director.FIRSTNAME,
-                        lastName = director.SURNAME,
-                        middleName = director.MIDDLENAME,
-                        creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
-                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID).Count()
-                    };
-                    allCorporate.Add(shareholdersData);
-                }
-            }
+            //if (customerType == (short)CustomerTypeEnum.Corporate)
+            //{
+            //    var shareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).ToList();
+            //    foreach (var director in shareholders)
+            //    {
+            //        CustomerViewModels shareholdersData = new CustomerViewModels
+            //        {
+            //            companyDirectorId = director.COMPANYDIRECTORID,
+            //            customerTypeId = director.CUSTOMERTYPEID,
+            //            customerTypeName = director.TBL_CUSTOMER_TYPE.NAME,
+            //            numberOfShares = director.SHAREHOLDINGPERCENTAGE,
+            //            isPoliticallyExposed = director.ISPOLITICALLYEXPOSED,
+            //            customerBVN = director.CUSTOMERBVN,
+            //            companyDirectorTypeId = director.COMPANYDIRECTORTYPEID,
+            //            companyDirectorTypeName = director.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+            //            address = director.ADDRESS,
+            //            phoneNumber = director.PHONENUMBER,
+            //            customerId = customerId,
+            //            emailAddress = director.EMAILADDRESS,
+            //            firstName = director.FIRSTNAME,
+            //            lastName = director.SURNAME,
+            //            middleName = director.MIDDLENAME,
+            //            creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
+            //                                                                        && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID).Count()
+            //        };
+            //        allCorporate.Add(shareholdersData);
+            //    }
+            //}
             return allCorporate;
         }
 
@@ -225,7 +229,7 @@ namespace FintrakBanking.Repositories.Credit
             List<string> searchResult = new List<string>();
             foreach (var searchInfo in searchInfoList)
             {
-                searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfo));
+               // searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfo));
             }
             return searchResult;
         }
