@@ -122,8 +122,6 @@ namespace FintrakBanking.Entities.Models
 
         public bool SUBMITTEDFORAPPRAISAL { get; set; }
 
-        public bool REQUIRECOLLATERAL { get; set; }         
-
         public bool CUSTOMERINFOVALIDATED { get; set; }
 
         [Column(TypeName = "date")]
@@ -133,6 +131,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? AVAILMENTDATE { get; set; }
 
         public bool DISPUTED { get; set; }
+
+        public bool REQUIRECOLLATERAL { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

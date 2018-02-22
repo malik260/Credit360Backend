@@ -541,6 +541,27 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
-        
+
+        [HttpGet]
+        [Route("loan-application/comments/{applicationRefNumber}")]
+        public HttpResponseMessage GetCommentOnLoanAvailment([FromUri] string applicationRefNumber)
+        {
+            try
+            {
+                var response = repo.GetCommentOnLoanAvailment(applicationRefNumber);
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+
     }
 }
