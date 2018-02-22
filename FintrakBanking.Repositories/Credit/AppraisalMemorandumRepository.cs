@@ -156,8 +156,12 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LoadConditionPrecedent(int loanApplicationId) // AND TRANSACTION DYNAMICS
         {
+            TBL_LOAN_APPLICATION appl = null;
+
             if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId).Any() == false)
             {
+                appl = appl == null ? context.TBL_LOAN_APPLICATION.Find(loanApplicationId) : appl;
+
                 var conditions = context.TBL_CONDITION_PRECEDENT.ToList(); // TEMPLATE
                 var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
                 foreach (var f in facilities)
@@ -183,6 +187,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId).Any() == false)
             {
+                appl = appl == null ? context.TBL_LOAN_APPLICATION.Find(loanApplicationId) : appl;
+
                 var dynamics = context.TBL_TRANSACTION_DYNAMICS.ToList(); // TEMPLATE
                 var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
                 foreach (var f in facilities)
@@ -1026,6 +1032,39 @@ namespace FintrakBanking.Repositories.Credit
                     schedule = x.REPAYMENTSCHEDULE,
                     productCustomerName = x.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME
                 }).ToList();
+        }
+
+        public List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity)
+        {
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
+            detail.APPROVEDAMOUNT = entity.recommendedAmount;
+            context.SaveChanges();
+            return GetProductLimitValidation(detail.LOANAPPLICATIONID, entity.productClassId);
+        }
+
+        public List<ProductLimitValidationViewModel> GetProductLimitValidation(int applicationId, int classId)
+        {
+            List<ProductLimitValidationViewModel> limits = new List<ProductLimitValidationViewModel>();
+            //List<ProductLimitValidationViewModel> limits = null;
+            //List<ProductLimitValidationViewModel> limits;
+
+            if (classId == 7) // first edu
+            {
+                limits = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId)
+                       .Join(context.TBL_LOAN_APPLICATION_DETL_EDU, a => a.LOANAPPLICATIONDETAILID, b => b.LOANAPPLICATIONDETAILID, (a, b) => new { a, b })
+                       .Join(context.TBL_PRODUCT_BEHAVIOUR, ab => ab.a.APPROVEDPRODUCTID, c => c.PRODUCTID, (ab, c) => new { ab, c })
+                       .Select(x => new ProductLimitValidationViewModel
+                       {
+                           applicationDetailId = x.ab.a.LOANAPPLICATIONDETAILID,
+                           productCustomerName = x.ab.a.TBL_PRODUCT.PRODUCTNAME + " -- " + x.ab.a.TBL_CUSTOMER.FIRSTNAME + " " + x.ab.a.TBL_CUSTOMER.MIDDLENAME + " " + x.ab.a.TBL_CUSTOMER.LASTNAME,
+                           recommendedAmount = x.ab.a.APPROVEDAMOUNT,
+                           controlAmount = x.ab.b.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
+                           percentageLimit = x.c.PRODUCT_LIMIT,
+                           productClassId = classId
+                       }).ToList();
+            }
+
+            return limits;
         }
     }
 }

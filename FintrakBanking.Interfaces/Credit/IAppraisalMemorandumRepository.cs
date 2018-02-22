@@ -50,5 +50,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool WorkflowTest();
 
         List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity);
+        List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity);
+        List<ProductLimitValidationViewModel> GetProductLimitValidation(int applicationId, int classId);
     }
 }

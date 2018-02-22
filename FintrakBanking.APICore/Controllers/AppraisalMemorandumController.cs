@@ -459,6 +459,37 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("product-limit-validation")]
+        public HttpResponseMessage SaveProductLimitValidation([FromBody] ProductLimitValidationViewModel entity)
+        {
+            try
+            {
+                List<ProductLimitValidationViewModel> response = repo.SaveProductLimitValidation(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("product-limit-validation/{applicationId}/class/{classId}")]
+        public HttpResponseMessage GetProductLimitValidation(int applicationId, int classId)
+        {
+            try
+            {
+                List<ProductLimitValidationViewModel> response = repo.GetProductLimitValidation(applicationId, classId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
         [HttpGet]
         [Route("appraisal-memorandum/workflow-test")]
         public HttpResponseMessage WorkflowTest()
