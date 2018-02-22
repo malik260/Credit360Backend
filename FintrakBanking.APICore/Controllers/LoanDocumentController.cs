@@ -371,6 +371,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+
                 }
 
                 var entity = new LoanDocumentViewModel
