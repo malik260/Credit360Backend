@@ -14,8 +14,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<CheckListResponseTypeViewModel> GetAllChecklistResponseType();
         IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistType();
         IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition();
-        //IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId);
-        IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId);
+        IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId);
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId);
         List<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId);
         bool AddChecklistDefinition(ChecklistDefinitionViewModel model);

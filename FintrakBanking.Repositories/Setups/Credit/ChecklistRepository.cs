@@ -167,10 +167,10 @@ namespace FintrakBanking.Repositories.Credit
                                      }).ToList();
             return checkListTypeList;
         }
-        public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId)
+        public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId)
         {
             //Get the approval level of the logon user
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.ChecklistApproval);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, operationId);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
