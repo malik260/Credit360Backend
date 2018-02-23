@@ -39,4 +39,14 @@
         //public int? deletedBy { get; set; }
         //public DateTime? dateTimeDeleted { get; set; }
     }
-}
+
+    public class SignatoryViewModel  : GeneralEntity
+    {
+        public int rmStaffId;
+        public int bmStaffId;
+        public string staffName { get; set; }
+        public string rmStaffName { get; set; }
+        public string bmStaffName { get; set; }
+        
+    }
+} 
