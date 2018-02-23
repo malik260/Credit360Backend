@@ -348,7 +348,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         #endregion
 
         #region COMMITTEE MINUTES

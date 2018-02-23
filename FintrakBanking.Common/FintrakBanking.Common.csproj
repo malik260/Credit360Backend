@@ -80,6 +80,7 @@
     <Compile Include="Enum\CustomerInformationTrackerEnum.cs" />
     <Compile Include="Enum\DailyAccuralCategory.cs" />
     <Compile Include="Enum\DayCountConventionEnum.cs" />
+    <Compile Include="Enum\documentUploadDatabaseTableEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />
     <Compile Include="Enum\CASAPostNoStatusEnum.cs" />
     <Compile Include="Enum\JobTypeEnum.cs" />
