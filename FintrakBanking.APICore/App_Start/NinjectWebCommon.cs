@@ -54,7 +54,6 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Interfaces.Reports;
     using FintrakBanking.Repositories.Reports;
     using FintrakBanking.Repositories.Setups.Credit;
-    using FinTrakBanking.ThirdPartyIntegration.CreditBureau;
 
     public static class NinjectWebCommon
     {
