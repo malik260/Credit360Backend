@@ -110,13 +110,13 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("validateamount/branch/{branchId}")]
-        public HttpResponseMessage  ValidateAmountByBranch( short branchId)
+        [Route("validateamount/branch")]
+        public HttpResponseMessage  ValidateAmountByBranch( )
         { 
                 try
                 {
-
-                var data = repo.ValidateAmountByBranch(branchId);
+            
+                var data = repo.ValidateAmountByBranch((short)token.GetBranchId);
                     if (data != null)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
@@ -136,13 +136,13 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("validatenpl/branch/{branchId}")]
-        public HttpResponseMessage ValidateNPLByBranch(short branchId)
+        [Route("validatenpl/branch")]
+        public HttpResponseMessage ValidateNPLByBranch()
         {
             try
             {
 
-                var data = repo.ValidateNPLByBranch(branchId);
+                var data = repo.ValidateNPLByBranch((short)token.GetBranchId);
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });

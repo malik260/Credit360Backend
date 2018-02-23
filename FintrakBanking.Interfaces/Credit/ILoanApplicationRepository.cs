@@ -42,7 +42,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
 
-        int AddLoanApplication(LoanApplicationViewModel loan);
+        int AddLoanApplication( LoanApplicationViewModel loan);
 
         bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity);
 

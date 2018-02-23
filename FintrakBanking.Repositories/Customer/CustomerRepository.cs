@@ -42,9 +42,7 @@ namespace FintrakBanking.Repositories.Customer
             _genSetup = genSetup;
             level = _level;
         }
-
-        double StackHoldersFund = 1000000000000;
-
+         
 
 
         public dynamic GetCustomerRating(int custormerId)
@@ -54,12 +52,9 @@ namespace FintrakBanking.Repositories.Customer
                         where c.CUSTOMERID == custormerId
                         select new
                         {
-
-                            shFund = c.TBL_CUSTOMER_RISK_RATING.MAX_SHAREHOLDER_FUND_PERCENTAG,
                             isInvestment = c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
                             rating = c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                            limit = ((double)c.TBL_CUSTOMER_RISK_RATING.MAX_SHAREHOLDER_FUND_PERCENTAG / 100.00) * StackHoldersFund
-                        }).FirstOrDefault();
+                              }).FirstOrDefault();
             return data;
         }
 
