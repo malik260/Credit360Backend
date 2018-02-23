@@ -29,7 +29,7 @@ namespace FintrakBanking.APICore.Controllers
         public CustomerCreditBureauController(ICustomerCreditBureauRepository _repo) // ICreditBureauProcess _creditBureau) //IErrorLogRepository _errorLogger
         {
             this.repo = _repo;
-           // creditBureau = _creditBureau;
+            //creditBureau = _creditBureau;
            // errorLogger = _errorLogger;
         }
 

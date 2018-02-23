@@ -203,7 +203,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetChecklistTypeByApprovalLevel(token.GetStaffId);
+                var data = repo.GetChecklistTypeByApprovalLevel(token.GetStaffId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

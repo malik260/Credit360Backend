@@ -291,7 +291,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -446,6 +446,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_APPROVAL_STATUS>()
                 .HasMany(e => e.TBL_LOAN_CONDITION_DEFERRAL)
+                .WithRequired(e => e.TBL_APPROVAL_STATUS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_APPROVAL_STATUS>()
+                .HasMany(e => e.TBL_LOAN_CONDITION_PRECEDENT)
                 .WithRequired(e => e.TBL_APPROVAL_STATUS)
                 .WillCascadeOnDelete(false);
 
@@ -806,15 +811,20 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CHECKLIST_RESPONSE_TYPE)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_CHECKLIST_RESPONSE_TYPE>()
+                .HasMany(e => e.TBL_CONDITION_PRECEDENT)
+                .WithRequired(e => e.TBL_CHECKLIST_RESPONSE_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CHECKLIST_RESPONSE_TYPE>()
+                .HasMany(e => e.TBL_LOAN_CONDITION_PRECEDENT)
+                .WithRequired(e => e.TBL_CHECKLIST_RESPONSE_TYPE)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_CHECKLIST_STATUS>()
                 .HasMany(e => e.TBL_CHECKLIST_DETAIL)
                 .WithRequired(e => e.TBL_CHECKLIST_STATUS)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CHECKLIST_STATUS>()
-                .HasMany(e => e.TBL_LOAN_CONDITION_PRECEDENT)
-                .WithOptional(e => e.TBL_CHECKLIST_STATUS)
-                .HasForeignKey(e => e.CHECKLISTSTATUSID);
 
             modelBuilder.Entity<TBL_CHECKLIST_TARGETTYPE>()
                 .HasMany(e => e.TBL_CHECKLIST_DETAIL)
@@ -1544,10 +1554,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER_EMPLOYER_TYPE_SUB)
                 .WillCascadeOnDelete(false);
 
-            //modelBuilder.Entity<TBL_CUSTOMER_EMPLOYER_TYPE_SUB>()
-            //    .HasMany(e => e.TBL_TEMP_CUSTOMER_EMPLOYER)
-            //    .WithRequired(e => e.TBL_CUSTOMER_EMPLOYER_TYPE_SUB)
-            //    .WillCascadeOnDelete(false);
+            modelBuilder.Entity<TBL_CUSTOMER_EMPLOYER_TYPE_SUB>()
+                .HasMany(e => e.TBL_TEMP_CUSTOMER_EMPLOYER)
+                .WithRequired(e => e.TBL_CUSTOMER_EMPLOYER_TYPE_SUB)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION>()
                 .HasMany(e => e.TBL_CUSTOMER_FS_CAPTION_DETAIL)

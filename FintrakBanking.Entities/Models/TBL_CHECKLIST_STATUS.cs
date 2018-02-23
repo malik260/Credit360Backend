@@ -14,7 +14,6 @@ namespace FintrakBanking.Entities.Models
         {
             TBL_CHECKLIST_DETAIL = new HashSet<TBL_CHECKLIST_DETAIL>();
             TBL_LOAN_CONDITION_PRECEDENT = new HashSet<TBL_LOAN_CONDITION_PRECEDENT>();
-            TBL_LOAN_CONDITION_PRECEDENT1 = new HashSet<TBL_LOAN_CONDITION_PRECEDENT>();
         }
 
         [Key]
@@ -48,8 +47,5 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_CONDITION_PRECEDENT> TBL_LOAN_CONDITION_PRECEDENT { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_CONDITION_PRECEDENT> TBL_LOAN_CONDITION_PRECEDENT1 { get; set; }
     }
 }
