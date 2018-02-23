@@ -896,6 +896,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return context.SaveChanges() != 0;
         }
+       
         #endregion
 
         #region Checklist Item
@@ -1085,6 +1086,16 @@ namespace FintrakBanking.Repositories.Credit
             }
             return false;
         }
+        public bool ValidateChecklistForDefferalOrWaival(int conditionId)
+        {
+            var data = context.TBL_LOAN_CONDITION_PRECEDENT.Find(conditionId);
+            if (data.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && 
+                (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived))
+            {
+                return true;
+            }
+            return false;
+        }
         #endregion
 
 
@@ -1136,15 +1147,15 @@ namespace FintrakBanking.Repositories.Credit
             if (isAvailment)
             {
                 var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                              where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId && c.ISSUBSEQUENT == false &&
+                              where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId  &&
                                c.CHECKLISTSTATUSID != null
                               select new ConditionPrecedentViewModel()
                               {
                                   condition = c.CONDITION,
                                   conditionId = c.CONDITIONID,
                                   status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
-                                  // approvalStatusId = c.APPROVALSTATUSID,
-
+                                  approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                  validationStatus = c.CHECKLISTVALIDATED
                               }).ToList();
                 return status;
             }
@@ -1427,7 +1438,28 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
 
         }
-
+        public bool ValidateConditionPrecedentDetail(ConditionPrecedentViewModel entity)
+        {
+            if (entity == null) return false;
+            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(entity.conditionId);
+            if (data == null) return false;
+            data.CHECKLISTVALIDATED = entity.validationStatus;
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Validated Loan Condition Precedence Checklist with Condition ID: {entity.conditionId}",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+            return context.SaveChanges() != 0;
+        }
         public bool UpdateProvidedChecklist(ConditionPrecedentViewModel model)
         {
             var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);

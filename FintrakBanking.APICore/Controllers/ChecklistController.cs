@@ -927,6 +927,37 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                  new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
+        }
+        [HttpPut]
+        [Route("validate-condition-precedence")]
+        public HttpResponseMessage ValidateConditionPrecedentDetail([FromBody] ConditionPrecedentViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                if (repo.ValidateChecklistForDefferalOrWaival(model.conditionId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "The request for deferral/waival of this item is still being processed. " });
+                }
+                var data = repo.ValidateConditionPrecedentDetail(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, message = "The record has been Validated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "There was an error validating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = $"There was an error validating this record {e.Message}" });
+            }
 
         }
         #endregion
