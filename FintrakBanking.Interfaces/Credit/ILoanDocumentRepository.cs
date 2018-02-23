@@ -36,6 +36,36 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddCreditBureauReportDocument(LoanDocumentViewModel model, byte[] file);
 
         bool UpdateCreditBureauReportDocument(LoanDocumentViewModel model, int documentId);
-        #endregion
+
+#endregion
+
+        bool AddMediaCheckListDocument(LoanDocumentViewModel model, byte[] file);
+        bool UpdateMediaCheckListDocument(LoanDocumentViewModel model);
+        LoanDocumentViewModel GetMediaCheckListDocument(LoanDocumentViewModel model);
+        List<LoanDocumentViewModel> GetMediaCheckListDocuments(LoanDocumentViewModel model);
+        bool AddMediaCollateralDocument(LoanDocumentViewModel model, byte[] file);
+        bool UpdateMediaCollateralDocument(LoanDocumentViewModel model, byte[] file);
+        LoanDocumentViewModel GetMediaCollateralDocument(LoanDocumentViewModel model);
+        List<LoanDocumentViewModel> GetMediaCollateralDocuments(LoanDocumentViewModel model);
+        bool AddMediaJobRequestDocument(LoanDocumentViewModel model, byte[] file);
+        bool UpdateMediaJobRequestDocument(LoanDocumentViewModel model);
+        LoanDocumentViewModel GetMediaJobRequestDocument(LoanDocumentViewModel model);
+        List<LoanDocumentViewModel> GetMediaJobRequestDocuments(LoanDocumentViewModel model);
+        bool AddMediaKYCDocument(LoanDocumentViewModel model, byte[] file);
+        bool UpdateMediaKYCDocument(LoanDocumentViewModel model);
+        LoanDocumentViewModel GetMediaKYCDocument(LoanDocumentViewModel model);
+        List<LoanDocumentViewModel> GetMediaKYCDocuments(LoanDocumentViewModel model);
+        bool AddMediaStaffPicture(LoanDocumentViewModel model, byte[] file);
+        bool UpdateMediaStaffPicture(LoanDocumentViewModel model);
+        LoanDocumentViewModel GetMediaStaffPicture(LoanDocumentViewModel model);
+        bool AddMediaStaffSignature(LoanDocumentViewModel model, byte[] file);
+        bool UpdateMediaStaffSignature(LoanDocumentViewModel model);
+        LoanDocumentViewModel GetMediaStaffSignature(LoanDocumentViewModel model);
+        bool uploadDocument(LoanDocumentViewModel model, byte[] file);
+        bool getUploadedDocument(LoanDocumentViewModel model);
+        bool getListOfUploadedDocument(LoanDocumentViewModel model);
+
+
+  
     }
 }
