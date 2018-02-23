@@ -346,6 +346,7 @@
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\FileUploadController.cs" />
     <Compile Include="Controllers\GeneralSetupController.cs" />
+    <Compile Include="Controllers\genericDocumentUploadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JobRequestController.cs" />
     <Compile Include="Controllers\JobTitleController.cs" />
