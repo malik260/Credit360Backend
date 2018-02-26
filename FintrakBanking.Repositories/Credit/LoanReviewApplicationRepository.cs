@@ -155,5 +155,33 @@ namespace FintrakBanking.Repositories.Credit
             return list;
         }
 
+        public bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
+        {
+            context.TBL_LOAN_REVIEW_APPLICATION.Add(new TBL_LOAN_REVIEW_APPLICATION {
+                LOANID = model.loanId,
+                PRODUCTTYPEID = model.productTypeId,
+                OPERATIONTYPEID = model.operationTypeId,
+                REVIEWDETAILS = model.reviewDetails,
+                INTERATERATE = model.interateRate,
+                PREPAYMENT = model.prepayment,
+                PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
+                INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
+                PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate,
+                INTERESTFIRSTPAYMENTDATE = model.interestFirstPaymentDate,
+                MATURITYDATE = model.maturityDate,
+                TENOR = model.tenor,
+                CASA_ACCOUNTID = model.casaAccountId,
+                OVERDRAFTTOPUP = model.overDraftTopup,
+                FEE_CHARGES = model.feeCharges,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                ISMANAGEMENTINTERESTRATE = model.isManagementInterestRate,
+                CREATEDBY = model.createdBy,
+                DATECREATED = general.GetApplicationDate(),
+            });
+
+            // ------------AUDIT CODE HERE! -------------
+
+            return context.SaveChanges() > 0;
+        }
     }
 }

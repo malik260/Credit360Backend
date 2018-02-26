@@ -86,5 +86,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("loan-review-application/submit")]
+        public HttpResponseMessage SubmitLoanReviewApplication([FromBody] LoanReviewApplicationViewModel entity)
+        {
+            try
+            {
+                entity.createdBy =  token.GetStaffId;
+                bool response = repo.SubmitLoanReviewApplication(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Application submitted successfully.", result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

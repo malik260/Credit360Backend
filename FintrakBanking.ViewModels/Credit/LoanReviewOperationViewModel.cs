@@ -224,7 +224,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? overDraftTopup { get; set; }
         public decimal? feeCharges { get; set; }
         public int approvalStatusId { get; set; }
-        public float isManagementInterestRate { get; set; }
+        public bool isManagementInterestRate { get; set; }
     }
 
     public class SelectListViewModel

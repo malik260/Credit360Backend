@@ -13,5 +13,6 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanApplicationViewModel> GetApplications(UserInfo user, int operationId, int? productClassId);
 
         SelectListViewModel GetAllSelectList();
+        bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel entity);
     }
 }
