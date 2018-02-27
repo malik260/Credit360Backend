@@ -860,10 +860,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 this.context.TBL_CHECKLIST_DETAIL.Remove(data);
             }
-            // Audit Section ---------------------------
-            //    var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.
-            //     CHECKLISTDEFINITIONID == context.TBL_CHECKLIST_DETAIL.Find(ChecklistId).CHECKLISTDEFINITIONID));
-
+          
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,

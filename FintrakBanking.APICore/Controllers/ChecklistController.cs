@@ -645,7 +645,7 @@ namespace FintrakBanking.APICore.Controllers
                 repo.DeleteChecklistDetail(ChecklistId, user);
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-             new { success = true, result = ChecklistId, message = "record has been deleted successfully" });
+             new { success = true, result = ChecklistId, message = "Record has been deleted successfully" });
             }
             catch (Exception ex)
             {
