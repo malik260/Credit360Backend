@@ -15,5 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
         SelectListViewModel GetAllSelectList();
 
         bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel entity);
+
+        List<LoanViewModel> LoanSearch(int getCompanyId, SearchViewModel search);
     }
 }

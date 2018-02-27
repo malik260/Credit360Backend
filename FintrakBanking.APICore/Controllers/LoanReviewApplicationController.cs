@@ -103,5 +103,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("loan-review-application/loan-search")]
+        public HttpResponseMessage LoanSearch([FromBody] SearchViewModel search)
+        {
+            try
+            {
+                List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
     }
 }
