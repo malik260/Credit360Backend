@@ -47,6 +47,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? TENOR { get; set; }
 
+        public int BRANCHID { get; set; }
+
         public int? CASA_ACCOUNTID { get; set; }
 
         [Column(TypeName = "money")]

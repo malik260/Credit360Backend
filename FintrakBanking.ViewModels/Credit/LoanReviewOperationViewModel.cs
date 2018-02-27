@@ -225,6 +225,19 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? feeCharges { get; set; }
         public int approvalStatusId { get; set; }
         public bool isManagementInterestRate { get; set; }
+        public int? approvalTrailId { get; set; }
+        public DateTime? newApplicationDate { get; set; }
+        public int? currentApprovalLevelId { get; set; }
+        public int? toStaffId { get; set; }
+        public int branchId { get; set; }
+        public DateTime applicationDate { get; set; }
+        public string referenceNumber { get; set; }
+        //public double amount { get; set; }
+        public DateTime effectiveDate { get; set; }
+        //public double interest { get; set; }
+        public decimal principalAmount { get; set; }
+        public double interestRate { get; set; }
+        public string customerName { get; set; }
     }
 
     public class SelectListViewModel
