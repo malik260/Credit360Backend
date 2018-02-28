@@ -114,6 +114,28 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("disbursed-loan-details/")]
+        public HttpResponseMessage SearchForLoan(int loanId)
+        {
+            try
+            {
+                var data = loanRepo.GetDisbursedLoanByLoanId(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("loan-guarantor/")]
         public HttpResponseMessage GetLoanGuarantor(int loanId)
         {

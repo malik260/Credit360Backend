@@ -109,6 +109,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool ValidateModifiedCustomerRecord(int customerId);
         bool ValidateModifiedCompanyRecord(int customerId);
         bool ValidateModifiedAddressRecord(int customerId);
+        bool ValidateModifiedPhoneRecord(int customerId);
         #endregion
         IEnumerable<CustomerInformationApprovalViemModel> GetAllCustomerInformationAwaitingApproval(int staffId, int companyId);
         bool GoForApproval(ApprovalViewModel entity);

@@ -30,5 +30,7 @@ namespace FintrakBanking.Entities.Models
         public bool REQUIRE_ADUSER { get; set; }
 
         public bool USE_THIRD_PARTY_INTEGRATION { get; set; }
+
+        public int MAXIMUMUPLOADFILESIZE { get; set; }
     }
 }

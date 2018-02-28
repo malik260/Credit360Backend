@@ -87,6 +87,7 @@
     <Compile Include="Credit\CustomerCollateralRepository.cs" />
     <Compile Include="AppEmail\EmailAndAlertsRepository.cs" />
     <Compile Include="Credit\CustomerCreditBureauRepository.cs" />
+    <Compile Include="Credit\FeeConcessionRepository.cs" />
     <Compile Include="Credit\LimitRepository.cs" />
     <Compile Include="Credit\LoanApplicationRepository.cs" />
     <Compile Include="Credit\LoanCovenantRepository.cs" />
