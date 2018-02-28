@@ -229,7 +229,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? newApplicationDate { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public int? toStaffId { get; set; }
-        public int branchId { get; set; }
+        public short branchId { get; set; }
         public DateTime applicationDate { get; set; }
         public string referenceNumber { get; set; }
         //public double amount { get; set; }
@@ -238,6 +238,15 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal principalAmount { get; set; }
         public double interestRate { get; set; }
         public string customerName { get; set; }
+        public string operationType { get; set; }
+        public string currentApprovalLevel { get; set; }
+        public string lastComment { get; set; }
+        public short currentApprovalStateId { get; set; }
+        public string currentStage { get; set; }
+        public string currentApprovalState { get; set; }
+        public string approvalStatus { get; set; }
+        public int customerId { get; set; }
+        public string branchName { get; set; }
     }
 
     public class SelectListViewModel

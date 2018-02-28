@@ -291,7 +291,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
-        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -410,6 +410,11 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_APPROVAL_STATE>()
                 .HasMany(e => e.TBL_APPROVAL_TRAIL)
                 .WithRequired(e => e.TBL_APPROVAL_STATE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_APPROVAL_STATUS>()
+                .HasMany(e => e.TBL_LOAN_REVIEW_APPLICATION)
+                .WithRequired(e => e.TBL_APPROVAL_STATUS)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_APPROVAL_STATUS>()
@@ -555,6 +560,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_BRANCH>()
                 .HasMany(e => e.TBL_TEMP_CHART_OF_ACCOUNT)
+                .WithRequired(e => e.TBL_BRANCH)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_BRANCH>()
+                .HasMany(e => e.TBL_LOAN_REVIEW_APPLICATION)
                 .WithRequired(e => e.TBL_BRANCH)
                 .WillCascadeOnDelete(false);
 

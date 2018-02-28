@@ -93,7 +93,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 entity.createdBy =  token.GetStaffId;
-                entity.branchId =  token.GetBranchId;
+                entity.branchId =  (short)token.GetBranchId;
                 bool response = repo.SubmitLoanReviewApplication(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Application submitted successfully.", result = response });
             }
