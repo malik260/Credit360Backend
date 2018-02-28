@@ -441,7 +441,7 @@ namespace FintrakBanking.ReportObjects
                 var data = from a in context.TBL_LOAN_CONDITION_PRECEDENT
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
 
-                           where (a.CHECKLISTSTATUSID1 == (short)CheckListStatusEnum.Waived || a.CHECKLISTSTATUSID2 == (short)CheckListStatusEnum.Waived)
+                           where (a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Waived )
                             && b.TBL_CUSTOMER.COMPANYID == companyId
                             && DbFunctions.TruncateTime(b.DATETIMECREATED) <= DbFunctions.TruncateTime(startDate)
                             && (b.TBL_CUSTOMER.BRANCHID == context.TBL_BRANCH.Where(x => x.BRANCHCODE == branchCode).Select(x => x.BRANCHID).FirstOrDefault() || branchCode == null)

@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<CheckListResponseTypeViewModel> GetAllChecklistResponseType();
         IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistType();
         IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition();
-        IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId);
+        IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId);
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId);
         List<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId);
         bool AddChecklistDefinition(ChecklistDefinitionViewModel model);
@@ -60,6 +60,8 @@ namespace FintrakBanking.Interfaces.Setups
         #endregion
         #region Checklist Validation
         bool ValidateChecklistDetailEntry(int checklistDefinitionId, int targetId);
+        bool ValidateConditionPrecedentDetail(ConditionPrecedentViewModel entity);
+        bool ValidateChecklistForDefferalOrWaival(int conditionId);
         #endregion
 
         // IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklist(int loanApplicationId);

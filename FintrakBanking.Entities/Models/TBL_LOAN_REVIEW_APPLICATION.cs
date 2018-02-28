@@ -55,7 +55,7 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal? FEE_CHARGES { get; set; }
 
-        public int APPROVALSTATUSID { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
         public bool ISMANAGEMENTINTERESTRATE { get; set; }
 
@@ -63,6 +63,12 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "date")]
         public DateTime DATECREATED { get; set; }
+
+        public short BRANCHID { get; set; }
+
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
+
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_REVIEW_APPLICATN_CAM> TBL_LOAN_REVIEW_APPLICATN_CAM { get; set; }
