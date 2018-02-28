@@ -175,6 +175,10 @@
       <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
       <Name>FintrakBanking.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FinTrakBanking.ThirdPartyIntegration\FinTrakBanking.ThirdPartyIntegration.csproj">
+      <Project>{81C64D5D-3674-499E-B718-257AA862B1B2}</Project>
+      <Name>FinTrakBanking.ThirdPartyIntegration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
       <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
       <Name>FintrakBanking.ViewModels</Name>
