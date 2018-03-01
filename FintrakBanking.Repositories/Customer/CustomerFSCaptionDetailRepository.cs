@@ -161,10 +161,9 @@ namespace FintrakBanking.Repositories.Customer
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
                         where a.CUSTOMERID == customerId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId
-                        && a.FSDATE == fsDate
-                        && a.TBL_CUSTOMER_FS_CAPTION.ISRATIO == false
+                        && a.TBL_CUSTOMER_FS_CAPTION.ISRATIO == false && a.FSDATE == fsDate
                         && a.DELETED == false
-                        orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID
+                        orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.POSITION, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID
                         select new CustomerFSCaptionDetailViewModel
                         {
                             customerId = a.CUSTOMERID,
@@ -174,7 +173,7 @@ namespace FintrakBanking.Repositories.Customer
                             fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
                             fsDate = a.FSDATE,
                             amount = a.AMOUNT,
-
+                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).ToList();
@@ -187,7 +186,7 @@ namespace FintrakBanking.Repositories.Customer
                         where a.CUSTOMERID == customerId
                         && a.TBL_CUSTOMER_FS_CAPTION.ISRATIO == false
                         && a.DELETED == false
-                        orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID
+                        orderby a.FSDATE descending, a.TBL_CUSTOMER_FS_CAPTION.TBL_CUSTOMER_FS_CAPTION_GROUP.POSITION, a.TBL_CUSTOMER_FS_CAPTION.POSITION
                         select new CustomerFSCaptionDetailViewModel
                         {
                             customerId = a.CUSTOMERID,
@@ -197,7 +196,8 @@ namespace FintrakBanking.Repositories.Customer
                             fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
                             fsDate = a.FSDATE,
                             amount = a.AMOUNT,
-
+                            fsGroupName = a.TBL_CUSTOMER_FS_CAPTION.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME,
+                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).ToList();
@@ -217,7 +217,7 @@ namespace FintrakBanking.Repositories.Customer
                             fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
                             fsDate = a.FSDATE,
                             amount = a.AMOUNT,
-
+                           fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).FirstOrDefault();
@@ -283,7 +283,7 @@ namespace FintrakBanking.Repositories.Customer
                             fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
                             fsDate = a.FSDATE,
                             amount = a.AMOUNT,
-
+                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).ToList();
@@ -306,7 +306,7 @@ namespace FintrakBanking.Repositories.Customer
                             fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
                             fsDate = a.FSDATE,
                             amount = a.AMOUNT,
-
+                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).ToList();
@@ -326,7 +326,7 @@ namespace FintrakBanking.Repositories.Customer
                             fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
                             fsDate = a.FSDATE,
                             amount = a.AMOUNT,
-
+                          fsCaptionPosition =  a.TBL_CUSTOMER_FS_CAPTION.POSITION,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).FirstOrDefault();
