@@ -47,6 +47,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public decimal disbursableAmount;
         public string loanStatusName;
+        public bool isBidbond;
+        public bool isOverdraft;
 
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -201,6 +203,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public decimal disbursableAmount;
         public string loanStatus;
+        public bool isOverdraft;
+        public bool isBidbond;
 
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -287,6 +291,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class ContingentLoanViewModel : GeneralEntity
     {
         public decimal disbursableAmount;
+        public bool isBidbond;
+        public bool isOverdraft;
 
         public int loanId { get; set; }
         public int loanApplicationId { get; set; }
@@ -385,7 +391,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public bool isFirstApprover;
+        public string repaymentTerms;
+        public string repaymentSchedule;
+
+        public bool isFirstApprover { get; set; }
+        public bool isBidbond { get; set; }
+        public bool isOverdraft { get; set; }
 
         //public DateTime applicationDate { get; set; }
         public DateTime? approvedDate { get; set; }
@@ -420,6 +431,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string requestedBy { get; set; }
         public short requestOperationId { get; set; }
         public int loanBookingRequestId { get; set; }
+        public string purpose { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
 
@@ -655,4 +667,18 @@ namespace FintrakBanking.ViewModels.Credit
         public short branchId { get; set; }
 
     }
+
+    public class CommentOnLoanAvailmentViewModel 
+    {
+        public string name  { get; set; }
+
+        public string comments  { get; set; }
+
+        public DateTime date { get; set; }
+
+        public string approvalState { get; set; }
+
+        public int approvalTrailId { get; set; } 
+    }
+
 }

@@ -67,8 +67,11 @@
     <Compile Include="Credit\ICallMemoRepository.cs" />
     <Compile Include="Credit\ICollateralDocumentRepository.cs" />
     <Compile Include="Credit\IConditionPrecedentRepository.cs" />
+    <Compile Include="Credit\ICreditBureauProcess.cs" />
     <Compile Include="Credit\ICreditTemplateRepository.cs" />
     <Compile Include="Credit\ICustomerCollateralRepository.cs" />
+    <Compile Include="Credit\ICustomerCreditBureauRepository.cs" />
+    <Compile Include="Credit\IFeeConcessionRepository.cs" />
     <Compile Include="Credit\ILimitRepository.cs" />
     <Compile Include="Credit\ILoanApplicationRepository.cs" />
     <Compile Include="Credit\ILoanMarketRepository.cs" />

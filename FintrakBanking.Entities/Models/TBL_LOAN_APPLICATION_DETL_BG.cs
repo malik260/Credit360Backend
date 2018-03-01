@@ -39,6 +39,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string REFERENCENO { get; set; }
 
+        public int? CASAACCOUNTID { get; set; }
+
         public int? APPROVEDBY { get; set; }
 
         public int? CASAACCOUNTID { get; set;}
@@ -58,6 +60,8 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual TBL_CASA TBL_CASA { get; set; }
 
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 

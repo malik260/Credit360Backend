@@ -168,6 +168,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+
         public async Task<LoanPreliminaryEvaluationViewModel> AddMultiplePreliminaryEvaluation(List<LoanPreliminaryEvaluationViewModel> model)
         {
             if (model == null)

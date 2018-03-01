@@ -55,7 +55,6 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Reports;
     using FintrakBanking.Repositories.Setups.Credit;
 
-
     public static class NinjectWebCommon
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
@@ -191,8 +190,9 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILoanRecoverySetupRepository>().To<LoanRecoverySetupRepository>();
             kernel.Bind<IEmployerRepository>().To<EmployerRepository>();
             kernel.Bind<ILoanReviewApplicationRepository>().To<LoanReviewApplicationRepository>();
-            
+            kernel.Bind<ICustomerCreditBureauRepository>().To<CustomerCreditBureauRepository>();
         }
 
     }
+    
 }

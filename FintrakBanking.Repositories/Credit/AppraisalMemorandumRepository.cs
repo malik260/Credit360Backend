@@ -154,22 +154,40 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        private void LoadConditionPrecedent(int loanApplicationId) // AND TRANSACTION DYNAMICS
+        private void LoadConditionsAndDynamics(int loanApplicationId)
         {
+            List<int?> productIds = null;
+            List<int> camProductIds = null;
+            IEnumerable<TBL_CONDITION_PRECEDENT> productConditions = null;
+            IEnumerable<TBL_TRANSACTION_DYNAMICS> productDynamics = null;
+            IEnumerable<TBL_LOAN_APPLICATION_DETAIL> facilities = null;
+
             if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId).Any() == false)
             {
-                var conditions = context.TBL_CONDITION_PRECEDENT.ToList(); // TEMPLATE
-                var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+                if (camProductIds == null) camProductIds = GetAllCamProductIds().ToList();
+                if (productIds == null) productIds = GetLoanApplicationProductIds(loanApplicationId).ToList();
+                if (facilities == null) facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+
+                var conditions = context.TBL_CONDITION_PRECEDENT.Where(x => productIds.Contains((int?)x.PRODUCTID) || x.PRODUCTID == null).ToList();
+
                 foreach (var f in facilities)
                 {
-                    foreach (var c in conditions)
+                    if (camProductIds.Contains(f.PROPOSEDPRODUCTID))
+                    {
+                        productConditions = conditions.Where(x => x.PRODUCTID == null);
+                    }
+                    else
+                    {
+                        productConditions = conditions.Where(x => x.PRODUCTID == f.PROPOSEDPRODUCTID);
+                    }
+
+                    foreach (var c in productConditions)
                     {
                         var row = new TBL_LOAN_CONDITION_PRECEDENT
                         {
                             CONDITION = c.CONDITION,
                             ISEXTERNAL = c.ISEXTERNAL,
                             CREATEDBY = c.CREATEDBY,
-                            //LOANAPPLICATIONID = loanApplicationId,
                             TIMELINEID = c.TIMELINEID,
                             RESPONSE_TYPEID = c.RESPONSE_TYPEID,
                             LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
@@ -183,18 +201,22 @@ namespace FintrakBanking.Repositories.Credit
 
             if (context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId).Any() == false)
             {
-                var dynamics = context.TBL_TRANSACTION_DYNAMICS.ToList(); // TEMPLATE
-                var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+                if (camProductIds == null) camProductIds = GetAllCamProductIds().ToList();
+                if (productIds == null) productIds = GetLoanApplicationProductIds(loanApplicationId).ToList();
+                if (facilities == null) facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+
+                var dynamics = context.TBL_TRANSACTION_DYNAMICS.Where(x => productIds.Contains((int?)x.PRODUCTID)).ToList();
+
                 foreach (var f in facilities)
                 {
-                    foreach (var c in dynamics)
+                    productDynamics = dynamics.Where(x => x.PRODUCTID == f.PROPOSEDPRODUCTID);
+                    foreach (var c in productDynamics)
                     {
                         var row = new TBL_LOAN_TRANSACTION_DYNAMICS
                         {
                             DYNAMICS = c.DYNAMICS,
                             DYNAMICSID = c.DYNAMICSID,
                             CREATEDBY = c.CREATEDBY,
-                            //LOANAPPLICATIONID = loanApplicationId,
                             LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
                             DATETIMECREATED = DateTime.Now
                         };
@@ -203,6 +225,21 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 context.SaveChanges();
             }
+        }
+
+        private IQueryable<int> GetAllCamProductIds()
+        {
+            return context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCT_CLASS_PROCESSID == 1)
+                .SelectMany(x => x.TBL_PRODUCT)
+                .Select(x => (int)x.PRODUCTID);
+        }
+
+        private IQueryable<int?> GetLoanApplicationProductIds(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATION_DETAIL
+                .Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Select(x => (int?)x.PROPOSEDPRODUCTID)
+                .Distinct();
         }
 
         private int GetFirstApprovalLevelId(/*short productId,*/ short? productClassId, int staffId = 0) // ---- REFACTOR when we have productId!!!
@@ -284,7 +321,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = general.GetApplicationDate();
             List<TBL_LOAN_APPLICATION_DETAIL> items = null;
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
-            this.LoadConditionPrecedent(model.applicationId);
+            LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
 
             // WORKFLOW
             workflow.StaffId = model.createdBy;
@@ -523,6 +560,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     statusId = x.STATUSID,
                     exchangeRate = x.EXCHANGERATE,
+                    terms = x.REPAYMENTTERMS,
+                    schedule = x.REPAYMENTSCHEDULE
                 });
 
             return details;
@@ -697,6 +736,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                     customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                     operationId = x.a.OPERATIONID,
+                    productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
                 })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
@@ -1007,6 +1047,62 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
 
             return true;
+        }
+
+        public List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity)
+        {
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
+            detail.REPAYMENTTERMS = entity.terms;
+            detail.REPAYMENTSCHEDULE = entity.schedule;
+            context.SaveChanges();
+            return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID)
+                .Select(x => new RepaymentScheduleTermsViewModel
+                {
+                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    terms = x.REPAYMENTTERMS,
+                    schedule = x.REPAYMENTSCHEDULE,
+                    productCustomerName = x.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME
+                }).ToList();
+        }
+
+        public List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity)
+        {
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
+            detail.APPROVEDAMOUNT = entity.recommendedAmount;
+
+            if (entity.productClassId==7)
+            {
+                var control = context.TBL_LOAN_APPLICATION_DETL_EDU.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == entity.applicationDetailId);
+                control.TOTAL_PREVIOUS_TERM_SCHOL_FEES = entity.controlAmount;
+            }
+
+            context.SaveChanges();
+            return GetProductLimitValidation(detail.LOANAPPLICATIONID, entity.productClassId);
+        }
+
+        public List<ProductLimitValidationViewModel> GetProductLimitValidation(int applicationId, int classId)
+        {
+            List<ProductLimitValidationViewModel> limits = new List<ProductLimitValidationViewModel>();
+            //List<ProductLimitValidationViewModel> limits = null;
+            //List<ProductLimitValidationViewModel> limits;
+
+            if (classId == 7) // first edu
+            {
+                limits = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId)
+                       .Join(context.TBL_LOAN_APPLICATION_DETL_EDU, a => a.LOANAPPLICATIONDETAILID, b => b.LOANAPPLICATIONDETAILID, (a, b) => new { a, b })
+                       .Join(context.TBL_PRODUCT_BEHAVIOUR, ab => ab.a.APPROVEDPRODUCTID, c => c.PRODUCTID, (ab, c) => new { ab, c })
+                       .Select(x => new ProductLimitValidationViewModel
+                       {
+                           applicationDetailId = x.ab.a.LOANAPPLICATIONDETAILID,
+                           productCustomerName = x.ab.a.TBL_PRODUCT.PRODUCTNAME + " -- " + x.ab.a.TBL_CUSTOMER.FIRSTNAME + " " + x.ab.a.TBL_CUSTOMER.MIDDLENAME + " " + x.ab.a.TBL_CUSTOMER.LASTNAME,
+                           recommendedAmount = x.ab.a.APPROVEDAMOUNT,
+                           controlAmount = x.ab.b.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
+                           percentageLimit = x.c.PRODUCT_LIMIT,
+                           productClassId = classId
+                       }).ToList();
+            }
+
+            return limits;
         }
     }
 }

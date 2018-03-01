@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
             TBL_CASA_OVERDRAFT = new HashSet<TBL_CASA_OVERDRAFT>();
             TBL_FINANCE_TRANSACTION = new HashSet<TBL_FINANCE_TRANSACTION>();
             TBL_LOAN_APPLICATION_ARCHIVE = new HashSet<TBL_LOAN_APPLICATION_ARCHIVE>();
+            TBL_LOAN_APPLICATION_DETL_BG = new HashSet<TBL_LOAN_APPLICATION_DETL_BG>();
             TBL_LOAN_APPLICATION = new HashSet<TBL_LOAN_APPLICATION>();
             TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
             TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
@@ -24,6 +25,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN_REVOLVING1 = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN = new HashSet<TBL_LOAN>();
+            TBL_TEMP_LOAN = new HashSet<TBL_TEMP_LOAN>();
         }
 
         [Key]
@@ -159,6 +161,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_APPLICATION_ARCHIVE> TBL_LOAN_APPLICATION_ARCHIVE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_APPLICATION_DETL_BG> TBL_LOAN_APPLICATION_DETL_BG { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -184,5 +189,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN { get; set; }
     }
 }

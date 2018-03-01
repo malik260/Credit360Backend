@@ -10,7 +10,6 @@ namespace FintrakBanking.Interfaces.Customer
 {
     public interface ICustomerRepository
     {
-        IEnumerable<CustomerViewModels> GetSimpleCustomerDetailsByCustomerId(int customerId);
         CustomerViewModels GetCustomer(int custormerId);
         IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId);
         IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLoanId(int loanApplicationId);
@@ -76,6 +75,7 @@ namespace FintrakBanking.Interfaces.Customer
 
         #region Single Customer Information By CustomerID
         CustomerViewModels GetSingleCustomerGeneralInfo(string customerCode);
+        CustomerViewModels GetSingleCustomerGeneralInfoByCustomerId(int customerId);
         CustomerCompanyInfomationViewModels GetSingleCustomerCompanyInfo(int customerId);
         IEnumerable<CustomerAddressViewModels> GetSingleCustomerAddressInfo(int customerId);
         IEnumerable<CustomerPhoneContactViewModels> GetSingleCustomerPhoneContactInfo(int customerId);
@@ -109,6 +109,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool ValidateModifiedCustomerRecord(int customerId);
         bool ValidateModifiedCompanyRecord(int customerId);
         bool ValidateModifiedAddressRecord(int customerId);
+        bool ValidateModifiedPhoneRecord(int customerId);
         #endregion
         IEnumerable<CustomerInformationApprovalViemModel> GetAllCustomerInformationAwaitingApproval(int staffId, int companyId);
         bool GoForApproval(ApprovalViewModel entity);

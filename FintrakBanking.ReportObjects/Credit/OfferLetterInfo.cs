@@ -7,6 +7,7 @@ using System;
 using FintrakBanking.Common;
 using System.IO;
 using System.Web.Hosting;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.ReportObjects.Credit
 {
@@ -42,6 +43,74 @@ namespace FintrakBanking.ReportObjects.Credit
             return new OfferLetterViewModel();
         }
 
+
+        public static List<SignatoryViewModel> GetLoanApplicationSignatory(string applicationRefNumber)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            try
+            {
+                var signatory = (from a in context.TBL_APPROVAL_TRAIL
+                            join b in context.TBL_STAFF on a.REQUESTSTAFFID equals b.STAFFID
+                            join c in context.TBL_LOAN_APPLICATION on a.TARGETID equals c.LOANAPPLICATIONID
+                            where c.APPLICATIONREFERENCENUMBER == applicationRefNumber && a.FROMAPPROVALLEVELID != null orderby(a.APPROVALTRAILID)
+                            select new SignatoryViewModel()
+                            {
+                                staffName = b.LASTNAME + " " + b.FIRSTNAME + " " + b.MIDDLENAME,
+                            }).Take(2).ToList();
+
+                if (signatory != null)
+                {
+                    signatory[0].rmStaffName = signatory[0].staffName;
+                    signatory[0].bmStaffName = signatory[1].staffName;
+                    return signatory;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return new List<SignatoryViewModel>();
+
+
+        }
+
+
+        public static List<ProductFeeViewModel> GetLoanApplicationFee (string applicationRefNumber)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            try
+            {
+                var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
+                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                            join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
+                            join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                            where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                            select new ProductFeeViewModel()
+                            {
+                                feeName = c.CHARGEFEENAME,
+                                rateValue = a.RECOMMENDED_FEERATEVALUE
+                            }).ToList();
+
+                if (fees != null)
+                {
+                    return fees;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return new List<ProductFeeViewModel>();
+
+
+        }
+
         public static List<OfferLetterDetailViewModel> GetLoanApplicationDetail(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -73,6 +142,10 @@ namespace FintrakBanking.ReportObjects.Credit
                                        customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                        customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
                                        customerPhoneNumber = a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
+                                       loanApplicationId = applicationRefNumber,
+                                       repaymentSchedule = b.REPAYMENTSCHEDULE ?? "Not applicable",
+                                       repaymentTerms = b.REPAYMENTTERMS ?? "Not applicable",
+                                       purpose = b.LOANPURPOSE,
                                    }).ToList();
 
                 if (loanDetails != null)

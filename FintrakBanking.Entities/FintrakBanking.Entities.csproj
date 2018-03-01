@@ -70,7 +70,6 @@
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_SIGNATURE.cs" />
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\SYSDIAGRAM.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -260,6 +259,7 @@
     <Compile Include="Models\TBL_LOAN_CAMSOL.cs" />
     <Compile Include="Models\TBL_LOAN_COLLATERAL_MAPPING.cs" />
     <Compile Include="Models\TBL_LOAN_COMMENT.cs" />
+    <Compile Include="Models\TBL_LOAN_CONCESSION_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_CONDITION_DEFERRAL.cs" />
     <Compile Include="Models\TBL_LOAN_CONDITION_PRECEDENT.cs" />
     <Compile Include="Models\TBL_LOAN_CONTINGENT.cs" />
@@ -279,6 +279,7 @@
     <Compile Include="Models\TBL_LOAN_PRICEINDEX_EXCEPTION.cs" />
     <Compile Include="Models\TBL_LOAN_PRINCIPAL.cs" />
     <Compile Include="Models\TBL_LOAN_PRUDENTIALGUIDELINE.cs" />
+    <Compile Include="Models\TBL_LOAN_RATE_FEE_CONCESSION_.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN_PAYMNT.cs" />
     <Compile Include="Models\TBL_LOAN_RELATIONSHIP_OFF_HIST.cs" />
@@ -383,9 +384,12 @@
     <Compile Include="Models\TBL_TEMP_CUSTOMER.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_ADDRESS.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_COMPANYINFO.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_EMPLOYER.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP_MAPPNG.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_PHONCONTACT.cs" />
     <Compile Include="Models\TBL_TEMP_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_LOAN.cs" />
     <Compile Include="Models\TBL_TEMP_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_BEHAVIOUR.cs" />

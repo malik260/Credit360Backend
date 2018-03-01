@@ -29,6 +29,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISRATIO { get; set; }
 
+        public int POSITION { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

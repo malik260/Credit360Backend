@@ -42,6 +42,7 @@ namespace FintrakBanking.Repositories.Customer
             var data = new TBL_CUSTOMER_FS_CAPTION
             {
                 FSCAPTIONNAME = entity.fsCaptionName,
+                POSITION = entity.position,
                 FSCAPTIONGROUPID = entity.fsCaptionGroupId,
                 ISRATIO = entity.isRatio,
                 CREATEDBY = (int)entity.createdBy,

@@ -75,6 +75,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal convertedApprovedAmount { get { return this.approvedAmount * (decimal)this.exchangeRate; } }
 
         public int customerId { get; set; }
+        public string terms { get; set; }
+        public string schedule { get; set; }
     }
 
     public class PrivilegeViewModel : GeneralEntity
@@ -221,4 +223,31 @@ namespace FintrakBanking.ViewModels.Credit
         public string productCustomerName { get; set; }
     }
 
+    public class RepaymentScheduleTermsViewModel
+    {
+        public string terms { get; set; }
+        public string schedule { get; set; }
+        public int applicationDetailId { get; set; }
+        public string productCustomerName { get; set; }
+    }
+
+    public class ProductLimitValidationViewModel
+    {
+        public int applicationDetailId { get; set; }
+        public string productCustomerName { get; set; }
+        public double? percentageLimit { get; set; }
+        public decimal recommendedAmount { get; set; }
+        public decimal controlAmount { get; set; }
+
+        public decimal limit
+        {
+            get
+            {
+                return percentageLimit == null ? 0 : (decimal)(percentageLimit / 100) * controlAmount;
+            }
+        }
+        public bool isValid { get { return recommendedAmount <= limit;  } }
+
+        public int productClassId { get; set; }
+    }
 }
