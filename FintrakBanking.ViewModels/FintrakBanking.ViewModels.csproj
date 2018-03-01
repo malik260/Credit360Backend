@@ -80,6 +80,7 @@
     <Compile Include="Credit\CurrentCustomerExposure.cs" />
     <Compile Include="Credit\DeferredChecklistViewModel.cs" />
     <Compile Include="Credit\ExistingLoanApplicationViewModel.cs" />
+    <Compile Include="Credit\FeeConcessionViewModel.cs" />
     <Compile Include="Credit\InvoiceDiscountingViewModel.cs" />
     <Compile Include="Credit\LimitViewModel.cs" />
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
