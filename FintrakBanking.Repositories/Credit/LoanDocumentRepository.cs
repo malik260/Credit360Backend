@@ -46,6 +46,7 @@ namespace FintrakBanking.Repositories.Credit
                     PHYSICALFILENUMBER = model.physicalFileNumber,
                     PHYSICALLOCATION = model.physicalLocation,
                     CREATEDBY = (int)model.createdBy,
+
                 };
 
                 context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
@@ -129,6 +130,26 @@ namespace FintrakBanking.Repositories.Credit
             });
         }
 
+
+        public void GetAllLoanDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
+        {
+            result = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x=>x.LOANAPPLICATIONNUMBER==model.loanApplicationNumber)
+                .Select(x => new LoanDocumentViewModel
+            {
+                documentId = x.DOCUMENTID,
+                loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                loanReferenceNumber = x.LOANREFERENCENUMBER,
+                documentTitle = x.DOCUMENTTITLE,
+                documentTypeId = x.DOCUMENTTYPEID,
+                // fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                systemDateTime = x.SYSTEMDATETIME,
+                physicalFileNumber = x.PHYSICALFILENUMBER,
+                physicalLocation = x.PHYSICALLOCATION,
+                    dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
+                }).ToList();
+        }
         public LoanDocumentViewModel GetLoanDocument(int documentId)
         {
             var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
@@ -146,6 +167,7 @@ namespace FintrakBanking.Repositories.Credit
                             systemDateTime = x.SYSTEMDATETIME,
                             physicalFileNumber = x.PHYSICALFILENUMBER,
                             physicalLocation = x.PHYSICALLOCATION,
+                            dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
                         });
 
             return data.FirstOrDefault();
@@ -172,6 +194,45 @@ namespace FintrakBanking.Repositories.Credit
 
             return data.ToList();
         }
+        public void GetApplicationLoanDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
+        {
+
+
+            var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
+                        where x.DOCUMENTID == model.documentId
+                        select new LoanDocumentViewModel
+                        {
+                            documentId = x.DOCUMENTID,
+                            loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                            loanReferenceNumber = x.LOANREFERENCENUMBER,
+                            documentTitle = x.DOCUMENTTITLE,
+                            documentTypeId = x.DOCUMENTTYPEID,
+                             fileData = x.FILEDATA,
+                            fileName = x.FILENAME,
+                            fileExtension = x.FILEEXTENSION,
+                            systemDateTime = x.SYSTEMDATETIME,
+                            physicalFileNumber = x.PHYSICALFILENUMBER,
+                            physicalLocation = x.PHYSICALLOCATION,
+                            dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
+                        });
+
+            result = data.FirstOrDefault();
+        }
+
+        public void DeleteApplicationLoanDocument(LoanDocumentViewModel model, out int result)
+        {
+
+            result = 0;
+            var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
+                        where x.DOCUMENTID == model.documentId
+                        select (x)).FirstOrDefault();
+
+            if (data!=null)
+            {
+                context.TBL_MEDIA_LOAN_DOCUMENTS.Remove(data);
+                result = context.SaveChanges();
+            }
+        }
 
         public LoanDocumentViewModel GetLoanDocumentByAppNoRefNo(string refNo, string applicationNumber)
         {
@@ -190,6 +251,7 @@ namespace FintrakBanking.Repositories.Credit
                     systemDateTime = x.SYSTEMDATETIME,
                     physicalFileNumber = x.PHYSICALFILENUMBER,
                     physicalLocation = x.PHYSICALLOCATION,
+                    dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
                 }).FirstOrDefault();
             return media;
         }
@@ -265,8 +327,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                
-               var delete = context.TBL_LOAN_COMMITTEE_MINUTES.FirstOrDefault(o=>o.DOCUMENTID==model.customerId);
+
+                var delete = context.TBL_LOAN_COMMITTEE_MINUTES.FirstOrDefault(o => o.DOCUMENTID == model.customerId);
 
                 context.TBL_LOAN_COMMITTEE_MINUTES.Remove(delete);
 
@@ -308,7 +370,29 @@ namespace FintrakBanking.Repositories.Credit
                 systemDateTime = x.SYSTEMDATETIME,
                 physicalFileNumber = x.PHYSICALFILENUMBER,
                 physicalLocation = x.PHYSICALLOCATION,
+
             });
+        }
+
+
+
+        public void GetCommitteeDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
+        {
+            result = this.context.TBL_LOAN_COMMITTEE_MINUTES.Where(x => x.LOANAPPLICATIONNUMBER == model.loanApplicationNumber).Select(x => new LoanDocumentViewModel
+            {
+                documentId = x.DOCUMENTID,
+                loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                loanReferenceNumber = x.LOANREFERENCENUMBER,
+                documentTitle = x.DOCUMENTTITLE,
+                documentTypeId = x.DOCUMENTTYPEID,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                systemDateTime = x.SYSTEMDATETIME,
+                physicalFileNumber = x.PHYSICALFILENUMBER,
+                physicalLocation = x.PHYSICALLOCATION,
+                dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES
+
+            }).ToList();
         }
 
         public LoanDocumentViewModel GetCommitteeDocument(int documentId)
@@ -330,9 +414,45 @@ namespace FintrakBanking.Repositories.Credit
                 systemDateTime = data.SYSTEMDATETIME,
                 physicalFileNumber = data.PHYSICALFILENUMBER,
                 physicalLocation = data.PHYSICALLOCATION,
+                dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES
             };
         }
+        public void GetCommitteeDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
+        {
+            var data = (from x in context.TBL_LOAN_COMMITTEE_MINUTES
+                       where x.DOCUMENTID == model.documentId
+                       select new LoanDocumentViewModel
+            {
+                documentId = x.DOCUMENTID,
+                loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                loanReferenceNumber = x.LOANREFERENCENUMBER,
+                documentTitle = x.DOCUMENTTITLE,
+                documentTypeId = x.DOCUMENTTYPEID,
+                fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                systemDateTime = x.SYSTEMDATETIME,
+                physicalFileNumber = x.PHYSICALFILENUMBER,
+                physicalLocation = x.PHYSICALLOCATION,
+                dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES
+            }).FirstOrDefault();
 
+            result = data;
+        }
+
+        public void DeleteCommitteeDocument(LoanDocumentViewModel model, out int result)
+        {
+            result = 0;
+            var data = (from x in context.TBL_LOAN_COMMITTEE_MINUTES
+                        where x.DOCUMENTID == model.documentId
+                        select (x)).FirstOrDefault();
+            if (data!=null)
+            {
+                context.TBL_LOAN_COMMITTEE_MINUTES.Remove(data);
+                result = context.SaveChanges();
+            }
+            
+        }
         #endregion COMMITTEE MINUTES
 
         #region CREDIT BUREAU REPORTS
@@ -348,10 +468,31 @@ namespace FintrakBanking.Repositories.Credit
                             fileName = x.FILENAME,
                             fileExtension = x.FILEEXTENSION,
                             systemDateTime = x.SYSTEMDATETIME,
+                            dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU
                         });
 
             return data.ToList();
         }
+
+        public void GetCreditBureauReportDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
+        {
+            var data = (from x in this.context.TBL_CUSTOMER_CREDIT_BUREAU
+                        where x.CUSTOMERCREDITBUREAUID == model.customerCreditBureauId
+                        select new LoanDocumentViewModel
+                        {
+                            documentId = x.DOCUMENTID,
+                            customerCreditBureauId = x.CUSTOMERCREDITBUREAUID,
+                            documentTitle = x.DOCUMENT_TITLE,
+                            fileName = x.FILENAME,
+                            fileExtension = x.FILEEXTENSION,
+                            systemDateTime = x.SYSTEMDATETIME,
+                            dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU
+                        });
+
+            result = data.ToList();
+        }
+
+
 
         public LoanDocumentViewModel GetCreditBureauReportDocumentByDocumentID(int customerCreditBureauId, int documentId)
         {
@@ -371,7 +512,7 @@ namespace FintrakBanking.Repositories.Credit
                     FILEEXTENSION = model.fileExtension,
                     SYSTEMDATETIME = DateTime.Now,
                     CREATEDBY = (int)model.createdBy,
-                    DATETIMECREATED = DateTime.Now
+                    DATETIMECREATED = DateTime.Now,
                 };
 
                 context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
@@ -524,7 +665,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public LoanDocumentViewModel GetConditionDocument(LoanDocumentViewModel model)
+        public void GetConditionDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
         {
             try
             {
@@ -538,9 +679,11 @@ namespace FintrakBanking.Repositories.Credit
                         physicalFileNumber = x.PHYSICALFILENUMBER,
                         physicalLocation = x.PHYSICALLOCATION,
                         createdBy = x.CREATEDBY,
+                        fileData=x.FILEDATA,
+                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS
                     }));
 
-                return record.FirstOrDefault();
+                result= record.FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -548,7 +691,25 @@ namespace FintrakBanking.Repositories.Credit
                 throw ex;
             }
         }
+        public void DeleteConditionDocument(LoanDocumentViewModel model, out int result)
+        {
+            result = 0;
+            try
+            {
+                var record = (context.TBL_LOAN_CONDITION_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                    .Select(x=>x)).FirstOrDefault();
+                if (record != null)
+                {
+                    context.TBL_LOAN_CONDITION_DOCUMENTS.Remove(record);
+                    result = context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
 
+                throw ex;
+            }
+        }
         public List<LoanDocumentViewModel> GetConditionDocuments(LoanDocumentViewModel model)
         {
             try
@@ -563,6 +724,7 @@ namespace FintrakBanking.Repositories.Credit
                            physicalFileNumber = x.PHYSICALFILENUMBER,
                            physicalLocation = x.PHYSICALLOCATION,
                            createdBy = x.CREATEDBY,
+                           dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS
                        }));
 
                 return record.ToList();
@@ -573,6 +735,30 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public void GetConditionDocuments(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
+        {
+            try
+            {
+                var record = (context.TBL_LOAN_CONDITION_DOCUMENTS.Where(o => o.LOANAPPLICATIONID == model.loanApplicationId)
+                       .Select(x => new LoanDocumentViewModel
+                       {
+                           loanApplicationId = x.LOANAPPLICATIONID,
+                           conditionId = x.CONDITIONID,
+                           fileName = x.FILENAME,
+                           fileExtension = x.FILEEXTENSION,
+                           physicalFileNumber = x.PHYSICALFILENUMBER,
+                           physicalLocation = x.PHYSICALLOCATION,
+                           createdBy = x.CREATEDBY,
+                           dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS
+                       }));
+
+                result= record.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
 
         #region TBL_MEDIA_CHECKLIST_DOCUMENTS
@@ -669,12 +855,13 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public LoanDocumentViewModel GetMediaCheckListDocument(LoanDocumentViewModel model)
+        public void GetMediaCheckListDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
         {
             try
             {
                 var record = context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
-                    .Select(x=> new LoanDocumentViewModel {
+                    .Select(x => new LoanDocumentViewModel
+                    {
                         fileData = x.FILEDATA,
                         loanApplicationId = x.LOANAPPLICATIONID,
                         fileName = x.FILENAME,
@@ -682,10 +869,11 @@ namespace FintrakBanking.Repositories.Credit
                         physicalFileNumber = x.PHYSICALFILENUMBER,
                         physicalLocation = x.PHYSICALLOCATION,
                         checkListDefinitionId = x.CHECKLISTDEFINITIONID,
-                        loanDetailId = x.LOANDETAILSID
+                        loanDetailId = x.LOANDETAILSID,
+                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS
                     });
 
-                return record.FirstOrDefault();
+                result= record.FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -694,7 +882,28 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public List<LoanDocumentViewModel> GetMediaCheckListDocuments(LoanDocumentViewModel model)
+        public void DeleteMediaCheckListDocument(LoanDocumentViewModel model, out int result)
+        {
+            result = 0;
+            try
+            {
+                var record = context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                    .Select(x => x).FirstOrDefault();
+                if (record!=null)
+                {
+                    context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Remove(record);
+                    result = context.SaveChanges();
+                }
+                
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public void GetMediaCheckListDocuments(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
         {
             try
             {
@@ -708,10 +917,11 @@ namespace FintrakBanking.Repositories.Credit
                        physicalFileNumber = x.PHYSICALFILENUMBER,
                        physicalLocation = x.PHYSICALLOCATION,
                        checkListDefinitionId = x.CHECKLISTDEFINITIONID,
-                       loanDetailId = x.LOANDETAILSID
+                       loanDetailId = x.LOANDETAILSID,
+                       dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS
                    });
 
-                return record.ToList();
+                result= record.ToList();
             }
             catch (Exception ex)
             {
@@ -810,20 +1020,22 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public LoanDocumentViewModel GetMediaCollateralDocument(LoanDocumentViewModel model)
+        public void GetMediaCollateralDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
         {
             try
             {
-              var record =  context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(o=>o.DOCUMENTID==model.documentId)
-                    .Select(x=> new LoanDocumentViewModel {
-                        fileData = x.FILEDATA,
-                        collateralCustomerId = x.COLLATERALCUSTOMERID,
-                        fileName = x.FILENAME,
-                        fileExtension = x.FILEEXTENSION,
-                        documentCode = x.DOCUMENTCODE,
-                    });
-                return record.FirstOrDefault();
-               
+                var record = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                      .Select(x => new LoanDocumentViewModel
+                      {
+                          fileData = x.FILEDATA,
+                          collateralCustomerId = x.COLLATERALCUSTOMERID,
+                          fileName = x.FILENAME,
+                          fileExtension = x.FILEEXTENSION,
+                          documentCode = x.DOCUMENTCODE,
+                          dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS
+                      });
+                result= record.FirstOrDefault();
+
             }
             catch (Exception ex)
             {
@@ -832,7 +1044,27 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public List<LoanDocumentViewModel> GetMediaCollateralDocuments(LoanDocumentViewModel model)
+        public void DeleteMediaCollateralDocument(LoanDocumentViewModel model, out int result)
+        {
+            result = 0;
+            try
+            {
+                var record = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                      .Select(x => x).FirstOrDefault();
+                if (record!=null)
+                {
+                    context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Remove(record);
+                    result = context.SaveChanges();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public void GetMediaCollateralDocuments(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
         {
             try
             {
@@ -844,8 +1076,9 @@ namespace FintrakBanking.Repositories.Credit
                           fileName = x.FILENAME,
                           fileExtension = x.FILEEXTENSION,
                           documentCode = x.DOCUMENTCODE,
+                          dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS
                       });
-                return record.ToList();
+                result= record.ToList();
             }
             catch (Exception ex)
             {
@@ -957,7 +1190,7 @@ namespace FintrakBanking.Repositories.Credit
             {
 
                 var record = context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
-                    .Select(x=>  new LoanDocumentViewModel
+                    .Select(x => new LoanDocumentViewModel
                     {
                         fileData = x.FILEDATA,
                         fileName = x.FILENAME,
@@ -967,9 +1200,10 @@ namespace FintrakBanking.Repositories.Credit
                         jobRequestCode = x.JOBREQUESTCODE,
                         physicalFileNumber = x.PHYSICALFILENUMBER,
                         physicalLocation = x.PHYSICALLOCATION,
+                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT
                     });
 
-              return  record.FirstOrDefault();
+                return record.FirstOrDefault();
 
             }
             catch (Exception ex)
@@ -979,7 +1213,60 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public List<LoanDocumentViewModel> GetMediaJobRequestDocuments(LoanDocumentViewModel model)
+
+        public void GetMediaJobRequestDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
+        {
+            try
+            {
+
+                var record = context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
+                    .Select(x => new LoanDocumentViewModel
+                    {
+                        fileData = x.FILEDATA,
+                        fileName = x.FILENAME,
+                        fileExtension = x.FILEEXTENSION,
+                        documentTitle = x.DOCUMENTTITLE,
+                        documentTypeId = x.DOCUMENTTYPEID,
+                        jobRequestCode = x.JOBREQUESTCODE,
+                        physicalFileNumber = x.PHYSICALFILENUMBER,
+                        physicalLocation = x.PHYSICALLOCATION,
+                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT
+                    });
+
+                result = record.FirstOrDefault();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public void DeleteMediaJobRequestDocument(LoanDocumentViewModel model, out int result)
+        {
+            result = 0;
+            try
+            {
+
+                var record = context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
+                    .Select(x => x).FirstOrDefault();
+
+                if (record!=null)
+                {
+                    context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Remove(record);
+                    result = context.SaveChanges();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public void GetMediaJobRequestDocuments(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
         {
             List<LoanDocumentViewModel> list = new List<LoanDocumentViewModel>();
             try
@@ -996,9 +1283,10 @@ namespace FintrakBanking.Repositories.Credit
                        jobRequestCode = x.JOBREQUESTCODE,
                        physicalFileNumber = x.PHYSICALFILENUMBER,
                        physicalLocation = x.PHYSICALLOCATION,
+                       dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT
                    });
 
-                return record.ToList();
+                result = record.ToList();
 
             }
             catch (Exception ex)
@@ -1109,13 +1397,14 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public LoanDocumentViewModel GetMediaKYCDocument(LoanDocumentViewModel model)
+        public void GetMediaKYCDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
         {
             try
             {
 
                 var record = context.TBL_MEDIA_KYC_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
-                    .Select(x => new LoanDocumentViewModel {
+                    .Select(x => new LoanDocumentViewModel
+                    {
                         fileData = x.FILEDATA,
                         fileName = x.FILENAME,
                         fileExtension = x.FILEEXTENSION,
@@ -1124,12 +1413,13 @@ namespace FintrakBanking.Repositories.Credit
                         physicalFileNumber = x.PHYSICALFILENUMBER,
                         physicalLocation = x.PHYSICALLOCATION,
                         customerCode = x.CUSTOMERCODE,
-                        customerId = x.CUSTOMERID
+                        customerId = x.CUSTOMERID,
+                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS
                     });
 
-                return record.FirstOrDefault();
+                result= record.FirstOrDefault();
 
-                
+
             }
             catch (Exception ex)
             {
@@ -1138,7 +1428,29 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public List<LoanDocumentViewModel> GetMediaKYCDocuments(LoanDocumentViewModel model)
+        public void DeleteMediaKYCDocument(LoanDocumentViewModel model, out int result)
+        {
+            result = 0;
+            try
+            {
+
+                var record = context.TBL_MEDIA_KYC_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                    .Select(x => x).FirstOrDefault();
+
+                if (record!=null)
+                {
+                    context.TBL_MEDIA_KYC_DOCUMENTS.Remove(record);
+                    result = context.SaveChanges();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public void GetMediaKYCDocuments(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
         {
             List<LoanDocumentViewModel> list = new List<LoanDocumentViewModel>();
             try
@@ -1155,10 +1467,11 @@ namespace FintrakBanking.Repositories.Credit
                          physicalFileNumber = x.PHYSICALFILENUMBER,
                          physicalLocation = x.PHYSICALLOCATION,
                          customerCode = x.CUSTOMERCODE,
-                         customerId = x.CUSTOMERID
+                         customerId = x.CUSTOMERID,
+                         dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS
                      });
 
-                return record.ToList();
+                result= record.ToList();
             }
             catch (Exception ex)
             {
@@ -1265,7 +1578,8 @@ namespace FintrakBanking.Repositories.Credit
             {
 
                 var record = context.TBL_MEDIA_STAFF_PICTURE.Where(o => o.DOCUMENTID == model.documentId)
-                    .Select(x=> new LoanDocumentViewModel {
+                    .Select(x => new LoanDocumentViewModel
+                    {
                         fileData = x.FILEDATA,
                         fileName = x.FILENAME,
                         fileExtension = x.FILEEXTENSION,
@@ -1282,6 +1596,53 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public void GetMediaStaffPicture(LoanDocumentViewModel model, out LoanDocumentViewModel result)
+        {
+            try
+            {
+
+                var record = context.TBL_MEDIA_STAFF_PICTURE.Where(o => o.DOCUMENTID == model.documentId)
+                    .Select(x => new LoanDocumentViewModel
+                    {
+                        fileData = x.FILEDATA,
+                        fileName = x.FILENAME,
+                        fileExtension = x.FILEEXTENSION,
+                        documentTitle = x.DOCUMENT_TITLE,
+                        staffCode = x.STAFFCODE,
+
+                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_PICTURE
+                    });
+
+                result = record.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public void DeleteMediaStaffPicture(LoanDocumentViewModel model, out int result)
+        {
+            result = 0;
+            try
+            {
+
+                var record = context.TBL_MEDIA_STAFF_PICTURE.Where(o => o.DOCUMENTID == model.documentId)
+                    .Select(x => x).FirstOrDefault();
+
+                if (true)
+                {
+                    context.TBL_MEDIA_STAFF_PICTURE.Remove(record);
+                    result = context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
 
         #endregion
 
@@ -1379,7 +1740,8 @@ namespace FintrakBanking.Repositories.Credit
             {
 
                 var record = context.TBL_MEDIA_STAFF_SIGNATURE.Where(o => o.DOCUMENTID == model.documentId)
-                    .Select(x=> new LoanDocumentViewModel {
+                    .Select(x => new LoanDocumentViewModel
+                    {
                         fileData = x.FILEDATA,
                         fileName = x.FILENAME,
                         fileExtension = x.FILEEXTENSION,
@@ -1387,7 +1749,54 @@ namespace FintrakBanking.Repositories.Credit
                     });
 
                 return record.FirstOrDefault();
-                
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public void GetMediaStaffSignature(LoanDocumentViewModel model, out LoanDocumentViewModel result)
+        {
+            try
+            {
+
+                var record = context.TBL_MEDIA_STAFF_SIGNATURE.Where(o => o.DOCUMENTID == model.documentId)
+                    .Select(x => new LoanDocumentViewModel
+                    {
+                        fileData = x.FILEDATA,
+                        fileName = x.FILENAME,
+                        fileExtension = x.FILEEXTENSION,
+                        staffCode = x.STAFFCODE
+                    });
+
+                result = record.FirstOrDefault();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public void DeleteMediaStaffSignature(LoanDocumentViewModel model, out int result)
+        {
+            result = 0;
+            try
+            {
+
+                var record = context.TBL_MEDIA_STAFF_SIGNATURE.Where(o => o.DOCUMENTID == model.documentId)
+                    .Select(x => x).FirstOrDefault();
+
+                if (record!=null)
+                {
+                    context.TBL_MEDIA_STAFF_SIGNATURE.Remove(record);
+                    result = context.SaveChanges();
+                }
+
             }
             catch (Exception ex)
             {
@@ -1421,45 +1830,106 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public bool getUploadedDocument(LoanDocumentViewModel model)
+        public LoanDocumentViewModel getUploadedDocument(LoanDocumentViewModel model)
         {
-            //Check for file size here
+            var result = new LoanDocumentViewModel();
             switch (model.dababaseTable)
             {
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: GetApplicationLoanDocument(model.loanApplicationNumber); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: GetCommitteeDocument(model.documentId); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU: GetCreditBureauReportDocumentByDocumentID(model.customerCreditBureauId,model.documentId); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS: GetConditionDocument(model); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS: GetMediaCheckListDocument(model); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS: GetMediaCollateralDocument(model); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT: GetMediaJobRequestDocument(model); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS: GetMediaKYCDocument(model); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_PICTURE: GetMediaStaffPicture(model); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_SIGNATURE: GetMediaStaffSignature(model); return true;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: GetApplicationLoanDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: GetCommitteeDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU: GetCreditBureauReportDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS: GetConditionDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS: GetMediaCheckListDocument(model,out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS: GetMediaCollateralDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT: GetMediaJobRequestDocument(model,out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS: GetMediaKYCDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_PICTURE: GetMediaStaffPicture(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_SIGNATURE: GetMediaStaffSignature(model, out result); return result;
                 default:
-                    return false;
+                    return result;
             }
 
         }
-        public bool getListOfUploadedDocument(LoanDocumentViewModel model)
+        public List<LoanDocumentViewModel> getListOfUploadedDocument(LoanDocumentViewModel model)
         {
-            //Check for file size here
+            var result = new List<LoanDocumentViewModel>();
             switch (model.dababaseTable)
             {
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: GetAllLoanDocument(); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: GetCommitteeDocument(model.loanApplicationNumber); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU: GetCreditBureauReportDocument(model.customerCreditBureauId); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS: GetConditionDocuments(model); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS: GetMediaCheckListDocuments(model); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS: GetMediaCollateralDocuments(model); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT: GetMediaJobRequestDocuments(model); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS: GetMediaKYCDocuments(model); return true;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: GetAllLoanDocument( model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: GetCommitteeDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU: GetCreditBureauReportDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS: GetConditionDocuments(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS: GetMediaCheckListDocuments(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS: GetMediaCollateralDocuments(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT: GetMediaJobRequestDocuments(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS: GetMediaKYCDocuments(model, out result); return result;
 
                 default:
-                    return false;
+                    return result;
             }
 
         }
+
+
+        public int DeleteUploadedDocument(LoanDocumentViewModel model)
+        {
+            var result = 0;
+
+            switch (model.dababaseTable)
+            {
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: DeleteApplicationLoanDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: DeleteCommitteeDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU: DeleteCreditBureauReportDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS: DeleteConditionDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS: DeleteMediaCheckListDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS: DeleteMediaCollateralDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT: DeleteMediaJobRequestDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS: DeleteMediaKYCDocument(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_PICTURE: DeleteMediaStaffPicture(model, out result); return result;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_SIGNATURE: DeleteMediaStaffSignature(model, out result); return result;
+                default:
+                    return result;
+            }
+
+        }
+
+       
+        public void GetCreditBureauReportDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
+        {
+            var data = (from x in this.context.TBL_CUSTOMER_CREDIT_BUREAU
+                        where x.DOCUMENTID == model.documentId
+                        select new LoanDocumentViewModel
+                        {
+                            documentId = x.DOCUMENTID,
+                            customerCreditBureauId = x.CUSTOMERCREDITBUREAUID,
+                            documentTitle = x.DOCUMENT_TITLE,
+                            fileName = x.FILENAME,
+                            fileExtension = x.FILEEXTENSION,
+                            systemDateTime = x.SYSTEMDATETIME,
+                            fileData = x.FILEDATA,
+                            dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU
+                        });
+
+            result= data.FirstOrDefault();
+        }
+
+        public void DeleteCreditBureauReportDocument(LoanDocumentViewModel model, out int result)
+        {
+            result = 0;
+            var data = (from x in this.context.TBL_CUSTOMER_CREDIT_BUREAU
+                        where x.CUSTOMERCREDITBUREAUID == model.customerCreditBureauId
+                        select (x)).FirstOrDefault();
+            if (data!=null)
+            {
+                context.TBL_CUSTOMER_CREDIT_BUREAU.Remove(data);
+                result = context.SaveChanges();
+            }
+     
+        }
+
+       
+       
+
         //public void getUploadedDocument(LoanDocumentViewModel model, byte[] file)
         //{
         //    //Check for file size here

@@ -102,7 +102,22 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.getUploadedDocument(model);
+                var response = repo.getListOfUploadedDocument(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("delete-uploaded-document")]
+        public async Task<HttpResponseMessage> DeleteUploadedDocument(LoanDocumentViewModel model)
+        {
+            try
+            {
+                var response = repo.DeleteUploadedDocument(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
