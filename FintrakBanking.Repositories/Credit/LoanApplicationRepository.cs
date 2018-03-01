@@ -840,13 +840,21 @@ namespace FintrakBanking.Repositories.Credit
                     throw new Exception("Tenor can not be ZERO (0)");
                 }
                 int loanId = this.data == null ? 0 : this.data.LOANAPPLICATIONID;
+                int tenor = 0;
+
+                switch (a.tenorModeId)
+                {
+                    case (int)TenorMode.Daily: tenor = a.proposedTenor; break;
+                    case (int)TenorMode.Monthly: tenor = (a.proposedTenor * 365) / 12; break;
+                    case (int)TenorMode.Yearly: tenor = (a.proposedTenor * 365) ;   break;                 
+                }
 
                 var data = new TBL_LOAN_APPLICATION_DETAIL
                 {
                     APPROVEDAMOUNT = a.proposedAmount,
                     APPROVEDINTERESTRATE = a.proposedInterestRate,
                     APPROVEDPRODUCTID = a.proposedProductId,
-                    APPROVEDTENOR = (a.proposedTenor * 365) / 12, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                    APPROVEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
                     EXCHANGERATE = a.exchangeRate,
                     CURRENCYID = a.currencyId,
@@ -857,7 +865,7 @@ namespace FintrakBanking.Repositories.Credit
                     PROPOSEDAMOUNT = a.proposedAmount,
                     PROPOSEDINTERESTRATE = a.proposedInterestRate,
                     PROPOSEDPRODUCTID = a.proposedProductId,
-                    PROPOSEDTENOR = (a.proposedTenor * 365) / 12, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                    PROPOSEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
                     SUBSECTORID = a.subSectorId,
                     CREATEDBY = createdBy,
