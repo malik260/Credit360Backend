@@ -17,6 +17,7 @@ namespace FintrakBanking.Entities.Models
             TBL_TEMP_CHART_OF_ACCOUNT = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT>();
             TBL_DEPARTMENT = new HashSet<TBL_DEPARTMENT>();
             TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
+            TBL_LOAN_REVIEW_APPLICATION = new HashSet<TBL_LOAN_REVIEW_APPLICATION>();
             TBL_CASA_LIEN = new HashSet<TBL_CASA_LIEN>();
             TBL_CASA = new HashSet<TBL_CASA>();
             TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
@@ -95,6 +96,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_REVIEW_APPLICATION> TBL_LOAN_REVIEW_APPLICATION { get; set; }
 
         public virtual TBL_BRANCH_REGION TBL_BRANCH_REGION { get; set; }
 

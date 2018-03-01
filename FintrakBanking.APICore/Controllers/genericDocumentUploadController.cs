@@ -57,6 +57,14 @@ namespace FintrakBanking.APICore.Controllers
 
                 var file = provider.Contents.FirstOrDefault();
                 var buffer = await file.ReadAsByteArrayAsync();
+
+                //file size
+                int fileSize = buffer.Length;
+                if (fileSize > (1048576))//max file size should come from database
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Exceed File Size. 3MB Maximum size is allowed");
+                }
+
                 var data = repo.uploadDocument(entity, buffer);
 
                 if (data)
@@ -79,6 +87,37 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.getUploadedDocument(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("get-all-document-uploads")]
+        public async Task<HttpResponseMessage> GetAllUploadedDocument(LoanDocumentViewModel model)
+        {
+            try
+            {
+                var response = repo.getListOfUploadedDocument(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("delete-uploaded-document")]
+        public async Task<HttpResponseMessage> DeleteUploadedDocument(LoanDocumentViewModel model)
+        {
+            try
+            {
+                var response = repo.DeleteUploadedDocument(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)

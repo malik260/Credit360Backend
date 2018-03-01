@@ -10,8 +10,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanDocumentViewModel> GetAllLoanDocument();
 
-        IEnumerable<LoanDocumentViewModel> GetApplicationLoanDocument(string applicationNumber);
-
         bool AddLoanDocument(LoanDocumentViewModel model, byte[] file);
 
         bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId);
@@ -41,20 +39,13 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool AddMediaCheckListDocument(LoanDocumentViewModel model, byte[] file);
         bool UpdateMediaCheckListDocument(LoanDocumentViewModel model);
-        LoanDocumentViewModel GetMediaCheckListDocument(LoanDocumentViewModel model);
-        List<LoanDocumentViewModel> GetMediaCheckListDocuments(LoanDocumentViewModel model);
         bool AddMediaCollateralDocument(LoanDocumentViewModel model, byte[] file);
         bool UpdateMediaCollateralDocument(LoanDocumentViewModel model, byte[] file);
-        LoanDocumentViewModel GetMediaCollateralDocument(LoanDocumentViewModel model);
-        List<LoanDocumentViewModel> GetMediaCollateralDocuments(LoanDocumentViewModel model);
         bool AddMediaJobRequestDocument(LoanDocumentViewModel model, byte[] file);
         bool UpdateMediaJobRequestDocument(LoanDocumentViewModel model);
         LoanDocumentViewModel GetMediaJobRequestDocument(LoanDocumentViewModel model);
-        List<LoanDocumentViewModel> GetMediaJobRequestDocuments(LoanDocumentViewModel model);
         bool AddMediaKYCDocument(LoanDocumentViewModel model, byte[] file);
         bool UpdateMediaKYCDocument(LoanDocumentViewModel model);
-        LoanDocumentViewModel GetMediaKYCDocument(LoanDocumentViewModel model);
-        List<LoanDocumentViewModel> GetMediaKYCDocuments(LoanDocumentViewModel model);
         bool AddMediaStaffPicture(LoanDocumentViewModel model, byte[] file);
         bool UpdateMediaStaffPicture(LoanDocumentViewModel model);
         LoanDocumentViewModel GetMediaStaffPicture(LoanDocumentViewModel model);
@@ -62,10 +53,75 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateMediaStaffSignature(LoanDocumentViewModel model);
         LoanDocumentViewModel GetMediaStaffSignature(LoanDocumentViewModel model);
         bool uploadDocument(LoanDocumentViewModel model, byte[] file);
-        bool getUploadedDocument(LoanDocumentViewModel model);
-        bool getListOfUploadedDocument(LoanDocumentViewModel model);
+
+        LoanDocumentViewModel getUploadedDocument(LoanDocumentViewModel model);
+
+        List<LoanDocumentViewModel> getListOfUploadedDocument(LoanDocumentViewModel model);
 
 
-  
+        void GetApplicationLoanDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result);
+
+        IEnumerable<LoanDocumentViewModel> GetApplicationLoanDocument(string applicationNumber);
+
+        void GetCommitteeDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result);
+
+        void GetCreditBureauReportDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result);
+
+        void GetConditionDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result);
+
+        void GetMediaCheckListDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result);
+
+        void GetMediaCollateralDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result);
+
+        void GetMediaJobRequestDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result);
+
+        void GetMediaKYCDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result);
+
+        void GetMediaStaffSignature(LoanDocumentViewModel model, out LoanDocumentViewModel result);
+
+        void GetMediaStaffPicture(LoanDocumentViewModel model, out LoanDocumentViewModel result);
+
+
+        void GetAllLoanDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result);
+
+        void GetCommitteeDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result);
+
+        void GetCreditBureauReportDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result);
+
+        void GetConditionDocuments(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result);
+
+        void GetMediaCheckListDocuments(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result);
+
+        void GetMediaCollateralDocuments(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result);
+
+        void GetMediaJobRequestDocuments(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result);
+
+        void GetMediaKYCDocuments(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result);
+
+        void DeleteApplicationLoanDocument(LoanDocumentViewModel model, out int result);
+
+        void DeleteCommitteeDocument(LoanDocumentViewModel model, out int result);
+
+        void DeleteCreditBureauReportDocument(LoanDocumentViewModel model, out int result);
+
+        void DeleteConditionDocument(LoanDocumentViewModel model, out int result);
+
+        void DeleteMediaCheckListDocument(LoanDocumentViewModel model, out int result);
+
+        void DeleteMediaCollateralDocument(LoanDocumentViewModel model, out int result);
+
+        void DeleteMediaJobRequestDocument(LoanDocumentViewModel model, out int result);
+
+        void DeleteMediaKYCDocument(LoanDocumentViewModel model, out int result);
+
+        void DeleteMediaStaffPicture(LoanDocumentViewModel model, out int result);
+
+        void DeleteMediaStaffSignature(LoanDocumentViewModel model, out int result);
+
+        int DeleteUploadedDocument(LoanDocumentViewModel model);
+
+
+
+
     }
 }

@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Customer;
 using System.Collections.Generic;
 using FintrakBanking.ViewModels.Reports;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -980,14 +981,36 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("loan-application/initiated-booking")]
-        public HttpResponseMessage GetInitiatedLoanBooking()
+        [Route("availed-loan-applications/booking-ready")]
+        public HttpResponseMessage GetAvailedLoanApplicationsReadyForBooking()
 
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repo.GetRequestedLoanBooking(token.GetCompanyId);
+                var response = repo.GetAvailedLoanApplicationsReadyForBooking(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("availed-loan-application/booking-ready/{applicationDetailId}")]
+        public HttpResponseMessage GetAvailedLoanApplicationDetailById(int applicationDetailId)
+
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetAvailedLoanApplicationDetailById(token.GetCompanyId, applicationDetailId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -1113,5 +1136,32 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         #endregion (Loan Application Date) Pre - Loan booking
+
+
+        #region Workflow Tracker
+
+        [HttpGet]
+        [Route("work-flow-tracker/operation/{operationId}/target/{targetId}")]
+        public async Task<HttpResponseMessage> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId)
+        {
+            try
+            {
+                var data = await repo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, token.GetCompanyId, token.GetStaffId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, count = data.Count() });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        #endregion Workflow Tracker
+
     }
 }

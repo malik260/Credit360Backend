@@ -129,10 +129,14 @@
           <DataField>customerPhoneNumber</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="purpose">
+          <DataField>purpose</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterDetail</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -912,6 +916,7 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style />
               </Paragraph>
               <Paragraph>
@@ -971,6 +976,7 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style />
               </Paragraph>
             </Paragraphs>
@@ -1008,6 +1014,7 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style />
               </Paragraph>
             </Paragraphs>
@@ -1442,6 +1449,7 @@
                 <LeftIndent>1.27cm</LeftIndent>
                 <RightIndent>0cm</RightIndent>
                 <HangingIndent>-18pt</HangingIndent>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style>
                   <TextAlign>Left</TextAlign>
                   <LineHeight>18pt</LineHeight>
@@ -1815,6 +1823,7 @@
                 <LeftIndent>1.27cm</LeftIndent>
                 <RightIndent>0cm</RightIndent>
                 <HangingIndent>-18pt</HangingIndent>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style>
                   <TextAlign>Left</TextAlign>
                   <LineHeight>18pt</LineHeight>
@@ -2096,6 +2105,7 @@
                 <LeftIndent>1.27cm</LeftIndent>
                 <RightIndent>0cm</RightIndent>
                 <HangingIndent>-18pt</HangingIndent>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style>
                   <TextAlign>Left</TextAlign>
                   <LineHeight>17pt</LineHeight>
@@ -2655,36 +2665,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox75">
+                        <Textbox Name="purpose">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>To enable customer discount its accepted invoices to  </Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Garamond</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>=StrConv(First(Fields!customerName.Value, "OfferLetterDetails"), vbProperCase)</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Garamond</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value> for work done needs</Value>
+                                  <Value>=Fields!purpose.Value</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Garamond</FontFamily>
@@ -2698,7 +2686,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox75</rd:DefaultName>
+                          <rd:DefaultName>purpose</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -3810,6 +3798,7 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style />
               </Paragraph>
             </Paragraphs>
@@ -3883,6 +3872,7 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style />
               </Paragraph>
               <Paragraph>
@@ -3997,12 +3987,13 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
             <Top>44.25107cm</Top>
-            <Left>0.51029cm</Left>
+            <Left>0.53906cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.74225cm</Width>
             <ZIndex>26</ZIndex>
@@ -4059,18 +4050,60 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>a)     In line with the Bank’s policy to review facilities from time to time in light of changing market conditions, the Bank reserves the right at any time without notice, liability, cavil, let or hindrance and at its absolute discretion to convert any foreign currency facility to Naira, at the prevailing interbank foreign exchange rate on the date of conversion. The interest rate on the naira facility will default to the bank’s prime lending rate until re-negotiated.*</Value>
+                    <Value />
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
                       <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>a)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>In line with the Bank’s policy to review facilities from time to time in light of changing market conditions, the Bank reserves the right at any time without notice, liability, cavil, let or hindrance and at its absolute discretion to convert any foreign currency facility to Naira, at the prevailing interbank foreign exchange rate on the date of conversion. The interest rate on the naira facility will default to the bank’s prime lending rate until re-negotiated.*</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
               </Paragraph>
               <Paragraph>
                 <TextRuns>
@@ -4078,31 +4111,39 @@
                     <Value>b)</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
                       <Color>#000000</Color>
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>   Approval of any request for extension of the facility at the expiration of the tenure hereby provided shall be at the discretion of the Bank and shall be subject to a fee of  ……% flat for new tenure as may be approved.</Value>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>Approval of any request for extension of the facility at the expiration of the tenure hereby provided shall be at the discretion of the Bank and shall be subject to a fee of  ……% flat for new tenure as may be approved.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <LeftIndent>1.27cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
                 <Style>
                   <TextAlign>Left</TextAlign>
-                  <LineHeight>18pt</LineHeight>
                 </Style>
               </Paragraph>
               <Paragraph>
@@ -4111,31 +4152,39 @@
                     <Value>c)</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
                       <Color>#000000</Color>
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>   The Borrower hereby indemnifies the Bank against any loss that might be incurred by the Bank as a result of any irregularity or incompleteness in the information contained in any documents submitted to the Bank.</Value>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>The Borrower hereby indemnifies the Bank against any loss that might be incurred by the Bank as a result of any irregularity or incompleteness in the information contained in any documents submitted to the Bank.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <LeftIndent>1.27cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
                 <Style>
                   <TextAlign>Left</TextAlign>
-                  <LineHeight>18pt</LineHeight>
                 </Style>
               </Paragraph>
               <Paragraph>
@@ -4144,141 +4193,262 @@
                     <Value>d)</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
                       <Color>#000000</Color>
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>    No change in the business operations and conditions (financial or otherwise) or in the prospects of the Borrower shall affect the full repayment of the facility at maturity.</Value>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>No change in the business operations and conditions (financial or otherwise) or in the prospects of the Borrower shall affect the full repayment of the facility at maturity.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <LeftIndent>1.27cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
                 <Style>
                   <TextAlign>Left</TextAlign>
-                  <LineHeight>18pt</LineHeight>
                 </Style>
               </Paragraph>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>e)     This facility shall be utilized strictly for the purpose for which it is granted and on no condition should it be utilized for any other purpose.</Value>
+                    <Value>e)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">       </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>This facility shall be utilized strictly for the purpose for which it is granted and on no condition should it be utilized for any other purpose.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <LeftIndent>1.27cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
                 <Style>
                   <TextAlign>Left</TextAlign>
-                  <LineHeight>18pt</LineHeight>
                 </Style>
               </Paragraph>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>f)     This offer is subject to the availability of funds and the rules and regulations as enunciated from time to time by the Central Bank of Nigeria.</Value>
+                    <Value>f)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>This offer is subject to the availability of funds and the rules and regulations as enunciated from time to time by the Central Bank of Nigeria.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <LeftIndent>1.27cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
                 <Style>
                   <TextAlign>Left</TextAlign>
-                  <LineHeight>18pt</LineHeight>
                 </Style>
               </Paragraph>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>g)    The Bank reserves the right to convert the facilities into any money market instrument and/or sell the entire debt or portion of it at its discretion and without recourse and/or consent from the Borrower.</Value>
+                    <Value>g)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>The Bank reserves the right to convert the facilities into any money market instrument and/or sell the entire debt or portion of it at its discretion and without recourse and/or consent from the Borrower.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <LeftIndent>1.27cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
                 <Style>
                   <TextAlign>Left</TextAlign>
-                  <LineHeight>18pt</LineHeight>
                 </Style>
               </Paragraph>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>h)    This Offer Letter may be varied by the Bank at any time upon giving the Borrower 10 business days’ prior notification (“variation notice”) of the variation of any term or condition of this offer.  The variation shall be deemed effective by the 10th business day of the Bank’s notification to the Borrower provided that the Borrower shall be entitled to opt out by liquidating the facility(ies) on or before the 10th business day of the variation notice.</Value>
+                    <Value>h)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">       </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>This Offer Letter may be varied by the Bank at any time upon giving the Borrower 10 business days’ prior notification (“variation notice”) of the variation of any term or condition of this offer.  The variation shall be deemed effective by the 10th business day of the Bank’s notification to the Borrower provided that the Borrower shall be entitled to opt out by liquidating the facility(ies) on or before the 10th business day of the variation notice.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <LeftIndent>1.27cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
                 <Style>
                   <TextAlign>Left</TextAlign>
-                  <LineHeight>17pt</LineHeight>
                 </Style>
               </Paragraph>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>i)      The Bank reserves the right to open a loan account, impersonal or suspense account (“Loan Account”) on whatever terms the Bank may think fit for the purpose of repayment and management of the facility(ies) as the Bank may from time to time conclusively determine in its absolute discretion.</Value>
+                    <Value>i)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">       </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>The Bank reserves the right to open a loan account, impersonal or suspense account (“Loan Account”) on whatever terms the Bank may think fit for the purpose of repayment and management of the facility(ies) as the Bank may from time to time conclusively determine in its absolute discretion.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <LeftIndent>1.27cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
                 <Style>
                   <TextAlign>Left</TextAlign>
-                  <LineHeight>17pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>12pt</LineHeight>
                 </Style>
               </Paragraph>
             </Paragraphs>
@@ -4469,39 +4639,79 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>1.   Irrevocable domiciliation of contract proceeds by the principal () to customer’s account duly confirmed by               Middle  office as valid with same account appropriately liened</Value>
+                    <Value>1.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>Irrevocable domiciliation of contract proceeds by the principal () to customer’s account duly confirmed by Middle office as valid with same account appropriately liened</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
                 <Style />
               </Paragraph>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>2.   Personal Guarantee of the Prime Mover of the Company on form 3240 to cover the total exposure supported by notarized statement of networth.</Value>
+                    <Value>2.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>Personal Guarantee of the Prime Mover of the Company on form 3240 to cover the total exposure supported by notarized statement of networth.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
+                <HangingIndent>-0.25in</HangingIndent>
                 <Style>
                   <TextAlign>Left</TextAlign>
-                  <LineHeight>17pt</LineHeight>
                 </Style>
               </Paragraph>
             </Paragraphs>
@@ -4551,7 +4761,9 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <Style />
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox9</rd:DefaultName>
@@ -4666,6 +4878,8 @@
             </Border>
           </Style>
         </PageFooter>
+        <PageHeight>11.69in</PageHeight>
+        <PageWidth>9in</PageWidth>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
         <TopMargin>1in</TopMargin>

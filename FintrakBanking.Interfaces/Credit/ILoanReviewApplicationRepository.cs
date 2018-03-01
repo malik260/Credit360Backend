@@ -10,8 +10,12 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanReviewApplicationRepository
     {
-        IQueryable<LoanApplicationViewModel> GetApplications(UserInfo user, int operationId, int? productClassId);
+        IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? productClassId);
 
         SelectListViewModel GetAllSelectList();
+
+        bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel entity);
+
+        List<LoanViewModel> LoanSearch(int getCompanyId, SearchViewModel search);
     }
 }
