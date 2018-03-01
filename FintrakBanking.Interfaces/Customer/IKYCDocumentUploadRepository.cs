@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool RemoveCheckListDocument(int definitionId, int statusId, int detailId, bool isProductBased);
 
         ConditionsPrecedentUploadViewModel GetLoanConditionDocumentBydocumentId(int documentId);
+        ConditionsPrecedentUploadViewModel GetLoanConditionDocumentByConditionId(int conditionId);
         IEnumerable<ConditionsPrecedentUploadViewModel> GetLoanConditionDocumentByContionId(int conditionId);
         bool ConditionsPrecedentDocumentUpload(ConditionsPrecedentUploadViewModel model, byte[] file);
     }

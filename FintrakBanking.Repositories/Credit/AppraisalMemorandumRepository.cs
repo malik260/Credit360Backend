@@ -1069,6 +1069,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
             detail.APPROVEDAMOUNT = entity.recommendedAmount;
+
+            if (entity.productClassId==7)
+            {
+                var control = context.TBL_LOAN_APPLICATION_DETL_EDU.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == entity.applicationDetailId);
+                control.TOTAL_PREVIOUS_TERM_SCHOL_FEES = entity.controlAmount;
+            }
+
             context.SaveChanges();
             return GetProductLimitValidation(detail.LOANAPPLICATIONID, entity.productClassId);
         }

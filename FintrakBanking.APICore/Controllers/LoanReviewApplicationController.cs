@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-        [HttpGet, Route("application")]
+        [HttpGet, Route("review-application")]
         public HttpResponseMessage GetApplications(
             [FromUri] int page,
             [FromUri] int itemsPerPage,
@@ -45,22 +45,21 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-
-                IQueryable<LoanApplicationViewModel> items;
+                IQueryable<LoanReviewApplicationViewModel> items;
                 items = repo.GetApplications(user, operationId, classId);
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
                     items = items.Where(x =>
-                        x.applicationReferenceNumber.Contains(searchString)
-                        || x.applicationAmount.ToString().Contains(searchString)
+                        x.referenceNumber.Contains(searchString)
+                        || x.principalAmount.ToString().Contains(searchString)
                         || x.customerName.Contains(searchString)
                         ).Take(itemsPerPage);
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.newApplicationDate) // OrderBy() must be called for Skip() to work!
-                    .ThenByDescending(x => x.loanApplicationId)
+                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
+                    .ThenByDescending(x => x.loanReviewApplicationId)
                     .Skip(page)
                     .Take(itemsPerPage)
                     .ToList();
@@ -86,5 +85,38 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("loan-review-application/submit")]
+        public HttpResponseMessage SubmitLoanReviewApplication([FromBody] LoanReviewApplicationViewModel entity)
+        {
+            try
+            {
+                entity.createdBy =  token.GetStaffId;
+                entity.branchId =  (short)token.GetBranchId;
+                bool response = repo.SubmitLoanReviewApplication(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Application submitted successfully.", result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-review-application/loan-search")]
+        public HttpResponseMessage LoanSearch([FromBody] SearchViewModel search)
+        {
+            try
+            {
+                List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
     }
 }

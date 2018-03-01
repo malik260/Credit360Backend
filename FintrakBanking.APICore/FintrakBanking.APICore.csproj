@@ -328,6 +328,7 @@
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
     <Compile Include="Controllers\EndOfDayController.cs" />
+    <Compile Include="Controllers\FeeConcessionController.cs" />
     <Compile Include="Controllers\FinanceTransactionController.cs" />
     <Compile Include="Controllers\CreditLimitValidationsController.cs" />
     <Compile Include="Controllers\CasaController.cs" />
@@ -775,6 +776,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\CustomerCreditBureau\" />
     <Folder Include="Views\EndOfDay\" />
+    <Folder Include="Views\FeeConcession\" />
     <Folder Include="Views\LoanOperation\" />
     <Folder Include="Views\Override\" />
     <Folder Include="Views\TransactionDynamics\" />
@@ -813,10 +815,6 @@
     <ProjectReference Include="..\FintrakBanking.Repositories\FintrakBanking.Repositories.csproj">
       <Project>{2853b1d8-af5f-4691-a513-9eb63a45dd4d}</Project>
       <Name>FintrakBanking.Repositories</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FinTrakBanking.ThirdPartyIntegration\FinTrakBanking.ThirdPartyIntegration.csproj">
-      <Project>{81C64D5D-3674-499E-B718-257AA862B1B2}</Project>
-      <Name>FinTrakBanking.ThirdPartyIntegration</Name>
     </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
       <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>

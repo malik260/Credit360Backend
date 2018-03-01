@@ -199,11 +199,11 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [Route("checklist-type-byapprovallevel")]
-        public HttpResponseMessage GetChecklistTypeByApprovalLevel()
+        public HttpResponseMessage GetChecklistTypeByApprovalLevel(int operationId)
         {
             try
             {
-                var data = repo.GetChecklistTypeByApprovalLevel(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetChecklistTypeByApprovalLevel(token.GetStaffId, token.GetCompanyId, operationId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -645,7 +645,7 @@ namespace FintrakBanking.APICore.Controllers
                 repo.DeleteChecklistDetail(ChecklistId, user);
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-             new { success = true, result = ChecklistId, message = "record has been deleted successfully" });
+             new { success = true, result = ChecklistId, message = "Record has been deleted successfully" });
             }
             catch (Exception ex)
             {

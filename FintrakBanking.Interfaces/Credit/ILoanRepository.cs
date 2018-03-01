@@ -7,6 +7,7 @@ using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -15,6 +16,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LookupViewModel> GetAllLoanTypes();
 
         IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
+
+        LoanViewModel GetDisbursedLoanByLoanId(int loanId);
 
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
@@ -37,7 +40,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetRequestedLoanBooking(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId);
+
+        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int companyId, int applicationDetailId);
 
         bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity);
 
@@ -84,6 +89,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> GetLoanScheduleByLoanId(int loanId);
          IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, string param);
-        
+
+        Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId);
+
+
     }
 }

@@ -202,12 +202,31 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-conditions-precedent/")]
+        [Route("loan-conditions-precedent")]
         public HttpResponseMessage GetLoanConditionDocumentByConditionId(int conditionId)
         {
             try
             {
                 var data = repo.GetLoanConditionDocumentByContionId(conditionId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("loan-conditions-precedent-upload")]
+        public HttpResponseMessage GetLoanConditionPrecedentUpload(int conditionId)
+        {
+            try
+            {
+                var data = repo.GetLoanConditionDocumentByConditionId(conditionId);
 
                 if (data == null)
                 {
