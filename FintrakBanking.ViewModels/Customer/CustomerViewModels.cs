@@ -6,6 +6,8 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerViewModels : GeneralEntity
     {
+        public string rcNumber;
+
         public int creditBureauCount { get; set; }
         public bool isCreditBureauUploadCompleted { get; set; }
         public double numberOfShares { get; set; }
