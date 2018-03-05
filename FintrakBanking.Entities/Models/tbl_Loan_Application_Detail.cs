@@ -54,6 +54,10 @@ namespace FintrakBanking.Entities.Models
 
         public int APPROVEDTENOR { get; set; }
 
+        public decimal EQUITYAMOUNT { get; set; }
+
+        public decimal EQUITYCASAACCOUNTID { get; set; }
+
         public double APPROVEDINTERESTRATE { get; set; }
 
         [Column(TypeName = "money")]

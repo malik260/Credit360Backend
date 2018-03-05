@@ -180,6 +180,10 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string customerName { get; set; }
 
+        public decimal equityAmount { get; set; }
+
+        public decimal equityCasaAccountId { get; set; }
+
         public short proposedProductId { get; set; }
 
         public string proposedProductName { get; set; }
