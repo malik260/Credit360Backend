@@ -555,7 +555,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                             productLimit = d.PRODUCT_LIMIT,
                             isInvoiceBased = d.ISINVOICEBASED,
-                            requireCasaAccount = d.REQUIRECASAACCOUNT 
+                            requireCasaAccount = (bool)d.REQUIRECASAACCOUNT 
 
                         }).FirstOrDefault(),
                         currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == data.PRODUCTID && curr.DELETED != false)

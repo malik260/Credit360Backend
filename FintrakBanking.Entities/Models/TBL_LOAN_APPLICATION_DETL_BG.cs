@@ -43,8 +43,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? APPROVEDBY { get; set; }
 
-        public int? CASAACCOUNTID { get; set;}
-
+        
         public DateTime? APPROVEDDATETIME { get; set; }
 
         public int CREATEDBY { get; set; }
