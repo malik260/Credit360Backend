@@ -145,6 +145,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        loanApplicationId = applicationRefNumber,
                                        repaymentSchedule = b.REPAYMENTSCHEDULE ?? "Not applicable",
                                        repaymentTerms = b.REPAYMENTTERMS ?? "Not applicable",
+                                       purpose = b.LOANPURPOSE,
                                    }).ToList();
 
                 if (loanDetails != null)

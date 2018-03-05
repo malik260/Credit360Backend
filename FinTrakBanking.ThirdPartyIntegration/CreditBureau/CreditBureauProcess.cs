@@ -47,11 +47,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
             }
             return "";
         }
+
         public List<dynamic> GetApprovedSearchReasons()
         {
             var xds = new XDSService();
             return xds.GetApprovedReasons();
         }
+
         public string GetFullSearchResult(SearchInput searchInput)
         {
             var xds = new XDSService();
@@ -76,6 +78,31 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
             return null;
         }
 
+        public byte[] GetFullSearchResultInPDF(SearchInput searchInput)
+        {
+            var xds = new XDSService();
+
+            if (!xds.IsticketActive(searchInput.userName))
+            {
+                xds.Login(searchInput.userName, searchInput.password);
+            }
+            if (searchInput.creditBureauId == (short)CreditBureauEnum.XDSCreditBureau)
+            {
+                if (searchInput.searchType == (int)CreditBureauTypeEnum.CommercialSearch)
+                {
+                    return GetXDSPDFCommercialFullCreditReport(searchInput);
+                }
+
+                if (searchInput.searchType == (int)CreditBureauTypeEnum.ConsumerSearch)
+                {
+                    return GetXDSPDFConsumerFullCreditReport(searchInput);
+                }
+            }
+
+            return null;
+        }
+
+
         private string GetXDSCommercialFullCreditReport(SearchInput searchInput)
         {
             try
@@ -99,6 +126,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
                 throw new Exception(ex.Message);
             }
         }
+
         private string GetXDSConsumerFullCreditReport(SearchInput searchInput)
         {
             try
@@ -122,6 +150,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
                 throw new Exception(ex.Message);
             }
         }
+
         private string MergeListToString(List<int> mergeId)
         {
             string str = string.Empty;
@@ -131,6 +160,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
             }
             return str;
         }
+
         private string DoXDSCommercialSearch(CreditBureauSearchViewModel searchInfo)
         {
             string result = string.Empty;
@@ -152,6 +182,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
 
             return result;
         }
+
         private string DoXDSIndividualSearch(CreditBureauSearchViewModel searchInfo)
         {
             string result = string.Empty;
@@ -172,8 +203,55 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
             return result;
         }
 
+        private byte[] GetXDSPDFCommercialFullCreditReport(SearchInput searchInput)
+        {
+            try
+            {
+                string result = string.Empty;
+                string mergeLst = MergeListToString(searchInput.mergeList);
+                XDSService xds = new XDSService();
+                var data = new SearchFullResultViewModel
+                {
+                    ConsumerID = searchInput.consumerID,
+                    MergeList = mergeLst,
+                    DataTicket = string.Empty,
+                    EnquiryID = searchInput.enquiryID,
+                    SubscriberEnquiryEngineID = searchInput.subscriberEnquiryEngineID
+                };
+
+                return xds.GetCommercialFullCreditReportBinary(data);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private byte[] GetXDSPDFConsumerFullCreditReport(SearchInput searchInput)
+        {
+            try
+            {
+                string result = string.Empty;
+                string mergeLst = MergeListToString(searchInput.mergeList);
+                XDSService xds = new XDSService();
+                var data = new SearchFullResultViewModel
+                {
+                    ConsumerID = searchInput.consumerID,
+                    MergeList = mergeLst,
+                    DataTicket = string.Empty,
+                    EnquiryID = searchInput.enquiryID,
+                    SubscriberEnquiryEngineID = searchInput.subscriberEnquiryEngineID
+                };
+
+                return xds.GetConsumerFullCreditReportBinary(data);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
     }
 
-  
+
 }

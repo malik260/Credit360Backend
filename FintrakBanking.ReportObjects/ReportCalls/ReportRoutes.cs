@@ -123,6 +123,60 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
+        public string GetProductSpecificTemplate(short? productClassProcessId, short? productClassId, string applicationRefNumber)
+        {
+          
+
+            var links = new
+            {
+                General = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
+                IDF = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
+                FirstEdu = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
+                FirstTrader = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
+                BondsAndGuarantees = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
+                ImportFinance = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
+                CashBackedOnly = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
+                InvoiceDiscountingFacility = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
+            };
+
+            if (productClassProcessId == (short)ProductClassProcessEnum.CAMBased)
+            {
+                return links.General;
+            }
+            else 
+            {
+                switch (productClassId)
+                {
+                    case (short)ProductClassEnum.BondAndGuarantees:
+                        return links.BondsAndGuarantees;
+
+                    case (short)ProductClassEnum.CashBackedOnly:
+                        return links.CashBackedOnly;
+
+                    case (short)ProductClassEnum.FirstEdu:
+                        return links.FirstEdu;
+
+                    case (short)ProductClassEnum.FirstTrader:
+                        return links.FirstTrader;
+
+                    case (short)ProductClassEnum.ImportFinance:
+                        return links.ImportFinance;
+
+                    case (short)ProductClassEnum.InvoiceDiscountingFacility:
+                        return links.InvoiceDiscountingFacility;
+
+                    default:
+                        return links.General;
+                }
+
+               
+            }
+
+            //templateLink = links.General;
+
+            //return templateLink;
+        }
+
         #endregion Offer Letter Generation
 
         #region Loan Monitoring Reports

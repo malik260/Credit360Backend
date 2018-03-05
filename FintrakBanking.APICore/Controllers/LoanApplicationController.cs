@@ -428,7 +428,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("loan/application")]
-        public HttpResponseMessage LoanBooking([FromBody] LoanApplicationViewModel entity)
+        public HttpResponseMessage AddLoanApplication([FromBody] LoanApplicationViewModel entity)
         {
             try
             {

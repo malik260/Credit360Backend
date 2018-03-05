@@ -70,6 +70,7 @@
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_SIGNATURE.cs" />
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
+    <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMORANDM.cs" />
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_DETL.cs" />
     <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_DOCU.cs" />
+    <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_LOG.cs" />
     <Compile Include="Models\TBL_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_CREDIT_TEMPLATE.cs" />
     <Compile Include="Models\TBL_CURRENCY.cs" />
@@ -241,6 +243,7 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATERL.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATRL2.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_ARCH.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_BG.cs" />
@@ -259,6 +262,7 @@
     <Compile Include="Models\TBL_LOAN_CAMSOL.cs" />
     <Compile Include="Models\TBL_LOAN_COLLATERAL_MAPPING.cs" />
     <Compile Include="Models\TBL_LOAN_COMMENT.cs" />
+    <Compile Include="Models\TBL_LOAN_CONCESSION_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_CONDITION_DEFERRAL.cs" />
     <Compile Include="Models\TBL_LOAN_CONDITION_PRECEDENT.cs" />
     <Compile Include="Models\TBL_LOAN_CONTINGENT.cs" />
@@ -278,6 +282,7 @@
     <Compile Include="Models\TBL_LOAN_PRICEINDEX_EXCEPTION.cs" />
     <Compile Include="Models\TBL_LOAN_PRINCIPAL.cs" />
     <Compile Include="Models\TBL_LOAN_PRUDENTIALGUIDELINE.cs" />
+    <Compile Include="Models\TBL_LOAN_RATE_FEE_CONCESSION_.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN_PAYMNT.cs" />
     <Compile Include="Models\TBL_LOAN_RELATIONSHIP_OFF_HIST.cs" />

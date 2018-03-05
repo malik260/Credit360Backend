@@ -13,6 +13,8 @@ namespace FintrakBanking.ViewModels.Credit
             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
         }
 
+        public bool isNewApplication { get; set; }
+
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         public string applicationReferenceNumber { get; set; }
@@ -191,6 +193,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short approvedProductId { get; set; }
 
         public int approvedTenor { get; set; }
+        
+        public int tenorModeId { get; set; }
 
         public double approvedInterestRate { get; set; }
 
@@ -246,6 +250,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationDetailId { get; set; }
         public decimal bondAmount { get; set; }
         public int principalId { get; set; }
+        public int? casaAccountId { get; set; }        
         public short bondCurrencyId { get; set; }
         public DateTime contractStartDate { get; set; }
         public DateTime contractEndDate { get; set; }
@@ -440,6 +445,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationDetailId { get; set; }
 
         public int principalId { get; set; }
+
+         public int? casaAccountId { get; set; }
 
         public decimal amount { get; set; }
 
