@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return CommonHelpers.GetLoanReferanceNumber();
         }
 
-        
+
         /// <summary>
         /// Returns All tbl_Product group
         /// </summary>

@@ -45,7 +45,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // query
             applications = context.TBL_LOAN_REVIEW_APPLICATION.Where(x =>
-                    (x.BRANCHID == branchId || isHeadOffice)
+                    (isHeadOffice)
                 )
             .Join(context.TBL_LOAN, a => a.LOANID, l => l.TERMLOANID, (a, l) => new { a, l })
             .GroupJoin(
@@ -78,11 +78,11 @@ namespace FintrakBanking.Repositories.Credit
                     toStaffId = t.TOSTAFFID,
 
                     approvalStatusId = x.a.APPROVALSTATUSID,
-                    approvalStatus = x.a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME, // --------------- open after rel added and scaaffold
+                //    approvalStatus = x.a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME, // --------------- open after rel added and scaaffold
                     customerId = x.l.CUSTOMERID,
                     customerName = x.l.TBL_CUSTOMER.FIRSTNAME + " " + x.l.TBL_CUSTOMER.MIDDLENAME + " " + x.l.TBL_CUSTOMER.LASTNAME,
-                    branchId = x.a.BRANCHID,
-                    branchName = x.a.TBL_BRANCH.BRANCHNAME, // -------------------- open after scaffold
+               //     branchId = x.a.BRANCHID,
+               //     branchName = x.a.TBL_BRANCH.BRANCHNAME, // -------------------- open after scaffold
 
                     //createdBy = x.a.CREATEDBY,
                 })
@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 ISMANAGEMENTINTERESTRATE = model.isManagementInterestRate,
                 CREATEDBY = model.createdBy,
-                BRANCHID = model.branchId,
+              //  BRANCHID = model.branchId,
                 DATECREATED = general.GetApplicationDate(),
             };
 

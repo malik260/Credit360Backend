@@ -27,6 +27,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICollateralTypeRepository collateralType;
         private IWorkflow workflow;
 
+       
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
             IGeneralSetupRepository _genSetup,
@@ -808,9 +809,20 @@ namespace FintrakBanking.Repositories.Credit
                 GUARANTORADDRESS = entity.guarantorAddress,
                 // GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber,
                 GUARANTEEVALUE = entity.guaranteeValue,
-                STARTDATE = (DateTime)entity.startDate,
+                STARTDATE = entity.cStartDate,
                 ENDDATE = entity.endDate,
                 REMARK = entity.remark,
+                FIRSTNAME = entity.firstName,
+                MIDDLENAME = entity.middleName,
+                LASTNAME= entity.lastName,
+                BVN = entity.bvn,
+                RCNUMBER = entity.rcNumber,
+                PHONENUMBER1= entity.phoneNumber1,
+                PHONENUMBER2 = entity.phoneNumber2,
+                EMAILADDRESS = entity.emailAddress,
+                RELATIONSHIP = entity.relationship,
+                RELATIONSHIPDURATION = entity.relationshipDuration
+
             });
         }
 
@@ -825,9 +837,19 @@ namespace FintrakBanking.Repositories.Credit
             collateral.GUARANTORADDRESS = entity.guarantorAddress;
             //   collateral.GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber;
             collateral.GUARANTEEVALUE = entity.guaranteeValue;
-            collateral.STARTDATE = (DateTime)entity.startDate;
+            collateral.STARTDATE = entity.cStartDate;
             collateral.ENDDATE = entity.endDate;
             collateral.REMARK = entity.remark;
+            collateral.FIRSTNAME = entity.firstName;
+            collateral.MIDDLENAME = entity.middleName;
+            collateral.LASTNAME = entity.lastName;
+            collateral.BVN = entity.bvn;
+            collateral.RCNUMBER = entity.rcNumber;
+            collateral.PHONENUMBER1 = entity.phoneNumber1;
+            collateral.PHONENUMBER2 = entity.phoneNumber2;
+            collateral.EMAILADDRESS = entity.emailAddress;
+            collateral.RELATIONSHIP = entity.relationship;
+            collateral.RELATIONSHIPDURATION = entity.relationshipDuration;
         }
 
         private CollateralViewModel GetCollateralGuarantee(int collateralId)
@@ -843,10 +865,20 @@ namespace FintrakBanking.Repositories.Credit
                 guarantorAddress = specifics.GUARANTORADDRESS,
                 //    guarantorReferenceNumber = specifics.GUARANTORREFERENCENUMBER,
                 guaranteeValue = specifics.GUARANTEEVALUE,
-                startDate = specifics.STARTDATE,
+                cStartDate = specifics.STARTDATE,
                 endDate = specifics.ENDDATE,
                 remark = specifics.REMARK,
-            };
+                firstName = specifics.FIRSTNAME ,
+            middleName= specifics.MIDDLENAME,
+            lastName = specifics.LASTNAME,
+            bvn = specifics.BVN ,
+            rcNumber = specifics.RCNUMBER ,
+            phoneNumber1 = specifics.PHONENUMBER1 ,
+            phoneNumber2 = specifics.PHONENUMBER2 ,
+            emailAddress = specifics.EMAILADDRESS ,
+            relationship = specifics.RELATIONSHIP,
+            relationshipDuration = specifics.RELATIONSHIPDURATION,
+        };
             details = GetCollateralInsurancePolicy(details);
             return details;
         }

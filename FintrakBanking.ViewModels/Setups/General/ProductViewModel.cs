@@ -111,6 +111,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string productCode { get; set; }
         public double collateralLcyLimit { get; set; }
         public double collateralFcyLimit { get; set; }
+        public bool requireCasaAccount { get; set; }
         //public bool isCurrent { get; set; }
         //public short approvalStatusId { get; set; }
     }

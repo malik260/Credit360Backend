@@ -14,12 +14,11 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
-        [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string INSTITUTIONNAME { get; set; }
 
         [Required]
-        [StringLength(250)]
+        [StringLength(500)]
         public string GUARANTORADDRESS { get; set; }
 
         [Column(TypeName = "money")]
@@ -31,6 +30,39 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(500)]
         public string REMARK { get; set; }
+
+        [StringLength(50)]
+        public string FIRSTNAME { get; set; }
+
+        [StringLength(50)]
+        public string MIDDLENAME { get; set; }
+
+        [StringLength(50)]
+        public string LASTNAME { get; set; }
+
+        [StringLength(50)]
+        public string TAXNUMBER { get; set; }
+
+        [StringLength(50)]
+        public string BVN { get; set; }
+
+        [StringLength(50)]
+        public string RCNUMBER { get; set; }
+
+        [StringLength(50)]
+        public string PHONENUMBER1 { get; set; }
+
+        [StringLength(50)]
+        public string PHONENUMBER2 { get; set; }
+
+        [StringLength(50)]
+        public string EMAILADDRESS { get; set; }
+
+        [StringLength(50)]
+        public string RELATIONSHIP { get; set; }
+
+        [StringLength(50)]
+        public string RELATIONSHIPDURATION { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }

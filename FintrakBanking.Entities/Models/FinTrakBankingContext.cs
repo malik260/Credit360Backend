@@ -2894,20 +2894,8 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_COLLATERAL_GAURANTEE>()
-                .Property(e => e.INSTITUTIONNAME)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<TBL_COLLATERAL_GAURANTEE>()
-                .Property(e => e.GUARANTORADDRESS)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<TBL_COLLATERAL_GAURANTEE>()
                 .Property(e => e.GUARANTEEVALUE)
                 .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_COLLATERAL_GAURANTEE>()
-                .Property(e => e.REMARK)
-                .IsUnicode(false);
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
                 .Property(e => e.PROPERTYADDRESS)
