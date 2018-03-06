@@ -75,6 +75,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         dynamic GetLoanAppById(int loanApplicationDetailId, int companyId);
 
-        
+        IEnumerable<LoanApplicationViewModel> SearchForLoan(string searchString);
     }
 }

@@ -1,10 +1,12 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,21 +42,272 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return type;
         }
-        public IEnumerable<FeeConcessionViewModel> GetAllConcessionFee()
+
+        public IEnumerable<LoanFeeChargesViewModel> GetAllLoanFeeChargeByDetailId(int loanApplicationDetailId)
+        {
+            var type = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
+                        where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                        select new LoanFeeChargesViewModel()
+                        {
+                            loanChargeFeeId = a.LOANCHARGEFEEID,
+                            chargesId = a.CHARGEFEEID,
+                            chargesTypeName = a.TBL_CHARGE_FEE.CHARGEFEENAME,
+                            defaultValue = a.DEFAULT_FEERATEVALUE
+                        }).ToList();
+            return type;
+        }
+
+        public IEnumerable<FeeConcessionViewModel> GetAllConcessionFee(int loanApplicationDetailId)
         {
             var feeConcession = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION_
-                                select new FeeConcessionViewModel()
-                                {
-                                    concessionId = a.CONCESSIONID,
-                                    concessionTypeId = a.CONCESSIONTYPEID,
-                                    concessionTypeName = a.TBL_LOAN_CONCESSION_TYPE.CONCESSIONTYPENAME,
-                                    concession = a.CONSESSIONREASON,
-                                    loanChargeFeeId = a.LOANCHARGEFEEID,
-                                    loanChargeFeeName = a.TBL_LOAN_APPLICATION_DETL_FEE.TBL_CHARGE_FEE.CHARGEFEENAME,
-                                    LoanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
-                                    approvalStatusId = a.APPROVALSTATUSID,
-                                }).ToList();
+                                 where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                 orderby a.DATETIMECREATED descending
+                                 select new FeeConcessionViewModel()
+                                 {
+                                     concessionId = a.CONCESSIONID,
+                                     concessionTypeId = a.CONCESSIONTYPEID,
+                                     concessionTypeName = a.TBL_LOAN_CONCESSION_TYPE.CONCESSIONTYPENAME,
+                                     concessionReason = a.CONSESSIONREASON,
+                                     concession = a.CONCESSION,
+                                     loanChargeFeeId = a.LOANCHARGEFEEID,
+                                     loanChargeFeeName = a.TBL_LOAN_APPLICATION_DETL_FEE.TBL_CHARGE_FEE.CHARGEFEENAME,
+                                     loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                     loanRefNo = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                     approvalStatusId = a.APPROVALSTATUSID,
+                                     approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                     defaultValue = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).DEFAULT_FEERATEVALUE
+                                 }).ToList();
             return feeConcession;
+        }
+        public IEnumerable<FeeConcessionViewModel> GetAllConcessionFeeAwaitingApproval(int staffId, int companyId)
+        {
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId);
+            int staffApprovalLevelId = 0;
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            var feeConcession = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION_
+                                 join atrail in context.TBL_APPROVAL_TRAIL on a.CONCESSIONID equals atrail.TARGETID
+                                 where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                                 && atrail.OPERATIONID == (int)OperationsEnum.FeeConcessionApproval
+                                 && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                                 && atrail.RESPONSESTAFFID == null
+                                 orderby a.DATETIMECREATED descending
+                                 select new FeeConcessionViewModel()
+                                 {
+                                     concessionId = a.CONCESSIONID,
+                                     concessionTypeId = a.CONCESSIONTYPEID,
+                                     concessionTypeName = a.TBL_LOAN_CONCESSION_TYPE.CONCESSIONTYPENAME,
+                                     concessionReason = a.CONSESSIONREASON,
+                                     concession = a.CONCESSION,
+                                     loanChargeFeeId = a.LOANCHARGEFEEID,
+                                     loanChargeFeeName = a.TBL_LOAN_APPLICATION_DETL_FEE.TBL_CHARGE_FEE.CHARGEFEENAME,
+                                     loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                     loanRefNo = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                     approvalStatusId = a.APPROVALSTATUSID,
+                                     approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                     defaultValue = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).DEFAULT_FEERATEVALUE
+                                 }).ToList();
+            return feeConcession;
+        }
+        public bool AddUpdateFeeConcession(FeeConcessionViewModel model)
+        {
+            if (model == null) return false;
+            TBL_LOAN_RATE_FEE_CONCESSION_ data;
+            if (model.concessionId > 0)
+            {
+                data = context.TBL_LOAN_RATE_FEE_CONCESSION_.Find(model.concessionId);
+                if (data != null)
+                {
+                    data.CONCESSION = model.concession;
+                    data.CONCESSIONTYPEID = (short)model.concessionTypeId;
+                    data.CONSESSIONREASON = model.concessionReason;
+                    data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+                    data.LOANCHARGEFEEID = model.loanChargeFeeId;
+                    data.DATETIMEUPDATED = DateTime.Now;
+                    data.LASTUPDATEDBY = model.createdBy;
+                }
+            }
+            else
+            {
+                data = new TBL_LOAN_RATE_FEE_CONCESSION_();
+                data.CONCESSIONID = model.concessionId;
+                data.CONCESSION = model.concession;
+                data.CONCESSIONTYPEID = (short)model.concessionTypeId;
+                data.CONSESSIONREASON = model.concessionReason;
+                data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+                data.LOANCHARGEFEEID = model.loanChargeFeeId;
+                data.DELETED = false;
+                data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                data.DATETIMECREATED = _genSetup.GetApplicationDate();
+                data.CREATEDBY = (int)model.createdBy;
+            }
+            //Audit Section ---------------------------
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added new Fee Concession",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            //Log to the approval workflow 
+            if (model.concessionId == 0)
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        context.TBL_LOAN_RATE_FEE_CONCESSION_.Add(data);
+                        this.auditTrail.AddAuditTrail(audit);
+                        var output = context.SaveChanges() > 0;
+
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = model.createdBy,
+                            companyId = model.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = data.CONCESSIONID,
+                            operationId = (int)OperationsEnum.FeeConcessionApproval,
+                            BranchId = model.userBranchId,
+                            externalInitialization = true
+                        };
+                        var returnVal = workFlow.LogForApproval(entity);
+                        if (returnVal)
+                        {
+                            trans.Commit();
+                            return output;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        return false;
+                        throw new Exception(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                return context.SaveChanges() > 0;
+            }
+            return false;
+        }
+
+        public bool GoForApproval(ApprovalViewModel entity)
+        {
+            entity.operationId = (int)OperationsEnum.FeeConcessionApproval;
+            entity.externalInitialization = false;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApproveFeeConcession(entity.targetId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+        private bool ApproveFeeConcession(int targetId, ApprovalViewModel user)
+        {
+            bool output = false;
+            var feeConcessionRecord = (from s in context.TBL_LOAN_RATE_FEE_CONCESSION_
+                                       where s.CONCESSIONID == targetId
+                                      && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                       select s).FirstOrDefault();
+            TBL_LOAN_APPLICATION_DETAIL loanDetailRecord = null;
+            TBL_LOAN_APPLICATION_DETL_FEE feeRecord = null;
+            if (feeConcessionRecord.CONCESSIONTYPEID == (short)FeeConcessionTypeEnum.Interest)
+            {
+                loanDetailRecord = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                                    where a.LOANAPPLICATIONDETAILID == feeConcessionRecord.LOANAPPLICATIONDETAILID
+                                    select a).FirstOrDefault();
+            }
+            else if (feeConcessionRecord.CONCESSIONTYPEID == (short)FeeConcessionTypeEnum.Fee && feeConcessionRecord.LOANCHARGEFEEID != null)
+            {
+                feeRecord = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
+                             where a.LOANAPPLICATIONDETAILID == feeConcessionRecord.LOANAPPLICATIONDETAILID
+                             && a.LOANCHARGEFEEID == feeConcessionRecord.LOANCHARGEFEEID
+                             select a).FirstOrDefault();
+            }
+
+
+            if (workFlow.NewState != (int)ApprovalState.Ended)
+            {
+                feeConcessionRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
+            }
+            else if (workFlow.NewState == (int)ApprovalState.Ended)
+            {
+                feeConcessionRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                if (loanDetailRecord != null && feeConcessionRecord.CONCESSIONTYPEID == (short)FeeConcessionTypeEnum.Interest )
+                {
+                    loanDetailRecord.APPROVEDINTERESTRATE = feeConcessionRecord.CONCESSION;
+                }
+                else if (feeRecord != null && feeConcessionRecord.CONCESSIONTYPEID == (short)FeeConcessionTypeEnum.Fee)
+                {
+                    feeRecord.HASCONSESSION = true;
+                    feeRecord.CONSESSIONREASON = feeConcessionRecord.CONSESSIONREASON;
+                    feeRecord.RECOMMENDED_FEERATEVALUE = (decimal)feeConcessionRecord.CONCESSION;
+                    feeRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                }        
+            }
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistUpdated,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Approve fee concession with concessionId: {targetId}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            output = context.SaveChanges() > 0;
+            return output;
+        }
+        public bool ValidateFeeConcession(int loanApplicationDetailId, int? loanChargeFeeId)
+        {
+            bool returnVal = false;
+            var exist = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION_
+                         where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId &&
+                         a.LOANCHARGEFEEID == loanChargeFeeId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                         select a).ToList();
+
+            if (exist.Any())
+            {
+                returnVal = true;
+            }
+            return returnVal;
         }
     }
 }

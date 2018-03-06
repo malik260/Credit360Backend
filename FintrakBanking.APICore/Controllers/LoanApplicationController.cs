@@ -960,5 +960,23 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error Occured =>  {e.Message}" });
             }
         }
+        [HttpGet]
+        [Route("loan-application/search")]
+        public HttpResponseMessage SearchLoanApplication(string searchString)
+        {
+            try
+            {
+                var response = repo.SearchForLoan(searchString);
+                if (response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record Found for " + searchString });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
 }
