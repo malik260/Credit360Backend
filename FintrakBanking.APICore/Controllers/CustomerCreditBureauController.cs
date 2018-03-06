@@ -205,25 +205,25 @@ namespace FintrakBanking.APICore.Controllers
         #region Integration
         [HttpPost]
         [Route("credit-bureau-search")]
-        public HttpResponseMessage GetCustomerCreditMatch(List<CreditBureauSearchViewModel> searchInfoList)
+        public HttpResponseMessage GetCustomerCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
             try
             {
-                foreach (var model in searchInfoList)
-                {
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-                    model.staffId = token.GetStaffId;
-                }
+                // foreach (var model in searchInfoList)
+                //{
+                searchInfoList.applicationUrl = HttpContext.Current.Request.Path;
+                searchInfoList.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                searchInfoList.createdBy = token.GetStaffId;
+                searchInfoList.companyId = token.GetCompanyId;
+                searchInfoList.staffId = token.GetStaffId;
+               // }
 
                 var result = repo.GetCustomerCreditMatch(searchInfoList);
 
                 if (result != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, date = result, message = " Search Completed" });
+                                            new { success = true, data = result, message = " Search Completed" });
                 }
                 else
                 {

@@ -36,7 +36,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId)
         {
             List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
-
+            var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId);
             var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
             var customer = from a in context.TBL_CUSTOMER
                            where a.DELETED == false && a.CUSTOMERID == customerId
@@ -75,6 +75,7 @@ namespace FintrakBanking.Repositories.Credit
                                riskRatingId = a.RISKRATINGID,
                                riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                                customerBVN = a.CUSTOMERBVN,
+                               rcNumber = customerInfo.Any() ? customerInfo.FirstOrDefault().REGISTRATIONNUMBER : null,
                                isCreditBureauUploadCompleted = false,
                                companyDirectorId = null,
                                creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false
@@ -221,14 +222,11 @@ namespace FintrakBanking.Repositories.Credit
         #endregion
 
         #region Integration 
-        public List<string> GetCustomerCreditMatch(List<CreditBureauSearchViewModel> searchInfoList)
+        public List<string> GetCustomerCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
             var creditBureau = new CreditBureauProcess();
             List<string> searchResult = new List<string>();
-            foreach (var searchInfo in searchInfoList)
-            {
-               searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfo));
-            }
+            searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfoList));
             return searchResult;
         }
         #endregion
