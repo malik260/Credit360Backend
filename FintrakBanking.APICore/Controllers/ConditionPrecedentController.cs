@@ -81,7 +81,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpPost]
         [Route("condition-precedent/selected")]
         public HttpResponseMessage AddSelectedConditionPrecedent([FromBody] SelectedIdsViewModel entity)
@@ -106,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
         
         #region CP template
 
-                [HttpGet]
+        [HttpGet]
         [Route("condition-precedent-template/application/{applicationId}")]
         public HttpResponseMessage GetConditionPrecedentDefaultByApplicationId(int applicationId)
         {

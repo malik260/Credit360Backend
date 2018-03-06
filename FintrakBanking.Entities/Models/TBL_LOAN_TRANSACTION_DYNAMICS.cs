@@ -10,7 +10,9 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_LOAN_TRANSACTION_DYNAMICS
     {
         [Key]
-        public int DYNAMICSID { get; set; }
+        public int LOANDYNAMICSID { get; set; }
+
+        public int? DYNAMICSID { get; set; }
 
         [Required]
         [StringLength(1000)]

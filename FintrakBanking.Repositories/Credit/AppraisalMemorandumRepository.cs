@@ -154,7 +154,7 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        private void LoadConditionsAndDynamics(int loanApplicationId)
+        /*private void LoadConditionsAndDynamics(int loanApplicationId)
         {
             List<int?> productIds = null;
             List<int> camProductIds = null;
@@ -225,7 +225,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 context.SaveChanges();
             }
-        }
+        }*/
 
         private IQueryable<int> GetAllCamProductIds()
         {
@@ -321,7 +321,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = general.GetApplicationDate();
             List<TBL_LOAN_APPLICATION_DETAIL> items = null;
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
-            LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
+            // LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
 
             // WORKFLOW
             workflow.StaffId = model.createdBy;
