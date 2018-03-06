@@ -22,6 +22,7 @@ using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 
 namespace WinApp
 {
@@ -36,9 +37,11 @@ namespace WinApp
         ICustomerFSRatioRepository cust;
         ILoanRepository loan;
         ICreditLimitValidationsRepository credit;
+        ICustomerStagingRepository customer;
         public Form1(FinTrakBankingContext _context , IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction,
             ILoanScheduleRepository _loanSchedule, ICustomerFSRatioRepository _cust, ILoanRepository _loan,
-            IAuditTrailRepository _auditTrail, ILoanOperationsRepository _loanOperation , ICreditLimitValidationsRepository _credit)
+            IAuditTrailRepository _auditTrail, ILoanOperationsRepository _loanOperation , ICreditLimitValidationsRepository _credit,
+            ICustomerStagingRepository _customer)
         //IGeneralSetupRepository _genSetup )
         {
             InitializeComponent();
@@ -51,6 +54,7 @@ namespace WinApp
             this.cust = _cust;
             this.loan = _loan;
             credit = _credit;
+            customer = _customer;
 
         }
 
@@ -110,6 +114,15 @@ namespace WinApp
             //cust.GetCustomerFSRatioValues(customeId);
             //loan.GetCustomerTotalOutstandingBalance(customeId);
             //credit.ValidateAmountByCustomer(customeId);
+            //customer.GetIntegratedCustomerInformation("1000021211");
+            CustomerDetails ccc = new CustomerDetails();
+            //ccc.GetCustomerByAccountNumber("1000021211").GetAwaiter().GetResult();
+           // Task.Run(async () => { await SubscribeMembersusingAPI(list); }).GetAwaiter().GetResult();
+            //Task.Run(async() => { await ccc.RunAsync();}).GetAwaiter().GetResult();
+           // Task.Run(async () => { await ccc.GetAllCustomers(); }).GetAwaiter().GetResult();
+           Task.Run(async () => { await ccc.GetCustomerByAccountNumber("1000021211"); }).GetAwaiter().GetResult();
+            //ccc.RunAsync().GetAwaiter().GetResult();
+            //ccc.GetAllCustomers().GetAwaiter().GetResult();
             MessageBox.Show("Successful", "Fintrak");
 
 

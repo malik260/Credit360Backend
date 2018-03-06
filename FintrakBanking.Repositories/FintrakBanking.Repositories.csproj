@@ -40,6 +40,9 @@
     <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.SqlServerCompact.6.2.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NodaTime, Version=2.2.2.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
       <HintPath>..\packages\NodaTime.2.2.2\lib\net45\NodaTime.dll</HintPath>
     </Reference>
@@ -57,6 +60,9 @@
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.4\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
@@ -174,6 +180,10 @@
     <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
       <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
       <Name>FintrakBanking.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FinTrakBanking.ThirdPartyIntegration\FinTrakBanking.ThirdPartyIntegration.csproj">
+      <Project>{81C64D5D-3674-499E-B718-257AA862B1B2}</Project>
+      <Name>FinTrakBanking.ThirdPartyIntegration</Name>
     </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
       <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>

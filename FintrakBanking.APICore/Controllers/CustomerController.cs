@@ -8,6 +8,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -148,7 +149,9 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = stagingRepo.GetIntegratedCustomerInformation(searchTerm);
-                if (data == null)
+                //CustomerDetails customer = new CustomerDetails();
+                //var data =   customer.GetCustomerByAccountNumber(searchTerm).GetAwaiter().GetResult(); ;
+                if (data.Count<= 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });

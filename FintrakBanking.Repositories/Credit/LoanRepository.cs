@@ -3311,7 +3311,8 @@ namespace FintrakBanking.Repositories.Credit
                                             .Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.CONTINGENTAMOUNT)) :
                                             0)
                             ),
-                            customerAccounts = (from k in context.TBL_CASA
+                customerAccounts = (
+                            from k in context.TBL_CASA
                                                 where k.DELETED == false
                                                 && k.CUSTOMERID == d.CUSTOMERID
                                                 select (

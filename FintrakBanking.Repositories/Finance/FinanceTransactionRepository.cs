@@ -136,6 +136,16 @@ namespace FintrakBanking.Repositories.Finance
 
                         UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
                     }
+                    else if (glClass == GLClassEnum.LoanSchedule)
+                    {
+                        item.casaAccountId = null;
+                        int referenceCount = 0;
+                        
+                        referenceCount = context.TBL_LOAN.Count(x => x.LOANREFERENCENUMBER == item.sourceReferenceNumber);
+
+                        if(referenceCount <= 0)
+                            throw new Exception($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                    }
                     else
                     { item.casaAccountId = null; }
 

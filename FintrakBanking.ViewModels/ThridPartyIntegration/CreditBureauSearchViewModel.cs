@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 namespace FintrakBanking.ViewModels.ThridPartyIntegration
 {
 
-
-
-
-    public class CreditBureauSearchViewModel : GeneralEntity
+    public class CreditBureauSearchViewModel  : GeneralEntity
     {
         public string productId;
 

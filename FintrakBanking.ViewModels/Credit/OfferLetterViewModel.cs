@@ -42,6 +42,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string repaymentTerms { get; set; }
         public string repaymentSchedule { get; set; }
+        public string purpose { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity

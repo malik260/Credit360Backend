@@ -7,6 +7,22 @@ namespace FintrakBanking.ViewModels.CASA
 {
     public class CasaViewModel : GeneralEntity
     {
+
+        //public string accountNumber { get; set; }
+        //public string accountName { get; set; }
+        //public string product { get; set; }
+        //public string productType { get; set; }
+        //public string productCode { get; set; }
+        //public string productName { get; set; }
+        //public string accountDetail { get { return (this.accountNumber + "(" + this.accountName + ")"); } }
+        //public string currencyType { get; set; }
+        //public decimal balance { get; set; }
+        //public string branch { get; set; }
+        //public string accountStatus { get; set; }
+        //public DateTime lastTransactionDate { get; set; }
+
+
+
         public int casaAccountId { get; set; }
         public string productAccountNumber { get; set; }
         public string productAccountName { get; set; }

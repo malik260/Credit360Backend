@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.Credit
                                maritalStatus = a.MARITALSTATUS.Value,
                                title = a.TITLE,
                                middleName = a.MIDDLENAME,
-                               customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                               //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                                customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                                nationality = a.NATIONALITY,
                                occupation = a.OCCUPATION,

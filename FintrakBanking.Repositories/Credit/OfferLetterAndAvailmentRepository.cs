@@ -12,6 +12,8 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
+//using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -463,7 +465,12 @@ namespace FintrakBanking.Repositories.Credit
         }
         public Form3800ViewModel GenerateForm3800Template(string applicationRefNumber)
         {
+            NumberFormatInfo format = new System.Globalization.NumberFormatInfo();
+            format.CurrencyDecimalDigits = 2;
+            format.CurrencyDecimalSeparator = ",";
+            format.CurrencyGroupSeparator = "";
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+            var currentDate = DateTime.Now;
 
             var targetAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber);
 
@@ -539,7 +546,9 @@ namespace FintrakBanking.Repositories.Credit
                             interestRate = b.APPROVEDINTERESTRATE,
                             purpose = b.LOANPURPOSE,
                             applicationDate = applDate,
-                        }).ToList();
+                            approvedAmount = b.APPROVEDAMOUNT,
+                            //(string)approvedAmount = decimal.Parse(b.APPROVEDAMOUNT).ToString(format),
+        }).ToList();
 
 
 
@@ -752,6 +761,8 @@ namespace FintrakBanking.Repositories.Credit
                     $"<strong> Facility Type </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:130.5pt'><p> &nbsp;</p>" +
                     $"<strong> Purpose </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:130.5pt'><p> &nbsp;</p>" +
+                    $"<strong> Limits </strong></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:49.5pt'><p> &nbsp;</p>" +
                     $"<strong> Tenor </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
@@ -767,6 +778,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmount}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate}</p></td>" +
@@ -787,7 +799,7 @@ namespace FintrakBanking.Repositories.Credit
             var branch = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_BRANCH.BRANCHNAME;
             //var info = data;
 
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData, currentDate);
 
             if (preparedTemplate != null)
             {
@@ -863,7 +875,7 @@ namespace FintrakBanking.Repositories.Credit
             //return templateLink;
         }
 
-        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition)
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition, DateTime currentDate)
         {
             string body;
 
@@ -880,6 +892,7 @@ namespace FintrakBanking.Repositories.Credit
             body = body.Replace("{@Customer}", customer);
             body = body.Replace("{@Fees}", feecondition);
             body = body.Replace("{@facility}", facilitycondition);
+            body = body.Replace("{@CurrentDate}", currentDate.ToLongDateString());
             return body;
         }
 

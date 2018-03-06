@@ -190,6 +190,7 @@
     <Compile Include="Setups\Risk\RiskAssessmentIndexViewModels.cs" />
     <Compile Include="Setups\Risk\RiskRatingViewModel.cs" />
     <Compile Include="ThridPartyIntegration\CreditBureauSearchViewModel.cs" />
+    <Compile Include="ThridPartyIntegration\CasaIntegrationViewModel.cs" />
     <Compile Include="UserInfo.cs" />
     <Compile Include="WorkFlow\ApprovalTrailViewModel.cs" />
     <Compile Include="WorkFlow\ApprovalViewModel.cs" />
