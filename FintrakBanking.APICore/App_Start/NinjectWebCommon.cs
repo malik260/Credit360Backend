@@ -55,7 +55,6 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Reports;
     using FintrakBanking.Repositories.Setups.Credit;
     using Ninject.Web.Common.WebHost;
-
     public static class NinjectWebCommon
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
@@ -195,4 +194,5 @@ namespace FintrakBanking.APICore.App_Start
         }
 
     }
+    
 }

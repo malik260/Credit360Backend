@@ -6,8 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("SYSDIAGRAMS")]
-    public partial class SYSDIAGRAM
+    public partial class SYSDIAGRAMS
     {
         [Required]
         [StringLength(128)]

@@ -52,7 +52,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     createUpdate = "created";
                 }
-               if (entity.customerTypeId == (int)CustomerTypeEnum.Individual)
+                if (entity.customerTypeId == (int)CustomerTypeEnum.Individual)
                 {
                     entity.subSectorId = 389;
                 }
@@ -655,7 +655,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (entity.companyInfomationId != 0 || entity.companyInfomationId < 0)
                 {
                     createUpdate = "updated";
-                   
+
                 }
                 else
                 {
@@ -704,9 +704,16 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 entity.userBranchId = (short)token.GetBranchId;
 
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = (short)token.GetCompanyId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
 
+                if (repo.ValidateModifiedPhoneRecord(entity.customerId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                           new { success = false, message = "Customer Phone Contact Information is already undergoing approval." });
+                }
                 var data = repo.AddCustomerPhoneContact(entity);
                 if (data)
                 {
@@ -742,7 +749,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     entity.addressTypeId = (int)CustomerAddressTypeEnum.Corporate;
                 }
-                if (repo.ValidateModifiedCustomerRecord(entity.customerId))
+                if (repo.ValidateModifiedAddressRecord(entity.customerId))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "Customer Address Information is already undergoing approval." });
@@ -1055,11 +1062,11 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpDelete]
         [Route("customer-children/{childId}")]
-        public HttpResponseMessage DeleteCustomerChild( int childId)
+        public HttpResponseMessage DeleteCustomerChild(int childId)
         {
             try
             {
-             
+
                 var data = repo.DeleteChild(childId);
                 if (data)
                 {
@@ -1403,7 +1410,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = proRepo.GetCustomerProductFeeByCustomerId(token.GetCompanyId,customerId);
+                var data = proRepo.GetCustomerProductFeeByCustomerId(token.GetCompanyId, customerId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1425,7 +1432,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = proRepo.GetCustomerProductFeeByProductId(token.GetCompanyId,productId);
+                var data = proRepo.GetCustomerProductFeeByProductId(token.GetCompanyId, productId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1476,7 +1483,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                
+
 
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -1504,7 +1511,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-              
+
                 var data = repo.ValidateCustomerCode(customerCode);
                 if (data)
                 {
@@ -1611,7 +1618,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("customer/approvals/temp")]
         public HttpResponseMessage GetAllCustomerInformationAwaitingApproval()
         {
-            try 
+            try
             {
                 var custInfo = repo.GetAllCustomerInformationAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 

@@ -26,7 +26,7 @@ namespace FintrakBanking.Entities.Models
 
         public short? PRODUCTID { get; set; }
 
-        public short? RESPONSE_TYPEID { get; set; }
+        public short RESPONSE_TYPEID { get; set; }
 
         public int CREATEDBY { get; set; }
 

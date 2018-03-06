@@ -52,5 +52,9 @@ namespace FintrakBanking.Interfaces.Credit
         List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity);
         List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity);
         List<ProductLimitValidationViewModel> GetProductLimitValidation(int applicationId, int classId);
+
+        List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId);
+        List<RecommendedCollateralViewModel> AddRecommendedCollateral(RecommendedCollateralViewModel entity);
+        List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity);
     }
 }

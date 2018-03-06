@@ -16,7 +16,9 @@ namespace FintrakBanking.Entities.Models
         }
 
         [Key]
-        public int CONDITIONID { get; set; }
+        public int LOANCONDITIONID { get; set; }
+
+        public int? CONDITIONID { get; set; }
 
         [Required]
         [StringLength(1000)]
@@ -30,16 +32,16 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
-        public short? RESPONSE_TYPEID { get; set; }
+        public short RESPONSE_TYPEID { get; set; }
 
-        public short? CHECKLISTSTATUSID1 { get; set; }
+        public short? CHECKLISTSTATUSID { get; set; }
 
-        public short? CHECKLISTSTATUSID2 { get; set; }
+        public bool? CHECKLISTVALIDATED { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? DEFEREDDATE { get; set; }
 
-        public short? APPROVALSTATUSID { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
 
@@ -54,8 +56,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
 
         public virtual TBL_CHECKLIST_STATUS TBL_CHECKLIST_STATUS { get; set; }
-
-        public virtual TBL_CHECKLIST_STATUS TBL_CHECKLIST_STATUS1 { get; set; }
 
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
 

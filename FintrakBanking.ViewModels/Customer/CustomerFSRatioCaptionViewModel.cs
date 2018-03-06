@@ -26,10 +26,10 @@ namespace FintrakBanking.ViewModels.Customer
         public DateTime fsDate2 { get; set; }
         public DateTime fsDate3 { get; set; }
         public DateTime fsDate4 { get; set; }
-        public decimal ratioValue1 { get; set; }
-        public decimal ratioValue2 { get; set; }
-        public decimal ratioValue3 { get; set; }
-        public decimal ratioValue4 { get; set; }
+        public string ratioValue1 { get; set; }
+        public string ratioValue2 { get; set; }
+        public string ratioValue3 { get; set; }
+        public string ratioValue4 { get; set; }
         public string fsGroupCaption { get; set; }
     }
 

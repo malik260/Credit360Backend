@@ -259,7 +259,7 @@
     </Reference>
     <Reference Include="XLeratorDLL-financial, Version=1.15.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -336,6 +336,7 @@
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
     <Compile Include="Controllers\EndOfDayController.cs" />
+    <Compile Include="Controllers\FeeConcessionController.cs" />
     <Compile Include="Controllers\FinanceTransactionController.cs" />
     <Compile Include="Controllers\CreditLimitValidationsController.cs" />
     <Compile Include="Controllers\CasaController.cs" />
@@ -354,6 +355,7 @@
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\FileUploadController.cs" />
     <Compile Include="Controllers\GeneralSetupController.cs" />
+    <Compile Include="Controllers\genericDocumentUploadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JobRequestController.cs" />
     <Compile Include="Controllers\JobTitleController.cs" />
@@ -812,6 +814,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\CustomerCreditBureau\" />
     <Folder Include="Views\EndOfDay\" />
+    <Folder Include="Views\FeeConcession\" />
     <Folder Include="Views\LoanOperation\" />
     <Folder Include="Views\Override\" />
     <Folder Include="Views\TransactionDynamics\" />

@@ -12,6 +12,8 @@ namespace FintrakBanking.Common.Enum
         Setup = 2,
         Products = 3,
         CAM = 4,
-        LoanManagement = 5
+        LoanManagement = 5,
+        OverrideApproval = 6,
+        LoanReviewApplication = 7
     }
 }

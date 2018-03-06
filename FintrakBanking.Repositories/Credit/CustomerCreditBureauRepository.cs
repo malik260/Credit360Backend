@@ -7,6 +7,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.CreditBureau;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,25 +18,25 @@ namespace FintrakBanking.Repositories.Credit
     public class CustomerCreditBureauRepository : ICustomerCreditBureauRepository
     {
         private FinTrakBankingContext context;
-        private IAuditTrailRepository auditTrail;
-        private IGeneralSetupRepository genSetup;
-        private ICreditBureauProcess creditBureau;
-        private IWorkflow workflow;
-        
-        public CustomerCreditBureauRepository(IAuditTrailRepository _auditTrail, IGeneralSetupRepository _genSetup, 
-            FinTrakBankingContext _context, ICreditBureauProcess _creditBureau)
+        //private IAuditTrailRepository auditTrail;
+        //private IGeneralSetupRepository genSetup;
+
+        public CustomerCreditBureauRepository(
+            //IAuditTrailRepository _auditTrail
+            //, IGeneralSetupRepository _genSetup, 
+            FinTrakBankingContext _context
+            )
         {
             this.context = _context;
-            auditTrail = _auditTrail;
-            this.genSetup = _genSetup;
-            creditBureau = _creditBureau;
+            //auditTrail = _auditTrail;
+            //this.genSetup = _genSetup;
         }
 
         #region Credit Bureau 
         public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId)
         {
             List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
-
+            var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId);
             var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
             var customer = from a in context.TBL_CUSTOMER
                            where a.DELETED == false && a.CUSTOMERID == customerId
@@ -74,6 +75,7 @@ namespace FintrakBanking.Repositories.Credit
                                riskRatingId = a.RISKRATINGID,
                                riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                                customerBVN = a.CUSTOMERBVN,
+                               rcNumber = customerInfo.Any() ? customerInfo.FirstOrDefault().REGISTRATIONNUMBER : null,
                                isCreditBureauUploadCompleted = false,
                                companyDirectorId = null,
                                creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false
@@ -220,13 +222,11 @@ namespace FintrakBanking.Repositories.Credit
         #endregion
 
         #region Integration 
-        public List<string> GetCustomerCreditMatch(List<CreditBureauSearchViewModel> searchInfoList)
+        public List<string> GetCustomerCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
+            var creditBureau = new CreditBureauProcess();
             List<string> searchResult = new List<string>();
-            foreach (var searchInfo in searchInfoList)
-            {
-                searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfo));
-            }
+            searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfoList));
             return searchResult;
         }
         #endregion

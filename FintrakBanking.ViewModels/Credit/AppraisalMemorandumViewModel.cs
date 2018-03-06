@@ -250,4 +250,15 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int productClassId { get; set; }
     }
+
+    public class RecommendedCollateralViewModel : GeneralEntity
+    {
+        public int? id { get; set; }
+        public decimal collateralValue { get; set; }
+        public string collateralDetail { get; set; }
+        public decimal stampedToCoverAmount { get; set; }
+        public int? applicationDetailId { get; set; }
+        public string productCustomerName { get; set; }
+        public int applicationId { get; set; }
+    }
 }
