@@ -59,8 +59,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     loanReviewApplicationId = x.a.LOANREVIEWAPPLICATIONID,
                     applicationDate = x.a.DATECREATED,
-                    operationTypeId = x.a.OPERATIONTYPEID,
-                    operationType = context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == x.a.OPERATIONTYPEID).OPERATIONNAME,
+                    operationTypeId = x.a.OPERATIONID,
+                    operationType = context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == x.a.OPERATIONID).OPERATIONNAME,
                     referenceNumber = x.l.LOANREFERENCENUMBER,
                     principalAmount = x.l.PRINCIPALAMOUNT,
                     effectiveDate = x.l.EFFECTIVEDATE,
@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 LOANID = model.loanId,
                 PRODUCTTYPEID = model.productTypeId,
-                OPERATIONTYPEID = model.operationTypeId,
+                OPERATIONID = model.operationTypeId,
                 REVIEWDETAILS = model.reviewDetails,
                 INTERATERATE = model.interateRate,
                 PREPAYMENT = model.prepayment,

@@ -14,6 +14,7 @@ namespace FintrakBanking.Entities.Models
         {
             TBL_CREDIT_APPRAISAL_MEMO_DETL = new HashSet<TBL_CREDIT_APPRAISAL_MEMO_DETL>();
             TBL_CREDIT_APPRAISAL_MEMO_DOCU = new HashSet<TBL_CREDIT_APPRAISAL_MEMO_DOCU>();
+            TBL_CREDIT_APPRAISAL_MEMO_LOG = new HashSet<TBL_CREDIT_APPRAISAL_MEMO_LOG>();
         }
 
         [Key]
@@ -52,6 +53,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMO_DOCU> TBL_CREDIT_APPRAISAL_MEMO_DOCU { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMO_LOG> TBL_CREDIT_APPRAISAL_MEMO_LOG { get; set; }
 
         public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
     }

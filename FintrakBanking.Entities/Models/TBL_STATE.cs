@@ -27,6 +27,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string STATENAME { get; set; }
 
+        [StringLength(10)]
+        public string STATECODE { get; set; }
+
         public int? REGIONID { get; set; }
 
         [Column(TypeName = "money")]

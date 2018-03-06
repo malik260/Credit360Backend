@@ -1106,7 +1106,7 @@ namespace FintrakBanking.Repositories.Credit
                                  select new ConditionPrecedentViewModel()
                                  {
                                      condition = c.CONDITION,
-                                     conditionId = c.CONDITIONID,
+                                     conditionId = c.LOANCONDITIONID,
                                      loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                      loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                                      isExternal = c.ISEXTERNAL,
@@ -1126,7 +1126,7 @@ namespace FintrakBanking.Repositories.Credit
                                  select new ConditionPrecedentViewModel()
                                  {
                                      condition = c.CONDITION,
-                                     conditionId = c.CONDITIONID,
+                                     conditionId = c.LOANCONDITIONID,
                                      loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                      loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                                      isExternal = c.ISEXTERNAL,
@@ -1150,7 +1150,7 @@ namespace FintrakBanking.Repositories.Credit
                               select new ConditionPrecedentViewModel()
                               {
                                   condition = c.CONDITION,
-                                  conditionId = c.CONDITIONID,
+                                  conditionId = c.LOANCONDITIONID,
                                   status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                   validationStatus = c.CHECKLISTVALIDATED,
@@ -1168,7 +1168,7 @@ namespace FintrakBanking.Repositories.Credit
                               select new ConditionPrecedentViewModel()
                               {
                                   condition = c.CONDITION,
-                                  conditionId = c.CONDITIONID,
+                                  conditionId = c.LOANCONDITIONID,
                                   status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                   validationStatus = c.CHECKLISTVALIDATED,
@@ -1195,7 +1195,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Deferred)
             {
                 var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
-                deferral.CONDITIONID = data.CONDITIONID;
+                deferral.CONDITIONID = data.LOANCONDITIONID;
                 deferral.DEFERRALREASON = model.reason;
                 deferral.DEFERREDDATE = model.deferedDate == null ? DateTime.Now : (DateTime)model.deferedDate;
                 deferral.DATETIMECREATED = DateTime.Now;
@@ -1234,7 +1234,7 @@ namespace FintrakBanking.Repositories.Credit
                             staffId = model.createdBy,
                             companyId = model.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = data.CONDITIONID,
+                            targetId = data.LOANCONDITIONID,
                             operationId = (int)OperationsEnum.ChecklistApproval,
                             BranchId = model.userBranchId,
                             comment = "Initiation",
@@ -1277,7 +1277,7 @@ namespace FintrakBanking.Repositories.Credit
                             deferralDuration = 1,
                             cummulativeDays = 1,
                             condition = b.CONDITION,
-                            conditionId = b.CONDITIONID,
+                            conditionId = b.LOANCONDITIONID,
                             loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
@@ -1413,7 +1413,7 @@ namespace FintrakBanking.Repositories.Credit
             data.LASTUPDATEDBY = (int)model.createdBy;
 
             var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
-            deferral.CONDITIONID = data.CONDITIONID;
+            deferral.CONDITIONID = data.LOANCONDITIONID;
             deferral.DEFERRALREASON = model.reason;
             deferral.DEFERREDDATE = (DateTime)model.deferedDate;
             deferral.DATETIMECREATED = DateTime.Now;
