@@ -159,7 +159,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.RESPONSESTAFFID = this.staffId;
             }
 
-            this.SendNotifications();
+           // this.SendNotifications();
 
             if (this.comment == "flow_test") { throw new Exception("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", CURRL:" + this.fromLevelId + ", NEXTL:" + this.nextLevelId + ", TO:" + this.toStaffId); }
 
@@ -652,7 +652,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 var operation = context.TBL_OPERATIONS.Find(this.operationId);
                 var trails = trailLog.OrderBy(x => x.APPROVALTRAILID);
-                var owner = context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
+                var owner = trails == null ? null : context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
 
                 int targetId = this.targetId;
                 int operationId = this.operationId;
@@ -684,7 +684,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         .ToArray();
                 }
 
-                var ownerMessageBody = $"Dear {owner.FIRSTNAME}, <br /><br />" +
+                var ownerMessageBody = owner == null ? "" : $"Dear {owner.FIRSTNAME}, <br /><br />" +
                             $"The {operationName} approval process you initiated have been {status}{level}. <br /><br />" +
                             $"See details here {link}";
 
@@ -696,20 +696,23 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if (emailNotification)
                 {
-                    message = new TBL_MESSAGE_LOG // INITIATOR
+                    if (owner != null)
                     {
-                        TOADDRESS = owner.EMAIL,
-                        MESSAGESUBJECT = ownerMessageSubject,
-                        MESSAGEBODY = ownerMessageBody,
-                        MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-                        MESSAGETYPEID = (short)MessageTypeEnum.Email,
-                        FROMADDRESS = this.support,
-                        DATETIMERECEIVED = DateTime.Now,
-                        SENDONDATETIME = DateTime.Now,
-                        TARGETID = targetId,
-                        OPERATIONID = operationId
-                    };
-                    context.TBL_MESSAGE_LOG.Add(message);
+                        message = new TBL_MESSAGE_LOG // INITIATOR
+                        {
+                            TOADDRESS = owner.EMAIL,
+                            MESSAGESUBJECT = ownerMessageSubject,
+                            MESSAGEBODY = ownerMessageBody,
+                            MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                            MESSAGETYPEID = (short)MessageTypeEnum.Email,
+                            FROMADDRESS = this.support,
+                            DATETIMERECEIVED = DateTime.Now,
+                            SENDONDATETIME = DateTime.Now,
+                            TARGETID = targetId,
+                            OPERATIONID = operationId
+                        };
+                        context.TBL_MESSAGE_LOG.Add(message);
+                    }
 
                     message = new TBL_MESSAGE_LOG // RECIEVERS
                     {
