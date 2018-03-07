@@ -21,5 +21,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool RemoveLoanTransactionDynamics(int id, UserInfo user);
 
         bool EditLoanTransactionDynamics(int id, TransactionDynamicsViewModel entity);
+
+        List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByApplicationId(int applicationId);
+
+        List<TransactionDynamicsViewModel> AddSelectedTransactionDynamics(SelectedIdsViewModel entity);
     }
 }
