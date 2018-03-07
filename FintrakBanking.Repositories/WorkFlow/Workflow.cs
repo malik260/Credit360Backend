@@ -651,8 +651,18 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (emailNotification || smsNotification)
             {
                 var operation = context.TBL_OPERATIONS.Find(this.operationId);
-                var trails = trailLog.OrderBy(x => x.APPROVALTRAILID);
-                var owner = context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
+
+                TBL_STAFF owner;
+                if (trailLog.Count() == 0)
+                {
+                    owner = context.TBL_STAFF.Find(this.staffId);
+                }
+                else
+                {
+                    var trails = trailLog.OrderBy(x => x.APPROVALTRAILID);
+                    owner = context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
+                }
+
 
                 int targetId = this.targetId;
                 int operationId = this.operationId;
