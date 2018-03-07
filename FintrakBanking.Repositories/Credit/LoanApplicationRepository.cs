@@ -368,8 +368,8 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
         }
 
-         
-     
+
+
 
         public async Task<bool> UpdateApprovalStatus(ApprovalViewModel entity)
         {
@@ -619,135 +619,119 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                short productClassProcessId = 0;
-                short? productClassId = null;
-                bool isGroupLoan = false;
-                int response = 0; int loanId = 0;
-                if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+                this.data = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber).FirstOrDefault();
+
+                if (loan.isNewApplication)
                 {
-                    isGroupLoan = true;
-                }
-                int casaAccountId = -1;
-                string refNumber = GenerateLoanReference(loan.customerId.Value);
-                if (loan.customerAccount != "N/A")
-                {
-                    casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
-                }
-                
-                var dat = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == loan.productClassId).FirstOrDefault();
-                if (dat != null)
-                {
-                    if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                    if (this.data == null)
                     {
-                        productClassId = null;
-                        productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+                        AddloanApplication(loan);
                     }
-                    if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+
+                    if (loan.LoanApplicationDetail.Count > 0)
                     {
-                        productClassId = loan.productClassId;
-                        productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+                        AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
                     }
+
                 }
-                decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                var loanStatusId = (short)LoanStatusEnum.Inactive;
-
-                var data = new TBL_LOAN_APPLICATION
+                else
                 {
-                    REQUIRECOLLATERAL =  loan .requireCollateral,
-                    TOTALEXPOSUREAMOUNT = totalAmount,
-                    PRODUCTCLASSID = productClassId,
-                    APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
-                    LOANTYPEID = loan.loanTypeId,
-                      PRODUCT_CLASS_PROCESSID = productClassProcessId,
-                    COMPANYID = loan.companyId,
-                    BRANCHID = (short)loan.branchId,
-                    RELATIONSHIPOFFICERID = loan.relationshipOfficerId,
-                    RELATIONSHIPMANAGERID = loan.relationshipManagerId,
-                    MISCODE = loan.misCode,
-                    TEAMMISCODE = loan.teamMisCode,
-                    INTERESTRATE = loan.interestRate,
-                    APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    LOANINFORMATION = loan.loanInformation,
-                    ISRELATEDPARTY = loan.isRelatedParty,
-                    ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed,
-                    CREATEDBY = (int)loan.createdBy,
-                    DATETIMECREATED = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now,
-                    CUSTOMERGROUPID = loan.customerGroupId,
-                    CASAACCOUNTID = loan.casaAccountId,
-                    APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
-                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                    APPLICATIONAMOUNT = loan.proposedAmount,
-                    APPLICATIONTENOR = (loan.proposedTenor * 365) / 12,
-                    ISINVESTMENTGRADE = loan.isInvestmentGrade,
-                    LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
-                    CUSTOMERID = loan.customerId,
-                    SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
-                    OPERATIONID = (int)OperationsEnum.CAM,
+                    UpdateLoanApplication(loan);
+
+                }
+
+                try
+                {
+                    response = context.SaveChanges();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                    throw new DbEntityValidationException(errorMessages);
+                }
+
+                if (response > 0)
+                    if (!loan.isNewApplication)
+                        return data.LOANAPPLICATIONID;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        private void AddloanApplication(LoanApplicationViewModel loan)
+        {
+
+
+            short productClassProcessId = 0;
+            short? productClassId = null;
+            isGroupLoan = false;
+            response = 0;
+            int loanId = 0;
+            if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+            {
+                isGroupLoan = true;
+            }
+            int casaAccountId = -1;
+            string refNumber = GenerateLoanReference(loan.customerId.Value);
+            if (loan.customerAccount != "N/A")
+            {
+                casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
+            }
+
+            var dat = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == loan.productClassId).FirstOrDefault();
+            if (dat != null)
+            {
+                if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                {
+                    productClassId = null;
+                    productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+                }
+                if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                {
+                    productClassId = loan.productClassId;
+                    productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+                }
+            }
+            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
+            var loanStatusId = (short)LoanStatusEnum.Inactive;
+
+            data = new TBL_LOAN_APPLICATION
+            {
+                REQUIRECOLLATERAL = loan.requireCollateral,
+                TOTALEXPOSUREAMOUNT = totalAmount,
+                PRODUCTCLASSID = productClassId,
+                APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
+                LOANTYPEID = loan.loanTypeId,
+                PRODUCT_CLASS_PROCESSID = productClassProcessId,
+                COMPANYID = loan.companyId,
+                BRANCHID = (short)loan.branchId,
+                RELATIONSHIPOFFICERID = loan.relationshipOfficerId,
+                RELATIONSHIPMANAGERID = loan.relationshipManagerId,
+                MISCODE = loan.misCode,
+                TEAMMISCODE = loan.teamMisCode,
+                INTERESTRATE = loan.interestRate,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                LOANINFORMATION = loan.loanInformation,
+                ISRELATEDPARTY = loan.isRelatedParty,
+                ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed,
+                CREATEDBY = (int)loan.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                CUSTOMERGROUPID = loan.customerGroupId,
+                CASAACCOUNTID = loan.casaAccountId,
+                APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                APPLICATIONAMOUNT = loan.proposedAmount,
+                APPLICATIONTENOR = (loan.proposedTenor * 365) / 12,
+                ISINVESTMENTGRADE = loan.isInvestmentGrade,
+                LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
+                CUSTOMERID = loan.customerId,
+                SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
+                OPERATIONID = (int)OperationsEnum.CAM,
 
             };
             if (isGroupLoan)
@@ -796,7 +780,7 @@ namespace FintrakBanking.Repositories.Credit
             this.data.SYSTEMDATETIME = DateTime.Now;
             this.data.CASAACCOUNTID = loan.casaAccountId;
             this.data.APPLICATIONAMOUNT = loan.proposedAmount;
-            this.data.APPLICATIONTENOR = (loan.proposedTenor * 365) / 12; 
+            this.data.APPLICATIONTENOR = (loan.proposedTenor * 365) / 12;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -862,7 +846,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     case (int)TenorMode.Daily: tenor = a.proposedTenor; break;
                     case (int)TenorMode.Monthly: tenor = (a.proposedTenor * 365) / 12; break;
-                    case (int)TenorMode.Yearly: tenor = (a.proposedTenor * 365) ;   break;                 
+                    case (int)TenorMode.Yearly: tenor = (a.proposedTenor * 365); break;
                 }
 
                 var data = new TBL_LOAN_APPLICATION_DETAIL
@@ -919,7 +903,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new Exception("NO FEE is defined for this product(s)");
                 }
-               
+
 
 
             }
@@ -964,7 +948,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISTENORED = entity.isTenored,
                 CURRENCYID = entity.bondCurrencyId,
                 REFERENCENO = entity.referenceNo,
-                 CASAACCOUNTID = entity.casaAccountId,
+                CASAACCOUNTID = entity.casaAccountId,
                 PRINCIPALID = entity.principalId,
                 DATETIMECREATED = DateTime.Now,
                 LOANAPPLICATIONDETAILID = loanApplicationId,
@@ -984,7 +968,7 @@ namespace FintrakBanking.Repositories.Credit
             if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
                 throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
 
-            if (previousSearch.Count() >= 3 )
+            if (previousSearch.Count() >= 3)
                 throw new Exception("You have reached that maximum credit bureau search for this customer");
 
             var data = new TBL_CUSTOMER_CREDIT_BUREAU()
@@ -1009,15 +993,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(c => c.CREDITBUREAUID == model.creditBureauId && c.CUSTOMERID == model.customerId).FirstOrDefault();
 
-            if(data != null) 
-            data.ISREPORTOKAY = status;
+            if (data != null)
+                data.ISREPORTOKAY = status;
 
             return context.SaveChanges() > 0;
         }
 
         public bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model)
         {
-            foreach(var item in model)
+            foreach (var item in model)
             {
                 if (UpdateCreditBureauCustomerReportStatus(status, item) == false) return false;
             }
@@ -1969,42 +1953,43 @@ namespace FintrakBanking.Repositories.Credit
             });
             return data;
         }
+
         public IEnumerable<LoanApplicationViewModel> SearchForLoan(string searchString)
         {
             var applications = (from a in context.TBL_LOAN_APPLICATION
-                               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                               join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                               join d in context.TBL_CASA on c.CUSTOMERID equals d.CUSTOMERID
-                               where (a.APPLICATIONREFERENCENUMBER == searchString
-                                                      || d.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchString.ToLower())
-                                                      || c.FIRSTNAME.ToLower().Contains(searchString.ToLower())
-                                                      || c.MAIDENNAME.ToLower().Contains(searchString.ToLower())
-                                                      || c.MIDDLENAME.ToLower().Contains(searchString.ToLower())
-                                                      || c.CUSTOMERCODE == searchString)
+                                join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                join d in context.TBL_CASA on c.CUSTOMERID equals d.CUSTOMERID
+                                where (a.APPLICATIONREFERENCENUMBER == searchString
+                                                       || d.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchString.ToLower())
+                                                       || c.FIRSTNAME.ToLower().Contains(searchString.ToLower())
+                                                       || c.MAIDENNAME.ToLower().Contains(searchString.ToLower())
+                                                       || c.MIDDLENAME.ToLower().Contains(searchString.ToLower())
+                                                       || c.CUSTOMERCODE == searchString)
 
-                               select new LoanApplicationViewModel
-                               {
-                                   customerName = c.FIRSTNAME + " "+ c.MIDDLENAME + " " + c.LASTNAME,
-                                   customerCode = c.CUSTOMERCODE,
-                                   loanApplicationId = a.LOANAPPLICATIONID,
-                                   loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
-                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                   customerId = a.CUSTOMERID,
-                                   applicationAmount =b.PROPOSEDAMOUNT,
-                                   interestRate = b.PROPOSEDINTERESTRATE,
-                                   applicationTenor = b.PROPOSEDTENOR,
-                                   productName = b.TBL_PRODUCT.PRODUCTNAME,
-                                   submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
-                                   customerInfoValidated = a.CUSTOMERINFOVALIDATED,
-                                   isRelatedParty = a.ISRELATEDPARTY,
-                                   branchName = a.TBL_BRANCH.BRANCHNAME,
-                                   relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
-                                   loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
-                                   operationId = a.OPERATIONID,
-                                   accountNumber =d.PRODUCTACCOUNTNUMBER,
-                               });
+                                select new LoanApplicationViewModel
+                                {
+                                    customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                                    customerCode = c.CUSTOMERCODE,
+                                    loanApplicationId = a.LOANAPPLICATIONID,
+                                    loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                                    applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                    customerId = a.CUSTOMERID,
+                                    applicationAmount = b.PROPOSEDAMOUNT,
+                                    interestRate = b.PROPOSEDINTERESTRATE,
+                                    applicationTenor = b.PROPOSEDTENOR,
+                                    productName = b.TBL_PRODUCT.PRODUCTNAME,
+                                    submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
+                                    customerInfoValidated = a.CUSTOMERINFOVALIDATED,
+                                    isRelatedParty = a.ISRELATEDPARTY,
+                                    branchName = a.TBL_BRANCH.BRANCHNAME,
+                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                                    loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                                    operationId = a.OPERATIONID,
+                                    accountNumber = d.PRODUCTACCOUNTNUMBER,
+                                });
 
-            return applications.GroupBy(x=> x.loanApplicationDetailId).Select(d=>d.FirstOrDefault()).ToList();
+            return applications.GroupBy(x => x.loanApplicationDetailId).Select(d => d.FirstOrDefault()).ToList();
         }
     }
 }
