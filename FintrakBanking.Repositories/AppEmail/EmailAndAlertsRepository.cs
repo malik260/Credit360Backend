@@ -21,6 +21,7 @@ namespace FintrakBanking.Repositories.AppEmail
         private IGeneralSetupRepository genSetup;
         private DateTime applDate;
         private IStaffRepository staffRepo;
+        public string response = string.Empty;
 
         private readonly string supportEmail = ConfigurationManager.AppSettings["SupportEmailAddr"];
 
@@ -129,9 +130,14 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    SaveMessageDetails(messageModel);
+                    if (SaveMessageDetails(messageModel)!=0)
+                    {
+                        response += response = " Covenants Approaching Due Date was logged successfully, "; 
+                    }else
+                        response += response = " Covenants Approaching Due Date looging has failed, ";
 
-                    emailHelpers.SendMail(recipient, additionalRecipient, messageSubject, messageContent, templateUrl);
+
+                    //  emailHelpers.SendMail(recipient, additionalRecipient, messageSubject, messageContent, templateUrl);
                 }
             }
             catch (Exception ex)
@@ -226,9 +232,15 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    SaveMessageDetails(messageModel);
+                    if (SaveMessageDetails(messageModel)!=0)
+                    {
+                        response += response = " Covenants Due Date data was logged successfully, ";
+                    }
+                    else
+                        response += response = " Covenants Due Date data log has failed, ";
 
-                    emailHelpers.SendMail(recipient, additionalRecipient, messageSubject, messageContent, templateUrl);
+
+                    //   emailHelpers.SendMail(recipient, additionalRecipient, messageSubject, messageContent, templateUrl);
                 }
             }
             catch (Exception ex)
@@ -320,7 +332,13 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    SaveMessageDetails(messageModel);
+                    if (SaveMessageDetails(messageModel)!=0)
+                    {
+                        response += response = " Collateral  Property Revaluation was logged successfully, ";
+                    }
+                    else
+                        response += response = " Collateral  Property Revaluation logged has failed, ";
+
 
                     //emailHelpers.SendMail(recipient, null, messageSubject, messageContent, templateUrl);
                 }
@@ -416,7 +434,13 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    SaveMessageDetails(messageModel);
+                    if (SaveMessageDetails(messageModel)!=0)
+                    {
+                        response += response = " Loan Npl Monitoring was logged successfully, ";
+                    }
+                    else
+                        response += response = " Loan Npl Monitoring logging has failed, ";
+
 
                     //emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
                 }
@@ -517,8 +541,12 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    SaveMessageDetails(messageModel);
-
+                    if (SaveMessageDetails(messageModel)!=0)
+                    {
+                        response += response = " Self Liquidating Loan Expiry was logged successfully, ";
+                    }
+                    else
+                        response += response = " Self Liquidating Loan Expiry logging has failed, ";
                     //emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
                 }
             }
@@ -617,7 +645,12 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    SaveMessageDetails(messageModel);
+                    if (SaveMessageDetails(messageModel)!=0)
+                    {
+                        response += response = " Over Draft Loans Almost Due was logged successfully, ";
+                    }
+                    else
+                        response += response = " Over Draft Loans Almost Due has failed, ";
 
                     //emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
                 }
@@ -717,7 +750,12 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    SaveMessageDetails(messageModel);
+                    if (SaveMessageDetails(messageModel)!=0)
+                    {
+                        response += response = " Expired Insurance was logged successfully, ";
+                    }
+                    else
+                        response += response = " Expired Insurance logging has failed, ";
 
                     //emailHelpers.SendMail(recipient, null, messageSubject, messageContent, templateUrl);
                 }
@@ -735,6 +773,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public void SendAlertsOnLoanCASAwithPND()
         {
             var applDate = genSetup.GetApplicationDate();
+            
 
             var data = (from a in context.TBL_LOAN
                         join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
@@ -820,8 +859,12 @@ namespace FintrakBanking.Repositories.AppEmail
                         DateTimeReceived = DateTime.Now,
                         SendOnDateTime = DateTime.Now
                     };
+                    if (SaveMessageDetails(messageModel)!=0)
+                    {
+                        response += response = " Loan CASA with PND was logged successfully, ";
+                    }else
+                        response += response = " Loan CASA with PND logging has failed, ";
 
-                    SaveMessageDetails(messageModel);
 
                     //emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
                 }
@@ -923,7 +966,12 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    SaveMessageDetails(messageModel);
+                    if (SaveMessageDetails(messageModel)!=0)
+                    {
+                        response += response = " Bond and guarantee about to expire was logged successfully, ";
+                    } 
+                    else
+                        response += response = " Bond and guarantee about to expire logging has failed, ";
 
                     //emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
                 }
@@ -938,7 +986,7 @@ namespace FintrakBanking.Repositories.AppEmail
         
         #region Helper Methods
 
-        public void SaveMessageDetails(MessageLogViewModel model)
+        public int SaveMessageDetails(MessageLogViewModel model)
         {
             var message = new TBL_MESSAGE_LOG()
             {
@@ -957,7 +1005,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
             try
             {
-                context.SaveChanges();
+               return context.SaveChanges();
             }
             catch (Exception ex)
             {
