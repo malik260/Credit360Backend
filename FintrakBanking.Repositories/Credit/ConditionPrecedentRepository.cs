@@ -31,7 +31,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => x.APPROVEDPRODUCTID)
                 .Distinct();
 
-            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => ids.Contains((short)x.PRODUCTID))
+            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => ids.Contains((short)x.PRODUCTID) || x.PRODUCTID == null)
             .Select(c => new ConditionPrecedentViewModel
             {
                 conditionId = c.CONDITIONID,

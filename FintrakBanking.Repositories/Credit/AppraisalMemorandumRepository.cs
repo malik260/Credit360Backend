@@ -289,8 +289,18 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int documentId)
         {
             var data = this.context.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Find(documentId);
-
             if (data == null) { return false; }
+
+            if (data.LASTUPDATEDBY != model.lastUpdatedBy) // archive old
+            {
+                context.TBL_CREDIT_APPRAISAL_MEMO_LOG.Add(new TBL_CREDIT_APPRAISAL_MEMO_LOG
+                {
+                    CAMDOCUMENTATION = data.CAMDOCUMENTATION,
+                    APPRAISALMEMORANDUMID = data.APPRAISALMEMORANDUMID,
+                    CREATEDBY = model.lastUpdatedBy,
+                    DATETIMECREATED = DateTime.Now
+                });
+            }
 
             data.CAMDOCUMENTATION = model.camDocumentation;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
