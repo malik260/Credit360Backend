@@ -505,5 +505,56 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        #region recommended collateral
+
+        [HttpGet]
+        [Route("recommended-collateral/{applicationId}")]
+        public HttpResponseMessage GetRecommendedCollateral(int applicationId)
+        {
+            try
+            {
+                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateral(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("recommended-collateral")]
+        public HttpResponseMessage AddRecommendedCollateral([FromBody] RecommendedCollateralViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                List<RecommendedCollateralViewModel> response = repo.AddRecommendedCollateral(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("recommended-collateral")]
+        public HttpResponseMessage UpdateRecommendedCollateral([FromBody] RecommendedCollateralViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                List<RecommendedCollateralViewModel> response = repo.UpdateRecommendedCollateral(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion recommended collateral
+
     }
 }

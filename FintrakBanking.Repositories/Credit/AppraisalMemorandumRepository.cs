@@ -154,7 +154,7 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        private void LoadConditionsAndDynamics(int loanApplicationId)
+        /*private void LoadConditionsAndDynamics(int loanApplicationId)
         {
             List<int?> productIds = null;
             List<int> camProductIds = null;
@@ -225,7 +225,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 context.SaveChanges();
             }
-        }
+        }*/
 
         private IQueryable<int> GetAllCamProductIds()
         {
@@ -321,7 +321,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = general.GetApplicationDate();
             List<TBL_LOAN_APPLICATION_DETAIL> items = null;
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
-            LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
+            // LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
 
             // WORKFLOW
             workflow.StaffId = model.createdBy;
@@ -1103,6 +1103,48 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return limits;
+        }
+
+        public List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Select(x => new RecommendedCollateralViewModel
+                {
+                    id = x.COLLATERALBASICDETAILID,
+                    collateralDetail = x.COLLATERALDETAIL,
+                    collateralValue = x.COLLATERALVALUE,
+                    stampedToCoverAmount = x.STAMPEDTOCOVERAMOUNT,
+                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+                })
+                .ToList();
+        }
+
+        public List<RecommendedCollateralViewModel> AddRecommendedCollateral(RecommendedCollateralViewModel entity)
+        {
+            context.TBL_LOAN_APPLICATION_COLLATRL2.Add(new TBL_LOAN_APPLICATION_COLLATRL2
+            {
+                LOANAPPLICATIONID = entity.applicationId,
+                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                COLLATERALDETAIL = entity.collateralDetail,
+                COLLATERALVALUE = entity.collateralValue,
+                STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
+                DATETIMECREATED=general.GetApplicationDate(),
+                SYSTEMDATETIME=DateTime.Now
+            });
+            context.SaveChanges();
+            return GetRecommendedCollateral(entity.applicationId);
+        }
+
+        public List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity)
+        {
+            var recommendation = context.TBL_LOAN_APPLICATION_COLLATRL2.Find(entity.id);
+            recommendation.LOANAPPLICATIONDETAILID = entity.applicationDetailId;
+            recommendation.COLLATERALDETAIL = entity.collateralDetail;
+            recommendation.COLLATERALVALUE = entity.collateralValue;
+            recommendation.STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount;
+            context.SaveChanges();
+            return GetRecommendedCollateral(entity.applicationId);
         }
     }
 }

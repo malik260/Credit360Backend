@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,14 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Credit
 {
-   public interface IFeeConcessionRepository
+    public interface IFeeConcessionRepository
     {
+        IEnumerable<FeeConcessionTypeViewModel> GetConcessionFeeType();
+        IEnumerable<LoanFeeChargesViewModel> GetAllLoanFeeChargeByDetailId(int loanApplicationDetailId);
+        IEnumerable<FeeConcessionViewModel> GetAllConcessionFee(int loanApplicationDetailId);
+        bool AddUpdateFeeConcession(FeeConcessionViewModel model);
+        bool GoForApproval(ApprovalViewModel entity);
+        bool ValidateFeeConcession(int loanApplicationDetailId, int? loanChargeFeeId);
+        IEnumerable<FeeConcessionViewModel> GetAllConcessionFeeAwaitingApproval(int staffId, int companyId);
     }
 }
