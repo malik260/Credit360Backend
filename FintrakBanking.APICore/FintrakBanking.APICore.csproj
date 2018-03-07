@@ -439,6 +439,13 @@
     <Compile Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.aspx.designer.cs">
       <DependentUpon>ExpiredSelfLiquidatingLoans.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx.cs">
+      <DependentUpon>OfferLetterCAMbase.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx.designer.cs">
+      <DependentUpon>OfferLetterCAMbase.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx.cs">
       <DependentUpon>OfferLetter.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -645,6 +652,7 @@
     <Content Include="Reports\Credit\Monitoring\NonPeformingLoans.aspx" />
     <Content Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.aspx" />
+    <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx" />
@@ -828,6 +836,7 @@
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\NonPeformingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
