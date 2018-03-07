@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
@@ -11,32 +12,35 @@ using FinTrakBanking.ThirdPartyIntegration.CreditBureau;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Credit
 {
     public class CustomerCreditBureauRepository : ICustomerCreditBureauRepository
     {
         private FinTrakBankingContext context;
-        //private IAuditTrailRepository auditTrail;
-        //private IGeneralSetupRepository genSetup;
+        private FinTrakBankingDocumentsContext docContext;
+        private IAuditTrailRepository auditTrail;
+        private IGeneralSetupRepository genSetup;
 
         public CustomerCreditBureauRepository(
-            //IAuditTrailRepository _auditTrail
-            //, IGeneralSetupRepository _genSetup, 
-            FinTrakBankingContext _context
+                IAuditTrailRepository _auditTrail,
+                IGeneralSetupRepository _genSetup,
+                FinTrakBankingDocumentsContext _docContext,
+                FinTrakBankingContext _context
             )
         {
             this.context = _context;
-            //auditTrail = _auditTrail;
-            //this.genSetup = _genSetup;
+            docContext = _docContext;
+            auditTrail = _auditTrail;
+            this.genSetup = _genSetup;
         }
 
         #region Credit Bureau 
         public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId)
         {
             List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
-
+            var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId);
             var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
             var customer = from a in context.TBL_CUSTOMER
                            where a.DELETED == false && a.CUSTOMERID == customerId
@@ -75,6 +79,7 @@ namespace FintrakBanking.Repositories.Credit
                                riskRatingId = a.RISKRATINGID,
                                riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                                customerBVN = a.CUSTOMERBVN,
+                               rcNumber = customerInfo.Any() ? customerInfo.FirstOrDefault().REGISTRATIONNUMBER : null,
                                isCreditBureauUploadCompleted = false,
                                companyDirectorId = null,
                                creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false
@@ -134,7 +139,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
 
-             var data = new TBL_CUSTOMER_CREDIT_BUREAU()
+             var data = new Entities.Models.TBL_CUSTOMER_CREDIT_BUREAU()
             {
                 COMPANYDIRECTORID = entity.companyDirectorId,
                 CHARGEAMOUNT = entity.chargeAmount,
@@ -221,15 +226,85 @@ namespace FintrakBanking.Repositories.Credit
         #endregion
 
         #region Integration 
-        public List<string> GetCustomerCreditMatch(List<CreditBureauSearchViewModel> searchInfoList)
+        public List<string> GetCustomerCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
             var creditBureau = new CreditBureauProcess();
             List<string> searchResult = new List<string>();
-            foreach (var searchInfo in searchInfoList)
+
+
+            var task = Task.Run(() => searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfoList)));
+            if (task.Wait(TimeSpan.FromSeconds(40)))
+                return searchResult;
+            else
+                throw new Exception("Timed out");
+
+            
+            
+        }
+
+        public byte[] GetFullSearchResultInPDF(SearchInput searchInput)
+        {
+            var creditBureau = new CreditBureauProcess();
+            var binaryData = creditBureau.GetFullSearchResultInPDF(searchInput);
+
+            using (var trans = context.Database.BeginTransaction())
             {
-               searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfo));
+                try
+                {
+                    var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
+                    if (!saveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
+                    {
+                        throw new Exception("Could not save file");
+                    }
+                    trans.Commit();
+                    return binaryData;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message.ToString());
+                }
             }
-            return searchResult;
+            
+        }
+        
+        private bool saveCreditBureauReportFile(int customerCreditBureauId, byte[] file, SearchInput model)
+        {
+            try
+            {
+                var data = new Entities.DocumentModels.TBL_CUSTOMER_CREDIT_BUREAU
+                {
+                    CUSTOMERCREDITBUREAUID = customerCreditBureauId,
+                    DOCUMENT_TITLE = "",
+                    FILEEXTENSION = "pdf",
+                    FILEDATA = file,
+                    SYSTEMDATETIME = genSetup.GetApplicationDate(),
+                    DATETIMECREATED = DateTime.Now,
+                    CREATEDBY = model.createdBy
+                };
+
+                docContext.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
+
+                // Audit Section ---------------------------
+                var creditBureauInfo = context.TBL_CREDIT_BUREAU.Find(model.creditBureauId);
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Uploaded '{ creditBureauInfo.CREDITBUREAUNAME }' Credit Bureau Report generated for merge ID list : '{ model.mergeList }' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.auditTrail.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+
+                return context.SaveChanges() != 0;
+            }
+            catch (Exception ex) { throw ex; }
+                        
+  
         }
         #endregion
     }

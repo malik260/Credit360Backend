@@ -24,6 +24,32 @@ namespace FintrakBanking.Repositories.Credit
             this.audit = audit;
         }
 
+        public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByApplicationId(int applicationId)
+        {
+            var ids = context.TBL_LOAN_APPLICATION_DETAIL
+                .Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Select(x => x.APPROVEDPRODUCTID)
+                .Distinct();
+
+            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => ids.Contains((short)x.PRODUCTID))
+            .Select(c => new ConditionPrecedentViewModel
+            {
+                conditionId = c.CONDITIONID,
+                condition = c.CONDITION,
+                isExternal = c.ISEXTERNAL,
+                isSubsequent = c.ISSUBSEQUENT,
+                corporate = c.CORPORATE,
+                retail = c.RETAIL,
+                productId = c.PRODUCTID,
+                product = c.TBL_PRODUCT.PRODUCTNAME,
+                timelineId = c.TIMELINEID,
+                dateTimeCreated = c.DATETIMECREATED,
+                dateTimeUpdated = c.DATETIMEUPDATED,
+            });
+
+            return conditions.ToList();
+        }
+
         public bool AddConditionPrecedent(ConditionPrecedentViewModel model)
         {
             var data = new TBL_LOAN_CONDITION_PRECEDENT
@@ -35,6 +61,7 @@ namespace FintrakBanking.Repositories.Credit
                 //LOANAPPLICATIONID = model.loanApplicationId,
                 TIMELINEID = model.timelineId,
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                RESPONSE_TYPEID = 1,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
 
@@ -56,6 +83,43 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
+        }
+
+        public List<ConditionPrecedentViewModel> AddSelectedConditionPrecedent(SelectedIdsViewModel entity)
+        {
+            var conditions = context.TBL_CONDITION_PRECEDENT.Where(x => entity.selectedIds.Contains(x.CONDITIONID)).ToList();
+
+            var loanconditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x =>
+                x.CONDITIONID != null
+                && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == entity.id
+            );
+
+            foreach (var c in conditions)
+            {
+                if (!loanconditions.Any(x => x.CONDITIONID == (int)c.CONDITIONID))
+                {
+                    var data = new TBL_LOAN_CONDITION_PRECEDENT
+                    {
+                        CONDITION = c.CONDITION,
+                        CONDITIONID = c.CONDITIONID,
+                        ISEXTERNAL = (bool)c.ISEXTERNAL,
+                        ISSUBSEQUENT = c.ISSUBSEQUENT,
+                        CREATEDBY = c.CREATEDBY,
+                        TIMELINEID = c.TIMELINEID,
+                        LOANAPPLICATIONDETAILID = entity.detailId,
+                        RESPONSE_TYPEID = 1,
+                        DATETIMECREATED = general.GetApplicationDate(),
+                    };
+                    context.TBL_LOAN_CONDITION_PRECEDENT.Add(data);
+                }
+            }
+
+            context.TBL_LOAN_CONDITION_PRECEDENT.RemoveRange(
+                context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.CONDITIONID != null && entity.selectedIds.Contains((int)x.CONDITIONID) == false)
+            );
+            context.SaveChanges();
+
+            return GetConditionPrecedentByApplicationId(entity.id).ToList();
         }
 
         public bool EditLoanConditionPrecedent(int id, ConditionPrecedentViewModel model)
@@ -97,15 +161,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ConditionPrecedentViewModel> GetAllConditionPrecedent()
         {
-            return this.context.TBL_LOAN_CONDITION_PRECEDENT
+            var x = this.context.TBL_LOAN_CONDITION_PRECEDENT
                 .Join(
                     context.TBL_STAFF,
                     c => c.CREATEDBY,
                     s => s.STAFFID,
                     (c, s) => new ConditionPrecedentViewModel
                     {
-                        conditionId = c.CONDITIONID,
+                        loanConditionId = c.LOANCONDITIONID,
                         condition = c.CONDITION,
+                        conditionId = c.CONDITIONID == null ? 0 : (int)c.CONDITIONID,
                         isExternal = c.ISEXTERNAL,
                         isSubsequent = c.ISSUBSEQUENT,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
@@ -115,6 +180,10 @@ namespace FintrakBanking.Repositories.Credit
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
                     });
+
+            var test = x.ToList();
+
+            return x;
         }
 
         public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByApplicationId(int applicationId)

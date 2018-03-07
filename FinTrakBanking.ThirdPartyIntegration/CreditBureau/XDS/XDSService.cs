@@ -26,6 +26,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
             try
             {
                 pathString = helper.FilePath();
+                pathString = Path.Combine(pathString, userName);
                 using (TextReader tr = new StreamReader(pathString))
                 {
                     ticket = tr.ReadLine();
@@ -119,7 +120,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
             string result;
             string dataTicket = GetStoredTicket("fir58767");
             result = proxy.ConnectConsumerMatch(dataTicket, searchParam.EnquiryReason, searchParam.ConsumerName,
-                searchParam.DateOfBirth, searchParam.Identification, searchParam.AccountNumber, XDSConnectProductEnum.DetailedCreditProfileReport.ToString());
+                searchParam.DateOfBirth, searchParam.Identification, searchParam.AccountNumber, ((int)XDSConnectProductEnum.DetailedCreditProfileReport).ToString());
             return result;
         }
 
@@ -175,7 +176,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
             string dataTicket = GetStoredTicket("fir58767");
             string result;
             result = proxy.ConnectCommercialMatch(dataTicket, searchParam.EnquiryReason, searchParam.BusinessName,
-                searchParam.BusinessRegistrationNumber, searchParam.AccountNumber, XDSConnectProductEnum.DetailedBusinessEnquiryReport.ToString());
+                searchParam.BusinessRegistrationNumber, searchParam.AccountNumber, ((int)XDSConnectProductEnum.DetailedBusinessEnquiryReport).ToString());
             return result;
         }
 

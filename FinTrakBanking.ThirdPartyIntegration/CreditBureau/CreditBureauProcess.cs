@@ -168,15 +168,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
 
             var data = new XDSCommercialSearchViewModel
             {
-                AccountNumber = searchInfo.accountOrRegistrationNumber,
-                BusinessName = searchInfo.customerName,
-                BusinessRegistrationNumber = searchInfo.accountOrRegistrationNumber,
+                AccountNumber = "", //searchInfo.accountOrRegistrationNumber,
+                BusinessName = "FINTRAK", //searchInfo.customerName,
+                BusinessRegistrationNumber ="", // searchInfo.accountOrRegistrationNumber,
                 EnquiryReason = searchInfo.enquiryReason,
                 DataTicket = ticket,
-                 ProductID = searchInfo.productId
+                ProductID = searchInfo.productId
             };
             result = xds.ConnectCommercialMatch(data);
-            xdoc.Load(result);
+            xdoc.LoadXml(result);
             result = new CreditBureauHelp().ConvertXmlToJson(xdoc);
 
 
@@ -186,19 +186,19 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
         private string DoXDSIndividualSearch(CreditBureauSearchViewModel searchInfo)
         {
             string result = string.Empty;
-            XDSService xds = new XDSService();
+            XDSService xds = new  XDSService();
             var data = new XDSIndividualSearchViewModel
             {
-                AccountNumber = searchInfo.accountOrRegistrationNumber,
-                ConsumerName = searchInfo.customerName,
-                DateOfBirth = searchInfo.dateOfBirth,
-                Identification = searchInfo.identification,
+                AccountNumber = "", //searchInfo.accountOrRegistrationNumber,
+                ConsumerName = "OGBONNAYA", // searchInfo.customerName,
+                DateOfBirth = "", //searchInfo.dateOfBirth,
+                Identification = "", // searchInfo.identification,
                 EnquiryReason = searchInfo.enquiryReason,
                 DataTicket = ticket,
                 ProductID = searchInfo.productId
             };
             result = xds.ConnectConsumerMatch(data);
-            xdoc.Load(result);
+            xdoc.LoadXml(result);
             result = new CreditBureauHelp().ConvertXmlToJson(xdoc);
             return result;
         }
