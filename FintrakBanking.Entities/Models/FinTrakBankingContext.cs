@@ -295,7 +295,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -692,6 +692,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_APPLICATION_ARCHIVE)
                 .WithRequired(e => e.TBL_CASA)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CASA>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
+                .WithOptional(e => e.TBL_CASA)
+                .HasForeignKey(e => e.EQUITYCASAACCOUNTID);
 
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION)
@@ -3344,6 +3349,10 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
+                .Property(e => e.EQUITYAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
                 .HasMany(e => e.TBL_LOAN)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WillCascadeOnDelete(false);
@@ -3533,6 +3542,7 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_LOAN_CONDITION_PRECEDENT>()
                 .HasMany(e => e.TBL_LOAN_CONDITION_DEFERRAL)
                 .WithRequired(e => e.TBL_LOAN_CONDITION_PRECEDENT)
+                .HasForeignKey(e => e.CONDITIONID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_CONTINGENT>()

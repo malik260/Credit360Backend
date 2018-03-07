@@ -188,7 +188,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             customerId = a.CUSTOMERID,
                             customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                            applicationDate = a.APPLICATIONDATE,
+                            applicationDate = a.APPLICATIONDATE,   //FinTrakBankingContext
                             applicationRef = a.APPLICATIONREFERENCENUMBER
                         }).FirstOrDefault();
             return data;
