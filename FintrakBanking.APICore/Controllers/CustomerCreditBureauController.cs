@@ -203,9 +203,43 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Integration
+
+        [HttpPost]
+        [Route("download-credit-bureau-search-result-in-pdf")]
+        public HttpResponseMessage GetFullSearchResultInPDF([FromBody] SearchInput searchInput)
+        {
+            try
+            {
+                searchInput.applicationUrl = HttpContext.Current.Request.Path;
+                searchInput.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                searchInput.createdBy = token.GetStaffId;
+                searchInput.companyId = token.GetCompanyId;
+                searchInput.staffId = token.GetStaffId;
+
+                var result = repo.GetFullSearchResultInPDF(searchInput);
+
+                if (result != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, data = result, message = " download Completed" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = " download failed" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
         [HttpPost]
         [Route("credit-bureau-search")]
-        public HttpResponseMessage GetCustomerCreditMatch(CreditBureauSearchViewModel searchInfoList)
+        public HttpResponseMessage GetCustomerCreditMatch([FromBody] CreditBureauSearchViewModel searchInfoList)
         {
             try
             {
@@ -237,6 +271,7 @@ namespace FintrakBanking.APICore.Controllers
                     new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
         #endregion
 
     }

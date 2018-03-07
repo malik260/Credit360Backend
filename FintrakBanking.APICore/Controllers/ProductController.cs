@@ -577,7 +577,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllLoanProduct().ToList();
+                var data = repo.GetAllLoanProduct(token.GetCompanyId).ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

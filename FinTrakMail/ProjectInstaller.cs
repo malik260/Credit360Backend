@@ -15,12 +15,12 @@ namespace FinTrakMail
         {
             InitializeComponent();
             MailProcessInstaller.Parent = this;
-            MailserviceInstaller.Parent = this;
+            FintrakEmailSenderService.Parent = this;
         }
 
         private void MailserviceInstaller_AfterInstall(object sender, InstallEventArgs e)
         {
-            new ServiceController(MailserviceInstaller.ServiceName).Start();
+            new ServiceController(FintrakEmailSenderService.ServiceName).Start();
         }
     }
 }

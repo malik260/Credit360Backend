@@ -72,6 +72,11 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string LOANPURPOSE { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal? EQUITYAMOUNT { get; set; }
+
+        public int? EQUITYCASAACCOUNTID { get; set; }
+
         public short CONSESSIONAPPROVALSTATUSID { get; set; }
 
         [StringLength(3000)]
@@ -102,6 +107,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
+
+        public virtual TBL_CASA TBL_CASA { get; set; }
 
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
