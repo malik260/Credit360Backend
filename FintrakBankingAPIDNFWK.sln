@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.3
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{FFFC697E-F2BE-4D13-BA78-96985F3549EB}"
 EndProject
@@ -37,11 +37,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinApp", "WinApp\WinApp.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessagingService", "MessagingService", "{B93C09B6-CCD8-4C8D-8FF5-7B1A6CEB4694}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTrakBanking.MessagingService", "FinTrakMail\FinTrakBanking.MessagingService.csproj", "{26484F06-9255-4F24-9EF1-4A022923E058}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTrakBanking.MessagingSenderService", "FinTrakMail\FinTrakBanking.MessagingSenderService.csproj", "{26484F06-9255-4F24-9EF1-4A022923E058}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdPartyIntegration", "ThirdPartyIntegration", "{E8BE4AB8-3E3A-4689-936C-12E986B90B07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTrakBanking.ThirdPartyIntegration", "FinTrakBanking.ThirdPartyIntegration\FinTrakBanking.ThirdPartyIntegration.csproj", "{81C64D5D-3674-499E-B718-257AA862B1B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTrakBanking.MessagingLoggingService", "EmailMessageLogger\FinTrakBanking.MessagingLoggingService.csproj", "{F81576A9-85EF-4E14-845D-484890A324E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,6 +173,18 @@ Global
 		{81C64D5D-3674-499E-B718-257AA862B1B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{81C64D5D-3674-499E-B718-257AA862B1B2}.Release|x86.ActiveCfg = Release|Any CPU
 		{81C64D5D-3674-499E-B718-257AA862B1B2}.Release|x86.Build.0 = Release|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.Debug|x86.Build.0 = Debug|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.DebugLocal|x86.ActiveCfg = Debug|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.DebugLocal|x86.Build.0 = Debug|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.Release|x86.ActiveCfg = Release|Any CPU
+		{F81576A9-85EF-4E14-845D-484890A324E0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -186,6 +200,7 @@ Global
 		{16AD4D43-A008-4FD5-9EF4-5FDCBEE364DB} = {DC675DB0-A368-4D40-AF2B-CBC5E50E4481}
 		{26484F06-9255-4F24-9EF1-4A022923E058} = {B93C09B6-CCD8-4C8D-8FF5-7B1A6CEB4694}
 		{81C64D5D-3674-499E-B718-257AA862B1B2} = {E8BE4AB8-3E3A-4689-936C-12E986B90B07}
+		{F81576A9-85EF-4E14-845D-484890A324E0} = {B93C09B6-CCD8-4C8D-8FF5-7B1A6CEB4694}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0FBE970E-7E0B-4494-8ECA-E322C2AD8272}

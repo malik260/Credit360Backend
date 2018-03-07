@@ -29,6 +29,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string status { get; set; }
         public int? timelineId { get; set; }
         public bool? validationStatus { get; set; }
+        public string product { get; set; }
+        public int loanConditionId { get; set; }
     }
 
     public class TransactionDynamicsViewModel : GeneralEntity
@@ -48,12 +50,20 @@ namespace FintrakBanking.ViewModels.Credit
         public string reason { get; set; }
         public string status { get; set; }
         public string productName { get; set; }
+        public int loanDynamicsId { get; set; }
     }
 
     public class ComplianceTimelineViewModel : GeneralEntity
     {
         public int timelineId { get; set; }
         public string timeline { get; set; }
+    }
+
+    public class SelectedIdsViewModel : GeneralEntity
+    {
+        public int id { get; set; }
+        public List<int> selectedIds { get; set; }
+        public int detailId { get; set; }
     }
 }
 

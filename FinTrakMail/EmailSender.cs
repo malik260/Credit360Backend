@@ -8,11 +8,12 @@ using System.Net.Mail;
 
 namespace FinTrakMail
 {
-    public class BusLogic
+    public class EmailSender
     {
         MailMessage mail = new MailMessage();
         SmtpClient client = new SmtpClient();
         FinTrakBankingContext dbContext = new FinTrakBankingContext();
+        int mailId = 0;
 
         public bool SendMail()
         {
@@ -26,22 +27,22 @@ namespace FinTrakMail
                 client.Host = ConfigurationManager.AppSettings["smtpClient"];
 
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
+
                 client.UseDefaultCredentials = true;
 
                 client.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["Username"], ConfigurationManager.AppSettings["Password"]);
-
 
                 var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending).ToList();
 
                 foreach (var newMail in listOfMails)
                 {
-                    mail.From = new MailAddress(ConfigurationManager.AppSettings["Username"],"FIRST BANK PLC");
+                    mail.From = new MailAddress(ConfigurationManager.AppSettings["Username"],"FBN Fintrak Credit 360");
 
                     if (newMail.TOADDRESS != null && newMail.TOADDRESS != string.Empty)
                     {
                         char[] seperators = { ',', ';' };
                         string[] Addy = newMail.TOADDRESS.Split(seperators);
-                       // string[] Addy = "isah.yarima@yahoo.com,anu.omotayo @fintraksoftware.com".Split(seperators);
+                     // string[] Addy = "isah.yarima@yahoo.com,anu.omotayo @fintraksoftware.com".Split(seperators);
                         foreach (var emailAddy in Addy)
                         {
                             if (emailAddy != null && emailAddy != string.Empty)
@@ -54,13 +55,12 @@ namespace FinTrakMail
                     mail.IsBodyHtml = true;
                     mail.Subject = newMail.MESSAGESUBJECT;
                     mail.Body = newMail.MESSAGEBODY;
+                    mailId = newMail.MESSAGEID;
 
                     client.Send(mail);
 
-                    AuditTrail.LogFileManager.LogToFile("Alert message has been sent to - " + newMail.TOADDRESS + " - Date sent : " + DateTime.Now.ToString());
-
-                    //UPDATE MESSAGE SENT
-                    UpdateMessageLogForEmailSent.UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent);
+                   //UPDATE MESSAGE SENT
+                    UpdateMessageLogForEmailSent.UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");
 
                 }
 
@@ -68,6 +68,8 @@ namespace FinTrakMail
             }
             catch (Exception ex)
             {
+                UpdateMessageLogForEmailSent.UpdateMailDeliveryStatus(mailId, (int)MessageStatusEnum.Attempted,"Email sending failed. Error Response : " + ex.Message);
+
                 AuditTrail.LogFileManager.LogToFile("Error Occurred - " + ex.Message + " - " + ex.StackTrace.ToString() + DateTime.Now.ToString());
                 return false;
             }

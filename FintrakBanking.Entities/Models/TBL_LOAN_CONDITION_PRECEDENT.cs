@@ -16,7 +16,9 @@ namespace FintrakBanking.Entities.Models
         }
 
         [Key]
-        public int CONDITIONID { get; set; }
+        public int LOANCONDITIONID { get; set; }
+
+        public int? CONDITIONID { get; set; }
 
         [Required]
         [StringLength(1000)]

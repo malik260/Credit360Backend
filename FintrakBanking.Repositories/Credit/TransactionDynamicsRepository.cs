@@ -98,7 +98,8 @@ namespace FintrakBanking.Repositories.Credit
                     s => s.STAFFID,
                     (c, s) => new TransactionDynamicsViewModel
                     {
-                        dynamicsId = c.DYNAMICSID,
+                        loanDynamicsId = c.LOANDYNAMICSID,
+                        dynamicsId = c.DYNAMICSID == null ? 0 : (int)c.DYNAMICSID,
                         dynamics = c.DYNAMICS,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
                         loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
@@ -217,6 +218,59 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
+        }
+
+        public List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByApplicationId(int applicationId)
+        {
+            var ids = context.TBL_LOAN_APPLICATION_DETAIL
+                .Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Select(x => x.APPROVEDPRODUCTID)
+                .Distinct();
+
+            var dynamics = this.context.TBL_TRANSACTION_DYNAMICS.Where(x => ids.Contains((short)x.PRODUCTID))
+            .Select(c => new TransactionDynamicsViewModel
+            {
+                dynamicsId = c.DYNAMICSID,
+                dynamics = c.DYNAMICS,
+                loanApplicationDetailId = c.PRODUCTID,
+                dateTimeCreated = c.DATETIMECREATED,
+                dateTimeUpdated = c.DATETIMEUPDATED,
+            });
+
+            return dynamics.ToList();
+        }
+
+        public List<TransactionDynamicsViewModel> AddSelectedTransactionDynamics(SelectedIdsViewModel entity)
+        {
+            var dynamics = context.TBL_TRANSACTION_DYNAMICS.Where(x => entity.selectedIds.Contains(x.DYNAMICSID)).ToList();
+
+            var loandynamics = context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x =>
+                x.DYNAMICSID != null
+                && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == entity.id
+            );
+
+            foreach (var c in dynamics)
+            {
+                if (!loandynamics.Any(x => x.DYNAMICSID == (int)c.DYNAMICSID))
+                {
+                    var data = new TBL_LOAN_TRANSACTION_DYNAMICS
+                    {
+                        DYNAMICS = c.DYNAMICS,
+                        DYNAMICSID = c.DYNAMICSID,
+                        CREATEDBY = c.CREATEDBY,
+                        LOANAPPLICATIONDETAILID = entity.detailId,
+                        DATETIMECREATED = general.GetApplicationDate(),
+                    };
+                    context.TBL_LOAN_TRANSACTION_DYNAMICS.Add(data);
+                }
+            }
+
+            context.TBL_LOAN_TRANSACTION_DYNAMICS.RemoveRange(
+                context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => x.DYNAMICSID != null && entity.selectedIds.Contains((int)x.DYNAMICSID) == false)
+            );
+            context.SaveChanges();
+
+            return GetTransactionDynamicsByApplicationId(entity.id).ToList();
         }
 
         #endregion CP Template

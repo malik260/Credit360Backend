@@ -86,6 +86,18 @@ namespace FintrakBanking.ViewModels.Credit
         //  public string guarantorReferenceNumber { get; set; }
         public decimal guaranteeValue { get; set; }
         public DateTime? endDate { get; set; }
+        public string firstName { get;  set; }
+        public string middleName { get;  set; }
+        public string lastName { get;  set; }
+        public string bvn { get;  set; }
+        public string rcNumber { get;  set; }
+        public string phoneNumber1 { get;  set; }
+        public string phoneNumber2 { get;  set; }
+        public string emailAddress { get;  set; }
+        public string relationship { get;  set; }
+        public string relationshipDuration { get;  set; }
+        public DateTime cStartDate { get; set; }
+
 
         // casa
         public int collateralCasaId { get; set; }

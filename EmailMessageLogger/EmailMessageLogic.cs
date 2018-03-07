@@ -10,11 +10,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinTrakMail
+namespace EmailMessageLogger
 {
    
 
-   public class PopulateAlertTable
+   public class EmailMessageLogic
     {
         private static FinTrakBankingContext context=new FinTrakBankingContext();
         private static IAuditTrailRepository auditTrail;
@@ -31,25 +31,27 @@ namespace FinTrakMail
                 staffRepo
             );
 
-        public void Start()
+        public string Start()
         {
-          
-            //repo.SendAlertsForCovenantsApproachingDueDate();
 
-            //repo.SendAlertsForCovenantsOverDue();
+            repo.SendAlertsForCovenantsApproachingDueDate();
 
-            //repo.SendAlertsForCollateralPropertyRevaluation();
+            repo.SendAlertsForCovenantsOverDue();
 
-            //repo.SendAlertsForLoanNplMonitoring();
+            repo.SendAlertsForCollateralPropertyRevaluation();
 
-            //repo.SendAlertsOnSelfLiquidatingLoanExpiry();
+            repo.SendAlertsForLoanNplMonitoring();
 
-            //repo.SendAlertsOnOverDraftLoansAlmostDue();
+            repo.SendAlertsOnSelfLiquidatingLoanExpiry();
 
-            //repo.SendAlertsOnLoanCASAwithPND();
+            repo.SendAlertsOnOverDraftLoansAlmostDue();
+
+            repo.SendAlertsOnLoanCASAwithPND();
 
             repo.SendAlertsForExpiredInsurance();
 
+            return repo.response;
+            
         }
     }
 }
