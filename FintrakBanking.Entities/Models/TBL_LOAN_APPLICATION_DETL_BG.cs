@@ -43,7 +43,6 @@ namespace FintrakBanking.Entities.Models
 
         public int? APPROVEDBY { get; set; }
 
-        
         public DateTime? APPROVEDDATETIME { get; set; }
 
         public int CREATEDBY { get; set; }

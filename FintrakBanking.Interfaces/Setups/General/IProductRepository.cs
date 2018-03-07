@@ -32,7 +32,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         Task<bool> UpdateProduct(int productId, ProductViewModel product);
         IEnumerable<LookupViewModel> GetAllProductBehaviourTypes();
         //bool DeleteProduct(int productId);
-        IEnumerable<ProductViewModel> GetAllLoanProduct();
+        IEnumerable<ProductSearchViewModel> GetAllLoanProduct(int companyId);
         IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId);
         IEnumerable<LookupViewModel> GetProductCurrency(int productId);
         #endregion Product
