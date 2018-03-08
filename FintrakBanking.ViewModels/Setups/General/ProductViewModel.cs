@@ -4,7 +4,33 @@ using FintrakBanking.ViewModels.Setups.Finance;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class ProductViewModel : GeneralEntity
+    public class ProductSearchViewModel 
+    {
+
+        public int productId { get; set; }
+        public short productTypeId { get; set; }
+        public string productTypeName { get; set; }
+        public string productGroupName { get; set; }
+        public short productCategoryId { get; set; }
+        public string productCategoryName { get; set; }
+        public short? productClassId { get; set; }
+        public string productClassName { get; set; } 
+        public string productCode { get; set; }
+        public string productName { get; set; }
+        public int productGroupId { get; set; }
+        public short? dealClassificationId { get; set; }
+        public string dealClassificationName { get; set; } 
+        public int maximumTenor { get; set; }
+        public int minimumTenor { get; set; }
+        public decimal? maximumRate { get; set; }
+        public decimal? minimumRate { get; set; }
+        public double? equityContribution { get; set; }
+
+        public ProductBehaviourViewModel ProductBehaviour { get; set; }
+        public short productClassProcessId { get; set; }
+
+    }
+        public class ProductViewModel : GeneralEntity
     {
 
         public int productId { get; set; }

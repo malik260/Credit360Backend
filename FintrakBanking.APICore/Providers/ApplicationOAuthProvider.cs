@@ -43,7 +43,7 @@ namespace FintrakBanking.APICore.Providers
             ClaimsIdentity identity;
             var _authRepo = new AuthenticationRepository(_bankingContext);
 
-            appSetup = _bankingContext.TBL_SETUP_GLOBAL.Single();
+            appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
             if (appSetup.USE_ACTIVE_DIRECTORY)
             {

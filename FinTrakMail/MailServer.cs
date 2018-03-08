@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.ServiceProcess;
 using System.Timers;
 
@@ -7,9 +8,12 @@ namespace FinTrakMail
 {
     partial class MailServer : ServiceBase
     {
-        BusLogic mailsender = new BusLogic();
+        EmailSender mailsender = new EmailSender();
+
         Timer timer = new Timer();
+
         private bool IsBusy = false;
+
         public MailServer()
         {
             InitializeComponent();
@@ -20,14 +24,23 @@ namespace FinTrakMail
 
         protected override void OnStart(string[] args)
         {
+            string Congifinterval = ConfigurationManager.AppSettings["EmailServiceInterval"];
+            int interval = 0;
+
+            
             try
             {
-               // Esetup = mailsender.GetEmailSetup();
-                timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
-                timer.Interval = 10000;
-                timer.Enabled = true;
-                timer.AutoReset = true;
-                timer.Start();
+                if (!String.IsNullOrEmpty(Congifinterval))
+                {
+                    interval = Convert.ToInt32(Congifinterval);
+
+                    timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+                    timer.Interval = (interval * 1000);
+                    timer.Enabled = true;
+                    timer.AutoReset = true;
+
+                    if (timer.Interval > 0) { timer.Start(); } else { timer.Stop(); }
+                }
             }
             catch (Exception ex)
             {
@@ -37,7 +50,7 @@ namespace FinTrakMail
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (!this.IsBusy)
+            if (this.IsBusy == false)
             {
                 SendMail();
             }
@@ -49,13 +62,13 @@ namespace FinTrakMail
             this.IsBusy = true;
             try
             {
-               // timer.Stop();
+              //  timer.Stop();
 
                 AuditTrail.LogFileManager.LogToFile("Email Service Started Successfully" + DateTime.Now.ToString());
 
-              bool  sent = mailsender.SendMail();
+                bool  sent = mailsender.SendMail();
 
-                //this.IsBusy = false;
+                this.IsBusy = false;
 
                 if (sent)
                 {
@@ -63,6 +76,7 @@ namespace FinTrakMail
                     return;
                 }
                 else
+
                 AuditTrail.LogFileManager.LogToFile("Email Service Failed" + DateTime.Now.ToString());
 
 

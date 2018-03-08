@@ -371,8 +371,8 @@ namespace FintrakBanking.Repositories.Credit
                         from e in apprTrail.DefaultIfEmpty()
                         where a.COMPANYID == companyId && a.DELETED == false
                               && b.STATUSID == (int)ApprovalStatusEnum.Approved &&
-                             e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
-                        //  e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending )
+                              e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                          || e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
                           && e.RESPONSESTAFFID == null
                           && e.OPERATIONID == (int)OperationsEnum.LoanAvailment && e.TOAPPROVALLEVELID == staffApprovalLevelId
                         select new CamProcessedLoanViewModel
@@ -469,6 +469,7 @@ namespace FintrakBanking.Repositories.Credit
         public Form3800ViewModel GenerateForm3800Template(string applicationRefNumber)
         {
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+            var currentDate = DateTime.Now;
 
             var targetAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber);
 
@@ -792,7 +793,7 @@ namespace FintrakBanking.Repositories.Credit
             var branch = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_BRANCH.BRANCHNAME;
             //var info = data;
 
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData,currentDate);
 
             if (preparedTemplate != null)
             {
@@ -868,7 +869,7 @@ namespace FintrakBanking.Repositories.Credit
             //return templateLink;
         }
 
-        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition)
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition,DateTime currentDate)
         {
             string body;
 
@@ -885,6 +886,7 @@ namespace FintrakBanking.Repositories.Credit
             body = body.Replace("{@Customer}", customer);
             body = body.Replace("{@Fees}", feecondition);
             body = body.Replace("{@facility}", facilitycondition);
+            body = body.Replace("{@CurrentDate}", currentDate.ToLongDateString());
             return body;
         }
 
@@ -1130,7 +1132,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.AVAILMENTDATE = DateTime.Now;
 
                 var loanApplication = appl;
-                if (loanApplication.PRODUCTCLASSID != 0 || loanApplication.PRODUCTCLASSID != null)
+                if (loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
                 {
                     if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                     {

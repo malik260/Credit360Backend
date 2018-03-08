@@ -19,5 +19,16 @@ namespace FintrakBanking.Common.Enum
         ImportFinance = 9,
         BondAndGuarantees = 10
     }
-
+    public enum ProductGroupEnum
+    {
+        LoansAndAdvances = 1,
+        CurrentAndSavings = 2,
+        MoneyMarket = 3,
+        CapitalMarket = 4,
+        RealEstate = 5,
+        Lease = 6,
+        ForexMarket = 7,
+        CustomBond = 10,
+        RetentionBond = 11
+    }
 }

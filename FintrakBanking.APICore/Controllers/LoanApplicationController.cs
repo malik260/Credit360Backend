@@ -465,7 +465,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
-                entity.companyId = token.GetCompanyId;
+                entity.companyId = token.GetCompanyId;  //FinTrakBankingContext
                 entity.branchId = (short)token.GetBranchId;
 
                 entity.misCode = "001";
