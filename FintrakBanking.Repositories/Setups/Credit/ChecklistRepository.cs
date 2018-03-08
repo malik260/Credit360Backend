@@ -306,7 +306,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddChecklistDefinition(ChecklistDefinitionViewModel model)
         {
-            var data = new TBL_CHECKLIST_DEFINITION
+            var data = new TBL_CHECKLIST_DEFINITION()
             {
                 OPERATIONID = model.operationId,
                 APPROVALLEVELID = (int)model.approvalLevelId,
@@ -365,7 +365,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in model.checklistItems)
             {
-                var data = new TBL_CHECKLIST_DEFINITION
+                var data = new TBL_CHECKLIST_DEFINITION()
                 {
                     OPERATIONID = model.operationId,
                     APPROVALLEVELID = (int)model.approvalLevelId,
@@ -714,106 +714,64 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool AddChecklistDetail(ChecklistDetailViewModel model)
         {
-            var isProductBased = (from a in context.TBL_CHECKLIST_DEFINITION
-                                  join b in context.TBL_CHECKLIST_TYPE on
-                                  a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
-                                  where a.CHECKLISTDEFINITIONID == model.checkListDefinitionId
-                                  select b.ISPRODUCT_BASED).FirstOrDefault();
-            if (isProductBased)
+            if (model != null)
             {
-                model.targetTypeId = (int)CheckListTargetTypeEnum.LoanApplicationProductChecklist;
-            }
-            else
-            {
-                model.targetTypeId = (int)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist;
-            }
-            var data = new TBL_CHECKLIST_DETAIL
-            {
-                CHECKLISTDEFINITIONID = model.checkListDefinitionId,
-                TARGETTYPEID = model.targetTypeId,
-                TARGETID = model.targetId,
-                CHECKLISTSTATUSID = model.checkListStatusId,
-                CHECKEDBY = (int)model.createdBy,
-                DEFEREDDATE = model.deferedDate,
-                REMARK = model.remark,
-                DATETIMECREATED = _genSetup.GetApplicationDate(),
-                CREATEDBY = (int)model.createdBy
-            };
-
-            // Audit Section ---------------------------
-            var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.CHECKLISTDEFINITIONID == data.CHECKLISTDEFINITIONID));
-
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added Loan Checklist {audit_checklist.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME}", // on Loan '{data.LoanId}' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-
-            context.TBL_CHECKLIST_DETAIL.Add(data);
-            this.auditTrail.AddAuditTrail(audit);
-
-            //end of Audit section -------------------------------
-
-
-
-            var loanDetailsData = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.targetId);
-            if (loanDetailsData != null)
-            {
-                var productCheckListCount = (from dd in context.TBL_CHECKLIST_DEFINITION
-                                             where dd.PRODUCTID == loanDetailsData.PROPOSEDPRODUCTID
-                                             select dd).Count();
-
-                var loanCheckListProductCount = (from dd in context.TBL_CHECKLIST_DETAIL
-                                                 where dd.TARGETID == loanDetailsData.LOANAPPLICATIONDETAILID
-                                                 && dd.TARGETTYPEID == (int)CheckListTargetTypeEnum.LoanApplicationProductChecklist
-                                                 select dd).Count();
-                var loanCheckListCustomer = (from dd in context.TBL_CHECKLIST_DETAIL
-                                             where dd.TARGETID == model.targetId
-                                             && dd.TARGETTYPEID == (int)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist
-                                             select dd).ToList();
-
-                if (productCheckListCount == (loanCheckListProductCount + 1))
+                try
                 {
-                    if (loanCheckListCustomer.Count > 0)
+                    var isProductBased = (from a in context.TBL_CHECKLIST_DEFINITION
+                                          join b in context.TBL_CHECKLIST_TYPE on
+                                          a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
+                                          where a.CHECKLISTDEFINITIONID == model.checkListDefinitionId
+                                          select b.ISPRODUCT_BASED).FirstOrDefault();
+                    if (isProductBased)
                     {
-                        foreach (var item in loanCheckListCustomer)
-                        {
-
-                        }
+                        model.targetTypeId = (int)CheckListTargetTypeEnum.LoanApplicationProductChecklist;
                     }
-                    loanDetailsData.HASDONECHECKLIST = true;
+                    else
+                    {
+                        model.targetTypeId = (int)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist;
+                    }
+                    var data = new TBL_CHECKLIST_DETAIL()
+                    {
+                        CHECKLISTDEFINITIONID = model.checkListDefinitionId,
+                        TARGETTYPEID = model.targetTypeId,
+                        TARGETID = model.targetId,
+                        CHECKLISTSTATUSID = model.checkListStatusId,
+                        CHECKEDBY = (int)model.createdBy,
+                        DEFEREDDATE = model.deferedDate,
+                        REMARK = model.remark,
+                        DATETIMECREATED = _genSetup.GetApplicationDate(),
+                        CREATEDBY = (int)model.createdBy
+                    };
+
+                    // Audit Section ---------------------------
+                    var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.CHECKLISTDEFINITIONID == data.CHECKLISTDEFINITIONID));
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = $"Added Loan Checklist {audit_checklist.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME}", // on Loan '{data.LoanId}' ",
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+
+                    context.TBL_CHECKLIST_DETAIL.Add(data);
+                    this.auditTrail.AddAuditTrail(audit);
+
+                    //end of Audit section -------------------------------
+
+                    return context.SaveChanges() > 0;
+                }
+                catch(Exception ex)
+                {
+                    throw new Exception(ex.Message);
                 }
             }
-            //var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == model.checklistId select l).ToList();
-            //if (loanData != null)
-            //{
-            //    var custNo = loanData.Count();
-            //    var checkedNo = 0;
-            //    foreach (var item in loanData)
-            //    {
-            //        if (item.HASDONECHECKLIST == true)
-            //        {
-            //            ++checkedNo;
-            //        }
-            //    }
-            //    if (custNo == checkedNo)
-            //    {
-            //        var loanApplication = context.TBL_LOAN_APPLICATION.Find(model.checklistId);
-            //        if (loanApplication != null)
-            //        {
-            //            loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
-            //        }
-            //    }
-
-            //}
-
-            return context.SaveChanges() != 0;
+            return false;
         }
 
         public bool UpdateChecklistDetail(int ChecklistId, ChecklistDetailViewModel model)
@@ -957,7 +915,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //end of Audit section -------------------------------
 
-            return context.SaveChanges() != 0;
+            return context.SaveChanges() > 0;
         }
 
         public bool AddMultipleChecklistItem(List<ChecklistItemViewModel> models)
@@ -1000,7 +958,7 @@ namespace FintrakBanking.Repositories.Credit
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
-            return context.SaveChanges() != 0;
+            return context.SaveChanges() > 0;
         }
 
         public bool DeleteChecklistItem(int CheckListItemId, UserInfo user)

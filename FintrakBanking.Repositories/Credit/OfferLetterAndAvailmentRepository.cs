@@ -371,8 +371,7 @@ namespace FintrakBanking.Repositories.Credit
                         from e in apprTrail.DefaultIfEmpty()
                         where a.COMPANYID == companyId && a.DELETED == false
                               && b.STATUSID == (int)ApprovalStatusEnum.Approved &&
-                              e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                          //e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
+                              (e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised )
                           && e.RESPONSESTAFFID == null
                           && e.OPERATIONID == (int)OperationsEnum.LoanAvailment && e.TOAPPROVALLEVELID == staffApprovalLevelId
                         select new CamProcessedLoanViewModel
