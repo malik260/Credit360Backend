@@ -237,6 +237,8 @@ namespace FintrakBanking.Repositories.Credit
                 dateTimeUpdated = c.DATETIMEUPDATED,
             });
 
+            var testids = ids.ToList();
+            var testcond = dynamics.ToList();
             return dynamics.ToList();
         }
 
