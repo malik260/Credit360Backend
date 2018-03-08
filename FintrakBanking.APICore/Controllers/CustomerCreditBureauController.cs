@@ -215,6 +215,7 @@ namespace FintrakBanking.APICore.Controllers
                 searchInput.createdBy = token.GetStaffId;
                 searchInput.companyId = token.GetCompanyId;
                 searchInput.staffId = token.GetStaffId;
+                searchInput.userBranchId = (short)token.GetBranchId;
 
                 var result = repo.GetFullSearchResultInPDF(searchInput);
 
@@ -250,6 +251,7 @@ namespace FintrakBanking.APICore.Controllers
                 searchInfoList.createdBy = token.GetStaffId;
                 searchInfoList.companyId = token.GetCompanyId;
                 searchInfoList.staffId = token.GetStaffId;
+                searchInfoList.userBranchId = (short)token.GetBranchId;
                // }
 
                 var result = repo.GetCustomerCreditMatch(searchInfoList);
