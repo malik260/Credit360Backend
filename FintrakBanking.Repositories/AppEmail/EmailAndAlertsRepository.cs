@@ -54,7 +54,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                         join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals f.FREQUENCYTYPEID
                         join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
-                        where DbFunctions.DiffDays(genSetup.GetApplicationDate(), a.NEXTCOVENANTDATE) <= 10
+                        where DbFunctions.DiffDays(genSetup.GetApplicationDate(), a.NEXTCOVENANTDATE) <= 15
                         select new LoanCovenantDetailViewModel
                         {
                             companyId = a.COMPANYID,

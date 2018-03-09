@@ -327,6 +327,15 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="OfferLetterCollateral" msprop:Generator_TableClassName="OfferLetterCollateralDataTable" msprop:Generator_TableVarName="tableOfferLetterCollateral" msprop:Generator_RowChangedName="OfferLetterCollateralRowChanged" msprop:Generator_TablePropName="OfferLetterCollateral" msprop:Generator_RowDeletingName="OfferLetterCollateralRowDeleting" msprop:Generator_RowChangingName="OfferLetterCollateralRowChanging" msprop:Generator_RowEvHandlerName="OfferLetterCollateralRowChangeEventHandler" msprop:Generator_RowDeletedName="OfferLetterCollateralRowDeleted" msprop:Generator_RowClassName="OfferLetterCollateralRow" msprop:Generator_UserTableName="OfferLetterCollateral" msprop:Generator_RowEvArgName="OfferLetterCollateralRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="collateralDetail" msprop:Generator_ColumnVarNameInTable="columncollateralDetail" msprop:Generator_ColumnPropNameInRow="collateralDetail" msprop:Generator_ColumnPropNameInTable="collateralDetailColumn" msprop:Generator_UserColumnName="collateralDetail" type="xs:string" minOccurs="0" />
+              <xs:element name="collateralValue" msprop:Generator_ColumnVarNameInTable="columncollateralValue" msprop:Generator_ColumnPropNameInRow="collateralValue" msprop:Generator_ColumnPropNameInTable="collateralValueColumn" msprop:Generator_UserColumnName="collateralValue" type="xs:string" minOccurs="0" />
+              <xs:element name="stapedToCoverAmount" msprop:Generator_ColumnVarNameInTable="columnstapedToCoverAmount" msprop:Generator_ColumnPropNameInRow="stapedToCoverAmount" msprop:Generator_ColumnPropNameInTable="stapedToCoverAmountColumn" msprop:Generator_UserColumnName="stapedToCoverAmount" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>

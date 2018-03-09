@@ -43,7 +43,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DELETED = false
                 };
             _context.TBL_CUSTOMER_EMPLOYER.Add(employerDb);
-                _context.SaveChanges();
+              
 
                 var audit = new TBL_AUDIT
                 {
@@ -57,6 +57,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     SYSTEMDATETIME = DateTime.Now
                 };
                 this._auditTrail.AddAuditTrail(audit);
+                _context.SaveChanges();
 
                 return "The record has been added successful";
 
@@ -73,7 +74,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 employerDel.DELETED = true;
                 employerDel.DELETEDBY = employer.staffId;
 
-                _context.SaveChanges();
+                
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalInserted,
@@ -86,6 +87,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     SYSTEMDATETIME = DateTime.Now
                 };
                 this._auditTrail.AddAuditTrail(audit);
+                _context.SaveChanges();
 
                 return "The record has been deleted successful";
 
@@ -159,7 +161,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 employerDel.DELETED = false;
                 employerDel.DATETIMEUPDATED = DateTime.Now;
                 employerDel.LASTUPDATEDBY = employer.staffId;
-                _context.SaveChanges();
+                
 
                 var audit = new TBL_AUDIT
                 {
@@ -173,6 +175,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     SYSTEMDATETIME = DateTime.Now
                 };
                 this._auditTrail.AddAuditTrail(audit);
+                _context.SaveChanges();
 
                 return "The record has been updated successful";
 
