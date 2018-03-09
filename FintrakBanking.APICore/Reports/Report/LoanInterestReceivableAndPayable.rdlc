@@ -1230,15 +1230,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>=Fields!productClassName.Value</Value>
-                      <Style>
-                        <FontFamily>verdana</FontFamily>
-                        <FontSize>14pt</FontSize>
-                        <FontWeight>Bold</FontWeight>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value> LOANS RECEIVABLE AND PAYABLE</Value>
+                      <Value>LOANS RECEIVABLE AND PAYABLE</Value>
                       <Style>
                         <FontFamily>verdana</FontFamily>
                         <FontSize>14pt</FontSize>

@@ -496,7 +496,7 @@ namespace FintrakBanking.Repositories.Credit
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {
             var operationId = entity.operationId; // (int)OperationsEnum.CAM; // <--------------------- overide incoming for now
-            var privilege = new PrivilegeViewModel();
+            //var privilege = new PrivilegeViewModel();
             var application = this.context.TBL_LOAN_APPLICATION.Find(entity.targetId);
 
             var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
@@ -522,9 +522,10 @@ namespace FintrakBanking.Repositories.Credit
                     });
 
             var grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
-            if (grant != null) privilege = grant;
-            privilege.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
-            return privilege;
+            if (grant == null) grant = new PrivilegeViewModel();
+            grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
+
+            return grant;
         }
 
         private IQueryable<OperationStaffViewModel> GetAllStaffNames()

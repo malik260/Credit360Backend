@@ -879,7 +879,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -942,7 +941,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>FCY Scheuled Loan Report</Value>
+                  <Value>FCY Scheduled Loan Report</Value>
                   <Style>
                     <FontFamily>verdana</FontFamily>
                     <FontSize>14pt</FontSize>

@@ -87,7 +87,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>OVER DRAFT LOANS CLOSE TO EXPIRY</Value>
+                    <Value>OVERDRAFT FACILITIES CLOSE TO EXPIRATION</Value>
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>12pt</FontSize>
@@ -104,7 +104,7 @@
             <Top>0.22917in</Top>
             <Left>3.42188in</Left>
             <Height>0.25in</Height>
-            <Width>3.94792in</Width>
+            <Width>4.30625in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -989,7 +989,7 @@
             <Top>1.09375in</Top>
             <Left>0.05034in</Left>
             <Height>1.01042in</Height>
-            <Width>10.2609in</Width>
+            <Width>10.26089in</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>

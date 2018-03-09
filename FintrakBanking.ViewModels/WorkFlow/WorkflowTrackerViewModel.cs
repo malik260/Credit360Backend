@@ -4,6 +4,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class WorkflowTrackerViewModel
     {
+        public int approvalTrailId { get; set; };
+
         public DateTime reportDate { get { return DateTime.Now; } }
         public string groupName { get; set; }
         public string operationName { get; set; }
