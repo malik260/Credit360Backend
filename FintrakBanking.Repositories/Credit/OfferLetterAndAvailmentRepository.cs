@@ -547,6 +547,16 @@ namespace FintrakBanking.Repositories.Credit
                             applicationDate = applDate,
                         }).ToList();
 
+            var loanCollaterals  = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
+                              //join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                              where x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                              select new LoanApplicationCollateralViewModel()
+                             {
+                                 collateralDetail = x.COLLATERALDETAIL,
+                                 collateralValue = x.COLLATERALVALUE,
+                                 stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT
+                             }).ToList();
+
 
 
 
@@ -556,6 +566,8 @@ namespace FintrakBanking.Repositories.Credit
             var fee = string.Empty;
 
             var loanDetail = string.Empty;
+
+            var loanCollateral = string.Empty;
 
             var internalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == false).ToList();
 
@@ -577,9 +589,13 @@ namespace FintrakBanking.Repositories.Credit
 
             var detail  = string.Empty;
 
+            var collateral  = string.Empty;
+
             int noOfDetails = 0;
 
             int noOfFees = 0;
+
+            int noOfCollaterals  = 0;
 
             foreach (var prod in products)
             {
@@ -787,13 +803,47 @@ namespace FintrakBanking.Repositories.Credit
 
             var loanDetailData  = $"{detail}";
 
+
+            loanCollateral = $" ";//<p><strong> Collateral: </strong></p>
+
+            loanCollateral = loanCollateral +
+                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> S/No </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:1.25in'><p> &nbsp;</p>" +
+                    $"<strong> Type and description of security </strong></p></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:130.5pt'><p> &nbsp;</p>" +
+                    $"<strong> Value(<s>N</s>) </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
+                    $"<strong> Amount Stamped To Cover (<s>N</s>) </strong></td></tr>";
+
+            foreach (var item in loanCollaterals)
+            {
+                loanCollateral = loanCollateral +
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfCollaterals}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralDetail}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralValue}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount}</p> Days </td>" +
+                    $"</tr>";
+            }
+
+            noOfCollaterals = 0;
+
+            loanCollateral = loanCollateral + "</tbody></table><p> &nbsp;</p>";
+
+            collateral += loanCollateral;
+
+            var loanCollateralData  = $"{collateral}";
+
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
 
             var customer = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_CUSTOMER.FIRSTNAME;
             var branch = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_BRANCH.BRANCHNAME;
             //var info = data;
 
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData,currentDate);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData,currentDate, loanCollateralData);
 
             if (preparedTemplate != null)
             {
@@ -869,7 +919,7 @@ namespace FintrakBanking.Repositories.Credit
             //return templateLink;
         }
 
-        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition,DateTime currentDate)
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition,DateTime currentDate,string collateralcondition)
         {
             string body;
 
@@ -887,6 +937,7 @@ namespace FintrakBanking.Repositories.Credit
             body = body.Replace("{@Fees}", feecondition);
             body = body.Replace("{@facility}", facilitycondition);
             body = body.Replace("{@CurrentDate}", currentDate.ToLongDateString());
+            body = body.Replace("{@Collateral}", collateralcondition);
             return body;
         }
 
@@ -1368,5 +1419,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        
+        //}
     }
 }

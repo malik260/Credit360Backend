@@ -29,5 +29,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
+
+        public virtual TBL_TRANSACTION_DYNAMICS TBL_TRANSACTION_DYNAMICS { get; set; }
     }
 }
