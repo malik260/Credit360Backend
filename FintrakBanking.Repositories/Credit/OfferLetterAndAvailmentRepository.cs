@@ -372,7 +372,7 @@ namespace FintrakBanking.Repositories.Credit
                         where a.COMPANYID == companyId && a.DELETED == false
                               && b.STATUSID == (int)ApprovalStatusEnum.Approved &&
                               e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                          //e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
+                          || e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
                           && e.RESPONSESTAFFID == null
                           && e.OPERATIONID == (int)OperationsEnum.LoanAvailment && e.TOAPPROVALLEVELID == staffApprovalLevelId
                         select new CamProcessedLoanViewModel
@@ -1183,7 +1183,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.AVAILMENTDATE = DateTime.Now;
 
                 var loanApplication = appl;
-                if (loanApplication.PRODUCTCLASSID != 0 || loanApplication.PRODUCTCLASSID != null)
+                if (loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
                 {
                     if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                     {

@@ -57,6 +57,7 @@ namespace FintrakBanking.Common.Enum
         LoanReviewApprovalAppraisal = 46,
         LoanReviewApprovalOfferLetter = 47,
         LoanReviewApprovalAvailment = 48,
-        FeeConcessionApproval = 49
+        FeeConcessionApproval = 49,
+        CreditBureauSearch = 50
     }
 }
