@@ -668,6 +668,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    
     public class CommentOnLoanAvailmentViewModel 
     {
         public string name  { get; set; }

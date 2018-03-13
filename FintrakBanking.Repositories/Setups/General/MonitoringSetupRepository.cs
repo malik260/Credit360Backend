@@ -45,16 +45,16 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             try
             {
-                var MonitoringSetup = new TBL_MONITORING_SETUP
+                var MonitoringSetup = new TBL_MONITORING_ALERT_SETUP 
                 {
                     MONITORING_ITEM_NAME = entity.monitoringItemName,
                     MESSAGE_TEMPLATE = entity.messageTemplate,
                     MESSAGETYPEID = entity.messageTypeId,
-                    NOTIFICATION_PERIOD = entity.notificationPeriod,
-                    PRODUCTID = entity.productId,
+                  //  NOTIFICATION_PERIOD = entity.notificationPeriod,
+                   // PRODUCTID = entity.productId,
                 };
 
-                this.context.TBL_MONITORING_SETUP.Add(MonitoringSetup);
+                this.context.TBL_MONITORING_ALERT_SETUP.Add(MonitoringSetup);
                 //context.SaveChanges();
 
                 // Audit Section ----------------------------
@@ -90,17 +90,17 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<MonitoringSetupViewModel> GetAllMonitoringSetup()
         {
-            var MonitoringSetup = (from d in context.TBL_MONITORING_SETUP
+            var MonitoringSetup = (from d in context.TBL_MONITORING_ALERT_SETUP
                                    select new MonitoringSetupViewModel()
                               {
                                   monitoringItemId = d.MONITORING_ITEMID,
                                   monitoringItemName = d.MONITORING_ITEM_NAME,
-                                  notificationPeriod = d.NOTIFICATION_PERIOD,
+                                 // notificationPeriod = d.NOTIFICATION_PERIOD,
                                   messageTypeId = d.MESSAGETYPEID,
                                   messageTemplate = d.MESSAGE_TEMPLATE,
                                   messageTypeName = d.TBL_MESSAGE_LOG_TYPE.MESSAGETYPENAME,
-                                  productId = d.TBL_PRODUCT.PRODUCTID,
-                                  productName = d.TBL_PRODUCT.PRODUCTDESCRIPTION,
+                                ///  productId = d.TBL_PRODUCT.PRODUCTID,
+                                 // productName = d.TBL_PRODUCT.PRODUCTDESCRIPTION,
 
                                    }).ToList();
             return MonitoringSetup;
@@ -135,27 +135,27 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public MonitoringSetupViewModel GetMonitoringSetup(int MonitoringSetupId)
         {
-            var MonitoringSetup = (from d in context.TBL_MONITORING_SETUP
+            var MonitoringSetup = (from d in context.TBL_MONITORING_ALERT_SETUP
                                    where d.MONITORING_ITEMID == MonitoringSetupId
                               select new MonitoringSetupViewModel()
                               {
                                   monitoringItemId = d.MONITORING_ITEMID,
                                   monitoringItemName = d.MONITORING_ITEM_NAME,
-                                  notificationPeriod = d.NOTIFICATION_PERIOD,
+                                 // notificationPeriod = d.NOTIFICATION_PERIOD,
                                   messageTypeId = d.MESSAGETYPEID,
                                   messageTemplate = d.MESSAGE_TEMPLATE,
-                                  productId = d.PRODUCTID,
+                               //   productId = d.PRODUCTID,
                               }).SingleOrDefault();
             return MonitoringSetup;
         }
 
         public bool UpdateMonitoringSetup(int MonitoringSetupId, MonitoringSetupViewModel entity)
         {
-            var MonitoringSetup = context.TBL_MONITORING_SETUP.Find(MonitoringSetupId);
+            var MonitoringSetup = context.TBL_MONITORING_ALERT_SETUP.Find(MonitoringSetupId);
 
             MonitoringSetup.MONITORING_ITEM_NAME = entity.monitoringItemName;
             MonitoringSetup.MESSAGE_TEMPLATE = entity.messageTemplate;
-            MonitoringSetup.NOTIFICATION_PERIOD = entity.notificationPeriod;
+          //  MonitoringSetup.NOTIFICATION_PERIOD = entity.notificationPeriod;
             MonitoringSetup.MESSAGETYPEID = entity.messageTypeId;
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
