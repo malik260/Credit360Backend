@@ -39,6 +39,7 @@
         <asp:Label Visible="false" ID="operationId" runat="server" ></asp:Label>
         <asp:Label Visible="false" ID="targetId" runat="server" ></asp:Label>
         <asp:Label Visible="false" ID="companyId" runat="server" ></asp:Label>
+         <asp:Label Visible="false" ID="staffId" runat="server" ></asp:Label>
     </form>
 </body>
 </html>

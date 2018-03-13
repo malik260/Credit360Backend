@@ -395,6 +395,8 @@ namespace FintrakBanking.Repositories.Credit
                     haircut = x.HAIRCUT,
                     approvalStatus = x.APPROVALSTATUS,
                     allowApplicationMapping = typeIds.Contains((short)x.COLLATERALTYPEID),
+                    requireInsurancePolicy  = x.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY
+
                 })
                 .OrderByDescending(x => x.collateralId)
                 .ToList();

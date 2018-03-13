@@ -15,6 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId);
 
         int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity);
+        int AddCustomerCreditBureauUpload(LoanCreditBereauViewModel entity, LoanDocumentViewModel docModel, byte[] file);
 
         bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model);
 

@@ -14,7 +14,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
+                var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId ).FirstOrDefault();
 
                 var output = (
 

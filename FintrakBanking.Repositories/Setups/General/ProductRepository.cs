@@ -1448,6 +1448,8 @@ namespace FintrakBanking.Repositories.Setups.General
             var behaviour = productModel.ProductBehaviour;
             var productBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
             {
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                ISCURRENT = true,
                 PRODUCTCODE = behaviour.productCode,
                 COLLATERAL_LCY_LIMIT = behaviour.collateralLcyLimit,
                 COLLATERAL_FCY_LIMIT = behaviour.collateralFcyLimit,
@@ -1477,7 +1479,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     auditTrail.AddAuditTrail(audit);
                     context.TBL_TEMP_PRODUCT.Add(product);
-                    context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(productBehaviour);
+                    //context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(productBehaviour);
                     output = await context.SaveChangesAsync() > 0;
 
                     var entity = new ApprovalViewModel

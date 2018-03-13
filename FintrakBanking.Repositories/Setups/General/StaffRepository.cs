@@ -903,6 +903,11 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
+        public int UploadStaffData(StaffDocumentViewModel model, byte[] file)
+        {
+            return 0;
+        }
+
         #region Staff Signature 
 
         public bool AddStaffSignature(StaffDocumentViewModel model, byte[] file)

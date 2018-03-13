@@ -32,7 +32,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetWorkflowSLA(id, token.GetCompanyId);
+                var data = repo.GetWorkflowSLA(id, token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -54,7 +54,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetLoanScheduleReport(loanid, token.GetCompanyId);
+                var data = repo.GetLoanScheduleReport(loanid, token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -75,7 +75,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetSectorLimitMonitoringReport(token.GetCompanyId);
+                var data = repo.GetSectorLimitMonitoringReport(token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -98,7 +98,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetBranchLoanAmountLimit(token.GetBranchId, token.GetCompanyId);
+                var data = repo.GetBranchLoanAmountLimit(token.GetBranchId, token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -120,7 +120,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetWorkflowDefinition(id, token.GetCompanyId);
+                var data = repo.GetWorkflowDefinition(id, token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -141,7 +141,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetDisburstLoans(dateRange, token.GetCompanyId);
+                var data = repo.GetDisburstLoans(dateRange, token.GetCompanyId,token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -186,7 +186,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetCollateralPropertyRevaluationReport(token.GetCompanyId, value);
+                var data = repo.GetCollateralPropertyRevaluationReport(token.GetCompanyId, value, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -208,7 +208,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetCovenantsApproachingDueDateReport(token.GetCompanyId);
+                var data = repo.GetCovenantsApproachingDueDateReport(token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -230,7 +230,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetNonPerformingLoansReport(token.GetCompanyId);
+                var data = repo.GetNonPerformingLoansReport(token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -252,7 +252,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetExpiredOverdraftLoansReport(token.GetCompanyId);
+                var data = repo.GetExpiredOverdraftLoansReport(token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -277,7 +277,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetLoanCommercialReport(dateRange, token.GetCompanyId);
+                var data = repo.GetLoanCommercialReport(dateRange, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -323,7 +323,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetTeamAndRevolving(dateRange, token.GetCompanyId);
+                var data = repo.GetTeamAndRevolving(dateRange, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -345,7 +345,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetEarnedUnearnedInterest(dateRange, token.GetCompanyId);
+                var data = repo.GetEarnedUnearnedInterest(dateRange, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -366,7 +366,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetAuditTrail(dateRange, token.GetCompanyId);
+                var data = repo.GetAuditTrail(dateRange, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -432,7 +432,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetLoanStatement(token.GetCompanyId,id);
+                var data = repo.GetLoanStatement(token.GetCompanyId,id, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -454,7 +454,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetLoanAnniversery(dateRange, token.GetCompanyId);
+                var data = repo.GetLoanAnniversery(dateRange, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -477,7 +477,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
 
-                var data = repo.GetLoanDocumentWaived(token.GetCompanyId, dateRange);
+                var data = repo.GetLoanDocumentWaived(token.GetCompanyId, dateRange, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -499,7 +499,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
 
-                var data = repo.GetLoanDocumentDeferrals(token.GetCompanyId, dateRange);
+                var data = repo.GetLoanDocumentDeferrals(token.GetCompanyId, dateRange, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -522,7 +522,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
 
-                var data = repo.GetLoanDocumentDeferralsMCC(token.GetCompanyId, dateRange);
+                var data = repo.GetLoanDocumentDeferralsMCC(token.GetCompanyId, dateRange, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -567,7 +567,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetCollateralEstimated(token.GetCompanyId, collateralCode);
+                var data = repo.GetCollateralEstimated(token.GetCompanyId, collateralCode, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -589,7 +589,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetFCYScheuledLoan(token.GetCompanyId, id);
+                var data = repo.GetFCYScheuledLoan(token.GetCompanyId, id, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -631,7 +631,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetStakeholdersOnExpirationOfFTP(reportSearchEntity, token.GetCompanyId);
+                var data = repo.GetStakeholdersOnExpirationOfFTP(reportSearchEntity, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -652,7 +652,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetFacilityApprovedNotUtilized(reportSearchEntity, token.GetCompanyId);
+                var data = repo.GetFacilityApprovedNotUtilized(reportSearchEntity, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -673,7 +673,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetRuningLoansByLoanType(reportSearchEntity, token.GetCompanyId);
+                var data = repo.GetRuningLoansByLoanType(reportSearchEntity, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -694,7 +694,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetLoanInterestReceivableAndPayable(reportSearchEntity, token.GetCompanyId);
+                var data = repo.GetLoanInterestReceivableAndPayable(reportSearchEntity, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -715,7 +715,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetLoanInterestReceivableAndPayable(reportSearchEntity, token.GetCompanyId);
+                var data = repo.GetLoanInterestReceivableAndPayable(reportSearchEntity, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
