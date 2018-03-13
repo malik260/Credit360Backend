@@ -108,13 +108,33 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
         #region Offer Letter Generation
 
+        //public string GetGeneratedOfferLetter(string applicationRefNumber)
+        //{
+        //    try
+        //    {
+        //        string path = string.Empty;
+        //        path = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber;
+        //        return path;
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        throw ex;
+        //    }
+        //}
+
         public string GetGeneratedOfferLetter(string applicationRefNumber)
         {
             try
             {
-                string path = string.Empty;
-                path = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber;
-                return path;
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+                    var productClassId = context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).PRODUCTCLASSID;
+                    var productClassProcessId = context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).PRODUCT_CLASS_PROCESSID;
+                    return GetProductSpecificTemplate(productClassProcessId, productClassId, applicationRefNumber);
+                }
+              
+              
             }
             catch (Exception ex)
             {
@@ -122,14 +142,13 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                 throw ex;
             }
         }
-
         public string GetProductSpecificTemplate(short? productClassProcessId, short? productClassId, string applicationRefNumber)
         {
           
 
             var links = new
             {
-                General = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
+                General = reportPath + "Credit/OfferLetterGeneration/OfferLetterCAMbase.aspx?applicationRefNumber=" + applicationRefNumber,
                 IDF = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
                 FirstEdu = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,
                 FirstTrader = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber,

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="OfferLetter.aspx.cs" Inherits="FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration.OfferLetter" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="OfferLetterCAMbase.aspx.cs" Inherits="FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration.OfferLetter" %>
 
  <%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
@@ -17,7 +17,7 @@
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
         <rsweb:ReportViewer ID="offerLetterReport" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
-            <LocalReport ReportPath="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc">
+            <LocalReport ReportPath="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc">
                 <DataSources>
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetter" Name="OfferLetterDetails" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterDetails" Name="OfferLetterLoanDetail" />
@@ -57,14 +57,12 @@
                 <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
             </SelectParameters>
         </asp:ObjectDataSource>
-
                  <asp:ObjectDataSource ID="odsOfferLetterSignatory" runat="server" SelectMethod="GetLoanApplicationSignatory" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfo">
             <SelectParameters>
                 <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
             </SelectParameters>
-        </asp:ObjectDataSource>
- 
-                 <asp:ObjectDataSource ID="odsOfferLetterCollateral" runat="server" SelectMethod="GetLoanCollateral" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfo">
+        </asp:ObjectDataSource> 
+           <asp:ObjectDataSource ID="odsOfferLetterCollateral" runat="server" SelectMethod="GetLoanCollateral" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfo">
             <SelectParameters>
                 <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
             </SelectParameters>

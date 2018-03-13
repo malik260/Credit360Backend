@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.TBL_CONDITION_PRECEDENT")]
     public partial class TBL_CONDITION_PRECEDENT
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_CONDITION_PRECEDENT()
+        {
+            TBL_LOAN_CONDITION_PRECEDENT = new HashSet<TBL_LOAN_CONDITION_PRECEDENT>();
+        }
+
         [Key]
         public int CONDITIONID { get; set; }
 
@@ -41,5 +47,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_CONDITION_PRECEDENT> TBL_LOAN_CONDITION_PRECEDENT { get; set; }
     }
 }

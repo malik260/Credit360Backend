@@ -53,5 +53,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool OfferLetterRejection(ForwardViewModel entity);
 
         IEnumerable<CommentOnLoanAvailmentViewModel> GetCommentOnLoanAvailment(string applicationRefNumber);
+
+        //IEnumerable<LoanApplicationCollateralViewModel> GetLoanCollateral(int loanApplicationDetailId);
     }
 }

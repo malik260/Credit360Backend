@@ -651,8 +651,18 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (emailNotification || smsNotification)
             {
                 var operation = context.TBL_OPERATIONS.Find(this.operationId);
-                var trails = trailLog.OrderBy(x => x.APPROVALTRAILID);
-                var owner = context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
+
+                TBL_STAFF owner;
+                if (trailLog.Count() == 0)
+                {
+                    owner = context.TBL_STAFF.Find(this.staffId);
+                }
+                else
+                {
+                    var trails = trailLog.OrderBy(x => x.APPROVALTRAILID);
+                    owner = context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
+                }
+
 
                 int targetId = this.targetId;
                 int operationId = this.operationId;
@@ -711,20 +721,23 @@ namespace FintrakBanking.Repositories.WorkFlow
                     };
                     context.TBL_MESSAGE_LOG.Add(message);
 
-                    message = new TBL_MESSAGE_LOG // RECIEVERS
+                    if (this.nextLevelId != null)
                     {
-                        TOADDRESS = this.toStaffId != null ? reciever.EMAIL : string.Join(";", emails),
-                        MESSAGESUBJECT = messageSubject,
-                        MESSAGEBODY = messageBody,
-                        MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-                        MESSAGETYPEID = (short)MessageTypeEnum.Email,
-                        FROMADDRESS = this.support,
-                        DATETIMERECEIVED = DateTime.Now,
-                        SENDONDATETIME = DateTime.Now,
-                        TARGETID = targetId,
-                        OPERATIONID = operationId
-                    };
-                    context.TBL_MESSAGE_LOG.Add(message);
+                        message = new TBL_MESSAGE_LOG // RECIEVERS
+                        {
+                            TOADDRESS = this.toStaffId != null ? reciever.EMAIL : string.Join(";", emails),
+                            MESSAGESUBJECT = messageSubject,
+                            MESSAGEBODY = messageBody,
+                            MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                            MESSAGETYPEID = (short)MessageTypeEnum.Email,
+                            FROMADDRESS = this.support,
+                            DATETIMERECEIVED = DateTime.Now,
+                            SENDONDATETIME = DateTime.Now,
+                            TARGETID = targetId,
+                            OPERATIONID = operationId
+                        };
+                        context.TBL_MESSAGE_LOG.Add(message);
+                    }
                 }
             }
         }

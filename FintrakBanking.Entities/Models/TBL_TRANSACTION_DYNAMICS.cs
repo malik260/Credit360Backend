@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.TBL_TRANSACTION_DYNAMICS")]
     public partial class TBL_TRANSACTION_DYNAMICS
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_TRANSACTION_DYNAMICS()
+        {
+            TBL_LOAN_TRANSACTION_DYNAMICS = new HashSet<TBL_LOAN_TRANSACTION_DYNAMICS>();
+        }
+
         [Key]
         public int DYNAMICSID { get; set; }
 
@@ -27,5 +33,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_TRANSACTION_DYNAMICS> TBL_LOAN_TRANSACTION_DYNAMICS { get; set; }
     }
 }
