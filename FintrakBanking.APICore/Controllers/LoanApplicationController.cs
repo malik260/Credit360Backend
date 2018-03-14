@@ -470,9 +470,12 @@ namespace FintrakBanking.APICore.Controllers
 
                 entity.misCode = "001";
                 entity.teamMisCode = "004";
+               if( entity.LoanApplicationDetail.Count == 0)
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No facility detail is provided" });
+
 
                 var response = repo.AddLoanApplication(entity);
-                if (response > 0)
+                if (response != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
                 }
@@ -978,5 +981,33 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        [HttpDelete]
+        [Route("loanApplicationDetail/{id}")]
+        public HttpResponseMessage DeleteLoanApplicationDetail(int id)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+               var result = repo.DeleteLoanApplicationDetail(id);
+               // if(result)
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = result, message = "loan Application was removed successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

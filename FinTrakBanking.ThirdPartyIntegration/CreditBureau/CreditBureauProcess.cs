@@ -190,7 +190,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
             var data = new XDSIndividualSearchViewModel
             {
                 AccountNumber = "", //searchInfo.accountOrRegistrationNumber,
-                ConsumerName = "OGBONNAYA", // searchInfo.customerName,
+                ConsumerName = "Ogbonnaya", // searchInfo.customerName,
                 DateOfBirth = "", //searchInfo.dateOfBirth,
                 Identification = "", // searchInfo.identification,
                 EnquiryReason = searchInfo.enquiryReason,

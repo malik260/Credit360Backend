@@ -42,7 +42,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
 
-        int AddLoanApplication( LoanApplicationViewModel loan);
+        LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
 
         bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity);
 
@@ -76,5 +76,7 @@ namespace FintrakBanking.Interfaces.Credit
         dynamic GetLoanAppById(int loanApplicationDetailId, int companyId);
 
         IEnumerable<LoanApplicationViewModel> SearchForLoan(string searchString);
+
+        bool DeleteLoanApplicationDetail(int loanApplicationDetailId);
     }
 }
