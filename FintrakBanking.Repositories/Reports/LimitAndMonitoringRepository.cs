@@ -171,6 +171,8 @@ namespace FintrakBanking.Repositories.Reports
         public IEnumerable<LimitAndMonitoringViewModel> GetAllEmailAlertMessages()
         {
             var data = context.TBL_MONITORING_ALERT_SETUP.Select(x => new LimitAndMonitoringViewModel {
+                monitoringItemId = x.MONITORING_ITEMID,
+                messageTitle = x.MESSAGE_TITLE,
                 messageBody = x.MONITORING_ITEM_NAME,
                 notificationPeriod1 = x.NOTIFICATION_PERIOD1,
                 escalationLevel1= x.RECIPIENTEMAILS1,
@@ -181,6 +183,37 @@ namespace FintrakBanking.Repositories.Reports
             }).ToList();
 
             return data;
+        }
+
+        public string UpdateEmailAlertMessages(LimitAndMonitoringViewModel data)
+        {
+            var alertMessage = context.TBL_MONITORING_ALERT_SETUP.Find(data.monitoringItemId);
+            if (alertMessage!=null)
+            {
+                alertMessage.NOTIFICATION_PERIOD1 = data.notificationPeriod1;
+                alertMessage.RECIPIENTEMAILS1 = data.escalationLevel1;
+                alertMessage.NOTIFICATION_PERIOD2 = data.notificationPeriod2;
+                alertMessage.RECIPIENTEMAILS2 = data.escalationLevel2;
+                alertMessage.NOTIFICATION_PERIOD3 = data.notificationPeriod3;
+                alertMessage.RECIPIENTEMAILS3 = data.escalationLevel3;
+
+                //var audit = new TBL_AUDIT
+                //{
+                //    AUDITTYPEID = (short)AuditTypeEnum.AlertAndMonitoryAdded,
+                //    STAFFID = data.staffId,
+                //    BRANCHID = (short)data.userBranchId,
+                //    DETAIL = $"Alert Message with  {data.monitoringItemId} id is edited",
+                //    IPADDRESS = data.userIPAddress,
+                //    URL = data.applicationUrl,
+                //    //  APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                //    SYSTEMDATETIME = DateTime.Now
+                //};
+                //this.auditTrail.AddAuditTrail(audit);
+                context.SaveChanges();
+
+                return "The record has been updated successful";
+            }
+            return "The record has not been updated";
         }
     }
 }

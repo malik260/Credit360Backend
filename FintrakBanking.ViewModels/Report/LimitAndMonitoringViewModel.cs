@@ -8,6 +8,7 @@ namespace FintrakBanking.ViewModels.Report
 {
    public class LimitAndMonitoringViewModel : GeneralEntity
     {
+        public int monitoringItemId { get; set; }
         public string messageBody { get; set; }
         public string messageTitle { get; set; }
         public int notificationPeriod1 { get; set; }

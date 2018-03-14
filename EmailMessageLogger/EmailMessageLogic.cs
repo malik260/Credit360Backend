@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common;
+﻿using EmailMessageLogger.Enum;
+using FintrakBanking.Common;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
@@ -23,6 +24,8 @@ namespace EmailMessageLogger
         private static DateTime applDate;
         private static IStaffRepository staffRepo;
 
+        FinTrakBankingContext dbContext = new FinTrakBankingContext();
+
         EmailAndAlertsRepository repo = new EmailAndAlertsRepository(
                 context,
                 auditTrail,
@@ -33,22 +36,26 @@ namespace EmailMessageLogger
 
         public string Start()
         {
+            string title = string.Empty;
+            string body = string.Empty;
 
-            repo.SendAlertsForCovenantsApproachingDueDate();
+          var alertSetups =  context.TBL_MONITORING_ALERT_SETUP.ToList();
 
-            repo.SendAlertsForCovenantsOverDue();
+           repo.SendAlertsForCovenantsApproachingDueDate(title,body, alertSetups);
 
-            repo.SendAlertsForCollateralPropertyRevaluation();
+           repo.SendAlertsForCovenantsOverDue(title, body, alertSetups);
 
-            repo.SendAlertsForLoanNplMonitoring();
+            //repo.SendAlertsForCollateralPropertyRevaluation(title, body);
 
-            repo.SendAlertsOnSelfLiquidatingLoanExpiry();
+            //repo.SendAlertsForLoanNplMonitoring(title, body);
 
-            repo.SendAlertsOnOverDraftLoansAlmostDue();
+            //repo.SendAlertsOnSelfLiquidatingLoanExpiry(title, body);
 
-            repo.SendAlertsOnLoanCASAwithPND();
+            //repo.SendAlertsOnOverDraftLoansAlmostDue(title, body);
 
-            repo.SendAlertsForExpiredInsurance();
+            //repo.SendAlertsOnLoanCASAwithPND(title, body);
+
+            //repo.SendAlertsForExpiredInsurance(title, body);
 
             return repo.response;
             
