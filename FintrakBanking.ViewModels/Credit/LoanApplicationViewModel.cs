@@ -481,4 +481,42 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int productClassId { get; set; }
     }
+
+    public class CamViewModel : GeneralEntity
+    {
+        public int documentationId { get; set; }
+        public string documentation { get; set; }
+        public int applicationId { get; set; }
+        public int approvalLevelId { get; set; }
+        public string referenceNumber { get; set; }
+        public bool createNew { get; set; }
+    }
+
+    public class ForwardReviewViewModel : GeneralEntity
+    {
+        public int forwardAction { get; set; } // statusId
+        public int applicationId { get; set; } // targetId
+        public int appraisalMemorandumId { get; set; }
+        public int? productClassId { get; set; }
+        public int? productId { get; set; }
+        public int receiverLevelId { get; set; }
+        public int? receiverStaffId { get; set; }
+        public int? trailId { get; set; }
+        public decimal amount { get; set; }
+        public bool politicallyExposed { get; set; }
+        public short? vote { get; set; }
+        public string comment { get; set; }
+        public decimal principal { get; set; }
+        public double rate { get; set; }
+        public int tenor { get; set; }
+        public bool investmentGrade { get; set; }
+        public int applicationTenor { get; set; }
+        public int operationId { get; set; }
+        public bool untenored { get; set; }
+        public bool isBusiness { get; set; }
+        public float? interestRateConcession { get; set; }
+        public float? feeRateConcession { get; set; }
+    }
+
+    
 }
