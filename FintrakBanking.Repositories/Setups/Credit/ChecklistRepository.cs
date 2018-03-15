@@ -1216,17 +1216,17 @@ namespace FintrakBanking.Repositories.Credit
             int staffApprovalLevelId = 0;
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var data = (from a in context.TBL_LOAN_APPLICATION
-                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
-                        join atrail in context.TBL_APPROVAL_TRAIL on b.CONDITIONID equals atrail.TARGETID
+            var data = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        join atrail in context.TBL_APPROVAL_TRAIL on b.LOANCONDITIONID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                         && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
                         && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null
-                        orderby a.APPLICATIONDATE descending
+                        orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
-                            customerName = a.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerName = a.TBL_LOAN_APPLICATION.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             proposedAmount = a.APPROVEDAMOUNT,
                             approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                             deferredDate = b.DEFEREDDATE,
@@ -1235,7 +1235,7 @@ namespace FintrakBanking.Repositories.Credit
                             condition = b.CONDITION,
                             conditionId = b.LOANCONDITIONID,
                             loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                             checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                             dateCreated = b.DATETIMECREATED
                         }).ToList();
@@ -1280,7 +1280,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool output = false;
             var checklistRecord = (from s in context.TBL_LOAN_CONDITION_PRECEDENT
-                                   where s.CONDITIONID == targetId
+                                   where s.LOANCONDITIONID == targetId
                                   && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                    select s).FirstOrDefault();
             var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
@@ -1314,10 +1314,6 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             this.auditTrail.AddAuditTrail(audit);
-
-
-
-
             output = context.SaveChanges() > 0;
 
             return output;
@@ -1326,7 +1322,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.TBL_LOAN_CONDITION_PRECEDENT
                         join b in context.TBL_LOAN_CONDITION_DEFERRAL
-                        on a.CONDITIONID equals b.CONDITIONID
+                        on a.LOANCONDITIONID equals b.CONDITIONID
                         join c in context.TBL_LOAN_APPLICATION
                         on a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived)

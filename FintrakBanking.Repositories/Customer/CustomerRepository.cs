@@ -1185,6 +1185,7 @@ namespace FintrakBanking.Repositories.Customer
                             temp = new TBL_TEMP_CUSTOMER_DIRECTOR();
 
                             temp.CUSTOMERID = entity.customerId;
+                            temp.COMPANYDIRECTORID = entity.companyDirectorId;
                             temp.SURNAME = entity.surname;
                             temp.FIRSTNAME = entity.firstname;
                             temp.MIDDLENAME = entity.middlename;
@@ -1470,6 +1471,7 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             temp = new TBL_TEMP_CUST_CLIENT_SUPPLIER();
                             temp.CUSTOMERID = entity.customerId;
+                            temp.CLIENT_SUPPLIERID = entity.client_SupplierId;
                             temp.CUSTOMERTYPEID = entity.customerTypeId;
                             temp.FIRSTNAME = entity.firstName;
                             temp.MIDDLENAME = entity.middleName;
