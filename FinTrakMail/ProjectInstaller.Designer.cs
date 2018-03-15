@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.MailProcessInstaller = new System.ServiceProcess.ServiceProcessInstaller();
-            this.MailserviceInstaller = new System.ServiceProcess.ServiceInstaller();
+            this.FintrakEmailSenderService = new System.ServiceProcess.ServiceInstaller();
             // 
             // MailProcessInstaller
             // 
@@ -37,25 +37,25 @@
             this.MailProcessInstaller.Password = null;
             this.MailProcessInstaller.Username = null;
             // 
-            // MailserviceInstaller
+            // FintrakEmailSenderService
             // 
-            this.MailserviceInstaller.Description = "FinTrak E-Mail Service";
-            this.MailserviceInstaller.DisplayName = "FinTrak E-Mail Service";
-            this.MailserviceInstaller.ServiceName = "MailServer";
-            this.MailserviceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
-            this.MailserviceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.MailserviceInstaller_AfterInstall);
+            this.FintrakEmailSenderService.Description = "FinTrak E-Mail Service";
+            this.FintrakEmailSenderService.DisplayName = "FinTrak E-Mail Service";
+            this.FintrakEmailSenderService.ServiceName = "Fintrak Email Sender";
+            this.FintrakEmailSenderService.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
+            this.FintrakEmailSenderService.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.MailserviceInstaller_AfterInstall);
             // 
             // ProjectInstaller
             // 
             this.Installers.AddRange(new System.Configuration.Install.Installer[] {
             this.MailProcessInstaller,
-            this.MailserviceInstaller});
+            this.FintrakEmailSenderService});
 
         }
 
         #endregion
 
         private System.ServiceProcess.ServiceProcessInstaller MailProcessInstaller;
-        private System.ServiceProcess.ServiceInstaller MailserviceInstaller;
+        private System.ServiceProcess.ServiceInstaller FintrakEmailSenderService;
     }
 }

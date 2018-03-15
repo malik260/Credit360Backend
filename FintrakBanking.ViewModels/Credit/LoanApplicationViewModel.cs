@@ -14,7 +14,7 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public bool isNewApplication { get; set; }
-
+        public bool closeApplication { get; set; }        
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         public string applicationReferenceNumber { get; set; }
@@ -180,6 +180,10 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string customerName { get; set; }
 
+        public decimal? equityAmount { get; set; }
+
+        public int? equityCasaAccountId { get; set; }
+
         public short proposedProductId { get; set; }
 
         public string proposedProductName { get; set; }
@@ -228,9 +232,11 @@ namespace FintrakBanking.ViewModels.Credit
         public List<ProductFeesViewModel> productFees { get; set; }
         public BondsAndGuranty bondDetails { get; set; }
         public IEnumerable<LoanCreditBereauViewModel> LoanCreditBereauReport { get; set; }
+        public string sectorName { get; set; }
+        public string productClass { get; set; }
     }
 
-    public class ProductFeesViewModel : GeneralEntity
+    public class ProductFeesViewModel// : GeneralEntity
     {
         public int loanChargeFeeId { get; set; }
         public int loanApplicationDetailId { get; set; }

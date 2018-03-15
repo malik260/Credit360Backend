@@ -56,15 +56,18 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
-        public IEnumerable<LoanInformation> GetLoanSchedule(int companyId, int tearmLoanId)
+        public IEnumerable<LoanInformation> GetLoanSchedule(int companyId, int tearmLoanId, int staffId)
         {
             IEnumerable<LoanInformation> loan;
+            
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
+                var staffSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
                 var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
                 loan = (from a in context.TBL_LOAN
+                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
-                        where a.COMPANYID == companyId && a.TERMLOANID == tearmLoanId
+                        where a.COMPANYID == companyId && a.TERMLOANID == tearmLoanId && c.CUSTOMERSENSITIVITYLEVELID <= staffSensitivityLevelId
                         select new LoanInformation()
                         {
                             accountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == a.CASAACCOUNTID).PRODUCTACCOUNTNUMBER,
@@ -95,6 +98,7 @@ namespace FintrakBanking.ReportObjects
                             outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
                             outstandingInterest = a.OUTSTANDINGINTEREST
                         });
+               
                 return loan.ToList();
             }
 
@@ -137,12 +141,11 @@ namespace FintrakBanking.ReportObjects
 
         }
 
-        public IEnumerable<DisburstLoanViewModel> GetDisburstLoans(DateTime startDate, DateTime endDate, int companyId, string loanRefNo, short? branchId, int? productClassId)
+        public IEnumerable<DisburstLoanViewModel> GetDisburstLoans(DateTime startDate, DateTime endDate, int companyId, string loanRefNo, short? branchId, int? productClassId, int staffId)
         {
-
-
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
+                var approvedCustomerSentivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
                 var data = from a in context.TBL_LOAN
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                            where (a.ISDISBURSED
@@ -152,6 +155,7 @@ namespace FintrakBanking.ReportObjects
                          && a.COMPANYID == companyId) && (a.LOANREFERENCENUMBER == loanRefNo || a.TBL_CUSTOMER.FIRSTNAME.StartsWith(loanRefNo) || a.TBL_CUSTOMER.LASTNAME.StartsWith(loanRefNo) || a.TBL_CUSTOMER.MIDDLENAME.StartsWith(loanRefNo) || loanRefNo == null)
                          && (a.BRANCHID == branchId || branchId == null)
                          && (a.TBL_PRODUCT.PRODUCTCLASSID == productClassId || productClassId == null || productClassId == 0)
+                         && a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID <= approvedCustomerSentivityLevelId
 
                            select new DisburstLoanViewModel
                            {

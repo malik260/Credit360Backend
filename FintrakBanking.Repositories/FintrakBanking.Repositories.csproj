@@ -124,6 +124,7 @@
     <Compile Include="Notification\NotificationRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\FinanceTransactions.cs" />
+    <Compile Include="Reports\LimitAndMonitoringRepository.cs" />
     <Compile Include="Risk\RiskImplementation.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupMappingRepository.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupRepository.cs" />

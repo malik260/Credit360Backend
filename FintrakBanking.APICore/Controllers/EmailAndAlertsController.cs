@@ -28,7 +28,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                repo.SendAlertsForCovenantsApproachingDueDate();
+              //  repo.SendAlertsForCovenantsApproachingDueDate();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
@@ -45,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                repo.SendAlertsForCovenantsOverDue();
+              //  repo.SendAlertsForCovenantsOverDue();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
@@ -62,7 +62,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                repo.SendAlertsForCollateralPropertyRevaluation();
+              //  repo.SendAlertsForCollateralPropertyRevaluation();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
@@ -79,7 +79,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                repo.SendAlertsForLoanNplMonitoring();
+               // repo.SendAlertsForLoanNplMonitoring();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
@@ -96,7 +96,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                repo.SendAlertsOnSelfLiquidatingLoanExpiry();
+              //  repo.SendAlertsOnSelfLiquidatingLoanExpiry();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
@@ -113,7 +113,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                repo.SendAlertsOnOverDraftLoansAlmostDue();
+              //  repo.SendAlertsOnOverDraftLoansAlmostDue();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }

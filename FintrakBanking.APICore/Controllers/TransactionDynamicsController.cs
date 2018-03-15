@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -190,6 +191,42 @@ namespace FintrakBanking.APICore.Controllers
                 };
                 var data = repo.RemoveLoanTransactionDynamics(id, user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been removed successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+
+
+        [HttpGet]
+        [Route("transaction-dynamics-template/application/{applicationId}")]
+        public HttpResponseMessage GetTransactionDynamicsDefaultByApplicationId(int applicationId)
+        {
+            try
+            {
+                List<TransactionDynamicsViewModel> data = repo.GetTransactionDynamicsDefaultByApplicationId(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("transaction-dynamics/selected")]
+        public HttpResponseMessage AddSelectedTransactionDynamics([FromBody] SelectedIdsViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                List<TransactionDynamicsViewModel> data = repo.AddSelectedTransactionDynamics(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
             }
             catch (Exception ex)
             {

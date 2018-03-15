@@ -18,7 +18,6 @@ namespace FintrakBanking.Entities.Models
             TBL_CUSTOMER_PRODUCT_FEE = new HashSet<TBL_CUSTOMER_PRODUCT_FEE>();
             TBL_DAILY_ACCRUAL = new HashSet<TBL_DAILY_ACCRUAL>();
             TBL_KYC_ITEM = new HashSet<TBL_KYC_ITEM>();
-            TBL_MONITORING_SETUP = new HashSet<TBL_MONITORING_SETUP>();
             TBL_LOAN = new HashSet<TBL_LOAN>();
             TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
             TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
@@ -162,9 +161,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_KYC_ITEM> TBL_KYC_ITEM { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_MONITORING_SETUP> TBL_MONITORING_SETUP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }

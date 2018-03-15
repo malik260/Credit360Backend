@@ -591,14 +591,48 @@ namespace FintrakBanking.Repositories.Setups.General
             return productData;
         }
 
+        private IEnumerable<ProductSearchViewModel> ProductSearch(int companyId)
+        {
+            var data = context.TBL_PRODUCT.Where(p => p.COMPANYID == companyId).Select(p => new ProductSearchViewModel
+            {
+                dealClassificationId = p.DEALCLASSIFICATIONID,
+                dealClassificationName = p.TBL_DEAL_CLASSIFICATION.CLASSIFICATION,
+                equityContribution = p.EQUITYCONTRIBUTION,
+                maximumRate = p.MAXIMUMRATE,
+                maximumTenor = p.MAXIMUMTENOR,
+                minimumRate = p.MINIMUMRATE,
+                minimumTenor = p.MINIMUMTENOR,
+                productCategoryId = p.PRODUCTCATEGORYID,
+                productCategoryName = p.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
+                productClassId = p.PRODUCTCLASSID,
+                productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                productCode = p.PRODUCTCODE,
+                productId = p.PRODUCTID,
+                productName = p.PRODUCTNAME,
+                productGroupId = p.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
+                ProductBehaviour = p.TBL_PRODUCT_BEHAVIOUR.Where(c => c.PRODUCTID == p.PRODUCTID).Select(c => new ProductBehaviourViewModel
+                {
+                    collateralFcyLimit = (double)c.COLLATERAL_FCY_LIMIT,
+                    collateralLcyLimit = (double)c.COLLATERAL_LCY_LIMIT,
+                    customerLimit = c.CUSTOMER_LIMIT,
+                    fcyLimit = c.COLLATERAL_FCY_LIMIT,
+                    isInvoiceBased = c.ISINVOICEBASED,
+                    lcyLimit = c.COLLATERAL_LCY_LIMIT,
+                    requireCasaAccount = (bool)c.REQUIRECASAACCOUNT,
+                    productLimit = c.PRODUCT_LIMIT
+                }).FirstOrDefault(),
+            });
+            return null;
+        }
+
         public IEnumerable<ProductViewModel> GetAllProduct()
         {
             return AllProduct();
         }
         
-        public IEnumerable<ProductViewModel> GetAllLoanProduct()
+        public IEnumerable<ProductSearchViewModel> GetAllLoanProduct(int companyId)
         {
-            return AllProduct().Where(c => c.productGroupId == 1);
+            return ProductSearch(companyId).Where(c => c.productGroupId ==(int)ProductGroupEnum.LoansAndAdvances);
         }
 
         public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId)
@@ -1414,6 +1448,8 @@ namespace FintrakBanking.Repositories.Setups.General
             var behaviour = productModel.ProductBehaviour;
             var productBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
             {
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                ISCURRENT = true,
                 PRODUCTCODE = behaviour.productCode,
                 COLLATERAL_LCY_LIMIT = behaviour.collateralLcyLimit,
                 COLLATERAL_FCY_LIMIT = behaviour.collateralFcyLimit,
@@ -1443,7 +1479,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     auditTrail.AddAuditTrail(audit);
                     context.TBL_TEMP_PRODUCT.Add(product);
-                    context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(productBehaviour);
+                    //context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(productBehaviour);
                     output = await context.SaveChangesAsync() > 0;
 
                     var entity = new ApprovalViewModel

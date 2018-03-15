@@ -11,13 +11,17 @@ namespace FinTrakMail
     {
         private static FinTrakBankingContext context = new FinTrakBankingContext(); 
 
-        public static bool UpdateMailDeliveryStatus(int messageId, short statusId)
+        public static bool UpdateMailDeliveryStatus(int messageId, short statusId, string response)
         {
             var mailMessage = context.TBL_MESSAGE_LOG.Find(messageId);
 
             if (mailMessage != null)
             {
                 mailMessage.MESSAGESTATUSID = (short)statusId;
+
+                mailMessage.DATETIMESENT = DateTime.Now;
+
+                mailMessage.GATEWAYRESPONSE = response;
 
                 var output = context.SaveChanges() > 0;
 

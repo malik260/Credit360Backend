@@ -94,7 +94,7 @@ namespace FintrakBanking.Repositories.Finance
             var transactionCount = (from a in inputTransactions
                                     select a.transactionDetails.Count());
             
-            if(transactionCount.Sum() < 2) //transaction.transactionDetails.Count() < 2
+            if(transactionCount.Sum() < 2) 
                 throw new Exception("Specify both debit and credit transactions");
 
             List<TBL_FINANCE_TRANSACTION> transactions = new List<TBL_FINANCE_TRANSACTION>();
@@ -1145,7 +1145,7 @@ namespace FintrakBanking.Repositories.Finance
             else
             {
                 FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-                debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                debit.glAccountId = creditGL;
                 debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
                 debit.casaAccountId = casa.CASAACCOUNTID;
                 debit.debitAmount = postedAmount;
@@ -1154,7 +1154,7 @@ namespace FintrakBanking.Repositories.Finance
                 debit.destinationBranchId = casa.BRANCHID;
 
                 FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-                credit.glAccountId = creditGL;
+                credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value; ;
 
                 credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
                 credit.casaAccountId = null;

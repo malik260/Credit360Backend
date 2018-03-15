@@ -154,7 +154,7 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        private void LoadConditionsAndDynamics(int loanApplicationId)
+        /*private void LoadConditionsAndDynamics(int loanApplicationId)
         {
             List<int?> productIds = null;
             List<int> camProductIds = null;
@@ -225,7 +225,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 context.SaveChanges();
             }
-        }
+        }*/
 
         private IQueryable<int> GetAllCamProductIds()
         {
@@ -289,8 +289,18 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int documentId)
         {
             var data = this.context.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Find(documentId);
-
             if (data == null) { return false; }
+
+            if (data.LASTUPDATEDBY != model.lastUpdatedBy) // archive old
+            {
+                context.TBL_CREDIT_APPRAISAL_MEMO_LOG.Add(new TBL_CREDIT_APPRAISAL_MEMO_LOG
+                {
+                    CAMDOCUMENTATION = data.CAMDOCUMENTATION,
+                    APPRAISALMEMORANDUMID = data.APPRAISALMEMORANDUMID,
+                    CREATEDBY = model.lastUpdatedBy,
+                    DATETIMECREATED = DateTime.Now
+                });
+            }
 
             data.CAMDOCUMENTATION = model.camDocumentation;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
@@ -321,7 +331,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = general.GetApplicationDate();
             List<TBL_LOAN_APPLICATION_DETAIL> items = null;
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
-            LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
+            // LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
 
             // WORKFLOW
             workflow.StaffId = model.createdBy;
@@ -486,7 +496,7 @@ namespace FintrakBanking.Repositories.Credit
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {
             var operationId = entity.operationId; // (int)OperationsEnum.CAM; // <--------------------- overide incoming for now
-            var privilege = new PrivilegeViewModel();
+            //var privilege = new PrivilegeViewModel();
             var application = this.context.TBL_LOAN_APPLICATION.Find(entity.targetId);
 
             var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
@@ -512,9 +522,10 @@ namespace FintrakBanking.Repositories.Credit
                     });
 
             var grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
-            if (grant != null) privilege = grant;
-            privilege.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
-            return privilege;
+            if (grant == null) grant = new PrivilegeViewModel();
+            grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
+
+            return grant;
         }
 
         private IQueryable<OperationStaffViewModel> GetAllStaffNames()

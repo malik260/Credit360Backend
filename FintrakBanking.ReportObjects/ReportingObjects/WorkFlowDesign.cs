@@ -43,16 +43,18 @@ namespace FintrakBanking.ReportObjects
 
         //}
 
-        public static IEnumerable<WorkflowTrackerViewModel> TrackWorkFlow(int operationId, int companyId, int targetId)
+        public static IEnumerable<WorkflowTrackerViewModel> TrackWorkFlow(int operationId, int companyId, int targetId, int staffId)
         {
 
 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
+                var staffSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
                 var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
                 var approvalTrail = (from f in context.TBL_APPROVAL_TRAIL
                                      where f.TARGETID == targetId && f.OPERATIONID == operationId && f.COMPANYID == companyId
                                      orderby f.TBL_APPROVAL_LEVEL.TBL_APPROVAL_GROUP.GROUPID, f.TBL_APPROVAL_LEVEL.APPROVALLEVELID
+
                                      select new WorkflowTrackerViewModel()
                                      {
                                          companyName = company.NAME ,

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Credit;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,17 @@ using System.Threading.Tasks;
 namespace FintrakBanking.ViewModels.ThridPartyIntegration
 {
 
+    public class CustomerCreditBureauUploadViewModel : GeneralEntity
+    {
+        public int documentId { get; set; }
+        public int customerCreditBureauId { get; set; }
+        public string documentTitle { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public byte[] fileData { get; set; }
+        public DateTime systemDateTime { get; set; }
+
+    }
 
 
 
@@ -28,7 +40,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string accountOrRegistrationNumber { get; set; }
     }
 
-    public class SearchInput{
+    public class SearchInput : GeneralEntity
+    {
         public string productId;
         public string userName { get; set; }
         public string password { get; set; }
@@ -40,6 +53,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public List<int> mergeList { get; set; }
         public string subscriberEnquiryEngineID { get; set; }
         public int enquiryID { get; set; }
+        public LoanCreditBereauViewModel customerCreditBureauUploadDetails { get; set; }
+        public int casaAccountId { get; set; }
     }
 
     public class XDSIndividualSearchViewModel
