@@ -109,6 +109,44 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The was an error while uploading document" });
         }
 
+        [HttpPost]
+        [Route("document-excel")]
+        public async Task<HttpResponseMessage> ExcelDocumentUpload()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+              
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsStreamAsync();
+                var data = _uploadService.ReadEntitiesFromFile(buffer);
+
+                if (data.Count() > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
+        }
 
         [HttpPost, Route("upload-stream")]
         public async Task<IHttpActionResult> UploadStream()

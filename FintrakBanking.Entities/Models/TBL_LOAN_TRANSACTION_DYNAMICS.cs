@@ -10,7 +10,9 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_LOAN_TRANSACTION_DYNAMICS
     {
         [Key]
-        public int DYNAMICSID { get; set; }
+        public int LOANDYNAMICSID { get; set; }
+
+        public int? DYNAMICSID { get; set; }
 
         [Required]
         [StringLength(1000)]
@@ -27,5 +29,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
+
+        public virtual TBL_TRANSACTION_DYNAMICS TBL_TRANSACTION_DYNAMICS { get; set; }
     }
 }

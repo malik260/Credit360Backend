@@ -113,5 +113,17 @@ namespace FintrakBanking.Interfaces.Customer
         #endregion
         IEnumerable<CustomerInformationApprovalViemModel> GetAllCustomerInformationAwaitingApproval(int staffId, int companyId);
         bool GoForApproval(ApprovalViewModel entity);
+
+        #region Customer Temporary Information 
+        CustomerViewModels GetSingleCustomerGeneralInfoByCustomerId(int customerId, int targetId);
+        CustomerCompanyInfomationViewModels GetSingleCustomerCompanyInfo(int customerId, int targetId);
+        IEnumerable<CustomerAddressViewModels> GetSingleCustomerAddressInfo(int customerId, int targetId);
+        IEnumerable<CustomerClientOrSupplierViewModels> GetSingleCustomerClientOrSupplierInfo(int customerId, short clientTypeId, int targetId);
+        IEnumerable<CustomerNextOfKinViewModels> GetSingleCustomerNextOfKinInfo(int customerId, int targetId);
+        IEnumerable<CustomerCompanyDirectorsViewModels> GetSingleCustomerDirectorInfo(int customerId, short directorTypeId, int targetId);
+        IEnumerable<CustomerCompanyDirectorsViewModels> GetSingleCustomerShareholderInfo(int customerId, short customerTypeId, int targetId);
+        IEnumerable<CustomerPhoneContactViewModels> GetSingleCustomerPhoneContactInfo(int customerId, int targetId);
+        IEnumerable<CustomerEmploymentHistoryViewModels> GetSingleCustomerEmploymentHistoryInfo(int customerId, int targetId);
+        #endregion
     }
 }
