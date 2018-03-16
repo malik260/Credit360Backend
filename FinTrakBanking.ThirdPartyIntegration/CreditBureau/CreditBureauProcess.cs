@@ -2,6 +2,7 @@
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC;
 using FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS;
 using System;
 using System.Collections.Generic;
@@ -101,6 +102,38 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
 
             return null;
         }
+
+
+        public CRCSearchResult CRCCreditBureauSearch(CRCRequestViewModel request)
+        {
+            try
+            {
+                CRCService crc = new CRCService();
+
+               return  crc.CRCSearchRequest(request);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+        public CRCSearchResult CRCCreditBureauMerge(MultiHitRequestViewModel request)
+        {
+            try
+            {
+                CRCService crc = new CRCService();
+
+                return crc.CRCMergeReport(request);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+
 
 
         private string GetXDSCommercialFullCreditReport(SearchInput searchInput)
