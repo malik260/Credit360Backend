@@ -415,6 +415,8 @@ namespace FintrakBanking.Repositories.Credit
                     toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
                     approvalStateId = x.APPROVALSTATEID,
                     approvalStatusId = x.APPROVALSTATUSID,
+                    approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                    approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                     comment = x.COMMENT,
                     staffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
                 }).OrderByDescending(x => x.approvalTrailId);
