@@ -21,7 +21,6 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
-        private IWorkflow wf;
 
         public LoanReviewApplicationRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
         {
@@ -29,7 +28,6 @@ namespace FintrakBanking.Repositories.Credit
             this.general = general;
             this.audit = audit;
             this.workflow = workflow;
-            this.wf = workflow;
         }
 
         public IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? classId)
@@ -64,10 +62,12 @@ namespace FintrakBanking.Repositories.Credit
                     operationTypeId = x.a.OPERATIONID,
                     operationType = context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == x.a.OPERATIONID).OPERATIONNAME,
                     referenceNumber = x.l.LOANREFERENCENUMBER,
-                    principalAmount = x.l.PRINCIPALAMOUNT,
-                    effectiveDate = x.l.EFFECTIVEDATE,
-                    maturityDate = x.l.MATURITYDATE,
-                    interestRate = x.l.INTERESTRATE,
+                    approvalState = x.l.APPROVALSTATUSID == 0 ? "" : context.TBL_APPROVAL_STATUS.FirstOrDefault(k => k.APPROVALSTATUSID == x.a.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                    //principalAmount = x.l.PRINCIPALAMOUNT,
+                    //effectiveDate = x.l.EFFECTIVEDATE,
+                    //maturityDate = x.l.MATURITYDATE,
+                    //interestRate = x.l.INTERESTRATE,
+
                     loanId = x.a.LOANID,
 
                     lastComment = t.COMMENT,
@@ -151,22 +151,22 @@ namespace FintrakBanking.Repositories.Credit
             var application = new TBL_LOAN_REVIEW_APPLICATION
             {
                 LOANID = model.loanId,
-                PRODUCTTYPEID = model.productTypeId,
+                PRODUCTTYPEID = 1, // 1. termloan
                 OPERATIONID = model.operationTypeId,
                 REVIEWDETAILS = model.reviewDetails,
-                INTERATERATE = model.interateRate,
-                PREPAYMENT = model.prepayment,
-                PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
-                INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
-                PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate,
-                INTERESTFIRSTPAYMENTDATE = model.interestFirstPaymentDate,
-                MATURITYDATE = model.maturityDate,
-                TENOR = model.tenor,
-                CASA_ACCOUNTID = model.casaAccountId,
-                OVERDRAFTTOPUP = model.overDraftTopup,
-                FEE_CHARGES = model.feeCharges,
+                //INTERATERATE = model.interateRate,
+                //PREPAYMENT = model.prepayment,
+                //PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
+                //INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
+                //PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate,
+                //INTERESTFIRSTPAYMENTDATE = model.interestFirstPaymentDate,
+                //MATURITYDATE = model.maturityDate,
+                //TENOR = model.tenor,
+                //CASA_ACCOUNTID = model.casaAccountId,
+                //OVERDRAFTTOPUP = model.overDraftTopup,
+                //FEE_CHARGES = model.feeCharges,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                ISMANAGEMENTINTERESTRATE = model.isManagementInterestRate,
+                //ISMANAGEMENTINTERESTRATE = model.isManagementInterestRate,
                 CREATEDBY = model.createdBy,
                 BRANCHID = model.branchId,
                 DATECREATED = general.GetApplicationDate(),
@@ -186,16 +186,16 @@ namespace FintrakBanking.Repositories.Credit
         private void PassApplicationToOperation(int applicationId, int operationId, int staffId, string comment)
         {
             var staff = context.TBL_STAFF.Find(staffId);
-            wf.StaffId = staffId;
-            wf.CompanyId = staff.COMPANYID;
-            wf.OperationId = operationId;
-            wf.TargetId = applicationId;
-            wf.ProductClassId = null;
-            wf.StatusId = (int)ApprovalStatusEnum.Pending;
-            wf.Comment = comment;
-            wf.ExternalInitialization = true;
-            wf.DeferredExecution = false;
-            wf.LogActivity();
+            workflow.StaffId = staffId;
+            workflow.CompanyId = staff.COMPANYID;
+            workflow.OperationId = operationId;
+            workflow.TargetId = applicationId;
+            workflow.ProductClassId = null;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.Comment = comment;
+            workflow.ExternalInitialization = true;
+            workflow.DeferredExecution = false;
+            workflow.LogActivity();
         }
 
         public List<LoanViewModel> LoanSearch(int getCompanyId, SearchViewModel search)
@@ -416,14 +416,29 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
+            var appl = context.TBL_LOAN_REVIEW_APPLICATION.Find(model.applicationId);
+
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
                     if (model.operationId != (int)OperationsEnum.LoanReviewApprovalAvailment) // last operation check
-                        PassApplicationToOperation(model.applicationId, model.operationId + 1, model.lastUpdatedBy, "New approved application");
+                        PassApplicationToOperation(model.applicationId, model.operationId + 1, model.lastUpdatedBy, "New application");
                 }
+
+                if (model.operationId != (int)OperationsEnum.LoanReviewApprovalAvailment) // approval flag (cam?/availment?)
+                {
+                    appl.APPROVALSTATUSID = (short)workflow.StatusId;
+                    context.SaveChanges();
+                }
+
                 return workflow.StatusId;
+            }
+
+            if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal)
+            {
+                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                context.SaveChanges();
             }
 
             return (int)ApprovalStatusEnum.Processing; // default for now
