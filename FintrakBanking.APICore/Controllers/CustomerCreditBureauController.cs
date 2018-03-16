@@ -115,7 +115,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
                 model.staffId = token.GetStaffId;
 
-                var result = repo.AddCustomerCreditBureauCharge(model);
+                var result =  repo.AddCustomerCreditBureauCharge(model);
 
                 if (result > 0)
                 {
@@ -200,6 +200,72 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
+        [HttpPost]
+        [Route("customer-credit-bureau-report-file-upload")]
+        public async Task<HttpResponseMessage> AddCreditBureauReportDocument()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                //int uploadType;
+                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                //}
+
+                var entity = new LoanDocumentViewModel();
+                //entity.customerCreditBureauId = Convert.ToInt32(provider.FormData["customerCreditBureauId"]);
+                entity.documentTitle = provider.FormData["documentTitle"];
+                //entity.documentTypeId = (short)uploadType;
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+
+                var loanCreditBureauModel = new LoanCreditBereauViewModel();
+                loanCreditBureauModel.creditBureauId = (short) Convert.ToInt32(provider.FormData["creditBureauId"]);  
+                loanCreditBureauModel.customerId = Convert.ToInt32(provider.FormData["customerId"]); 
+                loanCreditBureauModel.chargeAmount = Convert.ToDecimal(provider.FormData["chargeAmount"]);
+                loanCreditBureauModel.isComplete = Convert.ToBoolean(provider.FormData["isComplete"]);
+                loanCreditBureauModel.companyDirectorId = Convert.ToInt32(provider.FormData["companyDirectorId"]);
+                loanCreditBureauModel.isReportOkay = Convert.ToBoolean(provider.FormData["isReportOkay"]);
+                loanCreditBureauModel.usedIntegration = Convert.ToBoolean(provider.FormData["usedIntegration"]);
+                
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                loanCreditBureauModel.userBranchId = (short)token.GetBranchId;
+                loanCreditBureauModel.companyId = token.GetCompanyId;
+                loanCreditBureauModel.createdBy = token.GetStaffId;
+                loanCreditBureauModel.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var result = repo.AddCustomerCreditBureauUpload(loanCreditBureauModel, entity, buffer);
+
+                if (result > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                           new { success = true, data = result, message = loanCreditBureauModel.creditBureauName + " Credit Bureau Report Successfully Saved" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = loanCreditBureauModel.creditBureauName + " report upload failed" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
+        }
+
         #endregion
 
         #region Integration
@@ -215,6 +281,7 @@ namespace FintrakBanking.APICore.Controllers
                 searchInput.createdBy = token.GetStaffId;
                 searchInput.companyId = token.GetCompanyId;
                 searchInput.staffId = token.GetStaffId;
+                searchInput.userBranchId = (short)token.GetBranchId;
 
                 var result = repo.GetFullSearchResultInPDF(searchInput);
 
@@ -250,6 +317,7 @@ namespace FintrakBanking.APICore.Controllers
                 searchInfoList.createdBy = token.GetStaffId;
                 searchInfoList.companyId = token.GetCompanyId;
                 searchInfoList.staffId = token.GetStaffId;
+                searchInfoList.userBranchId = (short)token.GetBranchId;
                // }
 
                 var result = repo.GetCustomerCreditMatch(searchInfoList);

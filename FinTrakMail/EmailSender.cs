@@ -10,7 +10,7 @@ namespace FinTrakMail
 {
     public class EmailSender
     {
-        MailMessage mail = new MailMessage();
+   
         SmtpClient client = new SmtpClient();
         FinTrakBankingContext dbContext = new FinTrakBankingContext();
         int mailId = 0;
@@ -32,10 +32,12 @@ namespace FinTrakMail
 
                 client.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["Username"], ConfigurationManager.AppSettings["Password"]);
 
-                var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending).ToList();
+                var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending || o.MESSAGESTATUSID== (int)MessageStatusEnum.Attempted).ToList();
 
                 foreach (var newMail in listOfMails)
                 {
+                    MailMessage mail = new MailMessage();
+
                     mail.From = new MailAddress(ConfigurationManager.AppSettings["Username"],"FBN Fintrak Credit 360");
 
                     if (newMail.TOADDRESS != null && newMail.TOADDRESS != string.Empty)

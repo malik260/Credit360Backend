@@ -45,6 +45,7 @@
                 <asp:Label ID="loanRefNo" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="branchId" runat="server"  Visible="false" ></asp:Label>
         <asp:Label ID="productClassId" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="staffId" runat="server"  Visible="false" ></asp:Label>
 
     </form>
 </body>

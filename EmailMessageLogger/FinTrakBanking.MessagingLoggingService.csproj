@@ -40,6 +40,7 @@
       <HintPath>..\FinTrakMail\bin\Debug\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -50,6 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppEmail\EmailAndAlertsRepository.cs" />
+    <Compile Include="AppEmail\EmailRepository.cs" />
+    <Compile Include="EmailHelpers.cs" />
+    <Compile Include="Enum\AlertMessageEnum.cs" />
+    <Compile Include="Enum\AlertSetupEnum.cs" />
     <Compile Include="AuditTrail.cs" />
     <Compile Include="LoggerService.cs">
       <SubType>Component</SubType>
@@ -85,6 +91,9 @@
       <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
       <Name>FintrakBanking.ViewModels</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EmailTemplates\Monitoring.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

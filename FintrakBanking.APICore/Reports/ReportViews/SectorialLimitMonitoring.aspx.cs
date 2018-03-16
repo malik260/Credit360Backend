@@ -15,7 +15,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 
                 companyId.Text = Request.QueryString["companyId"];
-                 
+                staffId.Text = Request.QueryString["staffId"];
+
                 ReportViewer.LocalReport.Refresh();
             }
         }

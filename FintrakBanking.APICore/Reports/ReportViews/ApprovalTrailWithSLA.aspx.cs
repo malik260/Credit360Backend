@@ -19,8 +19,8 @@ namespace FintrakBanking.APICore.Reports.Credit
                 operationId.Text = Request.QueryString["operationId"];
                 targetId .Text = Request.QueryString["loanApplicationId"];
                 companyId.Text = Request.QueryString["companyId"];
+                staffId.Text = Request.QueryString["staffId"];
 
-                
                 ReportViewer.LocalReport.Refresh();
                  
             }

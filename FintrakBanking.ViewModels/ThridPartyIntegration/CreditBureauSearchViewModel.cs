@@ -54,6 +54,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string subscriberEnquiryEngineID { get; set; }
         public int enquiryID { get; set; }
         public LoanCreditBereauViewModel customerCreditBureauUploadDetails { get; set; }
+        public int casaAccountId { get; set; }
     }
 
     public class XDSIndividualSearchViewModel
