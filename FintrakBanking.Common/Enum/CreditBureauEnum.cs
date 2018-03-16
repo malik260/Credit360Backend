@@ -36,4 +36,10 @@ namespace FintrakBanking.Common.Enum
         SearchCompleted = 2,
         SearchError = 3
     }
+
+    public enum CRCSearchTypeEnum
+    {
+        ConsumerSearch = 6110,
+        CommercialSearch = 6112
+    }
 }
