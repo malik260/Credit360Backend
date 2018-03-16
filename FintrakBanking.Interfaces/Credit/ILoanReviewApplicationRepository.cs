@@ -17,5 +17,14 @@ namespace FintrakBanking.Interfaces.Credit
         bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel entity);
 
         List<LoanViewModel> LoanSearch(int getCompanyId, SearchViewModel search);
+
+        int SaveCam(CamViewModel cam);
+
+        CamViewModel GetCamDocument(int documentationId);
+
+        CamViewModel GetCamDocumentByApprovalLevel(int applicationId, int approvalLevelId);
+        
+        List<CamViewModel> GetCamDocuments(int applicationId);
+        int ForwardApplication(ForwardReviewViewModel model);
     }
 }

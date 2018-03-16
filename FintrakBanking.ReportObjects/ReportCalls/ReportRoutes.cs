@@ -10,98 +10,99 @@ namespace FintrakBanking.ReportObjects.ReportCalls
     public class ReportRoutes : IReportRoutes
     {
         string reportPath = CommonHelpers.ReportPath;
-        private IQueryable<TBL_LOAN_APPLICATION> LoanApplication(int companyId)
+        private IQueryable<TBL_LOAN_APPLICATION> LoanApplication(int companyId, int staffId)
         {
             IQueryable<TBL_LOAN_APPLICATION> data;
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                data = context.TBL_LOAN_APPLICATION.Where(c => c.COMPANYID == companyId);
+                var customerSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
+                data = context.TBL_LOAN_APPLICATION.Where(c => c.COMPANYID == companyId && c.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID <= customerSensitivityLevelId);
             }
             return data;
         }
-        public string GetWorkflowSLA(int loanApplicationId, int companyId)
+        public string GetWorkflowSLA(int loanApplicationId, int companyId, int staffId)
         {
             string path = string.Empty;
             int operationId = (int)OperationsEnum.CAM;
-            path = reportPath + "ReportViews/ApprovalTrailWithSLA.aspx?companyId=" + companyId.ToString() + "&operationId=" + operationId + "&loanApplicationId=" + loanApplicationId.ToString();
+            path = reportPath + "ReportViews/ApprovalTrailWithSLA.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId +  "&operationId=" + operationId + "&loanApplicationId=" + loanApplicationId.ToString();
             return path;
         }
 
-        public string GetLoanScheduleReport(int tearmLoanId, int companyId)
+        public string GetLoanScheduleReport(int tearmLoanId, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/LoanRepaymentSchedule.aspx?companyId=" + companyId.ToString() + "&tearmLoanId=" + tearmLoanId.ToString();
+            path = reportPath + "ReportViews/LoanRepaymentSchedule.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId.ToString() + " & tearmLoanId=" + tearmLoanId.ToString();
             return path;
         }
 
-        public string GetSectorLimitMonitoringReport(int companyId)
+        public string GetSectorLimitMonitoringReport(int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/SectorialLimitMonitoring.aspx?companyId=" + companyId.ToString();
+            path = reportPath + "ReportViews/SectorialLimitMonitoring.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId.ToString();
             return path;
         }
 
-        public string GetBranchLoanAmountLimit(int branchId, int companyId)
+        public string GetBranchLoanAmountLimit(int branchId, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/BranchLimitMonitoring.aspx?companyId=" + companyId.ToString() + "&branchId=" + branchId.ToString();
+            path = reportPath + "ReportViews/BranchLimitMonitoring.aspx?companyId=" + companyId.ToString() + "&branchId=" + branchId.ToString() + "&staffId=" + staffId.ToString();
             return path;
         }
-        public string GetWorkflowDefinition(int operationId, int companyId)
+        public string GetWorkflowDefinition(int operationId, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/Workflow.aspx?companyId=" + companyId.ToString() + "&operationId=" + operationId.ToString();
+            path = reportPath + "ReportViews/Workflow.aspx?companyId=" + companyId.ToString() + "&operationId=" + operationId.ToString() + "&staffId=" + staffId.ToString();
             return path;
         }
-        public string GetDisburstLoans(DateRange dateRange, int companyId)
+        public string GetDisburstLoans(DateRange dateRange, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/DisbursedLoans.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&loanRefNo="+ dateRange.loanRefNo + "&branchId="+ dateRange.branchId + "&productClassId="+ dateRange.productClassId;
-            return path;
-        }
-
-        public string GetLoanStatement(int companyId, int loanId)
-        {
-            string path = string.Empty;
-            path = reportPath + "ReportViews/LoanStatement.aspx?companyId=" + companyId.ToString() + "&loanId=" + loanId.ToString();
+            path = reportPath + "ReportViews/DisbursedLoans.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&loanRefNo="+ dateRange.loanRefNo + "&branchId="+ dateRange.branchId + "&productClassId="+ dateRange.productClassId + "&staffId=" + staffId.ToString();
             return path;
         }
 
-        public string GetLoanAnniversery(DateRange dateRange, int companyId)
+        public string GetLoanStatement(int companyId, int loanId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/LoanAnniversery.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
-            return path;
-        }
-        public string GetLoanDocumentWaived(int companyId, DateRange dateRange)
-        {
-            string path = string.Empty;
-            path = reportPath + "ReportViews/LoanDocumentWaived.aspx?companyId=" + companyId+ "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&branchId="+ dateRange.branchId;
-            return path;
-        }
-        public string GetLoanDocumentDeferrals(int companyId, DateRange dateRange)
-        {
-            string path = string.Empty;
-            path = reportPath + "ReportViews/LoanDocumentDeferral.aspx?companyId=" + companyId + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&branchId=" + dateRange.branchId;
-            return path;
-        }
-        public string GetLoanDocumentDeferralsMCC(int companyId, DateRange dateRange)
-        {
-            string path = string.Empty;
-            path = reportPath + "ReportViews/LoanDocumentDeferalsForMCC.aspx?companyId=" + companyId + "&startDate=" + dateRange.startDate.ToShortDateString() + "&branchCode=" + dateRange.branchCode;
-            return path;
-        }
-        public string GetCollateralEstimated(int companyId, string collateralCode)
-        {
-            string path = string.Empty;
-            path = reportPath + "ReportViews/CollateralEstimated.aspx?companyId=" + companyId.ToString() + "&collateralCode=" + collateralCode.ToString();
+            path = reportPath + "ReportViews/LoanStatement.aspx?companyId=" + companyId.ToString() + "&loanId=" + loanId.ToString() + "&staffId=" + staffId.ToString();
             return path;
         }
 
-        public string GetFCYScheuledLoan(int companyId, int loanId)
+        public string GetLoanAnniversery(DateRange dateRange, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/FCYScheuledLoan.aspx?companyId=" + companyId.ToString() + "&loanId=" + loanId.ToString();
+            path = reportPath + "ReportViews/LoanAnniversery.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId  + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
+            return path;
+        }
+        public string GetLoanDocumentWaived(int companyId, DateRange dateRange, int staffId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanDocumentWaived.aspx?companyId=" + "&staffId=" + staffId  + companyId+ "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&branchId="+ dateRange.branchId;
+            return path;
+        }
+        public string GetLoanDocumentDeferrals(int companyId, DateRange dateRange, int staffId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanDocumentDeferral.aspx?companyId=" + companyId + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString() + "&branchId=" + dateRange.branchId;
+            return path;
+        }
+        public string GetLoanDocumentDeferralsMCC(int companyId, DateRange dateRange, int staffId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanDocumentDeferalsForMCC.aspx?companyId=" + companyId + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToShortDateString() + "&branchCode=" + dateRange.branchCode;
+            return path;
+        }
+        public string GetCollateralEstimated(int companyId, string collateralCode, int staffId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/CollateralEstimated.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&collateralCode=" + collateralCode.ToString();
+            return path;
+        }
+
+        public string GetFCYScheuledLoan(int companyId, int loanId, int staffId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/FCYScheuledLoan.aspx?companyId=" + companyId.ToString() + "&loanId=" + loanId.ToString() + "&staffId=" + staffId;
             return path;
         }
 
@@ -200,12 +201,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
         #region Loan Monitoring Reports
 
-        public string GetCovenantsApproachingDueDateReport(int companyId)
+        public string GetCovenantsApproachingDueDateReport(int companyId, int staffId)
         {
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/CovenantsApproachingDueDate.aspx?companyId=" + companyId.ToString();
+                path = reportPath + "Credit/Monitoring/CovenantsApproachingDueDate.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId;
                 return path;
             }
             catch (Exception ex)
@@ -214,27 +215,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        public string GetCollateralPropertyRevaluationReport(int companyId,int value)
+        public string GetCollateralPropertyRevaluationReport(int companyId,int value, int staffId)
         {
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/CollateralPropertyRevaluation.aspx?companyId=" + companyId.ToString() + "&value="+value;
-                return path;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public string GetExpiredSelfLiquidatingLoansReport(int companyId)
-        {
-            try
-            {
-                string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/ExpiredSelfLiquidatingLoans.aspx?companyId=" + companyId.ToString();
+                path = reportPath + "Credit/Monitoring/CollateralPropertyRevaluation.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&value=" +value;
                 return path;
             }
             catch (Exception ex)
@@ -244,12 +230,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        public string GetNonPerformingLoansReport(int companyId)
+        public string GetExpiredSelfLiquidatingLoansReport(int companyId, int staffId)
         {
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/NonPeformingLoans.aspx?companyId=" + companyId.ToString();
+                path = reportPath + "Credit/Monitoring/ExpiredSelfLiquidatingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId;
                 return path;
             }
             catch (Exception ex)
@@ -259,12 +245,27 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        public string GetExpiredOverdraftLoansReport(int companyId)
+        public string GetNonPerformingLoansReport(int companyId, int staffId)
         {
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/ExpiredOverdraftLoans.aspx?companyId=" + companyId.ToString();
+                path = reportPath + "Credit/Monitoring/NonPeformingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId;
+                return path;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public string GetExpiredOverdraftLoansReport(int companyId, int staffId)
+        {
+            try
+            {
+                string path = string.Empty;
+                path = reportPath + "Credit/Monitoring/ExpiredOverdraftLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId;
                 return path;
             }
             catch (Exception ex)
@@ -276,17 +277,17 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
         #endregion Loan Monitoring Reports
 
-        public string GetLoanCommercialReport(DateRange dateRange, int companyId)
+        public string GetLoanCommercialReport(DateRange dateRange, int companyId, int staffId)
         {
             throw new NotImplementedException();
         }
 
-        public string GetTeamAndRevolving(DateRange dateRange, int companyId)
+        public string GetTeamAndRevolving(DateRange dateRange, int companyId, int staffId)
         {
             throw new NotImplementedException();
         }
 
-        public string GetEarnedUnearnedInterest(DateRange dateRange, int companyId)
+        public string GetEarnedUnearnedInterest(DateRange dateRange, int companyId, int staffId)
         {
             throw new NotImplementedException();
         }
@@ -307,37 +308,37 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId)
+        public string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/GetStakeholdersOnExpirationOfFTP.aspx?companyId=" + companyId.ToString() + "&branchId=" + searchEntity.branchId + "&customerName=" + searchEntity.customerName + "&startDate="+ searchEntity.startDate;
+            path = reportPath + "ReportViews/GetStakeholdersOnExpirationOfFTP.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&branchId=" + searchEntity.branchId + "&customerName=" + searchEntity.customerName + "&startDate="+ searchEntity.startDate;
             return path;
         }
 
-        public string GetFacilityApprovedNotUtilized(ReportSearchEntity searchEntity, int companyId)
+        public string GetFacilityApprovedNotUtilized(ReportSearchEntity searchEntity, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/FacilityApprovedNotUntilized.aspx?companyId=" + companyId.ToString() + "&branchId=" + searchEntity.branchId + "&customerName=" + searchEntity.customerName + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate;
+            path = reportPath + "ReportViews/FacilityApprovedNotUntilized.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&branchId=" + searchEntity.branchId + "&customerName=" + searchEntity.customerName + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate;
             return path;
         }
-        public string GetRuningLoansByLoanType(ReportSearchEntity searchEntity, int companyId)
+        public string GetRuningLoansByLoanType(ReportSearchEntity searchEntity, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/RuningLoansByLoanType.aspx?companyId=" + companyId.ToString() + "&branchId=" + searchEntity.branchId + "&loanRefNo=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&productClassId=" + searchEntity.productClassId;
+            path = reportPath + "ReportViews/RuningLoansByLoanType.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&branchId=" + searchEntity.branchId + "&loanRefNo=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&productClassId=" + searchEntity.productClassId;
             return path;
         }
 
-        public string GetAuditTrail(DateRange dateRange, int companyId)
+        public string GetAuditTrail(DateRange dateRange, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/AuditTrailView.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+            path = reportPath + "ReportViews/AuditTrailView.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate + "&staffId=" + staffId;
 
-           return path; ;
+            return path; ;
         }
-       public string GetLoanInterestReceivableAndPayable(ReportSearchEntity searchEntity, int companyId)
+       public string GetLoanInterestReceivableAndPayable(ReportSearchEntity searchEntity, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/LoanInterestReceivableAndPayable.aspx?companyId=" + companyId.ToString() + "&branchId=" + searchEntity.branchId + "&loanRefNo=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&productClassId=" + searchEntity.productClassId;
+            path = reportPath + "ReportViews/LoanInterestReceivableAndPayable.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&branchId=" + searchEntity.branchId + "&loanRefNo=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&productClassId=" + searchEntity.productClassId;
             return path;
         }
     }

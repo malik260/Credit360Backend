@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using ExcelDataReader;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
@@ -31,6 +32,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             try
             {
+              
                 var data = new Entities.DocumentModels.TBL_MEDIA_KYC_DOCUMENTS
                 {
                     FILEDATA = file,
