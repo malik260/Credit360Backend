@@ -65,6 +65,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.customerSensitivityLevelId = 1;
 
                 var data = repo.AddCustomer(entity);
                 if (data)

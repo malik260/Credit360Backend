@@ -23,6 +23,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
+using FintrakBanking.ViewModels.Finance;
 
 namespace WinApp
 {
@@ -58,6 +59,83 @@ namespace WinApp
 
         }
 
+        //public class FinanceTransactionViewModel  : GeneralEntity
+        //{
+        //    public string accounts { get; set; }
+        //    public string description { get; set; }
+        //    public string batchCode { get; set; }
+        //    public string currencyType { get; set; }
+        //    public string amount { get; set; }
+        //    public string webRequestStatus { get; set; }
+        //    public DateTime webRequestDate { get; set; }
+        //    public string responseCode { get; set; }
+        //    public int casaAccountId { get; set; }
+        //    public int currencyId { get; set; }
+        //    public decimal creditAmount { get; set; }
+
+
+
+
+        //}
+
+        //public class FinanceTransactionDetailViewModel
+        //{
+        //    public int transactionId { get; set; }
+        //    public int glAccountId { get; set; }
+        //    public string sourceReferenceNumber { get; set; }
+        //    public int? casaAccountId { get; set; }
+        //    public decimal debitAmount { get; set; }
+        //    public decimal creditAmount { get; set; }
+        //    public short sourceBranchId { get; set; }
+        //    public short destinationBranchId { get; set; }
+        //}
+
+
+        public class FinanceTransactionViewModelTest : GeneralEntity
+        {
+            //public FinanceTransactionViewModel()
+            //{
+            //    transactionDetails = new List<FinanceTransactionDetailViewModel>();
+            //}
+
+            public string batchCode { get; set; }
+            public int operationId { get; set; }
+            public string description { get; set; }
+            public DateTime valueDate { get; set; }
+            public DateTime transactionDate { get; set; }
+            public short currencyId { get; set; }
+            public double currencyRate { get; set; }
+            public DateTime postedDateTime { get; set; }
+            public bool isApproved { get; set; }
+            public int postedBy { get; set; }
+            public int approvedBy { get; set; }
+            public DateTime approvedDate { get; set; }
+            public DateTime approvedDateTime { get; set; }
+            public short sourceApplicationId { get; set; }
+            public int transactionId { get; set; }
+            public int glAccountId { get; set; }
+            public string sourceReferenceNumber { get; set; }
+            public int? casaAccountId { get; set; }
+            public decimal debitAmount { get; set; }
+            public decimal creditAmount { get; set; }
+            public short sourceBranchId { get; set; }
+            public short destinationBranchId { get; set; }
+            //public List<FinanceTransactionDetailViewModel> transactionDetails { get; set; }
+
+        }
+
+        //public class FinanceTransactionDetailViewModel
+        //{
+        //    public int transactionId { get; set; }
+        //    public int glAccountId { get; set; }
+        //    public string sourceReferenceNumber { get; set; }
+        //    public int? casaAccountId { get; set; }
+        //    public decimal debitAmount { get; set; }
+        //    public decimal creditAmount { get; set; }
+        //    public short sourceBranchId { get; set; }
+        //    public short destinationBranchId { get; set; }
+        //}
+
         private void btnSave_Click(object sender, EventArgs e)
         {
 
@@ -76,6 +154,36 @@ namespace WinApp
             short priceIndex = 1;
             double newRate = 20;
             int customeId = 1;
+
+            List<FinanceTransactionViewModel> tran = new List<FinanceTransactionViewModel>();
+
+            FinanceTransactionViewModel tran1 = new FinanceTransactionViewModel();
+           
+            {
+
+                    tran1.operationId = 7;
+                    tran1.sourceReferenceNumber = "C10000";
+                    tran1.description = "yes";
+                    tran1.batchCode = "22222";
+                    tran1.currencyId = 1;
+                    
+                   
+                  
+                }
+                tran.Add(tran1);
+            FinanceTransactionViewModel tran2 = new FinanceTransactionViewModel();
+            {
+                    tran2.operationId = 3;
+                    tran2.sourceReferenceNumber = "D10000";
+                    tran2.description = "no";
+                    tran2.batchCode = "22222";
+                    tran2.currencyId = 1;
+                    
+                    
+                    
+                }
+                tran.Add(tran2);
+        
 
             //string vDesc = txtDesc.Text;
 
@@ -115,14 +223,19 @@ namespace WinApp
             //loan.GetCustomerTotalOutstandingBalance(customeId);
             //credit.ValidateAmountByCustomer(customeId);
             //customer.GetIntegratedCustomerInformation("1000021211");
-            CustomerDetails ccc = new CustomerDetails();
+            //CustomerDetails ccc = new CustomerDetails(context);
             //ccc.GetCustomerByAccountNumber("1000021211").GetAwaiter().GetResult();
-           // Task.Run(async () => { await SubscribeMembersusingAPI(list); }).GetAwaiter().GetResult();
+            // Task.Run(async () => { await SubscribeMembersusingAPI(list); }).GetAwaiter().GetResult();
             //Task.Run(async() => { await ccc.RunAsync();}).GetAwaiter().GetResult();
-           // Task.Run(async () => { await ccc.GetAllCustomers(); }).GetAwaiter().GetResult();
-           Task.Run(async () => { await ccc.GetCustomerByAccountNumber("1000021211"); }).GetAwaiter().GetResult();
+            // Task.Run(async () => { await ccc.GetAllCustomers(); }).GetAwaiter().GetResult();
+            //Task.Run(async () => { await ccc.GetCustomerByAccountsNumber("1000021211"); }).GetAwaiter().GetResult();
             //ccc.RunAsync().GetAwaiter().GetResult();
             //ccc.GetAllCustomers().GetAwaiter().GetResult();
+            //loan.AddLoanTestFees();
+            TransactionPosting transaction = new TransactionPosting(context);
+            bool data = false;
+
+            Task.Run(async () => { data = await transaction.APITransactionPosting(tran); }).GetAwaiter().GetResult();
             MessageBox.Show("Successful", "Fintrak");
 
 

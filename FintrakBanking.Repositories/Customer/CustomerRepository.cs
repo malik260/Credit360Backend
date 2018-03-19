@@ -2524,8 +2524,8 @@ namespace FintrakBanking.Repositories.Customer
                                     }).ToList();
                 if (customerinfo.Count > 0)
                 {
-                    CustomerDetails customer = new CustomerDetails();
-                    Task.Run(async () => { data = await customer.GetCustomerAccountsBalance(customerinfo[0].customerCode); }).GetAwaiter().GetResult();
+                    CustomerDetails customer = new CustomerDetails(context);
+                    Task.Run(async () => { data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerinfo[0].customerCode); }).GetAwaiter().GetResult();
                    // return data.ToList();
 
                 }

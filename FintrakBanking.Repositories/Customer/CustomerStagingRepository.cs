@@ -83,13 +83,13 @@ namespace FintrakBanking.Repositories.Customer
                 { 
                 //mainContext.TBL_CASA.Where(a => a.PRODUCTACCOUNTNUMBER == searchTerm);
                 //var existingCustomer = mainContext.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == searchTerm);
-                CustomerDetails customer = new CustomerDetails();
+                CustomerDetails customer = new CustomerDetails(mainContext);
                 //customer.RunAsync().GetAwaiter().GetResult();
                 //return await customer.GetCustomerByAccountNumber(searchTerm);//GetAllCustomers
                 //return customer.GetAllCustomers(searchTerm).GetAwaiter().GetResult();
 
                 //return  customer.GetCustomerByAccountNumber(searchTerm).GetAwaiter().GetResult();
-                Task.Run(async () => { data = await customer.GetCustomerByAccountNumber(searchTerm); }).GetAwaiter().GetResult();
+                Task.Run(async () => { data = await customer.GetCustomerByAccountsNumber(searchTerm); }).GetAwaiter().GetResult();
 
                 return data;
                 }

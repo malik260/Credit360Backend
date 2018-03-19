@@ -34,6 +34,7 @@ namespace FintrakBanking.ViewModels.CASA
         public string productName { get; set; }
         //public int companyId { get; set; }
         public string accountDetail { get { return (this.productAccountNumber +"(" + this.productAccountName +")"); } }
+        public string productAccountDetail{ get { return (this.productAccountNumber + "(" + this.productName + " -" + this.currency + ")"); } }
         public short branchId { get; set; }
         public string branchCode { get; set; }
         public string branchName { get; set; }

@@ -211,26 +211,25 @@ namespace FintrakBanking.Repositories.CASA
 
             if (applicationTypeId == (int)LoanTypeEnum.Single)
             {
-                 data = new List<CasaViewModel>();
-                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                if (setup.USE_THIRD_PARTY_INTEGRATION)
-                {
-                    var customerinfo = (from a in context.TBL_CUSTOMER
-                                        where a.CUSTOMERID == customerId
-                                        select new CasaViewModel
-                                        {
-                                            customerCode = a.CUSTOMERCODE,
-                                        }).ToList();
-                    if (customerinfo.Count > 0)
-                    {
-                        CustomerDetails customer = new CustomerDetails();
-                        Task.Run(async () => { data = await customer.GetCustomerAccountsBalance(customerinfo[0].customerCode); }).GetAwaiter().GetResult();
-
-                    }
-                    return data;
-                }
-                else
-                {
+                // data = new List<CasaViewModel>();
+                //var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                //if (setup.USE_THIRD_PARTY_INTEGRATION)
+                //{
+                //    var customerinfo = (from a in context.TBL_CUSTOMER
+                //                        where a.CUSTOMERID == customerId
+                //                        select new CasaViewModel
+                //                        {
+                //                            customerCode = a.CUSTOMERCODE,
+                //                        }).ToList();
+                //    if (customerinfo.Count > 0)
+                //    {
+                //        CustomerDetails customer = new CustomerDetails();
+                //        Task.Run(async () => { data = await customer.GetCustomerAccountsBalance(customerinfo[0].customerCode); }).GetAwaiter().GetResult();
+                //    }
+                //    return data;
+                //}
+                //else
+                //{
                     data = (from a in context.TBL_CASA
                         where a.CUSTOMERID == customerId && a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
                         select new
@@ -241,7 +240,7 @@ namespace FintrakBanking.Repositories.CASA
                             productAccountName = a.PRODUCTACCOUNTNAME,
                             availableBalance = a.AVAILABLEBALANCE
                         }).Distinct();
-                }
+                //}
                 return data;
             }
           

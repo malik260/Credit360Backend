@@ -91,4 +91,37 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         //public bool politicallyExposedPerson { get; set; }
     }
 
+    public class CurrencyExchangeRateIntegrationViewModel 
+    {
+
+        public short currencyId { get; set; }
+
+        public string currencyCode { get; set; }
+
+        public string fromCurrencyCode { get; set; }
+
+        public string toCurrencyCode { get; set; }
+
+        public string rateCode  { get; set; }
+
+        public DateTime webRequestDate  { get; set; }
+
+        public string webRequestStatus { get; set; }
+
+        public double buyingRate { get; set; }
+
+        public double sellingRate { get; set; }
+
+        public double exchangeRate  { get; set; }
+
+        public short baseCurrencyId { get; set; }
+
+        public bool isBaseCurrency { get; set; }
+
+        
+
+
+
+    }
+
 }
