@@ -3404,7 +3404,7 @@ namespace FintrakBanking.Repositories.Customer
                         && a.APPROVALCOMPLETED == false
                         && c.RESPONSESTAFFID == null
                         && c.OPERATIONID == (int)OperationsEnum.CustomerInformationApproval
-                    && c.TOAPPROVALLEVELID == staffApprovalLevelId
+                    && c.TOAPPROVALLEVELID == staffApprovalLevelId orderby a.DATETIMECREATED descending
 
                     select new CustomerInformationApprovalViemModel
                     {
