@@ -94,7 +94,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                             relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                            relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
+                            //relationshipManagerName =  
                             misCode = a.MISCODE,
                             teamMisCode = a.TEAMMISCODE,
                             interestRate = a.INTERESTRATE,
@@ -105,6 +105,8 @@ namespace FintrakBanking.Repositories.Credit
                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             loanTypeId = a.LOANTYPEID,
                             loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                            applicationTenor = a.APPLICATIONTENOR,
+                            applicationAmount = a.APPLICATIONAMOUNT,
                             createdBy = a.CREATEDBY,
                             applicationDate = a.APPLICATIONDATE,
                             dateTimeCreated = a.DATETIMECREATED,
@@ -131,6 +133,12 @@ namespace FintrakBanking.Repositories.Credit
                                  statusId = c.STATUSID
                              }).ToList()
                         });
+
+            foreach(var item in data)
+            {
+                var mn = context.TBL_STAFF.Where(x => x.STAFFID == item.staffId).FirstOrDefault();
+                item.relationshipManagerName = mn.FIRSTNAME + " " + mn.MIDDLENAME + " " + mn.LASTNAME;
+            }
             return data;
         }
 

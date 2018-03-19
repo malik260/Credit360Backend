@@ -175,12 +175,13 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public bool AddChargeFee(ChargeFeeViewModel model)
         {
+            var p = context.TBL_PRODUCT.Find(model.productId);
             var data = new TBL_CHARGE_FEE
             {
                 CHARGEFEENAME = model.chargeName,
                 ACCOUNTCATEGORYID = model.accountCategoryId,
                 FEEINTERVALID = model.frequencyTypeId,
-                PRODUCTTYPEID = model.productId,
+                PRODUCTTYPEID = p.PRODUCTTYPEID,
                 FEETARGETID = model.targetId,
                 GLACCOUNTID = model.ledgerAccountId,
                 FEEAMORTISATIONTYPEID = model.amortisationTypeId,
