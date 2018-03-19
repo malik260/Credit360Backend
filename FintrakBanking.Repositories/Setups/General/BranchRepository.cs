@@ -185,24 +185,30 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> AddBranch(AddBranchViewModel model)
         {
-            var branch = new TBL_BRANCH()
+            var response = 0;
+
+            try
             {
-                STATEID = model.stateId,
-                CITYID = model.cityId,
-                REGIONID = model.regionId,
-                COMPANYID = model.companyId,
-                BRANCHNAME = model.branchName,
-                BRANCHCODE = model.branchCode,
-                ADDRESSLINE1 = model.addressLine1,
-                ADDRESSLINE2 = model.addressLine2,
-                COMMENT = model.comment,
-                CREATEDBY = model.createdBy,
-                DELETED = model.deleted,
-            };
+                var branch = new TBL_BRANCH()
+                {
+                    STATEID = model.stateId,
+                    CITYID = model.cityId,
+                    REGIONID = model.regionId,
+                    COMPANYID = model.companyId,
+                    BRANCHNAME = model.branchName,
+                    BRANCHCODE = model.branchCode,
+                    ADDRESSLINE1 = model.addressLine1,
+                    ADDRESSLINE2 = model.addressLine2,
+                    COMMENT = model.comment,
+                    CREATEDBY = model.createdBy,
+                    DELETED = model.deleted,
+                };
 
-            this.context.TBL_BRANCH.Add(branch);
+                this.context.TBL_BRANCH.Add(branch);
 
-            var response = await context.SaveChangesAsync();
+                 response = await context.SaveChangesAsync();
+          
+           
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -215,8 +221,11 @@ namespace FintrakBanking.Repositories.Setups.General
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
-            //end of Audit section -------------------------------
+                //end of Audit section -------------------------------
+            }
+            catch (Exception ex) { }
             return response != 0;
+
         }
 
         public async Task<bool> UpdateBranch(BranchViewModel model, short id)
