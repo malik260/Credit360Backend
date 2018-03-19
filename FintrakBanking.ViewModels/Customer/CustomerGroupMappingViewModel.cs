@@ -29,7 +29,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string accountHolder { get; set; }
         public short branchId { get; set; }
         public bool completedInformation { get; set; }
-
+        public bool crdeitBureauCompleted { get; set; }
         public List<CustomerBvnViewModels> customerBvnInformation { get; set; }
         public List<CustomerCompanyShareholdersViewModels> customerCompanyShareholders { get; set; }
         public List<CustomerCompanyDirectorsViewModels> customerCompanyDirectors { get; set; }
