@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_MESSAGE_LOG_TYPE()
         {
             TBL_MESSAGE_LOG = new HashSet<TBL_MESSAGE_LOG>();
-            TBL_MONITORING_SETUP = new HashSet<TBL_MONITORING_SETUP>();
+            TBL_MONITORING_ALERT_SETUP = new HashSet<TBL_MONITORING_ALERT_SETUP>();
         }
 
         [Key]
@@ -28,6 +28,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_MESSAGE_LOG> TBL_MESSAGE_LOG { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_MONITORING_SETUP> TBL_MONITORING_SETUP { get; set; }
+        public virtual ICollection<TBL_MONITORING_ALERT_SETUP> TBL_MONITORING_ALERT_SETUP { get; set; }
     }
 }

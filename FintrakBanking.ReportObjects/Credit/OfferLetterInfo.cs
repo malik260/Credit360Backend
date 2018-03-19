@@ -77,6 +77,36 @@ namespace FintrakBanking.ReportObjects.Credit
 
         }
 
+        public static List<LoanApplicationCollateralViewModel> GetLoanCollateral(string applicationRefNumber)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+            try
+            {
+                var collateral  = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
+                       join b in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                       where b.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                       select new LoanApplicationCollateralViewModel
+                       {
+                           collateralDetail = x.COLLATERALDETAIL,
+                           collateralValue = x.COLLATERALVALUE,
+                           stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT
+                       }).ToList();
+
+                if (collateral != null)
+                {
+                    return collateral;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return new List<LoanApplicationCollateralViewModel>();
+
+        }
+
 
         public static List<ProductFeeViewModel> GetLoanApplicationFee (string applicationRefNumber)
         {
@@ -335,6 +365,6 @@ namespace FintrakBanking.ReportObjects.Credit
 
             return body;
         }
-
+ 
     }
 }

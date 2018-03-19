@@ -355,6 +355,7 @@
     <Compile Include="Controllers\JobRequestController.cs" />
     <Compile Include="Controllers\JobTitleController.cs" />
     <Compile Include="Controllers\KYCDocumentUploadController.cs" />
+    <Compile Include="Controllers\LimitAndMonitoringController.cs" />
     <Compile Include="Controllers\LimitController.cs" />
     <Compile Include="Controllers\LoanApplicationController.cs" />
     <Compile Include="Controllers\LoanController.cs" />

@@ -192,6 +192,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILoanReviewApplicationRepository>().To<LoanReviewApplicationRepository>();
             kernel.Bind<ICustomerCreditBureauRepository>().To<CustomerCreditBureauRepository>();
             kernel.Bind<IFeeConcessionRepository>().To<FeeConcessionRepository>();
+            kernel.Bind<ILimitAndMonitoringRepository>().To<LimitAndMonitoringRepository>();
         }
 
     }

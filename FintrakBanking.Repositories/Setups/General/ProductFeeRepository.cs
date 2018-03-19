@@ -397,7 +397,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              {
                                  chargeFeeId = data.CHARGEFEEID,
                                  chargeName = data.CHARGEFEENAME,
-                                 productId = data.PRODUCTTYPEID,
+                                 productTypeId = data.PRODUCTTYPEID,
                                  amount = data.AMOUNT,
                                  rate = data.RATE,
                                  feeTypeId = data.FEETYPEID,
