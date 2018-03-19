@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -23,13 +24,15 @@ namespace FintrakBanking.Repositories.Customer
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
         private ICreditLimitValidationsRepository creditLimitRepo;
+        private ICustomerCreditBureauRepository creditBureau;
 
         public CustomerGroupRepository(FinTrakBankingContext _context,
                                         IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail,
                                         IWorkflow _workFlow,
                                         IApprovalLevelStaffRepository _level,
-            ICreditLimitValidationsRepository _creditLimitRepo)
+            ICreditLimitValidationsRepository _creditLimitRepo,
+            ICustomerCreditBureauRepository _creditBureau)
         {
             this.context = _context;
             this.genSetup = _genSetup;
@@ -37,6 +40,7 @@ namespace FintrakBanking.Repositories.Customer
             workFlow = _workFlow;
             level = _level;
             creditLimitRepo = _creditLimitRepo;
+            creditBureau = _creditBureau;
         }
 
         private bool SaveAll()
@@ -1068,7 +1072,7 @@ namespace FintrakBanking.Repositories.Customer
                                 taxIdentificationNumber = s.TBL_CUSTOMER.TAXNUMBER,
                                 registrationNumber = s.TBL_CUSTOMER.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).REGISTRATIONNUMBER,
                                 completedInformation = s.TBL_CUSTOMER.ACCOUNTCREATIONCOMPLETE,
-                               // crdeitBureauCompleted = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(l=>l.CUSTOMERID == s.CUSTOMERID)
+                               // crdeitBureauCompleted = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(w=>w.CUSTOMERID==s.CUSTOMERID).ISREPORTOKAY,
                                 customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == s.CUSTOMERID).Select(b => new CustomerBvnViewModels()
                                 {
                                     bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
