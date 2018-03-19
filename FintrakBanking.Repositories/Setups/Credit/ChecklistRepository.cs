@@ -710,110 +710,66 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
             }
-            return context.SaveChanges() != 0; ;
+            return context.SaveChanges() > 0; ;
         }
         public bool AddChecklistDetail(ChecklistDetailViewModel model)
         {
-            var isProductBased = (from a in context.TBL_CHECKLIST_DEFINITION
-                                  join b in context.TBL_CHECKLIST_TYPE on
-                                  a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
-                                  where a.CHECKLISTDEFINITIONID == model.checkListDefinitionId
-                                  select b.ISPRODUCT_BASED).FirstOrDefault();
-            if (isProductBased)
+            if (model != null)
             {
-                model.targetTypeId = (int)CheckListTargetTypeEnum.LoanApplicationProductChecklist;
-            }
-            else
-            {
-                model.targetTypeId = (int)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist;
-            }
-            var data = new TBL_CHECKLIST_DETAIL
-            {
-                CHECKLISTDEFINITIONID = model.checkListDefinitionId,
-                TARGETTYPEID = model.targetTypeId,
-                TARGETID = model.targetId,
-                CHECKLISTSTATUSID = model.checkListStatusId,
-                CHECKEDBY = (int)model.createdBy,
-                DEFEREDDATE = model.deferedDate,
-                REMARK = model.remark,
-                DATETIMECREATED = _genSetup.GetApplicationDate(),
-                CREATEDBY = (int)model.createdBy
-            };
-
-            // Audit Section ---------------------------
-            var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.CHECKLISTDEFINITIONID == data.CHECKLISTDEFINITIONID));
-
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added Loan Checklist {audit_checklist.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME}", // on Loan '{data.LoanId}' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-
-            context.TBL_CHECKLIST_DETAIL.Add(data);
-            this.auditTrail.AddAuditTrail(audit);
-
-            //end of Audit section -------------------------------
-
-
-
-            var loanDetailsData = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.targetId);
-            if (loanDetailsData != null)
-            {
-                var productCheckListCount = (from dd in context.TBL_CHECKLIST_DEFINITION
-                                             where dd.PRODUCTID == loanDetailsData.PROPOSEDPRODUCTID
-                                             select dd).Count();
-
-                var loanCheckListProductCount = (from dd in context.TBL_CHECKLIST_DETAIL
-                                                 where dd.TARGETID == loanDetailsData.LOANAPPLICATIONDETAILID
-                                                 && dd.TARGETTYPEID == (int)CheckListTargetTypeEnum.LoanApplicationProductChecklist
-                                                 select dd).Count();
-                var loanCheckListCustomer = (from dd in context.TBL_CHECKLIST_DETAIL
-                                             where dd.TARGETID == model.targetId
-                                             && dd.TARGETTYPEID == (int)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist
-                                             select dd).ToList();
-
-                if (productCheckListCount == (loanCheckListProductCount + 1))
+                try
                 {
-                    if (loanCheckListCustomer.Count > 0)
+                    var isProductBased = (from a in context.TBL_CHECKLIST_DEFINITION
+                                          join b in context.TBL_CHECKLIST_TYPE on
+                                          a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
+                                          where a.CHECKLISTDEFINITIONID == model.checkListDefinitionId
+                                          select b.ISPRODUCT_BASED).FirstOrDefault();
+                    if (isProductBased)
                     {
-                        foreach (var item in loanCheckListCustomer)
-                        {
-
-                        }
+                        model.targetTypeId = (int)CheckListTargetTypeEnum.LoanApplicationProductChecklist;
                     }
-                    loanDetailsData.HASDONECHECKLIST = true;
+                    else
+                    {
+                        model.targetTypeId = (int)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist;
+                    }
+                    var data = new TBL_CHECKLIST_DETAIL
+                    {
+                        CHECKLISTDEFINITIONID = model.checkListDefinitionId,
+                        TARGETTYPEID = model.targetTypeId,
+                        TARGETID = model.targetId,
+                        CHECKLISTSTATUSID = model.checkListStatusId,
+                        CHECKEDBY = (int)model.createdBy,
+                        DEFEREDDATE = model.deferedDate,
+                        REMARK = model.remark,
+                        DATETIMECREATED = _genSetup.GetApplicationDate(),
+                        CREATEDBY = (int)model.createdBy
+                    };
+
+                    // Audit Section ---------------------------
+                    var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.CHECKLISTDEFINITIONID == data.CHECKLISTDEFINITIONID));
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = $"Added Loan Checklist {audit_checklist.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME}", // on Loan '{data.LoanId}' ",
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    context.TBL_CHECKLIST_DETAIL.Add(data);
+                    this.auditTrail.AddAuditTrail(audit);
+
+                    //end of Audit section -------------------------------
+                    return context.SaveChanges() > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
                 }
             }
-            //var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == model.checklistId select l).ToList();
-            //if (loanData != null)
-            //{
-            //    var custNo = loanData.Count();
-            //    var checkedNo = 0;
-            //    foreach (var item in loanData)
-            //    {
-            //        if (item.HASDONECHECKLIST == true)
-            //        {
-            //            ++checkedNo;
-            //        }
-            //    }
-            //    if (custNo == checkedNo)
-            //    {
-            //        var loanApplication = context.TBL_LOAN_APPLICATION.Find(model.checklistId);
-            //        if (loanApplication != null)
-            //        {
-            //            loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
-            //        }
-            //    }
-
-            //}
-
-            return context.SaveChanges() != 0;
+            return false;
         }
 
         public bool UpdateChecklistDetail(int ChecklistId, ChecklistDetailViewModel model)
@@ -860,7 +816,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 this.context.TBL_CHECKLIST_DETAIL.Remove(data);
             }
-          
+
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
@@ -1260,17 +1216,17 @@ namespace FintrakBanking.Repositories.Credit
             int staffApprovalLevelId = 0;
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var data = (from a in context.TBL_LOAN_APPLICATION
-                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
-                        join atrail in context.TBL_APPROVAL_TRAIL on b.CONDITIONID equals atrail.TARGETID
+            var data = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        join atrail in context.TBL_APPROVAL_TRAIL on b.LOANCONDITIONID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                         && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
                         && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null
-                        orderby a.APPLICATIONDATE descending
+                        orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
-                            customerName = a.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerName = a.TBL_LOAN_APPLICATION.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             proposedAmount = a.APPROVEDAMOUNT,
                             approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                             deferredDate = b.DEFEREDDATE,
@@ -1279,9 +1235,22 @@ namespace FintrakBanking.Repositories.Credit
                             condition = b.CONDITION,
                             conditionId = b.LOANCONDITIONID,
                             loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                             checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
-                            dateCreated = b.DATETIMECREATED
+                            dateCreated = b.DATETIMECREATED,
+                            //Loan Information
+                            relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
+                            relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
+                            applicationAmount = a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
+                            applicationTenor = a.PROPOSEDTENOR,
+                            applicationDate = a.TBL_LOAN_APPLICATION.APPLICATIONDATE,
+                            isInvestmentGrade = a.TBL_LOAN_APPLICATION.ISINVESTMENTGRADE,
+                            isPoliticallyExposed = a.TBL_LOAN_APPLICATION.ISPOLITICALLYEXPOSED,
+                            isRelatedParty = a.TBL_LOAN_APPLICATION.ISRELATEDPARTY,
+                            approvalStatusId = a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                            applicationStatusId = a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
+                            submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
+                            loanInformation = a.LOANPURPOSE
                         }).ToList();
             return data;
         }
@@ -1324,7 +1293,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool output = false;
             var checklistRecord = (from s in context.TBL_LOAN_CONDITION_PRECEDENT
-                                   where s.CONDITIONID == targetId
+                                   where s.LOANCONDITIONID == targetId
                                   && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                    select s).FirstOrDefault();
             var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
@@ -1358,10 +1327,6 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             this.auditTrail.AddAuditTrail(audit);
-
-
-
-
             output = context.SaveChanges() > 0;
 
             return output;
@@ -1370,7 +1335,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.TBL_LOAN_CONDITION_PRECEDENT
                         join b in context.TBL_LOAN_CONDITION_DEFERRAL
-                        on a.CONDITIONID equals b.CONDITIONID
+                        on a.LOANCONDITIONID equals b.CONDITIONID
                         join c in context.TBL_LOAN_APPLICATION
                         on a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived)

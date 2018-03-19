@@ -141,7 +141,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanReferenceNumber = x.LOANREFERENCENUMBER,
                 documentTitle = x.DOCUMENTTITLE,
                 documentTypeId = x.DOCUMENTTYPEID,
-                // fileData = x.FILEDATA,
+                fileData = x.FILEDATA,
                 fileName = x.FILENAME,
                 fileExtension = x.FILEEXTENSION,
                 systemDateTime = x.SYSTEMDATETIME,
@@ -161,7 +161,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanReferenceNumber = x.LOANREFERENCENUMBER,
                             documentTitle = x.DOCUMENTTITLE,
                             documentTypeId = x.DOCUMENTTYPEID,
-                            // fileData = x.FILEDATA,
+                             fileData = x.FILEDATA,
                             fileName = x.FILENAME,
                             fileExtension = x.FILEEXTENSION,
                             systemDateTime = x.SYSTEMDATETIME,
@@ -184,7 +184,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanReferenceNumber = x.LOANREFERENCENUMBER,
                             documentTitle = x.DOCUMENTTITLE,
                             documentTypeId = x.DOCUMENTTYPEID,
-                            // fileData = x.FILEDATA,
+                             fileData = x.FILEDATA,
                             fileName = x.FILENAME,
                             fileExtension = x.FILEEXTENSION,
                             systemDateTime = x.SYSTEMDATETIME,
@@ -199,7 +199,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
-                        where x.DOCUMENTID == model.documentId
+                        where x.DOCUMENTID == model.documentId 
                         select new LoanDocumentViewModel
                         {
                             documentId = x.DOCUMENTID,

@@ -1,19 +1,19 @@
-﻿using FintrakBanking.ViewModels.Setups.General;
+﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IEmailAndAlertsRepository
     {
-        void SendAlertsForCovenantsApproachingDueDate();
 
-        void SendAlertsForCovenantsOverDue();
+        void SendAlertsForCovenantsApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups);
 
-        void SendAlertsForCollateralPropertyRevaluation();
+        void SendAlertsForCollateralPropertyRevaluation(string title, string messageBody);
 
-        void SendAlertsForLoanNplMonitoring();
+        void SendAlertsForLoanNplMonitoring(string title, string messageBody);
 
-        void SendAlertsOnSelfLiquidatingLoanExpiry();
+        void SendAlertsOnSelfLiquidatingLoanExpiry(string title, string messageBody);
 
         bool CreateEmailMessageAndSend(MessageLogViewModel model);
 
@@ -25,6 +25,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool UpdateMailDeliveryStatus(int messageId, short statusId);
 
-        void SendAlertsOnOverDraftLoansAlmostDue();
+        void SendAlertsOnOverDraftLoansAlmostDue(string title, string messageBody);
+
+        void SendAlertsOnLoanForInActiveBondAndGuarantee(string title, string messageBody);
     }
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="https://webserver.creditreferencenigeria.net/crcweb/liverequestinvoker.asmx?wsdl" docRef="https://webserver.creditreferencenigeria.net/crcweb/liverequestinvoker.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="https://webserver.creditreferencenigeria.net/crcweb/liverequestinvoker.asmx" xmlns:q1="http://crcnigeria.net/" binding="q1:LiveRequestInvokerSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="https://webserver.creditreferencenigeria.net/crcweb/liverequestinvoker.asmx" xmlns:q2="http://crcnigeria.net/" binding="q2:LiveRequestInvokerSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

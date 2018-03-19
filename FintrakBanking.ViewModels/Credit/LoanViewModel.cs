@@ -49,7 +49,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatusName;
         public bool isBidbond;
         public bool isOverdraft;
-
+        public int notificationDuration { get; set; }
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
@@ -578,6 +578,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string officerEmail { get; set; }
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
+
+        public int notificationDuration { get; set; }
     }
 
     public class LoanMonitoringTriggerViewModel : GeneralEntity
@@ -669,6 +671,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    
     public class CommentOnLoanAvailmentViewModel 
     {
         public string name  { get; set; }

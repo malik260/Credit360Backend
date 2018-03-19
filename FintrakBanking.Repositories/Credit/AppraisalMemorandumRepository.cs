@@ -154,79 +154,6 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        private void LoadConditionsAndDynamics(int loanApplicationId)
-        {
-            List<int?> productIds = null;
-            List<int> camProductIds = null;
-            IEnumerable<TBL_CONDITION_PRECEDENT> productConditions = null;
-            IEnumerable<TBL_TRANSACTION_DYNAMICS> productDynamics = null;
-            IEnumerable<TBL_LOAN_APPLICATION_DETAIL> facilities = null;
-
-            if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId).Any() == false)
-            {
-                if (camProductIds == null) camProductIds = GetAllCamProductIds().ToList();
-                if (productIds == null) productIds = GetLoanApplicationProductIds(loanApplicationId).ToList();
-                if (facilities == null) facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
-
-                var conditions = context.TBL_CONDITION_PRECEDENT.Where(x => productIds.Contains((int?)x.PRODUCTID) || x.PRODUCTID == null).ToList();
-
-                foreach (var f in facilities)
-                {
-                    if (camProductIds.Contains(f.PROPOSEDPRODUCTID))
-                    {
-                        productConditions = conditions.Where(x => x.PRODUCTID == null);
-                    }
-                    else
-                    {
-                        productConditions = conditions.Where(x => x.PRODUCTID == f.PROPOSEDPRODUCTID);
-                    }
-
-                    foreach (var c in productConditions)
-                    {
-                        var row = new TBL_LOAN_CONDITION_PRECEDENT
-                        {
-                            CONDITION = c.CONDITION,
-                            ISEXTERNAL = c.ISEXTERNAL,
-                            CREATEDBY = c.CREATEDBY,
-                            TIMELINEID = c.TIMELINEID,
-                            RESPONSE_TYPEID = c.RESPONSE_TYPEID,
-                            LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
-                            DATETIMECREATED = DateTime.Now
-                        };
-                        context.TBL_LOAN_CONDITION_PRECEDENT.Add(row);
-                    }
-                }
-                context.SaveChanges();
-            }
-
-            if (context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId).Any() == false)
-            {
-                if (camProductIds == null) camProductIds = GetAllCamProductIds().ToList();
-                if (productIds == null) productIds = GetLoanApplicationProductIds(loanApplicationId).ToList();
-                if (facilities == null) facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
-
-                var dynamics = context.TBL_TRANSACTION_DYNAMICS.Where(x => productIds.Contains((int?)x.PRODUCTID)).ToList();
-
-                foreach (var f in facilities)
-                {
-                    productDynamics = dynamics.Where(x => x.PRODUCTID == f.PROPOSEDPRODUCTID);
-                    foreach (var c in productDynamics)
-                    {
-                        var row = new TBL_LOAN_TRANSACTION_DYNAMICS
-                        {
-                            DYNAMICS = c.DYNAMICS,
-                            DYNAMICSID = c.DYNAMICSID,
-                            CREATEDBY = c.CREATEDBY,
-                            LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
-                            DATETIMECREATED = DateTime.Now
-                        };
-                        context.TBL_LOAN_TRANSACTION_DYNAMICS.Add(row);
-                    }
-                }
-                context.SaveChanges();
-            }
-        }
-
         private IQueryable<int> GetAllCamProductIds()
         {
             return context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCT_CLASS_PROCESSID == 1)
@@ -289,8 +216,18 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int documentId)
         {
             var data = this.context.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Find(documentId);
-
             if (data == null) { return false; }
+
+            if (data.LASTUPDATEDBY != model.lastUpdatedBy) // archive old
+            {
+                context.TBL_CREDIT_APPRAISAL_MEMO_LOG.Add(new TBL_CREDIT_APPRAISAL_MEMO_LOG
+                {
+                    CAMDOCUMENTATION = data.CAMDOCUMENTATION,
+                    APPRAISALMEMORANDUMID = data.APPRAISALMEMORANDUMID,
+                    CREATEDBY = model.lastUpdatedBy,
+                    DATETIMECREATED = DateTime.Now
+                });
+            }
 
             data.CAMDOCUMENTATION = model.camDocumentation;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
@@ -321,7 +258,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = general.GetApplicationDate();
             List<TBL_LOAN_APPLICATION_DETAIL> items = null;
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
-            LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
+            // LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
 
             // WORKFLOW
             workflow.StaffId = model.createdBy;
@@ -478,6 +415,8 @@ namespace FintrakBanking.Repositories.Credit
                     toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
                     approvalStateId = x.APPROVALSTATEID,
                     approvalStatusId = x.APPROVALSTATUSID,
+                    approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                    approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                     comment = x.COMMENT,
                     staffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
                 }).OrderByDescending(x => x.approvalTrailId);
@@ -486,7 +425,7 @@ namespace FintrakBanking.Repositories.Credit
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {
             var operationId = entity.operationId; // (int)OperationsEnum.CAM; // <--------------------- overide incoming for now
-            var privilege = new PrivilegeViewModel();
+            //var privilege = new PrivilegeViewModel();
             var application = this.context.TBL_LOAN_APPLICATION.Find(entity.targetId);
 
             var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
@@ -512,9 +451,10 @@ namespace FintrakBanking.Repositories.Credit
                     });
 
             var grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
-            if (grant != null) privilege = grant;
-            privilege.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
-            return privilege;
+            if (grant == null) grant = new PrivilegeViewModel();
+            grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
+
+            return grant;
         }
 
         private IQueryable<OperationStaffViewModel> GetAllStaffNames()

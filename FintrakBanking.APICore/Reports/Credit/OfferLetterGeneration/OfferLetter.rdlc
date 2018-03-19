@@ -232,8 +232,36 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterSignatory</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="OfferLetterCollateral">
+      <Query>
+        <DataSourceName>Credit</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="collateralDetail">
+          <DataField>collateralDetail</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="collateralValue">
+          <DataField>collateralValue</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="stapedToCoverAmount">
+          <DataField>stapedToCoverAmount</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Credit</rd:DataSetName>
+        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
+        <rd:TableName>OfferLetterCollateral</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />
@@ -884,7 +912,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>47.68561cm</Top>
+            <Top>47.36811cm</Top>
             <Left>0.50814cm</Left>
             <Height>2.55044cm</Height>
             <Width>16.7444cm</Width>
@@ -943,7 +971,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>37.9527cm</Top>
+            <Top>37.6352cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.7089cm</Width>
@@ -981,7 +1009,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>35.09239cm</Top>
+            <Top>34.77489cm</Top>
             <Left>0.53907cm</Left>
             <Height>1.90781cm</Height>
             <Width>16.71347cm</Width>
@@ -1019,7 +1047,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>32.52312cm</Top>
+            <Top>32.20562cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.51094cm</Height>
             <Width>16.7089cm</Width>
@@ -1401,7 +1429,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionPrecident</DataSetName>
-            <Top>7.27766in</Top>
+            <Top>7.15266in</Top>
             <Left>0.20181in</Left>
             <Height>0.53124in</Height>
             <Width>5.88335in</Width>
@@ -1545,7 +1573,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>22.2423cm</Top>
+            <Top>21.9248cm</Top>
             <Left>0.51029cm</Left>
             <Height>2.22005cm</Height>
             <Width>16.74225cm</Width>
@@ -1581,7 +1609,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>8.43737in</Top>
+            <Top>8.31237in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -1739,7 +1767,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionSubsequent</DataSetName>
-            <Top>7.87834in</Top>
+            <Top>7.75334in</Top>
             <Left>0.21223in</Left>
             <Height>0.51736in</Height>
             <Width>5.88426in</Width>
@@ -1771,7 +1799,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>9.70029in</Top>
+            <Top>9.57529in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -2007,7 +2035,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>25.45013cm</Top>
+            <Top>25.13263cm</Top>
             <Left>0.51029cm</Left>
             <Height>2.74922cm</Height>
             <Width>16.74225cm</Width>
@@ -2053,7 +2081,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>11.17155in</Top>
+            <Top>11.04655in</Top>
             <Left>0.20006in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -2221,7 +2249,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>29.14703cm</Top>
+            <Top>28.82953cm</Top>
             <Left>0.5126cm</Left>
             <Height>2.27366cm</Height>
             <Width>16.73994cm</Width>
@@ -3637,7 +3665,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>12.48493in</Top>
+            <Top>12.35993in</Top>
             <Left>0.21223in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3673,7 +3701,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>13.45479in</Top>
+            <Top>13.32979in</Top>
             <Left>0.21403in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3729,7 +3757,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>14.62256in</Top>
+            <Top>14.49756in</Top>
             <Left>0.21403in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3765,7 +3793,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>15.44448in</Top>
+            <Top>15.31948in</Top>
             <Left>0.21403in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3803,7 +3831,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>40.04039cm</Top>
+            <Top>39.72289cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.7089cm</Width>
@@ -3839,7 +3867,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>16.2803in</Top>
+            <Top>16.1553in</Top>
             <Left>0.21223in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3898,7 +3926,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>42.16337cm</Top>
+            <Top>41.84587cm</Top>
             <Left>0.53907cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.71347cm</Width>
@@ -3954,7 +3982,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>17.10223in</Top>
+            <Top>16.97723in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3992,7 +4020,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>44.25107cm</Top>
+            <Top>43.93357cm</Top>
             <Left>0.53906cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.74225cm</Width>
@@ -4028,7 +4056,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>17.93805in</Top>
+            <Top>17.81305in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -4529,7 +4557,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>46.37404cm</Top>
+            <Top>46.05654cm</Top>
             <Left>0.51028cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.74226cm</Width>
@@ -4672,141 +4700,6 @@
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="Textbox50">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>SECTION 2- COLLATERAL</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Lucida Sans Unicode</FontFamily>
-                      <FontWeight>Bold</FontWeight>
-                      <TextDecoration>Underline</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>6.2694in</Top>
-            <Left>0.21223in</Left>
-            <Height>0.25in</Height>
-            <Width>3.30208in</Width>
-            <ZIndex>30</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox32">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>1.</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Times New Roman</FontFamily>
-                      <FontSize>12pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value xml:space="preserve">      </Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Times New Roman</FontFamily>
-                      <FontSize>7pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value>Irrevocable domiciliation of contract proceeds by the principal () to customer’s account duly confirmed by Middle office as valid with same account appropriately liened</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <SpaceAfter>5pt</SpaceAfter>
-                <Style />
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>2.</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Times New Roman</FontFamily>
-                      <FontSize>12pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value xml:space="preserve">      </Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Times New Roman</FontFamily>
-                      <FontSize>7pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value>Personal Guarantee of the Prime Mover of the Company on form 3240 to cover the total exposure supported by notarized statement of networth.</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <HangingIndent>-0.25in</HangingIndent>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>16.66512cm</Top>
-            <Left>0.50814cm</Left>
-            <Height>2.22005cm</Height>
-            <Width>16.7444cm</Width>
-            <ZIndex>31</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>1pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Textbox Name="Textbox9">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -4847,6 +4740,149 @@
             <Left>4.84608in</Left>
             <Height>0.25in</Height>
             <Width>1.94626in</Width>
+            <ZIndex>30</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Tablix Name="Tablix2">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.49218in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>6.12269in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox13">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=RowNumber(nothing)</Value>
+                                  <Style>
+                                    <FontFamily>Garamond</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox13</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="collateralDetail">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!collateralDetail.Value</Value>
+                                  <Style>
+                                    <FontFamily>Garamond</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>collateralDetail</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Details1" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>OfferLetterCollateral</DataSetName>
+            <Top>6.76042in</Top>
+            <Left>0.1888in</Left>
+            <Height>0.25in</Height>
+            <Width>6.61487in</Width>
+            <ZIndex>31</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="Textbox51">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>SECTION 2 COLLATERAL</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>6.46875in</Top>
+            <Left>0.1888in</Left>
+            <Height>0.25in</Height>
+            <Width>3.30208in</Width>
             <ZIndex>32</ZIndex>
             <Style>
               <Border>
@@ -4859,14 +4895,14 @@
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>19.77797in</Height>
+        <Height>20.22589in</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>6.86333in</Width>
+      <Width>6.91754in</Width>
       <Page>
         <PageHeader>
           <Height>1.14111in</Height>

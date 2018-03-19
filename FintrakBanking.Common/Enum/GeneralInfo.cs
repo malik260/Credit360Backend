@@ -212,6 +212,8 @@ namespace FintrakBanking.Common.Enum
         CreditBureauReportDocumentAdded = 192,
         CreditBureauReportDocumentDeleted = 193,
         CreditBureauReportDocumentUpdated = 194,
+        AlertAndMonitoryAdded = 195,
+        AlertAndMonitoryUpdated = 196,
     };
 
 

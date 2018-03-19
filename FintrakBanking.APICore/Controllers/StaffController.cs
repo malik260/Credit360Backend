@@ -574,6 +574,64 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
+        [Route("staff/multiple-staff-data")]
+        public async Task<HttpResponseMessage> UploadStaffData()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                //int uploadType;
+                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
+                //}
+
+                var entity = new StaffDocumentViewModel
+                {
+                    staffCode = provider.FormData["staffCode"],
+                    documentTitle = provider.FormData["documentTitle"],
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = repo.UploadStaffData(entity, buffer);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Staff data was successfully uploaded" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading staff data" });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record " });
+            }
+        }
+
+
+        [HttpPost]
         [Route("staff/update-reliever")]
         public HttpResponseMessage UpdateReliever([FromBody]RelieverViewModel entity)
         {

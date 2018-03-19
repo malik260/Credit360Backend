@@ -21,10 +21,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime DATETIMECREATED { get; set; }
 
-        public int? LASTUPDATEDBY { get; set; }
-
-        public DateTime? DATETIMEUPDATED { get; set; }
-
         public virtual TBL_CREDIT_APPRAISAL_MEMORANDM TBL_CREDIT_APPRAISAL_MEMORANDM { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class TransactionDynamicsViewModel : GeneralEntity
     {
-        public int dynamicsId { get; set; }
+        public int? dynamicsId { get; set; }
         public string dynamics { get; set; }
         public short productId { get; set; }
         public int loanApplicationId { get; set; }
@@ -50,6 +50,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string reason { get; set; }
         public string status { get; set; }
         public string productName { get; set; }
+        public int loanDynamicsId { get; set; }
     }
 
     public class ComplianceTimelineViewModel : GeneralEntity
