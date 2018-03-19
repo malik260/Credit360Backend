@@ -3685,17 +3685,17 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.PAYMENTAMOUNT)
                 .HasPrecision(19, 4);
 
-            modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
-                .Property(e => e.PREPAYMENT)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
+            //    .Property(e => e.PREPAYMENT)
+            //    .HasPrecision(19, 4);
 
-            modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
-                .Property(e => e.OVERDRAFTTOPUP)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
+            //    .Property(e => e.OVERDRAFTTOPUP)
+            //    .HasPrecision(19, 4);
 
-            modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
-                .Property(e => e.FEE_CHARGES)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
+            //    .Property(e => e.FEE_CHARGES)
+            //    .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
                 .HasMany(e => e.TBL_LOAN_REVIEW_APPLICATN_CAM)

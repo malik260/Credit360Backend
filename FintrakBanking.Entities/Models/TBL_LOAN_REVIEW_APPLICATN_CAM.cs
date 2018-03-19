@@ -20,6 +20,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string CAMREF { get; set; }
 
+        public string DOCUMENTATION { get; set; }
+
         public bool ISCOMPLETED { get; set; }
 
         public bool RISKRATED { get; set; }
@@ -41,5 +43,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         public virtual TBL_LOAN_REVIEW_APPLICATION TBL_LOAN_REVIEW_APPLICATION { get; set; }
+        public int APPROVALLEVELID { get; set; }
     }
 }

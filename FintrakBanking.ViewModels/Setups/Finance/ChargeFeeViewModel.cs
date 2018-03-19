@@ -14,7 +14,7 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         }
         public int chargeFeeId { get; set; }
         public string chargeName { get; set; }
-        public short productId { get; set; }
+        public short productTypeId { get; set; }
         public int? operationId { get; set; }
         public decimal? amount { get; set; }
         public double? rate { get; set; }

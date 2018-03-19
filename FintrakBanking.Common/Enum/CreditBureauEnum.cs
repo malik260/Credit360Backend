@@ -30,4 +30,16 @@ namespace FintrakBanking.Common.Enum
         DetailedBusinessEnquiryReport = 47
     }
 
+    public enum SearchCompletedStatusEnum
+    {
+        SearchIncomplete = 1,
+        SearchCompleted = 2,
+        SearchError = 3
+    }
+
+    public enum CRCSearchTypeEnum
+    {
+        ConsumerSearch = 6110,
+        CommercialSearch = 6112
+    }
 }
