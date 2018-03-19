@@ -130,7 +130,6 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 data = new TBL_LOAN_RATE_FEE_CONCESSION_();
-                data.CONCESSIONID = model.concessionId;
                 data.CONCESSION = model.concession;
                 data.CONCESSIONTYPEID = (short)model.concessionTypeId;
                 data.CONSESSIONREASON = model.concessionReason;

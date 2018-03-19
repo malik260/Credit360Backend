@@ -247,6 +247,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatus { get; set; }
         public int customerId { get; set; }
         public string branchName { get; set; }
+        public string approvalState { get; set; }
     }
 
     public class SelectListViewModel

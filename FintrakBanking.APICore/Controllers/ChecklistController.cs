@@ -429,17 +429,17 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                if (repo.ValidateChecklistDetailEntry(model.checkListDefinitionId, model.targetId))
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-           new { success = false, message = "This checklist item is checked already" });
-                }
+              
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = CommonHelpers.GetUserIP();
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-
+                if (repo.ValidateChecklistDetailEntry(model.checkListDefinitionId, model.targetId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = "This checklist item is checked already" });
+                }
                 var data = repo.AddChecklistDetail(model);
                 if (data)
                 {
