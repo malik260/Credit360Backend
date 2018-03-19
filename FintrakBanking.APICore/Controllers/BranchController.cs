@@ -161,7 +161,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Branch has been created successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-              new { success = false, message = "There was an error saving this record" });
+              new { success = false, message = "There was an error saving this record, Branch Name Exist" });
 
             }
             catch (System.Exception ex)

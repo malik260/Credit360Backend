@@ -127,6 +127,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class RequestDocumentViewModel : GeneralEntity
     {
+        public string comment;
+
         public int documentId { get; set; }
         public int targetId { get; set; }
         public int operationId { get; set; }

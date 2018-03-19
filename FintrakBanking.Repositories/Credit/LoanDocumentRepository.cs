@@ -199,7 +199,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
-                        where x.DOCUMENTID == model.documentId
+                        where x.DOCUMENTID == model.documentId 
                         select new LoanDocumentViewModel
                         {
                             documentId = x.DOCUMENTID,

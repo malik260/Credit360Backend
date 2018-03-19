@@ -14,6 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
         #region CREDIT BUREAU REPORT
         IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId);
 
+        bool VerifyPositiveCreditBureau(int customerId);
         int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity);
         int AddCustomerCreditBureauUpload(LoanCreditBereauViewModel entity, LoanDocumentViewModel docModel, byte[] file);
 

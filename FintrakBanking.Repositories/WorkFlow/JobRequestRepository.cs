@@ -583,9 +583,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 requestsList.Add(request);
             }
-           
-
-            
 
             return requestsList;
 
@@ -831,14 +828,55 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         #region Job-Request Document
 
+        public bool AddJobReplyAndDocument(RequestDocumentViewModel model, byte[] file)
+        {
+            var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENT
+            {
+                FILEDATA = file,
+                JOBREQUESTCODE = model.jobRequestCode,
+                DOCUMENTTITLE = model.documentTitle,
+                DOCUMENTTYPEID = model.documentTypeId,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                SYSTEMDATETIME = DateTime.Now,
+                PHYSICALFILENUMBER = model.physicalFileNumber,
+                PHYSICALLOCATION = model.physicalLocation,
+                CREATEDBY = (int)model.createdBy,
+            };
+
+            docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Add(data);
+
+            JobRequestViewModel jb = new JobRequestViewModel();
+            jb.jobRequestId = context.TBL_JOB_REQUEST.Where(x => x.JOBREQUESTCODE == model.jobRequestCode).FirstOrDefault().JOBREQUESTID;
+            jb.responseComment = model.comment;
+            ReplyJobRequest(jb, jb.jobRequestId);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Loan Document '{ model.documentTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            var aud = context.SaveChanges() != 0;
+
+            return docContext.SaveChanges() != 0;
+        }
+
+
         public bool AddJobDocument(RequestDocumentViewModel model, byte[] file)
         {
             var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENT
             {
                 FILEDATA = file,
-                //LoanApplicationNumber = model.targetId,
-                //LoanReferenceNumber = model.targetReferenceNumber,
-                //operationId = model.operationId,
                 JOBREQUESTCODE = model.jobRequestCode,
                 DOCUMENTTITLE = model.documentTitle,
                 DOCUMENTTYPEID = model.documentTypeId,
