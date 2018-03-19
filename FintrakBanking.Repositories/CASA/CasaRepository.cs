@@ -9,6 +9,8 @@ using System.Linq;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Finance;
 using System.Text;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -185,28 +187,61 @@ namespace FintrakBanking.Repositories.CASA
             IEnumerable<dynamic> data = null;
             if (applicationTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
-                data = (from a in  context.TBL_CUSTOMER_GROUP_MAPPING join b in context.TBL_CASA on a.CUSTOMERID equals b.CUSTOMERID 
-                            where a.CUSTOMERID == customerId && a.TBL_CUSTOMER.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
-                            select new
-                            {
-                                casaAccountId = b.CASAACCOUNTID,
-                                productAccountNumber = b.PRODUCTACCOUNTNUMBER + "(" + b.PRODUCTACCOUNTNAME + " - " + b.TBL_CURRENCY.CURRENCYCODE + ")",
-                                productAccountName = b.PRODUCTACCOUNTNAME,
-                                availableBalance = b.AVAILABLEBALANCE
-                            }).Distinct();
-            }
-         
-            if (applicationTypeId == (int)LoanTypeEnum.Single) {
-                  data = (from a in context.TBL_CASA
-                            where a.CUSTOMERID == customerId && a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
-                            select new
+                //data = (from a in  context.TBL_CUSTOMER_GROUP_MAPPING join b in context.TBL_CASA on a.CUSTOMERID equals b.CUSTOMERID 
+                //            where a.CUSTOMERID == customerId && a.TBL_CUSTOMER.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
+                //            select new
+                //            {
+                //                casaAccountId = b.CASAACCOUNTID,
+                //                productAccountNumber = b.PRODUCTACCOUNTNUMBER + "(" + b.PRODUCTACCOUNTNAME + " - " + b.TBL_CURRENCY.CURRENCYCODE + ")",
+                //                productAccountName = b.PRODUCTACCOUNTNAME,
+                //                availableBalance = b.AVAILABLEBALANCE
+                //            }).Distinct();
 
-                            {
-                                casaAccountId = a.CASAACCOUNTID,
-                                productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE + ")",
-                                productAccountName = a.PRODUCTACCOUNTNAME,
-                                availableBalance = a.AVAILABLEBALANCE
-                            }).Distinct();
+                data = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                        join b in context.TBL_CASA on a.CUSTOMERID equals b.CUSTOMERID
+                        where a.CUSTOMERGROUPID == customerId && a.TBL_CUSTOMER.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
+                        select new
+                        {
+                            casaAccountId = b.CASAACCOUNTID,
+                            productAccountNumber = b.PRODUCTACCOUNTNUMBER + "(" + b.PRODUCTACCOUNTNAME + " - " + b.TBL_CURRENCY.CURRENCYCODE + ")",
+                            productAccountName = b.PRODUCTACCOUNTNAME,
+                            availableBalance = b.AVAILABLEBALANCE
+                        }).Distinct();
+            }
+
+            if (applicationTypeId == (int)LoanTypeEnum.Single)
+            {
+                // data = new List<CasaViewModel>();
+                //var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                //if (setup.USE_THIRD_PARTY_INTEGRATION)
+                //{
+                //    var customerinfo = (from a in context.TBL_CUSTOMER
+                //                        where a.CUSTOMERID == customerId
+                //                        select new CasaViewModel
+                //                        {
+                //                            customerCode = a.CUSTOMERCODE,
+                //                        }).ToList();
+                //    if (customerinfo.Count > 0)
+                //    {
+                //        CustomerDetails customer = new CustomerDetails();
+                //        Task.Run(async () => { data = await customer.GetCustomerAccountsBalance(customerinfo[0].customerCode); }).GetAwaiter().GetResult();
+                //    }
+                //    return data;
+                //}
+                //else
+                //{
+                    data = (from a in context.TBL_CASA
+                        where a.CUSTOMERID == customerId && a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
+                        select new
+
+                        {
+                            casaAccountId = a.CASAACCOUNTID,
+                            productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE + ")",
+                            productAccountName = a.PRODUCTACCOUNTNAME,
+                            availableBalance = a.AVAILABLEBALANCE
+                        }).Distinct();
+                //}
+                return data;
             }
           
 

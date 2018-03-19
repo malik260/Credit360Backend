@@ -92,6 +92,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId);
 
+        void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
+
 
     }
 }
