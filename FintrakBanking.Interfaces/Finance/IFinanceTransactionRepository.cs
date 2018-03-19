@@ -10,7 +10,7 @@ namespace FintrakBanking.Interfaces.Finance
     {
         //bool AddCollateralSearchLien(CasaLienViewModel model);
 
-        FinanceTransactionViewModel PostCollateralSearch(CasaLienViewModel model);
+        List<FinanceTransactionViewModel> PostCollateralSearch(CasaLienViewModel model);
 
         string PostTransaction(List<FinanceTransactionViewModel> transaction);
 

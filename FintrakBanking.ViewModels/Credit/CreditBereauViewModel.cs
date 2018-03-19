@@ -34,15 +34,16 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanCreditBereauViewModel : GeneralEntity
     {
-        public short creditBureauId;
-        public string creditBureauName;
-        public int customerCreditBureauId;
-        public int? companyDirectorId;
-        public string companyDirectorName;
-        public bool usedIntegration;
-        public bool isReportOkay;
-        public int searchCount;
-        public int uploadCount;
+        public short creditBureauId { get; set; }
+        public string creditBureauName { get; set; }
+        public int customerCreditBureauId { get; set; }
+        public int? companyDirectorId { get; set; }
+        public string companyDirectorName { get; set; }
+        public bool usedIntegration { get; set; }
+        public bool isReportOkay { get; set; }
+        public int searchCount { get; set; }
+        public int uploadCount { get; set; }
+        public int documentId { get; set; }
 
         public int applicationCreditBureauId { get; set; }
         public int loanApplicationId { get; set; }

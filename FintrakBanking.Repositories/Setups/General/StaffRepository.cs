@@ -14,6 +14,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common;
 using FintrakBanking.Entities.DocumentModels;
+using System.Drawing;
+using System.Text;
+using GemBox.Spreadsheet;
+using System.IO;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -43,7 +47,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public StaffRepository(FinTrakBankingContext context)
         {
-            this.context = context;
+            this.context = context;     
+
         }
 
         private bool SaveAll()
@@ -903,10 +908,153 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
-        public int UploadStaffData(StaffDocumentViewModel model, byte[] file)
+
+        private string StoredTicket(string filename)
         {
-            return 0;
+            CreditBureauHelp helper = new CreditBureauHelp();
+
+            string folderName = string.Empty;
+            folderName = helper.FilePath();
+            folderName = Path.Combine(folderName, "Excel_Uploads");
+            string pathString = Path.Combine(folderName, filename);
+
+            if (!Directory.Exists(folderName))
+            {
+                Directory.CreateDirectory(folderName);
+            }
+
+            if (!File.Exists(pathString))
+            {
+                using (StreamWriter sw = new StreamWriter(pathString))
+                {
+                   // sw.Write(pathString);
+                }
+                return pathString;
+            }
+            return pathString;
+            //else
+            //{
+            //    DisposeTicket(pathString);
+            //    StoredTicket(userName, ticket);
+            //}
         }
+
+        public List<StaffInfoViewModel> UploadStaffData(StaffDocumentViewModel model, byte[] file)
+        {
+            var staffInfo = new List<StaffInfoViewModel>();
+            // Loads a spreadsheet from a file with the specified path
+
+            // If using Professional version, put your serial key below.
+            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+
+            string path = "_" + model.createdBy + "." + model.fileExtension;
+            path = StoredTicket(path);
+            File.WriteAllBytes(path, file.ToArray());
+
+            ExcelFile ef = ExcelFile.Load(path);
+
+            ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+
+            CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+            for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
+            {
+                int excelRowPosition = 1;
+                StaffInfoViewModel staffRowData = new StaffInfoViewModel();
+                for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
+                {
+                    ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
+
+                    string cellName = CellRange.RowColumnToPosition(j, i);
+                    string cellRow  = ExcelRowCollection.RowIndexToName(j);
+                    string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
+                    excelRowPosition = Convert.ToInt32(cellRow);
+                    if (Convert.ToInt32(cellRow) == 1) continue;
+
+                    switch (cellColumn)
+                    {
+                        case "A":
+                            staffRowData.StaffCode = cell.Value.ToString();
+                            break;
+                        case "B":
+                            var rankInfo = context.TBL_STAFF_RANK.Where(x => x.RANKCODE == cell.Value.ToString()).FirstOrDefault();
+                            if (rankInfo != null) staffRowData.RankId = rankInfo.RANKID;
+                            else { throw new Exception("the RANKCODE @" + cellColumn + " does not exist in the rank log"); }
+                            break;
+                        case "C":
+                            var branchInfo = context.TBL_BRANCH.Where(x => x.BRANCHCODE == cell.Value.ToString()).FirstOrDefault();
+                            if (branchInfo != null) staffRowData.BranchId = branchInfo.BRANCHID;
+                            else { throw new Exception($"the 'BRANCHCODE' @" + cellColumn + " does not exist in the branch log"); }
+                            break;
+                        case "D":
+                            staffRowData.FirstName = cell.Value.ToString();
+                            break;
+                        case "E":
+                            staffRowData.LastName = cell.Value.ToString();
+                            break;
+                        case "F":
+                            staffRowData.MiddleName = cell.Value.ToString();
+                            break;
+                        case "G":
+                            var jobTitle = context.TBL_STAFF_JOBTITLE.Where(x => x.JOBTITLENAME.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+                            if (jobTitle != null) staffRowData.JobTitleId = jobTitle.JOBTITLEID;
+                            else { throw new Exception($"the 'Sensitivity Level' @" + cellColumn + " does not exist."); }
+                            break;
+                        case "H":
+                            var Sensitivity = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.Where(x => x.DESCRIPTION.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+                            if (Sensitivity != null) staffRowData.CustomerSensitivityLevelId = Sensitivity.CUSTOMERSENSITIVITYLEVELID;
+                            else { throw new Exception($"the 'Sensitivity Level' @" + cellColumn + " does not exist."); }
+                            break;
+                        case "I":
+                            var department = context.TBL_DEPARTMENT.Where(x => x.DEPARTMENTCODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+                            if (department != null) staffRowData.DepartmentId = department.DEPARTMENTID;
+                            else { throw new Exception($"the 'Department Code' @" + cellColumn + " does not exist."); }
+                            break;
+                        case "J":
+                            if (cell.Value.ToString().ToLower()  == "yes") staffRowData.npl_LimitExceeded = true;
+                            else if (cell.Value.ToString().ToLower() == "no") staffRowData.npl_LimitExceeded = false;
+                            else { throw new Exception($"the value at column " + cellColumn + " must be a 'Yes' or 'No'."); }
+                            break;
+                            //default:
+                            //    staffInfo[Convert.ToInt32(cellRow)].LastName = cell.Value.ToString();
+                            //    break;
+
+                    }
+                }
+               if(excelRowPosition > 1) staffInfo.Add(staffRowData);
+
+            };
+               
+            foreach(var staffInfoRow in staffInfo)
+            {
+                var staffObj = new TBL_TEMP_STAFF()
+                {
+                    DEPARTMENTID = staffInfoRow.DepartmentId,
+                    STAFFCODE = staffInfoRow.StaffCode,
+                    RANKID = staffInfoRow.RankId,
+                    BRANCHID = staffInfoRow.BranchId,
+                    FIRSTNAME = staffInfoRow.FirstName,
+                    LASTNAME = staffInfoRow.LastName,
+                    MIDDLENAME = staffInfoRow.MiddleName,
+                    JOBTITLEID = staffInfoRow.JobTitleId,
+                    CUSTOMERSENSITIVITYLEVELID = staffInfoRow.CustomerSensitivityLevelId,
+                    COMPANYID = model.companyId,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                    ISCURRENT = true
+
+
+                };
+                context.TBL_TEMP_STAFF.Add(staffObj);
+            };
+
+            if (context.SaveChanges() > 0) return staffInfo;
+            else
+            {
+                staffInfo = null;
+                return staffInfo;
+            }
+        }
+            
+        
 
         #region Staff Signature 
 

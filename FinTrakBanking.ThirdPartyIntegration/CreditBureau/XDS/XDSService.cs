@@ -118,7 +118,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         public string ConnectConsumerMatch(XDSIndividualSearchViewModel searchParam)
         {
             string result;
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             result = proxy.ConnectConsumerMatch(dataTicket, searchParam.EnquiryReason, searchParam.ConsumerName,
                 searchParam.DateOfBirth, searchParam.Identification, searchParam.AccountNumber, ((int)XDSConnectProductEnum.DetailedCreditProfileReport).ToString());
             return result;
@@ -127,7 +127,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         public string GetConsumerFullCreditReport(SearchFullResultViewModel searchParam)
         {
             string result;
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             result = proxy.GetConsumerFullCreditReport(dataTicket, searchParam.ConsumerID, searchParam.MergeList, searchParam.SubscriberEnquiryEngineID,
                 searchParam.EnquiryID);
             return result;
@@ -136,7 +136,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         public byte[] GetConsumerFullCreditReportBinary(SearchFullResultViewModel searchParam)
         {
             byte[] result;
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             result = proxy.GetConsumerFullCreditReportBinary(dataTicket, searchParam.ConsumerID, searchParam.MergeList, searchParam.SubscriberEnquiryEngineID,
                 searchParam.EnquiryID);
             return result;
@@ -145,7 +145,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         public byte[] GetXSCoreConsumerFullCreditReportBinary(SearchFullResultViewModel searchParam)
         {
             byte[] result;
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             result = proxy.GetXSCoreConsumerFullCreditReportBinary(dataTicket, searchParam.ConsumerID, searchParam.MergeList, searchParam.SubscriberEnquiryEngineID,
                 searchParam.EnquiryID);
             return result;
@@ -154,7 +154,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         public string GetConsumerBasicTraceReport(SearchFullResultViewModel searchParam)
         {
             string result;
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             result = proxy.GetConsumerBasicTraceReport(dataTicket, searchParam.ConsumerID, searchParam.MergeList, searchParam.SubscriberEnquiryEngineID,
                 searchParam.EnquiryID);
             return result;
@@ -163,7 +163,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         public string GetXSCoreConsumerFullCreditReport(SearchFullResultViewModel searchParam)
         {
             string result;
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             result = proxy.GetXSCoreConsumerFullCreditReport(dataTicket, searchParam.ConsumerID, searchParam.MergeList, searchParam.SubscriberEnquiryEngineID,
                 searchParam.EnquiryID);
             return result;
@@ -173,7 +173,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         #region Commercial
         public string ConnectCommercialMatch(XDSCommercialSearchViewModel searchParam)
         {
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             string result;
             result = proxy.ConnectCommercialMatch(dataTicket, searchParam.EnquiryReason, searchParam.BusinessName,
                 searchParam.BusinessRegistrationNumber, searchParam.AccountNumber, ((int)XDSConnectProductEnum.DetailedBusinessEnquiryReport).ToString());
@@ -183,7 +183,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         public string GetCommercialFullCreditReport(SearchFullResultViewModel searchParam)
         {
             string result;
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             result = proxy.GetCommercialFullCreditReport(dataTicket, searchParam.ConsumerID, searchParam.MergeList, searchParam.SubscriberEnquiryEngineID,
                 searchParam.EnquiryID);
             return result;
@@ -192,7 +192,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         public string GetCommercialBasicCreditReport(SearchFullResultViewModel searchParam)
         {
             string result;
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             result = proxy.GetCommercialBasicCreditReport(dataTicket, searchParam.ConsumerID, searchParam.MergeList, searchParam.SubscriberEnquiryEngineID,
                 searchParam.EnquiryID);
             return result;
@@ -201,7 +201,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         public string GetCommercialEnquiryReport(SearchFullResultViewModel searchParam)
         {
             string result;
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             result = proxy.GetCommercialEnquiryReport(dataTicket, searchParam.ConsumerID,"45");
             return result;
         }
@@ -209,7 +209,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
         public byte[] GetCommercialFullCreditReportBinary(SearchFullResultViewModel searchParam)
         {
             byte[] result;
-            string dataTicket = GetStoredTicket("fir58767");
+            string dataTicket = GetStoredTicket(searchParam.userName);
             result = proxy.GetCommercialFullCreditReportBinary(dataTicket, searchParam.ConsumerID, searchParam.MergeList, searchParam.SubscriberEnquiryEngineID,
                 searchParam.EnquiryID);
             return result;

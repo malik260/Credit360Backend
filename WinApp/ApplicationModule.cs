@@ -127,6 +127,8 @@ namespace WinApp
             kernel.Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
             kernel.Bind<ICallMemoRepository>().To<CallMemoRepository>();
             kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
+            kernel.Bind<ICustomerStagingRepository>().To<CustomerStagingRepository>();
+            
         }
     }
     

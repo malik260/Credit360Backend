@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.WorkFlow;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -1797,7 +1798,7 @@ namespace FintrakBanking.Repositories.Customer
                        maritalStatus = a.MARITALSTATUS.Value,
                        title = a.TITLE,
                        middleName = a.MIDDLENAME,
-                       customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                       //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                        misCode = a.MISCODE,
                        misStaff = a.MISSTAFF,
@@ -2024,7 +2025,7 @@ namespace FintrakBanking.Repositories.Customer
                        maritalStatus = a.MARITALSTATUS.Value,
                        title = a.TITLE,
                        middleName = a.MIDDLENAME,
-                       customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                       //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                        misCode = a.MISCODE,
                        misStaff = a.MISSTAFF,
@@ -2114,7 +2115,7 @@ namespace FintrakBanking.Repositories.Customer
                 maritalStatus = a.MARITALSTATUS.Value,
                 title = a.TITLE,
                 middleName = a.MIDDLENAME,
-                customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                 customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                 misCode = a.MISCODE,
                 misStaff = a.MISSTAFF,
@@ -3147,30 +3148,53 @@ namespace FintrakBanking.Repositories.Customer
         }
         public IEnumerable<CasaViewModel> GetCustomerCASAInformation(int customerId)
         {
-            var casaInformation = context.TBL_CASA.Where(a => a.CUSTOMERID == customerId).Select(x => new CasaViewModel()
+            var data = new List<CasaViewModel>();
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (setup.USE_THIRD_PARTY_INTEGRATION)
             {
-                casaAccountId = x.CASAACCOUNTID,
-                productAccountNumber = x.PRODUCTACCOUNTNUMBER,
-                productAccountName = x.PRODUCTACCOUNTNAME,
-                isCurrentAccount = x.ISCURRENTACCOUNT,
-                customerId = x.CUSTOMERID,
-                productId = x.PRODUCTID,
-                productCode = x.TBL_PRODUCT.PRODUCTCODE,
-                productName = x.TBL_PRODUCT.PRODUCTNAME,
-                branchId = x.BRANCHID,
-                branchCode = x.TBL_BRANCH.BRANCHCODE,
-                branchName = x.TBL_BRANCH.BRANCHNAME,
-                currencyId = x.CURRENCYID,
-                currency = x.TBL_CURRENCY.CURRENCYNAME,
-                availableBalance = x.AVAILABLEBALANCE,
-                ledgerBalance = x.LEDGERBALANCE,
-                accountStatusName = x.TBL_CASA_ACCOUNTSTATUS.ACCOUNTSTATUSNAME,
-                relationshipManagerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
-                relationshipOfficerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
-                hasOverdraft = x.HASOVERDRAFT,
-                hasLien = x.HASLIEN
-            }).ToList();
-            return casaInformation;
+                var customerinfo = (from a in context.TBL_CUSTOMER
+                                    where a.CUSTOMERID == customerId
+                                    select new CasaViewModel
+                                    {
+                                        customerCode = a.CUSTOMERCODE,
+                                    }).ToList();
+                if (customerinfo.Count > 0)
+                {
+                    CustomerDetails customer = new CustomerDetails(context);
+                    Task.Run(async () => { data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerinfo[0].customerCode); }).GetAwaiter().GetResult();
+                   // return data.ToList();
+
+                }
+                return data;
+            }
+            else
+            {
+                    var casaInformation = context.TBL_CASA.Where(a => a.CUSTOMERID == customerId).Select(x => new CasaViewModel()
+                    {
+                        casaAccountId = x.CASAACCOUNTID,
+                        productAccountNumber = x.PRODUCTACCOUNTNUMBER,
+                        productAccountName = x.PRODUCTACCOUNTNAME,
+                        isCurrentAccount = x.ISCURRENTACCOUNT,
+                        customerId = x.CUSTOMERID,
+                        productId = x.PRODUCTID,
+                        productCode = x.TBL_PRODUCT.PRODUCTCODE,
+                        productName = x.TBL_PRODUCT.PRODUCTNAME,
+                        branchId = x.BRANCHID,
+                        branchCode = x.TBL_BRANCH.BRANCHCODE,
+                        branchName = x.TBL_BRANCH.BRANCHNAME,
+                        currencyId = x.CURRENCYID,
+                        currency = x.TBL_CURRENCY.CURRENCYNAME,
+                        availableBalance = x.AVAILABLEBALANCE,
+                        ledgerBalance = x.LEDGERBALANCE,
+                        accountStatusName = x.TBL_CASA_ACCOUNTSTATUS.ACCOUNTSTATUSNAME,
+                        relationshipManagerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                        relationshipOfficerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+                        hasOverdraft = x.HASOVERDRAFT,
+                        hasLien = x.HASLIEN
+                    }).ToList();
+                return casaInformation;
+
+            }
         }
 
         public IEnumerable<CustomerNextOfKinViewModels> GetSingleCustomerNextOfKinInfo(int customerId)
