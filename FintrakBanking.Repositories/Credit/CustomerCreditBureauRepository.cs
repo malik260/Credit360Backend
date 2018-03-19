@@ -7,8 +7,6 @@ using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.Repositories.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
@@ -293,6 +291,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {
+            var doc = docContext.TBL_CUSTOMER_CREDIT_BUREAU;
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false
@@ -313,6 +312,14 @@ namespace FintrakBanking.Repositories.Credit
                                                    uploadCount = 0,
                                                    createdBy = a.CREATEDBY
                                                };
+            foreach (var item in customerLoanCreditBureauData)
+            {
+                var docRow = doc.Where(x => x.CUSTOMERCREDITBUREAUID == item.customerCreditBureauId).FirstOrDefault();
+                if (docRow != null)
+                {
+                    item.documentId = docRow.DOCUMENTID;
+                }
+            }
             return customerLoanCreditBureauData.ToList();
         }
         #endregion
@@ -330,6 +337,16 @@ namespace FintrakBanking.Repositories.Credit
             else
                 throw new Exception("Timed out");
 
+        }
+
+        public bool VerifyPositiveCreditBureau(int customerId)
+        {
+            var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId);
+            foreach(var customer in customers)
+            {
+                var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId);
+            };
+            return false;
         }
 
         public byte[] GetFullSearchResultInPDF(SearchInput searchInput)

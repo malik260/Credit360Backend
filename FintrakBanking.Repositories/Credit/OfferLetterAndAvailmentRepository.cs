@@ -392,6 +392,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
                             camReference = c.CAMREF != null ? c.CAMREF : "N/A",
                             camDocumentation = d.CAMDOCUMENTATION,
+                            approvalDate = a.APPROVEDDATE,
                             approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.Sum(x => x.APPROVEDAMOUNT),
                             newApplicationDate = a.APPLICATIONDATE,
                             applicationStatusId = a.APPLICATIONSTATUSID,
