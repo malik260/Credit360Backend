@@ -110,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("update-limit-and-monitoring")]
+        [Route("update-email-lert-message")]
         public HttpResponseMessage UpdateEmailMessageSeeting( [FromBody] LimitAndMonitoringViewModel model)
         {
             try
@@ -122,7 +122,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                var response = repo.UpdateEmailMessageSeeting( model);
+                var response = repo.UpdateEmailAlertMessages( model);
                 if (response!=null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been updated successfully" });

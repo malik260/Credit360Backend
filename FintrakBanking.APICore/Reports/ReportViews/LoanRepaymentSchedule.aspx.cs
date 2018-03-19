@@ -15,6 +15,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 tearmLoanId.Text = Request.QueryString["tearmLoanId"];
                 companyId.Text = Request.QueryString["companyId"];
+                staffId.Text = Request.QueryString["staffId"];
                 ReportViewer.LocalReport.Refresh();
             }
         }

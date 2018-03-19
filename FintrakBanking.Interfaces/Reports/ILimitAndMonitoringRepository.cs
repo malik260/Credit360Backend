@@ -22,7 +22,7 @@ namespace FintrakBanking.Interfaces.Reports
 
        string  RemoveEmailMessageSeeting(LimitAndMonitoringViewModel alertSetting);
 
-
+        string UpdateEmailAlertMessages(LimitAndMonitoringViewModel data);
 
     }
 }

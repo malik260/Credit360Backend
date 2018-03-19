@@ -429,6 +429,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+              
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = CommonHelpers.GetUserIP();
                 model.applicationUrl = HttpContext.Current.Request.Path;
@@ -437,22 +438,22 @@ namespace FintrakBanking.APICore.Controllers
                 if (repo.ValidateChecklistDetailEntry(model.checkListDefinitionId, model.targetId))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                new { success = false, message = "This checklist item is checked already" });
+                            new { success = false, message = "This checklist item is checked already" });
                 }
                 var data = repo.AddChecklistDetail(model);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                  new { success = true, result = data, message = "The record has been created successfully" });
+                 new { success = true, result = data, message = "The record has been created successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                                 new { success = false, message = "There was an error creating this record" });
+            new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"There was an error creating this record {e.Message}" });
+            new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
 
         }
@@ -1069,7 +1070,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                  new { success = false, message = "Please select a checklist to continue" });
                 }
-                if (model.deferedDate < DateTime.Now)
+                if (model.deferedDate < DateTime.Now )
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                  new { success = false, message = "Deferred date cannot be less than today's date" });
@@ -1241,7 +1242,7 @@ namespace FintrakBanking.APICore.Controllers
                      new { success = false, message = "This Checklist Type is already mapped with the selected Approval Level" });
                     }
                 }
-
+               
                 model.userBranchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
                 model.createdBy = token.GetStaffId;

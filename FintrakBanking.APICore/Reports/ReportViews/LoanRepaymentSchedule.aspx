@@ -34,6 +34,7 @@
         </div> 
         <asp:Label ID="tearmLoanId" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="staffId" runat="server"  Visible="false" ></asp:Label>
     </form>
 </body>
 </html>

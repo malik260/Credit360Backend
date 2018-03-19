@@ -43,19 +43,20 @@ namespace FintrakBanking.ReportObjects
 
         //}
 
-        public static IEnumerable<WorkflowTrackerViewModel> TrackWorkFlow(int operationId, int companyId, int targetId)
+        public static IEnumerable<WorkflowTrackerViewModel> TrackWorkFlow(int operationId, int companyId, int targetId, int staffId)
         {
 
 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
+                var staffSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
                 var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
                 var approvalTrail = (from f in context.TBL_APPROVAL_TRAIL
                                      where f.TARGETID == targetId && f.OPERATIONID == operationId && f.COMPANYID == companyId
-                                     orderby f.APPROVALTRAILID // f.TBL_APPROVAL_LEVEL. .TBL_APPROVAL_LEVEL.TBL_APPROVAL_GROUP, f.TBL_APPROVAL_LEVEL.APPROVALLEVELID
+                                     orderby f.TBL_APPROVAL_LEVEL.TBL_APPROVAL_GROUP.GROUPID, f.TBL_APPROVAL_LEVEL.APPROVALLEVELID
+
                                      select new WorkflowTrackerViewModel()
                                      {
-                                         approvalTrailId = f.APPROVALTRAILID,
                                          companyName = company.NAME ,
                                          groupName = f.TBL_APPROVAL_LEVEL.TBL_APPROVAL_GROUP.GROUPNAME,
                                          responseApprovalLevel = f.TBL_APPROVAL_LEVEL.LEVELNAME,
@@ -68,14 +69,14 @@ namespace FintrakBanking.ReportObjects
                                          requestApprovalLevel = (Int64)((Int32?)f.FROMAPPROVALLEVELID ?? (Int32?)0) == 0 ? "Undefined Level Initiation" : (Int64)((Int32?)f.FROMAPPROVALLEVELID ?? (Int32?)0) > 0 ? ((from m in context.TBL_APPROVAL_LEVEL where m.APPROVALLEVELID == f.FROMAPPROVALLEVELID select new { m.LEVELNAME }).FirstOrDefault().LEVELNAME) : null,
                                          approvalStatus = ((from n in context.TBL_APPROVAL_STATUS where n.APPROVALSTATUSID == f.APPROVALSTATUSID select new { n.APPROVALSTATUSNAME }).FirstOrDefault().APPROVALSTATUSNAME)
                                      }).ToList();
-                return approvalTrail.OrderBy(c=> c.TargetId);
+                return approvalTrail;
 
             }
         }
 
 
 
-        public static IEnumerable<WorkFlowViewModel> GetWorkFlowDefination(int companyId, int operationId)
+        public static List<WorkFlowViewModel> GetWorkFlowDefination(int companyId, int operationId)
         {
             List<WorkFlowViewModel> data = new List<WorkFlowViewModel>();
 
@@ -116,7 +117,7 @@ namespace FintrakBanking.ReportObjects
                                 staffLevelId = g.Key.LevelStaff.STAFFLEVELID.ToString()
                             }).ToList();
 
-                return data.OrderBy(c => c.grpPosition);
+                return data;
 
 
             }

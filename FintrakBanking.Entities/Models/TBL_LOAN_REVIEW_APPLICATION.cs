@@ -28,7 +28,7 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         public string REVIEWDETAILS { get; set; }
-
+        /*
         public double? INTERATERATE { get; set; }
 
         [Column(TypeName = "money")]
@@ -57,9 +57,10 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal? FEE_CHARGES { get; set; }
 
-        public short APPROVALSTATUSID { get; set; }
 
-        public bool ISMANAGEMENTINTERESTRATE { get; set; }
+        public bool ISMANAGEMENTINTERESTRATE { get; set; }*/
+
+        public short APPROVALSTATUSID { get; set; }
 
         public int CREATEDBY { get; set; }
 

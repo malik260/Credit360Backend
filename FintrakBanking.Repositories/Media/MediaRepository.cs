@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Interfaces.Setups.General;
+using ExcelDataReader;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Repositories.media
 {
@@ -83,6 +85,24 @@ namespace FintrakBanking.Repositories.media
         //    }
 
 
-       
+        public IEnumerable<CustomerAddressViewModels> ReadEntitiesFromFile(Stream stream)
+        {
+            var myEntities = new List<CustomerAddressViewModels>();
+           // var stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+
+            using (IExcelDataReader reader = ExcelReaderFactory.CreateOpenXmlReader(stream))
+            {
+                while (reader.Read())
+                {
+                    var myEntity = new CustomerAddressViewModels();
+                    myEntity.address = reader.GetString(1);
+                    myEntity.companyName = reader.GetString(2);
+               //   var shemaa =  reader.GetSchemaTable();
+                    myEntities.Add(myEntity);
+                }
+            }
+
+            return myEntities;
+        }
     }
 }

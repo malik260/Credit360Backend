@@ -46,6 +46,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId);
 
         bool AddJobDocument(RequestDocumentViewModel model, byte[] file);
+        bool AddJobReplyAndDocument(RequestDocumentViewModel model, byte[] file);
         bool UpdateJobDocument(RequestDocumentViewModel model, int documentId);
         IEnumerable<RequestDocumentViewModel> GetAllJobDocument();
         RequestDocumentViewModel GetJobDocument(int documentId);

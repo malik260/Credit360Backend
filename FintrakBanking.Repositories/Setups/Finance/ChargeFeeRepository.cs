@@ -100,7 +100,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 CHARGEFEENAME = chargeFeemodel.chargeName,
                 ACCOUNTCATEGORYID = chargeFeemodel.accountCategoryId,
                 FEEINTERVALID = chargeFeemodel.frequencyTypeId,
-                PRODUCTTYPEID = chargeFeemodel.productId,
+                PRODUCTTYPEID = chargeFeemodel.productTypeId,
                 FEETARGETID = chargeFeemodel.targetId,
                 GLACCOUNTID = chargeFeemodel.ledgerAccountId,
                 FEEAMORTISATIONTYPEID = chargeFeemodel.amortisationTypeId,
@@ -112,7 +112,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 RATE = chargeFeemodel.rate,
 
                 //ValueSource = chargeFeemodel.feeTypeId,
-                FEETYPEID = chargeFeemodel.valueSource,
+                FEETYPEID = chargeFeemodel.feeTypeId,
 
                 RECURRING = chargeFeemodel.recurring,
                 PRIMARYTAXID = chargeFeemodel.primaryTaxId,
@@ -175,13 +175,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public bool AddChargeFee(ChargeFeeViewModel model)
         {
-            var p = context.TBL_PRODUCT.Find(model.productId);
             var data = new TBL_CHARGE_FEE
             {
                 CHARGEFEENAME = model.chargeName,
                 ACCOUNTCATEGORYID = model.accountCategoryId,
                 FEEINTERVALID = model.frequencyTypeId,
-                PRODUCTTYPEID = p.PRODUCTTYPEID,
+                PRODUCTTYPEID = model.productTypeId,
                 FEETARGETID = model.targetId,
                 GLACCOUNTID = model.ledgerAccountId,
                 FEEAMORTISATIONTYPEID = model.amortisationTypeId,
@@ -191,7 +190,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 OPERATIONID = model.operationId,
                 AMOUNT = model.amount,
                 RATE = model.rate,
-                FEETYPEID = model.valueSource,
+                FEETYPEID = model.feeTypeId,
                 RECURRING = model.recurring,
                 PRIMARYTAXID = model.primaryTaxId,
                 SECONDARYTAXID = model.secondaryTaxId,
@@ -251,7 +250,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             data.CHARGEFEENAME = model.chargeName;
             data.ACCOUNTCATEGORYID = model.accountCategoryId;
             data.FEEINTERVALID = model.frequencyTypeId;
-            data.PRODUCTTYPEID = model.productId;
+            data.PRODUCTTYPEID = model.productTypeId;
             data.FEETARGETID = model.targetId;
             data.GLACCOUNTID = model.ledgerAccountId;
             data.FEEAMORTISATIONTYPEID = model.amortisationTypeId;
@@ -324,7 +323,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 accountCategoryName = x.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
                 frequencyTypeId = x.FEEINTERVALID,
                 frequencyTypeName = x.TBL_FEE_INTERVAL.FEEINTERVALNAME,
-                productId = x.PRODUCTTYPEID,
+                productTypeId = x.PRODUCTTYPEID,
                 targetId = x.FEETARGETID,
                 targetName = x.TBL_FEE_TARGET.FEETARGETNAME,
                 ledgerAccountId = x.GLACCOUNTID,
@@ -369,7 +368,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 chargeName = data.CHARGEFEENAME,
                 accountCategoryId = data.ACCOUNTCATEGORYID,
                 frequencyTypeId = data.FEEINTERVALID,
-                productId = data.PRODUCTTYPEID,
+                productTypeId = data.PRODUCTTYPEID,
                 targetId = data.FEETARGETID,
                 ledgerAccountId = data.GLACCOUNTID,
                 amortisationTypeId = data.FEEAMORTISATIONTYPEID,

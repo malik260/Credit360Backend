@@ -2,6 +2,7 @@
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC;
 using FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS;
 using System;
 using System.Collections.Generic;
@@ -103,6 +104,38 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
         }
 
 
+        public CRCSearchResult CRCCreditBureauSearch(CRCRequestViewModel request)
+        {
+            try
+            {
+                CRCService crc = new CRCService();
+
+               return  crc.CRCSearchRequest(request);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+        public CRCSearchResult CRCCreditBureauMerge(MultiHitRequestViewModel request)
+        {
+            try
+            {
+                CRCService crc = new CRCService();
+
+                return crc.CRCMergeReport(request);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+
+
+
         private string GetXDSCommercialFullCreditReport(SearchInput searchInput)
         {
             try
@@ -190,7 +223,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
             var data = new XDSIndividualSearchViewModel
             {
                 AccountNumber = "", //searchInfo.accountOrRegistrationNumber,
-                ConsumerName = "OGBONNAYA", // searchInfo.customerName,
+                ConsumerName = "Ogbonnaya", // searchInfo.customerName,
                 DateOfBirth = "", //searchInfo.dateOfBirth,
                 Identification = "", // searchInfo.identification,
                 EnquiryReason = searchInfo.enquiryReason,

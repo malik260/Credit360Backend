@@ -118,5 +118,76 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("loan-review-application/save-cam")]
+        public HttpResponseMessage SaveCam([FromBody] CamViewModel cam)
+        {
+            try
+            {
+                cam.userBranchId = (short)token.GetBranchId;
+                cam.companyId = token.GetCompanyId;
+                cam.lastUpdatedBy = token.GetStaffId;
+                cam.createdBy = token.GetStaffId;
+                cam.applicationUrl = HttpContext.Current.Request.Path;
+
+                int response = repo.SaveCam(cam);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-review-application/get-cam")]
+        public HttpResponseMessage GetCamDocument(int applicationId, int levelId)
+        {
+            try
+            {
+                CamViewModel data = repo.GetCamDocumentByApprovalLevel(applicationId,levelId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-review-application/get-cams/{applicationId}")]
+        public HttpResponseMessage GetCamDocuments(int applicationId)
+        {
+            try
+            {
+                List<CamViewModel> data = repo.GetCamDocuments(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-review-application/forward-application")]
+        public HttpResponseMessage ForwardApplication([FromBody] ForwardReviewViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.lastUpdatedBy = token.GetStaffId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+
+                int response = repo.ForwardApplication(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
 }

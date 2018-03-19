@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
@@ -6,8 +7,6 @@ using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.Repositories.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
@@ -164,6 +163,89 @@ namespace FintrakBanking.Repositories.Credit
             else return 0;
         }
 
+        public int AddCustomerCreditBureauUpload(LoanCreditBereauViewModel entity, LoanDocumentViewModel docModel, byte[] file)
+        {
+            var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId, entity.companyDirectorId);
+            bool hascrms = false;
+            foreach (var i in previousSearch)
+            {
+                if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
+            };
+            if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
+                throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
+
+            if (previousSearch.Count() >= 3)
+                throw new Exception("You have reached that maximum credit bureau search for this customer");
+
+            if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
+
+            var data = new Entities.Models.TBL_CUSTOMER_CREDIT_BUREAU()
+            {
+                COMPANYDIRECTORID = entity.companyDirectorId,
+                CHARGEAMOUNT = entity.chargeAmount,
+                CREDITBUREAUID = entity.creditBureauId,
+                CUSTOMERID = entity.customerId,
+                ISREPORTOKAY = entity.isReportOkay,
+                USEDINTEGRATION = entity.usedIntegration,
+                DATECOMPLETED = entity.dateCompleted,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = entity.createdBy
+            };
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CreditBureauReportDocumentAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Credit Bureau Report Document with title : '{ docModel.documentTitle }' ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+            context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
+            if (context.SaveChanges() > 0)
+            {
+                docModel.customerCreditBureauId = data.CUSTOMERCREDITBUREAUID;
+                if (AddCreditBureauReportDocument(docModel, file))
+                {
+                    return data.CUSTOMERCREDITBUREAUID;
+                }
+                else return 0;
+            }
+            else return 0;
+        }
+
+        public bool AddCreditBureauReportDocument(LoanDocumentViewModel model, byte[] file)
+        {
+            try
+            {
+                var data = new Entities.DocumentModels.TBL_CUSTOMER_CREDIT_BUREAU
+                {
+                    FILEDATA = file,
+                    CUSTOMERCREDITBUREAUID = model.customerCreditBureauId,
+                    DOCUMENT_TITLE = model.documentTitle,
+                    FILENAME = model.fileName,
+                    FILEEXTENSION = model.fileExtension,
+                    SYSTEMDATETIME = DateTime.Now,
+                    CREATEDBY = (int)model.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                };
+
+                docContext.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
+
+                return docContext.SaveChanges() != 0;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+
         public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model)
         {
             var directorId = model.companyDirectorId > 0 ? model.companyDirectorId : null;
@@ -209,6 +291,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {
+            var doc = docContext.TBL_CUSTOMER_CREDIT_BUREAU;
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false
@@ -229,6 +312,14 @@ namespace FintrakBanking.Repositories.Credit
                                                    uploadCount = 0,
                                                    createdBy = a.CREATEDBY
                                                };
+            foreach (var item in customerLoanCreditBureauData)
+            {
+                var docRow = doc.Where(x => x.CUSTOMERCREDITBUREAUID == item.customerCreditBureauId).FirstOrDefault();
+                if (docRow != null)
+                {
+                    item.documentId = docRow.DOCUMENTID;
+                }
+            }
             return customerLoanCreditBureauData.ToList();
         }
         #endregion
@@ -246,17 +337,28 @@ namespace FintrakBanking.Repositories.Credit
             else
                 throw new Exception("Timed out");
 
-            
-            
+        }
+
+        public bool VerifyPositiveCreditBureau(int customerId)
+        {
+            var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId);
+            foreach(var customer in customers)
+            {
+                var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId);
+            };
+            return false;
         }
 
         public byte[] GetFullSearchResultInPDF(SearchInput searchInput)
         {
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
             var casa = context.TBL_CASA.Find(searchInput.casaAccountId);
             if (casa == null) throw new Exception("Norminated Account Does not Exist");
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
+
+            
 
             var chargeAmount = searchInput.searchType == (short) CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
@@ -264,7 +366,7 @@ namespace FintrakBanking.Repositories.Credit
             List<FinanceTransactionViewModel> output = new List<FinanceTransactionViewModel>();
 
             FinanceTransactionViewModel searchTransaction = new FinanceTransactionViewModel();
-
+            
             if (chargeAmount > accountBalance)
                 throw new Exception("The norminated customer account has insufficient fund to perform this transaction.");
             else
@@ -280,12 +382,13 @@ namespace FintrakBanking.Repositories.Credit
                 searchTransaction.approvedBy = searchInput.createdBy;
                 searchTransaction.approvedDate = searchTransaction.transactionDate;
                 searchTransaction.approvedDateTime = DateTime.Now;
-                searchTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                searchTransaction.sourceApplicationId = searchInput.creditBureauId; 
                 searchTransaction.companyId = searchInput.companyId;
+                searchTransaction.batchCode = transactionCode;
 
                 FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-                debit.glAccountId = creditBureau.GLACCOUNTID;
-                debit.sourceReferenceNumber = string.Empty;
+                debit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
+                debit.sourceReferenceNumber = transactionCode;
                 debit.casaAccountId = casa.CASAACCOUNTID;
                 debit.debitAmount = chargeAmount;
                 debit.creditAmount = 0;
@@ -294,7 +397,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
                 credit.glAccountId = creditBureau.GLACCOUNTID;
-                credit.sourceReferenceNumber = string.Empty;
+                credit.sourceReferenceNumber = transactionCode;
                 credit.casaAccountId = null;
                 credit.debitAmount = 0;
                 credit.creditAmount = chargeAmount;
@@ -341,20 +444,20 @@ namespace FintrakBanking.Repositories.Credit
             catch
             {
                 FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-                debit.glAccountId = creditBureau.GLACCOUNTID;
-                debit.sourceReferenceNumber = string.Empty;
+                debit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL; 
+                debit.sourceReferenceNumber = transactionCode;
                 debit.casaAccountId = null;
-                debit.debitAmount = 0;
-                debit.creditAmount = chargeAmount;
+                debit.debitAmount = chargeAmount;
+                debit.creditAmount = 0;
                 debit.sourceBranchId = searchInput.userBranchId;
                 debit.destinationBranchId = casa.BRANCHID;
 
                 FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
                 credit.glAccountId = creditBureau.GLACCOUNTID;
-                credit.sourceReferenceNumber = string.Empty;
+                credit.sourceReferenceNumber = transactionCode;
                 credit.casaAccountId = casa.CASAACCOUNTID;
-                credit.debitAmount = chargeAmount;
-                credit.creditAmount = 0;
+                credit.debitAmount = 0;
+                credit.creditAmount = chargeAmount;
                 credit.sourceBranchId = searchInput.userBranchId;
                 credit.destinationBranchId = searchInput.userBranchId;
 
