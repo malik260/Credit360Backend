@@ -69,6 +69,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                        {
                            collateralTypeId = m.COLLATERALTYPEID,
                            collateralTypeName = m.COLLATERALTYPENAME,
+                           requireInsurancePolicy = m.REQUIREINSURANCEPOLICY
+
                        }).ToList();
                       // .Distinct();
                       ///.OrderBy(m => m.position);
