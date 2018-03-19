@@ -137,7 +137,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (ResolveLevelConfigurations() == false) { return false; }
 
-            if (this.useOrganogram == true) { OrganogramRouting(); } // REFACTOR
+            if (this.useOrganogram == true) { OrganogramRouting(); } // force to superior in organogram
 
             if (this.neededNumberOfApproval > 1 && ActionIsApprovalDecision())
             {
@@ -225,7 +225,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void ResolveReferred(int referrerId, int? fromId, int? toId)
         {
             if (toId == null) throw new Exception("Unable to resolve destination level!");
-            if (fromId == null) return;// throw new Exception("Unable to resolve originating level!");
+            if (fromId == null) return;
             var referrerGroup = context.TBL_APPROVAL_LEVEL.Find(fromId);
             var recepientGroup = context.TBL_APPROVAL_LEVEL.Find(toId);
             if (referrerGroup.GROUPID != recepientGroup.GROUPID)
@@ -452,40 +452,29 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.nextLevelId < 1) { this.nextLevelId = null; }
         }
 
-        private bool OrganogramRouting() // REDUNDANT
+        private bool OrganogramRouting() // if workflow is forced to use organogram
         {
             var position = context.TBL_STAFF_ORGANOGRAM.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (position == null) { return false; }
+
             var lineManagerPosition = context.TBL_STAFF_ORGANOGRAM.Where(x => x.STAFFCODE == position.PARENTSTAFFCODE).FirstOrDefault();
             if (lineManagerPosition == null) { return false; }
-            var lineManagerLevelId = GetStaffApprovalLevelId(lineManagerPosition.STAFFID);
-            if (lineManagerLevelId == null) { return false; }
-            this.nextLevelId = lineManagerLevelId;
+
+            var lineManager = approvalGrid.SelectMany(x => x.Staff)
+                .Where(x => x.STAFFID == lineManagerPosition.STAFFID)
+                .FirstOrDefault();
+
+            if (lineManager == null) { return false; }
+
+            this.nextLevelId = lineManager.APPROVALLEVELID;
+            this.toStaffId = lineManager.STAFFID;
+
             return true;
-        }
-
-        private int? GetStaffApprovalLevelId(int staffId) // REDUNDANT
-        {
-            var levelStaff = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
-                                && x.OPERATIONID == this.operationId
-                                && x.PRODUCTCLASSID == this.productClassId
-                                && x.PRODUCTID == this.productId
-                            )
-                            .SelectMany(x => x.TBL_APPROVAL_GROUP.TBL_APPROVAL_LEVEL).Where(x => x.ISACTIVE == true)
-                            .OrderBy(x => x.TBL_APPROVAL_GROUP.TBL_APPROVAL_GROUP_MAPPING.FirstOrDefault().POSITION)
-                            .ThenBy(x => x.POSITION)
-                            .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId).FirstOrDefault();
-
-            if (levelStaff == null)
-            {
-                throw new Exception("Staff do not exist in the current process flow!");
-            }
-
-            return levelStaff.APPROVALLEVELID;
         }
 
         private void CheckApprovalLimits()
         {
+            if (GroupRole() == (int)ApprovalGroupEnum.Business && this.statusId == (int)ApprovalStatusEnum.Disapproved) return; // allow business to drop process unconditionally 
             if (this.skipLimitsCheck == true) { return; }
             if (this.nextLevelId != null && this.amount > 0 && ActionIsApprovalDecision())
             {
@@ -498,6 +487,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
                 }
             }
+        }
+
+        private int GroupRole()
+        {
+            if (this.requestLevelId == null) return 1;
+            var level = context.TBL_APPROVAL_LEVEL.Find(this.requestLevelId);
+            return level.GROUPID;
         }
 
         private bool WithinTenorLimit(TBL_APPROVAL_LEVEL level)
@@ -694,13 +690,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                         .ToArray();
                 }
 
+                var time = String.Format("{0:F}", DateTime.Now);
+
                 var ownerMessageBody = $"Dear {owner.FIRSTNAME}, <br /><br />" +
                             $"The {operationName} approval process you initiated have been {status}{level}. <br /><br />" +
-                            $"See details here {link}";
+                            $"See details here {link}" +
+                            $"<p>Time: { time }</p>"
+                            ;
 
                 var messageBody = $"Dear {recipientName}, <br /><br />" +
                             $"You have a new pending {operationName} approval request. <br /><br />" +
-                            $"See details here {link}";
+                            $"See details here {link}" +
+                            $"<p>Time: { time }</p>"
+                            ;
 
                 //var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
 
