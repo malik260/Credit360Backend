@@ -1062,12 +1062,13 @@ namespace FintrakBanking.Repositories.Customer
                                 accountHolder = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.LASTNAME,
                                 companyId = s.TBL_CUSTOMER.COMPANYID,
                                 branchId = s.TBL_CUSTOMER.BRANCHID,
-                                //isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERID == s.CUSTOMERID),
+                                isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERCODE == s.TBL_CUSTOMER.CUSTOMERCODE),
                                 isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == s.CUSTOMERID) && x.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList),
                                 isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == s.CUSTOMERID)),
                                 taxIdentificationNumber = s.TBL_CUSTOMER.TAXNUMBER,
                                 registrationNumber = s.TBL_CUSTOMER.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).REGISTRATIONNUMBER,
                                 completedInformation = s.TBL_CUSTOMER.ACCOUNTCREATIONCOMPLETE,
+                               // crdeitBureauCompleted = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(l=>l.CUSTOMERID == s.CUSTOMERID)
                                 customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == s.CUSTOMERID).Select(b => new CustomerBvnViewModels()
                                 {
                                     bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
