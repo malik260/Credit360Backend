@@ -470,8 +470,8 @@ namespace FintrakBanking.APICore.Controllers
 
                 entity.misCode = "001";
                 entity.teamMisCode = "004";
-               if( entity.LoanApplicationDetail.Count == 0)
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No facility detail is provided" });
+               //if( entity.LoanApplicationDetail.Count == 0)
+               //     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No facility detail is provided" });
 
 
                 var response = repo.AddLoanApplication(entity);

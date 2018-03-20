@@ -7,6 +7,7 @@ using Owin;
 using FintrakBanking.APICore.Providers;
 using System.Configuration;
 
+
 namespace FintrakBanking.APICore
 {
     public partial class Startup
@@ -15,7 +16,8 @@ namespace FintrakBanking.APICore
 
         public static string PublicClientId { get; private set; }
 
-        
+     
+
         public void ConfigureAuth(IAppBuilder app)
         {
             
@@ -57,6 +59,7 @@ namespace FintrakBanking.APICore
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
             app.UseCookieAuthentication(new CookieAuthenticationOptions());
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+       
             var exipredHr = double.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
             // Configure the application for OAuth based flow
             PublicClientId = "self";
@@ -92,5 +95,6 @@ namespace FintrakBanking.APICore
             //    ClientSecret = ""
             //});
         }
+
     }
 }

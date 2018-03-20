@@ -17,5 +17,9 @@ namespace FintrakBanking.ViewModels.Finance
 
         public bool isBaseCurrency { get; set; }
 
+        public string webRequestStatus { get; set; }
+
+        
+
     }
 }
