@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalStatusId { get; set; }
         public string loanRefNo { get; set; }
         public string approvalStatus { get; set; }
-        public decimal? defaultValue { get; set; }
+        public double defaultValue { get; set; }
     }
     public class FeeConcessionTypeViewModel
     {
