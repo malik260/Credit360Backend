@@ -6,6 +6,7 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerViewModels : GeneralEntity
     {
+        public string branchCode { get; set; }
         public string rcNumber;
 
         public int creditBureauCount { get; set; }
@@ -37,7 +38,7 @@ namespace FintrakBanking.ViewModels.Customer
         public short branchId { get; set; }
         public int companyMainId { get; set; }
         public string branchName { get; set; }
-        public string customerAccountNo { get; set; }
+        //public string customerAccountNo { get; set; }
         public string title { get; set; }
         public string firstName { get; set; }
         public string middleName { get; set; }
