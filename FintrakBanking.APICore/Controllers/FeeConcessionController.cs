@@ -142,7 +142,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
 
                 var data = repo.AddUpdateFeeConcession(entity);
-                if (data)
+                if (data > 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
@@ -173,7 +173,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next office" });
+                        new { success = true, message = "Record has been approved successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
