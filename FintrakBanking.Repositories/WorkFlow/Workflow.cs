@@ -491,9 +491,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private int GroupRole()
         {
-            if (this.requestLevelId == null) return 1;
-            var level = context.TBL_APPROVAL_LEVEL.Find(this.requestLevelId);
-            return level.GROUPID;
+            if (this.fromLevelId == null) return 1;
+            var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+            if (this.level == null) return 1;
+            return level.TBL_APPROVAL_GROUP.ROLEID;
         }
 
         private bool WithinTenorLimit(TBL_APPROVAL_LEVEL level)
