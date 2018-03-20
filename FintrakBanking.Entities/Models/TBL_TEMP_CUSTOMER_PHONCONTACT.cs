@@ -20,6 +20,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CUSTOMERID { get; set; }
 
+        public int PHONECONTACTID { get; set; }
+
         public bool ACTIVE { get; set; }
 
         public int CREATEDBY { get; set; }
