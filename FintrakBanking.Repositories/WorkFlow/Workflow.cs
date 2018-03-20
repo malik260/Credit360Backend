@@ -474,7 +474,12 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void CheckApprovalLimits()
         {
-            if (GroupRole() == (int)ApprovalGroupEnum.Business && this.statusId == (int)ApprovalStatusEnum.Disapproved) return; // allow business to drop process unconditionally 
+            // allow business to drop process unconditionally 
+            if (this.statusId == (int)ApprovalStatusEnum.Disapproved && GroupRole() == (int)ApprovalGroupEnum.Business) // for optimization the more expensive conditions are placed last. GroupRole() may not be called
+            {
+                return; 
+            }
+
             if (this.skipLimitsCheck == true) { return; }
             if (this.nextLevelId != null && this.amount > 0 && ActionIsApprovalDecision())
             {
@@ -491,9 +496,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private int GroupRole()
         {
-            if (this.requestLevelId == null) return 1;
-            var level = context.TBL_APPROVAL_LEVEL.Find(this.requestLevelId);
-            return level.GROUPID;
+            if (this.fromLevelId == null) return 1;
+            var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+            if (this.level == null) return 1;
+            return level.TBL_APPROVAL_GROUP.ROLEID;
         }
 
         private bool WithinTenorLimit(TBL_APPROVAL_LEVEL level)

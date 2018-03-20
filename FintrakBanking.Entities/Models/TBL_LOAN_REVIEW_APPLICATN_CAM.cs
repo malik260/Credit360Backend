@@ -20,11 +20,13 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string CAMREF { get; set; }
 
-        public string DOCUMENTATION { get; set; }
-
         public bool ISCOMPLETED { get; set; }
 
         public bool RISKRATED { get; set; }
+
+        public string DOCUMENTATION { get; set; }
+
+        public int APPROVALLEVELID { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -40,9 +42,10 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
+        public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
+
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         public virtual TBL_LOAN_REVIEW_APPLICATION TBL_LOAN_REVIEW_APPLICATION { get; set; }
-        public int APPROVALLEVELID { get; set; }
     }
 }

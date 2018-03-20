@@ -395,7 +395,7 @@ namespace FintrakBanking.Repositories.Credit
             var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false
                                               && a.COMPANYDIRECTORID == directorId
-                                               //where a.DATETIMECREATED.Day <= ((DateTime.Now - a.DATETIMECREATED).TotalDays - 30)
+                                               where ((DateTime.Now - a.DATETIMECREATED).TotalDays <= 30)
                                                select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,
@@ -421,6 +421,17 @@ namespace FintrakBanking.Repositories.Credit
             }
             return customerLoanCreditBureauData.ToList();
         }
+
+        public bool VerifyCustomerValidCreditBureau(int customerId)
+        {
+            var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId);
+            foreach (var customer in customers)
+            {
+                var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId); //.Where(x => (DateTime.Now - x.dateTimeCreated).TotalDays <= 30);
+                if (customerCreditBureauLog.Count() < 3) return false;
+            };
+            return true;
+        }
         #endregion
 
         #region Integration 
@@ -438,15 +449,6 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public bool VerifyPositiveCreditBureau(int customerId)
-        {
-            var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId);
-            foreach(var customer in customers)
-            {
-                var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId);
-            };
-            return false;
-        }
 
         public byte[] GetFullSearchResultInPDF(SearchInput searchInput)
         {
