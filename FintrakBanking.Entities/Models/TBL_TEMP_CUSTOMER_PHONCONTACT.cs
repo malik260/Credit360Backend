@@ -12,6 +12,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int TEMPPHONECONTACTID { get; set; }
 
+        public int PHONECONTACTID { get; set; }
+
         [StringLength(20)]
         public string PHONE { get; set; }
 
@@ -19,8 +21,6 @@ namespace FintrakBanking.Entities.Models
         public string PHONENUMBER { get; set; }
 
         public int CUSTOMERID { get; set; }
-
-        public int PHONECONTACTID { get; set; }
 
         public bool ACTIVE { get; set; }
 

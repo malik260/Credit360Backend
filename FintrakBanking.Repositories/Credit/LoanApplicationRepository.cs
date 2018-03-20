@@ -367,14 +367,16 @@ namespace FintrakBanking.Repositories.Credit
                                                      select new LoanApplicationDetailInvoiceViewModel
                                                      {
                                                          approvalComment = i.APPROVAL_COMMENT,
-                                                         invoiceAmount = i.INVOICE_AMOUNT,
-                                                         invoiceNo = i.INVOICENO,
-                                                         approvaStatusId = i.APPROVALSTATUSID,
-                                                         approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
+                                                         contractNumber = i.CONTRACTNO,
                                                          contractEndDate = i.CONTRACT_ENDDATE,
                                                          contractStartDate = i.CONTRACT_STARTDATE,
+                                                         purchaseOrderNumber = i.PURCHASEORDERNUMBER,
+                                                         invoiceAmount = i.INVOICE_AMOUNT,
+                                                         invoiceNo = i.INVOICENO,
                                                          invoiceDate = i.INVOICE_DATE,
                                                          invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
+                                                         approvaStatusId = i.APPROVALSTATUSID,
+                                                         approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
                                                          principalName = i.TBL_LOAN_PRINCIPAL.NAME,
                                                          principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
                                                          principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
@@ -401,27 +403,29 @@ namespace FintrakBanking.Repositories.Credit
                                                       loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
                                                       //productClassId = i.
                                                   }).ToList(),
-                            loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                            loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                               select new CollateralViewModel
                                               {
-                                                  collateralId = i.COLLATERALCUSTOMERID,
-                                                  collateralCustomerId = i.COLLATERALCUSTOMERID,
-                                                  allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                                                  collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                                                  collateralValue = i.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                                                  collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                                                  collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
+                                                  collateralId = i.COLLATERALBASICDETAILID, // COLLATERALCUSTOMERID,
+                                                  collateralCustomerId = (int)i.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,//.CUSTOMERID, //COLLATERALCUSTOMERID,
+                                                 // allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                                                  collateralDetail =  i.COLLATERALDETAIL,
+                                                  //collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                                                  collateralValue = i.COLLATERALVALUE,
+                                                  stampToCoverAmount = i.STAMPEDTOCOVERAMOUNT,
+                                                  //collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                                  //collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
                                                   //collateralSubTypeId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.
-                                                  currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
-                                                  valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                                                  haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                                                  customerName = i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
-                                                 + " " + i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
+                                                  //currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                                                  //valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                  //haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                  customerName = i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME
+                                                 + " " + i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
                                                   //collateralSearchAmount = context.TBL_STATE.Where(x=>x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
                                                   //chartingAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.LastOrDefault().TBL_CITY.STATEID).LastOrDefault().CHARTINGAMOUNT,
                                                   //verificationAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
                                                   //cityId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().CITYID,
-                                                  legalFeeTaken = i.LEGAL_FEE_TAKEN,
+                                                 // legalFeeTaken = i.LEGAL_FEE_TAKEN,
                                               }).ToList(),
                             bondsAndGaurantees = (from i in context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                   select new BondsAndGauranteeViewModel
