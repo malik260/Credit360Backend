@@ -229,13 +229,17 @@ namespace FintrakBanking.APICore.Controllers
                 entity.fileExtension = provider.FormData["fileExtension"];
 
                 var loanCreditBureauModel = new LoanCreditBereauViewModel();
+
+                var companyDirectorId = 0;
+                if(provider.FormData["companyDirectorId"] != null && provider.FormData["companyDirectorId"] != "null") companyDirectorId = Convert.ToInt32(provider.FormData["companyDirectorId"]);
                 loanCreditBureauModel.creditBureauId = (short) Convert.ToInt32(provider.FormData["creditBureauId"]);  
                 loanCreditBureauModel.customerId = Convert.ToInt32(provider.FormData["customerId"]); 
                 loanCreditBureauModel.chargeAmount = Convert.ToDecimal(provider.FormData["chargeAmount"]);
                 loanCreditBureauModel.isComplete = Convert.ToBoolean(provider.FormData["isComplete"]);
-                loanCreditBureauModel.companyDirectorId = Convert.ToInt32(provider.FormData["companyDirectorId"]);
                 loanCreditBureauModel.isReportOkay = Convert.ToBoolean(provider.FormData["isReportOkay"]);
                 loanCreditBureauModel.usedIntegration = Convert.ToBoolean(provider.FormData["usedIntegration"]);
+                loanCreditBureauModel.companyDirectorId = companyDirectorId;
+                
                 
                 if (!provider.FileStreams.Any())
                 {

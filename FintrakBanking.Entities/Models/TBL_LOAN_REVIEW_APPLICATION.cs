@@ -28,37 +28,6 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         public string REVIEWDETAILS { get; set; }
-        /*
-        public double? INTERATERATE { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? PREPAYMENT { get; set; }
-
-        public int? PRINCIPALFREQUENCYTYPEID { get; set; }
-
-        public int? INTERESTFREQUENCYTYPEID { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? PRINCIPALFIRSTPAYMENTDATE { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? INTERESTFIRSTPAYMENTDATE { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? MATURITYDATE { get; set; }
-
-        public int? TENOR { get; set; }
-
-        public int? CASA_ACCOUNTID { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? OVERDRAFTTOPUP { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? FEE_CHARGES { get; set; }
-
-
-        public bool ISMANAGEMENTINTERESTRATE { get; set; }*/
 
         public short APPROVALSTATUSID { get; set; }
 

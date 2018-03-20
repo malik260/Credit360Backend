@@ -50,6 +50,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool UpdateJobDocument(RequestDocumentViewModel model, int documentId);
         IEnumerable<RequestDocumentViewModel> GetAllJobDocument();
         RequestDocumentViewModel GetJobDocument(int documentId);
-        IEnumerable<RequestDocumentViewModel> GetJobRequestDocument(string jobRequestCode);
+        IEnumerable<RequestDocumentViewModel> GetJobRequestDocuments(string jobRequestCode);
+        IEnumerable<RequestDocumentViewModel> GetJobRequestDocumentById(int documentId);
     }
 }

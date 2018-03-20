@@ -177,7 +177,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "Operation failed, there was an error submitting this record" });
+                   new { success = true, message = "Operation successful, request has been routed to the next approving office" });
             }
             catch (System.Exception e)
             {

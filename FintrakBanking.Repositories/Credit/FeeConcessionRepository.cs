@@ -105,7 +105,7 @@ namespace FintrakBanking.Repositories.Credit
                                      loanRefNo = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                      approvalStatusId = a.APPROVALSTATUSID,
                                      approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                                     defaultValue = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).DEFAULT_FEERATEVALUE
+                                     defaultValue = (int?)context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).DEFAULT_FEERATEVALUE
                                  }).ToList();
             return feeConcession;
         }

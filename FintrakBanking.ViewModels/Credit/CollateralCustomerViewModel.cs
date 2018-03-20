@@ -7,6 +7,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralViewModel : GeneralEntity
     {
         public bool requireInsurancePolicy;
+        public string collateralDetail { get; set; }
 
         public decimal? collateralSearchAmount { get; set; }
         public decimal? chartingAmount { get; set; }
@@ -122,7 +123,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal openMarketValue { get; set; }
         public decimal? collateralValue { get; set; }
         public decimal? forcedSaleValue { get; set; }
-        public string stampToCover { get; set; }
+        public decimal stampToCoverAmount { get; set; }
         public string valuationSource { get; set; }
         public decimal originalValue { get; set; }
         public decimal availableValue { get; set; }
