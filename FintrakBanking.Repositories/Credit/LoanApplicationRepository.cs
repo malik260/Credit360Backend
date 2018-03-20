@@ -100,7 +100,7 @@ namespace FintrakBanking.Repositories.Credit
                             isCollateralBacked = a.REQUIRECOLLATERAL,
                             tenor = a.APPLICATIONTENOR,
                             productClassId = a.PRODUCTCLASSID,
-
+                             loanApplicationId = a.LOANAPPLICATIONID,
 
                             LoanApplicationDetail = a.TBL_LOAN_APPLICATION_DETAIL.Where (b=> b.LOANAPPLICATIONID == a.LOANAPPLICATIONID ).Select(b => new LoanApplicationDetailViewModel
                             {
