@@ -13,6 +13,7 @@ namespace FintrakBaking.BranchUpdateService.Fintrak_Model
         public TBL_CITY()
         {
             TBL_BRANCH = new HashSet<TBL_BRANCH>();
+            TBL_STAFF = new HashSet<TBL_STAFF>();
         }
 
         [Key]
@@ -32,5 +33,10 @@ namespace FintrakBaking.BranchUpdateService.Fintrak_Model
         public virtual ICollection<TBL_BRANCH> TBL_BRANCH { get; set; }
 
         public virtual TBL_STATE TBL_STATE { get; set; }
+
+        public virtual TBL_CITY_CLASS TBL_CITY_CLASS { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_STAFF> TBL_STAFF { get; set; }
     }
 }

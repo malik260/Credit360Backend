@@ -94,7 +94,7 @@ namespace FintrakBanking.Repositories.Finance
         {            
             var balance = (from data in context.TBL_CASA_LIEN
                          where data.PRODUCTACCOUNTNUMBER == productAccountNumber
-                         select data.LIENCREDITAMOUNT - data.LIENDEBITAMOUNT).Sum();
+                         select data.LIENAMOUNT - data.LIENAMOUNT).Sum();
 
             return balance;
         }
@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Finance
         [OperationBehavior(TransactionScopeRequired = true)]
         public List<FinanceTransactionViewModel> PostCollateralSearch(CasaLienViewModel model)
         {
-            var lienSearchAmount = this.context.TBL_CASA_LIEN.FirstOrDefault(x => x.LIENREFERENCENUMBER == model.lienReferenceNumber).LIENCREDITAMOUNT;
+            var lienSearchAmount = this.context.TBL_CASA_LIEN.FirstOrDefault(x => x.LIENREFERENCENUMBER == model.lienReferenceNumber).LIENAMOUNT;
 
 
             var data = new TBL_CASA_LIEN
@@ -373,12 +373,12 @@ namespace FintrakBanking.Repositories.Finance
                 LIENREFERENCENUMBER = model.lienReferenceNumber, //CommonHelpers.GenerateRandomDigitCode(10),
                 BRANCHID = model.branchId,
                 COMPANYID = model.companyId,
-                LIENCREDITAMOUNT = 0,
-                LIENDEBITAMOUNT = lienSearchAmount,//creditOperations.GetCollateralSearchChargeAmount(model.stateId),
+              //  lie = 0,
+                LIENAMOUNT = lienSearchAmount,//creditOperations.GetCollateralSearchChargeAmount(model.stateId),
                 LIENTYPEID = (short)LienTypeEnum.CollateralSearch,
                 CREATEDBY = model.createdBy,
                 DESCRIPTION = "",
-                DATECREATED = generalSetup.GetApplicationDate()
+                DATETIMECREATED = generalSetup.GetApplicationDate()
             };
 
             context.TBL_CASA_LIEN.Add(data);                       

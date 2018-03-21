@@ -57,10 +57,20 @@
     <Compile Include="AuditTrail.cs" />
     <Compile Include="BranchViewModel.cs" />
     <Compile Include="Fintrak Model\FinTrakBankingContext.cs" />
+    <Compile Include="Fintrak Model\TBL_APPROVAL_GROUP.cs" />
+    <Compile Include="Fintrak Model\TBL_APPROVAL_GROUP_MAPPING.cs" />
+    <Compile Include="Fintrak Model\TBL_APPROVAL_LEVEL.cs" />
+    <Compile Include="Fintrak Model\TBL_APPROVAL_LEVEL_STAFF.cs" />
+    <Compile Include="Fintrak Model\TBL_APPROVAL_STATE.cs" />
     <Compile Include="Fintrak Model\TBL_BRANCH.cs" />
     <Compile Include="Fintrak Model\TBL_CITY.cs" />
+    <Compile Include="Fintrak Model\TBL_CITY_CLASS.cs" />
+    <Compile Include="Fintrak Model\TBL_STAFF.cs" />
+    <Compile Include="Fintrak Model\TBL_STAFF_JOBTITLE.cs" />
+    <Compile Include="Fintrak Model\TBL_STAFF_ORGANOGRAM.cs" />
+    <Compile Include="Fintrak Model\TBL_STAFF_RANK.cs" />
     <Compile Include="Fintrak Model\TBL_STATE.cs" />
-    <Compile Include="GetUpdatedNewBranches.cs" />
+    <Compile Include="FintrakStaggingInformationUpdate.cs" />
     <Compile Include="NewBranchService.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -77,6 +87,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Staging Model\FinTrakBankingStagingContext.cs" />
     <Compile Include="Staging Model\STG_BRANCH.cs" />
+    <Compile Include="Staging Model\STG_CUSTOMER.cs" />
+    <Compile Include="Staging Model\STG_STAFF.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

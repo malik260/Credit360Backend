@@ -63,12 +63,13 @@ namespace FintrakBanking.Repositories.Credit
                 SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
                 BRANCHID = model.userBranchId,
                 COMPANYID = model.companyId,
-                LIENCREDITAMOUNT = GetCollateralSearchChargeAmount(model.stateId),
-                LIENDEBITAMOUNT = 0,
+                LIENAMOUNT = GetCollateralSearchChargeAmount(model.stateId),
+                ////LIENDEBITAMOUNT = 0,
                 LIENTYPEID = (short)LienTypeEnum.CollateralSearch,
                 CREATEDBY = model.createdBy,
                 DESCRIPTION = "lien placed due to loan application collateral search", // model.description,
-                DATECREATED = generalSetup.GetApplicationDate()
+                DATETIMECREATED = generalSetup.GetApplicationDate()
+
 
             };
 
@@ -648,12 +649,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = refNo.LOANREFERENCENUMBER,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = 0,
-                        LIENDEBITAMOUNT = item.casaBalance,
+                        //LIENAMOUNT = 0,
+                        LIENAMOUNT = item.casaBalance,
                         LIENTYPEID = (short)LienTypeEnum.OverdraftCleanUp,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not swing to positive", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -988,12 +989,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDue.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDue.DEBITAMOUNT,
+                       // //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -1059,12 +1060,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
+                       // //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -1092,12 +1093,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                      //  //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -1157,12 +1158,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
+                        ////LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -1190,12 +1191,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                       // //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -1696,12 +1697,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDue.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDue.DEBITAMOUNT,
+                        //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -1765,12 +1766,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
+                        //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -1798,12 +1799,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                        //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -1863,12 +1864,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
+                        //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -1896,12 +1897,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                        //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -2020,12 +2021,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDue.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDue.DEBITAMOUNT,
+                        //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -2089,12 +2090,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
+                        //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -2122,12 +2123,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                        //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -2187,12 +2188,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
+                        //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -2220,12 +2221,12 @@ namespace FintrakBanking.Repositories.Credit
                         SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
                         BRANCHID = item.branchId,
                         COMPANYID = item.companyId,
-                        LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                        LIENDEBITAMOUNT = 0,
+                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                        //LIENDEBITAMOUNT = 0,
                         LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
                         CREATEDBY = (int)SystemStaff.System,
                         DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATECREATED = generalSetup.GetApplicationDate()
+                        DATETIMECREATED = generalSetup.GetApplicationDate()
 
                     };
 
@@ -4974,12 +4975,12 @@ namespace FintrakBanking.Repositories.Credit
                 SOURCEREFERENCENUMBER = loan.LOANREFERENCENUMBER,
                 BRANCHID = loan.BRANCHID,
                 COMPANYID = loan.COMPANYID,
-                LIENCREDITAMOUNT = accruedInterest + accruedPrincipal,
-                LIENDEBITAMOUNT = 0,
+                LIENAMOUNT = accruedInterest + accruedPrincipal,
+                //LIENDEBITAMOUNT = 0,
                 LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
                 CREATEDBY = (int)SystemStaff.System,
                 DESCRIPTION = "lien placed due to Loan Write Off", // model.description,
-                DATECREATED = generalSetup.GetApplicationDate()
+                DATETIMECREATED = generalSetup.GetApplicationDate()
             };
 
             context.TBL_CASA_LIEN.Add(data);
@@ -5264,8 +5265,8 @@ namespace FintrakBanking.Repositories.Credit
             //    SourceReferenceNumber = loan.LoanReferenceNumber,
             //    BranchId = loan.BranchId,
             //    CompanyId = loan.CompanyId,
-            //    LienCreditAmount = accruedInterest + accruedPrincipal,
-            //    LienDebitAmount = 0,
+            //    LIENAMOUNT = accruedInterest + accruedPrincipal,
+            //    //LIENDEBITAMOUNT = 0,
             //    LienTypeId = (short)LienTypeEnum.PrincipalRepayment,
             //    CreatedBy = (int)SystemStaff.System,
             //    Description = "lien placed due to Loan Write Off", // model.description,

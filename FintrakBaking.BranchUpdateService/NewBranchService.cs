@@ -14,7 +14,7 @@ namespace FintrakBaking.BranchUpdateService
 {
     public partial class NewBranchService : ServiceBase
     {
-        GetUpdatedNewBranches newBranch = new GetUpdatedNewBranches();
+        FintrakStaggingInformationUpdate newBranch = new FintrakStaggingInformationUpdate();
 
         Timer timer = new Timer();
 

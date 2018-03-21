@@ -260,7 +260,7 @@
     </Reference>
     <Reference Include="XLeratorDLL-financial, Version=1.15.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
