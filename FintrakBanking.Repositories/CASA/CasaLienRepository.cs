@@ -57,7 +57,7 @@ namespace FintrakBanking.Repositories.CASA
 
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
+                AUDITTYPEID = (short)AuditTypeEnum.LienPlaced,
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
                 DETAIL = $"Applied lien with reference number: {referenceNumber}",
@@ -89,7 +89,7 @@ namespace FintrakBanking.Repositories.CASA
                 BRANCHID = model.userBranchId,
                 COMPANYID = model.companyId,
                 LIENAMOUNT = Math.Abs(existingLien.LIENAMOUNT) * -1,
-                DESCRIPTION = model.description,
+                DESCRIPTION = "Lien Release -- " + model.description,
                 LIENTYPEID = existingLien.LIENTYPEID,                
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = DateTime.Now
@@ -102,7 +102,7 @@ namespace FintrakBanking.Repositories.CASA
 
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
+                AUDITTYPEID = (short)AuditTypeEnum.LienReleased,
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
                 DETAIL = $"Released lien with reference number: {existingLien.LIENREFERENCENUMBER}",

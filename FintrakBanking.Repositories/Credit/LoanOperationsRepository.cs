@@ -84,23 +84,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var lienReference = casaLien.PlaceLien(model);
 
-            // Audit Section ---------------------------            
-
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = model.branchId,
-                DETAIL = $"Applied for lien with reference number: { lienReference}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.auditTrail.AddAuditTrail(audit);
-
-            //end of Audit section -------------------------------
-            return context.SaveChanges() != 0;
+            return true;
 
         }
 
@@ -1014,24 +998,7 @@ namespace FintrakBanking.Repositories.Credit
                     lien.createdBy = (int)SystemStaff.System;
                     lien.description = "lien placed due to Account not funded at Anniversary Date";
 
-                    var lienReference = casaLien.PlaceLien(lien);
-
-                    // Audit Section ---------------------------            
-
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
-
-                    //end of Audit section -------------------------------
+                    casaLien.PlaceLien(lien);                    
 
                 }
                 else if (casabalance < item.periodInterestAmount && casabalance > 0)
@@ -1100,20 +1067,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     var lienReference = casaLien.PlaceLien(lien);
 
-                    // Audit Section ---------------------------            
-
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Placed lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
 
                     //var dataP = new TBL_CASA_LIEN
                     //{
@@ -1145,22 +1098,6 @@ namespace FintrakBanking.Repositories.Credit
                     lienPrincipal.description = "lien placed due to Account not funded at Anniversary Date";
 
                     lienReference = casaLien.PlaceLien(lienPrincipal);
-
-                    // Audit Section ---------------------------            
-
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Placed lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
-
 
                 }
                 else if (casabalance <= 0)
@@ -1224,21 +1161,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     var lienReference = casaLien.PlaceLien(lien);
 
-                    // Audit Section ---------------------------            
-
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
-
                     //var dataP = new TBL_CASA_LIEN
                     //{
                     //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
@@ -1269,21 +1191,6 @@ namespace FintrakBanking.Repositories.Credit
                     lienPrincipal.description = "lien placed due to Account not funded at Anniversary Date";
                         
                     lienReference = casaLien.PlaceLien(lienPrincipal);
-
-                    // Audit Section ---------------------------            
-
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
 
                 }
             }
@@ -1789,23 +1696,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     var lienReference = casaLien.PlaceLien(lien);
 
-                    // Audit Section ---------------------------            
-
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
-
-                    //end of Audit section -------------------------------
-
                 }
                 else if (casabalance < item.periodInterestAmount && casabalance > 0)
                 {
@@ -1871,21 +1761,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     var lienReference = casaLien.PlaceLien(lien);
 
-                    // Audit Section ---------------------------            
-
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
-
                     //var dataP = new TBL_CASA_LIEN
                     //{
                     //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
@@ -1915,22 +1790,7 @@ namespace FintrakBanking.Repositories.Credit
                     lienPrincipal.createdBy = (int)SystemStaff.System;
                     lienPrincipal.description = "lien placed due to Account not funded at Restructure Date";
 
-                    lienReference = casaLien.PlaceLien(lienPrincipal);
-
-                    // Audit Section ---------------------------            
-
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
+                    casaLien.PlaceLien(lienPrincipal);
 
 
                 }
@@ -1995,21 +1855,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     var lienReference = casaLien.PlaceLien(lien);
 
-                    // Audit Section ---------------------------            
-
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
-
                     //var dataP = new TBL_CASA_LIEN
                     //{
                     //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
@@ -2039,22 +1884,8 @@ namespace FintrakBanking.Repositories.Credit
                     lienPrincipal.createdBy = (int)SystemStaff.System;
                     lienPrincipal.description = "lien placed due to Account not funded at Restructure Date";
 
-                    lienReference = casaLien.PlaceLien(lienPrincipal);
-                    // Audit Section ---------------------------            
-
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
-
+                    casaLien.PlaceLien(lienPrincipal);
+  
                 }
             }
 
@@ -2177,23 +2008,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     var lienReference = casaLien.PlaceLien(lien);
 
-                    // Audit Section ---------------------------            
-
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
-
-                    //end of Audit section -------------------------------
-
                 }
                 else if (casabalance < item.periodInterestAmount && casabalance > 0)
                 {
@@ -2259,21 +2073,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     var lienReference = casaLien.PlaceLien(lien);
 
-                    // Audit Section ---------------------------            
-
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
-
                     //var dataP = new TBL_CASA_LIEN
                     //{
                     //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
@@ -2304,22 +2103,6 @@ namespace FintrakBanking.Repositories.Credit
                     lienPrincipal.description = "lien placed due to Account not funded at Restructure Date";
 
                     lienReference = casaLien.PlaceLien(lienPrincipal);
-
-                    // Audit Section ---------------------------            
-
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
-
 
                 }
                 else if (casabalance <= 0)
@@ -2383,21 +2166,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     var lienReference = casaLien.PlaceLien(lien);
 
-                    // Audit Section ---------------------------            
-
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
-
                     //var dataP = new TBL_CASA_LIEN
                     //{
                     //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
@@ -2427,22 +2195,7 @@ namespace FintrakBanking.Repositories.Credit
                     lienPrincipal.createdBy = (int)SystemStaff.System;
                     lienPrincipal.description = "lien placed due to Account not funded at Restructure Date";
 
-                    lienReference = casaLien.PlaceLien(lienPrincipal);
-
-                    // Audit Section ---------------------------            
-
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {lienReference}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
+                    casaLien.PlaceLien(lienPrincipal);
 
                 }
             }
@@ -5196,31 +4949,6 @@ namespace FintrakBanking.Repositories.Credit
             lien.description = "lien placed due to Loan Write Off";
 
             var lienReference = casaLien.PlaceLien(lien);
-
-            // Audit Section ---------------------------            
-
-            var audit = new TBL_AUDIT
-            {
-                //AuditTypeId = (short)AuditTypeEnum.LienAdded,
-                //StaffId = (int)SystemStaff.System,
-                //BranchId = loan.BRANCHID,
-                //Detail = $"Applied for lien with reference number: {data.SourceReferenceNumber}",
-                //IPAddress = loan.userIPAddress,
-                //Url = item.applicationUrl,
-                //ApplicationDate = generalSetup.GetApplicationDate(),
-                //SystemDateTime = DateTime.Now
-                AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                STAFFID = (int)SystemStaff.System,
-                BRANCHID = loan.BRANCHID,
-                DETAIL = $"Applied for lien with reference number: {lienReference}",
-                IPADDRESS = loanInput.userIPAddress,
-                URL = loanInput.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.auditTrail.AddAuditTrail(audit);
-
-            //end of Audit section -------------------------------
 
             context.SaveChanges();
 
