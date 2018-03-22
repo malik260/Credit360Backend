@@ -10,20 +10,19 @@ namespace EmailMessageLogger.Enum
     {
         LoanCovenantApproachingDueDates = 1,
         LoanCoveantOverdue = 2,
-        CollateralRevaluation = 3,
+        CollateralApproachingRevaluation = 3,
         NonPerformingLoans = 4,
         SelfLiquidatingLoanExpiry = 5,
         OverdraftLoansAlmostDue = 6,
-        InsuranceForCollateralApproachingDueDates = 7,
-        CovenantsApproachingDueDate = 8,
-        CASAwithPND = 9,
-        BondAndGuarantee = 10,
-        InactiveBondAndGuarantee = 11,
-        ExpiredActiveBondAndGuarantee = 12,
-        AccountWithExeption = 13,
-        AccountsThatPastDueObligation = 14,
-        InsuranceApprochingExpiration = 15,
-        ExpiredInsurance = 16,
-        TurnoverCovenant = 17
+        InactiveBondAndGuarantee = 8,
+        ExpiredActiveBondAndGuarantee = 9,
+        OverdrawnAccount = 10,
+        PastDueObligations = 11,
+        CovenantsInsuranceApproachingDueDate = 12,
+        ExpiredInsurance = 13,
+        TurnoverCovenantNotMet = 14,
+        CollateralDueForRevaluation = 15,
+        WatchListedAccount = 16,
+        AuathorizedAccount = 17
     }
 }

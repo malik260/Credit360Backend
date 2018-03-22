@@ -47,7 +47,11 @@ namespace EmailMessageLogger
 
             repo.SendAlertForExpiredInsurance(title, body, alertSetups);
 
-            repo.SendAlertOnAccountWithExeption(title, body, alertSetups);
+            repo.SendAlertOnAccountWithExeption_Overdrawn(title, body, alertSetups);
+
+            repo.SendAlertOnAccountWithExeption_Watchist(title, body, alertSetups);
+
+            repo.SendAlertOnAccountWithExeption_Unauthorized(title, body, alertSetups);
 
             repo.SendAlertOnInsuranceApprochingExpiration(title, body, alertSetups);
 
@@ -55,15 +59,15 @@ namespace EmailMessageLogger
 
             repo.SendAlertOnTurnoverCovenant(title, body, alertSetups);
 
-            repo.SendAlertsForCollateralPropertyRevaluation(title, body, alertSetups);
+            repo.SendAlertsForCollateralPropertyApproachingRevaluation(title, body, alertSetups);
 
-            repo.SendAlertsForLoanNplMonitoring(title, body, alertSetups);
+         //   repo.SendAlertsForLoanNplMonitoring(title, body, alertSetups);
 
             repo.SendAlertsOnExpiredActiveBondAndGuarantee(title, body, alertSetups);
 
             repo.SendAlertsOnInActiveBondAndGuarantee(title, body, alertSetups);
 
-            repo.SendAlertsOnLoanCASAwithPND(title, body, alertSetups);
+          //  repo.SendAlertsOnLoanCASAwithPND(title, body, alertSetups);
 
             repo.SendAlertsOnOverDraftLoansAlmostDue(title, body, alertSetups);
 

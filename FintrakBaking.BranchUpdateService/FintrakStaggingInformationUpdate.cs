@@ -81,7 +81,7 @@ namespace FintrakBaking.BranchUpdateService
                 {
                     var model = new TBL_STAFF
                     {
-                        ADDRESS = staging.ADDRESS1,
+                        ADDRESS = staging.ADRESS2,
                         BRANCHID = coreContext.TBL_BRANCH.FirstOrDefault(o => o.BRANCHCODE == staging.BRANCHCODE).BRANCHID,
                         FIRSTNAME = staging.FIRSTNAME,
                         MIDDLENAME = staging.MIDDLENAME,
@@ -91,6 +91,13 @@ namespace FintrakBaking.BranchUpdateService
                         DEPARTMENTID = coreContext.TBL_DEPARTMENT.FirstOrDefault(o => o.DEPARTMENTCODE == staging.DEPARTMENTCODE.ToString()).DEPARTMENTID,
                         STAFFCODE = staging.STAFFCODE,
                         SUPERVISOR_STAFFID = coreContext.TBL_STAFF.FirstOrDefault(s => s.STAFFCODE == staging.SUPERVISORSTAFFCODE).STAFFID,
+                        COMPANYID = 1,
+                        JOBTITLEID = 2,
+                        STAFFROLEID = 3,
+                        NPL_LIMITEXCEEDED = false,
+                        DELETED = false,
+                        CUSTOMERSENSITIVITYLEVELID = 3
+
                     };
 
                     coreContext.TBL_STAFF.Add(model);
@@ -118,11 +125,12 @@ namespace FintrakBaking.BranchUpdateService
                         var deptID = coreContext.TBL_DEPARTMENT.FirstOrDefault(o => o.DEPARTMENTCODE == staging.DEPARTMENTCODE.ToString());
 
                         TBL_STAFF val = coreContext.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE == staging.STAFFCODE);
-                        val.ADDRESS = staging.ADRESS2;
-                        val.BRANCHID = br.BRANCHID ;
-                       // val.DEPARTMENTID = deptID.DEPARTMENTID;
-                       // val.SUPERVISOR_STAFFID = supervisorStaffId.STAFFID;// coreContext.TBL_STAFF.FirstOrDefault(s => s.STAFFCODE == staging.SUPERVISORSTAFFCODE).STAFFID,
+                        val.BRANCHID = br.BRANCHID;
+                        if (val.SUPERVISOR_STAFFID!=null)
+                        {
+                        val.SUPERVISOR_STAFFID = supervisorStaffId.STAFFID;
 
+                        }
 
                         response = coreContext.SaveChanges();
 
@@ -131,17 +139,6 @@ namespace FintrakBaking.BranchUpdateService
                             StaffAdded = StaffAdded + ", " + staging.STAFFCODE;
                         }
 
-                        //branch.BRANCHID = br.BRANCHID;
-                        //if (supervisorStaffId != null)
-                        //{
-                        //    branch.SUPERVISOR_STAFFID = supervisorStaffId.STAFFID;
-                        //}
-
-                        //response = coreContext.SaveChanges();
-                        //if (response != 0)
-                        //{
-                        //    StaffUpdated = StaffUpdated + ", " + staging.STAFFCODE;
-                        //}
 
                     }
                 }

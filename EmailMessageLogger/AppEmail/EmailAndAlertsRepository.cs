@@ -42,7 +42,6 @@ namespace FintrakBanking.Repositories.AppEmail
             staffRepo = _staffRepo;
         }
 
-        #region Covenant Monitoring
 
         public bool SendAlertsForCovenantsApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
@@ -56,7 +55,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                              join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                                                              join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals (short?)f.FREQUENCYTYPEID
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
-                                                             where DbFunctions.DiffDays(a.NEXTCOVENANTDATE, currentDate) >= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD1
+                                                             where DbFunctions.DiffDays(a.NEXTCOVENANTDATE, currentDate) < alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD1
                                                              select new LoanCovenantDetailViewModel
                                                              {
                                                                  companyId = a.COMPANYID,
@@ -86,7 +85,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanCovenantDetailViewModel> escalationLevelOne = (from x in loanDetails
                                                                             where x.notificationDuration <= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD1
                                                                             select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
                         SendAlertsForCovenantsApproachingDueDateToMonitoringTeam(escalationLevelOne, alertsetupForCovenantsApproachingDueDate);
                     }
@@ -96,7 +95,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanCovenantDetailViewModel> escalationLevelTwo = (from x in loanDetails
                                                                             where x.notificationDuration <= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD2
                                                                             select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
                         SendAlertsForCovenantsApproachingDueDateToMonitoringTeam(escalationLevelTwo, alertsetupForCovenantsApproachingDueDate);
                     }
@@ -106,7 +105,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanCovenantDetailViewModel> escalationLevelThree = (from x in loanDetails
                                                                               where x.notificationDuration <= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD3
                                                                               select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
                         SendAlertsForCovenantsApproachingDueDateToMonitoringTeam(escalationLevelThree, alertsetupForCovenantsApproachingDueDate);
                     }
@@ -143,7 +142,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         dataTable = dataTable + $"<tr><td>{item3.loanRefNumber}</td><td>{item3.covenantDetail}</td><td>{item3.covenantTypeName}</td>" + $"<td>{item3.covenantAmount}</td><td>{item3.covenantDate:d}</td><td>{item3.dueDate:d}</td></tr>";
                         dataTable += "</table>";
                     }
-                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loan covenants which are approaching their due date for revaluation. <br /><br />" + $"{dataTable}";
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loan covenants which are approaching their due date. <br /><br />" + $"{dataTable}";
                     string additionalRecipient = loanDetails.FirstOrDefault((LoanCovenantDetailViewModel x) => x.relationshipOfficerId == item2.STAFFID).officerEmail;
                     string templateUrl = "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
@@ -185,7 +184,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     dataTable += "</table>";
                 }
                 string messageSubject = alertSetups.MESSAGE_TITLE;
-                string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loan covenants which are approaching their due date for revaluation. <br /><br />" + $"{dataTable}";
+                string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loan covenants which are approaching their due date. <br /><br />" + $"{dataTable}";
                 string templateUrl = "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
@@ -232,7 +231,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                              join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                                                              join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals (short?)f.FREQUENCYTYPEID
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
-                                                             where DbFunctions.DiffDays((DateTime?)a.NEXTCOVENANTDATE.Value, (DateTime?)currentDate) >= (int?)alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
+                                                             where DbFunctions.DiffDays((DateTime?)a.NEXTCOVENANTDATE.Value, (DateTime?)currentDate) < (int?)alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
                                                              select new LoanCovenantDetailViewModel
                                                              {
                                                                  companyId = a.COMPANYID,
@@ -260,7 +259,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanCovenantDetailViewModel> escalationLevelOne = (from x in loanDetails
                                                                             where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
                                                                             select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
                         SendAlertsForCovenantsOverDueMonitoringTeam(loanDetails, alertsetupForCovenantsOverDue);
                     }
@@ -270,7 +269,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanCovenantDetailViewModel> escalationLevelTwo = (from x in loanDetails
                                                                             where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD2
                                                                             select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
                         SendAlertsForCovenantsOverDueMonitoringTeam(loanDetails, alertsetupForCovenantsOverDue);
                     }
@@ -280,7 +279,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanCovenantDetailViewModel> escalationLevelThree = (from x in loanDetails
                                                                               where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD3
                                                                               select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
                         SendAlertsForCovenantsOverDueMonitoringTeam(loanDetails, alertsetupForCovenantsOverDue);
                     }
@@ -317,7 +316,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     }
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
-                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loan covenants which are overdue for revaluation. <br /><br />" + $"{dataTable2}";
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loan covenants which have pass their due date. <br /><br />" + $"{dataTable2}";
                     string additionalRecipient = loanDetails.FirstOrDefault((LoanCovenantDetailViewModel x) => x.relationshipOfficerId == item2.STAFFID).officerEmail;
                     string templateUrl = "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
@@ -359,7 +358,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 }
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
-                string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loan covenants which are overdue for revaluation. <br /><br />" + $"{dataTable}";
+                string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loan covenants which have pass their due date. <br /><br />" + $"{dataTable}";
                 string templateUrl = "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
@@ -392,10 +391,10 @@ namespace FintrakBanking.Repositories.AppEmail
 
 
 
-        public bool SendAlertsForCollateralPropertyRevaluation(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsForCollateralPropertyApproachingRevaluation(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP alertsetupForCovenantsOverDue = (from x in alertSetups
-                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.CollateralRevaluation
+                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.CollateralApproachingRevaluation
                                                                         select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<CollateralViewModel> loanDetails = (from a in context.TBL_COLLATERAL_CUSTOMER
@@ -404,7 +403,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                      join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
                                                      join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
                                                      join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
-                                                     where DbFunctions.DiffDays((DateTime?)f.LASTVALUATIONDATE, (DateTime?)currentDate) >= (int?)alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
+                                                     where DbFunctions.DiffDays((DateTime?)f.LASTVALUATIONDATE, (DateTime?)currentDate) < (int?)alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
                                                      select new CollateralViewModel
                                                      {
                                                          collateralTypeId = a.COLLATERALTYPEID,
@@ -421,15 +420,15 @@ namespace FintrakBanking.Repositories.AppEmail
                                                      }).ToList();
             if (loanDetails.Count != 0)
             {
-                SendAlertsForCollateralPropertyRevaluationRM(loanDetails, alertsetupForCovenantsOverDue.MESSAGE_TITLE);
+                SendAlertsForCollateralPropertyApproachingRevaluationRM(loanDetails, alertsetupForCovenantsOverDue.MESSAGE_TITLE);
                 if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS1.Trim() != string.Empty)
                 {
                     List<CollateralViewModel> escalationLevelOne = (from x in loanDetails
                                                                     where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
                                                                     select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
-                        SendAlertsForCollateralPropertyRevaluationMonitoringTeam(escalationLevelOne, alertsetupForCovenantsOverDue);
+                        SendAlertsForCollateralPropertyApproachingRevaluationMonitoringTeam(escalationLevelOne, alertsetupForCovenantsOverDue);
                     }
                 }
                 if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS2.Trim() != string.Empty)
@@ -437,9 +436,9 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<CollateralViewModel> escalationLevelTwo = (from x in loanDetails
                                                                     where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD2
                                                                     select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
-                        SendAlertsForCollateralPropertyRevaluationMonitoringTeam(escalationLevelTwo, alertsetupForCovenantsOverDue);
+                        SendAlertsForCollateralPropertyApproachingRevaluationMonitoringTeam(escalationLevelTwo, alertsetupForCovenantsOverDue);
                     }
                 }
                 if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS3.Trim() != string.Empty)
@@ -447,16 +446,16 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<CollateralViewModel> escalationLevelThree = (from x in loanDetails
                                                                       where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD3
                                                                       select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
-                        SendAlertsForCollateralPropertyRevaluationMonitoringTeam(escalationLevelThree, alertsetupForCovenantsOverDue);
+                        SendAlertsForCollateralPropertyApproachingRevaluationMonitoringTeam(escalationLevelThree, alertsetupForCovenantsOverDue);
                     }
                 }
                 return true;
             }
             return false;
         }
-        public void SendAlertsForCollateralPropertyRevaluationRM(List<CollateralViewModel> loanDetails, string title)
+        public void SendAlertsForCollateralPropertyApproachingRevaluationRM(List<CollateralViewModel> loanDetails, string title)
         {
             try
             {
@@ -513,7 +512,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
-        public void SendAlertsForCollateralPropertyRevaluationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
+        public void SendAlertsForCollateralPropertyApproachingRevaluationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
             {
@@ -553,6 +552,173 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
+
+
+
+
+
+        public bool SendAlertsForCollateralPropertyDueForRevaluation(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        {
+            TBL_MONITORING_ALERT_SETUP alertsetupForCovenantsOverDue = (from x in alertSetups
+                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.CollateralDueForRevaluation
+                                                                        select x).FirstOrDefault();
+            DateTime currentDate = DateTime.Now;
+            List<CollateralViewModel> loanDetails = (from a in context.TBL_COLLATERAL_CUSTOMER
+                                                     join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                                     join c in context.TBL_STAFF on a.CREATEDBY equals c.STAFFID
+                                                     join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
+                                                     join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
+                                                     join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
+                                                     where DbFunctions.DiffDays((DateTime?)f.LASTVALUATIONDATE, (DateTime?)currentDate) < (int?)alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
+                                                     select new CollateralViewModel
+                                                     {
+                                                         collateralTypeId = a.COLLATERALTYPEID,
+                                                         collateralType = d.COLLATERALTYPENAME,
+                                                         collateralCode = a.COLLATERALCODE,
+                                                         collateralSubType = e.COLLATERALSUBTYPENAME,
+                                                         customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                                         propertyName = f.PROPERTYNAME,
+                                                         lastValuationDate = f.LASTVALUATIONDATE,
+                                                         relationshipManagerId = a.CREATEDBY,
+                                                         relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
+                                                         relationshipManagerEmail = c.EMAIL,
+                                                         notificationDuration = (int)DbFunctions.DiffDays((DateTime?)f.LASTVALUATIONDATE, (DateTime?)currentDate)
+                                                     }).ToList();
+            if (loanDetails.Count != 0)
+            {
+                SendAlertsForCollateralPropertyDueForRevaluationRM(loanDetails, alertsetupForCovenantsOverDue.MESSAGE_TITLE);
+                if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS1.Trim() != string.Empty)
+                {
+                    List<CollateralViewModel> escalationLevelOne = (from x in loanDetails
+                                                                    where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
+                                                                    select x).ToList();
+                    if (escalationLevelOne.Count != 0)
+                    {
+                        SendAlertsForCollateralPropertyDueForRevaluationMonitoringTeam(escalationLevelOne, alertsetupForCovenantsOverDue);
+                    }
+                }
+                if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS2.Trim() != string.Empty)
+                {
+                    List<CollateralViewModel> escalationLevelTwo = (from x in loanDetails
+                                                                    where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD2
+                                                                    select x).ToList();
+                    if (escalationLevelTwo.Count != 0)
+                    {
+                        SendAlertsForCollateralPropertyDueForRevaluationMonitoringTeam(escalationLevelTwo, alertsetupForCovenantsOverDue);
+                    }
+                }
+                if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS3.Trim() != string.Empty)
+                {
+                    List<CollateralViewModel> escalationLevelThree = (from x in loanDetails
+                                                                      where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD3
+                                                                      select x).ToList();
+                    if (escalationLevelThree.Count != 0)
+                    {
+                        SendAlertsForCollateralPropertyDueForRevaluationMonitoringTeam(escalationLevelThree, alertsetupForCovenantsOverDue);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public void SendAlertsForCollateralPropertyDueForRevaluationRM(List<CollateralViewModel> loanDetails, string title)
+        {
+            try
+            {
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
+                List<int> dataList = (from g in loanDetails
+                                      select g.relationshipManagerId).ToList();
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
+                {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
+                    List<CollateralViewModel> mailList = (from x in loanDetails
+                                                          where x.relationshipManagerId == item2.STAFFID
+                                                          select x).ToList();
+                    string dataTable2 = "<table><tr><th>Collateral Code</th><th>Collateral Type</th><th>Collateral Sub Type</th><th>Property</th><th>Last Valuation Date</th></tr>";
+                    foreach (CollateralViewModel item3 in mailList)
+                    {
+                        dataTable2 = dataTable2 + $"<tr><td>{item3.collateralCode}</td><td>{item3.collateralType}</td><td>{item3.collateralSubType}</td>" + $"<td>{item3.propertyName}</td><td>{item3.lastValuationDate:d}</td></tr>";
+                    }
+                    dataTable2 += "</table>";
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following collaterals which are due for revaluation. <br /><br />" + $"{dataTable2}";
+                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                    MessageLogViewModel messageModel = new MessageLogViewModel
+                    {
+                        MessageSubject = title,
+                        MessageBody = mailBody,
+                        MessageStatusId = 1,
+                        MessageTypeId = 1,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = recipient,
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = DateTime.Now
+                    };
+                    if (SaveMessageDetails(messageModel) != 0)
+                    {
+                        response += (response = " Collateral  Property Revaluation was logged successfully, ");
+                    }
+                    else
+                    {
+                        response += (response = " Collateral  Property Revaluation logged has failed, ");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void SendAlertsForCollateralPropertyDueForRevaluationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
+        {
+            try
+            {
+                string recipient = alertSetups.RECIPIENTEMAILS2.Trim();
+                string dataTable = "<table><tr><th>Collateral Code</th><th>Collateral Type</th><th>Collateral Sub Type</th><th>Property</th><th>Last Valuation Date</th></tr>";
+                foreach (CollateralViewModel loanDetail in loanDetails)
+                {
+                    dataTable = dataTable + $"<tr><td>{loanDetail.collateralCode}</td><td>{loanDetail.collateralType}</td><td>{loanDetail.collateralSubType}</td>" + $"<td>{loanDetail.propertyName}</td><td>{loanDetail.lastValuationDate:d}</td></tr>";
+                }
+                dataTable += "</table>";
+                string messageSubject = alertSetups.MESSAGE_TITLE;
+                string messageContent = "Dear Team, <br /><br />This is to bring your attention the following collaterals which are due for revaluation. <br /><br />" + $"{dataTable}";
+                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = recipient,
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now
+                };
+                if (SaveMessageDetails(messageModel) != 0)
+                {
+                    response += (response = " Collateral  Property Revaluation was logged successfully, ");
+                }
+                else
+                {
+                    response += (response = " Collateral  Property Revaluation logged has failed, ");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
 
 
 
@@ -708,7 +874,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
                                                join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                                               where a.TBL_PRODUCT.PRODUCTTYPEID == 2 && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate) >= (int?)alertOnSelfLiquidatingLoanExpiry.NOTIFICATION_PERIOD1
+                                               where a.TBL_PRODUCT.PRODUCTTYPEID == 2 && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate) < (int?)alertOnSelfLiquidatingLoanExpiry.NOTIFICATION_PERIOD1
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -736,7 +902,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelOne = (from x in loanDetails
                                                               where x.notificationDuration <= alertOnSelfLiquidatingLoanExpiry.NOTIFICATION_PERIOD1
                                                               select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
                         SendAlertsOnSelfLiquidatingLoanExpiryMonitoringTeam(escalationLevelOne, alertOnSelfLiquidatingLoanExpiry);
                     }
@@ -746,7 +912,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelTwo = (from x in loanDetails
                                                               where x.notificationDuration <= alertOnSelfLiquidatingLoanExpiry.NOTIFICATION_PERIOD2
                                                               select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
                         SendAlertsOnSelfLiquidatingLoanExpiryMonitoringTeam(escalationLevelTwo, alertOnSelfLiquidatingLoanExpiry);
                     }
@@ -756,7 +922,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelThree = (from x in loanDetails
                                                                 where x.notificationDuration <= alertOnSelfLiquidatingLoanExpiry.NOTIFICATION_PERIOD3
                                                                 select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
                         return false;
                     }
@@ -882,7 +1048,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
                                                join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                                               where a.TBL_PRODUCT.PRODUCTTYPEID == 6 && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate)>= (int?)alertOnOverDraftLoansAlmostDue.NOTIFICATION_PERIOD1
+                                               where a.TBL_PRODUCT.PRODUCTTYPEID == 6 && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate) < (int?)alertOnOverDraftLoansAlmostDue.NOTIFICATION_PERIOD1
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -909,7 +1075,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelOne = (from x in loanDetails
                                                               where x.notificationDuration <= alertOnOverDraftLoansAlmostDue.NOTIFICATION_PERIOD1
                                                               select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
                         SendAlertsOnOverDraftLoansAlmostDueMonitoringTeam(escalationLevelOne, alertOnOverDraftLoansAlmostDue);
                     }
@@ -919,7 +1085,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelTwo = (from x in loanDetails
                                                               where x.notificationDuration <= alertOnOverDraftLoansAlmostDue.NOTIFICATION_PERIOD2
                                                               select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
                         SendAlertsOnOverDraftLoansAlmostDueMonitoringTeam(escalationLevelTwo, alertOnOverDraftLoansAlmostDue);
                     }
@@ -929,7 +1095,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelThree = (from x in loanDetails
                                                                 where x.notificationDuration <= alertOnOverDraftLoansAlmostDue.NOTIFICATION_PERIOD3
                                                                 select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
                         SendAlertsOnOverDraftLoansAlmostDueMonitoringTeam(escalationLevelThree, alertOnOverDraftLoansAlmostDue);
                     }
@@ -1044,7 +1210,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertsOnLoanCASAwithPND(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP CASAwithPND = (from x in alertSetups
-                                                      where x.MONITORING_ITEMID == (int)AlertMessageEnum.CASAwithPND
+                                                      where x.MONITORING_ITEMID == 2
                                                       select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN
@@ -1082,7 +1248,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelOne = (from x in loanDetails
                                                               where x.notificationDuration <= CASAwithPND.NOTIFICATION_PERIOD1
                                                               select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
                         SendAlertsOnLoanCASAwithPNDmonitoringTeam(escalationLevelOne, CASAwithPND);
                     }
@@ -1092,7 +1258,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelTwo = (from x in loanDetails
                                                               where x.notificationDuration <= CASAwithPND.NOTIFICATION_PERIOD2
                                                               select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
                         SendAlertsOnLoanCASAwithPNDmonitoringTeam(escalationLevelTwo, CASAwithPND);
                     }
@@ -1102,7 +1268,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelThree = (from x in loanDetails
                                                                 where x.notificationDuration <= CASAwithPND.NOTIFICATION_PERIOD3
                                                                 select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
                         SendAlertsOnLoanCASAwithPNDmonitoringTeam(escalationLevelThree, CASAwithPND);
                     }
@@ -1223,7 +1389,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) > (int?)InActiveBondAndGuarantee.NOTIFICATION_PERIOD1 && a.LOANSTATUSID == 1
+                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) < (int?)InActiveBondAndGuarantee.NOTIFICATION_PERIOD1 && a.LOANSTATUSID == 1
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -1253,7 +1419,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelOne = (from x in loanDetails
                                                               where x.notificationDuration <= InActiveBondAndGuarantee.NOTIFICATION_PERIOD1
                                                               select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
                         SendAlertsOnInActiveBondAndGuaranteeMonitoringTeam(escalationLevelOne, InActiveBondAndGuarantee);
                     }
@@ -1263,7 +1429,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelTwo = (from x in loanDetails
                                                               where x.notificationDuration <= InActiveBondAndGuarantee.NOTIFICATION_PERIOD2
                                                               select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
                         SendAlertsOnInActiveBondAndGuaranteeMonitoringTeam(escalationLevelTwo, InActiveBondAndGuarantee);
                     }
@@ -1273,7 +1439,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelThree = (from x in loanDetails
                                                                 where x.notificationDuration <= InActiveBondAndGuarantee.NOTIFICATION_PERIOD3
                                                                 select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
                         SendAlertsOnInActiveBondAndGuaranteeMonitoringTeam(escalationLevelThree, InActiveBondAndGuarantee);
                     }
@@ -1397,7 +1563,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                               where a.ISTENORED == false && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) > (int?)0 && a.LOANSTATUSID == 1 && a.RELATED_LOAN_REFERENCE_NUMBER != string.Empty
+                                               where a.ISTENORED == false && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) < (int?)0 && a.LOANSTATUSID == 1 && a.RELATED_LOAN_REFERENCE_NUMBER != string.Empty
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -1530,17 +1696,17 @@ namespace FintrakBanking.Repositories.AppEmail
 
 
 
-        public bool SendAlertOnAccountWithExeption(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertOnAccountWithExeption_Overdrawn(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP AccountWithExeption = (from x in alertSetups
-                                                              where x.MONITORING_ITEMID == (int)AlertMessageEnum.AccountWithExeption
+                                                              where x.MONITORING_ITEMID == (int)AlertMessageEnum.OverdrawnAccount
                                                               select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
-            List<LoanViewModel> loanDetails3 = (from a in context.TBL_LOAN_CONTINGENT
+            List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                                 join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                 join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                 join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                                where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0m
+                                                where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) < (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0m
                                                 select new LoanViewModel
                                                 {
                                                     applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -1562,60 +1728,121 @@ namespace FintrakBanking.Repositories.AppEmail
                                                     customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
                                                     notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
                                                 }).ToList();
-            List<LoanViewModel> loanDetails4 = (from a in context.TBL_LOAN
-                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
-                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
-                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                                where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0m
-                                                select new LoanViewModel
-                                                {
-                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
-                                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                                    bookingDate = a.BOOKINGDATE,
-                                                    disburseDate = a.DISBURSEDATE,
-                                                    maturityDate = a.MATURITYDATE,
-                                                    principalAmount = (decimal)s.OVERDRAFTAMOUNT,
-                                                    exchangeRate = a.EXCHANGERATE,
-                                                    loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
-                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                    relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                    relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
-                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
-                                                    branchId = a.BRANCHID,
-                                                    branchName = br.BRANCHNAME,
-                                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
-                                                    notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
-                                                }).ToList();
-            List<LoanViewModel> loanDetails2 = (from a in context.TBL_LOAN_REVOLVING
-                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
-                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
-                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                                where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0m
-                                                select new LoanViewModel
-                                                {
-                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
-                                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                                    bookingDate = a.BOOKINGDATE,
-                                                    disburseDate = a.DISBURSEDATE,
-                                                    maturityDate = a.MATURITYDATE,
-                                                    principalAmount = (decimal)s.OVERDRAFTAMOUNT,
-                                                    exchangeRate = a.EXCHANGERATE,
-                                                    loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
-                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                    relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                    relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
-                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
-                                                    branchId = a.BRANCHID,
-                                                    branchName = br.BRANCHNAME,
-                                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
-                                                    notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
-                                                }).ToList();
-            IEnumerable<LoanViewModel> loanDetails = loanDetails3.ToList().Union(loanDetails4.ToList()).Union(loanDetails2.ToList());
+            
             if (loanDetails !=null)
+            {
+                SendAlertsOnAccountWithExeptionRM(loanDetails.ToList(), AccountWithExeption.MESSAGE_TITLE);
+                if (AccountWithExeption.RECIPIENTEMAILS1.Trim() != string.Empty)
+                {
+                    List<LoanViewModel> escalationLevelOne = (from x in loanDetails
+                                                              where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD1
+                                                              select x).ToList();
+                    if (escalationLevelOne != null)
+                    {
+                        SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelOne, AccountWithExeption);
+                    }
+                }
+                if (AccountWithExeption.RECIPIENTEMAILS2.Trim() != string.Empty)
+                {
+                    List<LoanViewModel> escalationLevelTwo = (from x in loanDetails
+                                                              where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD2
+                                                              select x).ToList();
+                    if (escalationLevelTwo != null)
+                    {
+                        SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelTwo, AccountWithExeption);
+                    }
+                }
+                if (AccountWithExeption.RECIPIENTEMAILS3.Trim() != string.Empty)
+                {
+                    List<LoanViewModel> escalationLevelThree = (from x in loanDetails
+                                                                where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD3
+                                                                select x).ToList();
+                    if (escalationLevelThree != null)
+                    {
+                        SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelThree, AccountWithExeption);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public bool SendAlertOnAccountWithExeption_Watchist(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        {
+            TBL_MONITORING_ALERT_SETUP AccountWithExeption = (from x in alertSetups
+                                                              where x.MONITORING_ITEMID == (int)AlertMessageEnum.WatchListedAccount
+                                                              select x).FirstOrDefault();
+            DateTime currentDate = DateTime.Now;
+           
+            List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN
+                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                                                where a.INT_PRUDENT_GUIDELINE_STATUSID == (int)LoanPrudentialStatusEnum.WatchList
+                                               select new LoanViewModel
+                                                {
+                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
+                                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                                    bookingDate = a.BOOKINGDATE,
+                                                    disburseDate = a.DISBURSEDATE,
+                                                    maturityDate = a.MATURITYDATE,
+                                                    principalAmount = (decimal)s.OVERDRAFTAMOUNT,
+                                                    exchangeRate = a.EXCHANGERATE,
+                                                    loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                                    relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                                                    relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+                                                    branchId = a.BRANCHID,
+                                                    branchName = br.BRANCHNAME,
+                                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+                                                    notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
+                                                }).ToList();
+            
+            if (loanDetails != null)
+            {
+                SendAlertsOnAccountWithExeptionRM(loanDetails, AccountWithExeption.MESSAGE_TITLE);
+                SendAlertsOnAccountWithExeptionMonitoringTeam(loanDetails, AccountWithExeption);
+                
+                return true;
+            }
+            return false;
+        }
+        public bool SendAlertOnAccountWithExeption_Unauthorized(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        {
+            TBL_MONITORING_ALERT_SETUP AccountWithExeption = (from x in alertSetups
+                                                              where x.MONITORING_ITEMID == (int)AlertMessageEnum.AuathorizedAccount
+                                                              select x).FirstOrDefault();
+            DateTime currentDate = DateTime.Now;
+          
+            List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_REVOLVING
+                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                                                where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0m
+                                                select new LoanViewModel
+                                                {
+                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
+                                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                                    bookingDate = a.BOOKINGDATE,
+                                                    disburseDate = a.DISBURSEDATE,
+                                                    maturityDate = a.MATURITYDATE,
+                                                    principalAmount = (decimal)s.OVERDRAFTAMOUNT,
+                                                    exchangeRate = a.EXCHANGERATE,
+                                                    loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                                    relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                                                    relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+                                                    branchId = a.BRANCHID,
+                                                    branchName = br.BRANCHNAME,
+                                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+                                                    notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
+                                                }).ToList();
+            if (loanDetails != null)
             {
                 SendAlertsOnAccountWithExeptionRM(loanDetails.ToList(), AccountWithExeption.MESSAGE_TITLE);
                 if (AccountWithExeption.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -1760,14 +1987,14 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertOnPastDueObligationAccounts(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP PastDueObligationAccounts = (from x in alertSetups
-                                                                    where x.MONITORING_ITEMID == (int)AlertMessageEnum.AccountsThatPastDueObligation
+                                                                    where x.MONITORING_ITEMID == (int)AlertMessageEnum.PastDueObligations
                                                                     select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)PastDueObligationAccounts.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0m
+                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) < (int?)PastDueObligationAccounts.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0m
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -1797,7 +2024,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelOne = (from x in loanDetails
                                                               where x.notificationDuration <= PastDueObligationAccounts.NOTIFICATION_PERIOD1
                                                               select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
                         SendAlertsOnPastDueObligationAccountsMonitoringTeam(escalationLevelOne, PastDueObligationAccounts);
                     }
@@ -1807,7 +2034,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelTwo = (from x in loanDetails
                                                               where x.notificationDuration <= PastDueObligationAccounts.NOTIFICATION_PERIOD2
                                                               select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
                         SendAlertsOnPastDueObligationAccountsMonitoringTeam(escalationLevelTwo, PastDueObligationAccounts);
                     }
@@ -1817,7 +2044,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanViewModel> escalationLevelThree = (from x in loanDetails
                                                                 where x.notificationDuration <= PastDueObligationAccounts.NOTIFICATION_PERIOD3
                                                                 select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
                         SendAlertsOnPastDueObligationAccountsMonitoringTeam(escalationLevelThree, PastDueObligationAccounts);
                     }
@@ -1934,7 +2161,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertOnInsuranceApprochingExpiration(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP InsuranceApprochingExpiration = (from x in alertSetups
-                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.InsuranceApprochingExpiration
+                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.CovenantsInsuranceApproachingDueDate
                                                                         select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<CollateralViewModel> loanDetails = (from a in context.TBL_COLLATERAL_CUSTOMER
@@ -1944,7 +2171,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                      join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
                                                      join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
                                                      join p in context.TBL_COLLATERAL_ITEM_POLICY on a.COLLATERALCUSTOMERID equals p.COLLATERALCUSTOMERID
-                                                     where DbFunctions.DiffDays((DateTime?)p.ENDDATE, (DateTime?)currentDate) <= (int?)InsuranceApprochingExpiration.NOTIFICATION_PERIOD1
+                                                     where DbFunctions.DiffDays((DateTime?)p.ENDDATE, (DateTime?)currentDate) < (int?)InsuranceApprochingExpiration.NOTIFICATION_PERIOD1
                                                      select new CollateralViewModel
                                                      {
                                                          collateralType = d.COLLATERALTYPENAME,
@@ -1968,7 +2195,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<CollateralViewModel> escalationLevelOne = (from x in loanDetails
                                                                     where x.notificationDuration <= InsuranceApprochingExpiration.NOTIFICATION_PERIOD1
                                                                     select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
                         SendAlertOnInsuranceApprochingExpirationMonitoringTeam(escalationLevelOne, InsuranceApprochingExpiration);
                     }
@@ -1978,7 +2205,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<CollateralViewModel> escalationLevelTwo = (from x in loanDetails
                                                                     where x.notificationDuration <= InsuranceApprochingExpiration.NOTIFICATION_PERIOD2
                                                                     select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
                         SendAlertOnInsuranceApprochingExpirationMonitoringTeam(escalationLevelTwo, InsuranceApprochingExpiration);
                     }
@@ -1988,7 +2215,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<CollateralViewModel> escalationLevelThree = (from x in loanDetails
                                                                       where x.notificationDuration <= InsuranceApprochingExpiration.NOTIFICATION_PERIOD3
                                                                       select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
                         SendAlertOnInsuranceApprochingExpirationMonitoringTeam(escalationLevelThree, InsuranceApprochingExpiration);
                     }
@@ -2114,7 +2341,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                      join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
                                                      join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
                                                      join p in context.TBL_COLLATERAL_ITEM_POLICY on a.COLLATERALCUSTOMERID equals p.COLLATERALCUSTOMERID
-                                                     where DbFunctions.DiffDays((DateTime?)p.ENDDATE, (DateTime?)DateTime.Now) <= (int?)ExpiredInsurance.NOTIFICATION_PERIOD1 && p.HASEXPIRED == true
+                                                     where DbFunctions.DiffDays((DateTime?)p.ENDDATE, (DateTime?)currentDate) < (int?)ExpiredInsurance.NOTIFICATION_PERIOD1 && p.HASEXPIRED == true
                                                      select new CollateralViewModel
                                                      {
                                                          collateralType = d.COLLATERALTYPENAME,
@@ -2128,7 +2355,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                          insuranceCompany = p.INSURANCECOMPANYNAME,
                                                          startDate = (DateTime?)p.STARTDATE,
                                                          endDate = (DateTime?)p.ENDDATE,
-                                                         notificationDuration = (int)DbFunctions.DiffDays((DateTime?)p.ENDDATE, (DateTime?)DateTime.Now)
+                                                         notificationDuration = (int)DbFunctions.DiffDays((DateTime?)p.ENDDATE, (DateTime?)currentDate)
                                                      }).ToList();
             if (loanDetails.Count != 0)
             {
@@ -2138,7 +2365,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<CollateralViewModel> escalationLevelOne = (from x in loanDetails
                                                                     where x.notificationDuration <= ExpiredInsurance.NOTIFICATION_PERIOD1
                                                                     select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
                         SendAlertOnExpiredInsuranceMonitoringTeam(escalationLevelOne, ExpiredInsurance);
                     }
@@ -2148,7 +2375,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<CollateralViewModel> escalationLevelTwo = (from x in loanDetails
                                                                     where x.notificationDuration <= ExpiredInsurance.NOTIFICATION_PERIOD2
                                                                     select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
                         SendAlertOnExpiredInsuranceMonitoringTeam(escalationLevelTwo, ExpiredInsurance);
                     }
@@ -2158,7 +2385,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<CollateralViewModel> escalationLevelThree = (from x in loanDetails
                                                                       where x.notificationDuration <= ExpiredInsurance.NOTIFICATION_PERIOD3
                                                                       select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
                         SendAlertOnExpiredInsuranceMonitoringTeam(escalationLevelThree, ExpiredInsurance);
                     }
@@ -2273,7 +2500,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertOnTurnoverCovenant(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP TurnoverCovenant = (from x in alertSetups
-                                                           where x.MONITORING_ITEMID == (int)AlertMessageEnum.TurnoverCovenant
+                                                           where x.MONITORING_ITEMID == (int)AlertMessageEnum.TurnoverCovenantNotMet
                                                            select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanCovenantDetailViewModel> loanDetails = (from a in context.TBL_LOAN_COVENANT_DETAIL
@@ -2284,7 +2511,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                              join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                                                              join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals (short?)f.FREQUENCYTYPEID
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
-                                                             where DbFunctions.DiffDays((DateTime?)a.NEXTCOVENANTDATE.Value, (DateTime?)currentDate) <= (int?)TurnoverCovenant.NOTIFICATION_PERIOD1 && (decimal?)ca.AVAILABLEBALANCE < a.COVENANTAMOUNT
+                                                             where DbFunctions.DiffDays((DateTime?)a.NEXTCOVENANTDATE, (DateTime?)currentDate) < (int?)TurnoverCovenant.NOTIFICATION_PERIOD1 && (decimal?)ca.AVAILABLEBALANCE < a.COVENANTAMOUNT
                                                              select new LoanCovenantDetailViewModel
                                                              {
                                                                  companyId = a.COMPANYID,
@@ -2312,7 +2539,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanCovenantDetailViewModel> escalationLevelOne = (from x in loanDetails
                                                                             where x.notificationDuration <= TurnoverCovenant.NOTIFICATION_PERIOD1
                                                                             select x).ToList();
-                    if (escalationLevelOne != null)
+                    if (escalationLevelOne.Count != 0)
                     {
                         SendAlertOnTurnoverCovenantMonitoringTeam(escalationLevelOne, TurnoverCovenant);
                     }
@@ -2322,7 +2549,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanCovenantDetailViewModel> escalationLevelTwo = (from x in loanDetails
                                                                             where x.notificationDuration <= TurnoverCovenant.NOTIFICATION_PERIOD2
                                                                             select x).ToList();
-                    if (escalationLevelTwo != null)
+                    if (escalationLevelTwo.Count != 0)
                     {
                         SendAlertOnTurnoverCovenantMonitoringTeam(escalationLevelTwo, TurnoverCovenant);
                     }
@@ -2332,7 +2559,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     List<LoanCovenantDetailViewModel> escalationLevelThree = (from x in loanDetails
                                                                               where x.notificationDuration <= TurnoverCovenant.NOTIFICATION_PERIOD3
                                                                               select x).ToList();
-                    if (escalationLevelThree != null)
+                    if (escalationLevelThree.Count != 0)
                     {
                         SendAlertOnTurnoverCovenantMonitoringTeam(escalationLevelThree, TurnoverCovenant);
                     }
@@ -2468,120 +2695,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
-
-        //public bool CreateEmailMessageAndSend(MessageLogViewModel model)
-        //{
-        //    bool sentEmail;
-
-        //    var templateUrl =  "EmailTemplates\\Monitoring.html";
-
-        //    var message = new TBL_MESSAGE_LOG()
-        //    {
-        //        //MessageId = model.MessageId,
-        //        MESSAGESUBJECT = model.MessageSubject,
-        //        MESSAGEBODY = model.MessageBody,
-        //        MESSAGESTATUSID = model.MessageStatusId,
-        //        MESSAGETYPEID = model.MessageTypeId,
-        //        FROMADDRESS = ConfigurationManager.AppSettings["SupportEmailAddr"],
-        //        TOADDRESS = model.ToAddress,
-        //        DATETIMERECEIVED = model.DateTimeReceived,
-        //        SENDONDATETIME = model.SendOnDateTime
-        //    };
-
-        //    try
-        //    {
-        //        context.TBL_MESSAGE_LOG.Add(message);
-
-        //        context.SaveChanges();
-
-        //       // sentEmail = EmailHelpers.SendMail(model.ToAddress, null, model.MessageSubject, model.MessageBody, templateUrl);
-
-        //        //if (sentEmail)
-        //        //{
-        //        //    message.MESSAGESTATUSID = (short)MessageStatusEnum.Sent;
-
-        //        //    context.SaveChanges();
-
-        //        //    return true;
-        //        //}
-        //        //else
-        //        //{
-        //        //    message.MESSAGESTATUSID = (short)MessageStatusEnum.Attempted;
-
-        //        //    context.SaveChanges();
-
-        //        //    return false;
-        //        //}
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
-
-        public IEnumerable<MessageLogViewModel> GetMailingList()
-        {
-            var mailList = (from data in context.TBL_MESSAGE_LOG
-                            where data.MESSAGESTATUSID == (short)MessageStatusEnum.Pending
-                            select new MessageLogViewModel()
-                            {
-                                MessageId = data.MESSAGEID,
-                                MessageSubject = data.MESSAGESUBJECT,
-                                MessageBody = data.MESSAGEBODY,
-                                MessageStatusId = data.MESSAGESTATUSID,
-                                MessageTypeId = data.MESSAGETYPEID,
-                                FromAddress = data.FROMADDRESS,
-                                ToAddress = data.TOADDRESS,
-                                DateTimeReceived = data.DATETIMERECEIVED,
-                                SendOnDateTime = data.SENDONDATETIME
-                            }).ToList();
-
-            return mailList;
-        }
-
-        public IEnumerable<MessageLogViewModel> GetEmailMailingList()
-        {
-            var mailList = GetMailingList().Where(m => m.MessageTypeId == (short)MessageTypeEnum.Email).ToList();
-
-            return mailList;
-        }
-
-        public IEnumerable<MessageLogViewModel> GetSmsMailingList()
-        {
-            var mailList = GetMailingList().Where(m => m.MessageTypeId == (short)MessageTypeEnum.SMS).ToList();
-
-            return mailList;
-        }
-
-        public bool UpdateMailDeliveryStatus(int messageId, short statusId)
-        {
-            var mailMessage = context.TBL_MESSAGE_LOG.Find(messageId);
-
-            if (mailMessage != null)
-            {
-                mailMessage.MESSAGESTATUSID = (short)statusId;
-
-                var output = context.SaveChanges() > 0;
-
-                if (output)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            return false;
-        }
-
-        public bool CreateEmailMessageAndSend(MessageLogViewModel model)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion Helper Methods
 
 
     }
