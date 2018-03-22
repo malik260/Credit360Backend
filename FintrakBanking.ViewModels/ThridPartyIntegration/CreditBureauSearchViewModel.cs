@@ -85,50 +85,63 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string userName { get; set; }
         public string DataTicket { get; set; }
         public int ConsumerID { get; set; }
-        public string  MergeList { get; set; }
+        public string MergeList { get; set; }
         public string SubscriberEnquiryEngineID { get; set; }
         public int EnquiryID { get; set; }
     }
 
-    public class CRCRequestViewModel
+    public class CRCRequestViewModel : GeneralEntity
     {
         public string productId;
+        public object[] casaAccountId;
+        public short searchType;
 
         public string userName { get; set; }
         public string password { get; set; }
+
         /// <summary>
-        /// response type is the formate you want your result to be. CRC - 1 --> XML , 2 --> PDF 
+        /// response type is the format you want your result to be. CRC - 1 --> XML , 2 --> PDF 
         /// </summary>
         public int responseType { get; set; }
+
         /// <summary>
         /// Credit bureau type, 1 --> CRMS (No endpoint), 2 --> XDS  , 3 --> CRC, 
         /// </summary>
         public short creditBureauId { get; set; } //dxs / crc
-                                                  /// <summary>
-                                                  /// this represent the kind of search the should be performed. 6110 for	INDIVIDUAL  6112 for CORPORATE  
-                                                  /// </summary>
+
+        /// <summary>
+        /// this represent the kind of search the should be performed. 6110 for	INDIVIDUAL  6112 for CORPORATE  
+        /// </summary>
         public int reportID { get; set; }       // consumer/ commercial
-                                                /// <summary>
-                                                /// Search Type Code is for identifing the kind of search that is to be performed 
-                                                /// and it depend of the number of parameter that is being provided. use 0 for (name, gender, dob), 
-                                                /// 4 (BVN (identity)), 5 (Telephone), 6 for all 5 parameters
-                                                /// </summary>
+
+        /// <summary>
+        /// Search Type Code is for identifing the kind of search that is to be performed 
+        /// and it depend of the number of parameter that is being provided. use 0 for (name, gender, dob), 
+        /// 4 (BVN (identity)), 5 (Telephone), 6 for all 5 parameters
+        /// </summary>
         public int searchTypeCode { get; set; }
+
         /// <summary>
         /// Inquiry Reason for the search
         /// </summary>
         public string enquiryReason { get; set; }
+
         /// <summary>
         /// Customer search name. this could be Individual or Corporate (Business Name)
         /// </summary>
         public string customerName { get; set; }
+
         public string gender { get; set; }
+
         public string dateOfBirth { get; set; }
+
         /// <summary>
         /// BVN or National Identification number (NIMC)
         /// </summary>
         public string identification { get; set; }
+
         public string phoneNumber { get; set; }
+
         /// <summary>
         /// This is should be an NUBAN or Company Registration Number
         /// </summary>
@@ -181,6 +194,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
     public class CRCSearchResult
     {
+
         public int SearchCompleted { get; set; }
         public string SearchResult { get; set; }
     }

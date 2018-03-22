@@ -29,9 +29,11 @@ namespace FintrakBanking.Interfaces.Credit
         #endregion
 
         #region Integration
-        List<string> GetCustomerCreditMatch(CreditBureauSearchViewModel searchInfoList);
+        List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList);
 
         byte[] GetFullSearchResultInPDF(SearchInput searchInput);
+
+        CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo);
         #endregion
     }
 }
