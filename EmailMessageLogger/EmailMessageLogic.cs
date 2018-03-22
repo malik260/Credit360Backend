@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace EmailMessageLogger
 {
-   
 
-   public class EmailMessageLogic
+
+    public class EmailMessageLogic
     {
-        private static FinTrakBankingContext context=new FinTrakBankingContext();
+        private static FinTrakBankingContext context = new FinTrakBankingContext();
         private static IAuditTrailRepository auditTrail;
         private static EmailHelpers emailHelpers;
         private static IGeneralSetupRepository genSetup;
@@ -39,26 +39,37 @@ namespace EmailMessageLogger
             string title = string.Empty;
             string body = string.Empty;
 
-          var alertSetups =  context.TBL_MONITORING_ALERT_SETUP.ToList();
+            var alertSetups = context.TBL_MONITORING_ALERT_SETUP.ToList();
 
-           repo.SendAlertsForCovenantsApproachingDueDate(title,body, alertSetups);
+            repo.SendAlertsForCovenantsApproachingDueDate(title, body, alertSetups);
 
-           repo.SendAlertsForCovenantsOverDue(title, body, alertSetups);
+            repo.SendAlertsForCovenantsOverDue(title, body, alertSetups);
 
-            //repo.SendAlertsForCollateralPropertyRevaluation(title, body);
+            repo.SendAlertForExpiredInsurance(title, body, alertSetups);
 
-            //repo.SendAlertsForLoanNplMonitoring(title, body);
+            repo.SendAlertOnAccountWithExeption(title, body, alertSetups);
 
-            //repo.SendAlertsOnSelfLiquidatingLoanExpiry(title, body);
+            repo.SendAlertOnInsuranceApprochingExpiration(title, body, alertSetups);
 
-            //repo.SendAlertsOnOverDraftLoansAlmostDue(title, body);
+            repo.SendAlertOnPastDueObligationAccounts(title, body, alertSetups);
 
-            //repo.SendAlertsOnLoanCASAwithPND(title, body);
+            repo.SendAlertOnTurnoverCovenant(title, body, alertSetups);
 
-            //repo.SendAlertsForExpiredInsurance(title, body);
+            repo.SendAlertsForCollateralPropertyRevaluation(title, body, alertSetups);
 
-            return repo.response;
-            
+            repo.SendAlertsForLoanNplMonitoring(title, body, alertSetups);
+
+            repo.SendAlertsOnExpiredActiveBondAndGuarantee(title, body, alertSetups);
+
+            repo.SendAlertsOnInActiveBondAndGuarantee(title, body, alertSetups);
+
+            repo.SendAlertsOnLoanCASAwithPND(title, body, alertSetups);
+
+            repo.SendAlertsOnOverDraftLoansAlmostDue(title, body, alertSetups);
+
+            repo.SendAlertsOnSelfLiquidatingLoanExpiry(title, body, alertSetups);
+
+            return "";
         }
     }
 }

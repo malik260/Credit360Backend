@@ -115,7 +115,6 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertsForCovenantsApproachingDueDateToRM(List<LoanCovenantDetailViewModel> loanDetails, string title)
         {
             try
@@ -123,12 +122,18 @@ namespace FintrakBanking.Repositories.AppEmail
                 List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList = (from x in staffList
+               
+               var RMdetail = (from x in staffList
                              where dataList.Contains(x.STAFFID)
                              select x).ToList();
-                foreach (TBL_STAFF item2 in staffList)
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
-                    string recipient = item2.EMAIL.Trim();
+                    var bankManagerID = staffList.Where(o=>o.STAFFCODE==item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
                     string dataTable = "<table><tr><th>Application Ref</th><th>Covenant Detail</th><th>Covenant Type</th><th>Amount</th><th>Covenant Date</th><th>Due Date</th></tr>";
                     List<LoanCovenantDetailViewModel> mailList = (from x in loanDetails
                                                                   where x.relationshipManagerId == item2.STAFFID
@@ -168,7 +173,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
-
         public void SendAlertsForCovenantsApproachingDueDateToMonitoringTeam(List<LoanCovenantDetailViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -285,7 +289,6 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertsForCovenantsOverDueRM(List<LoanCovenantDetailViewModel> loanDetails, string title)
         {
             try
@@ -293,12 +296,17 @@ namespace FintrakBanking.Repositories.AppEmail
                 List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList = (from x in staffList
-                             where dataList.Contains(x.STAFFID)
-                             select x).ToList();
-                foreach (TBL_STAFF item2 in staffList)
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
-                    string recipient = item2.EMAIL.Trim();
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
                     List<LoanCovenantDetailViewModel> mailList = (from x in loanDetails
                                                                   where x.relationshipManagerId == item2.STAFFID
                                                                   select x).ToList();
@@ -339,7 +347,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
-
         public void SendAlertsForCovenantsOverDueMonitoringTeam(List<LoanCovenantDetailViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -449,7 +456,6 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertsForCollateralPropertyRevaluationRM(List<CollateralViewModel> loanDetails, string title)
         {
             try
@@ -457,12 +463,18 @@ namespace FintrakBanking.Repositories.AppEmail
                 List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList = (from x in staffList
-                             where dataList.Contains(x.STAFFID)
-                             select x).ToList();
-                foreach (TBL_STAFF item2 in staffList)
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
-                    string recipient = item2.EMAIL.Trim();
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
                     List<CollateralViewModel> mailList = (from x in loanDetails
                                                           where x.relationshipManagerId == item2.STAFFID
                                                           select x).ToList();
@@ -501,7 +513,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
-
         public void SendAlertsForCollateralPropertyRevaluationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -583,7 +594,6 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertsForLoanNplMonitoringRM(List<LoanViewModel> loanDetails, string title)
         {
             try
@@ -591,13 +601,20 @@ namespace FintrakBanking.Repositories.AppEmail
                 List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList = (from x in staffList
-                             where dataList.Contains(x.STAFFID)
-                             select x).ToList();
-                foreach (TBL_STAFF item2 in staffList)
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
                     string dataTable2 = "<table><tr><th>Loan Ref #</th><th>Loan Type</th><th>Outstanding Interest</th><th>Oustanding Principal</th><th>Booking Date</th><th>Disbursed Date</th></tr>";
-                    string recipient = item2.EMAIL;
+
                     List<LoanViewModel> mailList = (from x in loanDetails
                                                     where x.relationshipManagerId == item2.STAFFID
                                                     select x).ToList();
@@ -636,7 +653,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
-
         public void SendAlertsForLoanNplMonitoringMonitoringTeam(List<LoanViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -750,21 +766,27 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertsOnSelfLiquidatingLoanExpiryRM(List<LoanViewModel> loanDetails, string title)
         {
             try
             {
-                List<TBL_STAFF> staffList2 = context.TBL_STAFF.ToList();
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList2 = (from x in staffList2
-                              where dataList.Contains(x.STAFFID)
-                              select x).ToList();
-                foreach (TBL_STAFF item2 in staffList2)
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
                     string dataTable2 = "<table><tr><th>Loan Ref #</th><th>Product</th><th>Loan Type</th><th>Product Type</th><th>Outstanding Interest</th><th>Oustanding Principal</th><th>Disbursed Date</th><th>Maturity Date</th></tr>";
-                    string recipient = item2.EMAIL;
+
                     List<LoanViewModel> mailList = (from x in loanDetails
                                                     where x.relationshipManagerId == item2.STAFFID
                                                     select x).ToList();
@@ -804,7 +826,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw ex;
             }
         }
-
         public void SendAlertsOnSelfLiquidatingLoanExpiryMonitoringTeam(List<LoanViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -917,21 +938,26 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertsOnOverDraftLoansAlmostDueRM(List<LoanViewModel> loanDetails, string title)
         {
             try
             {
-                List<TBL_STAFF> staffList2 = context.TBL_STAFF.ToList();
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList2 = (from x in staffList2
-                              where dataList.Contains(x.STAFFID)
-                              select x).ToList();
-                foreach (TBL_STAFF item2 in staffList2)
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
                     string dataTable2 = "<table><tr><th>Loan Ref #</th><th>Product</th><th>Loan Type</th><th>Product Type</th><th>Overdraft Limit</th><th>Disbursed Date</th><th>Maturity Date</th></tr>";
-                    string recipient = item2.EMAIL;
+
                     List<LoanViewModel> mailList = (from x in loanDetails
                                                     where x.relationshipManagerId == item2.STAFFID
                                                     select x).ToList();
@@ -970,7 +996,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw ex;
             }
         }
-
         public void SendAlertsOnOverDraftLoansAlmostDueMonitoringTeam(List<LoanViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -1086,21 +1111,26 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertsOnLoanCASAwithPNDrm(List<LoanViewModel> loanDetails, string title)
         {
             try
             {
-                List<TBL_STAFF> staffList2 = context.TBL_STAFF.ToList();
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList2 = (from x in staffList2
-                              where dataList.Contains(x.STAFFID)
-                              select x).ToList();
-                foreach (TBL_STAFF item2 in staffList2)
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
                     string dataTable2 = "<table><tr><th>Loan Ref #</th><th>Customer Name</th><th>Principal Amount</th><th>Outstanding Principal</th><th>Tenor</th><th>Interest Rate</th><th>Booking Date</th><th>Effective Date</th><th>Maturity Date</th></tr>";
-                    string recipient = item2.EMAIL;
+
                     List<LoanViewModel> mailList = (from x in loanDetails
                                                     where x.relationshipManagerId == item2.STAFFID
                                                     select x).ToList();
@@ -1138,7 +1168,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw ex;
             }
         }
-
         public void SendAlertsOnLoanCASAwithPNDmonitoringTeam(List<LoanViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -1253,23 +1282,28 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertsOnInActiveBondAndGuaranteeRM(List<LoanViewModel> loanDetails, string title)
         {
             try
             {
-                List<StaffInfoViewModel> staffList2 = staffRepo.GetAllStaff().ToList();
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList2 = (from x in staffList2
-                              where dataList.Contains(x.StaffId)
-                              select x).ToList();
-                foreach (StaffInfoViewModel item2 in staffList2)
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
                     string dataTable2 = "<table><tr><th>Loan Ref #</th><th>Customer Name</th><th>Contingent Amount</th><th>exchange Rate</th><th>Booking Date</th><th>Effective Date</th><th>Maturity Date</th></tr>";
-                    string recipient = item2.Email;
+
                     List<LoanViewModel> mailList = (from x in loanDetails
-                                                    where x.relationshipManagerId == item2.StaffId
+                                                    where x.relationshipManagerId == item2.STAFFID
                                                     select x).ToList();
                     foreach (LoanViewModel item3 in mailList)
                     {
@@ -1277,8 +1311,8 @@ namespace FintrakBanking.Repositories.AppEmail
                     }
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
-                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FirstName + " " + item2.LastName) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                    string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.StaffId).relationshipOfficerEmail;
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
+                    string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
                     string templateUrl = "~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
@@ -1307,7 +1341,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw ex;
             }
         }
-
         public void SendAlertsOnInActiveBondAndGuaranteeMonitoringTeam(List<LoanViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -1393,23 +1426,28 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void ExpiredActiveBondAndGuaranteeRM(List<LoanViewModel> loanDetails, string title)
         {
             try
             {
-                List<StaffInfoViewModel> staffList2 = staffRepo.GetAllStaff().ToList();
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList2 = (from x in staffList2
-                              where dataList.Contains(x.StaffId)
-                              select x).ToList();
-                foreach (StaffInfoViewModel item2 in staffList2)
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
                     string dataTable2 = "<table><tr><th>Loan Ref #</th><th>Customer Name</th><th>Contingent Amount</th><th>exchange Rate</th><th>Booking Date</th><th>Effective Date</th><th>Maturity Date</th></tr>";
-                    string recipient = item2.Email;
                     List<LoanViewModel> mailList = (from x in loanDetails
-                                                    where x.relationshipManagerId == item2.StaffId
+                                                    where x.relationshipManagerId == item2.STAFFID
                                                     select x).ToList();
                     foreach (LoanViewModel item3 in mailList)
                     {
@@ -1417,8 +1455,8 @@ namespace FintrakBanking.Repositories.AppEmail
                     }
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
-                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FirstName + " " + item2.LastName) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                    string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.StaffId).relationshipOfficerEmail;
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
+                    string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
                     string templateUrl = "~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
@@ -1447,7 +1485,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw ex;
             }
         }
-
         public void SendAlertsOnExpiredActiveBondAndGuaranteeMonitoringTeam(List<LoanViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -1615,23 +1652,28 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertsOnAccountWithExeptionRM(List<LoanViewModel> loanDetails, string title)
         {
             try
             {
-                List<StaffInfoViewModel> staffList2 = staffRepo.GetAllStaff().ToList();
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList2 = (from x in staffList2
-                              where dataList.Contains(x.StaffId)
-                              select x).ToList();
-                foreach (StaffInfoViewModel item2 in staffList2)
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
                     string dataTable2 = "<table><tr><th>Loan Ref #</th><th>Customer Name</th><th>Contingent Amount</th><th>exchange Rate</th><th>Booking Date</th><th>Effective Date</th><th>Maturity Date</th></tr>";
-                    string recipient = item2.Email;
+
                     List<LoanViewModel> mailList = (from x in loanDetails
-                                                    where x.relationshipManagerId == item2.StaffId
+                                                    where x.relationshipManagerId == item2.STAFFID
                                                     select x).ToList();
                     foreach (LoanViewModel item3 in mailList)
                     {
@@ -1639,8 +1681,8 @@ namespace FintrakBanking.Repositories.AppEmail
                     }
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
-                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FirstName + " " + item2.LastName) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                    string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.StaffId).relationshipOfficerEmail;
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
+                    string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
                     string templateUrl = "~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
@@ -1669,7 +1711,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw ex;
             }
         }
-
         public void SendAlertsOnAccountWithExeptionMonitoringTeam(List<LoanViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -1785,23 +1826,28 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertsOnPastDueObligationAccountsRM(List<LoanViewModel> loanDetails, string title)
         {
             try
             {
-                List<StaffInfoViewModel> staffList2 = staffRepo.GetAllStaff().ToList();
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList2 = (from x in staffList2
-                              where dataList.Contains(x.StaffId)
-                              select x).ToList();
-                foreach (StaffInfoViewModel item2 in staffList2)
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
                     string dataTable2 = "<table><tr><th>Loan Ref #</th><th>Customer Name</th><th>Contingent Amount</th><th>exchange Rate</th><th>Booking Date</th><th>Effective Date</th><th>Maturity Date</th></tr>";
-                    string recipient = item2.Email;
+
                     List<LoanViewModel> mailList = (from x in loanDetails
-                                                    where x.relationshipManagerId == item2.StaffId
+                                                    where x.relationshipManagerId == item2.STAFFID
                                                     select x).ToList();
                     foreach (LoanViewModel item3 in mailList)
                     {
@@ -1809,8 +1855,8 @@ namespace FintrakBanking.Repositories.AppEmail
                     }
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
-                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FirstName + " " + item2.LastName) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                    string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.StaffId).relationshipOfficerEmail;
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
+                    string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
                     string templateUrl = "~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
@@ -1839,7 +1885,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw ex;
             }
         }
-
         public void SendAlertsOnPastDueObligationAccountsMonitoringTeam(List<LoanViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -1952,20 +1997,25 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertOnInsuranceApprochingExpirationRM(List<CollateralViewModel> loanDetails, string title)
         {
             try
             {
-                List<TBL_STAFF> staffList2 = context.TBL_STAFF.ToList();
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList2 = (from x in staffList2
-                              where dataList.Contains(x.STAFFID)
-                              select x).ToList();
-                foreach (TBL_STAFF item2 in staffList2)
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
-                    string recipient = item2.EMAIL;
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
                     List<CollateralViewModel> mailList = (from x in loanDetails
                                                           where x.relationshipManagerId == item2.STAFFID
                                                           select x).ToList();
@@ -2005,7 +2055,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
-
         public void SendAlertOnInsuranceApprochingExpirationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -2118,20 +2167,24 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertOnExpiredInsuranceRM(List<CollateralViewModel> loanDetails, string title)
         {
             try
             {
-                List<TBL_STAFF> staffList2 = context.TBL_STAFF.ToList();
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList2 = (from x in staffList2
-                              where dataList.Contains(x.STAFFID)
-                              select x).ToList();
-                foreach (TBL_STAFF item2 in staffList2)
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
-                    string recipient = item2.EMAIL;
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
                     List<CollateralViewModel> mailList = (from x in loanDetails
                                                           where x.relationshipManagerId == item2.STAFFID
                                                           select x).ToList();
@@ -2171,7 +2224,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
-
         public void SendAlertOnExpiredInsuranceMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try
@@ -2289,20 +2341,24 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             return false;
         }
-
         public void SendAlertOnTurnoverCovenantRM(List<LoanCovenantDetailViewModel> loanDetails, string title)
         {
             try
             {
-                List<TBL_STAFF> staffList2 = context.TBL_STAFF.ToList();
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
-                staffList2 = (from x in staffList2
-                              where dataList.Contains(x.STAFFID)
-                              select x).ToList();
-                foreach (TBL_STAFF item2 in staffList2)
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
                 {
-                    string recipient = item2.EMAIL;
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
                     List<LoanCovenantDetailViewModel> mailList = (from x in loanDetails
                                                                   where x.relationshipManagerId == item2.STAFFID
                                                                   select x).ToList();
@@ -2342,7 +2398,6 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
-
         public void SendAlertOnTurnoverCovenantMonitoringTeam(List<LoanCovenantDetailViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
             try

@@ -6,28 +6,25 @@ namespace FintrakBaking.BranchUpdateService.Fintrak_Model
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_APPROVAL_GROUP")]
-    public partial class TBL_APPROVAL_GROUP
+    [Table("core.TBL_BRANCH_REGION")]
+    public partial class TBL_BRANCH_REGION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_APPROVAL_GROUP()
+        public TBL_BRANCH_REGION()
         {
-            TBL_APPROVAL_GROUP_MAPPING = new HashSet<TBL_APPROVAL_GROUP_MAPPING>();
-            TBL_APPROVAL_LEVEL = new HashSet<TBL_APPROVAL_LEVEL>();
+            TBL_BRANCH = new HashSet<TBL_BRANCH>();
         }
 
         [Key]
-        public int GROUPID { get; set; }
+        public int REGIONID { get; set; }
 
         [Required]
-        [StringLength(150)]
-        public string GROUPNAME { get; set; }
+        [StringLength(200)]
+        public string REGION_NAME { get; set; }
 
         public int COMPANYID { get; set; }
 
-        public int ROLEID { get; set; }
-
-        public bool ISCOMMITTEE { get; set; }
+        public int? CAM_HOU_STAFFID { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -44,9 +41,8 @@ namespace FintrakBaking.BranchUpdateService.Fintrak_Model
         public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
+        public virtual ICollection<TBL_BRANCH> TBL_BRANCH { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
     }
 }

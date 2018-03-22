@@ -58,5 +58,7 @@ namespace FintrakBaking.BranchUpdateService.Fintrak_Model
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CITY> TBL_CITY { get; set; }
+
+        public virtual TBL_REGION TBL_REGION { get; set; }
     }
 }

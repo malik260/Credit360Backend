@@ -9,6 +9,12 @@ namespace FintrakBaking.BranchUpdateService.Fintrak_Model
     [Table("core.TBL_BRANCH")]
     public partial class TBL_BRANCH
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_BRANCH()
+        {
+            TBL_DEPARTMENT = new HashSet<TBL_DEPARTMENT>();
+        }
+
         [Key]
         public short BRANCHID { get; set; }
 
@@ -55,6 +61,11 @@ namespace FintrakBaking.BranchUpdateService.Fintrak_Model
         public DateTime? DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_DEPARTMENT> TBL_DEPARTMENT { get; set; }
+
+        public virtual TBL_BRANCH_REGION TBL_BRANCH_REGION { get; set; }
 
         public virtual TBL_CITY TBL_CITY { get; set; }
 

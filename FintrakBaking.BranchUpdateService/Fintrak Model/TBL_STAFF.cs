@@ -12,7 +12,7 @@ namespace FintrakBaking.BranchUpdateService.Fintrak_Model
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_STAFF()
         {
-            TBL_APPROVAL_LEVEL_STAFF = new HashSet<TBL_APPROVAL_LEVEL_STAFF>();
+            TBL_BRANCH_REGION = new HashSet<TBL_BRANCH_REGION>();
             TBL_STAFF1 = new HashSet<TBL_STAFF>();
             TBL_STAFF11 = new HashSet<TBL_STAFF>();
         }
@@ -118,9 +118,11 @@ namespace FintrakBaking.BranchUpdateService.Fintrak_Model
         public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
+        public virtual ICollection<TBL_BRANCH_REGION> TBL_BRANCH_REGION { get; set; }
 
         public virtual TBL_CITY TBL_CITY { get; set; }
+
+        public virtual TBL_DEPARTMENT_UNIT TBL_DEPARTMENT_UNIT { get; set; }
 
         public virtual TBL_STAFF_JOBTITLE TBL_STAFF_JOBTITLE { get; set; }
 

@@ -57,13 +57,14 @@ namespace FintrakBaking.BranchUpdateService
 
                 AuditTrail.LogFileManager.LogToFile("New Branch Logger Service Started Successfully" + DateTime.Now.ToString());
 
-                string respose = newBranch.AddNewBranches();
+                string UpdateRespose = newBranch.UpdateStaffInformation();
+               // string AddRespose = newBranch.AddNewBranches();
 
-                AuditTrail.LogFileManager.LogToFile("New Branch Logger Service ends with these responses : " + respose + " " + DateTime.Now.ToString());
+                AuditTrail.LogFileManager.LogToFile("New Branch Logger Service ends with these responses : " + UpdateRespose + " " + DateTime.Now.ToString());
 
                 this.IsBusy = false;
 
-                if (respose != "")
+                if (UpdateRespose != "")
                 {
                     AuditTrail.LogFileManager.LogToFile("New Branch Logger Service Ended Successfully" + DateTime.Now.ToString());
                     return;
