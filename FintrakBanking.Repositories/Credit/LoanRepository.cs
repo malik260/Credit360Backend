@@ -189,7 +189,7 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTRATE = model.interestRate,
                 EFFECTIVEDATE = model.effectiveDate,
                 MATURITYDATE = model.maturityDate,
-                BOOKINGDATE = model.bookingDate,
+                BOOKINGDATE = DateTime.Now, //model.bookingDate,
                 OVERDRAFTLIMIT = revolvingLoanInput.overdraftLimit,
                 DAYCOUNTCONVENTIONID = model.scheduleDayCountConventionId,
 
@@ -229,10 +229,6 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Revolving Loan Record.........................
                     var loan = context.TBL_LOAN_REVOLVING.Add(data);
 
-                    
-                    if (model.monitoringTriggers.Count > 0)
-                        AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)model.productTypeId);
-
                     //...................Saving Loan Collaterals Mapping.......................
                      AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
 
@@ -267,6 +263,10 @@ namespace FintrakBanking.Repositories.Credit
                         AddLoanFees(model.loanChargeFee, model.createdBy, loan.REVOLVINGLOANID, (short)model.productTypeId, model.companyId, model.feeOverride);
 
                         model.loanReferenceNumber = loanReferenceNumber;
+
+                        if (model.monitoringTriggers.Count > 0)
+                            AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)model.productTypeId);
+
                         if (!model.feeOverride) PostLoanFees(model);
                         context.SaveChanges();
 
@@ -342,7 +342,7 @@ namespace FintrakBanking.Repositories.Credit
                 EFFECTIVEDATE = entity.effectiveDate,
                 MATURITYDATE = entity.maturityDate,
                 
-                BOOKINGDATE = entity.bookingDate,
+                BOOKINGDATE = DateTime.Now, //entity.bookingDate,
 
                 CONTINGENTAMOUNT = contingentLoanInput.contingentAmount,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
@@ -379,9 +379,6 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Contingent Loan Record.........................
                     var loan = context.TBL_LOAN_CONTINGENT.Add(data);
 
-                    if (entity.monitoringTriggers.Count > 0)
-                        AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)entity.productTypeId);
-
                     //...................Saving Loan Collaterals Mapping.......................
                      AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
 
@@ -415,6 +412,10 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Fees..........
                         AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.CONTINGENTLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
                         entity.loanReferenceNumber = loanReferenceNumber;
+
+                        if (entity.monitoringTriggers.Count > 0)
+                            AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)entity.productTypeId);
+
                         if (!entity.feeOverride) PostLoanFees(entity);
 
                         context.SaveChanges();
@@ -547,7 +548,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
 
-                BOOKINGDATE = entity.bookingDate,
+                BOOKINGDATE = DateTime.Now, //entity.bookingDate,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 EFFECTIVEDATE = entity.loanScheduleInput.effectiveDate,
@@ -585,9 +586,6 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Term Loan Record.........................
                     var loan = context.TBL_LOAN.Add(data);
 
-                    
-                    if (entity.monitoringTriggers.Count > 0 )
-                         AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)entity.productTypeId);
 
                     //...................Saving Loan Collaterals Mapping.......................
                      AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
@@ -629,6 +627,9 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)entity.productTypeId);
                             AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
+
+                            if (entity.monitoringTriggers.Count > 0)
+                                AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)entity.productTypeId);
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                             if (!entity.feeOverride) PostLoanFees(entity);

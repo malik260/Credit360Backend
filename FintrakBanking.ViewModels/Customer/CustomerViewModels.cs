@@ -8,6 +8,7 @@ namespace FintrakBanking.ViewModels.Customer
     {
         public string branchCode { get; set; }
         public string rcNumber;
+        public string customerAccountNo;
 
         public int creditBureauCount { get; set; }
         public bool isCreditBureauUploadCompleted { get; set; }
