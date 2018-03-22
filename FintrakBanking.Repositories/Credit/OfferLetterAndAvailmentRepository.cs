@@ -34,7 +34,8 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext _context,
             IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
-            ILoanRepository _loans)
+            ILoanRepository _loans
+            )
         {
             context = _context;
             auditTrail = _auditTrail;
@@ -557,6 +558,15 @@ namespace FintrakBanking.Repositories.Credit
                                  collateralValue = x.COLLATERALVALUE,
                                  stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT
                              }).ToList();
+
+
+            var loanMonitoringTrigger  = (from x in context.TBL_LOAN_APPLICATN_DETL_MTRIG
+                                       join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals y.LOANAPPLICATIONDETAILID
+                                        where y.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                   select new MonitoringTriggersViewModel()
+                                   {
+                                       monitoringTrigger = x.MONITORING_TRIGGER,
+                                   }).ToList();
 
 
 
