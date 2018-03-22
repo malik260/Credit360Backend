@@ -66,6 +66,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? PRINCIPALBALANCEGL { get; set; }
 
+        public int? PRINCIPALBALANCEGL2 { get; set; }
+
         public int? INTERESTINCOMEEXPENSEGL { get; set; }
 
         public int? INTERESTRECEIVABLEPAYABLEGL { get; set; }
@@ -230,6 +232,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT4 { get; set; }
 
         public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT5 { get; set; }
+
+        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT6 { get; set; }
 
         public virtual TBL_DEAL_TYPE TBL_DEAL_TYPE { get; set; }
 

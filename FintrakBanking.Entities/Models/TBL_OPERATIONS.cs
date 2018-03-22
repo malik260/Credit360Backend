@@ -43,6 +43,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(300)]
         public string OPERATIONURL { get; set; }
 
+        public bool ISDISABLED { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
 

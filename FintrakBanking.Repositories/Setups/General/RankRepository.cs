@@ -20,37 +20,37 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public RankViewModel GetRank(int jobTitleId)
         {
-            var rank = (from a in context.TBL_STAFF_RANK
+            var rank = (from a in context.TBL_STAFF_ROLE
                         select new RankViewModel
                         {
-                            rankName = a.RANKNAME,
+                           roleName = a.STAFFROLENAME,
                             companyId = (short)a.COMPANYID,
-                            rankId = a.RANKID
+                            roleId = a.STAFFROLEID
                         }).SingleOrDefault();
             return rank;
         }
 
         public IEnumerable<RankViewModel> GetRankByCompanyId(int companyId)
         {
-            return from a in context.TBL_STAFF_RANK
+            return from a in context.TBL_STAFF_ROLE
                         where a.COMPANYID == companyId
                         select new RankViewModel
                         {
-                            rankName = a.RANKNAME,
+                            roleName = a.STAFFROLENAME,
                             companyId = (short)a.COMPANYID,
-                            rankId = a.RANKID
+                            roleId = a.STAFFROLEID
                         };
             
         }
 
         public IEnumerable<RankViewModel> GetRank()
         {
-            var rank = (from a in context.TBL_STAFF_RANK
+            var rank = (from a in context.TBL_STAFF_ROLE
                         select new RankViewModel
                         {
-                            rankName = a.RANKNAME,
+                            roleName = a.STAFFROLENAME,
                             companyId = (short)a.COMPANYID,
-                            rankId = a.RANKID
+                            roleId = a.STAFFROLEID
                         });
             return rank;
         }

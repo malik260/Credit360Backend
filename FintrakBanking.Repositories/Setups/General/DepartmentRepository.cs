@@ -287,7 +287,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                   staffId = c.STAFFID,
                                   middlename = c.MIDDLENAME,
                                
-                                  rankName = c.TBL_STAFF_RANK.RANKNAME,
+                                  RoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
                                   jobTitleName = c.TBL_STAFF_JOBTITLE.JOBTITLENAME
                               });
             return department;
@@ -380,7 +380,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                   lastname = s.LASTNAME,
                                   middlename = s.MIDDLENAME,                                
                                   staffId = s.STAFFID,
-                                  rankName = s.TBL_STAFF_RANK.RANKNAME,
+                                  RoleName = s.TBL_STAFF_ROLE.STAFFROLENAME,
                                   jobTitleName = s.TBL_STAFF_JOBTITLE.JOBTITLENAME
                               };
 

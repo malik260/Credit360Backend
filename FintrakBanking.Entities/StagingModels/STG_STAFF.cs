@@ -1,4 +1,4 @@
-namespace FintrakBaking.BranchUpdateService.Staging_Model
+namespace FintrakBanking.Entities.StagingModels
 {
     using System;
     using System.Collections.Generic;

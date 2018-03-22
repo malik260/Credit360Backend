@@ -56,21 +56,6 @@
   <ItemGroup>
     <Compile Include="AuditTrail.cs" />
     <Compile Include="BranchViewModel.cs" />
-    <Compile Include="Fintrak Model\FinTrakBankingContext.cs" />
-    <Compile Include="Fintrak Model\TBL_APPROVAL_STATE.cs" />
-    <Compile Include="Fintrak Model\TBL_BRANCH.cs" />
-    <Compile Include="Fintrak Model\TBL_BRANCH_REGION.cs" />
-    <Compile Include="Fintrak Model\TBL_CITY.cs" />
-    <Compile Include="Fintrak Model\TBL_CITY_CLASS.cs" />
-    <Compile Include="Fintrak Model\TBL_DEPARTMENT.cs" />
-    <Compile Include="Fintrak Model\TBL_DEPARTMENT_UNIT.cs" />
-    <Compile Include="Fintrak Model\TBL_REGION.cs" />
-    <Compile Include="Fintrak Model\TBL_SECTOR.cs" />
-    <Compile Include="Fintrak Model\TBL_STAFF.cs" />
-    <Compile Include="Fintrak Model\TBL_STAFF_JOBTITLE.cs" />
-    <Compile Include="Fintrak Model\TBL_STAFF_ORGANOGRAM.cs" />
-    <Compile Include="Fintrak Model\TBL_STAFF_RANK.cs" />
-    <Compile Include="Fintrak Model\TBL_STATE.cs" />
     <Compile Include="FintrakStaggingInformationUpdate.cs" />
     <Compile Include="NewBranchService.cs">
       <SubType>Component</SubType>
@@ -86,10 +71,6 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Staging Model\FinTrakBankingStagingContext.cs" />
-    <Compile Include="Staging Model\STG_BRANCH.cs" />
-    <Compile Include="Staging Model\STG_CUSTOMER.cs" />
-    <Compile Include="Staging Model\STG_STAFF.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -99,6 +80,12 @@
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
+      <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
+      <Name>FintrakBanking.Entities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,5 +1,6 @@
-﻿using FintrakBaking.BranchUpdateService.Fintrak_Model;
-using FintrakBaking.BranchUpdateService.Staging_Model;
+﻿
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Entities.StagingModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,59 +70,79 @@ namespace FintrakBaking.BranchUpdateService
             string StaffAdded = string.Empty;
             string StaffUpdated = string.Empty;
             var stagingStaff = stagingContext.STG_STAFF;
-            foreach (var x in stagingStaff)
+            foreach (var staging in stagingStaff)
             {
-                var frantrakStaff = coreContext.TBL_STAFF.Where(o => x.STAFFCODE == x.STAFFCODE).FirstOrDefault();
+
+                var frantrakStaff = (from b in coreContext.TBL_STAFF
+                                     where b.STAFFCODE == staging.STAFFCODE
+                                     select new { b }).FirstOrDefault();
+
                 if (frantrakStaff == null)
                 {
-
                     var model = new TBL_STAFF
                     {
-                        ADDRESS = x.ADDRESS1,
-                        BRANCHID = coreContext.TBL_BRANCH.FirstOrDefault(o => o.BRANCHCODE == x.BRANCHCODE).BRANCHID,
-                        FIRSTNAME = x.FIRSTNAME,
-                        MIDDLENAME = x.MIDDLENAME,
-                        LASTNAME = x.LASTNAME,
-                        PHONE = x.PHONE,
-                        EMAIL = x.EMAIL,
-                        DEPARTMENTID = coreContext.TBL_DEPARTMENT.FirstOrDefault(o => o.DEPARTMENTCODE == x.DEPARTMENTCODE.ToString()).DEPARTMENTID,
-                        STAFFCODE = x.STAFFCODE,
-                        SUPERVISOR_STAFFID = coreContext.TBL_STAFF.FirstOrDefault(s => s.STAFFCODE == stagingContext.STG_STAFF.FirstOrDefault(o => o.STAFFCODE == x.STAFFCODE).SUPERVISORSTAFFCODE).STAFFID,
+                        ADDRESS = staging.ADDRESS1,
+                        BRANCHID = coreContext.TBL_BRANCH.FirstOrDefault(o => o.BRANCHCODE == staging.BRANCHCODE).BRANCHID,
+                        FIRSTNAME = staging.FIRSTNAME,
+                        MIDDLENAME = staging.MIDDLENAME,
+                        LASTNAME = staging.LASTNAME,
+                        PHONE = staging.PHONE,
+                        EMAIL = staging.EMAIL,
+                        DEPARTMENTID = coreContext.TBL_DEPARTMENT.FirstOrDefault(o => o.DEPARTMENTCODE == staging.DEPARTMENTCODE.ToString()).DEPARTMENTID,
+                        STAFFCODE = staging.STAFFCODE,
+                        SUPERVISOR_STAFFID = coreContext.TBL_STAFF.FirstOrDefault(s => s.STAFFCODE == staging.SUPERVISORSTAFFCODE).STAFFID,
                     };
 
                     coreContext.TBL_STAFF.Add(model);
 
-                    try
+
+                    response = coreContext.SaveChanges();
+                    if (response != 0)
                     {
-                        response = coreContext.SaveChanges();
-                        if (response != 0)
-                        {
-                            StaffAdded = StaffAdded + ", " + x.STAFFCODE;
-                        }
+                        StaffAdded = StaffAdded + ", " + staging.STAFFCODE;
                     }
-                    catch (Exception ex) { }
+
                 }
                 else
                 {
                     // update branch
-                    string newBranchCode = stagingContext.STG_STAFF.FirstOrDefault(o => o.STAFFCODE == x.STAFFCODE).BRANCHCODE;
+                    string newBranchCode = stagingContext.STG_STAFF.FirstOrDefault(o => o.STAFFCODE == staging.STAFFCODE).BRANCHCODE;
 
-                    TBL_STAFF branch = new TBL_STAFF();
+                    var br = coreContext.TBL_BRANCH.Where(o => o.BRANCHCODE == newBranchCode).FirstOrDefault();
 
-                    var br = coreContext.TBL_BRANCH.FirstOrDefault(o => o.BRANCHCODE == newBranchCode);
-                   
-                    if (br.BRANCHID != null)
+                    if (br != null)
                     {
-                        try
+
+                        var sStaff = stagingStaff.FirstOrDefault(s => s.STAFFCODE == staging.STAFFCODE);
+                        var supervisorStaffId = coreContext.TBL_STAFF.FirstOrDefault(s => s.STAFFCODE == staging.SUPERVISORSTAFFCODE);
+                        var deptID = coreContext.TBL_DEPARTMENT.FirstOrDefault(o => o.DEPARTMENTCODE == staging.DEPARTMENTCODE.ToString());
+
+                        TBL_STAFF val = coreContext.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE == staging.STAFFCODE);
+                        val.ADDRESS = staging.ADRESS2;
+                        val.BRANCHID = br.BRANCHID ;
+                       // val.DEPARTMENTID = deptID.DEPARTMENTID;
+                       // val.SUPERVISOR_STAFFID = supervisorStaffId.STAFFID;// coreContext.TBL_STAFF.FirstOrDefault(s => s.STAFFCODE == staging.SUPERVISORSTAFFCODE).STAFFID,
+
+
+                        response = coreContext.SaveChanges();
+
+                        if (response != 0)
                         {
-                            branch.BRANCHID = br.BRANCHID;
-                            response = coreContext.SaveChanges();
-                            if (response != 0)
-                            {
-                                StaffUpdated = StaffUpdated + ", " + x.STAFFCODE;
-                            }
+                            StaffAdded = StaffAdded + ", " + staging.STAFFCODE;
                         }
-                        catch (Exception ex) { }
+
+                        //branch.BRANCHID = br.BRANCHID;
+                        //if (supervisorStaffId != null)
+                        //{
+                        //    branch.SUPERVISOR_STAFFID = supervisorStaffId.STAFFID;
+                        //}
+
+                        //response = coreContext.SaveChanges();
+                        //if (response != 0)
+                        //{
+                        //    StaffUpdated = StaffUpdated + ", " + staging.STAFFCODE;
+                        //}
+
                     }
                 }
             }

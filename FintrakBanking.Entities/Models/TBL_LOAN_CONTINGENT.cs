@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.TBL_LOAN_CONTINGENT")]
     public partial class TBL_LOAN_CONTINGENT
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_LOAN_CONTINGENT()
+        {
+            TBL_LOAN_CONTINGENT_USAGE = new HashSet<TBL_LOAN_CONTINGENT_USAGE>();
+        }
+
         [Key]
         public int CONTINGENTLOANID { get; set; }
 
@@ -126,5 +132,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
 
         public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_CONTINGENT_USAGE> TBL_LOAN_CONTINGENT_USAGE { get; set; }
     }
 }

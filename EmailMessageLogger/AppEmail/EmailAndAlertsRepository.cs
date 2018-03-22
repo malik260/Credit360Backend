@@ -47,7 +47,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertsForCovenantsApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP alertsetupForCovenantsApproachingDueDate = (from x in alertSetups
-                                                                                   where x.MONITORING_ITEMID == 8
+                                                                                   where x.MONITORING_ITEMID == (int)AlertMessageEnum.LoanCovenantApproachingDueDates
                                                                                    select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanCovenantDetailViewModel> loanDetails = (from a in context.TBL_LOAN_COVENANT_DETAIL
@@ -56,7 +56,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                              join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                                                              join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals (short?)f.FREQUENCYTYPEID
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
-                                                             where DbFunctions.DiffDays(a.NEXTCOVENANTDATE, currentDate) <= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD1
+                                                             where DbFunctions.DiffDays(a.NEXTCOVENANTDATE, currentDate) >= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD1
                                                              select new LoanCovenantDetailViewModel
                                                              {
                                                                  companyId = a.COMPANYID,
@@ -78,7 +78,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                                  officerEmail = d.EMAIL,
                                                                  notificationDuration = (int)DbFunctions.DiffDays(a.NEXTCOVENANTDATE, currentDate)
                                                              }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsForCovenantsApproachingDueDateToRM(loanDetails, alertsetupForCovenantsApproachingDueDate.MESSAGE_TITLE);
                 if (alertsetupForCovenantsApproachingDueDate.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -222,7 +222,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertsForCovenantsOverDue(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP alertsetupForCovenantsOverDue = (from x in alertSetups
-                                                                        where x.MONITORING_ITEMID == 2
+                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.LoanCoveantOverdue
                                                                         select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanCovenantDetailViewModel> loanDetails = (from a in context.TBL_LOAN_COVENANT_DETAIL
@@ -252,7 +252,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                                  officerEmail = d.EMAIL,
                                                                  notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.NEXTCOVENANTDATE.Value, (DateTime?)currentDate)
                                                              }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsForCovenantsOverDueRM(loanDetails, alertsetupForCovenantsOverDue.MESSAGE_TITLE);
                 if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -262,7 +262,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                                             select x).ToList();
                     if (escalationLevelOne != null)
                     {
-                        SendAlertsForCovenantsOverDueMonitoringTeam(escalationLevelOne, alertsetupForCovenantsOverDue);
+                        SendAlertsForCovenantsOverDueMonitoringTeam(loanDetails, alertsetupForCovenantsOverDue);
                     }
                 }
                 if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS2.Trim() != string.Empty)
@@ -272,7 +272,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                                             select x).ToList();
                     if (escalationLevelTwo != null)
                     {
-                        SendAlertsForCovenantsOverDueMonitoringTeam(escalationLevelTwo, alertsetupForCovenantsOverDue);
+                        SendAlertsForCovenantsOverDueMonitoringTeam(loanDetails, alertsetupForCovenantsOverDue);
                     }
                 }
                 if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS3.Trim() != string.Empty)
@@ -282,7 +282,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                                               select x).ToList();
                     if (escalationLevelThree != null)
                     {
-                        SendAlertsForCovenantsOverDueMonitoringTeam(escalationLevelThree, alertsetupForCovenantsOverDue);
+                        SendAlertsForCovenantsOverDueMonitoringTeam(loanDetails, alertsetupForCovenantsOverDue);
                     }
                 }
                 return true;
@@ -319,7 +319,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loan covenants which are overdue for revaluation. <br /><br />" + $"{dataTable2}";
                     string additionalRecipient = loanDetails.FirstOrDefault((LoanCovenantDetailViewModel x) => x.relationshipOfficerId == item2.STAFFID).officerEmail;
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl = "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -360,7 +360,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loan covenants which are overdue for revaluation. <br /><br />" + $"{dataTable}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl = "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -395,7 +395,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertsForCollateralPropertyRevaluation(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP alertsetupForCovenantsOverDue = (from x in alertSetups
-                                                                        where x.MONITORING_ITEMID == 3
+                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.CollateralRevaluation
                                                                         select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<CollateralViewModel> loanDetails = (from a in context.TBL_COLLATERAL_CUSTOMER
@@ -404,7 +404,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                      join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
                                                      join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
                                                      join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
-                                                     where DbFunctions.DiffDays((DateTime?)f.LASTVALUATIONDATE, (DateTime?)currentDate) <= (int?)alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
+                                                     where DbFunctions.DiffDays((DateTime?)f.LASTVALUATIONDATE, (DateTime?)currentDate) >= (int?)alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
                                                      select new CollateralViewModel
                                                      {
                                                          collateralTypeId = a.COLLATERALTYPEID,
@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                          relationshipManagerEmail = c.EMAIL,
                                                          notificationDuration = (int)DbFunctions.DiffDays((DateTime?)f.LASTVALUATIONDATE, (DateTime?)currentDate)
                                                      }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsForCollateralPropertyRevaluationRM(loanDetails, alertsetupForCovenantsOverDue.MESSAGE_TITLE);
                 if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -485,7 +485,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     }
                     dataTable2 += "</table>";
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following collaterals which are due for revaluation. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -526,7 +526,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following collaterals which are due for revaluation. <br /><br />" + $"{dataTable}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -586,7 +586,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                    relationshipOfficerName = b.TBL_STAFF.FIRSTNAME + " " + b.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = b.TBL_STAFF.EMAIL
                                                }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsForLoanNplMonitoringRM(loanDetails, alertsetupForCovenantsOverDue.MESSAGE_TITLE);
                 SendAlertsForLoanNplMonitoringMonitoringTeam(loanDetails, alertsetupForCovenantsOverDue);
@@ -625,7 +625,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     dataTable2 += "</table>";
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loans which are underperforming. <br /><br />" + $"{dataTable2}";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -666,7 +666,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable += "</table>";
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loans which are underperforming. <br /><br />" + $"{dataTable}";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -701,14 +701,14 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertsOnSelfLiquidatingLoanExpiry(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP alertOnSelfLiquidatingLoanExpiry = (from x in alertSetups
-                                                                           where x.MONITORING_ITEMID == 5
+                                                                           where x.MONITORING_ITEMID == (int)AlertMessageEnum.SelfLiquidatingLoanExpiry
                                                                            select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN
                                                join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
                                                join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                                               where a.TBL_PRODUCT.PRODUCTTYPEID == 2 && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate) <= (int?)alertOnSelfLiquidatingLoanExpiry.NOTIFICATION_PERIOD1
+                                               where a.TBL_PRODUCT.PRODUCTTYPEID == 2 && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate) >= (int?)alertOnSelfLiquidatingLoanExpiry.NOTIFICATION_PERIOD1
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -728,7 +728,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL
                                                }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsOnSelfLiquidatingLoanExpiryRM(loanDetails, alertOnSelfLiquidatingLoanExpiry.MESSAGE_TITLE);
                 if (alertOnSelfLiquidatingLoanExpiry.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -798,7 +798,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = "Dear Team, <br /><br />This is to bring your attention the following self-liquidating loans which are approaching expiry. <br /><br />" + $"{dataTable2}";
                     string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -839,7 +839,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following self-liquidating loans which are approaching expiry. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -875,14 +875,14 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertsOnOverDraftLoansAlmostDue(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP alertOnOverDraftLoansAlmostDue = (from x in alertSetups
-                                                                         where x.MONITORING_ITEMID == 3
+                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.OverdraftLoansAlmostDue
                                                                          select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_REVOLVING
                                                join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
                                                join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                                               where a.TBL_PRODUCT.PRODUCTTYPEID == 6 && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate) <= (int?)alertOnOverDraftLoansAlmostDue.NOTIFICATION_PERIOD1
+                                               where a.TBL_PRODUCT.PRODUCTTYPEID == 6 && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate)>= (int?)alertOnOverDraftLoansAlmostDue.NOTIFICATION_PERIOD1
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -901,7 +901,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL
                                                }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsOnOverDraftLoansAlmostDueRM(loanDetails, alertOnOverDraftLoansAlmostDue.MESSAGE_TITLE);
                 if (alertOnOverDraftLoansAlmostDue.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -968,7 +968,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = "Dear Team, <br /><br />This is to bring your attention the following overdraft loans which are approaching expiry. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1009,7 +1009,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following overdraft loans which are approaching expiry. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1044,7 +1044,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertsOnLoanCASAwithPND(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP CASAwithPND = (from x in alertSetups
-                                                      where x.MONITORING_ITEMID == 9
+                                                      where x.MONITORING_ITEMID == (int)AlertMessageEnum.CASAwithPND
                                                       select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN
@@ -1074,7 +1074,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                    branchName = br.BRANCHNAME,
                                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME
                                                }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsOnLoanCASAwithPNDrm(loanDetails, CASAwithPND.MESSAGE_TITLE);
                 if (CASAwithPND.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -1140,7 +1140,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     }
                     dataTable2 += "</table>";
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loans are on PND and lein placed on them. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1181,7 +1181,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loans are on PND and lein placed on them. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1216,14 +1216,14 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertsOnInActiveBondAndGuarantee(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP InActiveBondAndGuarantee = (from x in alertSetups
-                                                                   where x.MONITORING_ITEMID == 11
+                                                                   where x.MONITORING_ITEMID == (int)AlertMessageEnum.InactiveBondAndGuarantee
                                                                    select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) < (int?)InActiveBondAndGuarantee.NOTIFICATION_PERIOD1 && a.LOANSTATUSID == 1
+                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) > (int?)InActiveBondAndGuarantee.NOTIFICATION_PERIOD1 && a.LOANSTATUSID == 1
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -1245,7 +1245,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
                                                    notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now)
                                                }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsOnInActiveBondAndGuaranteeRM(loanDetails, InActiveBondAndGuarantee.MESSAGE_TITLE);
                 if (InActiveBondAndGuarantee.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -1313,7 +1313,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
                     string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1354,7 +1354,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1390,14 +1390,14 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertsOnExpiredActiveBondAndGuarantee(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP ExpiredActiveBondAndGuarantee = (from x in alertSetups
-                                                                        where x.MONITORING_ITEMID == 12
+                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.ExpiredActiveBondAndGuarantee
                                                                         select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                               where a.ISTENORED == false && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) < (int?)0 && a.LOANSTATUSID == 1 && a.RELATED_LOAN_REFERENCE_NUMBER != string.Empty
+                                               where a.ISTENORED == false && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) > (int?)0 && a.LOANSTATUSID == 1 && a.RELATED_LOAN_REFERENCE_NUMBER != string.Empty
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -1418,7 +1418,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                    branchName = br.BRANCHNAME,
                                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME
                                                }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsOnInActiveBondAndGuaranteeRM(loanDetails, ExpiredActiveBondAndGuarantee.MESSAGE_TITLE);
                 SendAlertsOnExpiredActiveBondAndGuaranteeMonitoringTeam(loanDetails, ExpiredActiveBondAndGuarantee);
@@ -1457,7 +1457,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
                     string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1498,7 +1498,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1533,7 +1533,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertOnAccountWithExeption(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP AccountWithExeption = (from x in alertSetups
-                                                              where x.MONITORING_ITEMID == 13
+                                                              where x.MONITORING_ITEMID == (int)AlertMessageEnum.AccountWithExeption
                                                               select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanViewModel> loanDetails3 = (from a in context.TBL_LOAN_CONTINGENT
@@ -1615,7 +1615,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                     notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
                                                 }).ToList();
             IEnumerable<LoanViewModel> loanDetails = loanDetails3.ToList().Union(loanDetails4.ToList()).Union(loanDetails2.ToList());
-            if (loanDetails != null)
+            if (loanDetails !=null)
             {
                 SendAlertsOnAccountWithExeptionRM(loanDetails.ToList(), AccountWithExeption.MESSAGE_TITLE);
                 if (AccountWithExeption.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -1683,7 +1683,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
                     string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1724,7 +1724,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1760,7 +1760,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertOnPastDueObligationAccounts(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP PastDueObligationAccounts = (from x in alertSetups
-                                                                    where x.MONITORING_ITEMID == 14
+                                                                    where x.MONITORING_ITEMID == (int)AlertMessageEnum.AccountsThatPastDueObligation
                                                                     select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_CONTINGENT
@@ -1789,7 +1789,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
                                                    notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
                                                }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsOnPastDueObligationAccountsRM(loanDetails.ToList(), PastDueObligationAccounts.MESSAGE_TITLE);
                 if (PastDueObligationAccounts.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -1857,7 +1857,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
                     string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1898,7 +1898,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1934,7 +1934,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertOnInsuranceApprochingExpiration(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP InsuranceApprochingExpiration = (from x in alertSetups
-                                                                        where x.MONITORING_ITEMID == 15
+                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.InsuranceApprochingExpiration
                                                                         select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<CollateralViewModel> loanDetails = (from a in context.TBL_COLLATERAL_CUSTOMER
@@ -1960,7 +1960,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                          endDate = (DateTime?)p.ENDDATE,
                                                          notificationDuration = (int)DbFunctions.DiffDays((DateTime?)p.ENDDATE, (DateTime?)currentDate)
                                                      }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertOnInsuranceApprochingExpirationRM(loanDetails, InsuranceApprochingExpiration.MESSAGE_TITLE);
                 if (InsuranceApprochingExpiration.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -2027,7 +2027,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -2068,7 +2068,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -2104,7 +2104,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertForExpiredInsurance(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP ExpiredInsurance = (from x in alertSetups
-                                                           where x.MONITORING_ITEMID == 16
+                                                           where x.MONITORING_ITEMID == (int)AlertMessageEnum.ExpiredInsurance
                                                            select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<CollateralViewModel> loanDetails = (from a in context.TBL_COLLATERAL_CUSTOMER
@@ -2130,7 +2130,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                          endDate = (DateTime?)p.ENDDATE,
                                                          notificationDuration = (int)DbFunctions.DiffDays((DateTime?)p.ENDDATE, (DateTime?)DateTime.Now)
                                                      }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertOnExpiredInsuranceRM(loanDetails, ExpiredInsurance.MESSAGE_TITLE);
                 if (ExpiredInsurance.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -2196,7 +2196,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -2237,7 +2237,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -2273,7 +2273,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public bool SendAlertOnTurnoverCovenant(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP TurnoverCovenant = (from x in alertSetups
-                                                           where x.MONITORING_ITEMID == 17
+                                                           where x.MONITORING_ITEMID == (int)AlertMessageEnum.TurnoverCovenant
                                                            select x).FirstOrDefault();
             DateTime currentDate = DateTime.Now;
             List<LoanCovenantDetailViewModel> loanDetails = (from a in context.TBL_LOAN_COVENANT_DETAIL
@@ -2304,7 +2304,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                                  officerEmail = d.EMAIL,
                                                                  notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.NEXTCOVENANTDATE.Value, (DateTime?)currentDate)
                                                              }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertOnTurnoverCovenantRM(loanDetails, TurnoverCovenant.MESSAGE_TITLE);
                 if (TurnoverCovenant.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -2370,7 +2370,7 @@ namespace FintrakBanking.Repositories.AppEmail
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "~/EmailTemplates/Monitoring.html";
+                    string templateUrl =  "EmailTemplates\\Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -2411,7 +2411,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string templateUrl =  "EmailTemplates\\Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -2473,7 +2473,7 @@ namespace FintrakBanking.Repositories.AppEmail
         //{
         //    bool sentEmail;
 
-        //    var templateUrl = "~/EmailTemplates/Monitoring.html";
+        //    var templateUrl =  "EmailTemplates\\Monitoring.html";
 
         //    var message = new TBL_MESSAGE_LOG()
         //    {
