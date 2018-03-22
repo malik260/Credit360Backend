@@ -31,6 +31,8 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime ENDDATE { get; set; }
 
+        public bool HASEXPIRED { get; set; }
+
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

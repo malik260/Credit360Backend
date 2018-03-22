@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
 using System;
@@ -10,7 +11,7 @@ namespace FintrakBanking.Interfaces.Finance
     {
         //bool AddCollateralSearchLien(CasaLienViewModel model);
 
-        List<FinanceTransactionViewModel> PostCollateralSearch(CasaLienViewModel model);
+        //List<FinanceTransactionViewModel> PostCollateralSearch(CasaLienViewModel model);
 
         string PostTransaction(List<FinanceTransactionViewModel> transaction);
 
