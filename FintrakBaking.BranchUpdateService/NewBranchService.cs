@@ -44,11 +44,11 @@ namespace FintrakBaking.BranchUpdateService
             {
                 if (!this.IsBusy)
                 {
-                    AddBranch();
+                    StaggingDataUpdate();
                 }
             }
         }
-        private void AddBranch()
+        private void StaggingDataUpdate()
         {
             this.IsBusy = true;
             try
@@ -70,7 +70,6 @@ namespace FintrakBaking.BranchUpdateService
                     return;
                 }
                 else
-
                     AuditTrail.LogFileManager.LogToFile("New Branch Logger Service Failed" + DateTime.Now.ToString());
 
 

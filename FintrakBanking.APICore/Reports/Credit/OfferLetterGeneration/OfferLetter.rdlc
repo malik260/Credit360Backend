@@ -4078,11 +4078,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-<<<<<<< HEAD
-                    <Value>a)    In line with the Bank’s policy to review facilities from time to time in light of changing market conditions, the Bank reserves the right at any time without notice, liability, cavil, let or hindrance and at its absolute discretion to convert any foreign currency facility to Naira, at the prevailing interbank foreign exchange rate or import and export window on the date of conversion. The interest rate on the naira facility will default to the bank’s prime lending rate until re-negotiated.</Value>
-=======
                     <Value />
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Times New Roman</FontFamily>
@@ -4099,9 +4095,6 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-<<<<<<< HEAD
-                    <Value>b)   Approval of any request for extension of the facility at the expiration of the tenure hereby provided shall be at the discretion of the Bank and shall be subject to a fee of  ……% flat for new tenure as may be approved.</Value>
-=======
                     <Value>a)</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
@@ -4166,7 +4159,6 @@
                   </TextRun>
                   <TextRun>
                     <Value>Approval of any request for extension of the facility at the expiration of the tenure hereby provided shall be at the discretion of the Bank and shall be subject to a fee of  ……% flat for new tenure as may be approved.</Value>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -4176,14 +4168,8 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
-<<<<<<< HEAD
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
-=======
                 <LeftIndent>0.5in</LeftIndent>
                 <HangingIndent>-0.25in</HangingIndent>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                 <Style>
                   <TextAlign>Left</TextAlign>
                 </Style>
@@ -4191,9 +4177,6 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-<<<<<<< HEAD
-                    <Value>c)   The Borrower hereby indemnifies the Bank against any loss that might be incurred by the Bank as a result of any irregularity or incompleteness in the information contained in any documents submitted to the Bank.</Value>
-=======
                     <Value>c)</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
@@ -4217,7 +4200,6 @@
                   </TextRun>
                   <TextRun>
                     <Value>The Borrower hereby indemnifies the Bank against any loss that might be incurred by the Bank as a result of any irregularity or incompleteness in the information contained in any documents submitted to the Bank.</Value>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -4227,14 +4209,8 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
-<<<<<<< HEAD
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
-=======
                 <LeftIndent>0.5in</LeftIndent>
                 <HangingIndent>-0.25in</HangingIndent>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                 <Style>
                   <TextAlign>Left</TextAlign>
                 </Style>
@@ -4271,8 +4247,6 @@
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
-<<<<<<< HEAD
-=======
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -4292,36 +4266,22 @@
                       <FontSize>12pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                       <Color>#000000</Color>
                     </Style>
                   </TextRun>
                   <TextRun>
-<<<<<<< HEAD
-                    <Value xml:space="preserve"> </Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-=======
                     <Value xml:space="preserve">       </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Times New Roman</FontFamily>
                       <FontSize>7pt</FontSize>
                       <FontWeight>Normal</FontWeight>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                       <TextDecoration>None</TextDecoration>
                       <Color>#000000</Color>
                     </Style>
                   </TextRun>
                   <TextRun>
-<<<<<<< HEAD
-                    <Value>   No change in the business operations and conditions (financial or otherwise) or in the prospects of the Borrower shall affect the full repayment of the facility at maturity.</Value>
-=======
                     <Value>This facility shall be utilized strictly for the purpose for which it is granted and on no condition should it be utilized for any other purpose.</Value>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -4331,14 +4291,8 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
-<<<<<<< HEAD
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
-=======
                 <LeftIndent>0.5in</LeftIndent>
                 <HangingIndent>-0.25in</HangingIndent>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                 <Style>
                   <TextAlign>Left</TextAlign>
                 </Style>
@@ -4378,14 +4332,8 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
-<<<<<<< HEAD
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
-=======
                 <LeftIndent>0.5in</LeftIndent>
                 <HangingIndent>-0.25in</HangingIndent>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                 <Style>
                   <TextAlign>Left</TextAlign>
                 </Style>
@@ -4425,14 +4373,8 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
-<<<<<<< HEAD
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
-=======
                 <LeftIndent>0.5in</LeftIndent>
                 <HangingIndent>-0.25in</HangingIndent>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                 <Style>
                   <TextAlign>Left</TextAlign>
                 </Style>
@@ -4472,14 +4414,8 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
-<<<<<<< HEAD
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
-=======
                 <LeftIndent>0.5in</LeftIndent>
                 <HangingIndent>-0.25in</HangingIndent>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                 <Style>
                   <TextAlign>Left</TextAlign>
                 </Style>
@@ -4519,14 +4455,8 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
-<<<<<<< HEAD
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
-=======
                 <LeftIndent>0.5in</LeftIndent>
                 <HangingIndent>-0.25in</HangingIndent>
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                 <Style>
                   <TextAlign>Left</TextAlign>
                 </Style>
@@ -4544,12 +4474,6 @@
                     </Style>
                   </TextRun>
                 </TextRuns>
-<<<<<<< HEAD
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <HangingIndent>-18pt</HangingIndent>
-=======
->>>>>>> e610f6ffe0560d082659db15b0249c6c71a44bac
                 <Style>
                   <TextAlign>Left</TextAlign>
                   <LineHeight>12pt</LineHeight>
