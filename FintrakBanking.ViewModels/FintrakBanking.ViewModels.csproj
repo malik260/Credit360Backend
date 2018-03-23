@@ -187,7 +187,7 @@
     <Compile Include="Setups\General\ProductGroupViewModel.cs" />
     <Compile Include="Setups\General\ProductTypeViewModel.cs" />
     <Compile Include="Setups\General\ProductViewModel.cs" />
-    <Compile Include="Setups\General\RankViewModel.cs" />
+    <Compile Include="Setups\General\StaffRoleViewModel.cs" />
     <Compile Include="Setups\General\StaffViewModel.cs" />
     <Compile Include="Setups\General\StateViewModel.cs" />
     <Compile Include="Setups\Finance\TaxViewModel.cs" />
