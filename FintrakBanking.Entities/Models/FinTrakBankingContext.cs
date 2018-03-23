@@ -295,6 +295,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
+        public virtual DbSet<TBL_CUSTOM_FIANCE_TRANSACTION> TBL_CUSTOM_FIANCE_TRANSACTION { get; set; }
         public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
@@ -409,6 +410,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_APPROVAL_LEVEL>()
                 .HasMany(e => e.TBL_CREDIT_TEMPLATE)
+                .WithRequired(e => e.TBL_APPROVAL_LEVEL)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_APPROVAL_LEVEL>()
+                .HasMany(e => e.TBL_LOAN_REVIEW_APPLICATN_CAM)
                 .WithRequired(e => e.TBL_APPROVAL_LEVEL)
                 .WillCascadeOnDelete(false);
 
@@ -2046,6 +2052,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_OPERATIONS>()
+                .HasMany(e => e.TBL_CUSTOM_FIANCE_TRANSACTION)
+                .WithRequired(e => e.TBL_OPERATIONS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_OPERATIONS>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_ARCHIVE)
                 .WithRequired(e => e.TBL_OPERATIONS)
                 .WillCascadeOnDelete(false);
@@ -2602,6 +2613,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_STAFF1)
                 .WithOptional(e => e.TBL_STAFF2)
                 .HasForeignKey(e => e.RELIEF_STAFFID);
+
+            modelBuilder.Entity<TBL_STAFF>()
+                .HasMany(e => e.TBL_STAFF11)
+                .WithOptional(e => e.TBL_STAFF3)
+                .HasForeignKey(e => e.SUPERVISOR_STAFFID);
 
             modelBuilder.Entity<TBL_STAFF>()
                 .HasMany(e => e.TBL_TEMP_LOAN)
@@ -3684,18 +3700,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_LOAN_RECOVERY_PLAN_PAYMNT>()
                 .Property(e => e.PAYMENTAMOUNT)
                 .HasPrecision(19, 4);
-
-            //modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
-            //    .Property(e => e.PREPAYMENT)
-            //    .HasPrecision(19, 4);
-
-            //modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
-            //    .Property(e => e.OVERDRAFTTOPUP)
-            //    .HasPrecision(19, 4);
-
-            //modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
-            //    .Property(e => e.FEE_CHARGES)
-            //    .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_REVIEW_APPLICATION>()
                 .HasMany(e => e.TBL_LOAN_REVIEW_APPLICATN_CAM)

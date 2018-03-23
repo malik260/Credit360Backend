@@ -200,6 +200,22 @@ namespace FintrakBanking.Repositories.Finance
             return batchCode;
         }
 
+        public void UpdateCustomTransactions(string batchCode)
+        {
+
+            //var result = (from p in context.TBL_CUSTOM_FIANCE_TRANSACTION
+            //              where p.BATCHCODE == batchCode && p.CONSUMED == false
+            //                select new CustomFinanceTransactionViewModel()
+            //                  {
+
+            //                  });
+            var result = context.TBL_CUSTOM_FIANCE_TRANSACTION.Where(x => x.CONSUMED == false && x.DATETIMECONSUMED == null &&  x.BATCHCODE.Contains(batchCode)).ToList();
+            result.ForEach(a => a.CONSUMED = true);
+            result.ForEach(a => a.DATETIMECONSUMED = DateTime.Now);
+
+            context.SaveChanges();
+        }
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions)
         {
@@ -281,13 +297,16 @@ namespace FintrakBanking.Repositories.Finance
                 bool data = false;
 
                 Task.Run(async () => { data = await tran.APITransactionPosting(inputTransactions); }).GetAwaiter().GetResult();
+
                 if(data == true)
                 {
                     PostTransactionSub(batchCode, inputTransactions, transactions);
+                    UpdateCustomTransactions(batchCode);
                 }
                 else
                 {
                     //display message
+                    throw new Exception($"Transaction Failed.");
                 }
                     
             }

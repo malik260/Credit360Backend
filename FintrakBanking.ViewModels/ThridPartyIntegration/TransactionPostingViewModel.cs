@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.ThridPartyIntegration
 {
-    public class TransactionPostingViewModel //: GeneralEntity
+    public class TransactionPostingViewModel: GeneralEntity
     {
         public string accounts { get; set; }
         public string amounts { get; set; }
@@ -45,6 +45,21 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string referenceNumber { get; set; }
 
     }
+    public class CustomFinanceTransactionViewModel : GeneralEntity
+    {
+        public int customTransactionId{ get; set; }
+        public string batchCode { get; set; }
+        public string accountId { get; set; }
+        public string amount { get; set; }
+        public string currencyCode { get; set; }
+        public string narration { get; set; }
+        public int operationId { get; set; }
+        public string referenceNumber { get; set; }
+        public DateTime datetimeCreated { get; set; }
+        public bool webRequestStatus { get; set; }
+        public string consumed { get; set; }
+        public DateTime datetimeConsumed { get; set; }
 
+    }
 
 }
