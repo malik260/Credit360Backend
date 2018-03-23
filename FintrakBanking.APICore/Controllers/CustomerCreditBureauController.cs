@@ -309,22 +309,53 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [Route("credit-bureau-search")]
-        public HttpResponseMessage GetCustomerCreditMatch([FromBody] CreditBureauSearchViewModel searchInfoList)
+        [Route("xds-credit-bureau-search")]
+        public HttpResponseMessage GetCustomerXDSCreditMatch([FromBody] CreditBureauSearchViewModel searchInfoList)
         {
             try
             {
-                // foreach (var model in searchInfoList)
-                //{
                 searchInfoList.applicationUrl = HttpContext.Current.Request.Path;
                 searchInfoList.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 searchInfoList.createdBy = token.GetStaffId;
                 searchInfoList.companyId = token.GetCompanyId;
                 searchInfoList.staffId = token.GetStaffId;
                 searchInfoList.userBranchId = (short)token.GetBranchId;
-               // }
 
-                var result = repo.GetCustomerCreditMatch(searchInfoList);
+                var result = repo.GetCustomerXDSCreditMatch(searchInfoList);
+
+                if (result != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, data = result, message = " Search Completed" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = " Search failed" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("crc-credit-bureau-search")]
+        public HttpResponseMessage GetCustomerCRCCreditMatch([FromBody] CRCRequestViewModel searchInfo)
+        {
+            try
+            {
+                searchInfo.applicationUrl = HttpContext.Current.Request.Path;
+                searchInfo.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                searchInfo.createdBy = token.GetStaffId;
+                searchInfo.companyId = token.GetCompanyId;
+                searchInfo.staffId = token.GetStaffId;
+                searchInfo.userBranchId = (short)token.GetBranchId;
+
+                var result = repo.GetCustomerCRCCreditMatch(searchInfo);
 
                 if (result != null)
                 {

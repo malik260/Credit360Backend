@@ -155,6 +155,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int principalId { get; set; }
         public bool invoiceStatus { get; set; }
         public string documentNo { get; set; }
+        public string purchaseOrderNumber { get; set; }
     }
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
@@ -345,8 +346,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? approvedBy { get; set; }
 
         public DateTime? approvedDateTime { get; set; }
-
-
+        public string purchaseOrderNumber { get; set; }
     }
 
     public class RegionLoanApplicationViewModel : GeneralEntity
@@ -388,6 +388,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int principalId { get; set; }
 
         public string contractNo { get; set; }
+
+        public string purchaseOrderNumber { get; set; }
 
         public string invoiceNo { get; set; }
 

@@ -29,10 +29,7 @@ namespace FintrakBanking.Entities.Models
         public short BRANCHID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal LIENCREDITAMOUNT { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal LIENDEBITAMOUNT { get; set; }
+        public decimal LIENAMOUNT { get; set; }
 
         [Required]
         [StringLength(500)]
@@ -40,8 +37,8 @@ namespace FintrakBanking.Entities.Models
 
         public short LIENTYPEID { get; set; }
 
-        [Column(TypeName = "date")]
-        public DateTime DATECREATED { get; set; }
+        //[Column(TypeName = "date")]
+        public DateTime DATETIMECREATED { get; set; }
 
         public int CREATEDBY { get; set; }
 

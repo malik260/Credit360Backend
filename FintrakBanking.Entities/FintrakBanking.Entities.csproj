@@ -69,6 +69,7 @@
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_PICTURE.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_SIGNATURE.cs" />
     <Compile Include="Models\DEV_CHECKLIST.cs" />
+    <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
     <Compile Include="Models\SYSDIAGRAMS.cs" />

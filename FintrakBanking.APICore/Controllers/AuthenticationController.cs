@@ -226,7 +226,9 @@ namespace FintrakBanking.APICore.Controllers
                         activities = userActivities,
                         staffId = currUser.staffId,
                         staffName = currUser.staffName,
+                          sessionStatusInfo = currUser.sessionStatusInfo,
                         applicationDate = _genSetup.GetApplicationDate(),
+                        lastLoginDate = currUser.lastLoginDate,
                     }
                 });
 
@@ -240,19 +242,56 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
+        [Route("endpendingsession")]
+        public IHttpActionResult SignOutUser([FromBody] TokenVM user)
+        {
+            try {
+              
+                //var audit = new TBL_AUDIT()
+                //{
+                //    AUDITTYPEID = (short)AuditTypeEnum.LoggedOut,
+                //    STAFFID = token.GetStaffId,
+                //    BRANCHID = (short)token.GetBranchId,
+                //    DETAIL = $"{token.GetUsername} ended a pending session",
+                //    IPADDRESS = CommonHelpers.GetUserIP(),
+                //    URL = Request.RequestUri.AbsoluteUri,
+                //    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                //    SYSTEMDATETIME = DateTime.Now,
+                //    TARGETID = -1
+                //};
+
+                //auditTrail.AddAuditTrail(audit);
+
+                var res = repo.ClearLoginToken(user.username);
+                Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+                return this.Ok(new { success = true, message = "Session Ended. Login To Continue" });
+
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+
+                return this.Ok(new   { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
         [Route("logOut")]
-        public HttpResponseMessage LogOut()
+        public IHttpActionResult LogOut()
         {
             try
             {
+                repo.ClearLoginToken(token.GetUsername);
                 var staffDetails = repo.GetSingleUserByUserName(token.GetUsername);
 
                 if (staffDetails == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "User Not Found" });
+                    return this.Ok( new { success = false, message = "User Not Found" });
                 }
+               
 
                 Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+                
 
                 var audit = new TBL_AUDIT()
                 {
@@ -271,13 +310,13 @@ namespace FintrakBanking.APICore.Controllers
 
                 context.SaveChanges();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "User Logged Off" });
+                return this.Ok(new    { success = true, message = "User Logged Off" });
 
             }
             catch (Exception ex)
             {
                 errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured {ex.Message}" });
+                return this.Ok(new { success = false, message = $"An unknown error occured {ex.Message}" });
             }
 
         }

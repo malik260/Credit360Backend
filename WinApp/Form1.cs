@@ -236,9 +236,8 @@ namespace WinApp
             bool data = false;
 
             Task.Run(async () => { data = await transaction.APITransactionPosting(tran); }).GetAwaiter().GetResult();
+            financeTransaction.UpdateCustomTransactions(tran[0].batchCode);
             MessageBox.Show("Successful", "Fintrak");
-
-
         }
 
     }

@@ -100,6 +100,7 @@ namespace FintrakBanking.Repositories.Credit
                             isCollateralBacked = a.REQUIRECOLLATERAL,
                             tenor = a.APPLICATIONTENOR,
                             productClassId = a.PRODUCTCLASSID,
+                             loanApplicationId = a.LOANAPPLICATIONID,  
 
 
                             LoanApplicationDetail = a.TBL_LOAN_APPLICATION_DETAIL.Where (b=> b.LOANAPPLICATIONID == a.LOANAPPLICATIONID ).Select(b => new LoanApplicationDetailViewModel
@@ -144,6 +145,7 @@ namespace FintrakBanking.Repositories.Credit
                                     invoiceDate = i.INVOICE_DATE,
                                     principalName = i.TBL_LOAN_PRINCIPAL.NAME,
                                     principalId = i.PRINCIPALID,
+                                    purchaseOrderNumber = i.PURCHASEORDERNUMBER
                                 }).ToList(),
                                 educationLoan = b.TBL_LOAN_APPLICATION_DETL_EDU.Where(i => i.LOANAPPLICATIONDETAILID == b.LOANAPPLICATIONDETAILID).Select(x => new EducationLoanViewModel
                                 {
@@ -373,6 +375,7 @@ namespace FintrakBanking.Repositories.Credit
                                                          principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
                                                          principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
                                                          principalId = i.PRINCIPALID,
+                                                         purchaseOrderNumber = i.PURCHASEORDERNUMBER
                                                      }).ToList(),
                             firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                      select new EducationLoanViewModel
@@ -764,8 +767,10 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 catch (DbEntityValidationException ex)
                 {
-                    string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                    throw new DbEntityValidationException(errorMessages);
+
+                    //string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                    //throw new DbEntityValidationException(errorMessages);
+                    throw new Exception("Something went wrong");
                 }
 
                 var returndate = this.GetLoanApplicationByLoanRefrenceNo(this.data.APPLICATIONREFERENCENUMBER, data.COMPANYID);
@@ -777,7 +782,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 return returndate;
 
-
+                
                 throw new Exception("Something went wrong");
             }
             catch (Exception ex)
@@ -951,7 +956,9 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
                 PRINCIPALID = c.principalId,
                 DATETIMECREATED = DateTime.Now,
-                CREATEDBY = createdBy
+                CREATEDBY = createdBy,
+                 PURCHASEORDERNUMBER =  c.purchaseOrderNumber 
+                  
             });
             context.TBL_LOAN_APPLICATION_DETL_INV.AddRange(data);
         }
@@ -1085,37 +1092,37 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETL_BG.Add(data);
         }
 
-        public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
-        {
-            var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId);
-            bool hascrms = false;
-            foreach (var i in previousSearch)
-            {
-                if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
-            };
-            if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
-                throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
+        //public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
+        //{
+        //    var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId);
+        //    bool hascrms = false;
+        //    foreach (var i in previousSearch)
+        //    {
+        //        if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
+        //    };
+        //    if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
+        //        throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
 
-            if (previousSearch.Count() >= 3)
-                throw new Exception("You have reached that maximum credit bureau search for this customer");
+        //    if (previousSearch.Count() >= 3)
+        //        throw new Exception("You have reached that maximum credit bureau search for this customer");
 
-            var data = new TBL_CUSTOMER_CREDIT_BUREAU()
-            {
-                COMPANYDIRECTORID = entity.companyDirectorId,
-                CHARGEAMOUNT = entity.chargeAmount,
-                CREDITBUREAUID = entity.creditBureauId,
-                CUSTOMERID = entity.customerId,
-                ISREPORTOKAY = entity.isReportOkay,
-                USEDINTEGRATION = entity.usedIntegration,
-                //ISCOMPLETED = entity.isComplete,
-                DATECOMPLETED = entity.dateCompleted,
-                DATETIMECREATED = DateTime.Now,
-                CREATEDBY = entity.createdBy
-            };
-            context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
-            if (context.SaveChanges() > 0) return data.CUSTOMERCREDITBUREAUID;
-            else return 0;
-        }
+        //    var data = new TBL_CUSTOMER_CREDIT_BUREAU()
+        //    {
+        //        COMPANYDIRECTORID = entity.companyDirectorId,
+        //        CHARGEAMOUNT = entity.chargeAmount,
+        //        CREDITBUREAUID = entity.creditBureauId,
+        //        CUSTOMERID = entity.customerId,
+        //        ISREPORTOKAY = entity.isReportOkay,
+        //        USEDINTEGRATION = entity.usedIntegration,
+        //        //ISCOMPLETED = entity.isComplete,
+        //        DATECOMPLETED = entity.dateCompleted,
+        //        DATETIMECREATED = DateTime.Now,
+        //        CREATEDBY = entity.createdBy
+        //    };
+        //    context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
+        //    if (context.SaveChanges() > 0) return data.CUSTOMERCREDITBUREAUID;
+        //    else return 0;
+        //}
 
         public bool DeleteLoanApplicationDetail(int loanApplicationDetailId)
         {
@@ -1185,48 +1192,48 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public IEnumerable<CreditBereauViewModel> GetCreditBureauInformation()
-        {
-            var creditBureauList = from a in context.TBL_CREDIT_BUREAU
-                                   where a.INUSE
-                                   select new CreditBereauViewModel
-                                   {
-                                       creditBureauId = a.CREDITBUREAUID,
-                                       creditBureauName = a.CREDITBUREAUNAME,
-                                       corporateChargeAmount = a.CORPORATE_CHARGEAMOUNT,
-                                       retailChargeAmount = a.INDIVIDUAL_CHARGEAMOUNT,
-                                       inUse = a.INUSE,
-                                       isMandatory = a.ISMANDATORY,
-                                       useIntegration = a.USEINTEGRATION,
-                                       appliedSearchForLoan = false,
-                                       hasFile = false,
-                                       fileName = string.Empty,
-                                   };
-            return creditBureauList;
-        }
+        //public IEnumerable<CreditBereauViewModel> GetCreditBureauInformation()
+        //{
+        //    var creditBureauList = from a in context.TBL_CREDIT_BUREAU
+        //                           where a.INUSE
+        //                           select new CreditBereauViewModel
+        //                           {
+        //                               creditBureauId = a.CREDITBUREAUID,
+        //                               creditBureauName = a.CREDITBUREAUNAME,
+        //                               corporateChargeAmount = a.CORPORATE_CHARGEAMOUNT,
+        //                               retailChargeAmount = a.INDIVIDUAL_CHARGEAMOUNT,
+        //                               inUse = a.INUSE,
+        //                               isMandatory = a.ISMANDATORY,
+        //                               useIntegration = a.USEINTEGRATION,
+        //                               appliedSearchForLoan = false,
+        //                               hasFile = false,
+        //                               fileName = string.Empty,
+        //                           };
+        //    return creditBureauList;
+        //}
 
-        public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId)
-        {
-            var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
-                                               where a.CUSTOMERID == customerId && a.DELETED == false //&& a.DATETIMECREATED.Day <= ((DateTime.Now - a.DATETIMECREATED).TotalDays  - 30)
-                                               select new LoanCreditBereauViewModel
-                                               {
-                                                   companyDirectorId = a.COMPANYDIRECTORID,
-                                                   companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
-                                                   chargeAmount = a.CHARGEAMOUNT,
-                                                   customerId = a.CUSTOMERID,
-                                                   creditBureauId = a.CREDITBUREAUID,
-                                                   isReportOkay = a.ISREPORTOKAY,
-                                                   usedIntegration = a.USEDINTEGRATION,
-                                                   dateCompleted = (DateTime)a.DATECOMPLETED,
-                                                   dateTimeCreated = a.DATETIMECREATED,
-                                                   searchCount = 0,
-                                                   uploadCount = 0,
-                                                   createdBy = a.CREATEDBY
-                                               };
+        //public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId)
+        //{
+        //    var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
+        //                                       where a.CUSTOMERID == customerId && a.DELETED == false //&& a.DATETIMECREATED.Day <= ((DateTime.Now - a.DATETIMECREATED).TotalDays  - 30)
+        //                                       select new LoanCreditBereauViewModel
+        //                                       {
+        //                                           companyDirectorId = a.COMPANYDIRECTORID,
+        //                                           companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
+        //                                           chargeAmount = a.CHARGEAMOUNT,
+        //                                           customerId = a.CUSTOMERID,
+        //                                           creditBureauId = a.CREDITBUREAUID,
+        //                                           isReportOkay = a.ISREPORTOKAY,
+        //                                           usedIntegration = a.USEDINTEGRATION,
+        //                                           dateCompleted = (DateTime)a.DATECOMPLETED,
+        //                                           dateTimeCreated = a.DATETIMECREATED,
+        //                                           searchCount = 0,
+        //                                           uploadCount = 0,
+        //                                           createdBy = a.CREATEDBY
+        //                                       };
 
-            return customerLoanCreditBureauData.ToList();
-        }
+        //    return customerLoanCreditBureauData.ToList();
+        //}
 
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId)
@@ -1494,6 +1501,7 @@ namespace FintrakBanking.Repositories.Credit
                                contractStartDate = a.CONTRACT_STARTDATE,
                                contractEndDate = a.CONTRACT_ENDDATE,
                                approvalStatusId = a.APPROVALSTATUSID,
+                                purchaseOrderNumber= a.PURCHASEORDERNUMBER,
                                productClassId = (int)ProductClassEnum.InvoiceDiscountingFacility
                            }).ToList();
                 return inv;
@@ -1571,11 +1579,12 @@ namespace FintrakBanking.Repositories.Credit
         public ValidateNumberViewModel ValidateDocumentNumber(ValidateNumberViewModel data)
         {
             var dat = context.TBL_LOAN_APPLICATION_DETL_INV
-                .Where(c => c.PRINCIPALID == (int)data.principalId && c.INVOICENO == data.documentNo)
+                .Where(c => c.PRINCIPALID == (int)data.principalId && c.INVOICENO == data.documentNo && c.PURCHASEORDERNUMBER == data.purchaseOrderNumber)
                 .FirstOrDefault();
 
             return new ValidateNumberViewModel
             {
+                purchaseOrderNumber = data.purchaseOrderNumber,
                 documentNo = data.documentNo,
                 invoiceStatus = (dat == null) ? false : true,
                 principalId = data.principalId,

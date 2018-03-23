@@ -85,7 +85,8 @@ namespace FintrakBanking.Common.Enum
         JobRequestUpdated = 79,
         JobTypeAdded = 80,
         JobTypeUpdated = 81,
-        LienAdded = 82,
+        LienPlaced = 82,
+        LienReleased = 195,
         LimitAdded = 83,
         LimitDeleted = 84,
         LimitDetailAdded = 85,
@@ -214,6 +215,7 @@ namespace FintrakBanking.Common.Enum
         CreditBureauReportDocumentUpdated = 194,
         AlertAndMonitoryAdded = 195,
         AlertAndMonitoryUpdated = 196,
+        EndPendingSession = 197,
     };
 
 
