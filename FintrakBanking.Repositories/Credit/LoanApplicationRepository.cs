@@ -361,14 +361,16 @@ namespace FintrakBanking.Repositories.Credit
                                                      select new LoanApplicationDetailInvoiceViewModel
                                                      {
                                                          approvalComment = i.APPROVAL_COMMENT,
-                                                         invoiceAmount = i.INVOICE_AMOUNT,
-                                                         invoiceNo = i.INVOICENO,
-                                                         approvaStatusId = i.APPROVALSTATUSID,
-                                                         approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
+                                                         contractNumber = i.CONTRACTNO,
                                                          contractEndDate = i.CONTRACT_ENDDATE,
                                                          contractStartDate = i.CONTRACT_STARTDATE,
+                                                         purchaseOrderNumber = i.PURCHASEORDERNUMBER,
+                                                         invoiceAmount = i.INVOICE_AMOUNT,
+                                                         invoiceNo = i.INVOICENO,
                                                          invoiceDate = i.INVOICE_DATE,
                                                          invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
+                                                         approvaStatusId = i.APPROVALSTATUSID,
+                                                         approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
                                                          principalName = i.TBL_LOAN_PRINCIPAL.NAME,
                                                          principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
                                                          principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
@@ -396,27 +398,29 @@ namespace FintrakBanking.Repositories.Credit
                                                       loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
                                                       //productClassId = i.
                                                   }).ToList(),
-                            loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                            loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                               select new CollateralViewModel
                                               {
-                                                  collateralId = i.COLLATERALCUSTOMERID,
-                                                  collateralCustomerId = i.COLLATERALCUSTOMERID,
-                                                  allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                                                  collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                                                  collateralValue = i.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                                                  collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                                                  collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
+                                                  collateralId = i.COLLATERALBASICDETAILID, // COLLATERALCUSTOMERID,
+                                                  collateralCustomerId = (int)i.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,//.CUSTOMERID, //COLLATERALCUSTOMERID,
+                                                 // allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                                                  collateralDetail =  i.COLLATERALDETAIL,
+                                                  //collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                                                  collateralValue = i.COLLATERALVALUE,
+                                                  stampToCoverAmount = i.STAMPEDTOCOVERAMOUNT,
+                                                  //collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                                  //collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
                                                   //collateralSubTypeId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.
-                                                  currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
-                                                  valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                                                  haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                                                  customerName = i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
-                                                 + " " + i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
+                                                  //currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                                                  //valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                  //haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                  customerName = i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME
+                                                 + " " + i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
                                                   //collateralSearchAmount = context.TBL_STATE.Where(x=>x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
                                                   //chartingAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.LastOrDefault().TBL_CITY.STATEID).LastOrDefault().CHARTINGAMOUNT,
                                                   //verificationAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
                                                   //cityId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().CITYID,
-                                                  legalFeeTaken = i.LEGAL_FEE_TAKEN,
+                                                 // legalFeeTaken = i.LEGAL_FEE_TAKEN,
                                               }).ToList(),
                             bondsAndGaurantees = (from i in context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                   select new BondsAndGauranteeViewModel
@@ -1088,37 +1092,37 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETL_BG.Add(data);
         }
 
-        public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
-        {
-            var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId);
-            bool hascrms = false;
-            foreach (var i in previousSearch)
-            {
-                if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
-            };
-            if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
-                throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
+        //public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
+        //{
+        //    var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId);
+        //    bool hascrms = false;
+        //    foreach (var i in previousSearch)
+        //    {
+        //        if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
+        //    };
+        //    if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
+        //        throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
 
-            if (previousSearch.Count() >= 3)
-                throw new Exception("You have reached that maximum credit bureau search for this customer");
+        //    if (previousSearch.Count() >= 3)
+        //        throw new Exception("You have reached that maximum credit bureau search for this customer");
 
-            var data = new TBL_CUSTOMER_CREDIT_BUREAU()
-            {
-                COMPANYDIRECTORID = entity.companyDirectorId,
-                CHARGEAMOUNT = entity.chargeAmount,
-                CREDITBUREAUID = entity.creditBureauId,
-                CUSTOMERID = entity.customerId,
-                ISREPORTOKAY = entity.isReportOkay,
-                USEDINTEGRATION = entity.usedIntegration,
-                //ISCOMPLETED = entity.isComplete,
-                DATECOMPLETED = entity.dateCompleted,
-                DATETIMECREATED = DateTime.Now,
-                CREATEDBY = entity.createdBy
-            };
-            context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
-            if (context.SaveChanges() > 0) return data.CUSTOMERCREDITBUREAUID;
-            else return 0;
-        }
+        //    var data = new TBL_CUSTOMER_CREDIT_BUREAU()
+        //    {
+        //        COMPANYDIRECTORID = entity.companyDirectorId,
+        //        CHARGEAMOUNT = entity.chargeAmount,
+        //        CREDITBUREAUID = entity.creditBureauId,
+        //        CUSTOMERID = entity.customerId,
+        //        ISREPORTOKAY = entity.isReportOkay,
+        //        USEDINTEGRATION = entity.usedIntegration,
+        //        //ISCOMPLETED = entity.isComplete,
+        //        DATECOMPLETED = entity.dateCompleted,
+        //        DATETIMECREATED = DateTime.Now,
+        //        CREATEDBY = entity.createdBy
+        //    };
+        //    context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
+        //    if (context.SaveChanges() > 0) return data.CUSTOMERCREDITBUREAUID;
+        //    else return 0;
+        //}
 
         public bool DeleteLoanApplicationDetail(int loanApplicationDetailId)
         {
@@ -1188,48 +1192,48 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public IEnumerable<CreditBereauViewModel> GetCreditBureauInformation()
-        {
-            var creditBureauList = from a in context.TBL_CREDIT_BUREAU
-                                   where a.INUSE
-                                   select new CreditBereauViewModel
-                                   {
-                                       creditBureauId = a.CREDITBUREAUID,
-                                       creditBureauName = a.CREDITBUREAUNAME,
-                                       corporateChargeAmount = a.CORPORATE_CHARGEAMOUNT,
-                                       retailChargeAmount = a.INDIVIDUAL_CHARGEAMOUNT,
-                                       inUse = a.INUSE,
-                                       isMandatory = a.ISMANDATORY,
-                                       useIntegration = a.USEINTEGRATION,
-                                       appliedSearchForLoan = false,
-                                       hasFile = false,
-                                       fileName = string.Empty,
-                                   };
-            return creditBureauList;
-        }
+        //public IEnumerable<CreditBereauViewModel> GetCreditBureauInformation()
+        //{
+        //    var creditBureauList = from a in context.TBL_CREDIT_BUREAU
+        //                           where a.INUSE
+        //                           select new CreditBereauViewModel
+        //                           {
+        //                               creditBureauId = a.CREDITBUREAUID,
+        //                               creditBureauName = a.CREDITBUREAUNAME,
+        //                               corporateChargeAmount = a.CORPORATE_CHARGEAMOUNT,
+        //                               retailChargeAmount = a.INDIVIDUAL_CHARGEAMOUNT,
+        //                               inUse = a.INUSE,
+        //                               isMandatory = a.ISMANDATORY,
+        //                               useIntegration = a.USEINTEGRATION,
+        //                               appliedSearchForLoan = false,
+        //                               hasFile = false,
+        //                               fileName = string.Empty,
+        //                           };
+        //    return creditBureauList;
+        //}
 
-        public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId)
-        {
-            var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
-                                               where a.CUSTOMERID == customerId && a.DELETED == false //&& a.DATETIMECREATED.Day <= ((DateTime.Now - a.DATETIMECREATED).TotalDays  - 30)
-                                               select new LoanCreditBereauViewModel
-                                               {
-                                                   companyDirectorId = a.COMPANYDIRECTORID,
-                                                   companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
-                                                   chargeAmount = a.CHARGEAMOUNT,
-                                                   customerId = a.CUSTOMERID,
-                                                   creditBureauId = a.CREDITBUREAUID,
-                                                   isReportOkay = a.ISREPORTOKAY,
-                                                   usedIntegration = a.USEDINTEGRATION,
-                                                   dateCompleted = (DateTime)a.DATECOMPLETED,
-                                                   dateTimeCreated = a.DATETIMECREATED,
-                                                   searchCount = 0,
-                                                   uploadCount = 0,
-                                                   createdBy = a.CREATEDBY
-                                               };
+        //public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId)
+        //{
+        //    var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
+        //                                       where a.CUSTOMERID == customerId && a.DELETED == false //&& a.DATETIMECREATED.Day <= ((DateTime.Now - a.DATETIMECREATED).TotalDays  - 30)
+        //                                       select new LoanCreditBereauViewModel
+        //                                       {
+        //                                           companyDirectorId = a.COMPANYDIRECTORID,
+        //                                           companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
+        //                                           chargeAmount = a.CHARGEAMOUNT,
+        //                                           customerId = a.CUSTOMERID,
+        //                                           creditBureauId = a.CREDITBUREAUID,
+        //                                           isReportOkay = a.ISREPORTOKAY,
+        //                                           usedIntegration = a.USEDINTEGRATION,
+        //                                           dateCompleted = (DateTime)a.DATECOMPLETED,
+        //                                           dateTimeCreated = a.DATETIMECREATED,
+        //                                           searchCount = 0,
+        //                                           uploadCount = 0,
+        //                                           createdBy = a.CREATEDBY
+        //                                       };
 
-            return customerLoanCreditBureauData.ToList();
-        }
+        //    return customerLoanCreditBureauData.ToList();
+        //}
 
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId)

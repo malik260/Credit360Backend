@@ -118,7 +118,7 @@
     <Compile Include="Customer\CustomerViewModels.cs" />
     <Compile Include="ErrorLogger\ErrorViewModel.cs" />
     <Compile Include="Finance\CurrencyExchangeRateViewModel.cs" />
-    <Compile Include="Finance\CasaLienViewModel.cs" />
+    <Compile Include="CASA\CasaLienViewModel.cs" />
     <Compile Include="Finance\EndOfDayViewModel.cs" />
     <Compile Include="Finance\FinanceTransactionViewModel.cs" />
     <Compile Include="GenaralEntity.cs" />
@@ -191,7 +191,9 @@
     <Compile Include="Setups\General\UserViewModel.cs" />
     <Compile Include="Setups\Risk\RiskAssessmentIndexViewModels.cs" />
     <Compile Include="Setups\Risk\RiskRatingViewModel.cs" />
+    <Compile Include="ThridPartyIntegration\TransactionPostingViewModel.cs" />
     <Compile Include="ThridPartyIntegration\CreditBureauSearchViewModel.cs" />
+    <Compile Include="ThridPartyIntegration\CasaIntegrationViewModel.cs" />
     <Compile Include="UserInfo.cs" />
     <Compile Include="WorkFlow\ApprovalTrailViewModel.cs" />
     <Compile Include="WorkFlow\ApprovalViewModel.cs" />
@@ -203,6 +205,12 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">
+      <Project>{18CEFC20-2662-4757-94DE-23D623FFC98D}</Project>
+      <Name>FintrakBanking.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

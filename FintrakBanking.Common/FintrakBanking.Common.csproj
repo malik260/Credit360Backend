@@ -69,6 +69,7 @@
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />
     <Compile Include="Enum\AlertMessageEnum.cs" />
+    <Compile Include="Enum\ApprovalGroupEnum.cs" />
     <Compile Include="Enum\ApprovalState.cs" />
     <Compile Include="Enum\ApprovalStatusEnum.cs" />
     <Compile Include="Enum\CASAAccountStatusEnum.cs" />

@@ -5,6 +5,8 @@ namespace FintrakBanking.ViewModels.Setups.General
 {
     public class StaffInfoViewModel : GeneralEntity
     {
+        public bool npl_LimitExceeded { get; set; }
+
         public int StaffId { get; set; }
         public string StaffCode { get; set; }
         public string FirstName { get; set; }

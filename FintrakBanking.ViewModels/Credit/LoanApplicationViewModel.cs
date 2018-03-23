@@ -308,6 +308,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationDetailInvoiceViewModel
     {
+        public string contractNumber { get; set; }
+        public string purchaseOrderNumber { get; set; }
+
         public int invoiceId { get; set; }
 
         public int loanApplicationDetailId { get; set; }

@@ -189,7 +189,7 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTRATE = model.interestRate,
                 EFFECTIVEDATE = model.effectiveDate,
                 MATURITYDATE = model.maturityDate,
-                BOOKINGDATE = model.bookingDate,
+                BOOKINGDATE = DateTime.Now, //model.bookingDate,
                 OVERDRAFTLIMIT = revolvingLoanInput.overdraftLimit,
                 DAYCOUNTCONVENTIONID = model.scheduleDayCountConventionId,
 
@@ -229,10 +229,6 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Revolving Loan Record.........................
                     var loan = context.TBL_LOAN_REVOLVING.Add(data);
 
-                    
-                    if (model.monitoringTriggers.Count > 0)
-                        AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)model.productTypeId);
-
                     //...................Saving Loan Collaterals Mapping.......................
                      AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
 
@@ -267,6 +263,10 @@ namespace FintrakBanking.Repositories.Credit
                         AddLoanFees(model.loanChargeFee, model.createdBy, loan.REVOLVINGLOANID, (short)model.productTypeId, model.companyId, model.feeOverride);
 
                         model.loanReferenceNumber = loanReferenceNumber;
+
+                        if (model.monitoringTriggers.Count > 0)
+                            AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)model.productTypeId);
+
                         if (!model.feeOverride) PostLoanFees(model);
                         context.SaveChanges();
 
@@ -342,7 +342,7 @@ namespace FintrakBanking.Repositories.Credit
                 EFFECTIVEDATE = entity.effectiveDate,
                 MATURITYDATE = entity.maturityDate,
                 
-                BOOKINGDATE = entity.bookingDate,
+                BOOKINGDATE = DateTime.Now, //entity.bookingDate,
 
                 CONTINGENTAMOUNT = contingentLoanInput.contingentAmount,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
@@ -379,9 +379,6 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Contingent Loan Record.........................
                     var loan = context.TBL_LOAN_CONTINGENT.Add(data);
 
-                    if (entity.monitoringTriggers.Count > 0)
-                        AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)entity.productTypeId);
-
                     //...................Saving Loan Collaterals Mapping.......................
                      AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
 
@@ -415,6 +412,10 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Fees..........
                         AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.CONTINGENTLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
                         entity.loanReferenceNumber = loanReferenceNumber;
+
+                        if (entity.monitoringTriggers.Count > 0)
+                            AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)entity.productTypeId);
+
                         if (!entity.feeOverride) PostLoanFees(entity);
 
                         context.SaveChanges();
@@ -547,7 +548,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
 
-                BOOKINGDATE = entity.bookingDate,
+                BOOKINGDATE = DateTime.Now, //entity.bookingDate,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 EFFECTIVEDATE = entity.loanScheduleInput.effectiveDate,
@@ -585,9 +586,6 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Term Loan Record.........................
                     var loan = context.TBL_LOAN.Add(data);
 
-                    
-                    if (entity.monitoringTriggers.Count > 0 )
-                         AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)entity.productTypeId);
 
                     //...................Saving Loan Collaterals Mapping.......................
                      AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
@@ -629,6 +627,9 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)entity.productTypeId);
                             AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
+
+                            if (entity.monitoringTriggers.Count > 0)
+                                AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)entity.productTypeId);
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                             if (!entity.feeOverride) PostLoanFees(entity);
@@ -689,7 +690,7 @@ namespace FintrakBanking.Repositories.Credit
             //PostLoanDisbursment(entity);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            inputTransactions.Add(BuildLoanDisbursmentPosting(entity));
+            inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));
 
             inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
 
@@ -1931,28 +1932,43 @@ namespace FintrakBanking.Repositories.Credit
         /// </summary>
         /// <param name="model">The model.</param>
         /// <returns></returns>
-        public FinanceTransactionViewModel BuildLoanDisbursmentPosting(LoanViewModel model)
+        public List<FinanceTransactionViewModel> BuildLoanDisbursmentPosting(LoanViewModel model)
         {
-            FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
+            List<FinanceTransactionViewModel> loanTransaction = new List<FinanceTransactionViewModel>();
 
             var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
             var product = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId && x.COMPANYID == model.companyId);
 
-            loanTransaction.operationId = (int)OperationsEnum.TermLoanBooking;
-            loanTransaction.description = "Loan Disbursment Amount";
-            loanTransaction.valueDate = generalSetup.GetApplicationDate();
-            loanTransaction.transactionDate = loanTransaction.valueDate;
-            loanTransaction.currencyId = casa.CURRENCYID;
-            loanTransaction.currencyRate = financeTransaction.GetExchangeRate(loanTransaction.valueDate,loanTransaction.currencyId, model.companyId).sellingRate;
-            loanTransaction.isApproved = true;
-            loanTransaction.postedBy = model.createdBy;
-            loanTransaction.approvedBy = model.createdBy;
-            loanTransaction.approvedDate = loanTransaction.transactionDate;
-            loanTransaction.approvedDateTime = DateTime.Now;
-            loanTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-            loanTransaction.companyId = model.companyId;
+            //loanTransaction.operationId = (int)OperationsEnum.TermLoanBooking;
+            //loanTransaction.description = "Loan Disbursment Amount";
+            //loanTransaction.valueDate = generalSetup.GetApplicationDate();
+            //loanTransaction.transactionDate = loanTransaction.valueDate;
+            //loanTransaction.currencyId = casa.CURRENCYID;
+            //loanTransaction.currencyRate = financeTransaction.GetExchangeRate(loanTransaction.valueDate,loanTransaction.currencyId, model.companyId).sellingRate;
+            //loanTransaction.isApproved = true;
+            //loanTransaction.postedBy = model.createdBy;
+            //loanTransaction.approvedBy = model.createdBy;
+            //loanTransaction.approvedDate = loanTransaction.transactionDate;
+            //loanTransaction.approvedDateTime = DateTime.Now;
+            //loanTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            //loanTransaction.companyId = model.companyId;
 
-            FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            //FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+            debit.operationId = (int)OperationsEnum.TermLoanBooking;
+            debit.description = "Loan Disbursment Amount";
+            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.transactionDate = debit.valueDate;
+            debit.currencyId = casa.CURRENCYID;
+            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+            debit.isApproved = true;
+            debit.postedBy = model.createdBy;
+            debit.approvedBy = model.createdBy;
+            debit.approvedDate = debit.transactionDate;
+            debit.approvedDateTime = DateTime.Now;
+            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            debit.companyId = model.companyId;
+
             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == product.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = model.loanReferenceNumber;
             debit.casaAccountId = null;
@@ -1961,10 +1977,24 @@ namespace FintrakBanking.Repositories.Credit
             debit.sourceBranchId = model.branchId;
             debit.destinationBranchId = casa.BRANCHID;
 
-            var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
-            FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = repaymentAccountGL;
+            
+            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+            credit.operationId = (int)OperationsEnum.TermLoanBooking;
+            credit.description = "Loan Disbursment Amount";
+            credit.valueDate = debit.valueDate;
+            credit.transactionDate = debit.valueDate;
+            credit.currencyId = casa.CURRENCYID;
+            credit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+            credit.isApproved = true;
+            credit.postedBy = model.createdBy;
+            credit.approvedBy = model.createdBy;
+            credit.approvedDate = debit.transactionDate;
+            credit.approvedDateTime = DateTime.Now;
+            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            credit.companyId = model.companyId;
 
+            var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            credit.glAccountId = repaymentAccountGL;
             credit.sourceReferenceNumber = model.loanReferenceNumber;
             credit.casaAccountId = casa.CASAACCOUNTID;
             credit.debitAmount = 0;
@@ -1973,8 +2003,8 @@ namespace FintrakBanking.Repositories.Credit
             credit.destinationBranchId = model.branchId;
 
 
-            loanTransaction.transactionDetails.Add(debit);
-            loanTransaction.transactionDetails.Add(credit);
+            loanTransaction.Add(debit);
+            loanTransaction.Add(credit);
 
             //financeTransaction.PostTransaction(loanTransaction);
 
@@ -2004,50 +2034,64 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in loanDetails.loanChargeFee)
             {
-                FinanceTransactionViewModel feeTransaction = new FinanceTransactionViewModel();
-
-
-                var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanDetails.casaAccountId);
-
-                feeTransaction.operationId = (int)OperationsEnum.TermLoanBooking;
-                feeTransaction.description = "Fee charge";
-                feeTransaction.valueDate = generalSetup.GetApplicationDate();
-                feeTransaction.transactionDate = feeTransaction.valueDate;
-                feeTransaction.currencyId = casa.CURRENCYID;
-                feeTransaction.currencyRate = financeTransaction.GetExchangeRate(feeTransaction.valueDate, feeTransaction.currencyId, loanDetails.companyId).sellingRate;
-                feeTransaction.isApproved = true;
-                feeTransaction.postedBy = loanDetails.createdBy;
-                feeTransaction.approvedBy = loanDetails.createdBy;
-                feeTransaction.approvedDate = feeTransaction.transactionDate;
-                feeTransaction.approvedDateTime = DateTime.Now;
-                feeTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-                feeTransaction.companyId = loanDetails.companyId;
-
-                FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-                debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
-                debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
-                debit.casaAccountId = casa.CASAACCOUNTID;
-                debit.debitAmount = (decimal)item.feeAmount;
-                debit.creditAmount = 0;
-                debit.sourceBranchId = loanDetails.branchId;
-                debit.destinationBranchId = casa.BRANCHID;
-
-                var feeGL = this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == item.chargeFeeId).Select(x => x.GLACCOUNTID).FirstOrDefault();  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
-                FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-                credit.glAccountId = feeGL;
-                credit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
-                credit.casaAccountId = null;
-                credit.debitAmount = 0;
-                credit.creditAmount = (decimal)item.feeAmount;
-                credit.sourceBranchId = loanDetails.branchId;
-                credit.destinationBranchId = loanDetails.branchId;
-
-
                 if (item.feeAmount != 0)
                 {
-                    feeTransaction.transactionDetails.Add(debit);
-                    feeTransaction.transactionDetails.Add(credit);
-                    output.Add(feeTransaction);
+
+
+                    var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanDetails.casaAccountId);                
+
+                    FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                    debit.operationId = (int)OperationsEnum.TermLoanBooking;
+                    debit.description = "Fee charge";
+                    debit.valueDate = generalSetup.GetApplicationDate();
+                    debit.transactionDate = debit.valueDate;
+                    debit.currencyId = casa.CURRENCYID;
+                    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, loanDetails.companyId).sellingRate;
+                    debit.isApproved = true;
+                    debit.postedBy = loanDetails.createdBy;
+                    debit.approvedBy = loanDetails.createdBy;
+                    debit.approvedDate = debit.transactionDate;
+                    debit.approvedDateTime = DateTime.Now;
+                    debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                    debit.companyId = loanDetails.companyId;
+
+                    debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                    debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
+                    debit.casaAccountId = casa.CASAACCOUNTID;
+                    debit.debitAmount = (decimal)item.feeAmount;
+                    debit.creditAmount = 0;
+                    debit.sourceBranchId = loanDetails.branchId;
+                    debit.destinationBranchId = casa.BRANCHID;
+
+                
+                    FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                    credit.operationId = (int)OperationsEnum.TermLoanBooking;
+                    credit.description = "Fee charge";
+                    credit.valueDate = debit.valueDate;
+                    credit.transactionDate = debit.valueDate;
+                    credit.currencyId = casa.CURRENCYID;
+                    credit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, loanDetails.companyId).sellingRate;
+                    credit.isApproved = true;
+                    credit.postedBy = loanDetails.createdBy;
+                    credit.approvedBy = loanDetails.createdBy;
+                    credit.approvedDate = debit.transactionDate;
+                    credit.approvedDateTime = DateTime.Now;
+                    credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                    credit.companyId = loanDetails.companyId;
+
+                    var feeGL = this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == item.chargeFeeId).Select(x => x.GLACCOUNTID).FirstOrDefault();  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+                    credit.glAccountId = feeGL;
+                    credit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
+                    credit.casaAccountId = null;
+                    credit.debitAmount = 0;
+                    credit.creditAmount = (decimal)item.feeAmount;
+                    credit.sourceBranchId = loanDetails.branchId;
+                    credit.destinationBranchId = loanDetails.branchId;
+
+
+                                
+                    output.Add(debit);
+                    output.Add(credit);
                 }
 
 
@@ -2224,7 +2268,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
 
         }
-    
+
         /// <summary>
         /// Adds the loan fees.
         /// </summary>
@@ -2232,6 +2276,56 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="loanId">The loan identifier.</param>
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
+        /// 
+
+
+        public void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride)
+        {
+            foreach (var ent in feeModel)
+            {
+
+                var fee = new TBL_LOAN_FEE
+                {
+                    CHARGEFEEID = ent.chargeFeeId,
+                    FEEAMOUNT = ent.feeAmount,
+                    FEEDEPENDENTAMOUNT = ent.feeDependentAmount,
+                    FEERATEVALUE = ent.feeRateValue,
+                    ISINTEGRALFEE = ent.isIntegralFee,
+                    LOANID = loanId,
+                    PRODUCTTYPEID = productTypeId,
+                    ISRECURRING = ent.recurring,
+                    RECURRINGPAYMENTDAY = 28,
+                    CREATEDBY = staffId, // ent.createdBy,
+                    DATETIMECREATED = DateTime.Now.Date,
+                    ISPOSTED = ent.isPosted
+                };
+                if (feeOverride && ent.isPosted)
+                    throw new Exception("Fee posted must be must be disabled for fee override until after approval");
+
+                context.TBL_LOAN_FEE.Add(fee);
+                if (feeOverride)
+                {
+                    context.SaveChanges();
+                    var approvalModel = new ForwardViewModel
+                    {
+
+                        createdBy = fee.CREATEDBY,
+                        companyId = companyId,
+                        applicationId = fee.LOANCHARGEFEEID,
+                        comment = "Please approve this fee ",
+                        amount = fee.FEEAMOUNT,
+                    };
+                    LogApproval(approvalModel, (int)OperationsEnum.LoanBookingFeeDeferral, true, (int)ApprovalStatusEnum.Pending);
+                }
+                else
+                {
+                    context.SaveChanges();
+                }
+
+            }
+
+            //return context.SaveChanges() > 0;
+        }
         private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride)
         {
             foreach (var ent in feeModel)
@@ -3291,7 +3385,8 @@ namespace FintrakBanking.Repositories.Credit
                                             .Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.CONTINGENTAMOUNT)) :
                                             0)
                             ),
-                            customerAccounts = (from k in context.TBL_CASA
+                customerAccounts = (
+                            from k in context.TBL_CASA
                                                 where k.DELETED == false
                                                 && k.CUSTOMERID == d.CUSTOMERID
                                                 select (

@@ -7,6 +7,7 @@ using Owin;
 using FintrakBanking.APICore.Providers;
 using System.Configuration;
 
+
 namespace FintrakBanking.APICore
 {
     public partial class Startup
@@ -15,7 +16,8 @@ namespace FintrakBanking.APICore
 
         public static string PublicClientId { get; private set; }
 
-        
+     
+
         public void ConfigureAuth(IAppBuilder app)
         {
             

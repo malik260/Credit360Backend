@@ -764,7 +764,7 @@ namespace FintrakBanking.Repositories.Credit
                     //end of Audit section -------------------------------
                     return context.SaveChanges() > 0;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new Exception(ex.Message);
                 }
@@ -816,7 +816,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 this.context.TBL_CHECKLIST_DETAIL.Remove(data);
             }
-          
+
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
@@ -1237,7 +1237,20 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                             checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
-                            dateCreated = b.DATETIMECREATED
+                            dateCreated = b.DATETIMECREATED,
+                            //Loan Information
+                            relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
+                            relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
+                            applicationAmount = a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
+                            applicationTenor = a.PROPOSEDTENOR,
+                            applicationDate = a.TBL_LOAN_APPLICATION.APPLICATIONDATE,
+                            isInvestmentGrade = a.TBL_LOAN_APPLICATION.ISINVESTMENTGRADE,
+                            isPoliticallyExposed = a.TBL_LOAN_APPLICATION.ISPOLITICALLYEXPOSED,
+                            isRelatedParty = a.TBL_LOAN_APPLICATION.ISRELATEDPARTY,
+                            approvalStatusId = a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                            applicationStatusId = a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
+                            submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
+                            loanInformation = a.LOANPURPOSE
                         }).ToList();
             return data;
         }

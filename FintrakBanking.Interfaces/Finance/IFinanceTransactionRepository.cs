@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
 using System;
@@ -10,7 +11,7 @@ namespace FintrakBanking.Interfaces.Finance
     {
         //bool AddCollateralSearchLien(CasaLienViewModel model);
 
-        FinanceTransactionViewModel PostCollateralSearch(CasaLienViewModel model);
+        //List<FinanceTransactionViewModel> PostCollateralSearch(CasaLienViewModel model);
 
         string PostTransaction(List<FinanceTransactionViewModel> transaction);
 
@@ -49,5 +50,7 @@ namespace FintrakBanking.Interfaces.Finance
         FinanceTransactionViewModel BuildCustomerApplicationChargeOrChargeReversalPosting(string postType, int loanId, GeneralEntity model, decimal postedAmount, int creditGL, string description);
 
         FinanceTransactionViewModel PostDailyInterestSuspension(DailyInterestAccrualViewModel model, int loanId, DateTime applicationDate, int staffId);
+
+        void UpdateCustomTransactions(string batchCode);
     }
 }

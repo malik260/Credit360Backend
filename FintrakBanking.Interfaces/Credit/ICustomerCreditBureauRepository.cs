@@ -14,6 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
         #region CREDIT BUREAU REPORT
         IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId);
 
+        bool VerifyCustomerValidCreditBureau(int customerId);
         int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity);
         int AddCustomerCreditBureauUpload(LoanCreditBereauViewModel entity, LoanDocumentViewModel docModel, byte[] file);
 
@@ -28,9 +29,11 @@ namespace FintrakBanking.Interfaces.Credit
         #endregion
 
         #region Integration
-        List<string> GetCustomerCreditMatch(CreditBureauSearchViewModel searchInfoList);
+        List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList);
 
         byte[] GetFullSearchResultInPDF(SearchInput searchInput);
+
+        CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo);
         #endregion
     }
 }

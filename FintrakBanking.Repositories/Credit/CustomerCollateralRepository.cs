@@ -905,7 +905,7 @@ namespace FintrakBanking.Repositories.Credit
                 OPENMARKETVALUE = entity.openMarketValue,
                 //COLLATERALVALUE = (decimal)entity.collateralValue,
                 FORCEDSALEVALUE = entity.forcedSaleValue,
-                STAMPTOCOVER = entity.stampToCover,
+                STAMPTOCOVER = entity.stampToCoverAmount.ToString(),
                 //VALUATIONSOURCE = entity.valuationSource,
                 //ORIGINALVALUE = entity.originalValue,
                 //AVAILABLEVALUE = entity.availableValue,
@@ -943,7 +943,7 @@ namespace FintrakBanking.Repositories.Credit
            // collateral.COLLATERALVALUE = (decimal)entity.collateralValue;
 
             collateral.FORCEDSALEVALUE = entity.forcedSaleValue;
-            collateral.STAMPTOCOVER = entity.stampToCover;
+            collateral.STAMPTOCOVER = entity.stampToCoverAmount.ToString();
             //collateral.VALUATIONSOURCE = entity.valuationSource;
             //collateral.ORIGINALVALUE = entity.originalValue;
 
@@ -982,7 +982,7 @@ namespace FintrakBanking.Repositories.Credit
                 openMarketValue = (decimal)specifics.OPENMARKETVALUE,
                 //collateralValue = specifics.COLLATERALVALUE,
                 forcedSaleValue = specifics.FORCEDSALEVALUE,
-                stampToCover = specifics.STAMPTOCOVER,
+                stampToCoverAmount = Convert.ToDecimal(specifics.STAMPTOCOVER),
 
                 //valuationSource = specifics.VALUATIONSOURCE,
                 //originalValue = specifics.ORIGINALVALUE,
