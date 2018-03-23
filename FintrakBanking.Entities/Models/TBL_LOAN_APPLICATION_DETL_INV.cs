@@ -47,6 +47,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? APPROVEDDATETIME { get; set; }
 
+        [StringLength(50)]
+        public string PURCHASEORDERNUMBER { get; set; }
+
         public bool REVALIDATED { get; set; }
 
         public int CREATEDBY { get; set; }
