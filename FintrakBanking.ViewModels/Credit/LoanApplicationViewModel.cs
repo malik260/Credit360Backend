@@ -346,7 +346,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int? approvedBy { get; set; }
 
         public DateTime? approvedDateTime { get; set; }
-     //   public string purchaseOrderNumber { get; set; }
     }
 
     public class RegionLoanApplicationViewModel : GeneralEntity

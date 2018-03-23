@@ -76,8 +76,7 @@ namespace WinApp
             kernel.Bind<ICollateralTypeRepository>().To<CollateralTypeRepository>();
             kernel.Bind<IAccountSensitivityRepository>().To<AccountSensitivityRepository>();
             kernel.Bind<IProductRepository>().To<ProductRepository>();
-            kernel.Bind<IJobTitleRepository>().To<JobTitleRepository>();
-            kernel.Bind<IRankRepository>().To<RankRepository>();
+            kernel.Bind<IJobTitleRepository>().To<JobTitleRepository>();          
             kernel.Bind<IProductCollateralTypeRepository>().To<ProductCollateralTypeRepository>();
             kernel.Bind<IProductFeeRepository>().To<ProductFeeRepository>();
             kernel.Bind<ICustomerRepository>().To<CustomerRepository>();

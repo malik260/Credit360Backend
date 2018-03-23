@@ -1,8 +1,8 @@
 ﻿namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class RankViewModel : GeneralEntity
+    public class StaffRoleViewModel : GeneralEntity
     {
-        public int roleId { get; set; }
-        public string roleName { get; set; }
+        public int staffRoleId { get; set; }
+        public string staffRoleName { get; set; }
     }
 }

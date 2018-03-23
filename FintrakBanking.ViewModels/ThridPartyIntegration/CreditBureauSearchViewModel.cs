@@ -93,8 +93,9 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
     public class CRCRequestViewModel : GeneralEntity
     {
         public string productId;
-        public object[] casaAccountId;
+        public int casaAccountId { get; set; }
         public short searchType;
+        //public int accountId { get; set; }
 
         public string userName { get; set; }
         public string password { get; set; }
