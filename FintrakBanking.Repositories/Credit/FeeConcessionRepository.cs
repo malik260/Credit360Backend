@@ -9,6 +9,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -292,7 +293,16 @@ namespace FintrakBanking.Repositories.Credit
                 SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
-            output = context.SaveChanges() > 0;
+            //output = context.SaveChanges() > 0;
+            try
+            {
+                output = context.SaveChanges() > 0;
+            }
+            catch (DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new DbEntityValidationException(errorMessages);
+            }
             return output;
         }
         public bool ValidateFeeConcession(int loanApplicationDetailId, int? loanChargeFeeId)
@@ -304,6 +314,20 @@ namespace FintrakBanking.Repositories.Credit
                          select a).ToList();
 
             if (exist.Any())
+            {
+                returnVal = true;
+            }
+            return returnVal;
+        }
+        public bool ValidateApprovedFeeConcession(int concessionId)
+        {
+            bool returnVal = false;
+            var isApproved = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION_
+                         where a.CONCESSIONID == concessionId &&
+                           a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                         select a).FirstOrDefault();
+
+            if (isApproved != null)
             {
                 returnVal = true;
             }

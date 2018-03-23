@@ -5632,7 +5632,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
             //Storing the Irregular Schedule Payment Plan
-            if (model.reviewIrregularSchedule != null)
+            if (model.reviewIrregularSchedule.Count > 0)
             {
                 foreach (var item in model.reviewIrregularSchedule)
                 {
