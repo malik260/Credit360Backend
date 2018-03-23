@@ -274,15 +274,15 @@ namespace FintrakBanking.Common
         {
             get
             {
-                return  ConfigurationManager.AppSettings["reportPath"];
+                return ConfigurationManager.AppSettings["reportPath"];
             }
         }
 
-        public static string  SendErrorMail
+        public static string SendErrorMail
         {
             get
             {
-                return  (ConfigurationManager.AppSettings["sendErrorMail"]).ToString();
+                return (ConfigurationManager.AppSettings["sendErrorMail"]).ToString();
             }
         }
 
@@ -294,7 +294,7 @@ namespace FintrakBanking.Common
                 return (ConfigurationManager.AppSettings["smtpClient"]).ToString();
             }
         }
-        public static string  SmtpPort
+        public static string SmtpPort
         {
             get
             {
@@ -320,7 +320,7 @@ namespace FintrakBanking.Common
                 ip = ip.Split(',').First().Trim();
             return ip;
         }
-        
+
         public static string GetUniqueKey(int maxSize)
         {
             char[] chars = new char[62];
@@ -339,11 +339,11 @@ namespace FintrakBanking.Common
                 result.Append(chars[b % (chars.Length)]);
             }
             string code = string.Empty;
-            for (int i = 0; i < result.Length ; i++)
+            for (int i = 0; i < result.Length; i++)
             {
                 code += result[i];
             }
-            return code ;
+            return code;
         }
 
 
@@ -354,5 +354,12 @@ namespace FintrakBanking.Common
             double unixTime = unixTicks.TotalSeconds;
             return (int)unixTime;
         }
+
+
+        public static byte[] ToByteArray(this string str)
+        {
+            return System.Text.Encoding.ASCII.GetBytes(str);
+        }
+
     }
 }

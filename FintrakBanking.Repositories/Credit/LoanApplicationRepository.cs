@@ -100,6 +100,7 @@ namespace FintrakBanking.Repositories.Credit
                             isCollateralBacked = a.REQUIRECOLLATERAL,
                             tenor = a.APPLICATIONTENOR,
                             productClassId = a.PRODUCTCLASSID,
+                             loanApplicationId = a.LOANAPPLICATIONID,  
 
 
                             LoanApplicationDetail = a.TBL_LOAN_APPLICATION_DETAIL.Where (b=> b.LOANAPPLICATIONID == a.LOANAPPLICATIONID ).Select(b => new LoanApplicationDetailViewModel
@@ -144,6 +145,7 @@ namespace FintrakBanking.Repositories.Credit
                                     invoiceDate = i.INVOICE_DATE,
                                     principalName = i.TBL_LOAN_PRINCIPAL.NAME,
                                     principalId = i.PRINCIPALID,
+                                    purchaseOrderNumber = i.PURCHASEORDERNUMBER
                                 }).ToList(),
                                 educationLoan = b.TBL_LOAN_APPLICATION_DETL_EDU.Where(i => i.LOANAPPLICATIONDETAILID == b.LOANAPPLICATIONDETAILID).Select(x => new EducationLoanViewModel
                                 {
@@ -371,6 +373,7 @@ namespace FintrakBanking.Repositories.Credit
                                                          principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
                                                          principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
                                                          principalId = i.PRINCIPALID,
+                                                         purchaseOrderNumber = i.PURCHASEORDERNUMBER
                                                      }).ToList(),
                             firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                      select new EducationLoanViewModel
@@ -760,8 +763,10 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 catch (DbEntityValidationException ex)
                 {
-                    string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                    throw new DbEntityValidationException(errorMessages);
+
+                    //string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                    //throw new DbEntityValidationException(errorMessages);
+                    throw new Exception("Something went wrong");
                 }
 
                 var returndate = this.GetLoanApplicationByLoanRefrenceNo(this.data.APPLICATIONREFERENCENUMBER, data.COMPANYID);
@@ -773,7 +778,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 return returndate;
 
-
+                
                 throw new Exception("Something went wrong");
             }
             catch (Exception ex)
@@ -947,7 +952,9 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
                 PRINCIPALID = c.principalId,
                 DATETIMECREATED = DateTime.Now,
-                CREATEDBY = createdBy
+                CREATEDBY = createdBy,
+                 PURCHASEORDERNUMBER =  c.purchaseOrderNumber 
+                  
             });
             context.TBL_LOAN_APPLICATION_DETL_INV.AddRange(data);
         }
@@ -1490,6 +1497,7 @@ namespace FintrakBanking.Repositories.Credit
                                contractStartDate = a.CONTRACT_STARTDATE,
                                contractEndDate = a.CONTRACT_ENDDATE,
                                approvalStatusId = a.APPROVALSTATUSID,
+                                purchaseOrderNumber= a.PURCHASEORDERNUMBER,
                                productClassId = (int)ProductClassEnum.InvoiceDiscountingFacility
                            }).ToList();
                 return inv;
@@ -1567,11 +1575,12 @@ namespace FintrakBanking.Repositories.Credit
         public ValidateNumberViewModel ValidateDocumentNumber(ValidateNumberViewModel data)
         {
             var dat = context.TBL_LOAN_APPLICATION_DETL_INV
-                .Where(c => c.PRINCIPALID == (int)data.principalId && c.INVOICENO == data.documentNo)
+                .Where(c => c.PRINCIPALID == (int)data.principalId && c.INVOICENO == data.documentNo && c.PURCHASEORDERNUMBER == data.purchaseOrderNumber)
                 .FirstOrDefault();
 
             return new ValidateNumberViewModel
             {
+                purchaseOrderNumber = data.purchaseOrderNumber,
                 documentNo = data.documentNo,
                 invoiceStatus = (dat == null) ? false : true,
                 principalId = data.principalId,

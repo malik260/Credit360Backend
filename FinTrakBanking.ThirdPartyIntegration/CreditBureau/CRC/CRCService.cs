@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.ThridPartyIntegration; 
 using FinTrakBanking.ThirdPartyIntegration.CRCWebService;
 using System;
@@ -64,43 +65,45 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
         }
 
 
-        private CRCSearchResult SearchOutput(string userName, string password,   XElement xml)
+        private CRCSearchResult SearchOutput(string userName, string password, XElement xml)
         {
-
+            XmlDocument xdoc = new XmlDocument();
             CRCSearchResult result = null;
 
             LiveRequestInvokerSoapClient crc = new LiveRequestInvokerSoapClient();
 
-            string dataPacket = crc.PostRequest(xml.ToString(),  userName,  password);
+            string dataPacket = crc.PostRequest(xml.ToString(), userName, password);
 
             if (dataPacket.Contains(DATA_PACKET))
             {
-                if (!dataPacket.Contains(ERROR)) {
-                    
-                     result = new CRCSearchResult
-                     {
+                if (!dataPacket.Contains(ERROR))
+                {
+                    result = new CRCSearchResult
+                    {
                         SearchCompleted = (int)SearchCompletedStatusEnum.SearchIncomplete,
                         SearchResult = dataPacket
                     };
                 }
                 else
                 {
+                    xdoc.LoadXml(dataPacket);
                     result = new CRCSearchResult
                     {
                         SearchCompleted = (int)SearchCompletedStatusEnum.SearchError,
-                        SearchResult = dataPacket
+                        SearchResult = new CreditBureauHelp().ConvertXmlToJson(xdoc)
                     };
                 }
-              
+
             }
             else
-            {
+            {            
+                xdoc.LoadXml(dataPacket);
                 result = new CRCSearchResult
                 {
                     SearchCompleted = (int)SearchCompletedStatusEnum.SearchCompleted,
-                    SearchResult = dataPacket
+                    SearchResult = new CreditBureauHelp().ConvertXmlToJson(xdoc)
                 };
-            };
+            }
             return result;
         }
 

@@ -57,7 +57,12 @@ namespace FintrakBanking.APICore
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
             app.UseCookieAuthentication(new CookieAuthenticationOptions());
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-            var exipredHr = double.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
+
+            var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
+            var exipredMin = int.Parse(ConfigurationManager.AppSettings["tokenExpiryMinute"]);
+            var exipredSec = int.Parse(ConfigurationManager.AppSettings["tokenExpirySecond"]);
+
+            var exipredTime = (exipredHr * 60 * 60) + (exipredMin * 60) + exipredSec;
             // Configure the application for OAuth based flow
             PublicClientId = "self";
             OAuthOptions = new OAuthAuthorizationServerOptions
@@ -65,9 +70,11 @@ namespace FintrakBanking.APICore
                 TokenEndpointPath = new PathString("/Token"),
                 Provider = new ApplicationOAuthProvider(PublicClientId),
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromHours(exipredHr),
-                // In production mode set AllowInsecureHttp = false
-                AllowInsecureHttp = true
+                // AccessTokenExpireTimeSpan = TimeSpan.FromHours(exipredHr),
+                AccessTokenExpireTimeSpan = TimeSpan.FromSeconds(exipredTime),
+                 
+            // In production mode set AllowInsecureHttp = false
+            AllowInsecureHttp = true
             };
 
             // Enable the application to use bearer tokens to authenticate users
@@ -92,5 +99,6 @@ namespace FintrakBanking.APICore
             //    ClientSecret = ""
             //});
         }
+
     }
 }
