@@ -24,6 +24,6 @@
         public string middlename { get; set; }
         public string fullname { get { return $"{ lastname}  {firstname} {middlename}"; } }
         public string jobTitleName { get; set; }
-        public string rankName { get; set; }
+        public string RoleName { get; set; }
     }
 }

@@ -38,9 +38,6 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime CONTRACT_ENDDATE { get; set; }
 
-        [StringLength(50)]
-        public string PURCHASEORDERNUMBER { get; set; }
-
         public short? APPROVALSTATUSID { get; set; }
 
         [StringLength(800)]
