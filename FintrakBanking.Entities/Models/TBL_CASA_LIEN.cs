@@ -37,7 +37,6 @@ namespace FintrakBanking.Entities.Models
 
         public short LIENTYPEID { get; set; }
 
-        //[Column(TypeName = "date")]
         public DateTime DATETIMECREATED { get; set; }
 
         public int CREATEDBY { get; set; }

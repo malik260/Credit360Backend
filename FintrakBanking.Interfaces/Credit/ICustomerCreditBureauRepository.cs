@@ -24,6 +24,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CreditBereauViewModel> GetCreditBureauInformation();
 
+        IEnumerable<CRCBureauFacilityViewModel> GetCRCBureauFacilities();
+
         List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId);
 
         #endregion
