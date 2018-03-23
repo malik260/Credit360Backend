@@ -443,5 +443,43 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         #endregion
+
+        #region Administration
+        [HttpGet]
+        [Route("accountmanagement")]
+        public IHttpActionResult GetAllApplicationUsers([FromUri] int page, [FromUri] int itemsPerPage)
+        {
+            var data = repo.GetActiveUsers(token.GetCompanyId);
+            int totalItems = data.Count();
+            data = data.OrderBy(x => x.staffName);//.Skip(page).Take(itemsPerPage);               
+            return Ok( new { success = true, result = data.ToList(), count = data.Count() });
+             
+        }
+
+
+        [HttpPut]
+        [Route("accountmanagement")]
+        public IHttpActionResult UpdateApplicationUsers([FromBody] ActiveUserDetails entity)
+        {
+            try
+            {
+                if (entity != null)
+            {
+                    string message = string.Empty;
+                    entity.lastUpdatedBy = token.GetUserId;
+                var data = repo.UpdateUserStatus(entity, out message);
+                if(data)
+                return Ok(new { success = data, result = data, message = message == string.Empty ?  $"Account is cleared" : message });                 
+            }
+
+            return Ok(new { success = false,  message = $"Account not fund" });
+        }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = $"Action Failed" });
+            }
+
+        }
+        #endregion
     }
 }

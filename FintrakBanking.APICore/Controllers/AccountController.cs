@@ -88,6 +88,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("Logout")]
         public IHttpActionResult Logout()
         {
+            repo.ClearLoginToken(token.GetUsername);
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
 
             var audit = new TBL_AUDIT()

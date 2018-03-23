@@ -43,12 +43,18 @@ namespace FintrakBanking.ViewModels.Setups.General
         public DateTime? dateTimeCreated { get; set; }
         public DateTime? dateTimeUpdated { get; set; }
         public bool approvalStatus { get; set; }
+        public Guid? logincode { get; set; }
         public List<UserGroupId> groupId { get; set; }
         public List<UserActivities> activities { get; set; }
 
         public int operationId { get; set; }
         public int approvalStatusId { get; set; }
         public string comment { get; set; }
+
+        public SessionStatusInfo sessionStatusInfo { get; set; }
+
+
+
 
         public string strIsFirstLogin
         {
@@ -73,5 +79,32 @@ namespace FintrakBanking.ViewModels.Setups.General
                 return this.lastLoginDate.HasValue ? this.lastLoginDate.Value.ToString("dd/MM/yyyy") : DateTime.Now.AddDays(-5).ToString("dd/MM/yyyy");
             }
         }
+    }
+    public class SessionStatusInfo
+    {
+        public Guid loginCode { get; set; }
+        public int state { get; set; }
+        public string errorMessage { get; set; }
+    }
+
+    public class ActiveUserDetails
+    {
+        public int companyId { get; set; }
+        public int staffId { get; set; }
+        public int user_id { get; set; }
+        public string username { get; set; }
+        public string staffName { get; set; }
+        public int branchId { get; set; }
+        public int countryId { get; set; }
+        public string branchName { get; set; }
+        public string companyName { get; set; }
+        public Guid? logincode { get; set; }
+        public DateTime? lastLoginDate { get; set; }
+        public bool isActive { get; set; }
+        public bool isLocked { get; set; }
+        public int? failedLogonAttempt { get; set; }
+        public DateTime? lastLockedOutDate { get; set; }
+        public int? lastUpdatedBy { get; set; }
+        public string actionMessage { get; set; }
     }
 }

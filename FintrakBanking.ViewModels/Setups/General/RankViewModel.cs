@@ -5,4 +5,10 @@
         public int rankId { get; set; }
         public string rankName { get; set; }
     }
+
+    public class RoleViewModel : GeneralEntity
+    {
+        public int staffRoleId { get; set; }
+        public string staffRoleName { get; set; }
+    }
 }

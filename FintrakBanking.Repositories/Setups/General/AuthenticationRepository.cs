@@ -8,6 +8,7 @@ using System.ComponentModel.Composition;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using static FintrakBanking.Repositories.Credit.LoanApplicationRepository;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -100,7 +101,12 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public UserViewModel FindUserByUserName(string username)
         {
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username );
+            var result = CheckSessionState(username);
+
+            if (result.state > 0)
+                throw new CustomException(result.errorMessage);
+
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username);
 
             if (_user != null)
             {
@@ -124,80 +130,146 @@ namespace FintrakBanking.Repositories.Setups.General
                                     companyName = coy.NAME,
 
                                 }).First();
-
                     if (data == null)
                     {
+                        _user.LOGINCODE = null;
                         _user.FAILEDLOGONATTEMPT += 1;
-
-                        context.SaveChanges();
                     }
+                    else
+                    {
+                        _user.LASTLOGINDATE = DateTime.Now;
+                        _user.LOGINCODE = result.loginCode;
+                    }
+                    context.SaveChanges();
 
                     return data;
                 }
                 catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
+                {                
+                    throw new CustomException(ex.Message);
                 }
             }
 
             return null;
         }
+         
+        private dynamic CheckSessionState(string username)
+        {
+            Guid loginCode = Guid.Empty;
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
+            dynamic result = null;
+          
 
+            if (_user != null)
+            {
+                if (_user.LOGINCODE == null || _user.LOGINCODE == Guid.Empty)
+                    result = new SessionStatusInfo
+                    {
+                        loginCode = Guid.NewGuid(),
+                        state = 0,
+                        errorMessage = "",
+                         
+                    };
+
+                else
+                {
+                    result = new SessionStatusInfo
+                    {
+                        loginCode = Guid.Empty,
+                        state = 1,
+                        errorMessage = "You are already logged in",                        
+                    };                   
+
+                }
+
+            }
+         return   result;
+        }
 
         public UserViewModel FindUserByUserNameAndPassword(string username, string password)
         {
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
-
-            var appSetup = context.TBL_SETUP_GLOBAL.Single();
-
             UserViewModel data;
 
-            if (_user != null)
+            var appSetup = context.TBL_SETUP_GLOBAL.Single();
+            var  result =    CheckSessionState(username);
+
+            if (result.state > 0)
+            {
+                data = UserLoginDetails(username, password);
+                data.sessionStatusInfo = result;
+
+                return data;
+            }
+
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
+            if (result.state == 0 && _user != null)
             {
                 try
                 {
                     if (appSetup.USE_ACTIVE_DIRECTORY)
                     {
                         data = FindUserByUserName(username);
+                        _user.LASTLOGINDATE = DateTime.Now;
                     }
                     else
                     {
-                        data = (from p in context.TBL_PROFILE_USER
-                                join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
-                                join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
-                                join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                                where p.USERNAME == username && p.PASSWORD == password
-                                select new UserViewModel
-                                {
-                                    companyId = coy.COMPANYID,
-                                    staffId = p.STAFFID,
-                                    user_id = p.USERID,
-                                    username = p.USERNAME,
-                                    staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                                    branchId = st.BRANCHID.Value,
-                                    countryId = coy.COUNTRYID,
-                                    branchName = br.BRANCHNAME,
-                                    companyName = coy.NAME,
+                        data = UserLoginDetails(username, password);
+                        data.sessionStatusInfo = result;
 
-                                }).First();
                     }
 
                     if (data == null)
                     {
+                        _user.LOGINCODE = null;
                         _user.FAILEDLOGONATTEMPT += 1;
-
-                        context.SaveChanges();
                     }
-
+                    else
+                    {
+                        _user.LASTLOGINDATE = DateTime.Now;
+                        _user.LOGINCODE = result.loginCode;
+                    }
+              
                     return data;
                 }
                 catch (Exception ex)
                 {
+                    context.Dispose();
                     throw new Exception(ex.Message);
                 }
             }
+            else
+            {
+                _user.LOGINCODE = null;
+                _user.FAILEDLOGONATTEMPT += 1;
+                context.SaveChanges();
+            }
 
             return null;
+        }
+        
+        private UserViewModel UserLoginDetails(string username, string password)
+        {
+            return (from p in context.TBL_PROFILE_USER
+                    join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
+                    join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                    join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                    where p.USERNAME == username && p.PASSWORD == password && p.ISACTIVE  && !p.ISLOCKED  
+                    select new UserViewModel
+                    {
+                        companyId = coy.COMPANYID,
+                        staffId = p.STAFFID,
+                        user_id = p.USERID,
+                        username = p.USERNAME,
+                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                        branchId = st.BRANCHID.Value,
+                        countryId = coy.COUNTRYID,
+                        branchName = br.BRANCHNAME,
+                        companyName = coy.NAME,
+                        logincode = p.LOGINCODE,
+                        lastLoginDate = p.LASTLOGINDATE
+
+
+                    }).First();
         }
 
         public bool IsUserExits(string username)
@@ -287,7 +359,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return (from u in context.TBL_PROFILE_USER
                     join st in context.TBL_STAFF
                     on u.STAFFID equals st.STAFFID
-                    where u.USERNAME == userName
+                    where u.USERNAME == userName && u.ISACTIVE && !u.ISLOCKED
                     select new UserViewModel()
                     {
                         user_id = u.USERID,
@@ -299,5 +371,16 @@ namespace FintrakBanking.Repositories.Setups.General
                     }).FirstOrDefault();
         }
 
+        public bool ClearLoginToken(string userName)
+        {
+            bool result = false;
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == userName);
+            if (_user != null)
+            {
+                _user.LOGINCODE = null;
+                result = context.SaveChanges() > 0;
+            }
+            return result;
+        }
     }
 }

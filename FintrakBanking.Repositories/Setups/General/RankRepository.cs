@@ -18,41 +18,79 @@ namespace FintrakBanking.Repositories.Setups.General
             this.context = _context;
         }
 
+
+        public RoleViewModel GetRole(int jobTitleId)
+        {
+            var role = (from a in context.TBL_STAFF_ROLE
+                        select new RoleViewModel
+                        {
+                            staffRoleName = a.STAFFROLENAME,
+                            companyId = (short)a.COMPANYID,
+                            staffRoleId = a.STAFFROLEID
+                        }).SingleOrDefault();
+            return role;
+        }
+        public IEnumerable<RoleViewModel> GetRoleByCompanyId(int companyId)
+        {
+            return from a in context.TBL_STAFF_ROLE
+                   where a.COMPANYID == companyId
+                   select new RoleViewModel
+                   {
+                       staffRoleName = a.STAFFROLENAME,
+                       companyId = (short)a.COMPANYID,
+                       staffRoleId = a.STAFFROLEID
+                   };
+
+        }
+
+        public IEnumerable<RoleViewModel> GetRole()
+        {
+            var role = (from a in context.TBL_STAFF_ROLE
+                        select new RoleViewModel
+                        {
+                            staffRoleName = a.STAFFROLENAME,
+                            companyId = (short)a.COMPANYID,
+                            staffRoleId = a.STAFFROLEID
+                        });
+            return role;
+        }
+
         public RankViewModel GetRank(int jobTitleId)
         {
-            var rank = (from a in context.TBL_STAFF_RANK
-                        select new RankViewModel
-                        {
-                            rankName = a.RANKNAME,
-                            companyId = (short)a.COMPANYID,
-                            rankId = a.RANKID
-                        }).SingleOrDefault();
+            var rank = (from a in context.TBL_STAFF_ROLE
+                    select new RankViewModel
+                    {
+                        //rankName = a.RANKNAME,
+                        //companyId = (short)a.COMPANYID,
+                        //rankId = a.RANKID
+                    }).SingleOrDefault();
             return rank;
         }
 
         public IEnumerable<RankViewModel> GetRankByCompanyId(int companyId)
         {
-            return from a in context.TBL_STAFF_RANK
-                        where a.COMPANYID == companyId
-                        select new RankViewModel
-                        {
-                            rankName = a.RANKNAME,
-                            companyId = (short)a.COMPANYID,
-                            rankId = a.RANKID
-                        };
-            
-        }
+            return from a in context.TBL_STAFF_ROLE
+                   where a.COMPANYID == companyId
+                   select new RankViewModel
+                   {
+                       //rankName = a.RANKNAME,
+                       //companyId = (short)a.COMPANYID,
+                       //rankId = a.RANKID
+                   };
 
+        }
         public IEnumerable<RankViewModel> GetRank()
         {
-            var rank = (from a in context.TBL_STAFF_RANK
+            var rank = (from a in context.TBL_STAFF_ROLE
                         select new RankViewModel
                         {
-                            rankName = a.RANKNAME,
-                            companyId = (short)a.COMPANYID,
-                            rankId = a.RANKID
+                            //rankName = a.RANKNAME,
+                            //companyId = (short)a.COMPANYID,
+                            //rankId = a.RANKID
                         });
             return rank;
         }
+
+
     }
 }

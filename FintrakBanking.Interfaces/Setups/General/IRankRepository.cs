@@ -10,5 +10,11 @@ namespace FintrakBanking.Interfaces.Setups.General
         RankViewModel GetRank(int rankId);
 
         IEnumerable<RankViewModel> GetRankByCompanyId(int companyId);
+
+        IEnumerable<RoleViewModel> GetRole();
+
+        RoleViewModel GetRole(int rankId);
+
+        IEnumerable<RoleViewModel> GetRoleByCompanyId(int companyId);
     }
 }

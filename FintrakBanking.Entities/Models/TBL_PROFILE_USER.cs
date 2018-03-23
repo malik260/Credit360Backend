@@ -56,6 +56,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMECREATED { get; set; }
 
+        public DateTime?  LASTLOCKOUTDATE { get; set; }
+
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public bool APPROVALSTATUS { get; set; }
@@ -63,6 +65,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATEAPPROVED { get; set; }
 
         public short APPROVALSTATUSID { get; set; }
+
+        public Guid? LOGINCODE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PROFILE_ADDITIONALACTIVITY> TBL_PROFILE_ADDITIONALACTIVITY { get; set; }

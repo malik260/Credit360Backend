@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -118,7 +121,7 @@
     <Compile Include="Customer\CustomerViewModels.cs" />
     <Compile Include="ErrorLogger\ErrorViewModel.cs" />
     <Compile Include="Finance\CurrencyExchangeRateViewModel.cs" />
-    <Compile Include="Finance\CasaLienViewModel.cs" />
+    <Compile Include="CASA\CasaLienViewModel.cs" />
     <Compile Include="Finance\EndOfDayViewModel.cs" />
     <Compile Include="Finance\FinanceTransactionViewModel.cs" />
     <Compile Include="GenaralEntity.cs" />
