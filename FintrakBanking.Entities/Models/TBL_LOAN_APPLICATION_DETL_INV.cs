@@ -31,9 +31,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string CONTRACTNO { get; set; }
-        [Required]
-        [StringLength(50)]
-        public string PURCHASEORDERNUMBER { get; set; }
+        
         [Column(TypeName = "date")]
         public DateTime CONTRACT_STARTDATE { get; set; }
 
