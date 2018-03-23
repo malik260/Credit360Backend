@@ -45,6 +45,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+       
         public decimal disbursableAmount;
         public string loanStatusName;
         public bool isBidbond;
@@ -146,6 +147,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalAmount { get; set; }
         public int chargeFeeId { get; set; }
 
+        //...................For Loan Review................//
+        public int loanReviewOperationTypeId { get; set; }
+        public string reviewDetails { get; set; }
         //.............Other Attributes................//
         public int productTypeId { get; set; }
 
