@@ -249,7 +249,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.JobRequestUpdated,
-                STAFFID = model.lastUpdatedBy,
+                STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Reply JobRequest '{ model.jobRequestCode }' ",
                 IPADDRESS = model.userIPAddress,
@@ -849,6 +849,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             JobRequestViewModel jb = new JobRequestViewModel();
             jb.jobRequestId = context.TBL_JOB_REQUEST.Where(x => x.JOBREQUESTCODE == model.jobRequestCode).FirstOrDefault().JOBREQUESTID;
             jb.responseComment = model.comment;
+            jb.createdBy = model.createdBy;
+            jb.companyId = model.companyId;
+            jb.userBranchId = model.userBranchId;
             ReplyJobRequest(jb, jb.jobRequestId);
 
             // Audit Section ---------------------------
@@ -954,12 +957,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Select(x => new RequestDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
-                //loanApplicationNumber = x.LoanApplicationNumber,
-                //loanReferenceNumber = x.LoanReferenceNumber,
                 jobRequestCode = x.JOBREQUESTCODE,
                 documentTitle = x.DOCUMENTTITLE,
                 documentTypeId = x.DOCUMENTTYPEID,
-                fileData = x.FILEDATA,
+                //fileData = x.FILEDATA,
                 fileName = x.FILENAME,
                 fileExtension = x.FILEEXTENSION,
                 systemDateTime = x.SYSTEMDATETIME,
@@ -994,9 +995,26 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
         }
 
-        public IEnumerable<RequestDocumentViewModel> GetJobRequestDocument(string jobRequestCode)
+        public IEnumerable<RequestDocumentViewModel> GetJobRequestDocuments(string jobRequestCode)
         {
             return this.GetAllJobDocument().Where(x => x.jobRequestCode == jobRequestCode);
+        }
+
+        public IEnumerable<RequestDocumentViewModel> GetJobRequestDocumentById(int documentId)
+        {
+            return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x=>x.DOCUMENTID == documentId).Select(x => new RequestDocumentViewModel
+            {
+                documentId = x.DOCUMENTID,
+                jobRequestCode = x.JOBREQUESTCODE,
+                documentTitle = x.DOCUMENTTITLE,
+                documentTypeId = x.DOCUMENTTYPEID,
+                fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                systemDateTime = x.SYSTEMDATETIME,
+                physicalFileNumber = x.PHYSICALFILENUMBER,
+                physicalLocation = x.PHYSICALLOCATION,
+            });
         }
 
         #endregion Job-Request Document

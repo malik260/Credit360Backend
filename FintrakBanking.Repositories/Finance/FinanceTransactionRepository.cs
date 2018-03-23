@@ -16,6 +16,7 @@ using FintrakBanking.ViewModels;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
+using FintrakBanking.ViewModels.CASA;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -94,7 +95,7 @@ namespace FintrakBanking.Repositories.Finance
         {            
             var balance = (from data in context.TBL_CASA_LIEN
                          where data.PRODUCTACCOUNTNUMBER == productAccountNumber
-                         select data.LIENCREDITAMOUNT - data.LIENDEBITAMOUNT).Sum();
+                         select data.LIENAMOUNT).Sum();
 
             return balance;
         }
@@ -378,108 +379,106 @@ namespace FintrakBanking.Repositories.Finance
         }
 
 
-        [OperationBehavior(TransactionScopeRequired = true)]
-        public List<FinanceTransactionViewModel> PostCollateralSearch(CasaLienViewModel model)
-        {
-            var lienSearchAmount = this.context.TBL_CASA_LIEN.FirstOrDefault(x => x.LIENREFERENCENUMBER == model.lienReferenceNumber).LIENCREDITAMOUNT;
+        //[OperationBehavior(TransactionScopeRequired = true)]
+        //public List<FinanceTransactionViewModel> PostCollateralSearch(CasaLienViewModel model)
+        //{
+        //    var lienSearchAmount = this.context.TBL_CASA_LIEN.FirstOrDefault(x => x.LIENREFERENCENUMBER == model.lienReferenceNumber).LIENAMOUNT;
 
 
-            var data = new TBL_CASA_LIEN
-            {
+        //    //var data = new TBL_CASA_LIEN
+        //    //{
+        //    //    PRODUCTACCOUNTNUMBER = model.productAccountNumber,
+        //    //    LIENREFERENCENUMBER = model.lienReferenceNumber, //CommonHelpers.GenerateRandomDigitCode(10),
+        //    //    BRANCHID = model.branchId,
+        //    //    COMPANYID = model.companyId,
+        //    //    LIENCREDITAMOUNT = 0,
+        //    //    LIENDEBITAMOUNT = lienSearchAmount,//creditOperations.GetCollateralSearchChargeAmount(model.stateId),
+        //    //    LIENTYPEID = (short)LienTypeEnum.CollateralSearch,
+        //    //    CREATEDBY = model.createdBy,
+        //    //    DESCRIPTION = "",
+        //    //    DATECREATED = generalSetup.GetApplicationDate()
+        //    //};
 
+        //    //context.TBL_CASA_LIEN.Add(data);                       
 
-                PRODUCTACCOUNTNUMBER = model.productAccountNumber,
-                LIENREFERENCENUMBER = model.lienReferenceNumber, //CommonHelpers.GenerateRandomDigitCode(10),
-                BRANCHID = model.branchId,
-                COMPANYID = model.companyId,
-                LIENCREDITAMOUNT = 0,
-                LIENDEBITAMOUNT = lienSearchAmount,//creditOperations.GetCollateralSearchChargeAmount(model.stateId),
-                LIENTYPEID = (short)LienTypeEnum.CollateralSearch,
-                CREATEDBY = model.createdBy,
-                DESCRIPTION = "",
-                DATECREATED = generalSetup.GetApplicationDate()
-            };
+        //    var casa = this.context.TBL_CASA.FirstOrDefault(x => x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId);
 
-            context.TBL_CASA_LIEN.Add(data);                       
+        //    FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+        //    debit.operationId = (int)OperationsEnum.CollateralSearch;
+        //    debit.description = "Customer Collateral Search Charge";
+        //    debit.valueDate = generalSetup.GetApplicationDate();
+        //    debit.transactionDate = debit.valueDate;
+        //    debit.currencyId = casa.CURRENCYID;
+        //    debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+        //    debit.isApproved = true;
+        //    debit.postedBy = model.createdBy;
+        //    debit.approvedBy = model.createdBy;
+        //    debit.approvedDate = debit.transactionDate;
+        //    debit.approvedDateTime = DateTime.Now;
+        //    debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+        //    debit.companyId = model.companyId;
 
-            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId);
-
-            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            debit.operationId = (int)OperationsEnum.CollateralSearch;
-            debit.description = "Customer Collateral Search Charge";
-            debit.valueDate = generalSetup.GetApplicationDate();
-            debit.transactionDate = debit.valueDate;
-            debit.currencyId = casa.CURRENCYID;
-            debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
-            debit.isApproved = true;
-            debit.postedBy = model.createdBy;
-            debit.approvedBy = model.createdBy;
-            debit.approvedDate = debit.transactionDate;
-            debit.approvedDateTime = DateTime.Now;
-            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-            debit.companyId = model.companyId;
-
-            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
-            debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
-            debit.casaAccountId = casa.CASAACCOUNTID;
-            debit.debitAmount = lienSearchAmount;
-            debit.creditAmount = 0;
-            debit.sourceBranchId = model.branchId;
-            debit.destinationBranchId = casa.BRANCHID;
+        //    debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+        //    debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
+        //    debit.casaAccountId = casa.CASAACCOUNTID;
+        //    debit.debitAmount = lienSearchAmount;
+        //    debit.creditAmount = 0;
+        //    debit.sourceBranchId = model.branchId;
+        //    debit.destinationBranchId = casa.BRANCHID;
 
             
-            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.CollateralSearch;
-            credit.description = "Customer Collateral Search Charge";
-            credit.valueDate = debit.valueDate;
-            credit.transactionDate = debit.valueDate;
-            credit.currencyId = casa.CURRENCYID;
-            credit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
-            credit.isApproved = true;
-            credit.postedBy = model.createdBy;
-            credit.approvedBy = model.createdBy;
-            credit.approvedDate = debit.transactionDate;
-            credit.approvedDateTime = DateTime.Now;
-            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-            credit.companyId = model.companyId;
+        //    FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+        //    credit.operationId = (int)OperationsEnum.CollateralSearch;
+        //    credit.description = "Customer Collateral Search Charge";
+        //    credit.valueDate = debit.valueDate;
+        //    credit.transactionDate = debit.valueDate;
+        //    credit.currencyId = casa.CURRENCYID;
+        //    credit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+        //    credit.isApproved = true;
+        //    credit.postedBy = model.createdBy;
+        //    credit.approvedBy = model.createdBy;
+        //    credit.approvedDate = debit.transactionDate;
+        //    credit.approvedDateTime = DateTime.Now;
+        //    credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+        //    credit.companyId = model.companyId;
 
-            var chargeGL = this.context.TBL_COLLATERAL_TYPE.FirstOrDefault(x => x.COLLATERALTYPEID == (int)CollateralTypeEnum.Property).CHARGEGLACCOUNTID.Value;
-            credit.glAccountId = chargeGL;
+        //    var chargeGL = this.context.TBL_COLLATERAL_TYPE.FirstOrDefault(x => x.COLLATERALTYPEID == (int)CollateralTypeEnum.Property).CHARGEGLACCOUNTID.Value;
+        //    credit.glAccountId = chargeGL;
 
-            credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
-            credit.casaAccountId = null;
-            credit.debitAmount = 0;
-            credit.creditAmount = lienSearchAmount;
-            credit.sourceBranchId = model.branchId;
-            credit.destinationBranchId = model.branchId;
+        //    credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
+        //    credit.casaAccountId = null;
+        //    credit.debitAmount = 0;
+        //    credit.creditAmount = lienSearchAmount;
+        //    credit.sourceBranchId = model.branchId;
+        //    credit.destinationBranchId = model.branchId;
 
 
-            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-            inputTransactions.Add(debit);
-            inputTransactions.Add(credit);
-            PostTransaction(inputTransactions);
+        //    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+        //    inputTransactions.Add(debit);
+        //    inputTransactions.Add(credit);
+        //    PostTransaction(inputTransactions);
 
-            // Audit Section ---------------------------            
+        //    // Audit Section ---------------------------            
 
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = model.branchId,
-                DETAIL = $"Applied for lien with reference number: {model.lienReferenceNumber}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
+        //    var audit = new TBL_AUDIT
+        //    {
+        //        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
+        //        STAFFID = model.createdBy,
+        //        BRANCHID = model.branchId,
+        //        DETAIL = $"Applied for lien with reference number: {model.lienReferenceNumber}",
+        //        IPADDRESS = model.userIPAddress,
+        //        URL = model.applicationUrl,
+        //        APPLICATIONDATE = generalSetup.GetApplicationDate(),
+        //        SYSTEMDATETIME = DateTime.Now
+        //    };
 
-            this.auditTrail.AddAuditTrail(audit);
+        //    this.auditTrail.AddAuditTrail(audit);
 
-            //end of Audit section -------------------------------
-            context.SaveChanges();
-            return null;
+        //    //end of Audit section -------------------------------
+        //    context.SaveChanges();
+        //    return null;
 
-        }
+        //}
 
         public CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId,   int companyId)
         {

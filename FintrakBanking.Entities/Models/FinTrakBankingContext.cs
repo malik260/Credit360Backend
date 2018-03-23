@@ -296,6 +296,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
         public virtual DbSet<TBL_CUSTOM_FIANCE_TRANSACTION> TBL_CUSTOM_FIANCE_TRANSACTION { get; set; }
+        public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
         public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
@@ -767,11 +768,7 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CASA_LIEN>()
-                .Property(e => e.LIENCREDITAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_CASA_LIEN>()
-                .Property(e => e.LIENDEBITAMOUNT)
+                .Property(e => e.LIENAMOUNT)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_CASA_LIEN_TYPE>()

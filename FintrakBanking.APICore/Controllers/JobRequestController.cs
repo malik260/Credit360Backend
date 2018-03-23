@@ -367,12 +367,27 @@ namespace FintrakBanking.APICore.Controllers
         #region Job-Documents
 
         [HttpGet]
-        [Route("job-document/{jobRequestCode}")]
-        public HttpResponseMessage GetLoanDocumentByApplication(string jobRequestCode)
+        [Route("job-request-documents/{jobRequestCode}")]
+        public HttpResponseMessage GetJobRequestDocuments(string jobRequestCode)
         {
             try
             {
-                var data = repo.GetJobRequestDocument(jobRequestCode);
+                var data = repo.GetJobRequestDocuments(jobRequestCode);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("job-request-document/{documentId}")]
+        public HttpResponseMessage GetJobRequestDocumentById(int documentId)
+        {
+            try
+            {
+                var data = repo.GetJobRequestDocumentById(documentId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -483,6 +498,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
                 var file = provider.Contents.FirstOrDefault();

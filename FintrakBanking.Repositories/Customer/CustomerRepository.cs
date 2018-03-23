@@ -557,6 +557,7 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             temp = existingTempPhone;
                             temp.ACTIVE = entity.active;
+                            temp.PHONECONTACTID = entity.phoneContactId;
                             temp.CUSTOMERID = entity.customerId;
                             temp.PHONE = entity.phone;
                             temp.PHONENUMBER = entity.phoneNumber;
@@ -570,6 +571,7 @@ namespace FintrakBanking.Repositories.Customer
 
                             temp.ACTIVE = entity.active;
                             temp.CUSTOMERID = entity.customerId;
+                            temp.PHONECONTACTID = entity.phoneContactId;
                             temp.PHONE = entity.phone;
                             temp.PHONENUMBER = entity.phoneNumber;
                             temp.CREATEDBY = entity.createdBy;
@@ -3428,7 +3430,7 @@ namespace FintrakBanking.Repositories.Customer
                         && a.APPROVALCOMPLETED == false
                         && c.RESPONSESTAFFID == null
                         && c.OPERATIONID == (int)OperationsEnum.CustomerInformationApproval
-                    && c.TOAPPROVALLEVELID == staffApprovalLevelId
+                    && c.TOAPPROVALLEVELID == staffApprovalLevelId orderby a.DATETIMECREATED descending
 
                     select new CustomerInformationApprovalViemModel
                     {
@@ -3758,7 +3760,7 @@ namespace FintrakBanking.Repositories.Customer
                 temp = context.TBL_TEMP_CUSTOMER_PHONCONTACT.FirstOrDefault(x => x.TEMPPHONECONTACTID == targetId);
                 if (temp != null) //If temp record is not null select the information from the main table
                 {
-                    entity = context.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault(x => x.PHONECONTACTID == targetId);
+                    entity = context.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault(x => x.PHONECONTACTID == temp.PHONECONTACTID);
                     entity.ACTIVE = temp.ACTIVE;
                     entity.CUSTOMERID = temp.CUSTOMERID;
                     entity.PHONE = temp.PHONE;
