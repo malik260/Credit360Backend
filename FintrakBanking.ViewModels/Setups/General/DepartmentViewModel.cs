@@ -15,6 +15,8 @@
 
     public class DepartmentCustomersViewModel : DepartmentViewModel
     {
+        public string roleName;
+
         public int customertId { get; set; }
         public int staffId { get; set; }
         public string firstname { get; set; }

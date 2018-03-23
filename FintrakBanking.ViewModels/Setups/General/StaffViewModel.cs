@@ -13,8 +13,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string LastName { get; set; }
         public string MiddleName { get; set; }
         public int JobTitleId { get; set; }
-        public int RankId { get; set; }
-        public string RankName { get; set; }
+        public int staffRoleId { get; set; }
+        public string staffRoleName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }

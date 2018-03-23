@@ -17,6 +17,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
 
+        IEnumerable<LoanViewModel> GetApprovedLoanReview();
+
         LoanViewModel GetDisbursedLoanByLoanId(int loanId);
 
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);

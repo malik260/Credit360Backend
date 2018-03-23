@@ -199,6 +199,7 @@
     <Compile Include="Models\TBL_CUSTOMER_SENSITIVITY_LEVEL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_SIGNATORY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOM_CRCBUREAU_PRODUCT.cs" />
     <Compile Include="Models\TBL_CUSTOM_FIANCE_TRANSACTION.cs" />
     <Compile Include="Models\TBL_CUSTOM_FIELDS.cs" />
     <Compile Include="Models\TBL_CUSTOM_FIELDS_DATA.cs" />
@@ -269,6 +270,7 @@
     <Compile Include="Models\TBL_LOAN_CONDITION_DEFERRAL.cs" />
     <Compile Include="Models\TBL_LOAN_CONDITION_PRECEDENT.cs" />
     <Compile Include="Models\TBL_LOAN_CONTINGENT.cs" />
+    <Compile Include="Models\TBL_LOAN_CONTINGENT_USAGE.cs" />
     <Compile Include="Models\TBL_LOAN_COVENANT_DETAIL.cs" />
     <Compile Include="Models\TBL_LOAN_COVENANT_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_DOCUMENT_TYPE.cs" />
@@ -366,6 +368,7 @@
     <Compile Include="Models\TBL_STAFF_JOBTITLE.cs" />
     <Compile Include="Models\TBL_STAFF_ORGANOGRAM.cs" />
     <Compile Include="Models\TBL_STAFF_RANK.cs" />
+    <Compile Include="Models\TBL_STAFF_ROLE.cs" />
     <Compile Include="Models\TBL_STATE.cs" />
     <Compile Include="Models\TBL_STOCK.cs" />
     <Compile Include="Models\TBL_SUB_SECTOR.cs" />
