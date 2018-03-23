@@ -93,7 +93,7 @@ namespace FintrakBaking.BranchUpdateService
                         SUPERVISOR_STAFFID = coreContext.TBL_STAFF.FirstOrDefault(s => s.STAFFCODE == staging.SUPERVISORSTAFFCODE).STAFFID,
                         COMPANYID = 1,
                         JOBTITLEID = 2,
-                        STAFFROLEID = 3,
+                        STAFFID = 3,
                         NPL_LIMITEXCEEDED = false,
                         DELETED = false,
                         CUSTOMERSENSITIVITYLEVELID = 3

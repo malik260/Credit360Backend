@@ -16,6 +16,7 @@ namespace FintrakBanking.Interfaces.Credit
         int AddUpdateFeeConcession(FeeConcessionViewModel model);
         bool GoForApproval(ApprovalViewModel entity);
         bool ValidateFeeConcession(int loanApplicationDetailId, int? loanChargeFeeId);
+        bool ValidateApprovedFeeConcession(int concessionId);
         IEnumerable<FeeConcessionViewModel> GetAllConcessionFeeAwaitingApproval(int staffId, int companyId);
     }
 }

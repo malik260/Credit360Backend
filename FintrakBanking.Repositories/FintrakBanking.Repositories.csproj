@@ -90,6 +90,7 @@
     <Compile Include="Admin\CanAuthorizationRepository.cs" />
     <Compile Include="Admin\CurrencyRateRepository.cs" />
     <Compile Include="AppEmail\EmailRepository.cs" />
+    <Compile Include="CASA\CasaLienRepository.cs" />
     <Compile Include="CASA\CasaRepository.cs" />
     <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="CreditLimitValidations\CreditLimitValidationsRepository.cs" />

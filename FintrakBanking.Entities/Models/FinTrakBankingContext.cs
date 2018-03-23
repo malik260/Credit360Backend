@@ -296,7 +296,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
+        public virtual DbSet<TBL_CUSTOM_CRCBUREAU_PRODUCT> TBL_CUSTOM_CRCBUREAU_PRODUCT { get; set; }
         public virtual DbSet<TBL_CUSTOM_FIANCE_TRANSACTION> TBL_CUSTOM_FIANCE_TRANSACTION { get; set; }
+        public virtual DbSet<TBL_CUSTOM_LIEN_PROCESS> TBL_CUSTOM_LIEN_PROCESS { get; set; }
         public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
         public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
@@ -4323,6 +4325,10 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_SOLICITOR_STATE_MAPPING>()
                 .Property(e => e.COLLATERALSEARCHCHARGEAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_CUSTOM_LIEN_PROCESS>()
+                .Property(e => e.AMOUNT)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_COT>()

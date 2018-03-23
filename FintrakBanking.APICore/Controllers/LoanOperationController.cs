@@ -38,6 +38,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("getrunningloan/{refNo}")]
+        public HttpResponseMessage GetRunningLoans(string refNo)
+        {
+            try
+            {
+                var data = repo.GetRunningLoans(token.GetCompanyId, refNo);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
         [HttpGet]
         [Route("new-interest-rate-review")]
         public HttpResponseMessage GetNewInterestRateReviews()

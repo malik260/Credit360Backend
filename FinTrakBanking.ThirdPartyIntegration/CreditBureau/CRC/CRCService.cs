@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.ThridPartyIntegration; 
 using FinTrakBanking.ThirdPartyIntegration.CRCWebService;
 using System;
@@ -66,7 +67,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
 
         private CRCSearchResult SearchOutput(string userName, string password,   XElement xml)
         {
-
+            XmlDocument xdoc = new XmlDocument();
             CRCSearchResult result = null;
 
             LiveRequestInvokerSoapClient crc = new LiveRequestInvokerSoapClient();
@@ -77,11 +78,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
             {
                 if (!dataPacket.Contains(ERROR)) {
                     
-                     result = new CRCSearchResult
+                    
+                    xdoc.LoadXml(dataPacket);
+                    result = new CRCSearchResult
                      {
                         SearchCompleted = (int)SearchCompletedStatusEnum.SearchIncomplete,
-                        SearchResult = dataPacket
-                    };
+                        SearchResult = new CreditBureauHelp().ConvertXmlToJson(xdoc)
+                };
                 }
                 else
                 {

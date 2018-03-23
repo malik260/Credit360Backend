@@ -2,11 +2,13 @@
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -29,10 +31,12 @@ namespace FintrakBanking.Repositories.Credit
         private ILoanScheduleRepository loanSchedule;
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
+        private ICasaLienRepository casaLien;
+
         public LoanOperationsRepository(
 
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
-            ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level)
+            ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien)
         {
 
             this.context = _context;
@@ -42,6 +46,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanSchedule = _loanSchedule;
             this.workFlow = _workFlow;
             this.level = _level;
+            this.casaLien = _casaLien;
         }
 
         public decimal GetCollateralSearchChargeAmount(int stateId)
@@ -56,42 +61,30 @@ namespace FintrakBanking.Repositories.Credit
         public bool AddCollateralSearchLien(CasaLienViewModel model)
         {
 
-            var data = new TBL_CASA_LIEN
-            {
-                PRODUCTACCOUNTNUMBER = model.productAccountNumber,
-                LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
-                BRANCHID = model.userBranchId,
-                COMPANYID = model.companyId,
-                LIENAMOUNT = GetCollateralSearchChargeAmount(model.stateId),
-                ////LIENDEBITAMOUNT = 0,
-                LIENTYPEID = (short)LienTypeEnum.CollateralSearch,
-                CREATEDBY = model.createdBy,
-                DESCRIPTION = "lien placed due to loan application collateral search", // model.description,
-                DATETIMECREATED = generalSetup.GetApplicationDate()
+            //var data = new TBL_CASA_LIEN
+            //{
+            //    //PRODUCTACCOUNTNUMBER = model.productAccountNumber,
+            //    //LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+            //    //SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
+            //    //BRANCHID = model.userBranchId,
+            //    //COMPANYID = model.companyId,
+            //    //LIENCREDITAMOUNT = GetCollateralSearchChargeAmount(model.stateId),
+            //    //LIENDEBITAMOUNT = 0,
+            //   // LIENTYPEID = (short)LienTypeEnum.CollateralSearch,
+            //    //CREATEDBY = model.createdBy,
+            //    //DESCRIPTION = "lien placed due to loan application collateral search", // model.description,
+            //   // DATECREATED = generalSetup.GetApplicationDate()
+            //};           
 
+            model.lienAmount = GetCollateralSearchChargeAmount(model.stateId);
+            model.branchId = model.userBranchId;
+            model.lienTypeId = (short)LienTypeEnum.CollateralSearch;
+            model.description = "lien placed due to loan application collateral search";
+            model.dateTimeCreated = generalSetup.GetApplicationDate();
 
-            };
+            var lienReference = casaLien.PlaceLien(model);
 
-            context.TBL_CASA_LIEN.Add(data);
-
-            // Audit Section ---------------------------            
-
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = model.branchId,
-                DETAIL = $"Applied for lien with reference number: { model.sourceReferenceNumber}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.auditTrail.AddAuditTrail(audit);
-
-            //end of Audit section -------------------------------
-            return context.SaveChanges() != 0;
+            return true;
 
         }
 
@@ -642,25 +635,19 @@ namespace FintrakBanking.Repositories.Credit
                     // financeTransaction.PostDailyAuthorisedOverdraftInterestAccrual(item);
                     var casa  = context.TBL_CASA.FirstOrDefault(a => a.CASAACCOUNTID == item.casaAccountId);
                     var refNo = context.TBL_LOAN_REVOLVING.FirstOrDefault(a => a.CASAACCOUNTID == item.casaAccountId);
-                    var model  = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = refNo.LOANREFERENCENUMBER,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        //LIENAMOUNT = 0,
-                        LIENAMOUNT = item.casaBalance,
-                        LIENTYPEID = (short)LienTypeEnum.OverdraftCleanUp,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not swing to positive", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                   
+                    CasaLienViewModel lien = new CasaLienViewModel();
 
-                    };
+                    lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lien.sourceReferenceNumber = refNo.LOANREFERENCENUMBER;
+                    lien.lienAmount = item.casaBalance;
+                    lien.branchId = item.branchId;
+                    lien.companyId = item.companyId;
+                    lien.lienTypeId = (short)LienTypeEnum.OverdraftCleanUp;
+                    lien.createdBy = (int)SystemStaff.System;
+                    lien.description = "lien placed due to Account not swinging to positive";                    
 
-                    context.TBL_CASA_LIEN.Add(model);
-
-                    context.SaveChanges();
+                    casaLien.PlaceLien(lien);
                 }
                 else
                 {
@@ -982,40 +969,36 @@ namespace FintrakBanking.Repositories.Credit
                     // place lien on the customer account on partial principal
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    var data = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDue.DEBITAMOUNT,
-                       // //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    //var data = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDue.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    };
+                    //};
 
-                    context.TBL_CASA_LIEN.Add(data);
+                    //context.TBL_CASA_LIEN.Add(data);
 
-                    // Audit Section ---------------------------            
+                    CasaLienViewModel lien = new CasaLienViewModel();
 
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
+                    lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
+                    lien.lienAmount = pastDue.DEBITAMOUNT;
+                    lien.branchId = item.branchId;
+                    lien.companyId = item.companyId;
+                    lien.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                    lien.createdBy = (int)SystemStaff.System;
+                    lien.description = "lien placed due to Account not funded at Anniversary Date";
 
-                    //end of Audit section -------------------------------
+                    casaLien.PlaceLien(lien);                    
 
                 }
                 else if (casabalance < item.periodInterestAmount && casabalance > 0)
@@ -1053,72 +1036,68 @@ namespace FintrakBanking.Repositories.Credit
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDueInterest.DEBITAMOUNT, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    var data = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
-                       // //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    //var data = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    };
+                    //};
 
-                    context.TBL_CASA_LIEN.Add(data);
+                    //context.TBL_CASA_LIEN.Add(data);
 
-                    // Audit Section ---------------------------            
+                    CasaLienViewModel lien = new CasaLienViewModel();
 
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
+                    lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lien.sourceReferenceNumber = pastDueInterest.PARENT_PASTDUECODE;
+                    lien.lienAmount = pastDueInterest.DEBITAMOUNT;
+                    lien.branchId = item.branchId;
+                    lien.companyId = item.companyId;
+                    lien.lienTypeId = (short)LienTypeEnum.InterestRepayment;
+                    lien.createdBy = (int)SystemStaff.System;
+                    lien.description = "lien placed due to Account not swinging to positive";
 
-                    var dataP = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                      //  //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    var lienReference = casaLien.PlaceLien(lien);
 
-                    };
 
-                    context.TBL_CASA_LIEN.Add(dataP);
+                    //var dataP = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    // Audit Section ---------------------------            
+                    //};
 
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {dataP.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
+                    //context.TBL_CASA_LIEN.Add(dataP);
 
+                    CasaLienViewModel lienPrincipal = new CasaLienViewModel();
+
+                    lienPrincipal.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lienPrincipal.sourceReferenceNumber = pastDuePrincipal.PARENT_PASTDUECODE;
+                    lienPrincipal.lienAmount = pastDuePrincipal.DEBITAMOUNT;
+                    lienPrincipal.branchId = item.branchId;
+                    lienPrincipal.companyId = item.companyId;
+                    lienPrincipal.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                    lienPrincipal.createdBy = (int)SystemStaff.System;
+                    lienPrincipal.description = "lien placed due to Account not funded at Anniversary Date";
+
+                    lienReference = casaLien.PlaceLien(lienPrincipal);
 
                 }
                 else if (casabalance <= 0)
@@ -1151,71 +1130,67 @@ namespace FintrakBanking.Repositories.Credit
 
                     transPastDue.Add(pastDuePrincipal);
 
-                    var data = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        ////LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    //var data = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    };
+                    //};
 
-                    context.TBL_CASA_LIEN.Add(data);
+                    //context.TBL_CASA_LIEN.Add(data);
 
-                    // Audit Section ---------------------------            
+                    CasaLienViewModel lien = new CasaLienViewModel();
 
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
+                    lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lien.sourceReferenceNumber = pastDueInterest.PARENT_PASTDUECODE;
+                    lien.lienAmount = pastDueInterest.DEBITAMOUNT;
+                    lien.branchId = item.branchId;
+                    lien.companyId = item.companyId;
+                    lien.lienTypeId = (short)LienTypeEnum.InterestRepayment;
+                    lien.createdBy = (int)SystemStaff.System;
+                    lien.description = "lien placed due to Account not funded at Anniversary Date";
 
-                    var dataP = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                       // //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    var lienReference = casaLien.PlaceLien(lien);
 
-                    };
+                    //var dataP = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    context.TBL_CASA_LIEN.Add(dataP);
+                    //};
 
-                    // Audit Section ---------------------------            
+                    //context.TBL_CASA_LIEN.Add(dataP);
 
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {dataP.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
+                    CasaLienViewModel lienPrincipal = new CasaLienViewModel();
+
+                    lienPrincipal.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lienPrincipal.sourceReferenceNumber = pastDuePrincipal.PARENT_PASTDUECODE;
+                    lienPrincipal.lienAmount = pastDuePrincipal.DEBITAMOUNT;
+                    lienPrincipal.branchId = item.branchId;
+                    lienPrincipal.companyId = item.companyId;
+                    lienPrincipal.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                    lienPrincipal.createdBy = (int)SystemStaff.System;
+                    lienPrincipal.description = "lien placed due to Account not funded at Anniversary Date";
+                        
+                    lienReference = casaLien.PlaceLien(lienPrincipal);
 
                 }
             }
@@ -1690,40 +1665,36 @@ namespace FintrakBanking.Repositories.Credit
                     // place lien on the customer account on partial principal
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    var data = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDue.DEBITAMOUNT,
-                        //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    //var data = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDue.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    };
+                    //};
 
-                    context.TBL_CASA_LIEN.Add(data);
+                    //context.TBL_CASA_LIEN.Add(data);
 
-                    // Audit Section ---------------------------            
+                    CasaLienViewModel lien = new CasaLienViewModel();
 
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
+                    lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
+                    lien.lienAmount = pastDue.DEBITAMOUNT;
+                    lien.branchId = item.branchId;
+                    lien.companyId = item.companyId;
+                    lien.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                    lien.createdBy = (int)SystemStaff.System;
+                    lien.description = "lien placed due to Account not funded at Restructure Date";
 
-                    //end of Audit section -------------------------------
+                    var lienReference = casaLien.PlaceLien(lien);
 
                 }
                 else if (casabalance < item.periodInterestAmount && casabalance > 0)
@@ -1759,71 +1730,67 @@ namespace FintrakBanking.Repositories.Credit
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDueInterest.DEBITAMOUNT, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    var data = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    //var data = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    };
+                    //};
 
-                    context.TBL_CASA_LIEN.Add(data);
+                    //context.TBL_CASA_LIEN.Add(data);
 
-                    // Audit Section ---------------------------            
+                    CasaLienViewModel lien = new CasaLienViewModel();
 
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
+                    lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lien.sourceReferenceNumber = pastDueInterest.PARENT_PASTDUECODE;
+                    lien.lienAmount = pastDueInterest.DEBITAMOUNT;
+                    lien.branchId = item.branchId;
+                    lien.companyId = item.companyId;
+                    lien.lienTypeId = (short)LienTypeEnum.InterestRepayment;
+                    lien.createdBy = (int)SystemStaff.System;
+                    lien.description = "lien placed due to Account not funded at Restructure Date";
 
-                    var dataP = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                        //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    var lienReference = casaLien.PlaceLien(lien);
 
-                    };
+                    //var dataP = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    context.TBL_CASA_LIEN.Add(dataP);
+                    //};
 
-                    // Audit Section ---------------------------            
+                    //context.TBL_CASA_LIEN.Add(dataP);
 
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {dataP.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
+                    CasaLienViewModel lienPrincipal = new CasaLienViewModel();
+
+                    lienPrincipal.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lienPrincipal.sourceReferenceNumber = pastDuePrincipal.PARENT_PASTDUECODE;
+                    lienPrincipal.lienAmount = pastDuePrincipal.DEBITAMOUNT;
+                    lienPrincipal.branchId = item.branchId;
+                    lienPrincipal.companyId = item.companyId;
+                    lienPrincipal.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                    lienPrincipal.createdBy = (int)SystemStaff.System;
+                    lienPrincipal.description = "lien placed due to Account not funded at Restructure Date";
+
+                    casaLien.PlaceLien(lienPrincipal);
 
 
                 }
@@ -1857,72 +1824,68 @@ namespace FintrakBanking.Repositories.Credit
 
                     transPastDue.Add(pastDuePrincipal);
 
-                    var data = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    //var data = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    };
+                    //};
 
-                    context.TBL_CASA_LIEN.Add(data);
+                    //context.TBL_CASA_LIEN.Add(data);
 
-                    // Audit Section ---------------------------            
+                    CasaLienViewModel lien = new CasaLienViewModel();
 
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
+                    lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lien.sourceReferenceNumber = pastDueInterest.PARENT_PASTDUECODE;
+                    lien.lienAmount = pastDueInterest.DEBITAMOUNT;
+                    lien.branchId = item.branchId;
+                    lien.companyId = item.companyId;
+                    lien.lienTypeId = (short)LienTypeEnum.InterestRepayment;
+                    lien.createdBy = (int)SystemStaff.System;
+                    lien.description = "lien placed due to Account not funded at Restructure Date";
 
-                    var dataP = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                        //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    var lienReference = casaLien.PlaceLien(lien);
 
-                    };
+                    //var dataP = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    context.TBL_CASA_LIEN.Add(dataP);
+                    //};
 
-                    // Audit Section ---------------------------            
+                    //context.TBL_CASA_LIEN.Add(dataP);
 
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {dataP.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
+                    CasaLienViewModel lienPrincipal = new CasaLienViewModel();
 
+                    lienPrincipal.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lienPrincipal.sourceReferenceNumber = pastDuePrincipal.PARENT_PASTDUECODE;
+                    lienPrincipal.lienAmount = pastDuePrincipal.DEBITAMOUNT;
+                    lienPrincipal.branchId = item.branchId;
+                    lienPrincipal.companyId = item.companyId;
+                    lienPrincipal.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                    lienPrincipal.createdBy = (int)SystemStaff.System;
+                    lienPrincipal.description = "lien placed due to Account not funded at Restructure Date";
+
+                    casaLien.PlaceLien(lienPrincipal);
+  
                 }
             }
 
@@ -2014,40 +1977,36 @@ namespace FintrakBanking.Repositories.Credit
                     // place lien on the customer account on partial principal
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    var data = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDue.DEBITAMOUNT,
-                        //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    //var data = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDue.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    };
+                    //};
 
-                    context.TBL_CASA_LIEN.Add(data);
+                    //context.TBL_CASA_LIEN.Add(data);
 
-                    // Audit Section ---------------------------            
+                    CasaLienViewModel lien = new CasaLienViewModel();
 
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
+                    lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
+                    lien.lienAmount = pastDue.DEBITAMOUNT;
+                    lien.branchId = item.branchId;
+                    lien.companyId = item.companyId;
+                    lien.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                    lien.createdBy = (int)SystemStaff.System;
+                    lien.description = "lien placed due to Account not funded at Restructure Date";
 
-                    //end of Audit section -------------------------------
+                    var lienReference = casaLien.PlaceLien(lien);
 
                 }
                 else if (casabalance < item.periodInterestAmount && casabalance > 0)
@@ -2083,72 +2042,67 @@ namespace FintrakBanking.Repositories.Credit
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDueInterest.DEBITAMOUNT, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    var data = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    //var data = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    };
+                    //};
 
-                    context.TBL_CASA_LIEN.Add(data);
+                    //context.TBL_CASA_LIEN.Add(data);
 
-                    // Audit Section ---------------------------            
+                    CasaLienViewModel lien = new CasaLienViewModel();
 
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
+                    lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lien.sourceReferenceNumber = pastDueInterest.PARENT_PASTDUECODE;
+                    lien.lienAmount = pastDueInterest.DEBITAMOUNT;
+                    lien.branchId = item.branchId;
+                    lien.companyId = item.companyId;
+                    lien.lienTypeId = (short)LienTypeEnum.InterestRepayment;
+                    lien.createdBy = (int)SystemStaff.System;
+                    lien.description = "lien placed due to Account not funded at Restructure Date";
 
-                    var dataP = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                        //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    var lienReference = casaLien.PlaceLien(lien);
 
-                    };
+                    //var dataP = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    context.TBL_CASA_LIEN.Add(dataP);
+                    //};
 
-                    // Audit Section ---------------------------            
+                    //context.TBL_CASA_LIEN.Add(dataP);
 
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {dataP.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
+                    CasaLienViewModel lienPrincipal = new CasaLienViewModel();
 
+                    lienPrincipal.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lienPrincipal.sourceReferenceNumber = pastDuePrincipal.PARENT_PASTDUECODE;
+                    lienPrincipal.lienAmount = pastDuePrincipal.DEBITAMOUNT;
+                    lienPrincipal.branchId = item.branchId;
+                    lienPrincipal.companyId = item.companyId;
+                    lienPrincipal.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                    lienPrincipal.createdBy = (int)SystemStaff.System;
+                    lienPrincipal.description = "lien placed due to Account not funded at Restructure Date";
+
+                    lienReference = casaLien.PlaceLien(lienPrincipal);
 
                 }
                 else if (casabalance <= 0)
@@ -2181,71 +2135,67 @@ namespace FintrakBanking.Repositories.Credit
 
                     transPastDue.Add(pastDuePrincipal);
 
-                    var data = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDueInterest.DEBITAMOUNT,
-                        //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    //var data = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    };
+                    //};
 
-                    context.TBL_CASA_LIEN.Add(data);
+                    //context.TBL_CASA_LIEN.Add(data);
 
-                    // Audit Section ---------------------------            
+                    CasaLienViewModel lien = new CasaLienViewModel();
 
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
+                    lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lien.sourceReferenceNumber = pastDueInterest.PARENT_PASTDUECODE;
+                    lien.lienAmount = pastDueInterest.DEBITAMOUNT;
+                    lien.branchId = item.branchId;
+                    lien.companyId = item.companyId;
+                    lien.lienTypeId = (short)LienTypeEnum.InterestRepayment;
+                    lien.createdBy = (int)SystemStaff.System;
+                    lien.description = "lien placed due to Account not funded at Restructure Date";
 
-                    var dataP = new TBL_CASA_LIEN
-                    {
-                        PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                        LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                        SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
-                        BRANCHID = item.branchId,
-                        COMPANYID = item.companyId,
-                        LIENAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                        //LIENDEBITAMOUNT = 0,
-                        LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                        CREATEDBY = (int)SystemStaff.System,
-                        DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
-                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                    var lienReference = casaLien.PlaceLien(lien);
 
-                    };
+                    //var dataP = new TBL_CASA_LIEN
+                    //{
+                    //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                    //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                    //    SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
+                    //    BRANCHID = item.branchId,
+                    //    COMPANYID = item.companyId,
+                    //    LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                    //    LIENDEBITAMOUNT = 0,
+                    //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                    //    CREATEDBY = (int)SystemStaff.System,
+                    //    DESCRIPTION = "lien placed due to Account not funded at Restructure Date", // model.description,
+                    //    DATECREATED = generalSetup.GetApplicationDate()
 
-                    context.TBL_CASA_LIEN.Add(dataP);
+                    //};
 
-                    // Audit Section ---------------------------            
+                    //context.TBL_CASA_LIEN.Add(dataP);
 
-                    var auditP = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                        STAFFID = (int)SystemStaff.System,
-                        BRANCHID = item.branchId,
-                        DETAIL = $"Applied for lien with reference number: {dataP.SOURCEREFERENCENUMBER}",
-                        IPADDRESS = item.userIPAddress,
-                        URL = item.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(auditP);
+                    CasaLienViewModel lienPrincipal = new CasaLienViewModel();
+
+                    lienPrincipal.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    lienPrincipal.sourceReferenceNumber = pastDuePrincipal.PARENT_PASTDUECODE;
+                    lienPrincipal.lienAmount = pastDuePrincipal.DEBITAMOUNT;
+                    lienPrincipal.branchId = item.branchId;
+                    lienPrincipal.companyId = item.companyId;
+                    lienPrincipal.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                    lienPrincipal.createdBy = (int)SystemStaff.System;
+                    lienPrincipal.description = "lien placed due to Account not funded at Restructure Date";
+
+                    casaLien.PlaceLien(lienPrincipal);
 
                 }
             }
@@ -4968,47 +4918,37 @@ namespace FintrakBanking.Repositories.Credit
             //context.SaveChanges();
             /// Place a Lien on Customer Repayment Account
 
-            var data = new TBL_CASA_LIEN
-            {
-                PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                SOURCEREFERENCENUMBER = loan.LOANREFERENCENUMBER,
-                BRANCHID = loan.BRANCHID,
-                COMPANYID = loan.COMPANYID,
-                LIENAMOUNT = accruedInterest + accruedPrincipal,
-                //LIENDEBITAMOUNT = 0,
-                LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                CREATEDBY = (int)SystemStaff.System,
-                DESCRIPTION = "lien placed due to Loan Write Off", // model.description,
-                DATETIMECREATED = generalSetup.GetApplicationDate()
-            };
+            //var data = new TBL_CASA_LIEN
+            //{
+            //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+            //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+            //    SOURCEREFERENCENUMBER = loan.LOANREFERENCENUMBER,
+            //    BRANCHID = loan.BRANCHID,
+            //    COMPANYID = loan.COMPANYID,
+            //    LIENCREDITAMOUNT = accruedInterest + accruedPrincipal,
+            //    LIENDEBITAMOUNT = 0,
+            //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+            //    CREATEDBY = (int)SystemStaff.System,
+            //    DESCRIPTION = "lien placed due to Loan Write Off", // model.description,
+            //    DATECREATED = generalSetup.GetApplicationDate()
+            //};
 
-            context.TBL_CASA_LIEN.Add(data);
+            //context.TBL_CASA_LIEN.Add(data);
+
             //context.SaveChanges();
-            // Audit Section ---------------------------            
 
-            var audit = new TBL_AUDIT
-            {
-                //AuditTypeId = (short)AuditTypeEnum.LienAdded,
-                //StaffId = (int)SystemStaff.System,
-                //BranchId = loan.BRANCHID,
-                //Detail = $"Applied for lien with reference number: {data.SourceReferenceNumber}",
-                //IPAddress = loan.userIPAddress,
-                //Url = item.applicationUrl,
-                //ApplicationDate = generalSetup.GetApplicationDate(),
-                //SystemDateTime = DateTime.Now
-                AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
-                STAFFID = (int)SystemStaff.System,
-                BRANCHID = data.BRANCHID,
-                DETAIL = $"Applied for lien with reference number: {data.SOURCEREFERENCENUMBER}",
-                IPADDRESS = loanInput.userIPAddress,
-                URL = loanInput.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.auditTrail.AddAuditTrail(audit);
+            CasaLienViewModel lien = new CasaLienViewModel();
 
-            //end of Audit section -------------------------------
+            lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+            lien.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
+            lien.lienAmount = accruedInterest + accruedPrincipal;
+            lien.branchId = loan.BRANCHID;
+            lien.companyId = loan.COMPANYID;
+            lien.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+            lien.createdBy = (int)SystemStaff.System;
+            lien.description = "lien placed due to Loan Write Off";
+
+            var lienReference = casaLien.PlaceLien(lien);
 
             context.SaveChanges();
 
@@ -5265,8 +5205,8 @@ namespace FintrakBanking.Repositories.Credit
             //    SourceReferenceNumber = loan.LoanReferenceNumber,
             //    BranchId = loan.BranchId,
             //    CompanyId = loan.CompanyId,
-            //    LIENAMOUNT = accruedInterest + accruedPrincipal,
-            //    //LIENDEBITAMOUNT = 0,
+            //    LienCreditAmount = accruedInterest + accruedPrincipal,
+            //    LienDebitAmount = 0,
             //    LienTypeId = (short)LienTypeEnum.PrincipalRepayment,
             //    CreatedBy = (int)SystemStaff.System,
             //    Description = "lien placed due to Loan Write Off", // model.description,
@@ -5432,7 +5372,163 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool Restructured(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        {
+            bool output = false;
+            var systemDate = generalSetup.GetApplicationDate();
+            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanInput.productId);
+            //var penalCharge = context.TBL_CHARGE_FEE.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.Restructured);
+
+            if (LoanExist(loanId) > 0)
+            {
+                DeleteLoanExist(loanId);
+                ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
+                ArchivePeriodicSchedule(loanId);
+                ArchiveDailySchedule(loanId);
+
+
+                //----------generate and save periodic loan schedule -----------------------------------
+
+                //loanInput.principalAmount = loanInput.newAmount;
+
+                List<LoanPaymentSchedulePeriodicViewModel> periodicScheduleTemp = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
+
+                List<TBL_LOAN_SCHEDULE_PERIODIC_TMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TMP>();
+                foreach (var item in periodicScheduleTemp)
+                {
+                    TBL_LOAN_SCHEDULE_PERIODIC_TMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TMP();
+
+                    scheduleTemp.LOANID = loanId;
+                    scheduleTemp.PAYMENTNUMBER = item.paymentNumber;
+                    scheduleTemp.PAYMENTDATE = item.paymentDate;
+                    scheduleTemp.STARTPRINCIPALAMOUNT = Convert.ToDecimal(item.startPrincipalAmount);
+                    scheduleTemp.PERIODPAYMENTAMOUNT = Convert.ToDecimal(item.periodPaymentAmount);
+                    scheduleTemp.PERIODINTERESTAMOUNT = Convert.ToDecimal(item.periodInterestAmount);
+                    scheduleTemp.PERIODPRINCIPALAMOUNT = Convert.ToDecimal(item.periodPrincipalAmount);
+                    scheduleTemp.ENDPRINCIPALAMOUNT = Convert.ToDecimal(item.endPrincipalAmount);
+                    scheduleTemp.INTERESTRATE = loanInput.interestRate;
+
+                    scheduleTemp.AMORTISEDSTARTPRINCIPALAMOUNT = Convert.ToDecimal(item.amortisedStartPrincipalAmount);
+                    scheduleTemp.AMORTISEDPERIODPAYMENTAMOUNT = Convert.ToDecimal(item.amortisedPeriodPaymentAmount);
+                    scheduleTemp.AMORTISEDPERIODINTERESTAMOUNT = Convert.ToDecimal(item.amortisedPeriodInterestAmount);
+                    scheduleTemp.AMORTISEDPERIODPRINCIPALAMOUNT = Convert.ToDecimal(item.amortisedPeriodPrincipalAmount);
+                    scheduleTemp.AMORTISEDENDPRINCIPALAMOUNT = Convert.ToDecimal(item.amortisedEndPrincipalAmount);
+                    scheduleTemp.EFFECTIVEINTERESTRATE = item.effectiveInterestRate;
+                    scheduleTemp.CREATEDBY = staffId;
+                    scheduleTemp.DATETIMECREATED = systemDate;
+
+                    tblPeriodicScheduleTemp.Add(scheduleTemp);
+                }
+                //-------------------------------------------------------------------------------------
+
+
+                //----------generate and save daily loan schedule -----------------------------------
+
+                //loanInput.principalAmount = loanInput.newAmount;
+                List<LoanPaymentScheduleDailyViewModel> dailyScheduleTemp = loanSchedule.GenerateDailyLoanSchedule(loanInput);
+
+                List<TBL_LOAN_SCHEDULE_DAILY_TEMP> tblDailyScheduleTemp = new List<TBL_LOAN_SCHEDULE_DAILY_TEMP>();
+
+                foreach (var item in dailyScheduleTemp)
+                {
+                    TBL_LOAN_SCHEDULE_DAILY_TEMP scheduleTemp = new TBL_LOAN_SCHEDULE_DAILY_TEMP();
+
+                    scheduleTemp.LOANID = loanId;
+                    scheduleTemp.PAYMENTNUMBER = item.paymentNumber;
+                    scheduleTemp.DATE = item.date;
+                    scheduleTemp.PAYMENTDATE = item.paymentDate;
+                    scheduleTemp.OPENINGBALANCE = Convert.ToDecimal(item.openingBalance);
+                    scheduleTemp.STARTPRINCIPALAMOUNT = Convert.ToDecimal(item.startPrincipalAmount);
+                    scheduleTemp.DAILYPAYMENTAMOUNT = Convert.ToDecimal(item.dailyPaymentAmount);
+                    scheduleTemp.DAILYINTERESTAMOUNT = Convert.ToDecimal(item.dailyInterestAmount);
+                    scheduleTemp.DAILYPRINCIPALAMOUNT = Convert.ToDecimal(item.dailyPrincipalAmount);
+                    scheduleTemp.CLOSINGBALANCE = Convert.ToDecimal(item.closingBalance);
+                    scheduleTemp.ENDPRINCIPALAMOUNT = Convert.ToDecimal(item.endPrincipalAmount);
+                    scheduleTemp.ACCRUEDINTEREST = Convert.ToDecimal(item.accruedInterest);
+                    scheduleTemp.AMORTISEDCOST = Convert.ToDecimal(item.amortisedCost);
+                    scheduleTemp.INTERESTRATE = item.norminalInterestRate;
+
+                    scheduleTemp.AMORTISEDOPENINGBALANCE = Convert.ToDecimal(item.amOpeningBalance);
+                    scheduleTemp.AMORTISEDSTARTPRINCIPALAMOUNT = Convert.ToDecimal(item.amStartPrincipalAmount);
+                    scheduleTemp.AMORTISEDDAILYPAYMENTAMOUNT = Convert.ToDecimal(item.amDailyPaymentAmount);
+                    scheduleTemp.AMORTISEDDAILYINTERESTAMOUNT = Convert.ToDecimal(item.amDailyInterestAmount);
+                    scheduleTemp.AMORTISEDDAILYPRINCIPALAMOUNT = Convert.ToDecimal(item.amDailyPrincipalAmount);
+                    scheduleTemp.AMORTISEDCLOSINGBALANCE = Convert.ToDecimal(item.amClosingBalance);
+                    scheduleTemp.AMORTISEDENDPRINCIPALAMOUNT = Convert.ToDecimal(item.amEndPrincipalAmount);
+                    scheduleTemp.AMORTISEDACCRUEDINTEREST = Convert.ToDecimal(item.amAccruedInterest);
+                    scheduleTemp.AMORTISED_AMORTISEDCOST = Convert.ToDecimal(item.amAmortisedCost);
+                    scheduleTemp.DISCOUNTPREMIUM = Convert.ToDecimal(item.discountPremium);
+                    scheduleTemp.UNEARNEDFEE = Convert.ToDecimal(item.unEarnedFee);
+                    scheduleTemp.EARNEDFEE = Convert.ToDecimal(item.earnedFee);
+                    scheduleTemp.EFFECTIVEINTERESTRATE = item.effectiveInterestRate;
+                    scheduleTemp.NUMBEROFPERIODS = item.numberOfPeriods;
+                    scheduleTemp.BALLONAMOUNT = Convert.ToDecimal(item.balloonAmt);
+                    scheduleTemp.CREATEDBY = staffId;
+                    scheduleTemp.DATETIMECREATED = systemDate;
+
+                    tblDailyScheduleTemp.Add(scheduleTemp);
+                }
+                //----------------------------------------------------------------
+
+
+                //------------adding records to the database--------------------------
+
+                //if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                //{ this.context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }////change to Temp table
+
+
+                this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
+
+                this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
+                context.SaveChanges();
+
+                //----------update loan details -----------------------------------
+                var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
+                loan.MATURITYDATE = periodicScheduleTemp.Max(x => x.paymentDate);
+                loan.PRINCIPALNUMBEROFINSTALLMENT = periodicScheduleTemp.Count() - 1;
+                loan.INTERESTNUMBEROFINSTALLMENT = loan.PRINCIPALNUMBEROFINSTALLMENT;
+                //-------------------------------------------------
+
+                MergePeriodicSchedule(loanId, applicationDate);
+
+                //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, accruedInterest, penalCharge.GLAccountId, "Penal Charge"));///change to charge GL
+                context.SaveChanges();
+                //-------------------------------------------------------
+            }
+
+
+
+            output = true;
+
+            return output;
+        }
         #endregion
+
+        public IEnumerable<LoanViewModel> GetRunningLoans(int companyId, string refNo)
+        {
+            var runningLoan  = (from l in context.TBL_LOAN
+                                   where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo
+                                   select new LoanViewModel()
+                                   {
+                                       companyName = l.TBL_COMPANY.NAME,
+                                       companyId = l.COMPANYID,
+                                       customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.MIDDLENAME + " " + l.TBL_CUSTOMER.LASTNAME,
+                                       customerId = l.CUSTOMERID,
+                                       approvedAmount = l.PRINCIPALAMOUNT,
+                                       branchName = l.TBL_BRANCH.BRANCHNAME,
+                                       interestRate = l.INTERESTRATE,
+                                       outstandingInterest = l.OUTSTANDINGINTEREST,
+                                       outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
+                                       principalAmount = l.PRINCIPALAMOUNT,
+                                       currency = l.TBL_CURRENCY.CURRENCYCODE,
+                                       loanReferenceNumber = l.LOANREFERENCENUMBER
+
+                                   });
+
+            return runningLoan;
+        }
+
         public IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId)
         {
             var excemptionsList = (from l in context.TBL_LOAN
@@ -5633,7 +5729,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
             //Storing the Irregular Schedule Payment Plan
-            if (model.reviewIrregularSchedule != null)
+            if (model.reviewIrregularSchedule.Count > 0)
             {
                 foreach (var item in model.reviewIrregularSchedule)
                 {
@@ -6171,6 +6267,22 @@ namespace FintrakBanking.Repositories.Credit
                         TenorExtension(loanId, item, applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
                     }
+                    else if ((int)OperationsEnum.Restructured == item.operationId)
+                    {
+
+                        item.newPrincipalFirstpaymentDate = item.effectiveDate.AddDays(10);
+                        item.newInterestFirstpaymentDate = item.effectiveDate.AddDays(10);/// change later just to test
+                        item.newAmount = item.principalAmount;
+                        item.interestFirstpaymentDate = (DateTime)item.newInterestFirstpaymentDate;
+                        item.principalFirstpaymentDate = (DateTime)item.newPrincipalFirstpaymentDate;
+                        item.maturityDate = item.maturityDate.AddMonths((int)item.proposedTenor);
+                        item.effectiveDate = item.newEffectiveDate;
+                        item.tenor = item.tenor + (int)item.proposedTenor;
+                        item.interestFrequency = (short)item.newInterestFrequency;
+                        item.principalFrequency = (short)item.newPrincipalFrequency;
+                        Restructured(loanId, item, applicationDate, staffId);
+                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                    }
                 }
             }
             else
@@ -6230,11 +6342,6 @@ namespace FintrakBanking.Repositories.Credit
                         item.tenor = item.newTenor;
                         InterestRateReview(loanId, item, applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                        //if (DbFunctions.TruncateTime(item.effectiveDate) < DbFunctions.TruncateTime(systemDate))
-                        //{
-                        //    //ProcessLoanRepaymentPostingPastDueForInterestReview(applicationDate, loanId);
-                        //}
-
 
                     }
                     else if ((int)OperationsEnum.Prepayment == item.operationId)
@@ -6323,6 +6430,19 @@ namespace FintrakBanking.Repositories.Credit
                         item.effectiveDate = item.newEffectiveDate;
                         item.tenor = item.tenor + (int)item.proposedTenor;
                         TenorExtension(loanId, item, applicationDate, staffId);
+                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                    }
+
+                    else if ((int)OperationsEnum.Restructured == item.operationId)
+                    {                       
+                        item.interestFirstpaymentDate = (DateTime)item.newInterestFirstpaymentDate;
+                        item.principalFirstpaymentDate = (DateTime)item.newPrincipalFirstpaymentDate;
+                        item.maturityDate = item.maturityDate.AddMonths((int)item.proposedTenor);
+                        item.effectiveDate = item.newEffectiveDate;
+                        item.tenor = item.tenor + (int)item.proposedTenor;
+                        item.interestFrequency = (short)item.newInterestFrequency;
+                        item.principalFrequency = (short)item.newPrincipalFrequency;
+                        Restructured(loanId, item, applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
                     }
                 }
