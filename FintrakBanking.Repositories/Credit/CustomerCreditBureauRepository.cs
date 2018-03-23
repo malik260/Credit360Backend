@@ -352,6 +352,8 @@ namespace FintrakBanking.Repositories.Credit
                 staffId = searchInfo.staffId,
                 companyId = searchInfo.companyId,
                 createdBy = searchInfo.createdBy,
+                casaAccountId = searchInfo.casaAccountId,
+                creditBureauId = searchInfo.creditBureauId
 
             };
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -374,21 +376,21 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var creditBureauProcess = new CreditBureauProcess();
-            CRCSearchResult searchResult = new CRCSearchResult();
+            CRCSearchResult searchResponse = new CRCSearchResult();
 
             using (var docTrans = docContext.Database.BeginTransaction())
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var task = Task.Run(() => searchResult = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
+                    var task = Task.Run(() => searchResponse = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
                     if (task.Wait(TimeSpan.FromSeconds(640)))
 
-                        if (searchResult.SearchCompleted == 1) return searchResult;
-                        else if (searchResult.SearchCompleted == 2)
+                        if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete) return searchResponse;
+                        else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
                         {
                             {   //System.Text.Encoding.ASCII.GetByteCount(searchResult.SearchResult)
-                                byte file =  Convert.ToByte(searchResult.SearchResult);
+                                byte file =  Convert.ToByte(searchResponse.SearchResult);
                                 byte[] fileArray = new byte[file];
                                 var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
                                 if (!saveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
@@ -399,7 +401,7 @@ namespace FintrakBanking.Repositories.Credit
                                 context.SaveChanges();
                                 trans.Commit();
                                 docTrans.Commit();
-                                return searchResult;
+                                return searchResponse;
                             }
                         }
                         else
@@ -419,6 +421,58 @@ namespace FintrakBanking.Repositories.Credit
                     throw new Exception(ex.Message.ToString());
                 }
             }
+        }
+
+        public bool saveCrcPdfFile(CRCRequestViewModel searchInfo, SearchInput creditBureauInputs)
+        {
+
+            var creditBureauProcess = new CreditBureauProcess();
+            CRCSearchResult searchResponse = new CRCSearchResult();
+
+            using (var docTrans = docContext.Database.BeginTransaction())
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var task = Task.Run(() => searchResponse = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
+                    if (task.Wait(TimeSpan.FromSeconds(640)))
+
+                        if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete) return true;
+                        else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
+                        {
+                            {   //System.Text.Encoding.ASCII.GetByteCount(searchResult.SearchResult)
+                                byte file = Convert.ToByte(searchResponse.SearchResult);
+                                byte[] fileArray = new byte[file];
+                                var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
+                                if (!saveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
+                                {
+                                    throw new Exception("Could not save file");
+                                }
+
+                                context.SaveChanges();
+                                trans.Commit();
+                                docTrans.Commit();
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                           // ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                            throw new Exception("An error occured");
+                        }
+                    else
+                    {
+                        //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                        throw new Exception("Timed out");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                    throw new Exception(ex.Message.ToString());
+                }
+            }
+
         }
 
         private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
