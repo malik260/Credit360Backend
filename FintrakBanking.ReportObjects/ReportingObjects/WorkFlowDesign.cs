@@ -111,9 +111,7 @@ namespace FintrakBanking.ReportObjects
                                 levelPosition = g.Key.Level .POSITION.ToString(),
                                 canApprove = g.Key.LevelStaff.CANAPPROVE == true ? "Yes" : "No",
                                 canEdit = g.Key.LevelStaff.CANEDIT == true ? "Yes" : "No",
-                                canUploadFile = g.Key.LevelStaff.CANUPLOADFILE == true ? "Yes" : "No",
-                                canSendJobRequest = g.Key.LevelStaff.CANSENDJOBREQUEST == true ? "Yes" : "No",
-
+                                canUploadFile = g.Key.LevelStaff.CANUPLOAD == true ? "Yes" : "No",
                                 staffLevelId = g.Key.LevelStaff.STAFFLEVELID.ToString()
                             }).ToList();
 

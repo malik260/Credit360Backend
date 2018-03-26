@@ -329,10 +329,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public IQueryable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId)
         {
-            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanAvailment);
+            //var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanAvailment);
             int staffApprovalLevelId = 0;
 
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(companyId).Where(x => x.operationId == (int)OperationsEnum.LoanAvailment).ToList();
 
@@ -1158,11 +1158,11 @@ namespace FintrakBanking.Repositories.Credit
         public bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
         {
             int operationId = (int)OperationsEnum.LoanAvailment;
-            int staffApprovalLevelId = 0;
-            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, operationId);
+            //int staffApprovalLevelId = 0;
+            //var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, operationId);
             var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == operationId).ToList();
             var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             workflow.StaffId = entity.createdBy;
             workflow.OperationId = operationId;

@@ -41,12 +41,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             // operationId = b.OperationId,
                             maximumAmount = a.MAXIMUMAMOUNT,
                             processViewScope = a.PROCESSVIEWSCOPEID,
-                            canViewDocument = a.CANVIEWCAMDOCUMENT,
-                            canViewUploadedFile = a.CANVIEWUPLOADEDFILE,
+                            canViewDocument = a.CANVIEWDOCUMENT,
+                            canViewUploadedFile = a.CANVIEWUPLOAD,
                             canViewApproval = a.CANVIEWAPPROVAL,
                             canApprove = a.CANAPPROVE,
-                            canUploadFile = a.CANUPLOADFILE,
-                            canSendRequest = a.CANSENDJOBREQUEST,
+                            canUploadFile = a.CANUPLOAD,
+                            //canSendRequest = a.CANSENDJOBREQUEST,
                             canEdit = a.CANEDIT,
                             vetoPower = a.VETOPOWER,
                             //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
@@ -80,12 +80,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             operationId = d.OPERATIONID,
                             maximumAmount = a.MAXIMUMAMOUNT,
                             processViewScope = a.PROCESSVIEWSCOPEID,
-                            canViewDocument = a.CANVIEWCAMDOCUMENT,
-                            canViewUploadedFile = a.CANVIEWUPLOADEDFILE,
+                            canViewDocument = a.CANVIEWDOCUMENT,
+                            canViewUploadedFile = a.CANVIEWUPLOAD,
                             canViewApproval = a.CANVIEWAPPROVAL,
                             canApprove = a.CANAPPROVE,
-                            canUploadFile = a.CANUPLOADFILE,
-                            canSendRequest = a.CANSENDJOBREQUEST,
+                            canUploadFile = a.CANUPLOAD,
+                            //canSendRequest = a.CANSENDJOBREQUEST,
                             canEdit = a.CANEDIT,
                             vetoPower = a.VETOPOWER,
                             //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
@@ -127,7 +127,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId, int operationId)
         {
+
             var levelStaff = GetAllDetailedApprovalLevelStaff(companyId);
+
             return levelStaff.FirstOrDefault(c => c.staffId == staffId && c.operationId == operationId);
         }
 
@@ -146,12 +148,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 APPROVALLEVELID = model.approvalLevelId,
                 POSITION = model.position,
                 PROCESSVIEWSCOPEID = (short)model.processViewScope,
-                CANVIEWCAMDOCUMENT = model.canViewDocument,
-                CANVIEWUPLOADEDFILE = model.canViewUploadedFile,
+                CANVIEWDOCUMENT = model.canViewDocument,
+                CANVIEWUPLOAD = model.canViewUploadedFile,
                 CANVIEWAPPROVAL = model.canViewApproval,
                 CANAPPROVE = model.canApprove,
-                CANUPLOADFILE = model.canUploadFile,
-                CANSENDJOBREQUEST = model.canSendRequest,
+                CANUPLOAD = model.canUploadFile,
+                //CANSENDJOBREQUEST = model.canSendRequest,
                 CANEDIT = model.canEdit,
                 VETOPOWER = model.vetoPower,
                 DATETIMECREATED = _genSetup.GetApplicationDate(),
@@ -193,12 +195,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
             data.POSITION = model.position;
             data.MAXIMUMAMOUNT = model.maximumAmount;
             data.PROCESSVIEWSCOPEID = (short)model.processViewScope;
-            data.CANVIEWCAMDOCUMENT = model.canViewDocument;
-            data.CANVIEWUPLOADEDFILE = model.canViewUploadedFile;
+            data.CANVIEWDOCUMENT = model.canViewDocument;
+            data.CANVIEWUPLOAD = model.canViewUploadedFile;
             data.CANVIEWAPPROVAL = model.canViewApproval;
             data.CANAPPROVE = model.canApprove;
-            data.CANUPLOADFILE = model.canUploadFile;
-            data.CANSENDJOBREQUEST = model.canSendRequest;
+            data.CANUPLOAD = model.canUploadFile;
+            //data.CANSENDJOBREQUEST = model.canSendRequest;
             data.CANEDIT = model.canEdit;
             data.VETOPOWER = model.vetoPower;
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();

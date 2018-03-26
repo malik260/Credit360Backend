@@ -19,17 +19,24 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public bool canRouteBack { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public bool isActive { get; set; }
-        public bool canEdit { get; set; }
-        public bool canDoRiskAssessment { get; set; }
-        public bool canRecieveAdjustment { get; set; }
+        //public bool canDoRiskAssessment { get; set; }
+        //public bool canRecieveAdjustment { get; set; }
         public bool canRecieveEmail { get; set; }
         public bool canRecieveSms { get; set; }
-        public bool hasChecklist { get; set; }
-        public bool canPerformFinancialAnalysis { get; set; }
-        public bool requireAuthorisation { get; set; }
-        public bool canOverideAuthorisation { get; set; }
+        //public bool hasChecklist { get; set; }
+        //public bool canPerformFinancialAnalysis { get; set; }
+        //public bool requireAuthorisation { get; set; }
+        //public bool canOverideAuthorisation { get; set; }
         public bool routeViaStaffOrganogram { get; set; }
         public int groupId { get; set; }
+        public int? roleId { get; set; }
+
+        public bool canViewDocument { get; set; }
+        public bool canEdit { get; set; }
+        public bool canViewUploadedFile { get; set; }
+        public bool canUploadFile { get; set; }
+        public bool canViewApproval { get; set; }
+        public bool canApprove { get; set; }
 
         public int operationId { get; set; }
         public bool canResolveDispute { get; set; }

@@ -3417,11 +3417,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerInformationApprovalViemModel> GetAllCustomerInformationAwaitingApproval(int staffId, int companyId)
         {
-            //Get the approval level of the logon user
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.CustomerInformationApproval);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerInformationApproval).ToList();
 
             return (from a in context.TBL_CUSTOMER_MODIFICATION
                     join c in context.TBL_APPROVAL_TRAIL on a.CUSTOMERMODIFICATIONID equals c.TARGETID
@@ -3430,7 +3426,8 @@ namespace FintrakBanking.Repositories.Customer
                         && a.APPROVALCOMPLETED == false
                         && c.RESPONSESTAFFID == null
                         && c.OPERATIONID == (int)OperationsEnum.CustomerInformationApproval
-                    && c.TOAPPROVALLEVELID == staffApprovalLevelId orderby a.DATETIMECREATED descending
+                    && ids.Contains((int)c.TOAPPROVALLEVELID)
+                    orderby a.DATETIMECREATED descending
 
                     select new CustomerInformationApprovalViemModel
                     {

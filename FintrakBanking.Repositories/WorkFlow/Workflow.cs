@@ -255,6 +255,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 throw new Exception("Unable to resolve initiating level or there is no setup for the specified operation!");
             }
 
+            var staffApprovalLevelIds = general.GetStaffApprovalLevelIds(this.staffId, this.operationId);
+
             if (this.fromLevelId != null) // check if staff in level
             {
                 level = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
@@ -263,7 +265,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     throw new Exception("This Approval Level is not in the workflow setup!");
                 }
                 var staff = level.Staff.Where(x => x.STAFFID == this.staffId);
-                if (staff.Any() == false)
+                if (staff.Any() == false && staffApprovalLevelIds.Any() == false) // second condition due to rights inheritance
                 {
                     throw new Exception("This User is not in the current workflow level of the process!");
                 }
@@ -272,13 +274,12 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.fromLevelId == null) // && externalInitialization == false
             {
-                var levelStaff = approvalLevels.SelectMany(x => x.Staff).Where(x => x.STAFFID == this.staffId).FirstOrDefault(); // doing
-                if (levelStaff == null)
+                var levels = context.TBL_APPROVAL_LEVEL.Where(x => staffApprovalLevelIds.Contains(x.APPROVALLEVELID)).OrderBy(x => x.POSITION);
+                if (levels.Any() == false)
                 {
                     throw new Exception("Unable to resolve initiating level OR there may be no setup for this operation!");
                 }
-                this.fromLevelId = levelStaff.APPROVALLEVELID;
-                this.neededNumberOfApproval = levelStaff.TBL_APPROVAL_LEVEL.NUMBEROFAPPROVALS;
+                this.fromLevelId = levels.First().APPROVALLEVELID;
             }
 
             if (this.statusId == (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.requestLevelId; } // default return back to sender
@@ -454,6 +455,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool OrganogramRouting() // if workflow is forced to use organogram
         {
+            // using parent staff code
+            /*
             var position = context.TBL_STAFF_ORGANOGRAM.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (position == null) { return false; }
 
@@ -465,10 +468,18 @@ namespace FintrakBanking.Repositories.WorkFlow
                 .FirstOrDefault();
 
             if (lineManager == null) { return false; }
-
+            
             this.nextLevelId = lineManager.APPROVALLEVELID;
             this.toStaffId = lineManager.STAFFID;
+            */
 
+            // using supervisor id
+            var supervisor = context.TBL_STAFF.Find(this.staffId);
+            this.toStaffId = supervisor.STAFFID;
+            if (general.GetStaffApprovalLevelIds(supervisor.STAFFID, this.operationId).ToList().Contains((int)this.nextLevelId) == false)
+            {
+                throw new Exception("The superior officer " + supervisor.FIRSTNAME + " " + supervisor.MIDDLENAME + " " + supervisor.LASTNAME + " is not in the current workflow level of the process!");
+            }
             return true;
         }
 

@@ -312,5 +312,34 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
 
+        public IEnumerable<int> GetStaffApprovalLevelIds(int staffId, int operationId)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+            var roleLevelIds = context.TBL_APPROVAL_LEVEL.Where(x => x.STAFFROLEID == staff.RANKID).Select(x => x.APPROVALLEVELID).Distinct();
+
+            int scope = (int)ProcessViewScopeEnum.Level; // default 1
+
+            var allLevels = context.TBL_APPROVAL_GROUP_MAPPING
+                .Where(x => x.OPERATIONID == operationId)
+                .Select(g => g.TBL_APPROVAL_GROUP)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL
+                .Where(l => l.ISACTIVE == true));
+
+            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId);
+
+            if (staffWorkflow.Count() > 0) scope = staffWorkflow.Max(x => x.PROCESSVIEWSCOPEID);
+
+            if (scope == 3) return allLevels.Select(x => x.APPROVALLEVELID).Distinct();
+
+            var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
+
+            if (scope == 2)
+            {
+                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
+                return context.TBL_APPROVAL_LEVEL.Where(x => groups.Contains(x.GROUPID)).Select(x => x.APPROVALLEVELID).Distinct();
+            }
+
+            return staffLevels.Union(roleLevelIds);
+        }
     }
 }

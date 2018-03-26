@@ -637,10 +637,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<StaffInfoViewModel> GetStaffAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.StaffCreation);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.StaffCreation).ToList();
 
             return (from c in context.TBL_TEMP_STAFF
                     join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
@@ -652,7 +649,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         && c.ISCURRENT == true
                         && t.RESPONSESTAFFID == null
                         && t.OPERATIONID == (int)OperationsEnum.StaffCreation
-                    && t.TOAPPROVALLEVELID == staffApprovalLevelId
+                    && ids.Contains((int)t.TOAPPROVALLEVELID)
                     select new StaffInfoViewModel
                     {
                         DelegateName = context.TBL_STAFF

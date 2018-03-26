@@ -51,17 +51,9 @@ namespace FintrakBanking.Entities.Models
 
         public double? INTERESTRATE { get; set; }
 
-        public bool CANROUTEBACK { get; set; }
-
         public bool ISPOLITICALLYEXPOSED { get; set; }
 
         public bool ISACTIVE { get; set; }
-
-        public bool CANEDIT { get; set; }
-
-        public bool CANDORISKASSESSMENT { get; set; }
-
-        public bool CANRECIEVEADJUSTMENT { get; set; }
 
         public bool CANRECIEVEEMAIL { get; set; }
 
@@ -72,14 +64,6 @@ namespace FintrakBanking.Entities.Models
         public bool CANAPPROVEUNTENORED { get; set; }
 
         public bool CANRESOLVEDISPUTE { get; set; }
-
-        public bool HASCHECKLIST { get; set; }
-
-        public bool CANPERFORMFINANCIALANALYSIS { get; set; }
-
-        public bool REQUIREAUTHORISATION { get; set; }
-
-        public bool CANOVERIDEAUTHORISATION { get; set; }
 
         public bool ROUTEVIASTAFFORGANOGRAM { get; set; }
 
@@ -96,6 +80,20 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public int? STAFFROLEID { get; set; }
+
+        public bool CANEDIT { get; set; }
+
+        public bool CANUPLOAD { get; set; }
+
+        public bool CANAPPROVE { get; set; }
+
+        public bool CANVIEWDOCUMENT { get; set; }
+
+        public bool CANVIEWUPLOAD { get; set; }
+
+        public bool CANVIEWAPPROVAL { get; set; }
 
         public virtual TBL_APPROVAL_GROUP TBL_APPROVAL_GROUP { get; set; }
 

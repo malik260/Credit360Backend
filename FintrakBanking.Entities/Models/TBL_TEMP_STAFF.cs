@@ -33,7 +33,7 @@ namespace FintrakBanking.Entities.Models
 
         public int JOBTITLEID { get; set; }
 
-        public int RANKID { get; set; }
+        public int? RANKID { get; set; }
 
         [StringLength(100)]
         public string PHONE { get; set; }

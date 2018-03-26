@@ -24,6 +24,10 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
+        public bool ISTENORED { get; set; }
+
+        public bool ISBANKFORMAT { get; set; }
+
         public short CURRENCYID { get; set; }
 
         public double EXCHANGERATE { get; set; }
@@ -31,6 +35,9 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string LOANREFERENCENUMBER { get; set; }
+
+        [StringLength(50)]
+        public string RELATED_LOAN_REFERENCE_NUMBER { get; set; }
 
         public short SUBSECTORID { get; set; }
 

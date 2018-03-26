@@ -413,6 +413,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_APPROVAL_LEVEL)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_APPROVAL_LEVEL>()
+                .HasMany(e => e.TBL_LOAN_REVIEW_APPLICATN_CAM)
+                .WithRequired(e => e.TBL_APPROVAL_LEVEL)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_APPROVAL_LEVEL_STAFF>()
                 .Property(e => e.MAXIMUMAMOUNT)
                 .HasPrecision(19, 4);

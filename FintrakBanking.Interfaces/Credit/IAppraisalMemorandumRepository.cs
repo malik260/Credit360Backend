@@ -27,7 +27,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationDetailLogViewModel> GetLoanDetailChangeLog(int applicationId);
 
-        bool Confirmation(int type, int applicationId);
+        //bool Confirmation(int type, int applicationId);
 
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId, int? classId);
 

@@ -721,11 +721,8 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IEnumerable<LoanViewModel> GetTermLoanBookingAwaitingApproval(int staffId, int companyId)
         {
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
 
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.TermLoanBooking);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
             var data = (from ln in context.TBL_LOAN
                         join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
                         join req in context.TBL_LOAN_BOOKING_REQUEST on ln.LOANAPPLICATIONDETAILID equals req.LOANAPPLICATIONDETAILID
@@ -733,7 +730,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on ln.TERMLOANID equals atrail.TARGETID
                         where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID==(short)ApprovalStatusEnum.Pending)
                               && atrail.OPERATIONID == (int)OperationsEnum.TermLoanBooking
-                              && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                               && atrail.RESPONSESTAFFID == null
                         orderby ln.TERMLOANID descending
 
@@ -892,10 +889,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanBookingAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.RevolvingLoanBooking);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
 
             var data = (from ln in context.TBL_LOAN_REVOLVING
                         join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
@@ -904,7 +898,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on ln.REVOLVINGLOANID equals atrail.TARGETID
                         where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                               && atrail.OPERATIONID == (int)OperationsEnum.RevolvingLoanBooking
-                              && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                               && atrail.RESPONSESTAFFID == null
                         orderby ln.REVOLVINGLOANID descending
                         select new RevolvingLoanViewModel()
@@ -1023,10 +1017,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IEnumerable<ContingentLoanViewModel> GetContingentLoanBookingAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.ContigentLoanBooking);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();
 
             var data = (from ln in context.TBL_LOAN_CONTINGENT
                         join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
@@ -1035,7 +1026,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on ln.CONTINGENTLOANID equals atrail.TARGETID
                         where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                               && atrail.OPERATIONID == (int)OperationsEnum.ContigentLoanBooking
-                              && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                               && atrail.RESPONSESTAFFID == null
                         orderby ln.CONTINGENTLOANID descending
 
@@ -1136,6 +1127,7 @@ namespace FintrakBanking.Repositories.Credit
                             //loanCovenant = { },
                             //loanChargeFee = { }
                         });
+
             return data;
         }
 
@@ -1161,11 +1153,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IEnumerable<LoanChargeFeeViewModel> GetDeferredTermLoanFeeAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanBookingFeeDeferral);
-            //var levelResult = level.GetAllAssignedApprovalLevelStaff(companyId);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanBookingFeeDeferral).ToList();
 
             var data = (from ln in context.TBL_LOAN
                         join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
@@ -1174,7 +1162,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on fee.LOANID equals atrail.TARGETID
                         where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                               && atrail.OPERATIONID == (int)OperationsEnum.LoanBookingFeeDeferral
-                              && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                               && atrail.RESPONSESTAFFID == null
                         orderby ln.TERMLOANID descending
 
@@ -1224,10 +1212,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IEnumerable<LoanChargeFeeViewModel> GetDeferredRevolvingLoanFeeAwaitingApproval(int staffId, int companyId)
         {
-
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanBookingFeeDeferral);
-            int staffApprovalLevelId = 0;
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanBookingFeeDeferral).ToList();
 
             var data = (from ln in context.TBL_LOAN_REVOLVING
                         join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
@@ -1236,7 +1221,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on fee.LOANID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                               && atrail.OPERATIONID == (int)OperationsEnum.LoanBookingFeeDeferral
-                              && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                               && atrail.RESPONSESTAFFID == null
                         orderby ln.REVOLVINGLOANID descending
 
@@ -1294,11 +1279,8 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IEnumerable<LoanChargeFeeViewModel> GetDeferredContingentLoanFeeAwaitingApproval(int staffId, int companyId)
         {
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanBookingFeeDeferral).ToList();
 
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanBookingFeeDeferral);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             var data = (from ln in context.TBL_LOAN_CONTINGENT
                         join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
@@ -1307,7 +1289,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on fee.LOANID equals atrail.TARGETID
                         where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                               && atrail.OPERATIONID == (int)OperationsEnum.LoanBookingFeeDeferral
-                              && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                               && atrail.RESPONSESTAFFID == null
                         orderby ln.CONTINGENTLOANID descending
 
@@ -4070,57 +4052,56 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId)
         {
-
             try
             {
                 List<CurrentCustomerExposure> datalst = new List<CurrentCustomerExposure>();
 
-                foreach (var item in  customer)
+                foreach (var item in customer)
                 {
-                    
-                          var data = (from a in context.TBL_LOAN
-                                      where
-                                        a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.APPROVALSTATUSID == (int)LoanStatusEnum.Active
-                                      select new CurrentCustomerExposure
-                                      {
-                                          facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                    var data = (from a in context.TBL_LOAN
+                                where
+                                 // a.CUSTOMERID == 33 && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                select new CurrentCustomerExposure
+                                {
+                                    facilityType = a.TBL_PRODUCT.PRODUCTNAME,
 
-                                          existingLimit = a.PRINCIPALAMOUNT,
+                                    existingLimit = a.PRINCIPALAMOUNT,
 
-                                          proposedLimit = a.OUTSTANDINGINTEREST,
-                                          PastDueObligationsInterest = ((System.Decimal?)(
-                                        a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
-                                          (from c in context.TBL_LOAN_FORCE_DEBIT
-                                           where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                           select new
-                                           {
-                                               DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                           }).Sum(p => p.DebitRepayment) :
-                                        a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
-                                          (from c in context.TBL_LOAN_FORCE_DEBIT
-                                           where c.LOANID == a.TERMLOANID &&
-                                              c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                           select new
-                                           {
-                                               DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                           }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
-                                          PastDueObligationsPrincipal = ((System.Decimal?)(
-                                        a.ALLOWFORCEDEBITREPAYMENT == false ?
-                                          (from c in context.TBL_LOAN_FORCE_DEBIT
-                                           where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal
-                                           select new
-                                           {
-                                               DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                           }).Sum(p => p.DebitRepayment) :
-                                        a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
-                                          (from c in context.TBL_LOAN_FORCE_DEBIT
-                                           where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal
-                                           select new
-                                           {
-                                               DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                           }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
-                                          reviewDate = DateTime.Now
-                                      });
+                                    proposedLimit = a.OUTSTANDINGINTEREST,
+                                    PastDueObligationsInterest = ((System.Decimal?)(
+                                  a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
+                                    (from c in context.TBL_LOAN_FORCE_DEBIT
+                                     where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
+                                     select new
+                                     {
+                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
+                                     }).Sum(p => p.DebitRepayment) :
+                                  a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
+                                    (from c in context.TBL_LOAN_FORCE_DEBIT
+                                     where c.LOANID == a.TERMLOANID &&
+                                        c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
+                                     select new
+                                     {
+                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
+                                     }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
+                                    PastDueObligationsPrincipal = ((System.Decimal?)(
+                                  a.ALLOWFORCEDEBITREPAYMENT == false ?
+                                    (from c in context.TBL_LOAN_FORCE_DEBIT
+                                     where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal
+                                     select new
+                                     {
+                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
+                                     }).Sum(p => p.DebitRepayment) :
+                                  a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
+                                    (from c in context.TBL_LOAN_FORCE_DEBIT
+                                     where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal
+                                     select new
+                                     {
+                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
+                                     }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
+                                    reviewDate = DateTime.Now
+                                });
                     if (data.Count() > 0)
                         datalst.AddRange(data.ToList());
                 }
@@ -4134,7 +4115,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
-   
+
         /// <summary>
         /// Searches for loan.
         /// </summary>
