@@ -9,13 +9,20 @@ namespace EmailMessageLogger.Enum
     public enum AlertMessageEnum
     {
         LoanCovenantApproachingDueDates = 1,
-        LoanCoveantOverdue =2,
-        CollateralRevaluation =3,
-        NonPerformingLoans =4,
-        SelfLiquidatingLoanExpiry =5,
+        LoanCoveantOverdue = 2,
+        CollateralApproachingRevaluation = 3,
+        NonPerformingLoans = 4,
+        SelfLiquidatingLoanExpiry = 5,
         OverdraftLoansAlmostDue = 6,
-        InsuranceForCollateralApproachingDueDates =7,
-        CovenantsApproachingDueDate=8,
-            CASAwithPND =9
+        InactiveBondAndGuarantee = 8,
+        ExpiredActiveBondAndGuarantee = 9,
+        OverdrawnAccount = 10,
+        PastDueObligations = 11,
+        CovenantsInsuranceApproachingDueDate = 12,
+        ExpiredInsurance = 13,
+        TurnoverCovenantNotMet = 14,
+        CollateralDueForRevaluation = 15,
+        WatchListedAccount = 16,
+        AuathorizedAccount = 17
     }
 }

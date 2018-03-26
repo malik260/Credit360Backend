@@ -31,16 +31,14 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string CONTRACTNO { get; set; }
-        [Required]
-        [StringLength(50)]
-        public string PURCHASEORDERNUMBER { get; set; }
+
         [Column(TypeName = "date")]
         public DateTime CONTRACT_STARTDATE { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime CONTRACT_ENDDATE { get; set; }
 
-             public short? APPROVALSTATUSID { get; set; }
+        public short? APPROVALSTATUSID { get; set; }
 
         [StringLength(800)]
         public string APPROVAL_COMMENT { get; set; }
@@ -48,6 +46,9 @@ namespace FintrakBanking.Entities.Models
         public int? APPROVEDBY { get; set; }
 
         public DateTime? APPROVEDDATETIME { get; set; }
+
+        [StringLength(50)]
+        public string PURCHASEORDERNUMBER { get; set; }
 
         public bool REVALIDATED { get; set; }
 

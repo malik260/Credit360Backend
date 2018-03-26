@@ -82,6 +82,30 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("crc-products")]
+        public HttpResponseMessage GetCRCBureauFacilities()
+        {
+            try
+            {
+                var test = repo;
+                var data = repo.GetCRCBureauFacilities();
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data.Count(), result = data.ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
+        [HttpGet]
         [Route("credit-bureau-report-log/{customerId}/director/{companyDirectorId}")]
         public HttpResponseMessage GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {
