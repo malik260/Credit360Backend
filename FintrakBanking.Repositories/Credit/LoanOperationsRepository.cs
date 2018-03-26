@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.ServiceModel;
 
@@ -5752,8 +5753,8 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
-                INTERATERATE = (double)model.interateRate,
-                PREPAYMENT = model.prepayment,
+                INTERATERATE = (double)model.interateRate ,
+                PREPAYMENT = model.prepayment ?? 0,
                 PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
                 INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
                 PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate,
@@ -5789,9 +5790,21 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
+                    bool output = false;
                     context.TBL_LOAN_REVIEW_OPERATION.Add(data);
                     auditTrail.AddAuditTrail(audit);
-                    var output = context.SaveChanges() > 0;
+                    try
+                    {
+                       output = context.SaveChanges() > 0;
+                      //  response = context.SaveChanges();
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+
+                        string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+                  //  var output = context.SaveChanges() > 0;
 
                     var approvalModel = new ApprovalViewModel
                     {
