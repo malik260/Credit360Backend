@@ -9,15 +9,15 @@ using System.Web;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Repositories.Credit;
 
-namespace FintrakBanking.APICore.Controllers 
+namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/operations")]
     public class LoanOperationController : ApiControllerBase
     {
         private ILoanOperationsRepository repo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
-
         public LoanOperationController(ILoanOperationsRepository _repo)
         {
             this.repo = _repo;
@@ -29,7 +29,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetLoanRateCustomerExcemptions( token.GetCompanyId);
+                var data = repo.GetLoanRateCustomerExcemptions(token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
             catch (Exception ex)
@@ -134,9 +134,9 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 entity.createdBy = token.GetStaffId;
-                entity.companyId = token.GetCompanyId; 
+                entity.companyId = token.GetCompanyId;
 
-                var data = repo.BulkRateReview(entity.productPriceIndexId,entity.newInterestRate,entity.effectiveDate,token.GetStaffId,(int) OperationsEnum.TermLoanBooking);
+                var data = repo.BulkRateReview(entity.productPriceIndexId, entity.newInterestRate, entity.effectiveDate, token.GetStaffId, (int)OperationsEnum.TermLoanBooking);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "New Interst Rate Successfully Added " });

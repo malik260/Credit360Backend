@@ -375,7 +375,7 @@ namespace FintrakBanking.Repositories.Credit
                                                          principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
                                                          principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
                                                          principalId = i.PRINCIPALID,
-                                                         purchaseOrderNumber = i.PURCHASEORDERNUMBER
+                                                       //  purchaseOrderNumber = i.PURCHASEORDERNUMBER
                                                      }).ToList(),
                             firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                      select new EducationLoanViewModel
