@@ -138,7 +138,7 @@
     <Compile Include="Setups\General\IProductFeeRepository.cs" />
     <Compile Include="Setups\General\IProductRepository.cs" />
     <Compile Include="Setups\General\IPublicHolidayRepository.cs" />
-    <Compile Include="Setups\General\IRankRepository.cs" />
+    <Compile Include="Setups\General\IStaffRoleRepository.cs" />
     <Compile Include="Setups\General\IStaffRepository.cs" />
     <Compile Include="Setups\Credit\ICustomerProductFeeRepository.cs" />
     <Compile Include="Setups\Risk\IRiskSetupRepository.cs" />

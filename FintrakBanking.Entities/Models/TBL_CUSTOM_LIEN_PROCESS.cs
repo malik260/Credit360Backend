@@ -18,20 +18,20 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string ACCOUNTID { get; set; }
 
-        [StringLength(50)]
-        public string AMOUNT { get; set; }
+        [Column(TypeName = "money")]
+        public decimal? AMOUNT { get; set; }
 
         [StringLength(10)]
         public string CURRENCYCODE { get; set; }
-
-        [StringLength(500)]
-        public string DESCRIPTION { get; set; }
 
         [StringLength(50)]
         public string LIENTYPE { get; set; }
 
         [StringLength(50)]
         public string REASONCODE { get; set; }
+
+        [StringLength(500)]
+        public string DESCRIPTION { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
 

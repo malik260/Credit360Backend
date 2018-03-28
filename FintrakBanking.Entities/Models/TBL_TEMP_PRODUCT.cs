@@ -44,6 +44,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? PRINCIPALBALANCEGL { get; set; }
 
+        public int? PRINCIPALBALANCEGL2 { get; set; }
+
         public int? INTERESTINCOMEEXPENSEGL { get; set; }
 
         public int? INTERESTRECEIVABLEPAYABLEGL { get; set; }

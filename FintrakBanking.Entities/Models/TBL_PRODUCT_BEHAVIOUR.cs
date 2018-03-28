@@ -27,6 +27,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool? REQUIRECASAACCOUNT { get; set; }
 
+        public bool? ALLOWFUNDUSAGE { get; set; }
+
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
     }
 }

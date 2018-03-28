@@ -50,6 +50,10 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? LASTLOGINDATE { get; set; }
 
+        public DateTime? LASTLOCKOUTDATE { get; set; }
+
+        public Guid? LOGINCODE { get; set; }
+
         public int? CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

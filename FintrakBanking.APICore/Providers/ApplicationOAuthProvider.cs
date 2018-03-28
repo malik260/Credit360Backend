@@ -30,10 +30,16 @@ namespace FintrakBanking.APICore.Providers
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             //var origin = context.OwinContext.Request.Headers["Origin"];
+            try
+            {
 
+          
             UserViewModel user = null;
 
             var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
+            var exipredMin = int.Parse(ConfigurationManager.AppSettings["tokenExpiryMinute"]);
+            var exipredSec  = int.Parse(ConfigurationManager.AppSettings["tokenExpirySecond"]);
+
             var userVM = new UserViewModel
             {
                 password = context.Password.EncryptSha512(StaticHelpers.EncryptionKey),
@@ -91,9 +97,9 @@ namespace FintrakBanking.APICore.Providers
                 currIdentity.AddClaim(new Claim("branchId", currUser.branchId.ToString()));
                 currIdentity.AddClaim(new Claim("countryId", currUser.countryId.ToString()));
                 currIdentity.AddClaim(new Claim("userId", currUser.user_id.ToString()));
-
+                currIdentity.AddClaim(new Claim("logincode", currUser.sessionStatusInfo.loginCode.ToString()));
                 var today = DateTime.Now;
-                TimeSpan duration = new TimeSpan(exipredHr, 0, 0);
+                TimeSpan duration = new TimeSpan(exipredHr, exipredMin, exipredSec);//(exipredHr, 0, 0);
 
                 var props = new AuthenticationProperties(new Dictionary<string, string>
                 {
@@ -110,12 +116,18 @@ namespace FintrakBanking.APICore.Providers
             }
             else
             {
-                context.SetError("unauthorized_access", "Access denied: Please contact your administrator");
+                context.SetError("unauthorized_access", "The user name or password is incorrect");
                 return;
             }
 
 
             await Task.CompletedTask;
+
+            }
+            catch (Exception ex)
+            {
+                context.SetError("invalid_grant", "The user name or password is incorrect.");
+            }
         }
 
         public override Task TokenEndpoint(OAuthTokenEndpointContext context)
@@ -168,6 +180,8 @@ namespace FintrakBanking.APICore.Providers
         {
             appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
 
+            
+
             if (appSetup.REQUIRE_ADUSER == true)
             {
                 using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, appSetup.ACTIVE_DIRECTORY_USERNAME, appSetup.ACTIVE_DIRECTORY_PASSWORD))
@@ -208,6 +222,6 @@ namespace FintrakBanking.APICore.Providers
             }
         }
 
-
+         
     }
 }

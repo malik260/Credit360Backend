@@ -101,7 +101,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
                 var data = new TBL_CUSTOM_LIEN_PROCESS();
                 {
                     data.ACCOUNTID = entity.account;
-                    data.AMOUNT = entity.lienAmount.ToString();
+                    data.AMOUNT = entity.lienAmount;
                     data.CURRENCYCODE = entity.lienAccountCurrency;
                     data.CONSUMED = false;
                     data.DATETIMECONSUMED = null;

@@ -45,7 +45,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTrakBanking.ThirdPartyIn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTrakBanking.MessagingLoggingService", "EmailMessageLogger\FinTrakBanking.MessagingLoggingService.csproj", "{F81576A9-85EF-4E14-845D-484890A324E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBaking.BranchUpdateService", "FintrakBaking.BranchUpdateService\FintrakBaking.BranchUpdateService.csproj", "{B5B4DB65-F19E-47D7-A281-98482EE522CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBaking.StaggingDataUpdateService", "FintrakBaking.BranchUpdateService\FintrakBaking.StaggingDataUpdateService.csproj", "{B5B4DB65-F19E-47D7-A281-98482EE522CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
