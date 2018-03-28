@@ -5522,11 +5522,14 @@ namespace FintrakBanking.Repositories.Credit
                                        outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
                                        principalAmount = l.PRINCIPALAMOUNT,
                                        currency = l.TBL_CURRENCY.CURRENCYCODE,
-                                       loanReferenceNumber = l.LOANREFERENCENUMBER
-
+                                       loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                       effectiveDate = DateTime.Now,
+                                       equityContribution = 0,
+                                       maintainTonor = false,
+                                       maturityDate = DateTime.Now,
                                    });
 
-            return runningLoan;
+            return runningLoan.ToList();
         }
 
         public IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId)
@@ -5642,6 +5645,17 @@ namespace FintrakBanking.Repositories.Credit
         {
             return (from data in context.TBL_OPERATIONS
                     where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                    select new LoanOperationTypeViewModel()
+                    {
+                        operationTypeId = data.OPERATIONID,
+                        operationTypeName = data.OPERATIONNAME
+                    });
+        }
+
+        public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD()
+        {
+            return (from data in context.TBL_OPERATIONS
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
@@ -5804,7 +5818,7 @@ namespace FintrakBanking.Repositories.Credit
                         comment = "Initiation",
                         externalInitialization = true
                     };
-                    var response = workFlow.LogForApproval(approvalModel);
+                    //var response = workFlow.LogForApproval(approvalModel);
                     trans.Commit();
 
                     return output;

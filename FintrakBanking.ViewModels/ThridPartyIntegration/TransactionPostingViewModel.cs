@@ -16,11 +16,13 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string webRequestStatus { get; set; }
         public DateTime webRequestDate { get; set; }
         public string responseCode { get; set; }
+        public int operationId { get; set; }
+        
 
     }
 
 
-    public class LienPostingViewModel //: GeneralEntity
+    public class LienProcessViewModel //: GeneralEntity
     {
         public string account { get; set; }
         public string lienProcessType { get; set; }

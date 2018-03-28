@@ -222,8 +222,6 @@ namespace FintrakBanking.Repositories.Finance
         {
            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
 
-            //transaction.batchCode = batchCode;
-
             var transactionCount = (inputTransactions.Count());
             
             if(transactionCount < 2) //transaction.transactionDetails.Count() < 2
@@ -232,16 +230,9 @@ namespace FintrakBanking.Repositories.Finance
             List<TBL_FINANCE_TRANSACTION> transactions = new List<TBL_FINANCE_TRANSACTION>();
 
             var debitSum = inputTransactions.Sum(x => x.debitAmount); 
-
-            //transaction.transactionDetails.Sum(x => x.debitAmount);
             var creditSum = inputTransactions.Sum(x => x.creditAmount);
-            //transaction.transactionDetails.Sum(x => x.creditAmount);
-            //var sumDebit = debitSum.FirstOrDefault();
-
-
             if (debitSum != creditSum)
                 throw new Exception("Total Debit Amount should equal Total Credit Amount");
-
 
             foreach (var item in inputTransactions)
             {
