@@ -2,6 +2,8 @@
 {
     public class ProductTypeViewModel : GeneralEntity
     {
+        public bool requirePrincipalGl2;
+
         public short productTypeId { get; set; }
         public string productTypeName { get; set; }
         public short productGroupId { get; set; }

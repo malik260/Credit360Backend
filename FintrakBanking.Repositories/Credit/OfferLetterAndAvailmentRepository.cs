@@ -87,7 +87,7 @@ namespace FintrakBanking.Repositories.Credit
                             productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             dateTimeCreated = a.DATETIMECREATED,
-                            availmentlDate = a.AVAILMENTDATE,
+                            availmentDate = a.AVAILMENTDATE,
                             approvalDate = a.APPROVEDDATE,
                             isFirstApprover = true,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
@@ -381,6 +381,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
                             customerName = a.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerId = a.CUSTOMERID,
                             customerGroupName = a.TBL_CUSTOMER_GROUP.GROUPNAME,
                             customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
@@ -1266,7 +1267,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
 
-                if (appl.PRODUCTCLASSID == 10) // Bonds and Guarantees adapter
+                if (appl.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees) // Bonds and Guarantees adapter
                 {
                     appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
                     context.SaveChanges(); // save changes at this point

@@ -409,7 +409,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal requestedAmount { get; set; }
         public DateTime? approvalDate { get; set; }
 
-        public DateTime? availmentlDate { get; set; }
+        public DateTime? availmentDate { get; set; }
 
         public string loanDetails { get; set; }
         public string camReference { get; set; }

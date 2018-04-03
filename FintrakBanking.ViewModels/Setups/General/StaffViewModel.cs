@@ -1,10 +1,13 @@
 ﻿using FintrakBanking.ViewModels.Media;
 using System;
+using System.Linq;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
     public class StaffInfoViewModel : GeneralEntity
     {
+        public IQueryable<DepartmentViewModel> departmentUnits;
+
         public bool npl_LimitExceeded { get; set; }
 
         public int StaffId { get; set; }
@@ -33,14 +36,14 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? MisinfoId { get; set; }
         public string MisInfoCode { get; set; }
         public short? DepartmentId { get; set; }
-        public short? DepartmentUnitId { get; set; }
-        public string DepartmentName { get; set; }
-        public string DepartmentUnitName { get; set; }
+        public short? departmentUnitId { get; set; }
+        public string departmentName { get; set; }
+        public string departmentUnitName { get; set; }
         public int? StateId { get; set; }
         public int? CityId { get; set; }
         public string CityName { get; set; }
         public string StateName { get; set; }
-        public short CustomerSensitivityLevelId { get; set; }
+        public short customerSensitivityLevelId { get; set; }
         public string SensitivityLevel { get; set; }
         public string CreatedByStaffName { get; set; }
         public bool IsUpdate { get; set; }

@@ -215,7 +215,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                             relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                            relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
+                            relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
                             misCode = a.MISCODE,
                             teamMisCode = a.TEAMMISCODE,
                             interestRate = a.INTERESTRATE,
@@ -228,6 +228,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
                             createdBy = a.CREATEDBY,
                             applicationDate = a.APPLICATIONDATE,
+                            applicationTenor = a.APPLICATIONTENOR,
+                            applicationAmount = a.APPLICATIONAMOUNT,
                             dateTimeCreated = a.DATETIMECREATED,
                             LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
                              .Select(c => new LoanApplicationDetailViewModel()

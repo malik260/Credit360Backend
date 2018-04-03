@@ -323,7 +323,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
 
-                var response = repo.AssignCollateral(entity);
+                var response = false; // repo.AssignCollateral(entity);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });

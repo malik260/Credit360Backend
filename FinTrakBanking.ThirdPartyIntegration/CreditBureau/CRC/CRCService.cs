@@ -230,7 +230,5 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
                   new XElement("TELEPHONE_NO", request.phoneNumber)
                  ));
         }
-
-
     }
 }

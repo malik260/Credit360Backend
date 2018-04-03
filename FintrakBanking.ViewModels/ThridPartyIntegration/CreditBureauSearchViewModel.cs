@@ -117,7 +117,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
         /// <summary>
         /// Search Type Code is for identifing the kind of search that is to be performed 
-        /// and it depend of the number of parameter that is being provided. use 0 for (name, gender, dob), 
+        /// and it depend on the number of parameter that is being provided. use 0 for (name, gender, dob), 
         /// 4 (BVN (identity)), 5 (Telephone), 6 for all 5 parameters
         /// </summary>
         public int searchTypeCode { get; set; }

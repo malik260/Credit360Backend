@@ -202,9 +202,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
             var data = new XDSCommercialSearchViewModel
             {
                 userName = searchInfo .userName ,
-                AccountNumber = "", //searchInfo.accountOrRegistrationNumber,
-                BusinessName = "FINTRAK", //searchInfo.customerName,
-                BusinessRegistrationNumber ="", // searchInfo.accountOrRegistrationNumber,
+                AccountNumber = searchInfo.accountOrRegistrationNumber,
+                BusinessName = searchInfo.customerName,
+                BusinessRegistrationNumber = searchInfo.accountOrRegistrationNumber,
                 EnquiryReason = searchInfo.enquiryReason,
                 DataTicket = ticket,
                 ProductID = searchInfo.productId
@@ -224,10 +224,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
             var data = new XDSIndividualSearchViewModel
             {
                 userName = searchInfo.userName,
-                AccountNumber = "", //searchInfo.accountOrRegistrationNumber,
-                ConsumerName = "Ogbonnaya", // searchInfo.customerName,
-                DateOfBirth = "", //searchInfo.dateOfBirth,
-                Identification = "", // searchInfo.identification,
+                AccountNumber = searchInfo.accountOrRegistrationNumber,
+                ConsumerName =  searchInfo.customerName,
+                DateOfBirth = searchInfo.dateOfBirth,
+                Identification =  searchInfo.identification,
                 EnquiryReason = searchInfo.enquiryReason,
                 DataTicket = ticket,
                 ProductID = searchInfo.productId

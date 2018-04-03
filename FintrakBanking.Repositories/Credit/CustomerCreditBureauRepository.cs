@@ -247,7 +247,6 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-
         public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model)
         {
             var directorId = model.companyDirectorId > 0 ? model.companyDirectorId : null;
