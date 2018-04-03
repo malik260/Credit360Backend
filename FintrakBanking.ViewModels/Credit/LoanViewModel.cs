@@ -45,6 +45,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+       
         public decimal disbursableAmount;
         public string loanStatusName;
         public bool isBidbond;
@@ -98,6 +99,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short loanTypeId { get; set; }
         public decimal overDraft { get; set; }
 
+
         public decimal equityContribution { get; set; }
         public short subSectorId { get; set; }
         public DateTime? firstPrincipalPaymentDate { get; set; }
@@ -146,6 +148,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalAmount { get; set; }
         public int chargeFeeId { get; set; }
 
+        //...................For Loan Review................//
+        public int loanReviewOperationTypeId { get; set; }
+        public string reviewDetails { get; set; }
         //.............Other Attributes................//
         public int productTypeId { get; set; }
 
@@ -194,7 +199,8 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         public decimal overdraftLimit { get; set; }
-        
+        public bool maintainTonor { get; set; }
+
 
         //......End f Loan Relational Table View Mapping Models......//
     }

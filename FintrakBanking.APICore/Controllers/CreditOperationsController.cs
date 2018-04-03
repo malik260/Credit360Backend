@@ -68,6 +68,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("loan-operationtypebyoverdraft")]
+        public HttpResponseMessage GetOperationTypeByOD()
+        {
+            try
+            {
+                var data = repo.GetOperationTypeByOD();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpGet]
         [Route("loan-operationtype/")]
         public HttpResponseMessage GetOperationTypeByLoanId(int productTypeId, int scheduleTypeId)
@@ -98,6 +121,28 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = loanRepo.SearchForLoan(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("approved-loan-review")]
+        public HttpResponseMessage GetApprovedLoanReview()
+        {
+            try
+            {
+                var data = loanRepo.GetApprovedLoanReview();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -290,6 +335,22 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+
+                if((int)OperationsEnum.Prepayment == model.operationTypeId)
+                {
+                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+                    }
+                    var response = repo.AddOperationReview(model);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                }
+                else
+                {
                 if (model.principalFirstPaymentDate < model.proposedEffectiveDate)    
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Principal First Payment Date cannot be less than Effective date" });
@@ -309,11 +370,13 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
+            }
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
-        }
+        
+    }
         [HttpPost]
         [Route("operation-approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)

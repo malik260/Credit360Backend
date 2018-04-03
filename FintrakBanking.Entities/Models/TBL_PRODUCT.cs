@@ -233,6 +233,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT5 { get; set; }
 
+        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT6 { get; set; }
+
         public virtual TBL_DEAL_TYPE TBL_DEAL_TYPE { get; set; }
 
         public virtual TBL_LOAN_SCHEDULE_TYPE TBL_LOAN_SCHEDULE_TYPE { get; set; }

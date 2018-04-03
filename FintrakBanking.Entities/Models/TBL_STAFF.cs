@@ -82,7 +82,7 @@ namespace FintrakBanking.Entities.Models
 
         public int JOBTITLEID { get; set; }
 
-        public int RANKID { get; set; }
+        public int STAFFROLEID { get; set; }
 
         [StringLength(100)]
         public string PHONE { get; set; }
@@ -277,7 +277,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_STAFF_JOBTITLE TBL_STAFF_JOBTITLE { get; set; }
 
-        public virtual TBL_STAFF_RANK TBL_STAFF_RANK { get; set; }
+        public virtual TBL_STAFF_ROLE TBL_STAFF_ROLE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_STAFF> TBL_STAFF1 { get; set; }

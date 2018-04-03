@@ -96,16 +96,16 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.84375in</Width>
+                  <Width>1.89694in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.39583in</Width>
+                  <Width>1.44902in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.10417in</Width>
+                  <Width>1.15736in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.51041in</Width>
+                  <Width>1.5636in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -659,7 +659,7 @@
               <TablixMembers>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>2.51042in</Size>
+                    <Size>2.56361in</Size>
                     <CellContents>
                       <Textbox Name="Textbox13">
                         <CanGrow>true</CanGrow>
@@ -708,7 +708,7 @@
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>2.51042in</Size>
+                    <Size>2.56361in</Size>
                     <CellContents>
                       <Textbox Name="facilityName">
                         <CanGrow>true</CanGrow>
@@ -749,7 +749,7 @@
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>2.51042in</Size>
+                    <Size>2.56361in</Size>
                     <CellContents>
                       <Textbox Name="Textbox16">
                         <CanGrow>true</CanGrow>
@@ -790,9 +790,8 @@
             </TablixRowHierarchy>
             <DataSetName>CollateralEstimated</DataSetName>
             <Top>0.14458in</Top>
-            <Left>0.09927in</Left>
             <Height>1in</Height>
-            <Width>8.36458in</Width>
+            <Width>8.63052in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -803,7 +802,7 @@
         <Height>1.14458in</Height>
         <Style />
       </Body>
-      <Width>10.37375in</Width>
+      <Width>8.63052in</Width>
       <Page>
         <PageHeader>
           <Height>2.79166in</Height>

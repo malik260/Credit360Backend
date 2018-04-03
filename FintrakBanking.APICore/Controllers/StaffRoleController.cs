@@ -9,25 +9,25 @@ using System.Web;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/setups")]
-    public class RankController : ApiControllerBase
+    public class StaffRoleController : ApiControllerBase
     {
-        private IRankRepository repo;
+        private IStaffRoleRepository repo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         //public RankController(IRankRepository _repo)
         //{
         //    this.repo = _repo;
         //}
-        public RankController(IRankRepository _repo)
+        public StaffRoleController(IStaffRoleRepository _repo)
         {
             this.repo = _repo;
         }
 
-        [HttpGet][Route("rank")]
-        public HttpResponseMessage GetRank()
+        [HttpGet][Route("staff-role")]
+        public HttpResponseMessage GetStaffRole()
         {
             try
             {
-                var data = repo.GetRank();
+                var data = repo.GetStaffRole();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -36,12 +36,12 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("rank/{rankId}")]
-        public HttpResponseMessage GetRank(int rankId)
+        [HttpGet][Route("staff-role/{staffRoleId}")]
+        public HttpResponseMessage GetStaffRole(int rankId)
         {
             try
             {
-                var data = repo.GetRank(rankId);
+                var data = repo.GetStaffRole(rankId);
 
                 if (data == null)
                 {
@@ -55,12 +55,12 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("rank/company")]
-        public HttpResponseMessage GetRankByCompanyId()
+        [HttpGet][Route("staff-role/company")]
+        public HttpResponseMessage GetStaffRoleByCompanyId()
         {
             try
             {
-                var data = repo.GetRankByCompanyId(token.GetCompanyId);
+                var data = repo.GetStaffRoleByCompanyId(token.GetCompanyId);
 
                 if (data == null)
                 {

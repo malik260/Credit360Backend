@@ -127,7 +127,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IAccountSensitivityRepository>().To<AccountSensitivityRepository>();
             kernel.Bind<IProductRepository>().To<ProductRepository>();
             kernel.Bind<IJobTitleRepository>().To<JobTitleRepository>();
-            kernel.Bind<IRankRepository>().To<RankRepository>();
+            kernel.Bind<IStaffRoleRepository>().To<StaffRoleRepository>();
             kernel.Bind<IProductCollateralTypeRepository>().To<ProductCollateralTypeRepository>();
             kernel.Bind<IProductFeeRepository>().To<ProductFeeRepository>();
             kernel.Bind<ICustomerRepository>().To<CustomerRepository>();
@@ -193,6 +193,8 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICustomerCreditBureauRepository>().To<CustomerCreditBureauRepository>();
             kernel.Bind<IFeeConcessionRepository>().To<FeeConcessionRepository>();
             kernel.Bind<ILimitAndMonitoringRepository>().To<LimitAndMonitoringRepository>();
+            kernel.Bind<ICasaLienRepository>().To<CasaLienRepository>(); 
+
         }
 
     }

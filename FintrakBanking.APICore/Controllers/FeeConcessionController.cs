@@ -124,6 +124,11 @@ namespace FintrakBanking.APICore.Controllers
                 if (entity.concessionId != 0 || entity.concessionId < 0)
                 {
                     createUpdate = "updated";
+                    if(repo.ValidateApprovedFeeConcession(entity.concessionId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                                 new { success = false, message = "Approved Record cannot be modified" });
+                    }
                 }
                 else
                 {

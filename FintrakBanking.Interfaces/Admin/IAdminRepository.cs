@@ -60,5 +60,8 @@ namespace FintrakBanking.Interfaces.Admin
 
         #endregion
 
+        bool UpdateUserStatus(ActiveUserDetails entity, out string message);
+        IEnumerable<ActiveUserDetails> GetActiveUsers(int companyId);
+
     }
 }

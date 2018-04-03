@@ -1,12 +1,9 @@
 ﻿using FintrakBanking.Common.Enum;
-using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels.Customer;
-using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 //using FintrakBanking.ViewModels.Operations;
 
 namespace FintrakBanking.Interfaces.Credit
@@ -59,5 +56,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId);
         IEnumerable<LoanClassificationViewModel> CalLoanClassification(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
+        IEnumerable<LoanViewModel> GetRunningLoans(int companyId, string refNo);
+        IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD();
     }
 }

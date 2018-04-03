@@ -30,5 +30,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<TBL_PROFILE_GROUP> GetAllGroups();
 
+        bool ClearLoginToken(string userName);
+
     }
 }

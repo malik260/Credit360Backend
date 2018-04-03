@@ -288,16 +288,30 @@ namespace FintrakBanking.Repositories.Credit
                                        hasFile = false,
                                        fileName = string.Empty,
                                    };
+
+            return creditBureauList;
+
+        }
+
+        public IEnumerable<CRCBureauFacilityViewModel> GetCRCBureauFacilities()
+        {
+            var creditBureauList = from a in context.TBL_CUSTOM_CRCBUREAU_PRODUCT
+                                   select new CRCBureauFacilityViewModel
+                                   {
+                                       productCode = a.PRODUCTCODE,
+                                       productName = a.PRODUCTNAME
+                                   };
+
             return creditBureauList;
         }
 
         public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
+
             var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
-                                               where a.CUSTOMERID == customerId && a.DELETED == false
-                                              && a.COMPANYDIRECTORID == directorId
-                                               //where a.DATETIMECREATED.Day <= ((DateTime.Now - a.DATETIMECREATED).TotalDays - 30)
+                                               where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
+                                               && (a.DATETIMECREATED.Day <= ((DateTime.Now - a.DATETIMECREATED).TotalDays - 30))
                                                select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,
@@ -319,27 +333,37 @@ namespace FintrakBanking.Repositories.Credit
         public bool VerifyCustomerValidCreditBureau(int customerId)
         {
             var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId);
+
             foreach (var customer in customers)
             {
-                var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId); //.Where(x => (DateTime.Now - x.dateTimeCreated).TotalDays <= 30);
+                var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId); 
+             
                 if (customerCreditBureauLog.Count() < 3) return false;
             };
+
             return true;
+
         }
+
         #endregion
 
         #region Integration 
         public List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
             var creditBureau = new CreditBureauProcess();
+
             List<string> searchResult = new List<string>();
 
-
             var task = Task.Run(() => searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfoList)));
+
             if (task.Wait(TimeSpan.FromSeconds(40)))
+            {
                 return searchResult;
+            }
             else
+            {
                 throw new Exception("Timed out");
+            }
 
         }
 
@@ -352,54 +376,63 @@ namespace FintrakBanking.Repositories.Credit
                 staffId = searchInfo.staffId,
                 companyId = searchInfo.companyId,
                 createdBy = searchInfo.createdBy,
+                casaAccountId = searchInfo.casaAccountId,
+                creditBureauId = searchInfo.creditBureauId
 
             };
+
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+
             var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
+
             if (casa == null) throw new Exception("Norminated Account Does not Exist");
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(creditBureauInputs.creditBureauId);
 
             var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
 
-            List<FinanceTransactionViewModel> output = new List<FinanceTransactionViewModel>();
-
             if (chargeAmount > accountBalance)
+            {
                 throw new Exception("The norminated customer account has insufficient fund to perform this transaction.");
+            }
             else
             {
                 DebitCustomer(creditBureau, casa, chargeAmount, creditBureauInputs);
             }
 
             var creditBureauProcess = new CreditBureauProcess();
-            CRCSearchResult searchResult = new CRCSearchResult();
+
+            CRCSearchResult searchResponse = new CRCSearchResult();
 
             using (var docTrans = docContext.Database.BeginTransaction())
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var task = Task.Run(() => searchResult = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
-                    if (task.Wait(TimeSpan.FromSeconds(640)))
+                    var task = Task.Run(() => searchResponse = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
 
-                        if (searchResult.SearchCompleted == 1) return searchResult;
-                        else if (searchResult.SearchCompleted == 2)
+                    if (task.Wait(TimeSpan.FromSeconds(640)))
+                    {
+                        if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete) return searchResponse;
+
+                        else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
                         {
                             {   //System.Text.Encoding.ASCII.GetByteCount(searchResult.SearchResult)
-                                byte file =  Convert.ToByte(searchResult.SearchResult);
+                                byte file = Convert.ToByte(searchResponse.SearchResult);
                                 byte[] fileArray = new byte[file];
                                 var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
                                 if (!saveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
-                                {  
+                                {
                                     throw new Exception("Could not save file");
                                 }
 
                                 context.SaveChanges();
                                 trans.Commit();
                                 docTrans.Commit();
-                                return searchResult;
+                                return searchResponse;
                             }
                         }
                         else
@@ -407,6 +440,7 @@ namespace FintrakBanking.Repositories.Credit
                             ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                             throw new Exception("An error occured");
                         }
+                    }
                     else
                     {
                         ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
@@ -419,6 +453,67 @@ namespace FintrakBanking.Repositories.Credit
                     throw new Exception(ex.Message.ToString());
                 }
             }
+        }
+
+        public bool saveCrcPdfFile(CRCRequestViewModel searchInfo, SearchInput creditBureauInputs)
+        {
+
+            var creditBureauProcess = new CreditBureauProcess();
+
+            CRCSearchResult searchResponse = new CRCSearchResult();
+
+            using (var docTrans = docContext.Database.BeginTransaction())
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var task = Task.Run(() => searchResponse = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
+
+                    if (task.Wait(TimeSpan.FromSeconds(640)))
+                    {
+                        if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete) return true;
+                        else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
+                        {
+                            {   //System.Text.Encoding.ASCII.GetByteCount(searchResult.SearchResult)
+                                byte file = Convert.ToByte(searchResponse.SearchResult);
+
+                                byte[] fileArray = new byte[file];
+
+                                var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
+
+                                if (!saveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
+                                {
+                                    throw new Exception("Could not save file");
+                                }
+
+                                context.SaveChanges();
+                                trans.Commit();
+                                docTrans.Commit();
+
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                            throw new Exception("An error occured");
+                        }
+
+                    }
+                    else
+                    {
+                        //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                        throw new Exception("Timed out");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                    throw new Exception(ex.Message.ToString());
+                }
+            }
+
         }
 
         private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)

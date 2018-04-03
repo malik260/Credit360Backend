@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Setups.General;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -19,6 +20,8 @@ namespace FintrakBanking.ViewModels
         public string branchName { get; set; }
         public string staffName { get; set; }
         public DateTime applicationDate { get; set; }
+        public SessionStatusInfo sessionStatusInfo { get; set; }
+        public DateTime? lastLoginDate { get; set; }
     }
 
 }

@@ -27,6 +27,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISINVOICEBASED { get; set; }
 
+        public bool? REQUIRECASAACCOUNT { get; set; }
+
+        public bool? ALLOWFUNDUSAGE { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
