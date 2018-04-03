@@ -43,6 +43,5 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }  
 
-        public bool ALLOWFUNDUSAGE { get; set; }
     }
 }
