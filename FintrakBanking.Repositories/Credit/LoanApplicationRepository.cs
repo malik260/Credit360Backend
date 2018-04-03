@@ -797,8 +797,6 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddloanApplication(LoanApplicationViewModel loan)
         {
-
-
             short productClassProcessId = 0;
             short? productClassId = null;
             isGroupLoan = false;
@@ -809,7 +807,7 @@ namespace FintrakBanking.Repositories.Credit
                 isGroupLoan = true;
             }
             int casaAccountId = -1;
-            string refNumber = GenerateLoanReference(loan.customerId.Value);
+          //  string refNumber = GenerateLoanReference(loan.customerId.Value);
             if (loan.customerAccount != "N/A")
             {
                 casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);

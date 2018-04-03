@@ -72,5 +72,12 @@ namespace FintrakBanking.Interfaces.Credit
 
 
         #endregion
+
+
+        int AddPropertyVistation(CollateralDocumentViewModel entity);
+
+        List<CollateralDocumentViewModel> GetPropertyVistation(int collateralVisitationId);
+
+        IEnumerable<StockCompanyViewModel> getStockPrice();
     }
 }

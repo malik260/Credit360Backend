@@ -2505,8 +2505,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnreportDate;
             
-            private global::System.Data.DataColumn columnapprovalTrailId;
-            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public GroupWorkFlowSetupDataTable() {
@@ -2726,14 +2724,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn approvalTrailIdColumn {
-                get {
-                    return this.columnapprovalTrailId;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -2792,8 +2782,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string systemArrivalDate, 
                         string systemResponseDate, 
                         string timespan, 
-                        string reportDate, 
-                        string approvalTrailId) {
+                        string reportDate) {
                 GroupWorkFlowSetupRow rowGroupWorkFlowSetupRow = ((GroupWorkFlowSetupRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         groupName,
@@ -2818,8 +2807,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         systemArrivalDate,
                         systemResponseDate,
                         timespan,
-                        reportDate,
-                        approvalTrailId};
+                        reportDate};
                 rowGroupWorkFlowSetupRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowGroupWorkFlowSetupRow);
                 return rowGroupWorkFlowSetupRow;
@@ -2865,7 +2853,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnsystemResponseDate = base.Columns["systemResponseDate"];
                 this.columntimespan = base.Columns["timespan"];
                 this.columnreportDate = base.Columns["reportDate"];
-                this.columnapprovalTrailId = base.Columns["approvalTrailId"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2917,8 +2904,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columntimespan);
                 this.columnreportDate = new global::System.Data.DataColumn("reportDate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnreportDate);
-                this.columnapprovalTrailId = new global::System.Data.DataColumn("approvalTrailId", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnapprovalTrailId);
                 this.columngroupName.Caption = "reportDate ";
                 this.columnoperationName.Caption = "reportDate ";
                 this.columnrequestStaffName.Caption = "reportDate ";
@@ -10191,22 +10176,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string approvalTrailId {
-                get {
-                    try {
-                        return ((string)(this[this.tableGroupWorkFlowSetup.approvalTrailIdColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'approvalTrailId\' in table \'GroupWorkFlowSetup\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableGroupWorkFlowSetup.approvalTrailIdColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsgroupNameNull() {
                 return this.IsNull(this.tableGroupWorkFlowSetup.groupNameColumn);
             }
@@ -10479,18 +10448,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetreportDateNull() {
                 this[this.tableGroupWorkFlowSetup.reportDateColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsapprovalTrailIdNull() {
-                return this.IsNull(this.tableGroupWorkFlowSetup.approvalTrailIdColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetapprovalTrailIdNull() {
-                this[this.tableGroupWorkFlowSetup.approvalTrailIdColumn] = global::System.Convert.DBNull;
             }
         }
         

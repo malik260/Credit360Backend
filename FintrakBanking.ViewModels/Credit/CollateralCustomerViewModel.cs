@@ -36,7 +36,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceType { get; set; }
         public string metalType { get; set; }
         public string machineType { get; set; }
-
+        
         // presentation
         public int approvalStatus { get; set; }
 
@@ -240,6 +240,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool canMappedToApplication { get; set; }
         public bool allowApplicationMapping { get; set; }
+        public string  bank { get; set; }
+        public int stateId { get; set; }
     }
 
     public class MiscellaneousNote
@@ -723,8 +725,18 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanRef { get; set; }
         public string expirationDate { get; set; }
         public decimal collateralValue { get; set; }
-        public decimal amountInUse { get; set; }
+        public decimal amountInUse { get; set; }    
         public decimal collateralBalance { get; set; }
         public DateTime dateUsed { get; set; }
+    }
+
+    public class StockCompanyViewModel
+    {
+        public int stockId { get; set; }
+        public string stockCode { get; set; }
+        public string stockName { get; set; }
+        public int MyProperty { get; set; }
+        public int stockPriceId { get; set; }
+        public decimal stockPrice { get; set; }
     }
 }

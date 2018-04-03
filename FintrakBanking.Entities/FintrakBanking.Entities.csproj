@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\TBL_COLLATERAL_VISITATION.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_CONDITION_DOCUMENTS.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="Models\TBL_COLLATERAL_VALUER.cs" />
     <Compile Include="Models\TBL_COLLATERAL_VALUER_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_VEHICLE.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_VISITATION.cs" />
     <Compile Include="Models\TBL_COMPANY.cs" />
     <Compile Include="Models\TBL_COMPANY_CLASS.cs" />
     <Compile Include="Models\TBL_COMPANY_TYPE.cs" />
@@ -367,6 +369,8 @@
     <Compile Include="Models\TBL_STAFF_RANK.cs" />
     <Compile Include="Models\TBL_STATE.cs" />
     <Compile Include="Models\TBL_STOCK.cs" />
+    <Compile Include="Models\TBL_STOCK_COMPANY.cs" />
+    <Compile Include="Models\TBL_STOCK_PRICE.cs" />
     <Compile Include="Models\TBL_SUB_SECTOR.cs" />
     <Compile Include="Models\TBL_TAX.cs" />
     <Compile Include="Models\TBL_TEMP_CHARGE_FEE.cs" />
