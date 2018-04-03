@@ -182,7 +182,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         revaluationDuration = m.REVALUATIONDURATION,
                         isLocationBased = m.ISLOCATIONBASED,
                         allowSharing = m.ALLOWSHARING,
-                        collateralType = t.COLLATERALTYPENAME
+                        collateralTypeName = t.COLLATERALTYPENAME
                     }).ToList();
         }
         

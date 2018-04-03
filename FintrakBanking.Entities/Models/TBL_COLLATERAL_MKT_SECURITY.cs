@@ -31,6 +31,9 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal LIENUSABLEAMOUNT { get; set; }
 
+        [StringLength(100)]
+        public string BANKPURCHASEDFROM { get; set; }
+
         [Required]
         [StringLength(150)]
         public string ISSUERNAME { get; set; }
@@ -47,12 +50,9 @@ namespace FintrakBanking.Entities.Models
 
         public int NUMBEROFUNITS { get; set; }
 
-        public short? RATING { get; set; }
+        public short RATING { get; set; }
 
         public short PERCENTAGEINTEREST { get; set; }
-
-        [StringLength(250)]
-        public string BANKPURCHASEDFROM { get; set; }
 
         public short? INTERESTPAYMENTFREQUENCY { get; set; }
 

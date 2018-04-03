@@ -337,7 +337,11 @@ namespace FintrakBanking.Repositories.Credit
                 SUMINSURED = entity.sumInsured,
                 STARTDATE = (DateTime)entity.startDate,
                 ENDDATE = (DateTime)entity.expiryDate,
-                INSURANCETYPE = entity.insuranceType
+                INSURANCETYPE = entity.insuranceType,
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false
+                 
             });
         }
 
@@ -893,38 +897,44 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddImmovablePropertyCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(new TBL_COLLATERAL_IMMOVE_PROPERTY
+            try
             {
-                COLLATERALCUSTOMERID = collateralId,
-                PROPERTYNAME = entity.propertyName,
-                CITYID = (int)entity.cityId,
-                COUNTRYID = entity.countryId,
-                CONSTRUCTIONDATE = entity.constructionDate,
-                PROPERTYADDRESS = entity.propertyAddress,
-                DATEOFACQUISITION = entity.dateOfAcquisition,
-                LASTVALUATIONDATE = entity.lastValuationDate,
-                VALUERID = entity.valuerId,
-                VALUERREFERENCENUMBER = entity.valuerReferenceNumber,
-                PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId,
-                OPENMARKETVALUE = entity.openMarketValue,
-                //COLLATERALVALUE = (decimal)entity.collateralValue,
-                FORCEDSALEVALUE = entity.forcedSaleValue,
-                STAMPTOCOVER = entity.stampToCoverAmount.ToString(),
-                //VALUATIONSOURCE = entity.valuationSource,
-                //ORIGINALVALUE = entity.originalValue,
-                //AVAILABLEVALUE = entity.availableValue,
-                SECURITYVALUE = entity.securityValue,
-                COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
-                REMARK = entity.remark,
-                NEARESTLANDMARK = entity.nearestLandMark,
-                NEARESTBUSSTOP = entity.nearestBusStop,
-                LONGITUDE = entity.longitude,
-                LATITUDE = entity.latitude,
-                PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
-                PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
-                VALUATIONAMOUNT = entity.valuationAmount,
-               // STATEID = entity.stateId
-            });
+                context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(new TBL_COLLATERAL_IMMOVE_PROPERTY
+                {
+                    COLLATERALCUSTOMERID = collateralId,
+                    PROPERTYNAME = entity.propertyName,
+                    CITYID = (int)entity.cityId,
+                    COUNTRYID = entity.countryId,
+                    CONSTRUCTIONDATE = entity.constructionDate,
+                    PROPERTYADDRESS = entity.propertyAddress,
+                    DATEOFACQUISITION = entity.dateOfAcquisition,
+                    LASTVALUATIONDATE = entity.lastValuationDate,
+                    VALUERID = entity.valuerId,
+                    VALUERREFERENCENUMBER = entity.valuerReferenceNumber,
+                    PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId,
+                    OPENMARKETVALUE = entity.openMarketValue,
+                    //COLLATERALVALUE = (decimal)entity.collateralValue,
+                    FORCEDSALEVALUE = entity.forcedSaleValue,
+                    STAMPTOCOVER = entity.stampToCoverAmount.ToString(),
+                    //VALUATIONSOURCE = entity.valuationSource,
+                    //ORIGINALVALUE = entity.originalValue,
+                    //AVAILABLEVALUE = entity.availableValue,
+                    SECURITYVALUE = entity.securityValue,
+                    COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
+                    REMARK = entity.remark,
+                    NEARESTLANDMARK = entity.nearestLandMark,
+                    NEARESTBUSSTOP = entity.nearestBusStop,
+                    LONGITUDE = entity.longitude,
+                    LATITUDE = entity.latitude,
+                    PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
+                    PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
+                    VALUATIONAMOUNT = entity.valuationAmount,
+                   
+                    //   STATEID = entity.stateId
+                });
+            }
+            catch (Exception ex)
+            { }
         }
 
         private void UpdateImmovablePropertyCollateral(CollateralViewModel entity)
@@ -1079,7 +1089,7 @@ namespace FintrakBanking.Repositories.Credit
                 issuerReferenceNumber = specifics.ISSUERREFERENCENUMBER,
                 unitValue = specifics.UNITVALUE,
                 numberOfUnits = specifics.NUMBEROFUNITS,
-               // rating = specifics.RATING,
+                rating = specifics.RATING,
                 percentageInterest = specifics.PERCENTAGEINTEREST,
                 interestPaymentFrequency = specifics.INTERESTPAYMENTFREQUENCY,
                 remark = specifics.REMARK,
@@ -1275,7 +1285,7 @@ namespace FintrakBanking.Repositories.Credit
             var collaterals = context.TBL_CUSTOMER//.Where(x => x.CustomerId == customerId)
                 .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
                 .Join(context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == customerId), cc => cc.Collateral.CUSTOMERID, a => a.CUSTOMERID, (cc, a) => new { CustomerCollateral = cc, Application = a })
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANAPPLICATIONID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
                 .Select(x => new ActiveCustomerCollateralViewModel
                 {
                     customerId = x.CollateralApplication.Application.CUSTOMERID,
@@ -1285,7 +1295,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanTypeId = x.CollateralApplication.Application.LOANTYPEID,
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
                     //loanId = x.Mapping.LoanId,
-                    loanApplicationId = x.Mapping.LOANAPPLICATIONID,
+                    loanApplicationId = x.Mapping.LOANID,
                     isReleased = x.Mapping.ISRELEASED,
                     releaseApprovalStatusId = (short)x.Mapping.RELEASEAPPROVALSTATUSID,
                     //productTypeId = x.Mapping.ProductTypeId,
@@ -1319,14 +1329,14 @@ namespace FintrakBanking.Repositories.Credit
             var collaterals = context.TBL_CUSTOMER
                 .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
                 .Join(context.TBL_LOAN_APPLICATION, cc => cc.Collateral.CUSTOMERID, a => a.CUSTOMERID, (cc, a) => new { CustomerCollateral = cc, Application = a })
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANAPPLICATIONID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
                 .Select(x => new ActiveCustomerCollateralViewModel
                 {
                     customerId = x.CollateralApplication.Application.CUSTOMERID,
                     collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
                     loanTypeId = x.CollateralApplication.Application.LOANTYPEID,
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
-                    loanApplicationId = x.Mapping.LOANAPPLICATIONID,
+                    loanApplicationId = x.Mapping.LOANID,
                     isReleased = x.Mapping.ISRELEASED,
                     releaseApprovalStatusId = (short)x.Mapping.RELEASEAPPROVALSTATUSID,
                     customerCode = x.CollateralApplication.CustomerCollateral.Customer.CUSTOMERCODE,
@@ -1424,14 +1434,14 @@ namespace FintrakBanking.Repositories.Credit
             return context.TBL_CUSTOMER//.Where(x => x.CustomerId == customerId)
                 .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
                 .Join(context.TBL_LOAN_APPLICATION, cc => cc.Collateral.CUSTOMERID, a => a.CUSTOMERID, (cc, a) => new { CustomerCollateral = cc, Application = a })
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANAPPLICATIONID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
                 .Select(x => new ActiveCustomerCollateralViewModel
                 {
                     customerId = x.CollateralApplication.Application.CUSTOMERID,
                     collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
                     loanTypeId = x.CollateralApplication.Application.LOANTYPEID,
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
-                    loanApplicationId = x.Mapping.LOANAPPLICATIONID,
+                    loanApplicationId = x.Mapping.LOANID,
                     isReleased = x.Mapping.ISRELEASED,
                     releaseApprovalStatusId = (short)x.Mapping.RELEASEAPPROVALSTATUSID,
                     customerCode = x.CollateralApplication.CustomerCollateral.Customer.CUSTOMERCODE,
@@ -1501,7 +1511,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var assignment = new TBL_LOAN_COLLATERAL_MAPPING
             {
-                LOANAPPLICATIONID = entity.loanApplicationId,
+                LOANID = entity.loanApplicationId,
                 COLLATERALCUSTOMERID = entity.collateralCustomerId,
                 RELEASEAPPROVALSTATUSID = 0
             };
@@ -1514,7 +1524,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.CollateralAssignmentAction,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Collateral Assignment :: LoanApplicationId:'{ assignment.LOANAPPLICATIONID }' CollateralCustomerId:'{ assignment.COLLATERALCUSTOMERID }' ",
+                DETAIL = $"Collateral Assignment :: LoanApplicationId:'{ assignment.LOANID }' CollateralCustomerId:'{ assignment.COLLATERALCUSTOMERID }' ",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
@@ -3121,17 +3131,18 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<StockCompanyViewModel> getStockPrice()
         {
             var stock = (from c in context.TBL_STOCK_COMPANY
-                            join p in context.TBL_STOCK_PRICE on c.STOCKID equals p.STOCKID
-                            select new StockCompanyViewModel
-                            {
-                                stockId = c.STOCKID,
-                                stockCode = c.STOCKCODE,
-                                stockName = c.STOCKNAME,
-                                stockPrice = p.STOCKPRICE
+                         join p in context.TBL_STOCK_PRICE on c.STOCKID equals p.STOCKID
+                         select new StockCompanyViewModel
+                         {
+                             stockId = c.STOCKID,
+                             stockCode = c.STOCKCODE,
+                             stockName = c.STOCKNAME,
+                             stockPrice = p.STOCKPRICE
 
-                            }).ToList();
+                         }).ToList();
             return stock;
         }
+
 
     }
 

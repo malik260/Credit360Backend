@@ -126,6 +126,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_JOB_TYPE_SUB> TBL_JOB_TYPE_SUB { get; set; }
         public virtual DbSet<TBL_KYC_DOCUMENTTYPE> TBL_KYC_DOCUMENTTYPE { get; set; }
         public virtual DbSet<TBL_KYC_ITEM> TBL_KYC_ITEM { get; set; }
+        public virtual DbSet<TBL_LOCALGOVERNMENT> TBL_LOCALGOVERNMENT { get; set; }
         public virtual DbSet<TBL_MANAGEMENT_TYPE> TBL_MANAGEMENT_TYPE { get; set; }
         public virtual DbSet<TBL_MESSAGE_LOG> TBL_MESSAGE_LOG { get; set; }
         public virtual DbSet<TBL_MESSAGE_LOG_STATUS> TBL_MESSAGE_LOG_STATUS { get; set; }
@@ -170,7 +171,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SOURCE_APPLICATION> TBL_SOURCE_APPLICATION { get; set; }
         public virtual DbSet<TBL_STAFF> TBL_STAFF { get; set; }
         public virtual DbSet<TBL_STAFF_JOBTITLE> TBL_STAFF_JOBTITLE { get; set; }
-        public virtual DbSet<TBL_STAFF_ORGANOGRAM> TBL_STAFF_ORGANOGRAM { get; set; }
         public virtual DbSet<TBL_STAFF_ROLE> TBL_STAFF_ROLE { get; set; }
         public virtual DbSet<TBL_STATE> TBL_STATE { get; set; }
         public virtual DbSet<TBL_SUB_SECTOR> TBL_SUB_SECTOR { get; set; }
@@ -355,7 +355,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
         public virtual DbSet<TBL_DEAL_CLASSIFICATION> TBL_DEAL_CLASSIFICATION { get; set; }
         public virtual DbSet<TBL_DEAL_TYPE> TBL_DEAL_TYPE { get; set; }
-        public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
         public virtual DbSet<TBL_STOCK_PRICE> TBL_STOCK_PRICE { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
@@ -1173,11 +1172,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_STAFF)
-                .WithRequired(e => e.TBL_COMPANY)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_COMPANY>()
-                .HasMany(e => e.TBL_STOCK)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
 
@@ -2010,6 +2004,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_JOB_TYPE_SUB)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_LOCALGOVERNMENT>()
+                .HasMany(e => e.TBL_CITY)
+                .WithRequired(e => e.TBL_LOCALGOVERNMENT)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_MESSAGE_LOG>()
                 .Property(e => e.MESSAGEBODY)
                 .IsUnicode(false);
@@ -2287,6 +2286,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_PRODUCT_TYPE>()
                 .HasMany(e => e.TBL_TEMP_PRODUCT)
+                .WithRequired(e => e.TBL_PRODUCT_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_PRODUCT_TYPE>()
+                .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
                 .WithRequired(e => e.TBL_PRODUCT_TYPE)
                 .WillCascadeOnDelete(false);
 
@@ -2630,11 +2634,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_STAFF>()
                 .HasMany(e => e.TBL_STAFF1)
                 .WithOptional(e => e.TBL_STAFF2)
-                .HasForeignKey(e => e.RELIEF_STAFFID);
-
-            modelBuilder.Entity<TBL_STAFF>()
-                .HasMany(e => e.TBL_STAFF11)
-                .WithOptional(e => e.TBL_STAFF3)
                 .HasForeignKey(e => e.SUPERVISOR_STAFFID);
 
             modelBuilder.Entity<TBL_STAFF>()
@@ -2648,11 +2647,6 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_STAFF1)
                 .HasForeignKey(e => e.RELATIONSHIPMANAGERID)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_STAFF>()
-                .HasMany(e => e.TBL_TEMP_STAFF)
-                .WithOptional(e => e.TBL_STAFF)
-                .HasForeignKey(e => e.RELIEF_STAFFID);
 
             modelBuilder.Entity<TBL_STAFF_JOBTITLE>()
                 .HasMany(e => e.TBL_STAFF)
@@ -2686,10 +2680,7 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.VERIFICATIONAMOUNT)
                 .HasPrecision(19, 4);
 
-            modelBuilder.Entity<TBL_STATE>()
-                .HasMany(e => e.TBL_CITY)
-                .WithRequired(e => e.TBL_STATE)
-                .WillCascadeOnDelete(false);
+
 
             modelBuilder.Entity<TBL_STATE>()
                 .HasMany(e => e.TBL_SOLICITOR_STATE_MAPPING)
@@ -2935,10 +2926,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_COLLATERAL_GAURANTEE>()
                 .Property(e => e.GUARANTEEVALUE)
                 .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
-                .Property(e => e.STATEID)
-                .IsFixedLength();
 
             modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
                 .Property(e => e.PROPERTYADDRESS)
@@ -3281,6 +3268,26 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN>()
+                .Property(e => e.PASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN>()
+                .Property(e => e.PASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN>()
+                .Property(e => e.INTERESTONPASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN>()
+                .Property(e => e.INTERESTONPASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN>()
+                .Property(e => e.PENALCHARGEAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN>()
                 .Property(e => e.SCHEDULEDPREPAYMENTAMOUNT)
                 .HasPrecision(19, 4);
 
@@ -3340,11 +3347,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION>()
                 .HasMany(e => e.TBL_LOAN_APPLTN_CREDIT_BUREAU)
-                .WithRequired(e => e.TBL_LOAN_APPLICATION)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_APPLICATION>()
-                .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION)
                 .WillCascadeOnDelete(false);
 
@@ -3772,6 +3774,26 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_REVOLVING>()
                 .Property(e => e.INTEREST_AMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
+                .Property(e => e.PASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
+                .Property(e => e.PASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
+                .Property(e => e.INTERESTONPASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
+                .Property(e => e.INTERESTONPASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
+                .Property(e => e.PENALCHARGEAMOUNT)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_REVOLVING>()
@@ -4865,6 +4887,26 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_TEMP_LOAN>()
                 .Property(e => e.OUTSTANDINGINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_LOAN>()
+                .Property(e => e.PASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_LOAN>()
+                .Property(e => e.PASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_LOAN>()
+                .Property(e => e.INTERESTONPASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_LOAN>()
+                .Property(e => e.INTERESTONPASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_LOAN>()
+                .Property(e => e.PENALCHARGEAMOUNT)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_TEMP_LOAN>()

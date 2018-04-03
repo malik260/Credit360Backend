@@ -3214,7 +3214,7 @@ namespace FintrakBanking.Repositories.Customer
                 email = x.EMAIL,
                 address = x.ADDRESS,
                 nearestLandmark = x.NEAREST_LANDMARK,
-                stateId = x.TBL_CITY.STATEID,
+                stateId = x.TBL_CITY.TBL_LOCALGOVERNMENT.STATEID,
                 cityId = x.CITYID,
                 active = x.ACTIVE,
             }).ToList();
@@ -3235,7 +3235,7 @@ namespace FintrakBanking.Repositories.Customer
                 email = x.EMAIL,
                 address = x.ADDRESS,
                 nearestLandmark = x.NEAREST_LANDMARK,
-                stateId = context.TBL_CITY.FirstOrDefault(k => k.CITYID == x.CITYID).STATEID,
+                stateId = context.TBL_CITY.FirstOrDefault(k => k.CITYID == x.CITYID).TBL_LOCALGOVERNMENT.STATEID,
                 cityId = x.CITYID,
                 active = x.ACTIVE,
             }).ToList();
@@ -3245,7 +3245,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId).Select(c => new
             {
-                custormerId = c.CUSTOMERID,
+                customerId = c.CUSTOMERID,
                 customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                 customerTypeId = c.CUSTOMERTYPEID,
                 customerType = c.TBL_CUSTOMER_TYPE.NAME

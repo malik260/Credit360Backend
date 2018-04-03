@@ -114,7 +114,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                     employerSubTypeId=a.EMPLOYER_SUB_TYPEID,
                                     cityId=a.CITYID,
                                     companyId=companyId,
-                                    stateId=c.STATEID,
+                                    stateId=c.TBL_LOCALGOVERNMENT.STATEID,
                                     employerTypeId = sb.EMPLOYER_TYPEID
 
 

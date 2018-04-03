@@ -47,7 +47,8 @@ namespace FintrakBanking.Repositories.Setups.General
             var cityEntity = new TBL_CITY
             {
                 CITYNAME = entity.cityName,
-                STATEID = entity.stateId,
+                LOCALGOVERNMENTID = entity.localGovernmentId,
+                //STATEID = entity.stateId,
                 CITYCLASSID = entity.cityClassId,
                 ALLOWEDFORCOLLATERAL = entity.allowedForCollateral
 
@@ -60,7 +61,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var cityEntity = context.TBL_CITY.Find(id);
             {
                 cityEntity.CITYNAME = entity.cityName;
-                cityEntity.STATEID = entity.stateId;
+                cityEntity.TBL_LOCALGOVERNMENT.STATEID = entity.stateId;
                 cityEntity.CITYCLASSID = entity.cityClassId;
                 cityEntity.ALLOWEDFORCOLLATERAL = entity.allowedForCollateral;
 
@@ -76,8 +77,8 @@ namespace FintrakBanking.Repositories.Setups.General
                               {
                                   cityId = a.CITYID,
                                   cityName = a.CITYNAME,
-                                  stateId = a.STATEID,
-                                  stateName = a.TBL_STATE.STATENAME,
+                                  stateId = a.TBL_LOCALGOVERNMENT.STATEID,
+                                  stateName = a.TBL_LOCALGOVERNMENT.TBL_STATE.STATENAME,
                                   cityClassId = a.CITYCLASSID,
                                   cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
                                   allowedForCollateral = a.ALLOWEDFORCOLLATERAL                                  
@@ -94,7 +95,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               {
                                   cityId = a.CITYID,
                                   cityName = a.CITYNAME,
-                                  stateId = a.STATEID,
+                                  stateId = a.TBL_LOCALGOVERNMENT.STATEID,
                                   cityClassId = a.CITYCLASSID,
                                   cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
                                   allowedForCollateral = a.ALLOWEDFORCOLLATERAL
@@ -106,12 +107,12 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<CityViewModel> GetCityByStateId(int stateId)
         {
             var stateEntity = (from a in context.TBL_CITY
-                               where a.STATEID == stateId
+                               where a.TBL_LOCALGOVERNMENT.STATEID == stateId
                                select new CityViewModel
                                {
                                    cityId = a.CITYID,
                                    cityName = a.CITYNAME,
-                                   stateId = a.STATEID,
+                                   stateId = a.TBL_LOCALGOVERNMENT.STATEID,
                                    cityClassId = a.CITYCLASSID,
                                    cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
                                    allowedForCollateral = a.ALLOWEDFORCOLLATERAL
@@ -124,7 +125,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return from c in context.TBL_COUNTRY
                    join st in context.TBL_STATE
                     on c.COUNTRYID equals st.COUNTRYID
-                   join ct in context.TBL_CITY on st.STATEID equals ct.STATEID
+                   join ct in context.TBL_CITY on st.STATEID equals ct.TBL_LOCALGOVERNMENT.STATEID
                    where c.COUNTRYID == countryId
                    select new
                    {

@@ -16,96 +16,6 @@
         <DataSourceName>Credit</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
-      <Fields>
-        <Field Name="groupName">
-          <DataField>groupName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="operationName">
-          <DataField>operationName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="requestStaffName">
-          <DataField>requestStaffName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="requestStaffCode">
-          <DataField>requestStaffCode</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="requestApprovalLevel">
-          <DataField>requestApprovalLevel</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="arrivalDate">
-          <DataField>arrivalDate</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="approvalStatus">
-          <DataField>approvalStatus</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="companyName">
-          <DataField>companyName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="sla">
-          <DataField>sla</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="responseDate">
-          <DataField>responseDate</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="responseStaffName">
-          <DataField>responseStaffName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="responseStaffCode">
-          <DataField>responseStaffCode</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="responseApprovalLevel">
-          <DataField>responseApprovalLevel</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TargetId">
-          <DataField>TargetId</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="comment">
-          <DataField>comment</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="slaDifferenceMinutes">
-          <DataField>slaDifferenceMinutes</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="slaDifferenceMinute">
-          <DataField>slaDifferenceMinute</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="approvalStatusId">
-          <DataField>approvalStatusId</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="systemArrivalDate">
-          <DataField>systemArrivalDate</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="systemResponseDate">
-          <DataField>systemResponseDate</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="timespan">
-          <DataField>timespan</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="reportDate">
-          <DataField>reportDate</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
         <rd:SchemaPath>D:\Projects\FintrakBanking\FintrakBankingAPI462_friday_150917\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
@@ -853,7 +763,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="APPROVAL PROVAL: " + First(Fields!operationName.Value, "DataSet1")</Value>
+                    <Value>="APPROVAL: " + First(Fields!operationName.Value, "DataSet1")</Value>
                     <Style>
                       <FontFamily>verdana</FontFamily>
                       <FontWeight>Bold</FontWeight>

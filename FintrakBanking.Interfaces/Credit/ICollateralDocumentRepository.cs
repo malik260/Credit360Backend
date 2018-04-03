@@ -21,6 +21,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool AddCollateralVisitation(CollateralDocumentViewModel model, byte[] file);
 
-        CollateralDocumentViewModel GetCollateralVisitationDocument(int documentId);
+        CollateralVisitationDocumentViewModel GetCollateralVisitationDocument(int documentId);
     }
 }

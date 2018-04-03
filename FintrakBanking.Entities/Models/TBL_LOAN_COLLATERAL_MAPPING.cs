@@ -14,20 +14,32 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
-        public int LOANAPPLICATIONID { get; set; }
+        public int LOANID { get; set; }
 
-        public int? LOANAPPLICATIONDETAILID { get; set; }
+        public short PRODUCTTYPEID { get; set; }
 
         public bool ISRELEASED { get; set; }
 
         public short? RELEASEAPPROVALSTATUSID { get; set; }
 
+        public int CREATEDBY { get; set; }
+
+        public DateTime DATETIMECREATED { get; set; }
+
+        public int? LASTUPDATEDBY { get; set; }
+
+        public DateTime? DATETIMEUPDATED { get; set; }
+
+        public bool DELETED { get; set; }
+
+        public int? DELETEDBY { get; set; }
+
+        public DateTime? DATETIMEDELETED { get; set; }
+
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
+        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
+
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
-
-        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
-
-        public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
     }
 }

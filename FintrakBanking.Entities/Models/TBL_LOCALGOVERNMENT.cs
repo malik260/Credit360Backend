@@ -1,4 +1,4 @@
-namespace FintrakBaking.BranchUpdateService.Fintrak_Model
+namespace FintrakBanking.Entities.Models
 {
     using System;
     using System.Collections.Generic;
@@ -6,30 +6,26 @@ namespace FintrakBaking.BranchUpdateService.Fintrak_Model
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CITY")]
-    public partial class TBL_CITY
+    [Table("core.TBL_LOCALGOVERNMENT")]
+    public partial class TBL_LOCALGOVERNMENT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_CITY()
+        public TBL_LOCALGOVERNMENT()
         {
-            TBL_BRANCH = new HashSet<TBL_BRANCH>();
+            TBL_CITY = new HashSet<TBL_CITY>();
         }
 
         [Key]
-        public int CITYID { get; set; }
+        public int LOCALGOVERNMENTID { get; set; }
 
         [Required]
-        [StringLength(150)]
-        public string CITYNAME { get; set; }
+        [StringLength(200)]
+        public string NAME { get; set; }
 
         public int STATEID { get; set; }
 
-        public short CITYCLASSID { get; set; }
-
-        public bool ALLOWEDFORCOLLATERAL { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_BRANCH> TBL_BRANCH { get; set; }
+        public virtual ICollection<TBL_CITY> TBL_CITY { get; set; }
 
         public virtual TBL_STATE TBL_STATE { get; set; }
     }

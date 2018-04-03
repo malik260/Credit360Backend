@@ -31,7 +31,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease();
 
         IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId);
-        bool AssignCollateral(ActiveCustomerCollateralViewModel entity);
+        //bool AssignCollateral(ActiveCustomerCollateralViewModel entity);
 
         decimal GetAccountLeinAmountForFD(string accountNumber);
 

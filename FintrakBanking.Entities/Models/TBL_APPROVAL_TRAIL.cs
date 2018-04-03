@@ -24,11 +24,13 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? SYSTEMRESPONSEDATETIME { get; set; }
 
+        public int REQUESTSTAFFID { get; set; }
+
         public int? RESPONSESTAFFID { get; set; }
 
-        public int COMPANYID { get; set; }
+        public int? TOSTAFFID { get; set; }
 
-        public int REQUESTSTAFFID { get; set; }
+        public int COMPANYID { get; set; }
 
         public int? FROMAPPROVALLEVELID { get; set; }
 
@@ -44,8 +46,6 @@ namespace FintrakBanking.Entities.Models
         public string COMMENT { get; set; }
 
         public short? VOTE { get; set; }
-
-        public int? TOSTAFFID { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

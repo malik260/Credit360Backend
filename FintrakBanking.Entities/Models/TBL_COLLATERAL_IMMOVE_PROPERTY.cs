@@ -22,9 +22,6 @@ namespace FintrakBanking.Entities.Models
 
         public short COUNTRYID { get; set; }
 
-        [StringLength(10)]
-        public string STATEID { get; set; }
-
         public DateTime? CONSTRUCTIONDATE { get; set; }
 
         [Required]

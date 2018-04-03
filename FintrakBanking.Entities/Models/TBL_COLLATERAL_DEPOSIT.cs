@@ -14,6 +14,9 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
+        [StringLength(100)]
+        public string BANK { get; set; }
+
         [StringLength(50)]
         public string DEALREFERENCENUMBER { get; set; }
 
@@ -38,9 +41,6 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "date")]
         public DateTime MATURITYDATE { get; set; }
-
-        [StringLength(250)]
-        public string BANK { get; set; }
 
         [Column(TypeName = "money")]
         public decimal MATURITYAMOUNT { get; set; }

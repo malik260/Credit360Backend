@@ -10,7 +10,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralTypeName { get; set; }
         public string details { get; set; }
         public bool requireInsurancePolicy { get; set; }
-        public bool? requireVisitation { get; set; }
+        public bool requireVisitation { get; set; }
         public int? chargeGLAccountId { get; set; }
         public int position { get; set; }
         public int collateralSubTypeId { get; set; }

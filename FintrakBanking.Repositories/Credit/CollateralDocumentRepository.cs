@@ -132,11 +132,11 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-        public CollateralDocumentViewModel GetCollateralVisitationDocument(int collateralVisitationId)
+        public CollateralVisitationDocumentViewModel GetCollateralVisitationDocument(int collateralVisitationId)
         {
             var data = (from x in this.context.TBL_COLLATERAL_VISITATION
                         where x.COLLATERALVISITATIONID == collateralVisitationId
-                        select new CollateralDocumentViewModel
+                        select new CollateralVisitationDocumentViewModel
                         {
                             documentId = x.DOCUMENTID,
                             collateralCustomerId = x.COLLATERALVISITATIONID,
@@ -167,24 +167,24 @@ namespace FintrakBanking.Repositories.Credit
                     SYSTEMDATETIME = DateTime.Now,
                     CREATEDBY = (int)model.createdBy,
                     COLLATERALVISITATIONID = visitationId,
-                    COLLATERALCODE ="aaasss",
+                    // COLLATERALCODE ="aaasss",
                 };
 
                 context.TBL_COLLATERAL_VISITATION.Add(data);
             }
-            // Audit Section ---------------------------
-            //var audit = new TBL_AUDIT
-            //{
-            //    AUDITTYPEID = (short)AuditTypeEnum.CollateralDocumentAdded,
-            //    STAFFID = model.createdBy,
-            //    BRANCHID = (short)model.userBranchId,
-            //    DETAIL = $"Added Collateral Visitation File '{ model.documentTitle }' ",
-            //    IPADDRESS = model.userIPAddress,
-            //    URL = model.applicationUrl,
-            //    APPLICATIONDATE = general.GetApplicationDate(),
-            //    SYSTEMDATETIME = DateTime.Now
-            //};
-            //this.audit.AddAuditTrail(audit);
+           // Audit Section ---------------------------
+           var audit = new TBL_AUDIT
+           {
+               AUDITTYPEID = (short)AuditTypeEnum.CollateralDocumentAdded,
+               STAFFID = model.createdBy,
+               BRANCHID = (short)model.userBranchId,
+               DETAIL = $"Added Collateral Visitation File '{ model.documentTitle }' ",
+               IPADDRESS = model.userIPAddress,
+               URL = model.applicationUrl,
+               APPLICATIONDATE = general.GetApplicationDate(),
+               SYSTEMDATETIME = DateTime.Now
+           };
+            this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;

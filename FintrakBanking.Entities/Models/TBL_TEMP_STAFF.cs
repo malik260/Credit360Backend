@@ -20,8 +20,6 @@ namespace FintrakBanking.Entities.Models
 
         public int? SUPERVISOR_STAFFID { get; set; }
 
-        public int? RELIEF_STAFFID { get; set; }
-
         [Required]
         [StringLength(50)]
         public string FIRSTNAME { get; set; }
@@ -114,8 +112,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_DEPARTMENT_UNIT TBL_DEPARTMENT_UNIT { get; set; }
 
         public virtual TBL_MIS_INFO TBL_MIS_INFO { get; set; }
-
-        public virtual TBL_STAFF TBL_STAFF { get; set; }
 
         public virtual TBL_STAFF_JOBTITLE TBL_STAFF_JOBTITLE { get; set; }
 

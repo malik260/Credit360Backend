@@ -313,6 +313,7 @@
     <Compile Include="Models\TBL_LOAN_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_TYPE.cs" />
+    <Compile Include="Models\TBL_LOCALGOVERNMENT.cs" />
     <Compile Include="Models\TBL_MACHINEVALUE_BASE.cs" />
     <Compile Include="Models\TBL_MANAGEMENT_TYPE.cs" />
     <Compile Include="Models\TBL_MESSAGE_LOG.cs" />
@@ -419,7 +420,9 @@
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
+    <Compile Include="StagingModels\STG_BRANCH.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />
+    <Compile Include="StagingModels\STG_STAFF.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

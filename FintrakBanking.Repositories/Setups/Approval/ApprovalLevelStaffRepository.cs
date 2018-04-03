@@ -285,9 +285,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return result;
         }
 
-        public IEnumerable<TBL_STAFF_ORGANOGRAM> GetStaffOrganogram(int companyId)
+        public IEnumerable<TBL_STAFF> GetStaffOrganogram(int companyId)
         {
-            return context.TBL_STAFF_ORGANOGRAM.Where(c => c.COMPANYID == companyId);
+            return context.TBL_STAFF.Where(c => c.COMPANYID == companyId);
         }
 
         public IQueryable<TBL_APPROVAL_TRAIL> GetApprovalTrail(int operationId, int targetId, int approvalLevelId, int numberOfApprovals)

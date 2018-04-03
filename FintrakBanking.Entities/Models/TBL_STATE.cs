@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_STATE()
         {
             TBL_BRANCH = new HashSet<TBL_BRANCH>();
-            TBL_CITY = new HashSet<TBL_CITY>();
+            TBL_LOCALGOVERNMENT = new HashSet<TBL_LOCALGOVERNMENT>();
             TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
             TBL_SOLICITOR_STATE_MAPPING = new HashSet<TBL_SOLICITOR_STATE_MAPPING>();
         }
@@ -58,10 +58,10 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_BRANCH> TBL_BRANCH { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CITY> TBL_CITY { get; set; }
-
         public virtual TBL_COUNTRY TBL_COUNTRY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOCALGOVERNMENT> TBL_LOCALGOVERNMENT { get; set; }
 
         public virtual TBL_REGION TBL_REGION { get; set; }
 
