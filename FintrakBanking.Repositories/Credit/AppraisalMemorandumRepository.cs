@@ -433,7 +433,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (staff.STAFFROLEID > 0)
             {
-                var rank = context.TBL_STAFF_RANK.Find(staff.STAFFROLEID);
+                var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
 
                 grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
                     .Join(context.TBL_APPROVAL_GROUP,

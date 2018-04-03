@@ -126,6 +126,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_JOB_TYPE_SUB> TBL_JOB_TYPE_SUB { get; set; }
         public virtual DbSet<TBL_KYC_DOCUMENTTYPE> TBL_KYC_DOCUMENTTYPE { get; set; }
         public virtual DbSet<TBL_KYC_ITEM> TBL_KYC_ITEM { get; set; }
+        public virtual DbSet<TBL_LOCALGOVERNMENT> TBL_LOCALGOVERNMENT { get; set; }
         public virtual DbSet<TBL_MANAGEMENT_TYPE> TBL_MANAGEMENT_TYPE { get; set; }
         public virtual DbSet<TBL_MESSAGE_LOG> TBL_MESSAGE_LOG { get; set; }
         public virtual DbSet<TBL_MESSAGE_LOG_STATUS> TBL_MESSAGE_LOG_STATUS { get; set; }
@@ -170,7 +171,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SOURCE_APPLICATION> TBL_SOURCE_APPLICATION { get; set; }
         public virtual DbSet<TBL_STAFF> TBL_STAFF { get; set; }
         public virtual DbSet<TBL_STAFF_JOBTITLE> TBL_STAFF_JOBTITLE { get; set; }
-        public virtual DbSet<TBL_STAFF_ORGANOGRAM> TBL_STAFF_ORGANOGRAM { get; set; }
+        public virtual DbSet<TBL_STAFF_RELIEF> TBL_STAFF_RELIEF { get; set; }
         public virtual DbSet<TBL_STAFF_ROLE> TBL_STAFF_ROLE { get; set; }
         public virtual DbSet<TBL_STATE> TBL_STATE { get; set; }
         public virtual DbSet<TBL_SUB_SECTOR> TBL_SUB_SECTOR { get; set; }
@@ -301,7 +302,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_FIANCE_TRANSACTION> TBL_CUSTOM_FIANCE_TRANSACTION { get; set; }
         public virtual DbSet<TBL_CUSTOM_LIEN_PROCESS> TBL_CUSTOM_LIEN_PROCESS { get; set; }
         public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
-        //public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -355,11 +356,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
         public virtual DbSet<TBL_DEAL_CLASSIFICATION> TBL_DEAL_CLASSIFICATION { get; set; }
         public virtual DbSet<TBL_DEAL_TYPE> TBL_DEAL_TYPE { get; set; }
-        public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
-        public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
-        //public virtual DbSet<TBL_COLLATERAL_VISITATION> TBL_COLLATERAL_VISITATION { get; set; }
         public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
         public virtual DbSet<TBL_STOCK_PRICE> TBL_STOCK_PRICE { get; set; }
+        public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1178,11 +1177,6 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COMPANY>()
-                .HasMany(e => e.TBL_STOCK)
-                .WithRequired(e => e.TBL_COMPANY)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_TAX)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
@@ -1247,6 +1241,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_COUNTRY>()
                 .HasMany(e => e.TBL_STATE)
+                .WithRequired(e => e.TBL_COUNTRY)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_COUNTRY>()
+                .HasMany(e => e.TBL_STOCK_COMPANY)
                 .WithRequired(e => e.TBL_COUNTRY)
                 .WillCascadeOnDelete(false);
 
@@ -2006,6 +2005,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_JOB_TYPE_SUB)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_LOCALGOVERNMENT>()
+                .HasMany(e => e.TBL_CITY)
+                .WithRequired(e => e.TBL_LOCALGOVERNMENT)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_MESSAGE_LOG>()
                 .Property(e => e.MESSAGEBODY)
                 .IsUnicode(false);
@@ -2286,10 +2290,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_PRODUCT_TYPE)
                 .WillCascadeOnDelete(false);
 
-            //modelBuilder.Entity<TBL_PRODUCT_TYPE>()
-            //    .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
-            //    .WithRequired(e => e.TBL_PRODUCT_TYPE)
-            //    .WillCascadeOnDelete(false);
+            modelBuilder.Entity<TBL_PRODUCT_TYPE>()
+                .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
+                .WithRequired(e => e.TBL_PRODUCT_TYPE)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT_TYPE>()
                 .HasMany(e => e.TBL_LOAN_COVENANT_DETAIL)
@@ -2395,6 +2399,11 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.LOAN_LIMIT)
                 .HasPrecision(19, 4);
 
+            modelBuilder.Entity<TBL_SECTOR>()
+                .HasMany(e => e.TBL_STOCK_COMPANY)
+                .WithRequired(e => e.TBL_SECTOR)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_SIGNATURE_DOCUMENT_TYPE>()
                 .HasMany(e => e.TBL_SIGNATURE_DOCUMENT_STAFF)
                 .WithRequired(e => e.TBL_SIGNATURE_DOCUMENT_TYPE)
@@ -2436,6 +2445,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_APPROVAL_TRAIL2)
                 .WithOptional(e => e.TBL_STAFF2)
                 .HasForeignKey(e => e.TOSTAFFID);
+
+            modelBuilder.Entity<TBL_STAFF>()
+                .HasMany(e => e.TBL_APPROVAL_TRAIL3)
+                .WithOptional(e => e.TBL_STAFF3)
+                .HasForeignKey(e => e.RELIEVEDSTAFFID);
 
             modelBuilder.Entity<TBL_STAFF>()
                 .HasMany(e => e.TBL_AUDIT)
@@ -2624,13 +2638,20 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_STAFF>()
-                .HasMany(e => e.TBL_STAFF1)
-                .WithOptional(e => e.TBL_STAFF2)
-                .HasForeignKey(e => e.RELIEF_STAFFID);
+                .HasMany(e => e.TBL_STAFF_RELIEF)
+                .WithRequired(e => e.TBL_STAFF)
+                .HasForeignKey(e => e.STAFFID)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_STAFF>()
-                .HasMany(e => e.TBL_STAFF11)
-                .WithOptional(e => e.TBL_STAFF3)
+                .HasMany(e => e.TBL_STAFF_RELIEF1)
+                .WithRequired(e => e.TBL_STAFF1)
+                .HasForeignKey(e => e.RELIEFSTAFFID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_STAFF>()
+                .HasMany(e => e.TBL_STAFF1)
+                .WithOptional(e => e.TBL_STAFF2)
                 .HasForeignKey(e => e.SUPERVISOR_STAFFID);
 
             modelBuilder.Entity<TBL_STAFF>()
@@ -2644,11 +2665,6 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_STAFF1)
                 .HasForeignKey(e => e.RELATIONSHIPMANAGERID)
                 .WillCascadeOnDelete(false);
-
-            //modelBuilder.Entity<TBL_STAFF>()
-            //    .HasMany(e => e.TBL_TEMP_STAFF)
-            //    .WithOptional(e => e.TBL_STAFF)
-            //    .HasForeignKey(e => e.RELIEF_STAFFID);
 
             modelBuilder.Entity<TBL_STAFF_JOBTITLE>()
                 .HasMany(e => e.TBL_STAFF)
@@ -2665,10 +2681,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_STAFF_ROLE)
                 .WillCascadeOnDelete(false);
 
-            //modelBuilder.Entity<TBL_STAFF_ROLE>()
-            //    .HasMany(e => e.TBL_TEMP_STAFF)
-            //    .WithRequired(e => e.TBL_STAFF_ROLE)
-            //    .WillCascadeOnDelete(false);
+            modelBuilder.Entity<TBL_STAFF_ROLE>()
+                .HasMany(e => e.TBL_TEMP_STAFF)
+                .WithRequired(e => e.TBL_STAFF_ROLE)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_STATE>()
                 .Property(e => e.COLLATERALSEARCHCHARGEAMOUNT)
@@ -2683,7 +2699,7 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_STATE>()
-                .HasMany(e => e.TBL_CITY)
+                .HasMany(e => e.TBL_LOCALGOVERNMENT)
                 .WithRequired(e => e.TBL_STATE)
                 .WillCascadeOnDelete(false);
 
@@ -4970,6 +4986,15 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_PRODUCT_TYPE)
                 .WithRequired(e => e.TBL_DEAL_CLASSIFICATION)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_STOCK_COMPANY>()
+                .HasMany(e => e.TBL_STOCK_PRICE)
+                .WithRequired(e => e.TBL_STOCK_COMPANY)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_STOCK_PRICE>()
+                .Property(e => e.STOCKPRICE)
+                .HasPrecision(19, 4);
         }
     }
 }

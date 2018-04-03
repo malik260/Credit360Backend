@@ -6,23 +6,27 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_PERFECTN_STAT")]
-    public partial class TBL_COLLATERAL_PERFECTN_STAT
+    [Table("core.TBL_LOCALGOVERNMENT")]
+    public partial class TBL_LOCALGOVERNMENT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_COLLATERAL_PERFECTN_STAT()
+        public TBL_LOCALGOVERNMENT()
         {
-            TBL_COLLATERAL_IMMOVE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVE_PROPERTY>();
+            TBL_CITY = new HashSet<TBL_CITY>();
         }
 
         [Key]
-        public byte PERFECTIONSTATUSID { get; set; }
+        public int LOCALGOVERNMENTID { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string PERFECTIONSTATUSNAME { get; set; }
+        [StringLength(200)]
+        public string NAME { get; set; }
+
+        public int STATEID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_COLLATERAL_IMMOVE_PROPERTY> TBL_COLLATERAL_IMMOVE_PROPERTY { get; set; }
+        public virtual ICollection<TBL_CITY> TBL_CITY { get; set; }
+
+        public virtual TBL_STATE TBL_STATE { get; set; }
     }
 }

@@ -18,6 +18,8 @@ namespace FintrakBanking.Entities.Models
 
         public int COMPANYID { get; set; }
 
+        public int? SUPERVISOR_STAFFID { get; set; }
+
         [Required]
         [StringLength(50)]
         public string FIRSTNAME { get; set; }
@@ -31,7 +33,7 @@ namespace FintrakBanking.Entities.Models
 
         public int JOBTITLEID { get; set; }
 
-        public int RANKID { get; set; }
+        public int STAFFROLEID { get; set; }
 
         [StringLength(100)]
         public string PHONE { get; set; }
@@ -113,7 +115,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_STAFF_JOBTITLE TBL_STAFF_JOBTITLE { get; set; }
 
-        public virtual TBL_STAFF_RANK TBL_STAFF_RANK { get; set; }
+        public virtual TBL_STAFF_ROLE TBL_STAFF_ROLE { get; set; }
 
         public virtual TBL_STATE TBL_STATE { get; set; }
     }

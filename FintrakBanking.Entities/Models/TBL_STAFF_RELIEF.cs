@@ -41,5 +41,9 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
+
+        public virtual TBL_STAFF TBL_STAFF1 { get; set; }
     }
 }

@@ -686,7 +686,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         Phone = c.PHONE,
                         PhoneOfNok = c.PHONEOFNOK,
                         StateId = c.STATEID,
-                        StateName = c.TBL_CITY.TBL_STATE.STATENAME,
+                        StateName = c.TBL_CITY.TBL_LOCALGOVERNMENT.TBL_STATE.STATENAME,
                         CityId = (int)c.CITYID,
                         CityName = c.TBL_CITY.CITYNAME,
                         FirstName = c.FIRSTNAME,

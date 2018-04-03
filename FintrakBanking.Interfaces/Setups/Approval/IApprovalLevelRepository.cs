@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         bool AddMultipleApprovalLevel(List<ApprovalLevelViewModel> models);
         bool UpdateApprovalLevel(int ApprovalLevelId, ApprovalLevelViewModel model);
         Task<bool> DeleteApprovalLevel(int ApprovalLevelId, UserInfo user);
-        IEnumerable<TBL_STAFF_ORGANOGRAM> GetStaffOrganogram(int companyId);
+        IEnumerable<TBL_STAFF> GetStaffOrganogram(int companyId);
         bool UpdateApprovalTrail(TBL_APPROVAL_TRAIL model);
         Task<bool> AddApprovalTrail(TBL_APPROVAL_TRAIL model);
         IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int operationId, int companyId); 

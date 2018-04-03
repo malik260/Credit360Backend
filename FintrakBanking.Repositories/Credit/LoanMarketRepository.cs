@@ -129,7 +129,7 @@ namespace FintrakBanking.Repositories.Credit
                             marketId = o.MARKETID,
                             marketName = o.MARKETNAME,
                             phoneNumber = o.PHONENUMBER,
-                            stateId = c.STATEID,
+                            stateId = c.TBL_LOCALGOVERNMENT.STATEID,
                             cityName=c.CITYNAME,
                             
                         }).ToList();

@@ -671,10 +671,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ProductViewModel> GetProductAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.ProductCreation);
-            int staffApprovalLevelId = 0;
+            //var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.ProductCreation);
+            //int staffApprovalLevelId = 0;
 
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ProductCreation).ToList();
+
+            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             try
             {
@@ -683,7 +685,10 @@ namespace FintrakBanking.Repositories.Setups.General
                                               join atrail in context.TBL_APPROVAL_TRAIL on c.PRODUCTID equals atrail.TARGETID
                                               where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
                                                     && atrail.RESPONSESTAFFID == null
-                                                    && atrail.OPERATIONID == (int)OperationsEnum.ProductCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                                                    && atrail.OPERATIONID == (int)OperationsEnum.ProductCreation
+                                                    //&& atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                                                                                  && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+
                                               select new ProductViewModel()
                                               {
                                                   productId = c.PRODUCTID,

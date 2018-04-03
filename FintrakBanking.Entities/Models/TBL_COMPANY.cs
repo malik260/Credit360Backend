@@ -62,9 +62,7 @@ namespace FintrakBanking.Entities.Models
             TBL_SETUP_COMPANY = new HashSet<TBL_SETUP_COMPANY>();
             TBL_SIGNATURE_DOCUMENT_STAFF = new HashSet<TBL_SIGNATURE_DOCUMENT_STAFF>();
             TBL_SOLICITOR = new HashSet<TBL_SOLICITOR>();
-            TBL_STAFF_ORGANOGRAM = new HashSet<TBL_STAFF_ORGANOGRAM>();
             TBL_STAFF = new HashSet<TBL_STAFF>();
-            TBL_STOCK = new HashSet<TBL_STOCK>();
             TBL_TAX = new HashSet<TBL_TAX>();
             TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
             TBL_TEMP_CUSTOMER_EMPLOYER = new HashSet<TBL_TEMP_CUSTOMER_EMPLOYER>();
@@ -344,13 +342,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_STAFF_ORGANOGRAM> TBL_STAFF_ORGANOGRAM { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_STAFF> TBL_STAFF { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_STOCK> TBL_STOCK { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TAX> TBL_TAX { get; set; }

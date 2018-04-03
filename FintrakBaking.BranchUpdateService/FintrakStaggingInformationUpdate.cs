@@ -25,7 +25,7 @@ namespace FintrakBaking.BranchUpdateService
                 if (frantrakBranck == null)
                 {
                     var stateId = coreContext.TBL_STATE.Where(a => a.STATECODE == x.STATECODE).FirstOrDefault().STATEID;
-                    var cityId = coreContext.TBL_CITY.Where(a => a.STATEID == stateId).FirstOrDefault().CITYID;
+                    var cityId = coreContext.TBL_CITY.Where(a => a.TBL_LOCALGOVERNMENT.STATEID == stateId).FirstOrDefault().CITYID;
 
                     var model = new TBL_BRANCH
                     {

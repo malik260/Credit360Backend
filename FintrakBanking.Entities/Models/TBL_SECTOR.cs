@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_SECTOR()
         {
             TBL_SUB_SECTOR = new HashSet<TBL_SUB_SECTOR>();
+            TBL_STOCK_COMPANY = new HashSet<TBL_STOCK_COMPANY>();
         }
 
         [Key]
@@ -30,5 +31,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_SUB_SECTOR> TBL_SUB_SECTOR { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
     }
 }

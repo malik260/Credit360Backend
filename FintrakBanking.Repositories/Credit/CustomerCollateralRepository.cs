@@ -1335,17 +1335,17 @@ namespace FintrakBanking.Repositories.Credit
                 .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
                 .Select(x => new ActiveCustomerCollateralViewModel
                 {
-                    customerId = x.LoanCollateral.Customer.CUSTOMERID,
+                    //customerId = x.LoanCollateral.Customer.CUSTOMERID,
                     collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
                     loanTypeId = x.Mapping.PRODUCTTYPEID, //
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
                     loanApplicationId = x.Mapping.LOANID,
                     isReleased = x.Mapping.ISRELEASED,
-                    releaseApprovalStatusId = x.Mapping.RELEASEAPPROVALSTATUSID,
-                    customerCode = x.LoanCollateral.Customer.CUSTOMERCODE,
-                    firstName = x.LoanCollateral.Customer.FIRSTNAME,
-                    middleName = x.LoanCollateral.Customer.MIDDLENAME,
-                    lastName = x.LoanCollateral.Customer.LASTNAME,
+                    //releaseApprovalStatusId = x.Mapping.RELEASEAPPROVALSTATUSID,
+                    //customerCode = x.LoanCollateral.Customer.CUSTOMERCODE,
+                    //firstName = x.LoanCollateral.Customer.FIRSTNAME,
+                    //middleName = x.LoanCollateral.Customer.MIDDLENAME,
+                    //lastName = x.LoanCollateral.Customer.LASTNAME,
                     collateralCode = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                     collateralValue = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                     allowSharing = x.Mapping.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,

@@ -23,6 +23,18 @@ namespace FintrakBanking.Entities.Models
 
         public int POSITION { get; set; }
 
+        public bool CANVIEWDOCUMENT { get; set; }
+
+        public bool CANVIEWUPLOAD { get; set; }
+
+        public bool CANVIEWAPPROVAL { get; set; }
+
+        public bool CANAPPROVE { get; set; }
+
+        public bool CANUPLOAD { get; set; }
+
+        public bool CANEDIT { get; set; }
+
         public bool VETOPOWER { get; set; }
 
         public int CREATEDBY { get; set; }
@@ -38,18 +50,6 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
-
-        public bool CANEDIT { get; set; }
-
-        public bool CANUPLOAD { get; set; }
-
-        public bool CANAPPROVE { get; set; }
-
-        public bool CANVIEWDOCUMENT { get; set; }
-
-        public bool CANVIEWUPLOAD { get; set; }
-
-        public bool CANVIEWAPPROVAL { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
