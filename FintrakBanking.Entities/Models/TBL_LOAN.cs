@@ -134,6 +134,21 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal OUTSTANDINGINTEREST { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal PASTDUEPRINCIPAL { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal PASTDUEINTEREST { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal INTERESTONPASTDUEPRINCIPAL { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal INTERESTONPASTDUEINTEREST { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal PENALCHARGEAMOUNT { get; set; }
+
         public int? PRINCIPALADDITIONCOUNT { get; set; }
 
         public int? PRINCIPALREDUCTIONCOUNT { get; set; }

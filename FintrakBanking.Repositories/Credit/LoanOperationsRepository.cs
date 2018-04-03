@@ -935,7 +935,27 @@ namespace FintrakBanking.Repositories.Credit
                 var PastDueCode  = CommonHelpers.GenerateRandomDigitCode(10);
                 var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId);
                 var casabalance = casa.AVAILABLEBALANCE;
-                if (casabalance >= item.totalAmount)
+                decimal principalAmountNotCollected = 0;
+                decimal balanceAfterInterestAmountCollection  = 0;
+                decimal partialPrincipalAmountCollected  = 0;
+                decimal partialInterestAmountCollected = 0;
+                decimal interestAmountNotCollected  = 0;
+                //if (casabalance >= item.periodInterestAmount)
+                //{
+                //    balanceAfterInterestAmountCollection = casabalance - item.periodInterestAmount;
+                //}
+                //if (casabalance > item.periodInterestAmount && casabalance < item.totalAmount)
+                //{
+                //    partialPrincipalAmountCollected = balanceAfterInterestAmountCollection;
+                //    principalAmountNotCollected = item.periodPrincipalAmount - partialPrincipalAmountCollected;
+                //}
+                //if (casabalance < item.periodInterestAmount && casabalance > 0)
+                //{
+                //    partialInterestAmountCollected = casabalance;
+                //    interestAmountNotCollected = item.periodInterestAmount - partialInterestAmountCollected;
+
+                //}
+                    if (casabalance >= item.totalAmount)
                 {
 
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
@@ -948,14 +968,16 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else if (casabalance > item.periodInterestAmount && casabalance < item.totalAmount)
                 {
+                    partialPrincipalAmountCollected = balanceAfterInterestAmountCollection;
+                    principalAmountNotCollected = item.periodPrincipalAmount - partialPrincipalAmountCollected;
                     TBL_LOAN_PAST_DUE pastDue  = new TBL_LOAN_PAST_DUE();
 
 
                     pastDue.LOANID = item.loanId;
                     pastDue.PARENT_PASTDUECODE = PastDueCode;
                     pastDue.CREDITAMOUNT = 0;
-                    pastDue.DESCRIPTION = "Force Debit as a result of Account not funded";
-                    pastDue.DEBITAMOUNT = Math.Abs(casabalance - item.totalAmount);
+                    pastDue.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
+                    pastDue.DEBITAMOUNT = Math.Abs(principalAmountNotCollected);
                     pastDue.DATE = item.paymentDate;
                     pastDue.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
                     pastDue.PARENT_PASTDUECODE = item.loanRefNo;
@@ -966,7 +988,7 @@ namespace FintrakBanking.Repositories.Credit
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
-                    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDue.DEBITAMOUNT, product.PRINCIPALBALANCEGL.Value, "partial principal repayment"));
+                    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialPrincipalAmountCollected, product.PRINCIPALBALANCEGL.Value, "partial principal repayment"));
                     // place lien on the customer account on partial principal
                     financeTransaction.PostTransaction(inputTransactions);
 
@@ -1004,13 +1026,15 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else if (casabalance < item.periodInterestAmount && casabalance > 0)
                 {
+                    partialInterestAmountCollected = casabalance;
+                    interestAmountNotCollected = item.periodInterestAmount - partialInterestAmountCollected;
                     TBL_LOAN_PAST_DUE pastDueInterest = new TBL_LOAN_PAST_DUE();
 
                     pastDueInterest.LOANID = item.loanId;
                     pastDueInterest.PASTDUECODE = PastDueCode;
                     pastDueInterest.CREDITAMOUNT = 0;
-                    pastDueInterest.DESCRIPTION = "Force Debit as a result of Account not funded";
-                    pastDueInterest.DEBITAMOUNT = Math.Abs(casabalance - item.periodInterestAmount);
+                    pastDueInterest.DESCRIPTION = "Past Due Entries on Interest as a result of Account not funded";
+                    pastDueInterest.DEBITAMOUNT = Math.Abs(interestAmountNotCollected);
                     pastDueInterest.DATE = item.paymentDate;
                     pastDueInterest.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Interest;
                     pastDueInterest.PARENT_PASTDUECODE = item.loanRefNo;
@@ -1023,7 +1047,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDuePrincipal.LOANID = item.loanId;
                     pastDuePrincipal.PASTDUECODE = PastDueCode;
                     pastDuePrincipal.CREDITAMOUNT = 0;
-                    pastDuePrincipal.DESCRIPTION = "Force Debit as a result of Account not funded";
+                    pastDuePrincipal.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
                     pastDuePrincipal.DEBITAMOUNT = item.periodPrincipalAmount;
                     pastDuePrincipal.DATE = item.paymentDate;
                     pastDuePrincipal.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
@@ -1034,7 +1058,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDueInterest.DEBITAMOUNT, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
+                    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialInterestAmountCollected, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
                     financeTransaction.PostTransaction(inputTransactions);
 
                     //var data = new TBL_CASA_LIEN
@@ -1108,7 +1132,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDueInterest.LOANID = item.loanId;
                     pastDueInterest.PASTDUECODE = PastDueCode;
                     pastDueInterest.CREDITAMOUNT = 0;
-                    pastDueInterest.DESCRIPTION = "Force Debit as a result of Account not funded";
+                    pastDueInterest.DESCRIPTION = "Past Due Entries on Interest as a result of Account not funded";
                     pastDueInterest.DEBITAMOUNT = Math.Abs(item.periodInterestAmount);
                     pastDueInterest.DATE = item.paymentDate;
                     pastDueInterest.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Interest;
@@ -1122,7 +1146,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDuePrincipal.LOANID = item.loanId;
                     pastDuePrincipal.PASTDUECODE = PastDueCode;
                     pastDuePrincipal.CREDITAMOUNT = 0;
-                    pastDuePrincipal.DESCRIPTION = "Force Debit as a result of Account not funded";
+                    pastDuePrincipal.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
                     pastDuePrincipal.DEBITAMOUNT = Math.Abs(item.periodPrincipalAmount);
                     pastDuePrincipal.DATE = item.paymentDate;
                     pastDuePrincipal.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;

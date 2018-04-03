@@ -22,6 +22,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(250)]
         public string INSURANCECOMPANYNAME { get; set; }
 
+        [StringLength(100)]
+        public string INSURANCETYPE { get; set; }
+
         [Column(TypeName = "money")]
         public decimal SUMINSURED { get; set; }
 

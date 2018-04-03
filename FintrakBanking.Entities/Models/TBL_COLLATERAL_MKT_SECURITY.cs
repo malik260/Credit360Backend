@@ -31,6 +31,9 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal LIENUSABLEAMOUNT { get; set; }
 
+        [StringLength(100)]
+        public string BANKPURCHASEDFROM { get; set; }
+
         [Required]
         [StringLength(150)]
         public string ISSUERNAME { get; set; }

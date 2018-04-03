@@ -71,6 +71,7 @@
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
+    <Compile Include="Models\SYSDIAGRAM.cs" />
     <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="Models\TBL_COLLATERAL_VALUER.cs" />
     <Compile Include="Models\TBL_COLLATERAL_VALUER_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_VEHICLE.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_VISITATION.cs" />
     <Compile Include="Models\TBL_COMPANY.cs" />
     <Compile Include="Models\TBL_COMPANY_CLASS.cs" />
     <Compile Include="Models\TBL_COMPANY_TYPE.cs" />
