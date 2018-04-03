@@ -36,6 +36,8 @@
           
                 <asp:ControlParameter ControlID="productClassId" Name="productClassId" PropertyName="Text" Type="Int32" />
           
+                <asp:ControlParameter ControlID="staffId" Name="staffId" PropertyName="Text" Type="Int32" />
+          
             </SelectParameters>
         </asp:ObjectDataSource>
         </div> 

@@ -87,7 +87,7 @@ namespace FintrakBanking.Repositories.Credit
                             productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             dateTimeCreated = a.DATETIMECREATED,
-                            availmentlDate = a.AVAILMENTDATE,
+                            availmentDate = a.AVAILMENTDATE,
                             approvalDate = a.APPROVEDDATE,
                             isFirstApprover = true,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)

@@ -21,6 +21,9 @@ namespace FintrakBanking.Entities.Models
 
         public int LEGAL_CHARGE_GLACCOUNTID { get; set; }
 
+        [StringLength(200)]
+        public string APIURL { get; set; }
+
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }

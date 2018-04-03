@@ -34,6 +34,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool REQUIREINSURANCEPOLICY { get; set; }
 
+        public bool? REQUIREVISITATION { get; set; }
+
         public int? CHARGEGLACCOUNTID { get; set; }
 
         public int POSITION { get; set; }

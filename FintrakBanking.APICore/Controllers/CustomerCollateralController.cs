@@ -18,6 +18,8 @@ using System.Data.SqlClient;
 using System.IO;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
+using System.Globalization;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -161,6 +163,133 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-visitation-file/{documentId}")]
+        public HttpResponseMessage GetVisitationFile(int documentId)
+        {
+            try
+            {
+                var data = document.GetCollateralVisitationDocument(documentId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("loan-visitation/{collateralVisitationId}")]
+        public HttpResponseMessage GetVisitationDocument(int collateralVisitationId)
+        {
+            try
+            {
+                var data = repo.GetPropertyVistation(collateralVisitationId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("visitation-document")]
+        public async Task<HttpResponseMessage> AddVisitationDocument( )
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                int collateralCustomerId;
+                if (!Int32.TryParse(provider.FormData["collateralCustomerId"], out collateralCustomerId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                }
+
+              var visitationDate =  provider.FormData["lastVisitaionDate"];
+
+                var actualDate = visitationDate.Substring(0, 15);
+                var dateVisited = DateTime.ParseExact(actualDate, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
+
+                var entity = new CollateralDocumentViewModel
+                {
+                    lastVisitaionDate = dateVisited, 
+                    visitationRemark = provider.FormData["visitationRemark"],
+                    collateralCustomerId = Convert.ToInt32(provider.FormData["collateralCustomerId"]),
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.collateralCustomerId = collateralCustomerId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = document.AddCollateralVisitation(entity, buffer);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
+        }
+
+        [HttpPost, Route("collateral-visitation")]
+        public HttpResponseMessage AddCollateralVisitation([FromBody] CollateralDocumentViewModel entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
+
+                var response =  repo.AddPropertyVistation(entity);
+                if (response>0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 
@@ -811,6 +940,22 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("stock-price")]
+        public HttpResponseMessage GetStockPrice()
+        {
+            try
+            {
+                var response = repo.getStockPrice();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
     }

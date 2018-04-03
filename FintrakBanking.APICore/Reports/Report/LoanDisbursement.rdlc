@@ -108,7 +108,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>D:\Projects\FintrakBankingAPI\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
         <rd:TableName>DisbursedLoans</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -2791,7 +2791,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>

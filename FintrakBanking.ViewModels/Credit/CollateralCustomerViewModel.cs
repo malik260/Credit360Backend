@@ -36,6 +36,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceType { get; set; }
         public string metalType { get; set; }
         public string machineType { get; set; }
+        public string bank { get; set; }
 
         // presentation
         public int approvalStatus { get; set; }
@@ -112,6 +113,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string propertyName { get; set; }
         public int cityId { get; set; }
+        public int stateId { get; set; }
         public short countryId { get; set; }
         public DateTime? constructionDate { get; set; }
         public string propertyAddress { get; set; }
@@ -146,7 +148,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string issuerReferenceNumber { get; set; }
         public decimal unitValue { get; set; }
         public int numberOfUnits { get; set; }
-        public short rating { get; set; }
+        public short? rating { get; set; }
         public short percentageInterest { get; set; }
         public short? interestPaymentFrequency { get; set; }
 
@@ -230,6 +232,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManager { get; set; }
         public string relationshipManagerEmail { get; set; }
 
+        public DateTime lastVisitationDate { get; set; }
+
 
         //collateral value calculation ERROR PRONE
         public double securityCollateralValue {
@@ -303,6 +307,15 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class StockCompanyViewModel
+    {
+        public int stockId { get; set; }
+        public string stockCode { get; set; }
+        public string stockName { get; set; }
+        public int MyProperty { get; set; }
+        public int stockPriceId { get; set; }
+        public decimal stockPrice { get; set; }
+    }
     public class CollateralDepositViewModel
     {
         public string collateralSubTypeName;
@@ -379,7 +392,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string issuerReferenceNumber { get; set; }
         public decimal unitValue { get; set; }
         public int numberOfUnits { get; set; }
-        public short rating { get; set; }
+        public short? rating { get; set; }
         public short percentageInterest { get; set; }
         public short? interestPaymentFrequency { get; set; }
         public string remark { get; set; }
@@ -622,6 +635,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int revaluationDuration { get; set; }
         public bool isLocationBased { get; set; }
         public bool allowSharing { get; set; }
+        public string collateralType { get; set; }
+        public int visitationCycle { get; set; }
     }
 
     public class CustomerCollateralSearch

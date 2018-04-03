@@ -14,7 +14,7 @@ namespace FintrakBaking.BranchUpdateService
 {
     public partial class NewBranchService : ServiceBase
     {
-        GetUpdatedNewBranches newBranch = new GetUpdatedNewBranches();
+        FintrakStaggingInformationUpdate newBranch = new FintrakStaggingInformationUpdate();
 
         Timer timer = new Timer();
 
@@ -44,11 +44,11 @@ namespace FintrakBaking.BranchUpdateService
             {
                 if (!this.IsBusy)
                 {
-                    AddBranch();
+                    StaggingDataUpdate();
                 }
             }
         }
-        private void AddBranch()
+        private void StaggingDataUpdate()
         {
             this.IsBusy = true;
             try
@@ -57,19 +57,19 @@ namespace FintrakBaking.BranchUpdateService
 
                 AuditTrail.LogFileManager.LogToFile("New Branch Logger Service Started Successfully" + DateTime.Now.ToString());
 
-                string respose = newBranch.AddNewBranches();
+                string UpdateRespose = newBranch.UpdateStaffInformation();
+               // string AddRespose = newBranch.AddNewBranches();
 
-                AuditTrail.LogFileManager.LogToFile("New Branch Logger Service ends with these responses : " + respose + " " + DateTime.Now.ToString());
+                AuditTrail.LogFileManager.LogToFile("New Branch Logger Service ends with these responses : " + UpdateRespose + " " + DateTime.Now.ToString());
 
                 this.IsBusy = false;
 
-                if (respose != "")
+                if (UpdateRespose != "")
                 {
                     AuditTrail.LogFileManager.LogToFile("New Branch Logger Service Ended Successfully" + DateTime.Now.ToString());
                     return;
                 }
                 else
-
                     AuditTrail.LogFileManager.LogToFile("New Branch Logger Service Failed" + DateTime.Now.ToString());
 
 

@@ -710,7 +710,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
             }
-            return context.SaveChanges() > 0; ;
+            return context.SaveChanges() > 0; 
         }
         public bool AddChecklistDetail(ChecklistDetailViewModel model)
         {

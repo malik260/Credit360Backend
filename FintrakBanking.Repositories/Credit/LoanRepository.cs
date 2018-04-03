@@ -3381,7 +3381,7 @@ namespace FintrakBanking.Repositories.Credit
                             createdBy = m.CREATEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
-                            availmentlDate = m.AVAILMENTDATE,
+                            availmentDate = m.AVAILMENTDATE,
 
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                             customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
@@ -3562,7 +3562,7 @@ namespace FintrakBanking.Repositories.Credit
                             submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
                             approvedAmount = d.APPROVEDAMOUNT,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
-                            availmentlDate = m.AVAILMENTDATE,
+                            availmentDate = m.AVAILMENTDATE,
                             isBidbond = d.TBL_PRODUCT.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees ? true : false,
                             isOverdraft = d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
                             repaymentTerms = d.REPAYMENTTERMS,
@@ -3757,7 +3757,7 @@ namespace FintrakBanking.Repositories.Credit
                             submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
                             approvedAmount = d.APPROVEDAMOUNT,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
-                            availmentlDate = m.AVAILMENTDATE,
+                            availmentDate = m.AVAILMENTDATE,
                             isBidbond = d.TBL_PRODUCT.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees ? true : false,
                             isOverdraft = d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
                             repaymentTerms = d.REPAYMENTTERMS,
