@@ -160,7 +160,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      
         [HttpPut]
         [Route("loan-document/{loanDocumentId}")]
         public HttpResponseMessage UpdateLoanDocument([FromBody] LoanDocumentViewModel entity, int loanDocumentId)

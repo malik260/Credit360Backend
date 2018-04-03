@@ -22,6 +22,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(250)]
         public string INSURANCECOMPANYNAME { get; set; }
 
+        [StringLength(100)]
+        public string INSURANCETYPE { get; set; }
+
         [Column(TypeName = "money")]
         public decimal SUMINSURED { get; set; }
 
@@ -48,5 +51,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+
+        
     }
 }

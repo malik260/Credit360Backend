@@ -17,12 +17,14 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingDocumentsContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
+        private ICustomerCollateralRepository coll;
 
-        public CollateralDocumentRepository(FinTrakBankingDocumentsContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+        public CollateralDocumentRepository(CustomerCollateralRepository coll, FinTrakBankingDocumentsContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
         {
             this.context = context;
             this.general = general;
             this.audit = audit;
+            this.coll = coll;
         }
 
         public bool AddCollateralDocument(CollateralDocumentViewModel model, byte[] file)
@@ -58,6 +60,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
+       
         public bool UpdateCollateralDocument(CollateralDocumentViewModel model, int documentId)
         {
             var data = this.context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Find(documentId);
@@ -121,10 +124,72 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        public IEnumerable<CollateralDocumentViewModel> GetCustomerCollateralDocument(int collateralId)
+        public IEnumerable<CollateralDocumentViewModel> GetCustomerCollateralDocument(int documentId)
         {
-            return this.GetAllCollateralDocument().Where(x => x.collateralId == collateralId).ToList();
+            return this.GetAllCollateralDocument().Where(x => x.collateralId == documentId).ToList();
         }
 
+
+
+
+        public CollateralVisitationDocumentViewModel GetCollateralVisitationDocument(int collateralVisitationId)
+        {
+            var data = (from x in this.context.TBL_COLLATERAL_VISITATION
+                        where x.COLLATERALVISITATIONID == collateralVisitationId
+                        select new CollateralVisitationDocumentViewModel
+                        {
+                            documentId = x.DOCUMENTID,
+                            collateralCustomerId = x.COLLATERALVISITATIONID,
+                            fileData = x.FILEDATA,
+                            fileName = x.FILENAME,
+                            fileExtension = x.FILEEXTENSION,
+                            CollateralVisitationID = x.COLLATERALVISITATIONID
+                        });
+
+            return data.FirstOrDefault();
+        }
+
+       
+
+        public bool AddCollateralVisitation(CollateralDocumentViewModel model, byte[] file)
+        {
+          var visitationId =  coll.AddPropertyVistation(model);
+            if (visitationId > 0)
+            {
+
+
+                var data = new Entities.DocumentModels.TBL_COLLATERAL_VISITATION
+                {
+                    FILEDATA = file,
+                    FILENAME = model.fileName,
+                    FILEEXTENSION = model.fileExtension,
+                    COLLATERALCUSTOMERID = Convert.ToInt32(model.collateralCustomerId),
+                    SYSTEMDATETIME = DateTime.Now,
+                    CREATEDBY = (int)model.createdBy,
+                    COLLATERALVISITATIONID = visitationId,
+                    // COLLATERALCODE ="aaasss",
+                };
+
+                context.TBL_COLLATERAL_VISITATION.Add(data);
+            }
+           // Audit Section ---------------------------
+           var audit = new TBL_AUDIT
+           {
+               AUDITTYPEID = (short)AuditTypeEnum.CollateralDocumentAdded,
+               STAFFID = model.createdBy,
+               BRANCHID = (short)model.userBranchId,
+               DETAIL = $"Added Collateral Visitation File '{ model.documentTitle }' ",
+               IPADDRESS = model.userIPAddress,
+               URL = model.applicationUrl,
+               APPLICATIONDATE = general.GetApplicationDate(),
+               SYSTEMDATETIME = DateTime.Now
+           };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+       
     }
 }

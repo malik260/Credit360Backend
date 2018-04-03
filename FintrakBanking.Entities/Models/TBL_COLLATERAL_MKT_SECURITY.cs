@@ -31,6 +31,9 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal LIENUSABLEAMOUNT { get; set; }
 
+         [StringLength(100)]
+        public string BANKPURCHASEDFROM { get; set; }
+
         [Required]
         [StringLength(150)]
         public string ISSUERNAME { get; set; }
@@ -57,5 +60,6 @@ namespace FintrakBanking.Entities.Models
         public string REMARK { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+    
     }
 }

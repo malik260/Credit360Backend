@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FintrakBanking.APICore.Reports.Credit {
+namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
     public partial class ApprovalTrailWithSLA {
@@ -31,13 +31,13 @@ namespace FintrakBanking.APICore.Reports.Credit {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// ReportViewer control.
+        /// approvalTrailWithSLA control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer approvalTrailWithSLA;
         
         /// <summary>
         /// ObjectDataSource1 control.
@@ -47,41 +47,5 @@ namespace FintrakBanking.APICore.Reports.Credit {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSource1;
-        
-        /// <summary>
-        /// operationId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label operationId;
-        
-        /// <summary>
-        /// targetId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label targetId;
-        
-        /// <summary>
-        /// companyId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label companyId;
-        
-        /// <summary>
-        /// staffId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label staffId;
     }
 }

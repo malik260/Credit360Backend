@@ -202,6 +202,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_VALUER> TBL_COLLATERAL_VALUER { get; set; }
         public virtual DbSet<TBL_COLLATERAL_VALUER_TYPE> TBL_COLLATERAL_VALUER_TYPE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_VEHICLE> TBL_COLLATERAL_VEHICLE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_VISITATION> TBL_COLLATERAL_VISITATION { get; set; }
         public virtual DbSet<TBL_COMPLIANCE_TIMELINE> TBL_COMPLIANCE_TIMELINE { get; set; }
         public virtual DbSet<TBL_CONDITION_PRECEDENT> TBL_CONDITION_PRECEDENT { get; set; }
         public virtual DbSet<TBL_CREDIT_APPRAISAL_MEMO_DETL> TBL_CREDIT_APPRAISAL_MEMO_DETL { get; set; }
@@ -300,7 +301,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_FIANCE_TRANSACTION> TBL_CUSTOM_FIANCE_TRANSACTION { get; set; }
         public virtual DbSet<TBL_CUSTOM_LIEN_PROCESS> TBL_CUSTOM_LIEN_PROCESS { get; set; }
         public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -356,6 +357,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DEAL_TYPE> TBL_DEAL_TYPE { get; set; }
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
+        //public virtual DbSet<TBL_COLLATERAL_VISITATION> TBL_COLLATERAL_VISITATION { get; set; }
+        public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
+        public virtual DbSet<TBL_STOCK_PRICE> TBL_STOCK_PRICE { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -2283,6 +2287,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT_TYPE>()
+                .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
+                .WithRequired(e => e.TBL_PRODUCT_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_PRODUCT_TYPE>()
                 .HasMany(e => e.TBL_LOAN_COVENANT_DETAIL)
                 .WithRequired(e => e.TBL_PRODUCT_TYPE)
                 .WillCascadeOnDelete(false);
@@ -3264,6 +3273,26 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN>()
+                .Property(e => e.PASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN>()
+                .Property(e => e.PASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN>()
+                .Property(e => e.INTERESTONPASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN>()
+                .Property(e => e.INTERESTONPASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN>()
+                .Property(e => e.PENALCHARGEAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN>()
                 .Property(e => e.SCHEDULEDPREPAYMENTAMOUNT)
                 .HasPrecision(19, 4);
 
@@ -3750,6 +3779,26 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_REVOLVING>()
                 .Property(e => e.INTEREST_AMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
+                .Property(e => e.PASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
+                .Property(e => e.PASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
+                .Property(e => e.INTERESTONPASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
+                .Property(e => e.INTERESTONPASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
+                .Property(e => e.PENALCHARGEAMOUNT)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_REVOLVING>()
@@ -4843,6 +4892,26 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_TEMP_LOAN>()
                 .Property(e => e.OUTSTANDINGINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_LOAN>()
+                .Property(e => e.PASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_LOAN>()
+                .Property(e => e.PASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_LOAN>()
+                .Property(e => e.INTERESTONPASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_LOAN>()
+                .Property(e => e.INTERESTONPASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_LOAN>()
+                .Property(e => e.PENALCHARGEAMOUNT)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_TEMP_LOAN>()

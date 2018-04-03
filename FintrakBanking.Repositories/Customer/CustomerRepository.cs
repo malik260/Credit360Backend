@@ -3245,7 +3245,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId).Select(c => new
             {
-                custormerId = c.CUSTOMERID,
+                customerId = c.CUSTOMERID,
                 customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                 customerTypeId = c.CUSTOMERTYPEID,
                 customerType = c.TBL_CUSTOMER_TYPE.NAME

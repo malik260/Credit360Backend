@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.ServiceModel;
 
@@ -353,12 +354,11 @@ namespace FintrakBanking.Repositories.Credit
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
             var data = (from a in context.TBL_LOAN
-                        join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
+                        //join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
                         join c in context.TBL_DAY_COUNT_CONVENTION on a.SCHEDULEDAYCOUNTCONVENTIONID equals c.DAYCOUNTCONVENTIONID
                         join d in context.TBL_SETUP_COMPANY on a.COMPANYID equals d.COMPANYID
-                        where b.DATE == DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                       && (b.CREDITAMOUNT - b.DEBITAMOUNT) < 0 && a.ALLOWFORCEDEBITREPAYMENT == false
-                        && b.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest && a.SUSPENDINTEREST == false
+                        where  a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                        && a.ALLOWFORCEDEBITREPAYMENT == false && a.SUSPENDINTEREST == false
 
 
                         select new DailyInterestAccrualViewModel()
@@ -371,10 +371,10 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = a.EXCHANGERATE,
                             interestRate = a.INTERESTRATE,
                             date = applicationDate,
-                            dailyAccuralAmount = d.PASTDUEINDEFAULT_INTERESTRATE / 100,
-                            mainAmount = (b.DEBITAMOUNT - b.CREDITAMOUNT),
+                            dailyAccuralAmount = a.INTERESTRATE,/// change to global charge rate 
+                            mainAmount = a.PASTDUEINTEREST,
                             categoryId = (short)DailyAccrualCategory.PastDueObligation,
-                            availableBalance = (b.DEBITAMOUNT - b.CREDITAMOUNT),
+                            availableBalance = a.PASTDUEINTEREST,
                             transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                             baseReferenceNumber = null,
                             dayCountConventionId = c.DAYCOUNTCONVENTIONID,
@@ -441,12 +441,11 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var data = (from a in context.TBL_LOAN
-                        join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
+                        //join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
                         join c in context.TBL_DAY_COUNT_CONVENTION on a.SCHEDULEDAYCOUNTCONVENTIONID equals c.DAYCOUNTCONVENTIONID
                         join d in context.TBL_SETUP_COMPANY on a.COMPANYID equals d.COMPANYID
-                        where b.DATE == DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                       && (b.CREDITAMOUNT - b.DEBITAMOUNT) < 0 && a.ALLOWFORCEDEBITREPAYMENT == false
-                        && b.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal && a.SUSPENDINTEREST == false
+                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.ALLOWFORCEDEBITREPAYMENT == false
+                        && a.SUSPENDINTEREST == false
 
 
                         select new DailyInterestAccrualViewModel()
@@ -459,10 +458,10 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = a.EXCHANGERATE,
                             interestRate = a.INTERESTRATE,
                             date = applicationDate,
-                            dailyAccuralAmount = d.PASTDUEINDEFAULT_INTERESTRATE,
-                            mainAmount = (b.DEBITAMOUNT - b.CREDITAMOUNT),
-                            categoryId = (short)DailyAccrualCategory.UnauthorisedOverdraft,
-                            availableBalance = (b.DEBITAMOUNT - b.CREDITAMOUNT),
+                            dailyAccuralAmount = (double)a.INTERESTONPASTDUEPRINCIPAL,/// change to global charge rate 
+                            mainAmount = a.PASTDUEPRINCIPAL,
+                            categoryId = (short)DailyAccrualCategory.PastDueObligation,
+                            availableBalance = a.PASTDUEPRINCIPAL,
                             transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                             baseReferenceNumber = null,
                             dayCountConventionId = c.DAYCOUNTCONVENTIONID,
@@ -934,7 +933,27 @@ namespace FintrakBanking.Repositories.Credit
                 var PastDueCode  = CommonHelpers.GenerateRandomDigitCode(10);
                 var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId);
                 var casabalance = casa.AVAILABLEBALANCE;
-                if (casabalance >= item.totalAmount)
+                decimal principalAmountNotCollected = 0;
+                decimal balanceAfterInterestAmountCollection  = 0;
+                decimal partialPrincipalAmountCollected  = 0;
+                decimal partialInterestAmountCollected = 0;
+                decimal interestAmountNotCollected  = 0;
+                //if (casabalance >= item.periodInterestAmount)
+                //{
+                //    balanceAfterInterestAmountCollection = casabalance - item.periodInterestAmount;
+                //}
+                //if (casabalance > item.periodInterestAmount && casabalance < item.totalAmount)
+                //{
+                //    partialPrincipalAmountCollected = balanceAfterInterestAmountCollection;
+                //    principalAmountNotCollected = item.periodPrincipalAmount - partialPrincipalAmountCollected;
+                //}
+                //if (casabalance < item.periodInterestAmount && casabalance > 0)
+                //{
+                //    partialInterestAmountCollected = casabalance;
+                //    interestAmountNotCollected = item.periodInterestAmount - partialInterestAmountCollected;
+
+                //}
+                    if (casabalance >= item.totalAmount)
                 {
 
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
@@ -947,14 +966,16 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else if (casabalance > item.periodInterestAmount && casabalance < item.totalAmount)
                 {
+                    partialPrincipalAmountCollected = balanceAfterInterestAmountCollection;
+                    principalAmountNotCollected = item.periodPrincipalAmount - partialPrincipalAmountCollected;
                     TBL_LOAN_PAST_DUE pastDue  = new TBL_LOAN_PAST_DUE();
 
 
                     pastDue.LOANID = item.loanId;
                     pastDue.PARENT_PASTDUECODE = PastDueCode;
                     pastDue.CREDITAMOUNT = 0;
-                    pastDue.DESCRIPTION = "Force Debit as a result of Account not funded";
-                    pastDue.DEBITAMOUNT = Math.Abs(casabalance - item.totalAmount);
+                    pastDue.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
+                    pastDue.DEBITAMOUNT = Math.Abs(principalAmountNotCollected);
                     pastDue.DATE = item.paymentDate;
                     pastDue.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
                     pastDue.PARENT_PASTDUECODE = item.loanRefNo;
@@ -965,7 +986,7 @@ namespace FintrakBanking.Repositories.Credit
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
-                    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDue.DEBITAMOUNT, product.PRINCIPALBALANCEGL.Value, "partial principal repayment"));
+                    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialPrincipalAmountCollected, product.PRINCIPALBALANCEGL.Value, "partial principal repayment"));
                     // place lien on the customer account on partial principal
                     financeTransaction.PostTransaction(inputTransactions);
 
@@ -1003,13 +1024,15 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else if (casabalance < item.periodInterestAmount && casabalance > 0)
                 {
+                    partialInterestAmountCollected = casabalance;
+                    interestAmountNotCollected = item.periodInterestAmount - partialInterestAmountCollected;
                     TBL_LOAN_PAST_DUE pastDueInterest = new TBL_LOAN_PAST_DUE();
 
                     pastDueInterest.LOANID = item.loanId;
                     pastDueInterest.PASTDUECODE = PastDueCode;
                     pastDueInterest.CREDITAMOUNT = 0;
-                    pastDueInterest.DESCRIPTION = "Force Debit as a result of Account not funded";
-                    pastDueInterest.DEBITAMOUNT = Math.Abs(casabalance - item.periodInterestAmount);
+                    pastDueInterest.DESCRIPTION = "Past Due Entries on Interest as a result of Account not funded";
+                    pastDueInterest.DEBITAMOUNT = Math.Abs(interestAmountNotCollected);
                     pastDueInterest.DATE = item.paymentDate;
                     pastDueInterest.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Interest;
                     pastDueInterest.PARENT_PASTDUECODE = item.loanRefNo;
@@ -1022,7 +1045,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDuePrincipal.LOANID = item.loanId;
                     pastDuePrincipal.PASTDUECODE = PastDueCode;
                     pastDuePrincipal.CREDITAMOUNT = 0;
-                    pastDuePrincipal.DESCRIPTION = "Force Debit as a result of Account not funded";
+                    pastDuePrincipal.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
                     pastDuePrincipal.DEBITAMOUNT = item.periodPrincipalAmount;
                     pastDuePrincipal.DATE = item.paymentDate;
                     pastDuePrincipal.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
@@ -1033,7 +1056,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDueInterest.DEBITAMOUNT, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
+                    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialInterestAmountCollected, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
                     financeTransaction.PostTransaction(inputTransactions);
 
                     //var data = new TBL_CASA_LIEN
@@ -1107,7 +1130,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDueInterest.LOANID = item.loanId;
                     pastDueInterest.PASTDUECODE = PastDueCode;
                     pastDueInterest.CREDITAMOUNT = 0;
-                    pastDueInterest.DESCRIPTION = "Force Debit as a result of Account not funded";
+                    pastDueInterest.DESCRIPTION = "Past Due Entries on Interest as a result of Account not funded";
                     pastDueInterest.DEBITAMOUNT = Math.Abs(item.periodInterestAmount);
                     pastDueInterest.DATE = item.paymentDate;
                     pastDueInterest.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Interest;
@@ -1121,7 +1144,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDuePrincipal.LOANID = item.loanId;
                     pastDuePrincipal.PASTDUECODE = PastDueCode;
                     pastDuePrincipal.CREDITAMOUNT = 0;
-                    pastDuePrincipal.DESCRIPTION = "Force Debit as a result of Account not funded";
+                    pastDuePrincipal.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
                     pastDuePrincipal.DEBITAMOUNT = Math.Abs(item.periodPrincipalAmount);
                     pastDuePrincipal.DATE = item.paymentDate;
                     pastDuePrincipal.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
@@ -5522,11 +5545,14 @@ namespace FintrakBanking.Repositories.Credit
                                        outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
                                        principalAmount = l.PRINCIPALAMOUNT,
                                        currency = l.TBL_CURRENCY.CURRENCYCODE,
-                                       loanReferenceNumber = l.LOANREFERENCENUMBER
-
+                                       loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                       effectiveDate = DateTime.Now,
+                                       equityContribution = 0,
+                                       maintainTonor = false,
+                                       maturityDate = DateTime.Now,
                                    });
 
-            return runningLoan;
+            return runningLoan.ToList();
         }
 
         public IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId)
@@ -5648,6 +5674,17 @@ namespace FintrakBanking.Repositories.Credit
                         operationTypeName = data.OPERATIONNAME
                     });
         }
+
+        public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD()
+        {
+            return (from data in context.TBL_OPERATIONS
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
+                    select new LoanOperationTypeViewModel()
+                    {
+                        operationTypeId = data.OPERATIONID,
+                        operationTypeName = data.OPERATIONNAME
+                    });
+        }
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId)
         {
             var loanOperations = (from data in context.TBL_OPERATIONS
@@ -5752,8 +5789,8 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
-                INTERATERATE = (double)model.interateRate,
-                PREPAYMENT = model.prepayment,
+                INTERATERATE = (double)model.interateRate ,
+                PREPAYMENT = model.prepayment ?? 0,
                 PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
                 INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
                 PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate,
@@ -5789,9 +5826,21 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
+                    bool output = false;
                     context.TBL_LOAN_REVIEW_OPERATION.Add(data);
                     auditTrail.AddAuditTrail(audit);
-                    var output = context.SaveChanges() > 0;
+                    try
+                    {
+                       output = context.SaveChanges() > 0;
+                      //  response = context.SaveChanges();
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+
+                        string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+                  //  var output = context.SaveChanges() > 0;
 
                     var approvalModel = new ApprovalViewModel
                     {
@@ -5804,7 +5853,7 @@ namespace FintrakBanking.Repositories.Credit
                         comment = "Initiation",
                         externalInitialization = true
                     };
-                    var response = workFlow.LogForApproval(approvalModel);
+                    //var response = workFlow.LogForApproval(approvalModel);
                     trans.Commit();
 
                     return output;

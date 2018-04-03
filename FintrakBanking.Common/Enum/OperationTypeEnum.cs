@@ -14,6 +14,7 @@ namespace FintrakBanking.Common.Enum
         CAM = 4,
         LoanManagement = 5,
         OverrideApproval = 6,
-        LoanReviewApplication = 7
+        LoanReviewApplication = 7,
+        LoanManagementOverdraft = 8
     }
 }

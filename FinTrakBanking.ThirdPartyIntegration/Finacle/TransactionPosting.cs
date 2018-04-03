@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
@@ -81,10 +82,37 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
                     data.DATETIMECONSUMED = null;
                     data.DATETIMECREATED = DateTime.Now;
                     data.NARRATION = item.narration;
-                    data.OPERATIONID = 1;
+                    data.OPERATIONID = item.operationId;
                 }             
                 context.TBL_CUSTOM_FIANCE_TRANSACTION.Add(data);
             };
+
+            context.SaveChanges();
+            output = true;
+            return output;
+
+        }
+
+        private bool AddCustomLien(LienProcessViewModel entity)
+        {
+            bool output = false;
+            //foreach (var item in entity)
+            //{
+                var data = new TBL_CUSTOM_LIEN_PROCESS();
+                {
+                    data.ACCOUNTID = entity.account;
+                    data.AMOUNT = entity.lienAmount;
+                    data.CURRENCYCODE = entity.lienAccountCurrency;
+                    data.CONSUMED = false;
+                    data.DATETIMECONSUMED = null;
+                    data.DATETIMECREATED = DateTime.Now;
+                    data.LIENTYPE = entity.lienProcessType;
+                    data.REASONCODE = entity.lienReasonCode;
+                    data.LIENREFERENCENUMBER = entity.lienUniqueReferenceNumber;
+                    data.DESCRIPTION = entity.lienReason;
+                };
+                context.TBL_CUSTOM_LIEN_PROCESS.Add(data);
+            //};
 
             context.SaveChanges();
             output = true;
@@ -101,13 +129,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             {
                     apiModel.Add(new TransactionPostingViewModel
                     {
-                        accounts = item.casaAccountId!= null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
-                        //accounts = item.operationId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+                        accounts = item.casaAccountId!= null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,                       
                         amounts = item.creditAmount > 0 ? "C" + item.creditAmount.ToString() : "D" + item.debitAmount.ToString(),
                         //amounts = item.sourceReferenceNumber,
                         narration = item.description,
                         referenceNumber = item.batchCode,
                         currencyType = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE,
+                        operationId = item.operationId,// != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
                     }
                     );
             }
@@ -158,27 +186,21 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
 
 
-        public async Task<bool> APILienPosting(List<FinanceTransactionViewModel> model)
+        public async Task<bool> APIProcessLien(CasaLienViewModel model, string lienType)
         {
 
             bool output = false;
-            List<LienPostingViewModel> apiModel = new List<LienPostingViewModel>();
-            foreach (var item in model)
+            LienProcessViewModel apiModel = new LienProcessViewModel
             {
-                apiModel.Add(new LienPostingViewModel
-                {
-                    account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER ,
-                    lienProcessType = "",
-                    lienReasonCode = "",
-                    lienReason = item.description,
-                    lienAmount = 0,
-                    lienUniqueReferenceNumber = item.sourceReferenceNumber,
-                    lienAccountCurrency = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE,
-                    referenceNumber = item.batchCode,
-                 
-                }
-                );
-            }
+                account = model.productAccountNumber,
+                lienProcessType = lienType, //"PLACE" or LIFTLIEN
+                lienReasonCode = "VIA",
+                lienReason = model.description,
+                lienAmount = model.lienAmount,
+                lienUniqueReferenceNumber = model.lienReferenceNumber,
+                lienAccountCurrency = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId).TBL_CURRENCY.CURRENCYCODE
+            };
+
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -190,13 +212,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-            LienPostingViewModel responseModel = new LienPostingViewModel();
+            LienProcessViewModel responseModel = new LienProcessViewModel();
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
             HttpResponseMessage response = client.PostAsync("api/Lien/ProcessLien", new StringContent(
                                             new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
             if (response.IsSuccessStatusCode)
             {
-                responseModel = await response.Content.ReadAsAsync<LienPostingViewModel>();
+                responseModel = await response.Content.ReadAsAsync<LienProcessViewModel>();
             }
             ResponseViewModel responseAPI = new ResponseViewModel();
             responseAPI.responseCode = responseModel.responseCode;
@@ -206,14 +228,14 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
             handler.Dispose();
             client.Dispose();
-            //if (responseModel.responseCode == "0")
-            //{
-            //    output = true;
-            //}
-            //else
-            //{
-            //    output = false;
-            //}
+            if (responseModel.responseCode == "0")
+            {
+                output = true;
+            }
+            else
+            {
+                output = false;
+            }
 
             return output;
 
