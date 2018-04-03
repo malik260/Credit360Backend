@@ -312,6 +312,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productGroupId = p.PRODUCTGROUPID,
                         productGroupName = p.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
                         requirePrincipalGl = p.REQUIREPRINCIPALGL,
+                        requirePrincipalGl2 = p.REQUIREPRINCIPALGL2,
                         requireInterestIncomeExpenseGl = p.REQUIREINTERESTINCOMEEXPENSEGL,
                         requireInterestReceivablePayableGl = p.REQUIRE_INT_RECEIVABL_PAYABLGL,
                         requirePremiumDiscountGl = p.REQUIREPREMIUMDISCOUNTGL,
@@ -365,6 +366,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 PRODUCTTYPENAME = productType.productTypeName,
                 PRODUCTGROUPID = productType.productGroupId,
                 REQUIREPRINCIPALGL = productType.requirePrincipalGl,
+                REQUIREPRINCIPALGL2 = productType.requirePrincipalGl2,
                 REQUIREINTERESTINCOMEEXPENSEGL = productType.requireInterestIncomeExpenseGl,
                 REQUIRE_INT_RECEIVABL_PAYABLGL = productType.requireInterestReceivablePayableGl,
                 REQUIREPREMIUMDISCOUNTGL = productType.requirePremiumDiscountGl,
@@ -420,7 +422,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             data.PRODUCTTYPENAME = productType.productTypeName;
             data.PRODUCTGROUPID = productType.productGroupId;
-            data.REQUIREPRINCIPALGL = productType.requirePrincipalGl;
+            data.REQUIREPRINCIPALGL = productType.requirePrincipalGl2;
+            data.REQUIREPRINCIPALGL2 = productType.requirePrincipalGl;
             data.REQUIREPREMIUMDISCOUNTGL = productType.requirePremiumDiscountGl;
             data.REQUIREDORMANTGL = productType.requireDormantGl;
             data.REQUIREOVERDRAWNGL = productType.requireOverdrawnGL;
@@ -524,6 +527,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         principalBalanceGl = data.PRINCIPALBALANCEGL,
                         principalBalanceGlCode = (data.PRINCIPALBALANCEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
+                        principalBalanceGl2 = data.PRINCIPALBALANCEGL2,
+                        principalBalanceGl2Code = (data.PRINCIPALBALANCEGL2.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+
                         interestIncomeExpenseGl = data.INTERESTINCOMEEXPENSEGL,
                         interestIncomeExpenseGlCode = (data.INTERESTINCOMEEXPENSEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
@@ -555,7 +561,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                             productLimit = d.PRODUCT_LIMIT,
                             isInvoiceBased = d.ISINVOICEBASED,
-                            requireCasaAccount = (bool)d.REQUIRECASAACCOUNT 
+                            requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
+                            allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false
 
                         }).FirstOrDefault(),
                         currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == data.PRODUCTID && curr.DELETED != false)
@@ -619,7 +626,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     isInvoiceBased = c.ISINVOICEBASED,
                     lcyLimit = c.COLLATERAL_LCY_LIMIT,
                     requireCasaAccount = (bool)c.REQUIRECASAACCOUNT,
-                    productLimit = c.PRODUCT_LIMIT
+                    productLimit = c.PRODUCT_LIMIT,
+                    allowFundUsage = c.ALLOWFUNDUSAGE != null ? (bool)c.ALLOWFUNDUSAGE : false
                 }).FirstOrDefault(),
             });
             return null;
@@ -663,129 +671,154 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ProductViewModel> GetProductAwaitingApprovals(int staffId, int companyId)
         {
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ProductCreation).ToList();
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.ProductCreation);
+            int staffApprovalLevelId = 0;
 
-            return (from c in context.TBL_TEMP_PRODUCT
-                    join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
-                    join atrail in context.TBL_APPROVAL_TRAIL on c.PRODUCTID equals atrail.TARGETID
-                    where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
-                          && atrail.RESPONSESTAFFID == null
-                          && atrail.OPERATIONID == (int)OperationsEnum.ProductCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                    select new ProductViewModel()
-                    {
-                        productId = c.PRODUCTID,
-                        companyId = c.COMPANYID,
-                        productTypeId = c.PRODUCTTYPEID,
-                        productTypeName = c.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
-                        productCategoryId = c.PRODUCTCATEGORYID,
-                        productCategoryName = c.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
-                        productClassId = c.PRODUCTCLASSID,
-                        productClassName = c.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-                        productPriceIndexId = c.PRODUCTPRICEINDEXID,
-                        productPriceIndexName = c.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
-                        productPriceIndexSpread = c.PRODUCTPRICEINDEXSPREAD,
+            try
+            {
+                var pendingProductsChanges = (from c in context.TBL_TEMP_PRODUCT
+                                              join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
+                                              join atrail in context.TBL_APPROVAL_TRAIL on c.PRODUCTID equals atrail.TARGETID
+                                              where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
+                                                    && atrail.RESPONSESTAFFID == null
+                                                    && atrail.OPERATIONID == (int)OperationsEnum.ProductCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                                              select new ProductViewModel()
+                                              {
+                                                  productId = c.PRODUCTID,
+                                                  companyId = c.COMPANYID,
+                                                  productTypeId = c.PRODUCTTYPEID,
+                                                  productTypeName = c.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                                  productCategoryId = c.PRODUCTCATEGORYID,
+                                                  productCategoryName = c.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
+                                                  productClassId = c.PRODUCTCLASSID,
+                                                  productClassName = c.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
-                        productCode = c.PRODUCTCODE,
-                        productName = c.PRODUCTNAME,
-                        productDescription = c.PRODUCTDESCRIPTION,
+                                                  productPriceIndexId = c.PRODUCTPRICEINDEXID,
+                                                  productPriceIndexName = c.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                                                  productPriceIndexSpread = c.PRODUCTPRICEINDEXSPREAD,
 
-                        productGroupId = c.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
-                        productGroupName = c.TBL_PRODUCT_TYPE.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
+                                                  productCode = c.PRODUCTCODE,
+                                                  productName = c.PRODUCTNAME,
+                                                  productDescription = c.PRODUCTDESCRIPTION,
 
-                        principalBalanceGl = c.PRINCIPALBALANCEGL,
-                        principalBalanceGlCode = (c.PRINCIPALBALANCEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                                                  productGroupId = c.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
+                                                  productGroupName = c.TBL_PRODUCT_TYPE.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
 
-                        interestIncomeExpenseGl = c.INTERESTINCOMEEXPENSEGL,
-                        interestIncomeExpenseGlCode = (c.INTERESTINCOMEEXPENSEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                                                  principalBalanceGl = c.PRINCIPALBALANCEGL,
+                                                  principalBalanceGlCode = (c.PRINCIPALBALANCEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        interestReceivablePayableGl = c.INTERESTRECEIVABLEPAYABLEGL,
-                        interestReceivablePayableGlCode = (c.INTERESTRECEIVABLEPAYABLEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                                                  principalBalanceGl2 = c.PRINCIPALBALANCEGL2,
+                                                  principalBalanceGl2Code = (c.PRINCIPALBALANCEGL2.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        dormantGl = c.DORMANTGL,
-                        dormantGlCode = (c.DORMANTGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
-                        premiumDiscountGl = c.PREMIUMDISCOUNTGL,
-                        premiumDiscountGlCode = (c.PREMIUMDISCOUNTGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        dealTypeId = c.DEALTYPEID,
-                        dealTypeName = c.TBL_DEAL_TYPE.DEALTYPENAME,
-                        dealClassificationId = c.DEALCLASSIFICATIONID,
-                        dealClassificationName = c.TBL_DEAL_CLASSIFICATION.CLASSIFICATION,
-                        dayCountId = c.DAYCOUNTCONVENTIONID,
-                        dayCountName = c.TBL_DAY_COUNT_CONVENTION.DAYCOUNTCONVENTIONNAME,
+                                                  interestIncomeExpenseGl = c.INTERESTINCOMEEXPENSEGL,
+                                                  interestIncomeExpenseGlCode = (c.INTERESTINCOMEEXPENSEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        maximumTenor = c.MAXIMUMTENOR,
-                        minimumTenor = c.MINIMUMTENOR,
-                        maximumRate = c.MAXIMUMRATE,
-                        minimumRate = c.MINIMUMRATE,
-                        minimumBalance = c.MINIMUMBALANCE,
-                        approvedBy = c.APPROVEDBY,
-                        completed = c.COMPLETED,
-                        approved = c.APPROVED,
-                        //approvalStatusId = c.APPROVALSTATUSID,
-                        operationId = atrail.OPERATIONID,
-                        currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == c.PRODUCTID && curr.DELETED == false).Select(pc => new ProductCurrencyViewModel()
-                        {
-                            productId = c.PRODUCTID,
-                            productCurrencyId = pc.PRODUCTCURRENCYID,
-                            currencyId = pc.CURRENCYID,
-                            currencyName = pc.TBL_CURRENCY.CURRENCYCODE + " -- " + pc.TBL_CURRENCY.CURRENCYNAME
-                        }).ToList(),
-                        fees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(curr => curr.PRODUCTID == c.PRODUCTID && c.DELETED == false).Select(pf => new ProductFeeViewModel()
-                        {
-                            productFeeId = pf.PRODUCTFEEID,
-                            productId = pf.PRODUCTID,
-                            feeId = pf.CHARGEFEEID,
-                            feeName = pf.TBL_CHARGE_FEE.CHARGEFEENAME,
-                            feeIntervalName = pf.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
-                            feeTargetName = pf.TBL_CHARGE_FEE.TBL_FEE_TARGET.FEETARGETNAME,
-                            feeTypeName = pf.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,
-                            glAccountCode = pf.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                            glAccountName = pf.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
-                            companyId = pf.COMPANYID,
+                                                  interestReceivablePayableGl = c.INTERESTRECEIVABLEPAYABLEGL,
+                                                  interestReceivablePayableGlCode = (c.INTERESTRECEIVABLEPAYABLEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                            rateValue = pf.RATEVALUE,
-                            dependentAmount = pf.DEPENDENTAMOUNT,
+                                                  dormantGl = c.DORMANTGL,
+                                                  dormantGlCode = (c.DORMANTGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                                                  premiumDiscountGl = c.PREMIUMDISCOUNTGL,
+                                                  premiumDiscountGlCode = (c.PREMIUMDISCOUNTGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                            createdBy = pf.CREATEDBY,
-                            dateTimeCreated = pf.DATETIMECREATED,
+                                                  dealTypeId = c.DEALTYPEID,
+                                                  dealTypeName = c.TBL_DEAL_TYPE.DEALTYPENAME,
+                                                  dealClassificationId = c.DEALCLASSIFICATIONID,
+                                                  dealClassificationName = c.TBL_DEAL_CLASSIFICATION.CLASSIFICATION,
+                                                  dayCountId = c.DAYCOUNTCONVENTIONID,
+                                                  dayCountName = c.TBL_DAY_COUNT_CONVENTION.DAYCOUNTCONVENTIONNAME,
 
-                        }).ToList(),
-                        collaterals = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(coll => coll.PRODUCTID == c.PRODUCTID && coll.DELETED == false).Select(prodColl => new ProductCollateralTypeViewModel()
-                        {
-                            productId = prodColl.PRODUCTID,
-                            productCollateralId = prodColl.PRODUCTCOLLATERALTYPEID,
-                            collateralTypeName = prodColl.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
-                        }).ToList(),
-                        ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == c.PRODUCTID).Select(d => new ProductBehaviourViewModel()
-                        {
-                            customerLimit = d.CUSTOMER_LIMIT,
-                            collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
-                            collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
-                            productLimit = d.PRODUCT_LIMIT,
-                            isInvoiceBased = d.ISINVOICEBASED
+                                                  maximumTenor = c.MAXIMUMTENOR,
+                                                  minimumTenor = c.MINIMUMTENOR,
+                                                  maximumRate = c.MAXIMUMRATE,
+                                                  minimumRate = c.MINIMUMRATE,
+                                                  minimumBalance = c.MINIMUMBALANCE,
+                                                  approvedBy = c.APPROVEDBY,
+                                                  completed = c.COMPLETED,
+                                                  approved = c.APPROVED,
+                                                
+                                                  //approvalStatusId = c.APPROVALSTATUSID,
+                                                  operationId = atrail.OPERATIONID,
+                                                  currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == c.PRODUCTID && curr.DELETED == false).Select(pc => new ProductCurrencyViewModel()
+                                                  {
+                                                      productId = c.PRODUCTID,
+                                                      productCurrencyId = pc.PRODUCTCURRENCYID,
+                                                      currencyId = pc.CURRENCYID,
+                                                      currencyName = pc.TBL_CURRENCY.CURRENCYCODE + " -- " + pc.TBL_CURRENCY.CURRENCYNAME
+                                                  }).ToList(),
+                                                  fees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(curr => curr.PRODUCTID == c.PRODUCTID && c.DELETED == false).Select(pf => new ProductFeeViewModel()
+                                                  {
+                                                      productFeeId = pf.PRODUCTFEEID,
+                                                      productId = pf.PRODUCTID,
+                                                      feeId = pf.CHARGEFEEID,
+                                                      feeName = pf.TBL_CHARGE_FEE.CHARGEFEENAME,
+                                                      feeIntervalName = pf.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                                                      feeTargetName = pf.TBL_CHARGE_FEE.TBL_FEE_TARGET.FEETARGETNAME,
+                                                      feeTypeName = pf.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,
+                                                      glAccountCode = pf.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                                                      glAccountName = pf.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                                                      companyId = pf.COMPANYID,
+                                                      
+                                                      rateValue = pf.RATEVALUE,
+                                                      dependentAmount = pf.DEPENDENTAMOUNT,
 
-                        }).FirstOrDefault(),
-                        dateTimeUpdated = c.DATETIMEUPDATED,
-                        deleted = c.DELETED,
-                        deletedBy = c.DELETEDBY,
-                        dateTimeDeleted = c.DATETIMEDELETED,
+                                                      createdBy = pf.CREATEDBY,
+                                                      dateTimeCreated = pf.DATETIMECREATED,
 
-                        allowCustomerAccountForceDebit = c.ALLOWCUSTOMERACCOUNTFORCEDEBIT,
-                        allowMoratorium = c.ALLOWMORATORIUM,
-                        allowScheduleTypeOverride = c.ALLOWSCHEDULETYPEOVERRIDE,
-                        allowTenor = c.ALLOWTENOR,
-                        allowRate = c.ALLOWRATE,
-                        allowOverdrawn = c.ALLOWOVERDRAWN,
+                                                  }).ToList(),
+                                                  collaterals = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(coll => coll.PRODUCTID == c.PRODUCTID && coll.DELETED == false).Select(prodColl => new ProductCollateralTypeViewModel()
+                                                  {
+                                                      productId = prodColl.PRODUCTID,
+                                                      productCollateralId = prodColl.PRODUCTCOLLATERALTYPEID,
+                                                      collateralTypeName = prodColl.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
+                                                  }).ToList(),
+                                                  ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == c.PRODUCTID).Select(d => new ProductBehaviourViewModel()
+                                                  {
+                                                      customerLimit = d.CUSTOMER_LIMIT,
+                                                      collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                                                      collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+                                                      productLimit = d.PRODUCT_LIMIT,
+                                                      allowFundUsage = (bool)d.ALLOWFUNDUSAGE,
+                                                      isInvoiceBased = d.ISINVOICEBASED,
+                                                      //allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false,
+                                                      requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
 
-                        cleanupPeriod = c.CLEANUPPERIOD ?? 0,
-                        defaultGracePeriod = c.DEFAULTGRACEPERIOD ?? 0,
-                        equityContribution = c.EQUITYCONTRIBUTION ?? 0,
-                        expiryPeriod = c.EXPIRYPERIOD ?? 0,
-                        scheduleTypeId = c.SCHEDULETYPEID,
-                        //productBehaviourId = c.PRODUCT_BEHAVIOURID,
-                        //productBehaviourName = c.TBL_PRODUCT_BEHAVIOUR.PRODUCT_BEHAVIOUR_NAME
-                    }).GroupBy(x => x.productId).Select(g => g.FirstOrDefault());
+
+                                                  }).FirstOrDefault(),
+                                                  dateTimeUpdated = c.DATETIMEUPDATED,
+                                                  deleted = c.DELETED,
+                                                  deletedBy = c.DELETEDBY,
+                                                  dateTimeDeleted = c.DATETIMEDELETED,
+
+                                                  allowCustomerAccountForceDebit = c.ALLOWCUSTOMERACCOUNTFORCEDEBIT,
+                                                  allowMoratorium = c.ALLOWMORATORIUM,
+                                                  allowScheduleTypeOverride = c.ALLOWSCHEDULETYPEOVERRIDE,
+                                                  allowTenor = c.ALLOWTENOR,
+                                                  allowRate = c.ALLOWRATE,
+                                                  allowOverdrawn = c.ALLOWOVERDRAWN,
+
+                                                  cleanupPeriod = c.CLEANUPPERIOD ?? 0,
+                                                  defaultGracePeriod = c.DEFAULTGRACEPERIOD ?? 0,
+                                                  equityContribution = c.EQUITYCONTRIBUTION ?? 0,
+                                                  expiryPeriod = c.EXPIRYPERIOD ?? 0,
+                                                  scheduleTypeId = c.SCHEDULETYPEID,
+                                                  //productBehaviourId = c.PRODUCT_BEHAVIOURID,
+                                                  //productBehaviourName = c.TBL_PRODUCT_BEHAVIOUR.PRODUCT_BEHAVIOUR_NAME
+                                              }).GroupBy(x => x.productId).Select(g => g.FirstOrDefault());
+                var b = pendingProductsChanges.ToList();
+
+                return pendingProductsChanges;
+
+            }
+            catch (Exception ex)
+            {
+                throw new  Exception(""+ ex);
+            }
+            
+           
         }
 
         public ProductViewModel GetTempProductDetail(int productId)
@@ -819,6 +852,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         principalBalanceGl = tp.PRINCIPALBALANCEGL,
                         principalBalanceGlCode = (tp.PRINCIPALBALANCEGL.HasValue ? tp.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+
+                        principalBalanceGl2 = tp.PRINCIPALBALANCEGL2,
+                        principalBalanceGl2Code = (tp.PRINCIPALBALANCEGL2.HasValue ? context.TBL_CHART_OF_ACCOUNT.Find(tp.PRINCIPALBALANCEGL2).ACCOUNTCODE : ""),
+
 
                         interestIncomeExpenseGl = tp.INTERESTINCOMEEXPENSEGL,
                         interestIncomeExpenseGlCode = (tp.INTERESTINCOMEEXPENSEGL.HasValue ? tp.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
@@ -879,7 +916,9 @@ namespace FintrakBanking.Repositories.Setups.General
                             collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
                             collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                             productLimit = d.PRODUCT_LIMIT,
-                            isInvoiceBased = d.ISINVOICEBASED
+                            isInvoiceBased = d.ISINVOICEBASED,
+                            allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false
+
 
                         }).FirstOrDefault(),
 
@@ -1041,6 +1080,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingProduct.PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION;
 
                     existingProduct.PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL;
+                    existingProduct.PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2;
                     existingProduct.INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL;
                     existingProduct.INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL;
                     existingProduct.DORMANTGL = productModel.DORMANTGL;
@@ -1091,6 +1131,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         existingProductBehaviour.COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT;
                         existingProductBehaviour.COLLATERAL_LCY_LIMIT = productBehaviourModel.COLLATERAL_LCY_LIMIT;
                         existingProductBehaviour.ISINVOICEBASED = productBehaviourModel.ISINVOICEBASED;
+                        existingProductBehaviour.ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE; 
                     }
                 }
                 else //Insert a new product record into the real product table
@@ -1151,6 +1192,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION,
 
                             PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL,
+                            PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2,
                             INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL,
                             INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL,
                             DORMANTGL = productModel.DORMANTGL,
@@ -1205,7 +1247,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT,
                             CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT,
                             PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT,
-
+                            ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE,
+                            REQUIRECASAACCOUNT = productBehaviourModel.REQUIRECASAACCOUNT
                         };
                         context.TBL_PRODUCT.Add(product);
                         context.TBL_PRODUCT_BEHAVIOUR.Add(productBehaviour);
@@ -1269,7 +1312,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<ProductViewModel> AddTempProduct(ProductViewModel productModel)
         {
-            var isPrincipalGLRequired = context.TBL_PRODUCT_TYPE.Any(x => x.PRODUCTTYPEID == productModel.productTypeId && x.REQUIREPRINCIPALGL == true);
+            var isPrincipalGLRequired = context.TBL_PRODUCT_TYPE.Any(x => x.PRODUCTTYPEID == productModel.productTypeId && x.REQUIREPRINCIPALGL == true || x.PRODUCTTYPEID == productModel.productTypeId && x.REQUIREPRINCIPALGL2 == true);
 
             if (isPrincipalGLRequired)
             {
@@ -1397,6 +1440,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 PRODUCTDESCRIPTION = productModel.productDescription,
 
                 PRINCIPALBALANCEGL = productModel.principalBalanceGl,
+                PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2,
                 INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl,
                 INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl,
                 DORMANTGL = productModel.dormantGl,
@@ -1453,6 +1497,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 CUSTOMER_LIMIT = behaviour.customerLimit,
                 PRODUCT_LIMIT = behaviour.productLimit,
                 ISINVOICEBASED = behaviour.isInvoiceBased,
+                ALLOWFUNDUSAGE = behaviour.allowFundUsage,
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = productModel.createdBy
             };
@@ -1536,6 +1581,7 @@ namespace FintrakBanking.Repositories.Setups.General
         //        ProductDescription = product.productDescription,
 
         //        PrincipalBalanceGL = product.principalBalanceGl,
+        //        PrincipalBalanceGL = product.principalBalanceGl2,
         //        InterestIncomeExpenseGL = product.interestIncomeExpenseGl,
         //        InterestReceivablePayableGL = product.interestReceivablePayableGl,
         //        DormantGL = product.dormantGl,
@@ -1710,6 +1756,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductToUpdate.PRODUCTDESCRIPTION = productModel.productDescription;
 
                 tempProductToUpdate.PRINCIPALBALANCEGL = productModel.principalBalanceGl;
+                tempProductToUpdate.PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2;
                 tempProductToUpdate.INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl;
                 tempProductToUpdate.INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl;
                 tempProductToUpdate.DORMANTGL = productModel.dormantGl;
@@ -1761,6 +1808,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     TempProductBehaviourToUpdate.ISINVOICEBASED = productModel.ProductBehaviour.isInvoiceBased;
                     TempProductBehaviourToUpdate.PRODUCTCODE = productModel.ProductBehaviour.productCode;
                     TempProductBehaviourToUpdate.PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit;
+                    TempProductBehaviourToUpdate.ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage;
                 }
                 else if(productModel.ProductBehaviour != null)
                 {
@@ -1773,6 +1821,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ISCURRENT = true,
                         ISINVOICEBASED = productModel.ProductBehaviour.isInvoiceBased,
                         PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit,
+                        ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage,
                         DATETIMECREATED = DateTime.Now,
                         CREATEDBY = productModel.createdBy
                     };
@@ -1841,6 +1890,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     PRODUCTDESCRIPTION = productModel.productDescription,
 
                     PRINCIPALBALANCEGL = productModel.principalBalanceGl,
+                    PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2,
                     INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl,
                     INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl,
                     DORMANTGL = productModel.dormantGl,
@@ -1893,6 +1943,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     ISCURRENT = true,
                     ISINVOICEBASED = productModel.ProductBehaviour.isInvoiceBased,
                     PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit,
+                    ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage,
                     DATETIMECREATED = DateTime.Now,
                     CREATEDBY =productModel.createdBy
                 };

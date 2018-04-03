@@ -31,6 +31,8 @@ namespace FintrakBanking.Entities.Models
 
         public int REVALUATIONDURATION { get; set; }
 
+        public int? VISITATIONCYCLE { get; set; }
+
         public bool ALLOWSHARING { get; set; }
 
         public bool ISLOCATIONBASED { get; set; }

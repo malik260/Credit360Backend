@@ -85,4 +85,10 @@ namespace FintrakBanking.ViewModels.Finance
         public int currencyId { get; set; }
         public CASAAccountStatusEnum accountStatusId { get; set; }
     }
+
+    public class BasicTrasactionSourceInputModel : GeneralEntity
+    {
+        public string description { get; set; }
+        public short sourceApplicationId { get; set; }
+    }
 }

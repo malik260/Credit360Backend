@@ -14,6 +14,9 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
+        [StringLength(100)]
+        public string BANK { get; set; }
+
         [StringLength(50)]
         public string DEALREFERENCENUMBER { get; set; }
 
@@ -46,5 +49,7 @@ namespace FintrakBanking.Entities.Models
         public string REMARK { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+
+        //public string BANK { get; set; }
     }
 }

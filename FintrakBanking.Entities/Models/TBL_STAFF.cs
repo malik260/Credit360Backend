@@ -50,8 +50,10 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN_REVOLVING1 = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_STAFF1 = new HashSet<TBL_STAFF>();
+            TBL_STAFF11 = new HashSet<TBL_STAFF>();
             TBL_TEMP_LOAN = new HashSet<TBL_TEMP_LOAN>();
             TBL_TEMP_LOAN1 = new HashSet<TBL_TEMP_LOAN>();
+            TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
 
         [Key]
@@ -64,6 +66,8 @@ namespace FintrakBanking.Entities.Models
         public int COMPANYID { get; set; }
 
         public int? SUPERVISOR_STAFFID { get; set; }
+
+        public int? RELIEF_STAFFID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -273,7 +277,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_STAFF_JOBTITLE TBL_STAFF_JOBTITLE { get; set; }
 
-        public virtual TBL_STAFF_RANK TBL_STAFF_RANK { get; set; }
+        public virtual TBL_STAFF_ROLE TBL_STAFF_ROLE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_STAFF> TBL_STAFF1 { get; set; }
@@ -281,9 +285,17 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_STAFF TBL_STAFF2 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_STAFF> TBL_STAFF11 { get; set; }
+
+        public virtual TBL_STAFF TBL_STAFF3 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
     }
 }

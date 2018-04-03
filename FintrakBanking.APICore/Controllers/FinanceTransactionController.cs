@@ -11,6 +11,7 @@ using System.Web;
 using System.Linq;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels.CASA;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -112,25 +113,25 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
-        [Route("Posttransaction")]
-        public HttpResponseMessage PostCollateralSearch( [FromBody] CasaLienViewModel model)
-        {
-            try
-            {
-                var data = repo.PostCollateralSearch(model);
-                if (data != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Transaction Posted successfully" });
-                }
+        //[HttpPost]
+        //[Route("Posttransaction")]
+        //public HttpResponseMessage PostCollateralSearch( [FromBody] CasaLienViewModel model)
+        //{
+        //    try
+        //    {
+        //        var data = repo.PostCollateralSearch(model);
+        //        if (data != null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Transaction Posted successfully" });
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+        //    }
+        //}
 
 
     }

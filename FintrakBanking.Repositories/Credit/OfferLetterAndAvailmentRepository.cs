@@ -34,7 +34,8 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext _context,
             IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
-            ILoanRepository _loans)
+            ILoanRepository _loans
+            )
         {
             context = _context;
             auditTrail = _auditTrail;
@@ -87,7 +88,7 @@ namespace FintrakBanking.Repositories.Credit
                             productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             dateTimeCreated = a.DATETIMECREATED,
-                            availmentlDate = a.AVAILMENTDATE,
+                            availmentDate = a.AVAILMENTDATE,
                             approvalDate = a.APPROVEDDATE,
                             isFirstApprover = true,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
@@ -381,6 +382,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
                             customerName = a.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerId = a.CUSTOMERID,
                             customerGroupName = a.TBL_CUSTOMER_GROUP.GROUPNAME,
                             customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
@@ -548,6 +550,18 @@ namespace FintrakBanking.Repositories.Credit
                             applicationDate = applDate,
                         }).ToList();
 
+            var transactionDynamicsDetails = (from a in context.TBL_LOAN_TRANSACTION_DYNAMICS
+                               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                               //join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
+                               //from c in cc.DefaultIfEmpty()
+                               //join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
+                               //from d in cg.DefaultIfEmpty()
+                               where b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                               select new TransactionDynamicsViewModel()
+                               {
+                                   dynamics = a.DYNAMICS,
+                               }).ToList();
+
             var loanCollaterals  = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
                               //join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
                               where x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == applicationRefNumber
@@ -557,6 +571,15 @@ namespace FintrakBanking.Repositories.Credit
                                  collateralValue = x.COLLATERALVALUE,
                                  stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT
                              }).ToList();
+
+
+            var loanMonitoringTriggers  = (from x in context.TBL_LOAN_APPLICATN_DETL_MTRIG
+                                       join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals y.LOANAPPLICATIONDETAILID
+                                        where y.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                   select new MonitoringTriggersViewModel()
+                                   {
+                                       monitoringTrigger = x.MONITORING_TRIGGER,
+                                   }).ToList();
 
 
 
@@ -569,6 +592,10 @@ namespace FintrakBanking.Repositories.Credit
             var loanDetail = string.Empty;
 
             var loanCollateral = string.Empty;
+
+            var loanMonitoringTrigger = string.Empty;
+
+            var loanTransactionDynamics = string.Empty;
 
             var internalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == false).ToList();
 
@@ -592,11 +619,19 @@ namespace FintrakBanking.Repositories.Credit
 
             var collateral  = string.Empty;
 
+            var monitoringTrigger = string.Empty;
+
+            var transactionDynamics = string.Empty;
+
             int noOfDetails = 0;
 
             int noOfFees = 0;
 
             int noOfCollaterals  = 0;
+
+            int noOfMonitoringTriggers = 0;
+
+            int noOfTransactionDynamics = 0;
 
             foreach (var prod in products)
             {
@@ -838,13 +873,79 @@ namespace FintrakBanking.Repositories.Credit
 
             var loanCollateralData  = $"{collateral}";
 
+
+            loanMonitoringTrigger = $"<p><strong> Monitoring Triggers: </strong></p>";
+
+            loanMonitoringTrigger = loanMonitoringTrigger +
+                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                        $"<strong> S/No </strong></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong>  </strong></td></tr>";
+
+
+
+            foreach (var item in loanMonitoringTriggers)
+            {
+                loanMonitoringTrigger = loanMonitoringTrigger +
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.monitoringTrigger}</p></td>" +
+                    $"</tr>";
+            }
+
+            noOfMonitoringTriggers = 0;
+
+            loanMonitoringTrigger = loanMonitoringTrigger + "</tbody></table><p> &nbsp;</p>";
+
+            monitoringTrigger += loanMonitoringTrigger;
+
+            var monitoringTriggerData = $"{monitoringTrigger}";
+
+            // transactionDynamicsDetails
+
+            loanTransactionDynamics = $"<p><strong> Transaction Dynamics: </strong></p>";
+
+            loanTransactionDynamics = loanTransactionDynamics +
+                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> S/No </strong></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
+                    $"<strong> Dynamics </strong></p></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
+                    $"<strong> Credit Verification Officer’s initial for compliance only </strong></p></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong>  </strong></td></tr>";
+
+
+
+            foreach (var item in transactionDynamicsDetails)
+            {
+                loanTransactionDynamics = loanTransactionDynamics +
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.dynamics}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p></p></td>" +
+                    $"</tr>";
+            }
+
+            noOfTransactionDynamics = 0;
+
+            loanTransactionDynamics = loanTransactionDynamics + "</tbody></table><p> &nbsp;</p>";
+
+            transactionDynamics += loanTransactionDynamics;
+
+            var transactionDynamicsData = $"{transactionDynamics}";
+
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
 
             var customer = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_CUSTOMER.FIRSTNAME;
             var branch = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_BRANCH.BRANCHNAME;
             //var info = data;
 
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData,currentDate, loanCollateralData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData,currentDate, loanCollateralData, monitoringTriggerData, transactionDynamicsData);
 
             if (preparedTemplate != null)
             {
@@ -920,7 +1021,7 @@ namespace FintrakBanking.Repositories.Credit
             //return templateLink;
         }
 
-        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition,DateTime currentDate,string collateralcondition)
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition,DateTime currentDate,string collateralcondition, string monitoringTrigger, string transactionDynamics)
         {
             string body;
 
@@ -939,6 +1040,9 @@ namespace FintrakBanking.Repositories.Credit
             body = body.Replace("{@facility}", facilitycondition);
             body = body.Replace("{@CurrentDate}", currentDate.ToLongDateString());
             body = body.Replace("{@Collateral}", collateralcondition);
+            body = body.Replace("{@monitoringTrigger}", monitoringTrigger);
+            body = body.Replace("{@transactionDynamics}", transactionDynamics);
+            
             return body;
         }
 
@@ -1266,7 +1370,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
 
-                if (appl.PRODUCTCLASSID == 10) // Bonds and Guarantees adapter
+                if (appl.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees) // Bonds and Guarantees adapter
                 {
                     appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
                     context.SaveChanges(); // save changes at this point

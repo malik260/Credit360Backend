@@ -468,7 +468,7 @@ namespace FintrakBanking.ReportObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var data = from a in context.TBL_LOAN_COLLATERAL_MAPPING
-                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANID equals b.LOANAPPLICATIONID // ------------------ REFACTOR TO LOANID!
+                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANID equals b.LOANAPPLICATIONID
                            join c in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                            where c.COLLATERALCODE == collateralCode
 

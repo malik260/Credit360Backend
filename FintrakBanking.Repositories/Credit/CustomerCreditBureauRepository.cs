@@ -7,12 +7,13 @@ using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Repositories.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FinTrakBanking.ThirdPartyIntegration.CreditBureau;
-using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,185 +48,87 @@ namespace FintrakBanking.Repositories.Credit
         #region Credit Bureau 
         public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId)
         {
-
-            var data = new List<CustomerViewModels>();
-            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
-            {
-                CustomerDetails cust = new CustomerDetails(context);
-                var customerCode = this.context.TBL_CUSTOMER.FirstOrDefault(a => a.CUSTOMERID == customerId).CUSTOMERCODE;
-                cust.AddCustomerAccounts(customerCode);
-
-                List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
-                var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId);
-                var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
-                var customer = from a in context.TBL_CUSTOMER
-                               where a.DELETED == false && a.CUSTOMERID == customerId
-                               select
-                               new CustomerViewModels
-                               {
-                                   accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
-                                   branchId = a.BRANCHID,
-                                   branchName = a.TBL_BRANCH.BRANCHNAME,
-                                   createdBy = a.CREATEDBY,
-                                   customerCode = a.CUSTOMERCODE,
-                                   customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
-                                   customerTypeId = (short)a.CUSTOMERTYPEID,
-                                   dateOfBirth = (DateTime)a.DATEOFBIRTH,
-                                   customerId = a.CUSTOMERID,
-                                   emailAddress = a.EMAILADDRESS,
-                                   phoneNumber = a.TBL_CUSTOMER_PHONECONTACT.Any() ? a.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONE : null,
-                                   firstName = a.FIRSTNAME,
-                                   gender = a.GENDER,
-                                   lastName = a.LASTNAME,
-                                   maidenName = a.MAIDENNAME,
-                                   maritalStatus = a.MARITALSTATUS.Value,
-                                   title = a.TITLE,
-                                   middleName = a.MIDDLENAME,
-                               //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+            List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
+            var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId);
+            var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
+            var customer = from a in context.TBL_CUSTOMER
+                           where a.DELETED == false && a.CUSTOMERID == customerId
+                           select
+                           new CustomerViewModels
+                           {
+                               accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
+                               branchId = a.BRANCHID,
+                               branchName = a.TBL_BRANCH.BRANCHNAME,
+                               createdBy = a.CREATEDBY,
+                               customerCode = a.CUSTOMERCODE,
+                               customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                               customerTypeId = (short)a.CUSTOMERTYPEID,
+                               dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                               customerId = a.CUSTOMERID,
+                               emailAddress = a.EMAILADDRESS,
+                               phoneNumber = a.TBL_CUSTOMER_PHONECONTACT.Any() ? a.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONE : null,
+                               firstName = a.FIRSTNAME,
+                               gender = a.GENDER,
+                               lastName = a.LASTNAME,
+                               maidenName = a.MAIDENNAME,
+                               maritalStatus = a.MARITALSTATUS.Value,
+                               title = a.TITLE,
+                               middleName = a.MIDDLENAME,
+                               customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                                customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
-                                   nationality = a.NATIONALITY,
-                                   occupation = a.OCCUPATION,
-                                   placeOfBirth = a.PLACEOFBIRTH,
-                                   isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
-                                   sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
-                                   sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                                   subSectorId = (short)a.SUBSECTORID,
-                                   subSectorName = a.TBL_SUB_SECTOR.NAME,
-                                   taxNumber = a.TAXNUMBER,
-                                   riskRatingId = a.RISKRATINGID,
-                                   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                                   customerBVN = a.CUSTOMERBVN,
-                                   rcNumber = customerInfo.Any() ? customerInfo.FirstOrDefault().REGISTRATIONNUMBER : null,
-                                   isCreditBureauUploadCompleted = false,
-                                   companyDirectorId = null,
-                                   creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false
-                                                                                                && x.COMPANYDIRECTORID == null).Count(),
-                               };
+                               nationality = a.NATIONALITY,
+                               occupation = a.OCCUPATION,
+                               placeOfBirth = a.PLACEOFBIRTH,
+                               isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                               sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
+                               sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                               subSectorId = (short)a.SUBSECTORID,
+                               subSectorName = a.TBL_SUB_SECTOR.NAME,
+                               taxNumber = a.TAXNUMBER,
+                               riskRatingId = a.RISKRATINGID,
+                               riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                               customerBVN = a.CUSTOMERBVN,
+                               rcNumber = customerInfo.Any() ? customerInfo.FirstOrDefault().REGISTRATIONNUMBER : null,
+                               isCreditBureauUploadCompleted = false,
+                               companyDirectorId = null,
+                               creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false
+                                                                                            && x.COMPANYDIRECTORID == null).Count(),
+                           };
 
-                foreach (var item in customer)
-                {
-                    allCorporate.Add(item);
-                }
-
-                if (customerType == (short)CustomerTypeEnum.Corporate)
-                {
-                    var shareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).ToList();
-                    foreach (var director in shareholders)
-                    {
-                        CustomerViewModels shareholdersData = new CustomerViewModels
-                        {
-                            companyDirectorId = director.COMPANYDIRECTORID,
-                            customerTypeId = director.CUSTOMERTYPEID,
-                            customerTypeName = director.TBL_CUSTOMER_TYPE.NAME,
-                            numberOfShares = director.SHAREHOLDINGPERCENTAGE,
-                            isPoliticallyExposed = director.ISPOLITICALLYEXPOSED,
-                            customerBVN = director.CUSTOMERBVN,
-                            companyDirectorTypeId = director.COMPANYDIRECTORTYPEID,
-                            companyDirectorTypeName = director.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                            address = director.ADDRESS,
-                            phoneNumber = director.PHONENUMBER,
-                            customerId = customerId,
-                            emailAddress = director.EMAILADDRESS,
-                            firstName = director.FIRSTNAME,
-                            lastName = director.SURNAME,
-                            middleName = director.MIDDLENAME,
-                            creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
-                                                                                        && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID).Count()
-                        };
-                        allCorporate.Add(shareholdersData);
-                    }
-
-                }
-
-                return allCorporate;
-            }
-            else
+            foreach (var item in customer)
             {
-                List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
-                var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId);
-                var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
-                var customer = from a in context.TBL_CUSTOMER
-                               where a.DELETED == false && a.CUSTOMERID == customerId
-                               select
-                               new CustomerViewModels
-                               {
-                                   accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
-                                   branchId = a.BRANCHID,
-                                   branchName = a.TBL_BRANCH.BRANCHNAME,
-                                   createdBy = a.CREATEDBY,
-                                   customerCode = a.CUSTOMERCODE,
-                                   customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
-                                   customerTypeId = (short)a.CUSTOMERTYPEID,
-                                   dateOfBirth = (DateTime)a.DATEOFBIRTH,
-                                   customerId = a.CUSTOMERID,
-                                   emailAddress = a.EMAILADDRESS,
-                                   phoneNumber = a.TBL_CUSTOMER_PHONECONTACT.Any() ? a.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONE : null,
-                                   firstName = a.FIRSTNAME,
-                                   gender = a.GENDER,
-                                   lastName = a.LASTNAME,
-                                   maidenName = a.MAIDENNAME,
-                                   maritalStatus = a.MARITALSTATUS.Value,
-                                   title = a.TITLE,
-                                   middleName = a.MIDDLENAME,
-                               //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                               customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
-                                   nationality = a.NATIONALITY,
-                                   occupation = a.OCCUPATION,
-                                   placeOfBirth = a.PLACEOFBIRTH,
-                                   isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
-                                   sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
-                                   sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                                   subSectorId = (short)a.SUBSECTORID,
-                                   subSectorName = a.TBL_SUB_SECTOR.NAME,
-                                   taxNumber = a.TAXNUMBER,
-                                   riskRatingId = a.RISKRATINGID,
-                                   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                                   customerBVN = a.CUSTOMERBVN,
-                                   rcNumber = customerInfo.Any() ? customerInfo.FirstOrDefault().REGISTRATIONNUMBER : null,
-                                   isCreditBureauUploadCompleted = false,
-                                   companyDirectorId = null,
-                                   creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false
-                                                                                                && x.COMPANYDIRECTORID == null).Count(),
-                               };
-
-                foreach (var item in customer)
-                {
-                    allCorporate.Add(item);
-                }
-
-                if (customerType == (short)CustomerTypeEnum.Corporate)
-                {
-                    var shareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).ToList();
-                    foreach (var director in shareholders)
-                    {
-                        CustomerViewModels shareholdersData = new CustomerViewModels
-                        {
-                            companyDirectorId = director.COMPANYDIRECTORID,
-                            customerTypeId = director.CUSTOMERTYPEID,
-                            customerTypeName = director.TBL_CUSTOMER_TYPE.NAME,
-                            numberOfShares = director.SHAREHOLDINGPERCENTAGE,
-                            isPoliticallyExposed = director.ISPOLITICALLYEXPOSED,
-                            customerBVN = director.CUSTOMERBVN,
-                            companyDirectorTypeId = director.COMPANYDIRECTORTYPEID,
-                            companyDirectorTypeName = director.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                            address = director.ADDRESS,
-                            phoneNumber = director.PHONENUMBER,
-                            customerId = customerId,
-                            emailAddress = director.EMAILADDRESS,
-                            firstName = director.FIRSTNAME,
-                            lastName = director.SURNAME,
-                            middleName = director.MIDDLENAME,
-                            creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
-                                                                                        && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID).Count()
-                        };
-                        allCorporate.Add(shareholdersData);
-                    }
-
-                }
-
-                return allCorporate;
+                allCorporate.Add(item);
             }
+
+            if (customerType == (short)CustomerTypeEnum.Corporate)
+            {
+                var shareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).ToList();
+                foreach (var director in shareholders)
+                {
+                    CustomerViewModels shareholdersData = new CustomerViewModels
+                    {
+                        companyDirectorId = director.COMPANYDIRECTORID,
+                        customerTypeId = director.CUSTOMERTYPEID,
+                        customerTypeName = director.TBL_CUSTOMER_TYPE.NAME,
+                        numberOfShares = director.SHAREHOLDINGPERCENTAGE,
+                        isPoliticallyExposed = director.ISPOLITICALLYEXPOSED,
+                        customerBVN = director.CUSTOMERBVN,
+                        companyDirectorTypeId = director.COMPANYDIRECTORTYPEID,
+                        companyDirectorTypeName = director.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                        address = director.ADDRESS,
+                        phoneNumber = director.PHONENUMBER,
+                        customerId = customerId,
+                        emailAddress = director.EMAILADDRESS,
+                        firstName = director.FIRSTNAME,
+                        lastName = director.SURNAME,
+                        middleName = director.MIDDLENAME,
+                        creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
+                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID).Count()
+                    };
+                    allCorporate.Add(shareholdersData);
+                }
+            }
+            return allCorporate;
         }
 
 
@@ -245,7 +148,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
 
-             var data = new Entities.Models.TBL_CUSTOMER_CREDIT_BUREAU()
+            var data = new Entities.Models.TBL_CUSTOMER_CREDIT_BUREAU()
             {
                 COMPANYDIRECTORID = entity.companyDirectorId,
                 CHARGEAMOUNT = entity.chargeAmount,
@@ -344,12 +247,11 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-
         public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model)
         {
             var directorId = model.companyDirectorId > 0 ? model.companyDirectorId : null;
-            var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(c => c.CREDITBUREAUID == model.creditBureauId 
-                                                                && c.CUSTOMERID == model.customerId 
+            var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(c => c.CREDITBUREAUID == model.creditBureauId
+                                                                && c.CUSTOMERID == model.customerId
                                                                 && c.COMPANYDIRECTORID == directorId).FirstOrDefault();
 
             if (data != null)
@@ -385,17 +287,30 @@ namespace FintrakBanking.Repositories.Credit
                                        hasFile = false,
                                        fileName = string.Empty,
                                    };
+
+            return creditBureauList;
+
+        }
+
+        public IEnumerable<CRCBureauFacilityViewModel> GetCRCBureauFacilities()
+        {
+            var creditBureauList = from a in context.TBL_CUSTOM_CRCBUREAU_PRODUCT
+                                   select new CRCBureauFacilityViewModel
+                                   {
+                                       productCode = a.PRODUCTCODE,
+                                       productName = a.PRODUCTNAME
+                                   };
+
             return creditBureauList;
         }
 
         public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {
-            var doc = docContext.TBL_CUSTOMER_CREDIT_BUREAU;
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
+
             var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
-                                               where a.CUSTOMERID == customerId && a.DELETED == false
-                                              && a.COMPANYDIRECTORID == directorId
-                                               where ((DateTime.Now - a.DATETIMECREATED).TotalDays <= 30)
+                                               where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
+                                               && (a.DATETIMECREATED.Day <= ((DateTime.Now - a.DATETIMECREATED).TotalDays - 30))
                                                select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,
@@ -411,44 +326,308 @@ namespace FintrakBanking.Repositories.Credit
                                                    uploadCount = 0,
                                                    createdBy = a.CREATEDBY
                                                };
-            foreach (var item in customerLoanCreditBureauData)
-            {
-                var docRow = doc.Where(x => x.CUSTOMERCREDITBUREAUID == item.customerCreditBureauId).FirstOrDefault();
-                if (docRow != null)
-                {
-                    item.documentId = docRow.DOCUMENTID;
-                }
-            }
             return customerLoanCreditBureauData.ToList();
         }
 
         public bool VerifyCustomerValidCreditBureau(int customerId)
         {
             var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId);
+
             foreach (var customer in customers)
             {
-                var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId); //.Where(x => (DateTime.Now - x.dateTimeCreated).TotalDays <= 30);
+                var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId); 
+             
                 if (customerCreditBureauLog.Count() < 3) return false;
             };
+
             return true;
+
         }
+
         #endregion
 
         #region Integration 
-        public List<string> GetCustomerCreditMatch(CreditBureauSearchViewModel searchInfoList)
+        public List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
             var creditBureau = new CreditBureauProcess();
+
             List<string> searchResult = new List<string>();
 
-
             var task = Task.Run(() => searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfoList)));
+
             if (task.Wait(TimeSpan.FromSeconds(40)))
+            {
                 return searchResult;
+            }
             else
+            {
                 throw new Exception("Timed out");
+            }
 
         }
 
+        public CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo)
+        {
+            var creditBureauInputs = new SearchInput()
+            {
+                applicationUrl = searchInfo.applicationUrl,
+                userBranchId = searchInfo.userBranchId,
+                staffId = searchInfo.staffId,
+                companyId = searchInfo.companyId,
+                createdBy = searchInfo.createdBy,
+                casaAccountId = searchInfo.casaAccountId,
+                creditBureauId = searchInfo.creditBureauId
+
+            };
+
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+            var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
+
+            if (casa == null) throw new Exception("Norminated Account Does not Exist");
+
+            var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+
+            var creditBureau = context.TBL_CREDIT_BUREAU.Find(creditBureauInputs.creditBureauId);
+
+            var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
+                : creditBureau.CORPORATE_CHARGEAMOUNT;
+
+            if (chargeAmount > accountBalance)
+            {
+                throw new Exception("The norminated customer account has insufficient fund to perform this transaction.");
+            }
+            else
+            {
+                DebitCustomer(creditBureau, casa, chargeAmount, creditBureauInputs);
+            }
+
+            var creditBureauProcess = new CreditBureauProcess();
+
+            CRCSearchResult searchResponse = new CRCSearchResult();
+
+            using (var docTrans = docContext.Database.BeginTransaction())
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var task = Task.Run(() => searchResponse = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
+
+                    if (task.Wait(TimeSpan.FromSeconds(640)))
+                    {
+                        if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete) return searchResponse;
+
+                        else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
+                        {
+                            {   //System.Text.Encoding.ASCII.GetByteCount(searchResult.SearchResult)
+                                byte file = Convert.ToByte(searchResponse.SearchResult);
+                                byte[] fileArray = new byte[file];
+                                var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
+                                if (!saveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
+                                {
+                                    throw new Exception("Could not save file");
+                                }
+
+                                context.SaveChanges();
+                                trans.Commit();
+                                docTrans.Commit();
+                                return searchResponse;
+                            }
+                        }
+                        else
+                        {
+                            ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                            throw new Exception("An error occured");
+                        }
+                    }
+                    else
+                    {
+                        ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                        throw new Exception("Timed out");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                    throw new Exception(ex.Message.ToString());
+                }
+            }
+        }
+
+        public bool saveCrcPdfFile(CRCRequestViewModel searchInfo, SearchInput creditBureauInputs)
+        {
+
+            var creditBureauProcess = new CreditBureauProcess();
+
+            CRCSearchResult searchResponse = new CRCSearchResult();
+
+            using (var docTrans = docContext.Database.BeginTransaction())
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var task = Task.Run(() => searchResponse = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
+
+                    if (task.Wait(TimeSpan.FromSeconds(640)))
+                    {
+                        if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete) return true;
+                        else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
+                        {
+                            {   //System.Text.Encoding.ASCII.GetByteCount(searchResult.SearchResult)
+                                byte file = Convert.ToByte(searchResponse.SearchResult);
+
+                                byte[] fileArray = new byte[file];
+
+                                var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
+
+                                if (!saveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
+                                {
+                                    throw new Exception("Could not save file");
+                                }
+
+                                context.SaveChanges();
+                                trans.Commit();
+                                docTrans.Commit();
+
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                            throw new Exception("An error occured");
+                        }
+
+                    }
+                    else
+                    {
+                        //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                        throw new Exception("Timed out");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                    throw new Exception(ex.Message.ToString());
+                }
+            }
+
+        }
+
+        private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
+        {
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+            debit.operationId = (int)OperationsEnum.CreditBureauSearch;
+            debit.description = creditBureau.CREDITBUREAUNAME + " search charge";
+            debit.valueDate = genSetup.GetApplicationDate();
+            debit.transactionDate = debit.valueDate;
+            debit.currencyId = casa.CURRENCYID;
+            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, creditBureauInputs.companyId).sellingRate;
+            debit.isApproved = true;
+            debit.postedBy = creditBureauInputs.createdBy;
+            debit.approvedBy = creditBureauInputs.createdBy;
+            debit.approvedDate = debit.transactionDate;
+            debit.approvedDateTime = DateTime.Now;
+            debit.sourceApplicationId = creditBureauInputs.creditBureauId;
+            debit.companyId = creditBureauInputs.companyId;
+            debit.batchCode = transactionCode;
+            debit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
+            debit.sourceReferenceNumber = transactionCode;
+            debit.casaAccountId = casa.CASAACCOUNTID;
+            debit.debitAmount = chargeAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = creditBureauInputs.userBranchId;
+            debit.destinationBranchId = casa.BRANCHID;
+
+            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+            credit.operationId = (int)OperationsEnum.CreditBureauSearch;
+            credit.description = creditBureau.CREDITBUREAUNAME + " search charge";
+            credit.valueDate = genSetup.GetApplicationDate();
+            credit.transactionDate = credit.valueDate;
+            credit.currencyId = casa.CURRENCYID;
+            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, creditBureauInputs.companyId).sellingRate;
+            credit.isApproved = true;
+            credit.postedBy = creditBureauInputs.createdBy;
+            credit.approvedBy = creditBureauInputs.createdBy;
+            credit.approvedDate = credit.transactionDate;
+            credit.approvedDateTime = DateTime.Now;
+            credit.sourceApplicationId = creditBureauInputs.creditBureauId;
+            credit.companyId = creditBureauInputs.companyId;
+            credit.batchCode = transactionCode;
+            credit.glAccountId = creditBureau.GLACCOUNTID;
+            credit.sourceReferenceNumber = transactionCode;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = chargeAmount;
+            credit.sourceBranchId = creditBureauInputs.userBranchId;
+            credit.destinationBranchId = creditBureauInputs.userBranchId;
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            inputTransactions.Add(debit);
+            inputTransactions.Add(credit);
+            financeTransaction.PostTransaction(inputTransactions);
+        }
+
+        private void ReverseDebit(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
+        {
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+            debit.operationId = (int)OperationsEnum.CreditBureauSearch;
+            debit.description = creditBureau.CREDITBUREAUNAME + " search charge reversal";
+            debit.valueDate = genSetup.GetApplicationDate();
+            debit.transactionDate = debit.valueDate;
+            debit.currencyId = casa.CURRENCYID;
+            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, creditBureauInputs.companyId).sellingRate;
+            debit.isApproved = true;
+            debit.postedBy = creditBureauInputs.createdBy;
+            debit.approvedBy = creditBureauInputs.createdBy;
+            debit.approvedDate = debit.transactionDate;
+            debit.approvedDateTime = DateTime.Now;
+            debit.sourceApplicationId = creditBureauInputs.creditBureauId;
+            debit.companyId = creditBureauInputs.companyId;
+            debit.batchCode = transactionCode;
+            debit.glAccountId = creditBureau.GLACCOUNTID;
+            debit.sourceReferenceNumber = transactionCode;
+            debit.casaAccountId = null;
+            debit.debitAmount = chargeAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = creditBureauInputs.userBranchId;
+            debit.destinationBranchId = casa.BRANCHID;
+
+            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+            credit.operationId = (int)OperationsEnum.CreditBureauSearch;
+            credit.description = creditBureau.CREDITBUREAUNAME + " search charge";
+            credit.valueDate = genSetup.GetApplicationDate();
+            credit.transactionDate = credit.valueDate;
+            credit.currencyId = casa.CURRENCYID;
+            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, creditBureauInputs.companyId).sellingRate;
+            credit.isApproved = true;
+            credit.postedBy = creditBureauInputs.createdBy;
+            credit.approvedBy = creditBureauInputs.createdBy;
+            credit.approvedDate = credit.transactionDate;
+            credit.approvedDateTime = DateTime.Now;
+            credit.sourceApplicationId = creditBureauInputs.creditBureauId;
+            credit.companyId = creditBureauInputs.companyId;
+            credit.batchCode = transactionCode;
+            credit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
+            credit.sourceReferenceNumber = transactionCode;
+            credit.casaAccountId = casa.CASAACCOUNTID;
+            credit.debitAmount = 0;
+            credit.creditAmount = chargeAmount;
+            credit.sourceBranchId = creditBureauInputs.userBranchId;
+            credit.destinationBranchId = creditBureauInputs.userBranchId;
+
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(debit);
+            inputTransactions.Add(credit);
+            financeTransaction.PostTransaction(inputTransactions);
+        }
 
         public byte[] GetFullSearchResultInPDF(SearchInput searchInput)
         {
@@ -459,76 +638,22 @@ namespace FintrakBanking.Repositories.Credit
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
 
-            
-
-            var chargeAmount = searchInput.searchType == (short) CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
+            var chargeAmount = searchInput.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
 
-            List<FinanceTransactionViewModel> output = new List<FinanceTransactionViewModel>();
 
-            
             if (chargeAmount > accountBalance)
                 throw new Exception("The norminated customer account has insufficient fund to perform this transaction.");
             else
             {
-                FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-                debit.operationId = (int)OperationsEnum.CreditBureauSearch;
-                debit.description = creditBureau.CREDITBUREAUNAME +" search charge";
-                debit.valueDate = genSetup.GetApplicationDate();
-                debit.transactionDate = debit.valueDate;
-                debit.currencyId = casa.CURRENCYID;
-                debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, searchInput.companyId).sellingRate;
-                debit.isApproved = true;
-                debit.postedBy = searchInput.createdBy;
-                debit.approvedBy = searchInput.createdBy;
-                debit.approvedDate = debit.transactionDate;
-                debit.approvedDateTime = DateTime.Now;
-                debit.sourceApplicationId = searchInput.creditBureauId; 
-                debit.companyId = searchInput.companyId;
-                debit.batchCode = transactionCode;             
-                debit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
-                debit.sourceReferenceNumber = transactionCode;
-                debit.casaAccountId = casa.CASAACCOUNTID;
-                debit.debitAmount = chargeAmount;
-                debit.creditAmount = 0;
-                debit.sourceBranchId = searchInput.userBranchId;
-                debit.destinationBranchId = casa.BRANCHID;
-
-                FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-                credit.operationId = (int)OperationsEnum.CreditBureauSearch;
-                credit.description = creditBureau.CREDITBUREAUNAME + " search charge";
-                credit.valueDate = genSetup.GetApplicationDate();
-                credit.transactionDate = credit.valueDate;
-                credit.currencyId = casa.CURRENCYID;
-                credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, searchInput.companyId).sellingRate;
-                credit.isApproved = true;
-                credit.postedBy = searchInput.createdBy;
-                credit.approvedBy = searchInput.createdBy;
-                credit.approvedDate = credit.transactionDate;
-                credit.approvedDateTime = DateTime.Now;
-                credit.sourceApplicationId = searchInput.creditBureauId;
-                credit.companyId = searchInput.companyId;
-                credit.batchCode = transactionCode;
-                credit.glAccountId = creditBureau.GLACCOUNTID;
-                credit.sourceReferenceNumber = transactionCode;
-                credit.casaAccountId = null;
-                credit.debitAmount = 0;
-                credit.creditAmount = chargeAmount;
-                credit.sourceBranchId = searchInput.userBranchId;
-                credit.destinationBranchId = searchInput.userBranchId;
-
-                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-
-                inputTransactions.Add(debit);
-                inputTransactions.Add(credit);
-                financeTransaction.PostTransaction(inputTransactions);
+                DebitCustomer(creditBureau, casa, chargeAmount, searchInput);
             }
 
-            byte[] binaryData ;
+            byte[] binaryData;
             var creditBureauProcess = new CreditBureauProcess();
             try
             {
-                 binaryData = creditBureauProcess.GetFullSearchResultInPDF(searchInput);
+                binaryData = creditBureauProcess.GetFullSearchResultInPDF(searchInput);
                 using (var docTrans = docContext.Database.BeginTransaction())
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -549,66 +674,14 @@ namespace FintrakBanking.Repositories.Credit
                         throw new Exception(ex.Message.ToString());
                     }
                 }
-
             }
             catch
             {
-                FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-                debit.operationId = (int)OperationsEnum.CreditBureauSearch;
-                debit.description = creditBureau.CREDITBUREAUNAME + " search charge";
-                debit.valueDate = genSetup.GetApplicationDate();
-                debit.transactionDate = debit.valueDate;
-                debit.currencyId = casa.CURRENCYID;
-                debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, searchInput.companyId).sellingRate;
-                debit.isApproved = true;
-                debit.postedBy = searchInput.createdBy;
-                debit.approvedBy = searchInput.createdBy;
-                debit.approvedDate = debit.transactionDate;
-                debit.approvedDateTime = DateTime.Now;
-                debit.sourceApplicationId = searchInput.creditBureauId;
-                debit.companyId = searchInput.companyId;
-                debit.batchCode = transactionCode;
-                debit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL; 
-                debit.sourceReferenceNumber = transactionCode;
-                debit.casaAccountId = null;
-                debit.debitAmount = chargeAmount;
-                debit.creditAmount = 0;
-                debit.sourceBranchId = searchInput.userBranchId;
-                debit.destinationBranchId = casa.BRANCHID;
-
-                FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-                credit.operationId = (int)OperationsEnum.CreditBureauSearch;
-                credit.description = creditBureau.CREDITBUREAUNAME + " search charge";
-                credit.valueDate = genSetup.GetApplicationDate();
-                credit.transactionDate = credit.valueDate;
-                credit.currencyId = casa.CURRENCYID;
-                credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, searchInput.companyId).sellingRate;
-                credit.isApproved = true;
-                credit.postedBy = searchInput.createdBy;
-                credit.approvedBy = searchInput.createdBy;
-                credit.approvedDate = credit.transactionDate;
-                credit.approvedDateTime = DateTime.Now;
-                credit.sourceApplicationId = searchInput.creditBureauId;
-                credit.companyId = searchInput.companyId;
-                credit.batchCode = transactionCode;
-                credit.glAccountId = creditBureau.GLACCOUNTID;
-                credit.sourceReferenceNumber = transactionCode;
-                credit.casaAccountId = casa.CASAACCOUNTID;
-                credit.debitAmount = 0;
-                credit.creditAmount = chargeAmount;
-                credit.sourceBranchId = searchInput.userBranchId;
-                credit.destinationBranchId = searchInput.userBranchId;
-
-
-                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-                inputTransactions.Add(debit);
-                inputTransactions.Add(credit);
-                financeTransaction.PostTransaction(inputTransactions);
+                ReverseDebit(creditBureau, casa, chargeAmount, searchInput);
                 throw new Exception("Download failed. This may have been cause by slow or no internet connection");
             }
-            
-    }
-        
+        }
+
         private bool saveCreditBureauReportFile(int customerCreditBureauId, byte[] file, SearchInput model)
         {
             try
@@ -644,12 +717,10 @@ namespace FintrakBanking.Repositories.Credit
                 this.auditTrail.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                docContext.SaveChanges();                
+                docContext.SaveChanges();
                 return context.SaveChanges() != 0;
             }
             catch (Exception ex) { throw ex; }
-                        
-  
         }
         #endregion
     }

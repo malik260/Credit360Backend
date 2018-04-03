@@ -32,6 +32,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class CRCBureauFacilityViewModel
+    {
+        public string productCode { get; set; }
+        public string productName { get; set; }
+    }
+
     public class LoanCreditBereauViewModel : GeneralEntity
     {
         public short creditBureauId { get; set; }

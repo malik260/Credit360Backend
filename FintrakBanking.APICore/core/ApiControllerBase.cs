@@ -1,7 +1,9 @@
 ﻿using FintrakBanking.APICore.Filters;
 using System.Security;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Http.Filters;
 
 namespace FintrakBanking.APICore.core
 {
@@ -15,6 +17,14 @@ namespace FintrakBanking.APICore.core
             string userLoggedIn = User.Identity.Name;
             if (userLoggedIn != userRequested)
                 throw new SecurityException("Attempting to access data for another user.");
+        }
+    }
+
+    public class UnhandledExceptionFilter : ExceptionFilterAttribute
+    {
+        public override void OnException(HttpActionExecutedContext context)
+        {
+            Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Elmah.Error(context.Exception));
         }
     }
 }

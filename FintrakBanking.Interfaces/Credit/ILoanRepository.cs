@@ -17,6 +17,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
 
+        IEnumerable<LoanViewModel> GetApprovedLoanReview();
+
         LoanViewModel GetDisbursedLoanByLoanId(int loanId);
 
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
@@ -93,6 +95,8 @@ namespace FintrakBanking.Interfaces.Credit
         Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId);
 
         void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
+
+        IQueryable<LoanViewModel> SearchForOverdraft(string searchQuery);
 
 
     }

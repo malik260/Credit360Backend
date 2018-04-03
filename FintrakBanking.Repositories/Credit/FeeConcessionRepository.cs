@@ -9,6 +9,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -75,7 +76,7 @@ namespace FintrakBanking.Repositories.Credit
                                      loanRefNo = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                      approvalStatusId = a.APPROVALSTATUSID,
                                      approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                                     defaultValue = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).DEFAULT_FEERATEVALUE
+                                     defaultValue = a.LOANCHARGEFEEID == null ? a.TBL_LOAN_APPLICATION_DETAIL.PROPOSEDINTERESTRATE : (double)context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(x => x.LOANCHARGEFEEID == a.LOANCHARGEFEEID).DEFAULT_FEERATEVALUE
                                  }).ToList();
             return feeConcession;
         }
@@ -105,13 +106,13 @@ namespace FintrakBanking.Repositories.Credit
                                      loanRefNo = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                      approvalStatusId = a.APPROVALSTATUSID,
                                      approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                                     defaultValue = (int?)context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).DEFAULT_FEERATEVALUE
+                                     defaultValue = a.LOANCHARGEFEEID == null ? a.TBL_LOAN_APPLICATION_DETAIL.PROPOSEDINTERESTRATE : (double)context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(x => x.LOANCHARGEFEEID == a.LOANCHARGEFEEID).DEFAULT_FEERATEVALUE
                                  }).ToList();
             return feeConcession;
         }
-        public bool AddUpdateFeeConcession(FeeConcessionViewModel model)
+        public int AddUpdateFeeConcession(FeeConcessionViewModel model)
         {
-            if (model == null) return false;
+            if (model == null) return 0;
             TBL_LOAN_RATE_FEE_CONCESSION_ data;
             if (model.concessionId > 0)
             {
@@ -178,22 +179,23 @@ namespace FintrakBanking.Repositories.Credit
                         if (returnVal)
                         {
                             trans.Commit();
-                            return output;
+                            return data.CONCESSIONID;
                         }
                     }
                     catch (Exception ex)
                     {
                         trans.Rollback();
-                        return false;
+                        return 0;
                         throw new Exception(ex.Message);
                     }
                 }
             }
             else
             {
-                return context.SaveChanges() > 0;
+                if (context.SaveChanges() > 0)
+                    return data.CONCESSIONID; 
             }
-            return false;
+            return 0;
         }
 
         public bool GoForApproval(ApprovalViewModel entity)
@@ -291,7 +293,16 @@ namespace FintrakBanking.Repositories.Credit
                 SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
-            output = context.SaveChanges() > 0;
+            //output = context.SaveChanges() > 0;
+            try
+            {
+                output = context.SaveChanges() > 0;
+            }
+            catch (DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new DbEntityValidationException(errorMessages);
+            }
             return output;
         }
         public bool ValidateFeeConcession(int loanApplicationDetailId, int? loanChargeFeeId)
@@ -303,6 +314,20 @@ namespace FintrakBanking.Repositories.Credit
                          select a).ToList();
 
             if (exist.Any())
+            {
+                returnVal = true;
+            }
+            return returnVal;
+        }
+        public bool ValidateApprovedFeeConcession(int concessionId)
+        {
+            bool returnVal = false;
+            var isApproved = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION_
+                         where a.CONCESSIONID == concessionId &&
+                           a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                         select a).FirstOrDefault();
+
+            if (isApproved != null)
             {
                 returnVal = true;
             }

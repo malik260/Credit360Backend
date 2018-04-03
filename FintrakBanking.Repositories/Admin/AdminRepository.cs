@@ -749,6 +749,87 @@ namespace FintrakBanking.Repositories.Admin
 
         #endregion Activies
 
+
+        #region Administration
+        public IEnumerable<ActiveUserDetails> GetActiveUsers(int companyId)
+        {
+            return UserDetails(companyId);
+        }
+
+        private IQueryable<ActiveUserDetails> UserDetails(int companyId)
+        {
+            return from p in context.TBL_PROFILE_USER
+                    join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
+                    join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                    join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                    where   st.COMPANYID == companyId 
+                    select new ActiveUserDetails
+                    {
+                        companyId = coy.COMPANYID,
+                        staffId = p.STAFFID,
+                        user_id = p.USERID,
+                        username = p.USERNAME,
+                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                        branchId = st.BRANCHID.Value,
+                        countryId = coy.COUNTRYID,
+                        branchName = br.BRANCHNAME,
+                        companyName = coy.NAME,
+                        logincode = p.LOGINCODE,
+                        lastLoginDate = p.LASTLOGINDATE,
+                        isActive = p.ISACTIVE,
+                        isLocked = p.ISLOCKED,
+                        failedLogonAttempt = p.FAILEDLOGONATTEMPT  ,
+                         lastLockedOutDate = p.LASTLOCKOUTDATE
+                         
+                    } ;
+        }
+
+        public bool UpdateUserStatus(ActiveUserDetails entity , out string message)
+        {
+           // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
+
+            var data = context.TBL_PROFILE_USER.Find(entity.user_id);
+
+            if (data != null)
+            {
+                data.ISACTIVE = entity.isActive;
+
+                data.DATETIMEUPDATED = DateTime.Now;
+                data.LASTUPDATEDBY = entity.lastUpdatedBy;
+
+                if (entity.isLocked && entity.isActive)
+                {
+                    data.ISLOCKED = entity.isLocked;
+                    data.LASTLOCKOUTDATE = DateTime.Now;
+                    entity.actionMessage = "Account has been locked successfully";
+                }
+
+                if(!entity.isLocked && entity.isActive)
+                {
+                    data.ISLOCKED = entity.isLocked;
+                    entity.actionMessage = "Account has been unlocked successfully";
+                }
+
+                if (!entity.isActive && !entity.isLocked)
+                {
+                    data.ISACTIVE = entity.isActive;
+                    data.DEACTIVATEDDATE = DateTime.Now;
+                    entity.actionMessage = "Account has been deactivated successfully";
+                }
+                if (entity.isActive && entity.isLocked)
+                {
+                    data.ISACTIVE = entity.isActive;
+                    entity.actionMessage = "Account has been activated successfully";
+                }
+
+            }
+            message = entity.actionMessage;
+
+            return context.SaveChanges() > 0;
+        }
+        
+        #endregion  
+
     }
 
     public enum UserAccountLockStatusEnum

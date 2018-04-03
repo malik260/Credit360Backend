@@ -16,6 +16,7 @@ namespace FintrakBanking.Entities.Models
             TBL_FEE = new HashSet<TBL_FEE>();
             TBL_PRODUCT = new HashSet<TBL_PRODUCT>();
             TBL_TEMP_PRODUCT = new HashSet<TBL_TEMP_PRODUCT>();
+            TBL_LOAN_COLLATERAL_MAPPING = new HashSet<TBL_LOAN_COLLATERAL_MAPPING>();
             TBL_LOAN_COVENANT_DETAIL = new HashSet<TBL_LOAN_COVENANT_DETAIL>();
             TBL_LOAN_FEE = new HashSet<TBL_LOAN_FEE>();
             TBL_LOAN_FORCE_DEBIT = new HashSet<TBL_LOAN_FORCE_DEBIT>();
@@ -38,6 +39,8 @@ namespace FintrakBanking.Entities.Models
         public short PRODUCTGROUPID { get; set; }
 
         public bool REQUIREPRINCIPALGL { get; set; }
+
+        public bool REQUIREPRINCIPALGL2 { get; set; }
 
         public bool REQUIREINTERESTINCOMEEXPENSEGL { get; set; }
 
@@ -74,6 +77,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_COVENANT_DETAIL> TBL_LOAN_COVENANT_DETAIL { get; set; }

@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -41,6 +44,9 @@
       <HintPath>..\packages\EntityFramework.SqlServerCompact.6.2.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.4.1\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
@@ -118,7 +124,7 @@
     <Compile Include="Customer\CustomerViewModels.cs" />
     <Compile Include="ErrorLogger\ErrorViewModel.cs" />
     <Compile Include="Finance\CurrencyExchangeRateViewModel.cs" />
-    <Compile Include="Finance\CasaLienViewModel.cs" />
+    <Compile Include="CASA\CasaLienViewModel.cs" />
     <Compile Include="Finance\EndOfDayViewModel.cs" />
     <Compile Include="Finance\FinanceTransactionViewModel.cs" />
     <Compile Include="GenaralEntity.cs" />
@@ -185,7 +191,7 @@
     <Compile Include="Setups\General\ProductGroupViewModel.cs" />
     <Compile Include="Setups\General\ProductTypeViewModel.cs" />
     <Compile Include="Setups\General\ProductViewModel.cs" />
-    <Compile Include="Setups\General\RankViewModel.cs" />
+    <Compile Include="Setups\General\StaffRoleViewModel.cs" />
     <Compile Include="Setups\General\StaffViewModel.cs" />
     <Compile Include="Setups\General\StateViewModel.cs" />
     <Compile Include="Setups\Finance\TaxViewModel.cs" />

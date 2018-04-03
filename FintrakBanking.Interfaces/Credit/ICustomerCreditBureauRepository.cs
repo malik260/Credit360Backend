@@ -24,14 +24,18 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CreditBereauViewModel> GetCreditBureauInformation();
 
+        IEnumerable<CRCBureauFacilityViewModel> GetCRCBureauFacilities();
+
         List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId);
 
         #endregion
 
         #region Integration
-        List<string> GetCustomerCreditMatch(CreditBureauSearchViewModel searchInfoList);
+        List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList);
 
         byte[] GetFullSearchResultInPDF(SearchInput searchInput);
+
+        CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo);
         #endregion
     }
 }

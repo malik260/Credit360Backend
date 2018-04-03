@@ -31,6 +31,8 @@ namespace FintrakBanking.Entities.Models
 
         public int GROUPID { get; set; }
 
+        public int? STAFFROLEID { get; set; }
+
         public int POSITION { get; set; }
 
         public int? TENOR { get; set; }
@@ -99,6 +101,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
+
+        public virtual TBL_STAFF_ROLE TBL_STAFF_ROLE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }

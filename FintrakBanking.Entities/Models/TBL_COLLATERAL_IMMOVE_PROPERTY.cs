@@ -80,5 +80,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
 
         public virtual TBL_COLLATERAL_PERFECTN_STAT TBL_COLLATERAL_PERFECTN_STAT { get; set; }
+
+       // public int  STATEID { get; set; }
     }
 }
