@@ -1227,7 +1227,8 @@ namespace FintrakBanking.Repositories.Credit
             var collaterals = context.TBL_CUSTOMER//.Where(x => x.CustomerId == customerId)
                 .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
                 .Join(context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == customerId), cc => cc.Collateral.CUSTOMERID, a => a.CUSTOMERID, (cc, a) => new { CustomerCollateral = cc, Application = a })
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANAPPLICATIONID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANID, (ca, m) => new { CollateralApplication = ca, Mapping = m }) // ------------------ REFACTOR TO LOANID!
+                //.Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANAPPLICATIONID, (ca, m) => new { CollateralApplication = ca, Mapping = m }) // ------------------ REFACTOR TO LOANID!
                 .Select(x => new ActiveCustomerCollateralViewModel
                 {
                     customerId = x.CollateralApplication.Application.CUSTOMERID,
@@ -1237,7 +1238,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanTypeId = x.CollateralApplication.Application.LOANTYPEID,
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
                     //loanId = x.Mapping.LoanId,
-                    loanApplicationId = x.Mapping.LOANAPPLICATIONID,
+                    //loanApplicationId = x.Mapping.LOANAPPLICATIONID, // ------------------ REFACTOR TO LOANID!
                     isReleased = x.Mapping.ISRELEASED,
                     releaseApprovalStatusId = (short)x.Mapping.RELEASEAPPROVALSTATUSID,
                     //productTypeId = x.Mapping.ProductTypeId,
@@ -1266,25 +1267,28 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
-        public IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId)
+        public IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId, int productTypeId)
         {
+            //var l = context.TBL_LOAN.Find(loanId);
+
+
             var collaterals = context.TBL_CUSTOMER
                 .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
-                .Join(context.TBL_LOAN_APPLICATION, cc => cc.Collateral.CUSTOMERID, a => a.CUSTOMERID, (cc, a) => new { CustomerCollateral = cc, Application = a })
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANAPPLICATIONID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x=>x.LOANID == loanId && x.PRODUCTTYPEID==productTypeId), 
+                    ca => ca.Collateral.COLLATERALCUSTOMERID, m => m.COLLATERALCUSTOMERID, (ca, m) => new { LoanCollateral = ca, Mapping = m }) 
                 .Select(x => new ActiveCustomerCollateralViewModel
                 {
-                    customerId = x.CollateralApplication.Application.CUSTOMERID,
+                    customerId = x.LoanCollateral.Customer.CUSTOMERID,
                     collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
-                    loanTypeId = x.CollateralApplication.Application.LOANTYPEID,
+                    loanTypeId = x.Mapping.PRODUCTTYPEID, //
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
-                    loanApplicationId = x.Mapping.LOANAPPLICATIONID,
+                    loanId = x.Mapping.LOANID, 
                     isReleased = x.Mapping.ISRELEASED,
-                    releaseApprovalStatusId = (short)x.Mapping.RELEASEAPPROVALSTATUSID,
-                    customerCode = x.CollateralApplication.CustomerCollateral.Customer.CUSTOMERCODE,
-                    firstName = x.CollateralApplication.CustomerCollateral.Customer.FIRSTNAME,
-                    middleName = x.CollateralApplication.CustomerCollateral.Customer.MIDDLENAME,
-                    lastName = x.CollateralApplication.CustomerCollateral.Customer.LASTNAME,
+                    releaseApprovalStatusId = x.Mapping.RELEASEAPPROVALSTATUSID,
+                    customerCode = x.LoanCollateral.Customer.CUSTOMERCODE,
+                    firstName = x.LoanCollateral.Customer.FIRSTNAME,
+                    middleName = x.LoanCollateral.Customer.MIDDLENAME,
+                    lastName = x.LoanCollateral.Customer.LASTNAME,
                     collateralCode = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                     collateralValue = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                     allowSharing = x.Mapping.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
@@ -1292,13 +1296,15 @@ namespace FintrakBanking.Repositories.Credit
                     valuationCycle = x.Mapping.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
                     hairCut = x.Mapping.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                     collateralTypeId = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
-                    applicationReferenceNumber = x.CollateralApplication.Application.APPLICATIONREFERENCENUMBER,
-                    applicationDate = x.CollateralApplication.Application.APPLICATIONDATE,
-                    interestRate = x.CollateralApplication.Application.INTERESTRATE,
-                    loanInformation = x.CollateralApplication.Application.LOANINFORMATION,
+                    //applicationReferenceNumber = x.CollateralApplication.Application.APPLICATIONREFERENCENUMBER,
+                    //applicationDate = x.CollateralApplication.Application.APPLICATIONDATE,
+                    //interestRate = x.CollateralApplication.Application.INTERESTRATE,
+                    //loanInformation = x.CollateralApplication.Application.LOANINFORMATION,
                 })
                 .Where(x => x.isReleased == false)
                 .Distinct();
+
+            var test = collaterals.ToList();
 
             return collaterals;
         }
@@ -1376,14 +1382,14 @@ namespace FintrakBanking.Repositories.Credit
             return context.TBL_CUSTOMER//.Where(x => x.CustomerId == customerId)
                 .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
                 .Join(context.TBL_LOAN_APPLICATION, cc => cc.Collateral.CUSTOMERID, a => a.CUSTOMERID, (cc, a) => new { CustomerCollateral = cc, Application = a })
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANAPPLICATIONID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANID, (ca, m) => new { CollateralApplication = ca, Mapping = m }) // ------------------ REFACTOR TO LOANID!
                 .Select(x => new ActiveCustomerCollateralViewModel
                 {
                     customerId = x.CollateralApplication.Application.CUSTOMERID,
                     collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
                     loanTypeId = x.CollateralApplication.Application.LOANTYPEID,
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
-                    loanApplicationId = x.Mapping.LOANAPPLICATIONID,
+                    loanApplicationId = x.Mapping.LOANID, // ------------------ REFACTOR TO LOANID!
                     isReleased = x.Mapping.ISRELEASED,
                     releaseApprovalStatusId = (short)x.Mapping.RELEASEAPPROVALSTATUSID,
                     customerCode = x.CollateralApplication.CustomerCollateral.Customer.CUSTOMERCODE,
@@ -1453,8 +1459,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var assignment = new TBL_LOAN_COLLATERAL_MAPPING
             {
-                LOANAPPLICATIONID = entity.loanApplicationId,
+                LOANID = entity.loanId,
                 COLLATERALCUSTOMERID = entity.collateralCustomerId,
+                PRODUCTTYPEID = entity.productTypeId,
                 RELEASEAPPROVALSTATUSID = 0
             };
 
@@ -1466,7 +1473,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.CollateralAssignmentAction,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Collateral Assignment :: LoanApplicationId:'{ assignment.LOANAPPLICATIONID }' CollateralCustomerId:'{ assignment.COLLATERALCUSTOMERID }' ",
+                DETAIL = $"Collateral Assignment :: LoanApplicationId:'{ assignment.LOANID }' CollateralCustomerId:'{ assignment.COLLATERALCUSTOMERID }' ",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),

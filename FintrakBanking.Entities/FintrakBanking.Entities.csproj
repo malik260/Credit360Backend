@@ -364,6 +364,7 @@
     <Compile Include="Models\TBL_STAFF_JOBTITLE.cs" />
     <Compile Include="Models\TBL_STAFF_ORGANOGRAM.cs" />
     <Compile Include="Models\TBL_STAFF_RANK.cs" />
+    <Compile Include="Models\TBL_STAFF_RELIEF.cs" />
     <Compile Include="Models\TBL_STATE.cs" />
     <Compile Include="Models\TBL_STOCK.cs" />
     <Compile Include="Models\TBL_SUB_SECTOR.cs" />

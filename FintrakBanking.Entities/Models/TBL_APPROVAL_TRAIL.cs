@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? RESPONSESTAFFID { get; set; }
 
+        public int? RELIEVEDSTAFFID { get; set; }
+
         public int COMPANYID { get; set; }
 
         public int REQUESTSTAFFID { get; set; }

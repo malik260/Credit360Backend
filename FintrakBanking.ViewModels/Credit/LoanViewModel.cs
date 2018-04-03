@@ -26,6 +26,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string totalRepayment { get { return (principalRepayment + interestAccrual).ToString("#,#.00#"); } }
 
         public int loanApplicationId { get; set; }
+        public int productTypeId { get; set; }
     }
 
     public class FacilityReport

@@ -127,7 +127,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              MiddleName = c.MIDDLENAME,
                              LastName = c.LASTNAME,
                              StaffCode = c.STAFFCODE,
-                             RankId = c.RANKID,
+                             RankId = c.STAFFROLEID,
                              BranchName = br.BRANCHNAME,
                              DepartmentName = dept.DEPARTMENTNAME,
                              DepartmentUnitId = (short)c.DEPARTMENT_UNITID,
@@ -170,7 +170,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              MiddleName = c.MIDDLENAME,
                              LastName = c.LASTNAME,
                              StaffCode = c.STAFFCODE,
-                             RankId = c.RANKID,
+                             RankId = c.STAFFROLEID,
                              //BranchName = br.BranchName,
 
                              //DepartmentName = c.Department.DepartmentName,
@@ -210,7 +210,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.STAFFCODE = staffModel.StaffCode;
                 tempStaffToUpdate.JOBTITLEID = staffModel.JobTitleId;
                 tempStaffToUpdate.COMPANYID = staffModel.companyId;
-                tempStaffToUpdate.RANKID = staffModel.RankId;
+                //tempStaffToUpdate.STAFFROLEID = staffModel.RankId;
                 tempStaffToUpdate.ADDRESS = staffModel.Address;
                 tempStaffToUpdate.ADDRESSOFNOK = staffModel.AddressOfNok;
                 tempStaffToUpdate.BRANCHID = staffModel.BranchId;
@@ -249,7 +249,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFCODE = targetStaff?.STAFFCODE,
                     JOBTITLEID = staffModel.JobTitleId,
                     COMPANYID = staffModel.companyId,
-                    RANKID = staffModel.RankId,
+                    //STAFFROLEID = staffModel.RankId,
                     ADDRESS = staffModel.Address,
                     ADDRESSOFNOK = staffModel.AddressOfNok,
                     BRANCHID = staffModel.BranchId,
@@ -428,7 +428,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.LASTNAME = temp.LASTNAME;
                 entity.STAFFCODE = temp.STAFFCODE;
                 entity.JOBTITLEID = temp.JOBTITLEID;
-                entity.RANKID = temp.RANKID;
+                entity.STAFFROLEID = temp.RANKID;
                 entity.ADDRESS = temp.ADDRESS;
                 entity.ADDRESSOFNOK = temp.ADDRESSOFNOK;
                 entity.BRANCHID = temp.BRANCHID;
@@ -461,7 +461,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     LASTNAME = temp.LASTNAME,
                     STAFFCODE = temp.STAFFCODE,
                     JOBTITLEID = temp.JOBTITLEID,
-                    RANKID = temp.RANKID,
+                    STAFFROLEID = temp.RANKID,
                     ADDRESS = temp.ADDRESS,
                     ADDRESSOFNOK = temp.ADDRESSOFNOK,
                     BRANCHID = temp.BRANCHID,
@@ -550,7 +550,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 LASTNAME = staffModel.LastName,
                 STAFFCODE = StaticHelpers.GetUniqueKey(6),
                 JOBTITLEID = staffModel.JobTitleId,
-                RANKID = staffModel.RankId,
+                //RANKID = staffModel.RankId,
                 ADDRESS = staffModel.Address,
                 ADDRESSOFNOK = staffModel.AddressOfNok,
                 BRANCHID = staffModel.BranchId,
@@ -796,7 +796,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             MiddleName = c.MIDDLENAME,
                             LastName = c.LASTNAME,
                             StaffCode = c.STAFFCODE,
-                            RankId = c.RANKID,
+                            RankId = c.STAFFROLEID,
                             Rank = c.TBL_STAFF_RANK.RANKNAME,
                             DepartmentName = dept.DEPARTMENTNAME,
                             DepartmentUnitId = (short)c.DEPARTMENT_UNITID,
@@ -1027,7 +1027,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     DEPARTMENTID = staffInfoRow.DepartmentId,
                     STAFFCODE = staffInfoRow.StaffCode,
-                    RANKID = staffInfoRow.RankId,
+                    //STAFFROLEID = staffInfoRow.RankId,
                     BRANCHID = staffInfoRow.BranchId,
                     FIRSTNAME = staffInfoRow.FirstName,
                     LASTNAME = staffInfoRow.LastName,
@@ -1205,7 +1205,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFCODE = staff.STAFFCODE,
                 JOBTITLEID = staff.JOBTITLEID,
                 COMPANYID = staff.COMPANYID,
-                RANKID = staff.RANKID,
+                RANKID = staff.STAFFROLEID,
                 ADDRESS = staff.ADDRESS,
                 ADDRESSOFNOK = staff.ADDRESSOFNOK,
                 BRANCHID = staff.BRANCHID,

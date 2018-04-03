@@ -18,7 +18,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             {
 
                 var data = from l in db.TBL_LOAN
-                           join m in db.TBL_LOAN_COLLATERAL_MAPPING on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                           join m in db.TBL_LOAN_COLLATERAL_MAPPING on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals m.LOANID // ------------------ REFACTOR TO LOANID!
                            join g in db.TBL_LOAN_GUARANTOR on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
                            where l.COMPANYID == companyId && l.LOANSTATUSID == 1
                                 && DbFunctions.TruncateTime(l.DATEAPPROVED) >= DbFunctions.TruncateTime(startDate)
@@ -64,7 +64,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             {
 
                 var data = from l in db.TBL_LOAN
-                           join m in db.TBL_LOAN_COLLATERAL_MAPPING on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                           join m in db.TBL_LOAN_COLLATERAL_MAPPING on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals m.LOANID // ------------------ REFACTOR TO LOANID!
                            join g in db.TBL_LOAN_GUARANTOR on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
                            where l.COMPANYID == companyId && l.LOANSTATUSID == 1  && l.TBL_CASA.PRODUCTACCOUNTNUMBER==accountNo
 
@@ -108,7 +108,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             {
 
                 var data = from l in db.TBL_LOAN
-                           join m in db.TBL_LOAN_COLLATERAL_MAPPING on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                           join m in db.TBL_LOAN_COLLATERAL_MAPPING on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals m.LOANID // ------------------ REFACTOR TO LOANID!
                            join g in db.TBL_LOAN_GUARANTOR on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
                            where l.COMPANYID == companyId && l.LOANSTATUSID == 1 && l.TBL_CASA.PRODUCTACCOUNTNUMBER == accountNo
 

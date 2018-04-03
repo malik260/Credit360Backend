@@ -431,14 +431,14 @@ namespace FintrakBanking.Repositories.Credit
 
             IQueryable<PrivilegeViewModel> grants;
 
-            if (staff.RANKID != null)
+            if (staff.STAFFROLEID > 0)
             {
-                var rank = context.TBL_STAFF_RANK.Find(staff.RANKID);
+                var rank = context.TBL_STAFF_RANK.Find(staff.STAFFROLEID);
 
                 grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
                     .Join(context.TBL_APPROVAL_GROUP,
                         m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.STAFFROLEID == staff.RANKID),
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.STAFFROLEID == staff.STAFFROLEID),
                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
                         {
                             viewCamDocument = l.CANVIEWDOCUMENT,

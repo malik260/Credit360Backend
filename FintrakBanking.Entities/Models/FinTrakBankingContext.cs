@@ -172,6 +172,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STAFF_JOBTITLE> TBL_STAFF_JOBTITLE { get; set; }
         public virtual DbSet<TBL_STAFF_ORGANOGRAM> TBL_STAFF_ORGANOGRAM { get; set; }
         public virtual DbSet<TBL_STAFF_RANK> TBL_STAFF_RANK { get; set; }
+        public virtual DbSet<TBL_STAFF_RELIEF> TBL_STAFF_RELIEF { get; set; }
         public virtual DbSet<TBL_STATE> TBL_STATE { get; set; }
         public virtual DbSet<TBL_SUB_SECTOR> TBL_SUB_SECTOR { get; set; }
         public virtual DbSet<TBL_TAX> TBL_TAX { get; set; }
@@ -456,8 +457,9 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_APPROVAL_STATUS>()
                 .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
-                .WithOptional(e => e.TBL_APPROVAL_STATUS)
-                .HasForeignKey(e => e.RELEASEAPPROVALSTATUSID);
+                .WithRequired(e => e.TBL_APPROVAL_STATUS)
+                .HasForeignKey(e => e.RELEASEAPPROVALSTATUSID)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_APPROVAL_STATUS>()
                 .HasMany(e => e.TBL_LOAN_CONDITION_DEFERRAL)
@@ -2612,11 +2614,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_STAFF>()
                 .HasMany(e => e.TBL_STAFF1)
                 .WithOptional(e => e.TBL_STAFF2)
-                .HasForeignKey(e => e.RELIEF_STAFFID);
-
-            modelBuilder.Entity<TBL_STAFF>()
-                .HasMany(e => e.TBL_STAFF11)
-                .WithOptional(e => e.TBL_STAFF3)
                 .HasForeignKey(e => e.SUPERVISOR_STAFFID);
 
             modelBuilder.Entity<TBL_STAFF>()
@@ -2631,11 +2628,6 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.RELATIONSHIPMANAGERID)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_STAFF>()
-                .HasMany(e => e.TBL_TEMP_STAFF)
-                .WithOptional(e => e.TBL_STAFF)
-                .HasForeignKey(e => e.RELIEF_STAFFID);
-
             modelBuilder.Entity<TBL_STAFF_JOBTITLE>()
                 .HasMany(e => e.TBL_STAFF)
                 .WithRequired(e => e.TBL_STAFF_JOBTITLE)
@@ -2649,6 +2641,7 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_STAFF_RANK>()
                 .HasMany(e => e.TBL_STAFF)
                 .WithRequired(e => e.TBL_STAFF_RANK)
+                .HasForeignKey(e => e.STAFFROLEID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_STAFF_RANK>()
@@ -3318,11 +3311,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION>()
                 .HasMany(e => e.TBL_LOAN_APPLTN_CREDIT_BUREAU)
-                .WithRequired(e => e.TBL_LOAN_APPLICATION)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_APPLICATION>()
-                .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION)
                 .WillCascadeOnDelete(false);
 
