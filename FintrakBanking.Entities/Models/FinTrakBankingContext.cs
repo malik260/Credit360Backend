@@ -357,6 +357,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DEAL_TYPE> TBL_DEAL_TYPE { get; set; }
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
+        //public virtual DbSet<TBL_COLLATERAL_VISITATION> TBL_COLLATERAL_VISITATION { get; set; }
+        public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
+        public virtual DbSet<TBL_STOCK_PRICE> TBL_STOCK_PRICE { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -49,13 +49,13 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.context.SaveChanges() > 0;
         }
 
-       //public  IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId)
-       // {
-       //     var data = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCT_CLASS_PROCESSID == processId).Select(c => new ProductClassViewModel
-       //     {
-                 
-       //     });
-       // }
+        //public  IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId)
+        // {
+        //     var data = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCT_CLASS_PROCESSID == processId).Select(c => new ProductClassViewModel
+        //     {
+
+        //     });
+        // }
 
         private string GenerateProductCode(int companyId)
         {
@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId)
         {
-            return (from data in context.TBL_PRODUCT_CLASS.Where(c=> c.PRODUCT_CLASS_PROCESSID == processId)
+            return (from data in context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCT_CLASS_PROCESSID == processId)
                         //where data.OperationTypeId == operationTypeId
                     select new LookupViewModel()
                     {
@@ -122,7 +122,8 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId)
         {
-            return (from data in context.TBL_PRODUCT_CLASS where data.CUSTOMERTYPEID == customerTypeId
+            return (from data in context.TBL_PRODUCT_CLASS
+                    where data.CUSTOMERTYPEID == customerTypeId
                     //where data.OperationTypeId == operationTypeId
                     select new LookupViewModel()
                     {
@@ -147,7 +148,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<LookupViewModel> GetProductCurrency(int productId)
         {
-            var data = (from p in context.TBL_PRODUCT_CURRENCY where p.PRODUCTID ==  productId
+            var data = (from p in context.TBL_PRODUCT_CURRENCY
+                        where p.PRODUCTID == productId
                         select new LookupViewModel()
                         {
                             lookupId = (short)p.CURRENCYID,
@@ -303,7 +305,7 @@ namespace FintrakBanking.Repositories.Setups.General
         #region Product Type
         public IQueryable<ProductTypeViewModel> AllProductType()
         {
-            return (from p in context.TBL_PRODUCT_TYPE
+            var productType =  (from p in context.TBL_PRODUCT_TYPE
                     where p.DELETED == false
                     select new ProductTypeViewModel()
                     {
@@ -312,6 +314,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productGroupId = p.PRODUCTGROUPID,
                         productGroupName = p.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
                         requirePrincipalGl = p.REQUIREPRINCIPALGL,
+                        requirePrincipalGl2 = p.REQUIREPRINCIPALGL2,
                         requireInterestIncomeExpenseGl = p.REQUIREINTERESTINCOMEEXPENSEGL,
                         requireInterestReceivablePayableGl = p.REQUIRE_INT_RECEIVABL_PAYABLGL,
                         requirePremiumDiscountGl = p.REQUIREPREMIUMDISCOUNTGL,
@@ -322,6 +325,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         dealClassificationId = p.DEALCLASSIFICATIONID,
                         requireScheduleType = p.REQUIRESCHEDULETYPE
                     });
+            var b = productType.ToList();
+            return productType;
         }
 
         public IEnumerable<ProductTypeViewModel> GetAllProductType()
@@ -365,6 +370,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 PRODUCTTYPENAME = productType.productTypeName,
                 PRODUCTGROUPID = productType.productGroupId,
                 REQUIREPRINCIPALGL = productType.requirePrincipalGl,
+                REQUIREPRINCIPALGL2 = productType.requirePrincipalGl2,
                 REQUIREINTERESTINCOMEEXPENSEGL = productType.requireInterestIncomeExpenseGl,
                 REQUIRE_INT_RECEIVABL_PAYABLGL = productType.requireInterestReceivablePayableGl,
                 REQUIREPREMIUMDISCOUNTGL = productType.requirePremiumDiscountGl,
@@ -420,7 +426,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             data.PRODUCTTYPENAME = productType.productTypeName;
             data.PRODUCTGROUPID = productType.productGroupId;
-            data.REQUIREPRINCIPALGL = productType.requirePrincipalGl;
+            data.REQUIREPRINCIPALGL = productType.requirePrincipalGl2;
+            data.REQUIREPRINCIPALGL2 = productType.requirePrincipalGl;
             data.REQUIREPREMIUMDISCOUNTGL = productType.requirePremiumDiscountGl;
             data.REQUIREDORMANTGL = productType.requireDormantGl;
             data.REQUIREOVERDRAWNGL = productType.requireOverdrawnGL;
@@ -497,96 +504,100 @@ namespace FintrakBanking.Repositories.Setups.General
         private IQueryable<ProductViewModel> AllProduct()
         {
             var productData = (from data in context.TBL_PRODUCT
-                    select new ProductViewModel()
-                    {
-                        productId = data.PRODUCTID,
-                        companyId = data.COMPANYID,
-                        productTypeId = data.PRODUCTTYPEID,
-                        productTypeName = data.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
-                        productGroupName = data.TBL_PRODUCT_TYPE.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
-                        productCategoryId = data.PRODUCTCATEGORYID,
-                        productCategoryName = data.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
-                        productClassId = data.PRODUCTCLASSID,
-                        productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                               select new ProductViewModel()
+                               {
+                                   productId = data.PRODUCTID,
+                                   companyId = data.COMPANYID,
+                                   productTypeId = data.PRODUCTTYPEID,
+                                   productTypeName = data.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                   productGroupName = data.TBL_PRODUCT_TYPE.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
+                                   productCategoryId = data.PRODUCTCATEGORYID,
+                                   productCategoryName = data.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
+                                   productClassId = data.PRODUCTCLASSID,
+                                   productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
-                        customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
+                                   customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
 
-                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
-                        productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
-                        productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
+                                   productPriceIndexId = data.PRODUCTPRICEINDEXID,
+                                   productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                                   productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
 
-                        productCode = data.PRODUCTCODE,
-                        productName = data.PRODUCTNAME,
-                        productDescription = data.PRODUCTDESCRIPTION,
+                                   productCode = data.PRODUCTCODE,
+                                   productName = data.PRODUCTNAME,
+                                   productDescription = data.PRODUCTDESCRIPTION,
 
-                        productGroupId = data.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
+                                   productGroupId = data.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
 
-                        principalBalanceGl = data.PRINCIPALBALANCEGL,
-                        principalBalanceGlCode = (data.PRINCIPALBALANCEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                                   principalBalanceGl = data.PRINCIPALBALANCEGL,
+                                   principalBalanceGlCode = (data.PRINCIPALBALANCEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        interestIncomeExpenseGl = data.INTERESTINCOMEEXPENSEGL,
-                        interestIncomeExpenseGlCode = (data.INTERESTINCOMEEXPENSEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                                   principalBalanceGl2 = data.PRINCIPALBALANCEGL2,
+                                   principalBalanceGl2Code = (data.PRINCIPALBALANCEGL2.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        interestReceivablePayableGl = data.INTERESTRECEIVABLEPAYABLEGL,
-                        interestReceivablePayableGlCode = (data.INTERESTRECEIVABLEPAYABLEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                                   interestIncomeExpenseGl = data.INTERESTINCOMEEXPENSEGL,
+                                   interestIncomeExpenseGlCode = (data.INTERESTINCOMEEXPENSEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        dormantGl = data.DORMANTGL,
-                        premiumDiscountGl = data.PREMIUMDISCOUNTGL,
+                                   interestReceivablePayableGl = data.INTERESTRECEIVABLEPAYABLEGL,
+                                   interestReceivablePayableGlCode = (data.INTERESTRECEIVABLEPAYABLEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        dealTypeId = data.DEALTYPEID,
-                        dealTypeName = data.TBL_DEAL_TYPE.DEALTYPENAME,
-                        dealClassificationId = data.DEALCLASSIFICATIONID,
-                        dealClassificationName = data.TBL_DEAL_CLASSIFICATION.CLASSIFICATION,
-                        dayCountId = data.DAYCOUNTCONVENTIONID,
-                        dayCountName = data.TBL_DAY_COUNT_CONVENTION.DAYCOUNTCONVENTIONNAME,
+                                   dormantGl = data.DORMANTGL,
+                                   premiumDiscountGl = data.PREMIUMDISCOUNTGL,
 
-                        maximumTenor = data.MAXIMUMTENOR,
-                        minimumTenor = data.MINIMUMTENOR,
-                        maximumRate = data.MAXIMUMRATE,
-                        minimumRate = data.MINIMUMRATE,
-                        minimumBalance = data.MINIMUMBALANCE,
-                        approvedBy = data.APPROVEDBY,
-                        completed = data.COMPLETED,
-                        approved = data.APPROVED,
-                        ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == data.PRODUCTID).Select(d => new ProductBehaviourViewModel()
-                        {
-                            customerLimit = d.CUSTOMER_LIMIT,
-                            collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
-                            collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
-                            productLimit = d.PRODUCT_LIMIT,
-                            isInvoiceBased = d.ISINVOICEBASED,
-                            requireCasaAccount = (bool)d.REQUIRECASAACCOUNT 
+                                   dealTypeId = data.DEALTYPEID,
+                                   dealTypeName = data.TBL_DEAL_TYPE.DEALTYPENAME,
+                                   dealClassificationId = data.DEALCLASSIFICATIONID,
+                                   dealClassificationName = data.TBL_DEAL_CLASSIFICATION.CLASSIFICATION,
+                                   dayCountId = data.DAYCOUNTCONVENTIONID,
+                                   dayCountName = data.TBL_DAY_COUNT_CONVENTION.DAYCOUNTCONVENTIONNAME,
 
-                        }).FirstOrDefault(),
-                        currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == data.PRODUCTID && curr.DELETED != false)
-                        .Select(c => new ProductCurrencyViewModel()
-                        {
-                            productId = c.PRODUCTID,
-                            productCurrencyId = c.PRODUCTCURRENCYID,
-                            currencyId = c.CURRENCYID,
-                            currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
-                        }).ToList(),
+                                   maximumTenor = data.MAXIMUMTENOR,
+                                   minimumTenor = data.MINIMUMTENOR,
+                                   maximumRate = data.MAXIMUMRATE,
+                                   minimumRate = data.MINIMUMRATE,
+                                   minimumBalance = data.MINIMUMBALANCE,
+                                   approvedBy = data.APPROVEDBY,
+                                   completed = data.COMPLETED,
+                                   approved = data.APPROVED,
+                                   ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == data.PRODUCTID).Select(d => new ProductBehaviourViewModel()
+                                   {
+                                       customerLimit = d.CUSTOMER_LIMIT,
+                                       collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                                       collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+                                       productLimit = d.PRODUCT_LIMIT,
+                                       isInvoiceBased = d.ISINVOICEBASED,
+                                       requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
+                                       allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false
 
-                        dateTimeUpdated = data.DATETIMEUPDATED,
-                        deleted = data.DELETED,
-                        deletedBy = data.DELETEDBY,
-                        dateTimeDeleted = data.DATETIMEDELETED,
+                                   }).FirstOrDefault(),
+                                   currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == data.PRODUCTID && curr.DELETED != false)
+                                   .Select(c => new ProductCurrencyViewModel()
+                                   {
+                                       productId = c.PRODUCTID,
+                                       productCurrencyId = c.PRODUCTCURRENCYID,
+                                       currencyId = c.CURRENCYID,
+                                       currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
+                                   }).ToList(),
 
-                        allowCustomerAccountForceDebit = data.ALLOWCUSTOMERACCOUNTFORCEDEBIT,
-                        allowMoratorium = data.ALLOWMORATORIUM,
-                        allowScheduleTypeOverride = data.ALLOWSCHEDULETYPEOVERRIDE,
-                        allowTenor = data.ALLOWTENOR,
-                        allowRate = data.ALLOWOVERDRAWN,
-                        allowOverdrawn = data.ALLOWOVERDRAWN,
+                                   dateTimeUpdated = data.DATETIMEUPDATED,
+                                   deleted = data.DELETED,
+                                   deletedBy = data.DELETEDBY,
+                                   dateTimeDeleted = data.DATETIMEDELETED,
 
-                        cleanupPeriod = data.CLEANUPPERIOD,
-                        defaultGracePeriod = data.DEFAULTGRACEPERIOD,
-                        equityContribution = data.EQUITYCONTRIBUTION,
-                        expiryPeriod = data.EXPIRYPERIOD,
-                        scheduleTypeId = data.SCHEDULETYPEID,
-                       
+                                   allowCustomerAccountForceDebit = data.ALLOWCUSTOMERACCOUNTFORCEDEBIT,
+                                   allowMoratorium = data.ALLOWMORATORIUM,
+                                   allowScheduleTypeOverride = data.ALLOWSCHEDULETYPEOVERRIDE,
+                                   allowTenor = data.ALLOWTENOR,
+                                   allowRate = data.ALLOWOVERDRAWN,
+                                   allowOverdrawn = data.ALLOWOVERDRAWN,
 
-                    });
+                                   cleanupPeriod = data.CLEANUPPERIOD,
+                                   defaultGracePeriod = data.DEFAULTGRACEPERIOD,
+                                   equityContribution = data.EQUITYCONTRIBUTION,
+                                   expiryPeriod = data.EXPIRYPERIOD,
+                                   scheduleTypeId = data.SCHEDULETYPEID,
+
+
+                               });
 
             return productData;
         }
@@ -619,7 +630,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     isInvoiceBased = c.ISINVOICEBASED,
                     lcyLimit = c.COLLATERAL_LCY_LIMIT,
                     requireCasaAccount = (bool)c.REQUIRECASAACCOUNT,
-                    productLimit = c.PRODUCT_LIMIT
+                    productLimit = c.PRODUCT_LIMIT,
+                    allowFundUsage = c.ALLOWFUNDUSAGE != null ? (bool)c.ALLOWFUNDUSAGE : false
                 }).FirstOrDefault(),
             });
             return null;
@@ -629,10 +641,10 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return AllProduct();
         }
-        
+
         public IEnumerable<ProductSearchViewModel> GetAllLoanProduct(int companyId)
         {
-            return ProductSearch(companyId).Where(c => c.productGroupId ==(int)ProductGroupEnum.LoansAndAdvances);
+            return ProductSearch(companyId).Where(c => c.productGroupId == (int)ProductGroupEnum.LoansAndAdvances);
         }
 
         public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId)
@@ -698,6 +710,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         principalBalanceGl = c.PRINCIPALBALANCEGL,
                         principalBalanceGlCode = (c.PRINCIPALBALANCEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+
+                        principalBalanceGl2 = c.PRINCIPALBALANCEGL2,
+                        principalBalanceGl2Code = (c.PRINCIPALBALANCEGL2.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+
 
                         interestIncomeExpenseGl = c.INTERESTINCOMEEXPENSEGL,
                         interestIncomeExpenseGlCode = (c.INTERESTINCOMEEXPENSEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
@@ -766,7 +782,10 @@ namespace FintrakBanking.Repositories.Setups.General
                             collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
                             collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                             productLimit = d.PRODUCT_LIMIT,
-                            isInvoiceBased = d.ISINVOICEBASED
+                            isInvoiceBased = d.ISINVOICEBASED,
+                            allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false,
+                            requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
+
 
                         }).FirstOrDefault(),
                         dateTimeUpdated = c.DATETIMEUPDATED,
@@ -822,6 +841,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         principalBalanceGl = tp.PRINCIPALBALANCEGL,
                         principalBalanceGlCode = (tp.PRINCIPALBALANCEGL.HasValue ? tp.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+
+                        principalBalanceGl2 = tp.PRINCIPALBALANCEGL2,
+                        principalBalanceGl2Code = (tp.PRINCIPALBALANCEGL2.HasValue ? context.TBL_CHART_OF_ACCOUNT.Find(tp.PRINCIPALBALANCEGL2).ACCOUNTCODE : ""),
+
 
                         interestIncomeExpenseGl = tp.INTERESTINCOMEEXPENSEGL,
                         interestIncomeExpenseGlCode = (tp.INTERESTINCOMEEXPENSEGL.HasValue ? tp.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
@@ -882,7 +905,9 @@ namespace FintrakBanking.Repositories.Setups.General
                             collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
                             collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                             productLimit = d.PRODUCT_LIMIT,
-                            isInvoiceBased = d.ISINVOICEBASED
+                            isInvoiceBased = d.ISINVOICEBASED,
+                            allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false
+
 
                         }).FirstOrDefault(),
 
@@ -944,10 +969,10 @@ namespace FintrakBanking.Repositories.Setups.General
         private bool ApproveProduct(int productId, short approvalStatusId, UserInfo user)
         {
             var productModel = context.TBL_TEMP_PRODUCT.Find(productId);
-            var productBehaviourModel = context.TBL_PRODUCT_BEHAVIOUR.Where(x=>x.PRODUCTID == productModel.PRODUCTID).FirstOrDefault();
+            var productBehaviourModel = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == productModel.PRODUCTID).FirstOrDefault();
 
             var productToUpdate = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTCODE == productModel.PRODUCTCODE);
-            var productBehaviourToUpdate= context.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault(x => x.PRODUCTID == productModel.PRODUCTID);
+            var productBehaviourToUpdate = context.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault(x => x.PRODUCTID == productModel.PRODUCTID);
 
             var currModel = context.TBL_TEMP_PRODUCT_CURRENCY.Where(c => c.PRODUCTID == productModel.PRODUCTID && c.DELETED == false);
             var currListToUpdate = new List<TBL_PRODUCT_CURRENCY>();
@@ -1044,6 +1069,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingProduct.PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION;
 
                     existingProduct.PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL;
+                    existingProduct.PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2;
                     existingProduct.INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL;
                     existingProduct.INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL;
                     existingProduct.DORMANTGL = productModel.DORMANTGL;
@@ -1094,6 +1120,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         existingProductBehaviour.COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT;
                         existingProductBehaviour.COLLATERAL_LCY_LIMIT = productBehaviourModel.COLLATERAL_LCY_LIMIT;
                         existingProductBehaviour.ISINVOICEBASED = productBehaviourModel.ISINVOICEBASED;
+                        existingProductBehaviour.ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE;
                     }
                 }
                 else //Insert a new product record into the real product table
@@ -1154,6 +1181,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION,
 
                             PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL,
+                            PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2,
                             INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL,
                             INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL,
                             DORMANTGL = productModel.DORMANTGL,
@@ -1208,7 +1236,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT,
                             CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT,
                             PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT,
-
+                            ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE,
+                            REQUIRECASAACCOUNT = productBehaviourModel.REQUIRECASAACCOUNT
                         };
                         context.TBL_PRODUCT.Add(product);
                         context.TBL_PRODUCT_BEHAVIOUR.Add(productBehaviour);
@@ -1272,7 +1301,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<ProductViewModel> AddTempProduct(ProductViewModel productModel)
         {
-            var isPrincipalGLRequired = context.TBL_PRODUCT_TYPE.Any(x => x.PRODUCTTYPEID == productModel.productTypeId && x.REQUIREPRINCIPALGL == true);
+            var isPrincipalGLRequired = context.TBL_PRODUCT_TYPE.Any(x => x.PRODUCTTYPEID == productModel.productTypeId && x.REQUIREPRINCIPALGL == true || x.PRODUCTTYPEID == productModel.productTypeId && x.REQUIREPRINCIPALGL2 == true);
 
             if (isPrincipalGLRequired)
             {
@@ -1400,6 +1429,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 PRODUCTDESCRIPTION = productModel.productDescription,
 
                 PRINCIPALBALANCEGL = productModel.principalBalanceGl,
+                PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2,
                 INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl,
                 INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl,
                 DORMANTGL = productModel.dormantGl,
@@ -1456,6 +1486,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 CUSTOMER_LIMIT = behaviour.customerLimit,
                 PRODUCT_LIMIT = behaviour.productLimit,
                 ISINVOICEBASED = behaviour.isInvoiceBased,
+                ALLOWFUNDUSAGE = behaviour.allowFundUsage,
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = productModel.createdBy
             };
@@ -1539,6 +1570,7 @@ namespace FintrakBanking.Repositories.Setups.General
         //        ProductDescription = product.productDescription,
 
         //        PrincipalBalanceGL = product.principalBalanceGl,
+        //        PrincipalBalanceGL = product.principalBalanceGl2,
         //        InterestIncomeExpenseGL = product.interestIncomeExpenseGl,
         //        InterestReceivablePayableGL = product.interestReceivablePayableGl,
         //        DormantGL = product.dormantGl,
@@ -1713,6 +1745,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductToUpdate.PRODUCTDESCRIPTION = productModel.productDescription;
 
                 tempProductToUpdate.PRINCIPALBALANCEGL = productModel.principalBalanceGl;
+                tempProductToUpdate.PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2;
                 tempProductToUpdate.INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl;
                 tempProductToUpdate.INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl;
                 tempProductToUpdate.DORMANTGL = productModel.dormantGl;
@@ -1755,7 +1788,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductToUpdate.TBL_TEMP_PRODUCT_COLLATERALTYP = productCollaterals;
 
                 //Product Behaviour Update
-                if (existingTempProductBehaviour != null) {
+                if (existingTempProductBehaviour != null)
+                {
                     var TempProductBehaviourToUpdate = existingTempProductBehaviour;
                     TempProductBehaviourToUpdate.COLLATERAL_FCY_LIMIT = productModel.ProductBehaviour.collateralFcyLimit;
                     TempProductBehaviourToUpdate.COLLATERAL_LCY_LIMIT = productModel.ProductBehaviour.collateralLcyLimit;
@@ -1764,8 +1798,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     TempProductBehaviourToUpdate.ISINVOICEBASED = productModel.ProductBehaviour.isInvoiceBased;
                     TempProductBehaviourToUpdate.PRODUCTCODE = productModel.ProductBehaviour.productCode;
                     TempProductBehaviourToUpdate.PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit;
+                    TempProductBehaviourToUpdate.ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage;
                 }
-                else if(productModel.ProductBehaviour != null)
+                else if (productModel.ProductBehaviour != null)
                 {
                     tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
                     {
@@ -1776,18 +1811,19 @@ namespace FintrakBanking.Repositories.Setups.General
                         ISCURRENT = true,
                         ISINVOICEBASED = productModel.ProductBehaviour.isInvoiceBased,
                         PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit,
+                        ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage,
                         DATETIMECREATED = DateTime.Now,
                         CREATEDBY = productModel.createdBy
                     };
                     context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
                 }
-                
+
 
             }
             else
             {
                 var targetProduct = context.TBL_PRODUCT.Find(productId);
-                var targetProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x=>x.PRODUCTID == targetProduct.PRODUCTID).FirstOrDefault();
+                var targetProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == targetProduct.PRODUCTID).FirstOrDefault();
                 //Storing the updated product currencies
                 foreach (var item in productModel.currencies)
                 {
@@ -1844,6 +1880,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     PRODUCTDESCRIPTION = productModel.productDescription,
 
                     PRINCIPALBALANCEGL = productModel.principalBalanceGl,
+                    PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2,
                     INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl,
                     INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl,
                     DORMANTGL = productModel.dormantGl,
@@ -1896,8 +1933,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     ISCURRENT = true,
                     ISINVOICEBASED = productModel.ProductBehaviour.isInvoiceBased,
                     PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit,
+                    ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage,
                     DATETIMECREATED = DateTime.Now,
-                    CREATEDBY =productModel.createdBy
+                    CREATEDBY = productModel.createdBy
                 };
 
                 context.TBL_TEMP_PRODUCT.Add(tempProduct);
@@ -2180,7 +2218,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 var data = new TBL_PRODUCT_CLASS_PROCESS()
                 {
                     PRODUCT_CLASS_PROCESS_NAME = model.productClassProcessName,
-                    MAXIMUM_AMOUNT =(decimal) model.maximumAmount,
+                    MAXIMUM_AMOUNT = (decimal)model.maximumAmount,
                     USE_AMOUNT_LIMIT = model.useAmountLimit
                 };
 
@@ -2206,7 +2244,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (data != null)
             {
                 data.PRODUCT_CLASS_PROCESS_NAME = model.productClassProcessName;
-                data.MAXIMUM_AMOUNT = (decimal) model.maximumAmount;
+                data.MAXIMUM_AMOUNT = (decimal)model.maximumAmount;
                 data.USE_AMOUNT_LIMIT = model.useAmountLimit;
 
                 try

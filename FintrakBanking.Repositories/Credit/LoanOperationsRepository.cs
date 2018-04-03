@@ -354,12 +354,11 @@ namespace FintrakBanking.Repositories.Credit
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
             var data = (from a in context.TBL_LOAN
-                        join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
+                        //join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
                         join c in context.TBL_DAY_COUNT_CONVENTION on a.SCHEDULEDAYCOUNTCONVENTIONID equals c.DAYCOUNTCONVENTIONID
                         join d in context.TBL_SETUP_COMPANY on a.COMPANYID equals d.COMPANYID
-                        where b.DATE == DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                       && (b.CREDITAMOUNT - b.DEBITAMOUNT) < 0 && a.ALLOWFORCEDEBITREPAYMENT == false
-                        && b.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest && a.SUSPENDINTEREST == false
+                        where  a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                        && a.ALLOWFORCEDEBITREPAYMENT == false && a.SUSPENDINTEREST == false
 
 
                         select new DailyInterestAccrualViewModel()
@@ -372,10 +371,10 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = a.EXCHANGERATE,
                             interestRate = a.INTERESTRATE,
                             date = applicationDate,
-                            dailyAccuralAmount = d.PASTDUEINDEFAULT_INTERESTRATE / 100,
-                            mainAmount = (b.DEBITAMOUNT - b.CREDITAMOUNT),
+                            dailyAccuralAmount = a.INTERESTRATE,/// change to global charge rate 
+                            mainAmount = a.PASTDUEINTEREST,
                             categoryId = (short)DailyAccrualCategory.PastDueObligation,
-                            availableBalance = (b.DEBITAMOUNT - b.CREDITAMOUNT),
+                            availableBalance = a.PASTDUEINTEREST,
                             transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                             baseReferenceNumber = null,
                             dayCountConventionId = c.DAYCOUNTCONVENTIONID,
@@ -442,12 +441,11 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var data = (from a in context.TBL_LOAN
-                        join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
+                        //join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
                         join c in context.TBL_DAY_COUNT_CONVENTION on a.SCHEDULEDAYCOUNTCONVENTIONID equals c.DAYCOUNTCONVENTIONID
                         join d in context.TBL_SETUP_COMPANY on a.COMPANYID equals d.COMPANYID
-                        where b.DATE == DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                       && (b.CREDITAMOUNT - b.DEBITAMOUNT) < 0 && a.ALLOWFORCEDEBITREPAYMENT == false
-                        && b.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal && a.SUSPENDINTEREST == false
+                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.ALLOWFORCEDEBITREPAYMENT == false
+                        && a.SUSPENDINTEREST == false
 
 
                         select new DailyInterestAccrualViewModel()
@@ -460,10 +458,10 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = a.EXCHANGERATE,
                             interestRate = a.INTERESTRATE,
                             date = applicationDate,
-                            dailyAccuralAmount = d.PASTDUEINDEFAULT_INTERESTRATE,
-                            mainAmount = (b.DEBITAMOUNT - b.CREDITAMOUNT),
-                            categoryId = (short)DailyAccrualCategory.UnauthorisedOverdraft,
-                            availableBalance = (b.DEBITAMOUNT - b.CREDITAMOUNT),
+                            dailyAccuralAmount = (double)a.INTERESTONPASTDUEPRINCIPAL,/// change to global charge rate 
+                            mainAmount = a.PASTDUEPRINCIPAL,
+                            categoryId = (short)DailyAccrualCategory.PastDueObligation,
+                            availableBalance = a.PASTDUEPRINCIPAL,
                             transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                             baseReferenceNumber = null,
                             dayCountConventionId = c.DAYCOUNTCONVENTIONID,

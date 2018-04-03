@@ -120,6 +120,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         int DeleteUploadedDocument(LoanDocumentViewModel model);
 
+        
+
 
 
 

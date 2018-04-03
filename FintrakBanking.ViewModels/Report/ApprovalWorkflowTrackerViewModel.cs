@@ -69,8 +69,8 @@ namespace FintrakBanking.ReportObjects.ViewModels
         public string levelName { get; set; }
         public string username { get; set; }
         public string scope { get; set; }
-        public string grpPosition { get; set; }
-        public string levelPosition { get; set; }
+        public int grpPosition { get; set; }
+        public int levelPosition { get; set; }
         public string canApprove { get; set; }
         public string canEdit { get; set; }
         public string canUploadFile { get; set; }

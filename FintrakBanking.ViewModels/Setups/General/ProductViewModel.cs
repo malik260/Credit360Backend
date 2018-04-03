@@ -32,6 +32,8 @@ namespace FintrakBanking.ViewModels.Setups.General
     }
         public class ProductViewModel : GeneralEntity
     {
+        public int? principalBalanceGl2;
+        public string principalBalanceGl2Code;
 
         public int productId { get; set; }
         public short productTypeId { get; set; }
@@ -126,7 +128,9 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string priceIndexDescription { get; set; }
     }
     public class ProductBehaviourViewModel
-    {  
+    {
+        public bool allowFundUsage;
+
         public double? lcyLimit { get; set; }
         public double? fcyLimit { get; set; }
         public decimal? customerLimit { get; set; }
