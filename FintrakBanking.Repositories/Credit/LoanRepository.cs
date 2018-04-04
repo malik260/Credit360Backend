@@ -193,7 +193,7 @@ namespace FintrakBanking.Repositories.Credit
                 MATURITYDATE = model.maturityDate,
                 BOOKINGDATE = DateTime.Now, //model.bookingDate,
                 OVERDRAFTLIMIT = revolvingLoanInput.overdraftLimit,
-                DAYCOUNTCONVENTIONID = model.scheduleDayCountConventionId,
+                DAYCOUNTCONVENTIONID = revolvingLoanInput.accrualBasis,
 
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 LOANSTATUSID = (int)LoanStatusEnum.Inactive,
