@@ -565,6 +565,7 @@ namespace FintrakBanking.Repositories.Credit
                 FIRSTPRINCIPALPAYMENTDATE = entity.loanScheduleInput.principalFirstpaymentDate,
                 FIRSTINTERESTPAYMENTDATE = entity.loanScheduleInput.interestFirstpaymentDate,
                 ALLOWFORCEDEBITREPAYMENT = false,
+                SCHEDULEDAYCOUNTCONVENTIONID = entity.loanScheduleInput.accrualBasis
 
             };
 
@@ -1845,7 +1846,7 @@ namespace FintrakBanking.Repositories.Credit
                 principalFirstpaymentDate = (DateTime)loanScheduleData.FIRSTPRINCIPALPAYMENTDATE,
                 interestFirstpaymentDate = (DateTime)loanScheduleData.FIRSTINTERESTPAYMENTDATE,
                 maturityDate = maturityDate,
-                accurialBasis = loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID,
+                accrualBasis = loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID,
                 integralFeeAmount = integraFeeAmount,
                 shouldDisburse = loanScheduleData.SHOULD_DISBURSE,
                 firstDayType = loanScheduleData.SCHEDULEDAYINTERESTTYPEID,
