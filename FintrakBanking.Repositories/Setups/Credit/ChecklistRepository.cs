@@ -17,8 +17,6 @@ using FintrakBanking.Interfaces.Setups.Approval;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    [Export(typeof(IChecklistRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class ChecklistRepository : IChecklistRepository
     {
         private FinTrakBankingContext context;
@@ -169,16 +167,11 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId)
         {
-            //Get the approval level of the logon user
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, operationId);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
-
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
             var checkType = (from a in context.TBL_CHECKLIST_TYPE
                              join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
-                             where b.APPROVALLEVELID == staffApprovalLevelId
+                             where ids.Contains((int)b.APPROVALLEVELID)
                              select new CheckListTargetTypeViewModel
                              {
                                  targetTypeId = a.CHECKLIST_TYPEID,

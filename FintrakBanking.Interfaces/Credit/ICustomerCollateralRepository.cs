@@ -21,7 +21,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId);
         IEnumerable<ActiveCustomerCollateralViewModel> GetActiveCustomerCollateral(int customerId);
-        IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId);
+        IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId, int productTypeId);
 
         Task<bool> AddCollateralValuer(CollateralValuersViewModel entity);
         Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id);

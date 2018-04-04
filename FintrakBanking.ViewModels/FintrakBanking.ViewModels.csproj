@@ -147,6 +147,7 @@
     <Compile Include="Setups\Approval\ApprovalGroupViewModel.cs" />
     <Compile Include="Setups\Approval\ApprovalLevelStaffViewModel.cs" />
     <Compile Include="Setups\Approval\ApprovalLevelViewModel.cs" />
+    <Compile Include="Setups\Approval\ApprovalReliefViewModel.cs" />
     <Compile Include="Setups\Credit\ChecklistViewModel.cs" />
     <Compile Include="Setups\Credit\CollateralLocationsViewModel.cs" />
     <Compile Include="Setups\Credit\CollateralTypeViewModel.cs" />

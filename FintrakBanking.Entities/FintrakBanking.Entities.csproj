@@ -72,7 +72,6 @@
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\SYSDIAGRAM.cs" />
     <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
@@ -314,6 +313,7 @@
     <Compile Include="Models\TBL_LOAN_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_TYPE.cs" />
+    <Compile Include="Models\TBL_LOCALGOVERNMENT.cs" />
     <Compile Include="Models\TBL_MACHINEVALUE_BASE.cs" />
     <Compile Include="Models\TBL_MANAGEMENT_TYPE.cs" />
     <Compile Include="Models\TBL_MESSAGE_LOG.cs" />
@@ -369,10 +369,9 @@
     <Compile Include="Models\TBL_SOURCE_APPLICATION.cs" />
     <Compile Include="Models\TBL_STAFF.cs" />
     <Compile Include="Models\TBL_STAFF_JOBTITLE.cs" />
-    <Compile Include="Models\TBL_STAFF_ORGANOGRAM.cs" />
+    <Compile Include="Models\TBL_STAFF_RELIEF.cs" />
     <Compile Include="Models\TBL_STAFF_ROLE.cs" />
     <Compile Include="Models\TBL_STATE.cs" />
-    <Compile Include="Models\TBL_STOCK.cs" />
     <Compile Include="Models\TBL_STOCK_COMPANY.cs" />
     <Compile Include="Models\TBL_STOCK_PRICE.cs" />
     <Compile Include="Models\TBL_SUB_SECTOR.cs" />

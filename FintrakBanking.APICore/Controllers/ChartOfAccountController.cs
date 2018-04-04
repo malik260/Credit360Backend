@@ -262,8 +262,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("approvals/temp")]
         public HttpResponseMessage GetAccountsAwaitingApproval()
         {
-
-
             try
             {
                 var token = new TokenDecryptionHelper();

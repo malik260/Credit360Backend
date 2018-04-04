@@ -322,10 +322,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanPreliminaryEvaluationViewModel> GetSingleCustomerPreliminaryEvaluationsAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanPreliminaryEvaluation);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanPreliminaryEvaluation).ToList();
 
             var data = (from pen in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on pen.COMPANYID equals coy.COMPANYID
@@ -333,7 +330,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && pen.ISCURRENT == true
                             && pen.LOANTYPEID == (short)LoanTypeEnum.Single && atrail.RESPONSESTAFFID == null
-                              && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.COMPANYID,
@@ -445,10 +442,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanPreliminaryEvaluationViewModel> GetGroupCustomerPreliminaryEvaluationsAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanPreliminaryEvaluation);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanPreliminaryEvaluation).ToList();
 
             var data = (from pen in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on pen.COMPANYID equals coy.COMPANYID
@@ -456,7 +450,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && pen.ISCURRENT == true
                               && pen.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup && atrail.RESPONSESTAFFID == null
-                              && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.COMPANYID,

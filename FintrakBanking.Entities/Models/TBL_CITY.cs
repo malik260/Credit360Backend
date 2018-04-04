@@ -30,7 +30,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(150)]
         public string CITYNAME { get; set; }
 
-        public int STATEID { get; set; }
+        public int LOCALGOVERNMENTID { get; set; }
 
         public short CITYCLASSID { get; set; }
 
@@ -39,9 +39,9 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_BRANCH> TBL_BRANCH { get; set; }
 
-        public virtual TBL_STATE TBL_STATE { get; set; }
-
         public virtual TBL_CITY_CLASS TBL_CITY_CLASS { get; set; }
+
+        public virtual TBL_LOCALGOVERNMENT TBL_LOCALGOVERNMENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_COLLATERAL_IMMOVE_PROPERTY> TBL_COLLATERAL_IMMOVE_PROPERTY { get; set; }

@@ -258,10 +258,7 @@ namespace FintrakBanking.Repositories.Admin
 
         public IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.UserCreation);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.UserCreation).ToList();
 
             var data = (from c in context.TBL_PROFILE_USER
                         join br in context.TBL_BRANCH on c.TBL_STAFF.BRANCHID equals br.BRANCHID
@@ -272,7 +269,8 @@ namespace FintrakBanking.Repositories.Admin
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                         //&& c.ApprovalStatus == false
                               && atrail.RESPONSESTAFFID == null
-                              && atrail.OPERATIONID == (int)OperationsEnum.UserCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && atrail.OPERATIONID == (int)OperationsEnum.UserCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+
                         select new UserViewModel()
                         {
                             user_id = c.USERID,

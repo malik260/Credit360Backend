@@ -113,7 +113,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                         };
                         TBL_CASA casaAccount = context.TBL_CASA.Find(loanApplication.CASAACCOUNTID);
-                        collateralLocationState = context.TBL_STATE.Find(city.STATEID);
+                        collateralLocationState = context.TBL_STATE.Find(city.TBL_LOCALGOVERNMENT.STATEID);
                         var crdGL = context.TBL_SETUP_COMPANY.FirstOrDefault().LEGAL_CHARGE_GLACCOUNTID;
 
                         switch (actionName)

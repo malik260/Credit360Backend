@@ -110,6 +110,7 @@
     <Compile Include="Setups\Approval\IApprovalGroupRepository.cs" />
     <Compile Include="Setups\Approval\IApprovalLevelRepository.cs" />
     <Compile Include="Setups\Approval\IApprovalLevelStaffRepository.cs" />
+    <Compile Include="Setups\Approval\IApprovalReliefRepository.cs" />
     <Compile Include="Setups\Credit\IChecklistRepository.cs" />
     <Compile Include="Setups\Credit\ICollateralTypeRepository.cs" />
     <Compile Include="Setups\Credit\IPrudentialGuidelineSetupRepository.cs" />

@@ -487,16 +487,13 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupViewModel> GetCustomerGroupsAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.CustomerGroupCreation);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerGroupCreation).ToList();
 
             return (from c in context.TBL_TEMP_CUSTOMER_GROUP
                     join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
                     join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPID equals atrail.TARGETID
                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
-                          && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                          && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                     select new CustomerGroupViewModel()
                     {
                         companyId = c.COMPANYID,
@@ -992,16 +989,13 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapsAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.CustomerGroupCreation);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerGroupCreation).ToList();
 
             return (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG
                     join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
                     join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPID equals atrail.TARGETID
                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
-                          && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                          && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                     select new CustomerGroupMappingViewModel()
                     {
                         companyId = c.COMPANYID,

@@ -50,21 +50,27 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             numberOfUsers = x.NUMBEROFUSERS,
                             numberOfApprovals = x.NUMBEROFAPPROVALS,
                             slaInterval = x.SLAINTERVAL,
-                            canRouteBack = x.CANROUTEBACK,
+                            //canRouteBack = x.CANROUTEBACK,
                             isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
                             canEscalate = x.CANESCALATE,
                             canApproveUntenored = x.CANAPPROVEUNTENORED,
                             canResolveDispute = x.CANRESOLVEDISPUTE,
                             isActive = x.ISACTIVE,
+
+                            canViewDocument = x.CANVIEWDOCUMENT,
                             canEdit = x.CANEDIT,
-                            canDoRiskAssessment = x.CANDORISKASSESSMENT,
-                            canRecieveAdjustment = x.CANRECIEVEADJUSTMENT,
+                            canViewUploadedFile = x.CANVIEWUPLOAD,
+                            canUploadFile = x.CANUPLOAD,
+                            canViewApproval = x.CANVIEWAPPROVAL,
+                            canApprove = x.CANAPPROVE,
+                            //canDoRiskAssessment = x.CANDORISKASSESSMENT,
+                            //canRecieveAdjustment = x.CANRECIEVEADJUSTMENT,
                             canRecieveEmail = x.CANRECIEVEEMAIL,
                             canRecieveSms = x.CANRECIEVESMS,
-                            hasChecklist = x.HASCHECKLIST,
-                            canPerformFinancialAnalysis = x.CANPERFORMFINANCIALANALYSIS,
-                            requireAuthorisation = x.REQUIREAUTHORISATION,
-                            canOverideAuthorisation = x.CANOVERIDEAUTHORISATION,
+                            //hasChecklist = x.HASCHECKLIST,
+                            //canPerformFinancialAnalysis = x.CANPERFORMFINANCIALANALYSIS,
+                            //requireAuthorisation = x.REQUIREAUTHORISATION,
+                            //canOverideAuthorisation = x.CANOVERIDEAUTHORISATION,
                             routeViaStaffOrganogram = x.ROUTEVIASTAFFORGANOGRAM,
                             createdBy = x.CREATEDBY,
                             dateTimeCreated = x.DATETIMECREATED,
@@ -73,7 +79,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             deletedBy = x.DELETEDBY,
                             dateTimeDeleted = x.DATETIMEDELETED,
                             groupId = (int)x.GROUPID,
-                            //operationId = b.OperationId
+                            roleId = x.STAFFROLEID,
                         }).OrderBy(x => x.position).ToList();
 
             return data;
@@ -98,21 +104,28 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             numberOfUsers = a.NUMBEROFUSERS,
                             numberOfApprovals = a.NUMBEROFAPPROVALS,
                             slaInterval = a.SLAINTERVAL,
-                            canRouteBack = a.CANROUTEBACK,
+                            //canRouteBack = a.CANROUTEBACK,
                             isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                             canEscalate = a.CANESCALATE,
                             canApproveUntenored = a.CANAPPROVEUNTENORED,
                             canResolveDispute = a.CANRESOLVEDISPUTE,
                             isActive = a.ISACTIVE,
+
+                            canViewDocument = a.CANVIEWDOCUMENT,
                             canEdit = a.CANEDIT,
-                            canDoRiskAssessment = a.CANDORISKASSESSMENT,
-                            canRecieveAdjustment = a.CANRECIEVEADJUSTMENT,
+                            canViewUploadedFile = a.CANVIEWUPLOAD,
+                            canUploadFile = a.CANUPLOAD,
+                            canViewApproval = a.CANVIEWAPPROVAL,
+                            canApprove = a.CANAPPROVE,
+
+                            //canDoRiskAssessment = a.CANDORISKASSESSMENT,
+                            //canRecieveAdjustment = a.CANRECIEVEADJUSTMENT,
                             canRecieveEmail = a.CANRECIEVEEMAIL,
                             canRecieveSms = a.CANRECIEVESMS,
-                            hasChecklist = a.HASCHECKLIST,
-                            canPerformFinancialAnalysis = a.CANPERFORMFINANCIALANALYSIS,
-                            requireAuthorisation = a.REQUIREAUTHORISATION,
-                            canOverideAuthorisation = a.CANOVERIDEAUTHORISATION,
+                            //hasChecklist = a.HASCHECKLIST,
+                            //canPerformFinancialAnalysis = a.CANPERFORMFINANCIALANALYSIS,
+                            //requireAuthorisation = a.REQUIREAUTHORISATION,
+                            //canOverideAuthorisation = a.CANOVERIDEAUTHORISATION,
                             routeViaStaffOrganogram = a.ROUTEVIASTAFFORGANOGRAM,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATETIMECREATED,
@@ -169,24 +182,32 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 NUMBEROFUSERS = model.numberOfUsers,
                 NUMBEROFAPPROVALS = model.numberOfApprovals,
                 SLAINTERVAL = model.slaInterval,
-                CANROUTEBACK = model.canRouteBack,
+                //CANROUTEBACK = model.canRouteBack,
                 ISPOLITICALLYEXPOSED = model.isPoliticallyExposed,
                 CANESCALATE = model.canEscalate,
                 CANAPPROVEUNTENORED = model.canApproveUntenored,
                 CANRESOLVEDISPUTE = model.canResolveDispute,
                 ISACTIVE = model.isActive,
+
+                CANVIEWDOCUMENT = model.canViewDocument,
                 CANEDIT = model.canEdit,
-                CANDORISKASSESSMENT = model.canDoRiskAssessment,
-                CANRECIEVEADJUSTMENT = model.canRecieveAdjustment,
+                CANVIEWUPLOAD = model.canViewUploadedFile,
+                CANUPLOAD = model.canUploadFile,
+                CANVIEWAPPROVAL = model.canViewApproval,
+                CANAPPROVE = model.canApprove,
+
+                //CANDORISKASSESSMENT = model.canDoRiskAssessment,
+                //CANRECIEVEADJUSTMENT = model.canRecieveAdjustment,
                 CANRECIEVEEMAIL = model.canRecieveEmail,
                 CANRECIEVESMS = model.canRecieveSms,
-                HASCHECKLIST = model.hasChecklist,
-                CANPERFORMFINANCIALANALYSIS = model.canPerformFinancialAnalysis,
-                REQUIREAUTHORISATION = model.requireAuthorisation,
-                CANOVERIDEAUTHORISATION = model.canOverideAuthorisation,
+                //HASCHECKLIST = model.hasChecklist,
+                //CANPERFORMFINANCIALANALYSIS = model.canPerformFinancialAnalysis,
+                //REQUIREAUTHORISATION = model.requireAuthorisation,
+                //CANOVERIDEAUTHORISATION = model.canOverideAuthorisation,
                 ROUTEVIASTAFFORGANOGRAM = model.routeViaStaffOrganogram,
                 CREATEDBY = model.createdBy,
                 GROUPID = model.groupId,
+                STAFFROLEID = model.roleId,
                 DATETIMECREATED = genSetup.GetApplicationDate()
             };
 
@@ -239,25 +260,32 @@ namespace FintrakBanking.Repositories.Setups.Approval
             data.NUMBEROFUSERS = model.numberOfUsers;
             data.NUMBEROFAPPROVALS = model.numberOfApprovals;
             data.SLAINTERVAL = model.slaInterval;
-            data.CANROUTEBACK = model.canRouteBack;
+            //data.CANROUTEBACK = model.canRouteBack;
             data.ISPOLITICALLYEXPOSED = model.isPoliticallyExposed;
             data.CANESCALATE = model.canEscalate;
             data.CANAPPROVEUNTENORED = model.canApproveUntenored;
             data.CANRESOLVEDISPUTE = model.canResolveDispute;
             data.ISACTIVE = model.isActive;
+
+            data.CANVIEWDOCUMENT = model.canViewDocument;
             data.CANEDIT = model.canEdit;
-            data.CANDORISKASSESSMENT = model.canDoRiskAssessment;
-            data.CANRECIEVEADJUSTMENT = model.canRecieveAdjustment;
+            data.CANVIEWUPLOAD = model.canViewUploadedFile;
+            data.CANUPLOAD = model.canUploadFile;
+            data.CANVIEWAPPROVAL = model.canViewApproval;
+            data.CANAPPROVE = model.canApprove;
+            //data.CANDORISKASSESSMENT = model.canDoRiskAssessment;
+            //data.CANRECIEVEADJUSTMENT = model.canRecieveAdjustment;
             data.CANRECIEVEEMAIL = model.canRecieveEmail;
             data.CANRECIEVESMS = model.canRecieveSms;
-            data.HASCHECKLIST = model.hasChecklist;
-            data.CANPERFORMFINANCIALANALYSIS = model.canPerformFinancialAnalysis;
-            data.REQUIREAUTHORISATION = model.requireAuthorisation;
-            data.CANOVERIDEAUTHORISATION = model.canOverideAuthorisation;
+            //data.HASCHECKLIST = model.hasChecklist;
+            //data.CANPERFORMFINANCIALANALYSIS = model.canPerformFinancialAnalysis;
+            //data.REQUIREAUTHORISATION = model.requireAuthorisation;
+            //data.CANOVERIDEAUTHORISATION = model.canOverideAuthorisation;
             data.ROUTEVIASTAFFORGANOGRAM = model.routeViaStaffOrganogram;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMEUPDATED = DateTime.Now;
             data.GROUPID = model.groupId;
+            data.STAFFROLEID = model.roleId;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
 
             // Audit Section ---------------------------
@@ -346,9 +374,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return result;
         }
 
-        public IEnumerable<TBL_STAFF_ORGANOGRAM> GetStaffOrganogram(int companyId)
+        public IEnumerable<TBL_STAFF> GetStaffOrganogram(int companyId)
         {
-            return context.TBL_STAFF_ORGANOGRAM.Where(c => c.COMPANYID == companyId);
+            return context.TBL_STAFF.Where(c => c.COMPANYID == companyId);
         }
 
         public IQueryable<TBL_APPROVAL_TRAIL> GetApprovalTrail(int operationId, int targetId, int approvalLevelId, int numberOfApprovals)

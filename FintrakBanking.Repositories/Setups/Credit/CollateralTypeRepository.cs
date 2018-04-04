@@ -41,6 +41,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         collateralTypeName = m.COLLATERALTYPENAME,
                         chargeGLAccountId = m.CHARGEGLACCOUNTID,
                         requireInsurancePolicy = m.REQUIREINSURANCEPOLICY,
+                        requireVisitation = m.REQUIREVISITATION,
                         details = m.DETAILS,
                          position = m.POSITION 
                     }).OrderBy(m=> m.position );
@@ -69,7 +70,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                        {
                            collateralTypeId = m.COLLATERALTYPEID,
                            collateralTypeName = m.COLLATERALTYPENAME,
-                           requireInsurancePolicy = m.REQUIREINSURANCEPOLICY
+                           requireInsurancePolicy = m.REQUIREINSURANCEPOLICY,
+                           requireVisitation = m.REQUIREVISITATION
 
                        }).ToList();
                       // .Distinct();
@@ -88,7 +90,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
             return list.Where(x => typeIds.Contains((short)x.collateralTypeId));
         }
-
+        
         public IEnumerable<CollateralTypeViewModel> GetCollateralTypes()
         {
             return CollateralTypes();
@@ -108,6 +110,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             type.REQUIREINSURANCEPOLICY = entity.requireInsurancePolicy;
             type.DATETIMEUPDATED = genSetup.GetApplicationDate();
             type.LASTUPDATEDBY = entity.lastUpdatedBy;
+            type.REQUIREVISITATION = entity.requireVisitation;
 
             var respose = await context.SaveChangesAsync() != 0;
 
@@ -168,6 +171,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes()
         {
             return (from m in context.TBL_COLLATERAL_TYPE_SUB
+                    join t in context.TBL_COLLATERAL_TYPE 
+                    on m.COLLATERALTYPEID equals t.COLLATERALTYPEID
                     select new CollateralSubTypeViewModel
                     {
                         collateralSubTypeId = m.COLLATERALSUBTYPEID,
@@ -176,7 +181,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         haircut = m.HAIRCUT,
                         revaluationDuration = m.REVALUATIONDURATION,
                         isLocationBased = m.ISLOCATIONBASED,
-                        allowSharing = m.ALLOWSHARING
+                        allowSharing = m.ALLOWSHARING,
+                        collateralTypeName = t.COLLATERALTYPENAME
                     }).ToList();
         }
         

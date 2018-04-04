@@ -424,32 +424,60 @@ namespace FintrakBanking.Repositories.Credit
 
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {
-            var operationId = entity.operationId; // (int)OperationsEnum.CAM; // <--------------------- overide incoming for now
-            //var privilege = new PrivilegeViewModel();
-            var application = this.context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+            var operationId = entity.operationId;
+            var staffId = entity.createdBy;
 
-            var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
-                .Join(context.TBL_APPROVAL_GROUP,
-                    m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                .Join(context.TBL_APPROVAL_LEVEL,//.Where(x => x.APPROVALLEVELID == entity.levelId),
-                    mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })//, u=l.TBL_APPROVAL_LEVEL_STAFF })
-                .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == entity.createdBy),
-                    gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
-                    {
-                        viewCamDocument = s.CANVIEWCAMDOCUMENT,
-                        viewUploadedFiles = s.CANVIEWUPLOADEDFILE,
-                        viewApproval = s.CANVIEWAPPROVAL,
-                        canMakeChanges = s.CANEDIT,
-                        canAppendTemplate = s.CANEDIT,
-                        canApprove = s.CANAPPROVE,
-                        canUploadFile = s.CANUPLOADFILE,
-                        canSendRequest = s.CANSENDJOBREQUEST,
-                        approvalLimit = s.MAXIMUMAMOUNT,
-                        approvalLevelId = s.APPROVALLEVELID,
-                        groupRoleId = gl.mg.g.ROLEID,
-                        canEscalate = gl.l.CANESCALATE,
-                    });
+            var staff = context.TBL_STAFF.Find(staffId);
 
+            IQueryable<PrivilegeViewModel> grants;
+
+            if (staff.STAFFROLEID > 0)
+            {
+                var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
+
+                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP,
+                        m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.STAFFROLEID == staff.STAFFROLEID),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
+                        {
+                            viewCamDocument = l.CANVIEWDOCUMENT,
+                            canMakeChanges = l.CANEDIT,
+                            canAppendTemplate = l.CANEDIT,
+                            viewUploadedFiles = l.CANVIEWUPLOAD,
+                            canUploadFile = l.CANUPLOAD,
+                            viewApproval = l.CANVIEWAPPROVAL,
+                            canApprove = l.CANAPPROVE,
+                            approvalLimit = l.MAXIMUMAMOUNT,
+                            approvalLevelId = l.APPROVALLEVELID,
+                            groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
+                            canEscalate = l.CANESCALATE,
+                        });
+
+            }
+            else
+            {
+                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP,
+                        m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL,
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
+                    .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId),
+                        gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
+                        {
+                            viewCamDocument = s.CANVIEWDOCUMENT,
+                            canMakeChanges = s.CANEDIT,
+                            canAppendTemplate = s.CANEDIT,
+                            viewUploadedFiles = s.CANVIEWUPLOAD,
+                            canUploadFile = s.CANUPLOAD,
+                            viewApproval = s.CANVIEWAPPROVAL,
+                            canApprove = s.CANAPPROVE,
+                            approvalLimit = s.MAXIMUMAMOUNT,
+                            approvalLevelId = s.APPROVALLEVELID,
+                            groupRoleId = gl.mg.g.ROLEID,
+                            canEscalate = gl.l.CANESCALATE,
+                        });
+            }
             var grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
             if (grant == null) grant = new PrivilegeViewModel();
             grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
@@ -568,45 +596,45 @@ namespace FintrakBanking.Repositories.Credit
             return documentation;
         }
 
-        public bool Confirmation(int type, int applicationId)
-        {
-            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            bool result = false;
+        //public bool Confirmation(int type, int applicationId)
+        //{
+        //    var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+        //    bool result = false;
 
-            switch (type)
-            {
-                case 1:
-                    application.CUSTOMERINFOVALIDATED = (application.CUSTOMERINFOVALIDATED == false) ? true : false;
-                    result = application.CUSTOMERINFOVALIDATED;
-                    break;
-                //case 2:
-                //    application.NOTINNEGATIVECRMS = (application.NOTINNEGATIVECRMS == false) ? true : false;
-                //    result = application.NOTINNEGATIVECRMS;
-                //    break;
-                //case 3:
-                //    application.NOTINBLACKBOOK = (application.NOTINBLACKBOOK == false) ? true : false;
-                //    result = application.NOTINBLACKBOOK;
-                //    break;
-                //case 4:
-                //    application.NOTINCAMSOL = (application.NOTINCAMSOL == false) ? true : false;
-                //    result = application.NOTINCAMSOL;
-                //    break;
-                //case 5:
-                //    application.NOTINXDS = (application.NOTINXDS == false) ? true : false;
-                //    result = application.NOTINXDS;
-                //    break;
-                //case 6:
-                //    application.NOTINCRC = (application.NOTINCRC == false) ? true : false;
-                //    result = application.NOTINCRC;
-                //    break;
-                default:
-                    break;
-            }
+        //    switch (type)
+        //    {
+        //        case 1:
+        //            application.CUSTOMERINFOVALIDATED = (application.CUSTOMERINFOVALIDATED == false) ? true : false;
+        //            result = application.CUSTOMERINFOVALIDATED;
+        //            break;
+        //        //case 2:
+        //        //    application.NOTINNEGATIVECRMS = (application.NOTINNEGATIVECRMS == false) ? true : false;
+        //        //    result = application.NOTINNEGATIVECRMS;
+        //        //    break;
+        //        //case 3:
+        //        //    application.NOTINBLACKBOOK = (application.NOTINBLACKBOOK == false) ? true : false;
+        //        //    result = application.NOTINBLACKBOOK;
+        //        //    break;
+        //        //case 4:
+        //        //    application.NOTINCAMSOL = (application.NOTINCAMSOL == false) ? true : false;
+        //        //    result = application.NOTINCAMSOL;
+        //        //    break;
+        //        //case 5:
+        //        //    application.NOTINXDS = (application.NOTINXDS == false) ? true : false;
+        //        //    result = application.NOTINXDS;
+        //        //    break;
+        //        //case 6:
+        //        //    application.NOTINCRC = (application.NOTINCRC == false) ? true : false;
+        //        //    result = application.NOTINCRC;
+        //        //    break;
+        //        default:
+        //            break;
+        //    }
 
-            context.SaveChanges();
+        //    context.SaveChanges();
 
-            return result;
-        }
+        //    return result;
+        //}
 
         #region CAM Pending Applications
 
@@ -618,7 +646,7 @@ namespace FintrakBanking.Repositories.Credit
             bool isHeadOffice = (branchId == 1) ? true : false;
 
             // get approval levels 
-            var levelIds = GetStaffApprovalLevelIds(staffId, operationId);
+            var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
 
             // query
             applications = context.TBL_LOAN_APPLICATION.Where(x =>
@@ -794,7 +822,7 @@ namespace FintrakBanking.Repositories.Credit
         public IQueryable<RegionLoanApplicationViewModel> GetRegionalLoanApplications(int staffId)
         {
             var operationId = (int)OperationsEnum.CAM;
-            var levels = GetStaffApprovalLevelIds(staffId, operationId);
+            var levels = general.GetStaffApprovalLevelIds(staffId, operationId);
             var region = context.TBL_BRANCH_REGION.FirstOrDefault(x => x.CAM_HOU_STAFFID == staffId);
             if (region == null) { throw new Exception("This user does not have a region mapped to him."); }
             var branches = context.TBL_BRANCH.Where(x => x.REGIONID == region.REGIONID).Select(x => x.BRANCHID);
@@ -851,7 +879,7 @@ namespace FintrakBanking.Repositories.Credit
             int staffId = user.staffId;
             bool isHeadOffice = (user.BranchId == 1) ? true : false;
             int operationId = (int)OperationsEnum.CAM;
-            var levelIds = GetStaffApprovalLevelIds(user.staffId, operationId);// new int[] {3,1,5};
+            var levelIds = general.GetStaffApprovalLevelIds(user.staffId, operationId);// new int[] {3,1,5};
             int productBasedId = (int)ProductClassProcessEnum.ProductBased;
 
             var applications = context.TBL_LOAN_APPLICATION.Where(x =>
@@ -906,33 +934,6 @@ namespace FintrakBanking.Repositories.Credit
             var detail = context.TBL_LOAN_APPLICATION_DETL_BG
                 .FirstOrDefault(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId);
             return detail == null ? false : !detail.ISTENORED;
-        }
-
-        private IQueryable<int> GetStaffApprovalLevelIds(int staffId, int operationId)
-        {
-            int scope = (int)ProcessViewScopeEnum.Level; // default 1
-
-            var allLevels = context.TBL_APPROVAL_GROUP_MAPPING
-                .Where(x => x.OPERATIONID == operationId)
-                .Select(g => g.TBL_APPROVAL_GROUP)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL
-                .Where(l => l.ISACTIVE == true));
-
-            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId);
-
-            if (staffWorkflow.Count() > 0) scope = staffWorkflow.Max(x => x.PROCESSVIEWSCOPEID);
-
-            if (scope == 3) return allLevels.Select(x => x.APPROVALLEVELID).Distinct();
-
-            var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
-
-            if (scope == 2)
-            {
-                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
-                return context.TBL_APPROVAL_LEVEL.Where(x => groups.Contains(x.GROUPID)).Select(x => x.APPROVALLEVELID).Distinct();
-            }
-
-            return staffLevels;
         }
 
         public IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggers(int applicationId)

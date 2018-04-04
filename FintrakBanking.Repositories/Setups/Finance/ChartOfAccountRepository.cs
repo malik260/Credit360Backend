@@ -20,8 +20,6 @@ namespace FintrakBanking.Repositories.Setups.Finance
     /// TODO: Implement audit trails in these methods
     /// </summary>
     ///
-    [Export(typeof(IChartOfAccountRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class ChartOfAccountRepository : IChartOfAccountRepository
     {
         private FinTrakBankingContext context;
@@ -691,19 +689,17 @@ namespace FintrakBanking.Repositories.Setups.Finance
             }
         }
 
-        public IEnumerable<ChartOfAccountViewModel> GetAccountsAwaitingApprovals(int accountId, int companyId)
+        public IEnumerable<ChartOfAccountViewModel> GetAccountsAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(accountId, companyId, (int)OperationsEnum.ChartOfAccountCreation);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChartOfAccountCreation).ToList();
 
             var data = (from c in context.TBL_TEMP_CHART_OF_ACCOUNT
                         join coy in context.TBL_COMPANY on c.COMPANYID equals companyId
                         join atrail in context.TBL_APPROVAL_TRAIL on c.GLACCOUNTID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                             && c.ISCURRENT == true && atrail.RESPONSESTAFFID == null
-                              && atrail.OPERATIONID == (int)OperationsEnum.ChartOfAccountCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && atrail.OPERATIONID == (int)OperationsEnum.ChartOfAccountCreation 
+                              && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new ChartOfAccountViewModel()
                         {
                             accountId = c.GLACCOUNTID,

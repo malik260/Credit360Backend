@@ -454,10 +454,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool OrganogramRouting() // if workflow is forced to use organogram
         {
-            var position = context.TBL_STAFF_ORGANOGRAM.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
+            var position = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (position == null) { return false; }
 
-            var lineManagerPosition = context.TBL_STAFF_ORGANOGRAM.Where(x => x.STAFFCODE == position.PARENTSTAFFCODE).FirstOrDefault();
+            var lineManagerPosition = context.TBL_STAFF.Where(x => x.STAFFID == position.SUPERVISOR_STAFFID).FirstOrDefault();
             if (lineManagerPosition == null) { return false; }
 
             var lineManager = approvalGrid.SelectMany(x => x.Staff)
@@ -664,7 +664,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var trails = trailLog.OrderBy(x => x.APPROVALTRAILID);
                     owner = context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
                 }
-
 
                 int targetId = this.targetId;
                 int operationId = this.operationId;

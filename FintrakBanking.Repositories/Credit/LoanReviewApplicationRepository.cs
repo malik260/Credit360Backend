@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Credit
             bool screenCanViewAll = operationId == (int)OperationsEnum.LoanReviewApprovalApplication;
 
             // get approval levels 
-            var levelIds = GetStaffApprovalLevelIds(staffId, operationId);
+            var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
 
             // query
             applications = context.TBL_LOAN_REVIEW_APPLICATION.Where(x =>
@@ -103,32 +103,32 @@ namespace FintrakBanking.Repositories.Credit
             return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
-        private IQueryable<int> GetStaffApprovalLevelIds(int staffId, int operationId)
-        {
-            int scope = (int)ProcessViewScopeEnum.Level; // default 1
+        //private IQueryable<int> GetStaffApprovalLevelIds(int staffId, int operationId)
+        //{
+        //    int scope = (int)ProcessViewScopeEnum.Level; // default 1
 
-            var allLevels = context.TBL_APPROVAL_GROUP_MAPPING
-                .Where(x => x.OPERATIONID == operationId)
-                .Select(g => g.TBL_APPROVAL_GROUP)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL
-                .Where(l => l.ISACTIVE == true));
+        //    var allLevels = context.TBL_APPROVAL_GROUP_MAPPING
+        //        .Where(x => x.OPERATIONID == operationId)
+        //        .Select(g => g.TBL_APPROVAL_GROUP)
+        //        .SelectMany(x => x.TBL_APPROVAL_LEVEL
+        //        .Where(l => l.ISACTIVE == true));
 
-            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId);
+        //    var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId);
 
-            if (staffWorkflow.Count() > 0) scope = staffWorkflow.Max(x => x.PROCESSVIEWSCOPEID);
+        //    if (staffWorkflow.Count() > 0) scope = staffWorkflow.Max(x => x.PROCESSVIEWSCOPEID);
 
-            if (scope == 3) return allLevels.Select(x => x.APPROVALLEVELID).Distinct();
+        //    if (scope == 3) return allLevels.Select(x => x.APPROVALLEVELID).Distinct();
 
-            var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
+        //    var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
 
-            if (scope == 2)
-            {
-                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
-                return context.TBL_APPROVAL_LEVEL.Where(x => groups.Contains(x.GROUPID)).Select(x => x.APPROVALLEVELID).Distinct();
-            }
+        //    if (scope == 2)
+        //    {
+        //        var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
+        //        return context.TBL_APPROVAL_LEVEL.Where(x => groups.Contains(x.GROUPID)).Select(x => x.APPROVALLEVELID).Distinct();
+        //    }
 
-            return staffLevels;
-        }
+        //    return staffLevels;
+        //}
 
         public SelectListViewModel GetAllSelectList()
         {
@@ -154,19 +154,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTTYPEID = 1, // 1. termloan
                 OPERATIONID = model.operationTypeId,
                 REVIEWDETAILS = model.reviewDetails,
-                //INTERATERATE = model.interateRate,
-                //PREPAYMENT = model.prepayment,
-                //PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
-                //INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
-                //PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate,
-                //INTERESTFIRSTPAYMENTDATE = model.interestFirstPaymentDate,
-                //MATURITYDATE = model.maturityDate,
-                //TENOR = model.tenor,
-                //CASA_ACCOUNTID = model.casaAccountId,
-                //OVERDRAFTTOPUP = model.overDraftTopup,
-                //FEE_CHARGES = model.feeCharges,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                //ISMANAGEMENTINTERESTRATE = model.isManagementInterestRate,
                 CREATEDBY = model.createdBy,
                 BRANCHID = model.branchId,
                 DATECREATED = general.GetApplicationDate(),
