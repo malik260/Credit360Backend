@@ -324,7 +324,7 @@ namespace FintrakBanking.Repositories.Credit
 
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
 
-            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accrualBasis);
             int numberOfPayments = CalculateNumberOfInstallments(loanInput.interestFirstpaymentDate, loanInput.maturityDate, (FrequencyTypeEnum)loanInput.interestFrequency);
             int numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == loanInput.interestFrequency).VALUE;
 
@@ -416,7 +416,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new Exception("First Interest Payment Date cannot be less than the effective date");
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
 
-            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accrualBasis);
             int numberOfPayments = CalculateNumberOfInstallments(loanInput.interestFirstpaymentDate, loanInput.maturityDate, (FrequencyTypeEnum)loanInput.interestFrequency);
 
             int numberOfPrincipalPayments = CalculateNumberOfInstallments(loanInput.principalFirstpaymentDate, loanInput.maturityDate, (FrequencyTypeEnum)loanInput.interestFrequency);
@@ -503,7 +503,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new Exception("First Principal Payment Date cannot be less than the effective date");
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
 
-            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accrualBasis);
             int numberOfPayments = CalculateNumberOfInstallments(loanInput.interestFirstpaymentDate, loanInput.maturityDate, (FrequencyTypeEnum)loanInput.interestFrequency);
 
             int numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == loanInput.interestFrequency).VALUE;            
@@ -596,7 +596,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new Exception("First Interest Payment Date cannot be less than the effective date");
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
 
-            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accrualBasis);
             int numberOfPayments = CalculateNumberOfInstallments(loanInput.interestFirstpaymentDate, loanInput.maturityDate, (FrequencyTypeEnum)loanInput.interestFrequency);
 
             int numberOfPrincipalPayments = CalculateNumberOfInstallments(loanInput.principalFirstpaymentDate, loanInput.maturityDate, (FrequencyTypeEnum)loanInput.interestFrequency);
@@ -880,7 +880,7 @@ namespace FintrakBanking.Repositories.Credit
             
             double previousPrincipalAmount = loanInput.principalAmount;
             DateTime previousPaymentDate = loanInput.effectiveDate;
-            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accrualBasis);
 
             int paymentNumber = 1;
             foreach (var item in data)
@@ -941,7 +941,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //double previousPrincipalAmount = loanInput.principalAmount;
             //DateTime previousPaymentDate = loanInput.effectiveDate;
-            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accrualBasis);
 
 
             LoanPaymentSchedulePeriodicViewModel loanPeriod = new LoanPaymentSchedulePeriodicViewModel();
@@ -1010,7 +1010,7 @@ namespace FintrakBanking.Repositories.Credit
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateConstantPrincipalAndInterestPeriodicSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
             
-            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accrualBasis);
 
             int numberOfPayments = CalculateNumberOfInstallments(loanInput.interestFirstpaymentDate, loanInput.maturityDate, (FrequencyTypeEnum)loanInput.interestFrequency);
 
