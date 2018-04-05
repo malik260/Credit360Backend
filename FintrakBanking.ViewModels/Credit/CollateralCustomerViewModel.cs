@@ -742,7 +742,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal stockPrice { get; set; }
     }
 
-    public class loanApplicationColateral
+    public class loanApplicationColateralViewModel
     {
         public int loanApplicationCollateralId   { get; set; }
         public int collateralCustomerId          { get; set; }
