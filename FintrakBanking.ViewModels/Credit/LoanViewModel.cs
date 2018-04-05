@@ -200,7 +200,10 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         public decimal overdraftLimit { get; set; }
-        public bool maintainTonor { get; set; }
+        public bool maintainTenor { get; set; }
+        public decimal accrualedAmount { get; set; }
+
+        //public int tenor  { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
