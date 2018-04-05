@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Reports;
@@ -13,7 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
-        IEnumerable<LookupViewModel> GetAllLoanTypes();
+        IEnumerable<LookupViewModel> GetLoanApplicationTypes();
 
         IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
 
@@ -80,7 +81,12 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<CustomerViewModels> SearchForCustomerCollateral(int companyId, string searchQuery);
 
-        List<LoanGuarantorViewModel> GetLoanGuarantors(int loanId);
+        List<LoanGuarantorViewModel> GetLoanGuarantors(int loanApplicationId);
+
+        List<CasaViewModel> GetLoanCustomerAccounts(int customerId, int loanApplicationDetailId);
+
+
+        List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTriggerByLoanApplicationDetailId(int loanApplicationDetailId);
 
         List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId);
        // decimal GetCustomerLoanAvailableBalance(int loanAplicationDetailId);
