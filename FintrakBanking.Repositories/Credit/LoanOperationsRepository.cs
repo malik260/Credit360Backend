@@ -5530,6 +5530,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanViewModel> GetRunningLoans(int companyId, string refNo)
         {
+            var applicationDate = generalSetup.GetApplicationDate();
             var runningLoan  = (from l in context.TBL_LOAN
                                    where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo
                                    select new LoanViewModel()
@@ -5546,14 +5547,33 @@ namespace FintrakBanking.Repositories.Credit
                                        principalAmount = l.PRINCIPALAMOUNT,
                                        currency = l.TBL_CURRENCY.CURRENCYCODE,
                                        loanReferenceNumber = l.LOANREFERENCENUMBER,
-                                       effectiveDate = DateTime.Now,
+                                       effectiveDate = applicationDate,//DateTime.Now,
                                        equityContribution = 0,
-                                       maintainTonor = false,
-                                       maturityDate = DateTime.Now,
-                                   });
+                                       maintainTenor = true,
+                                       maturityDate = l.MATURITYDATE,
+                                       scheduleTypeId = l.SCHEDULETYPEID,
+                                       teno =  (l.MATURITYDATE -l.EFFECTIVEDATE).Days,
+                                       //tenor  = tenor,
+                                       accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == refNo && x.DATE == applicationDate).ACCRUEDINTEREST,
+        });
 
             return runningLoan.ToList();
         }
+
+        //public int GetAccrualedInterest(DateTime applicationDate,string refNo, int companyId)
+        //{
+        //    DateTime lastPaymentDate = this.context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == refNo && x.DATE == applicationDate).PAYMENTDATE;
+
+        //    var runningLoan = (from a in context.TBL_LOAN
+        //                       join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
+        //                       join c in context.TBL_DAILY_ACCRUAL on a.LOANREFERENCENUMBER equals c.REFERENCENUMBER
+        //                       where a.COMPANYID == companyId && a.LOANREFERENCENUMBER == refNo
+        //                       select new LoanViewModel()
+        //                       {
+
+        //                       }
+        //   return CasaAccount.CASAACCOUNTID;
+        //}
 
         public IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId)
         {
