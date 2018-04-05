@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Credit
         /// Gets all loan types.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<LookupViewModel> GetAllLoanTypes()
+        public IEnumerable<LookupViewModel> GetLoanApplicationTypes()
         {
             return (from data in context.TBL_LOAN_APPLICATION_TYPE
                     select new LookupViewModel()

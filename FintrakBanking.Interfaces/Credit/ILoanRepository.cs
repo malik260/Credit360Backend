@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
-        IEnumerable<LookupViewModel> GetAllLoanTypes();
+        IEnumerable<LookupViewModel> GetLoanApplicationTypes();
 
         IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
 

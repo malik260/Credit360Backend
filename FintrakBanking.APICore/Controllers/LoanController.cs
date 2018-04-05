@@ -100,12 +100,12 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("loan-types")]
-        public HttpResponseMessage GetAllLoanTypes()
+        [Route("loan-application-types")]
+        public HttpResponseMessage GetLoanApplicationTypes()
         {
             try
             {
-                var data = repo.GetAllLoanTypes();
+                var data = repo.GetLoanApplicationTypes();
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
