@@ -3883,7 +3883,6 @@ namespace FintrakBanking.Repositories.Credit
                             customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                             isInvestmentGrade = m.ISINVESTMENTGRADE,
-
                             customerAccounts = (from k in context.TBL_CASA
                                                 where k.DELETED == false
                                                 && k.CUSTOMERID == d.CUSTOMERID
@@ -3958,7 +3957,6 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
                             relationshipManagerId = m.RELATIONSHIPMANAGERID,
                             relationshipManagerName = m.TBL_STAFF1.FIRSTNAME + " " + m.TBL_STAFF1.MIDDLENAME + " " + m.TBL_STAFF1.LASTNAME,
-
                             currencyId = d.CURRENCYID,
                             currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
                             exchangeRate = d.EXCHANGERATE,
@@ -3969,15 +3967,12 @@ namespace FintrakBanking.Repositories.Credit
                             productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
                             productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                             productName = d.TBL_PRODUCT.PRODUCTNAME,
-
                             misCode = m.MISCODE,
                             teamMisCode = m.TEAMMISCODE,
-
                             interestRate = d.APPROVEDINTERESTRATE,
                             submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
                             approvedAmount = d.APPROVEDAMOUNT,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
-
                             customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
                                                       || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
                              ? (d.APPROVEDAMOUNT - d.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.PRINCIPALAMOUNT)) :
@@ -3994,7 +3989,6 @@ namespace FintrakBanking.Repositories.Credit
                             createdBy = m.CREATEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
-
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                             loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID)
                                              select (
@@ -4256,8 +4250,8 @@ namespace FintrakBanking.Repositories.Credit
                                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                            productAccountNumber = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
                                            productAccountName = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
-                                           customerGroupId = a.CUSTOMERGROUPID,
-                                           loanTypeId = a.LOANTYPEID,
+                                           //customerGroupId = a.CUSTOMERGROUPID,
+                                           //loanTypeId = a.LOANTYPEID,
                                            loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
                                            equityContribution = a.EQUITYCONTRIBUTION,
                                            firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
