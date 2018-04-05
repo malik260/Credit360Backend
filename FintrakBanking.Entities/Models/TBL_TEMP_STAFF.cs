@@ -113,6 +113,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_MIS_INFO TBL_MIS_INFO { get; set; }
 
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
+
         public virtual TBL_STAFF_JOBTITLE TBL_STAFF_JOBTITLE { get; set; }
 
         public virtual TBL_STAFF_ROLE TBL_STAFF_ROLE { get; set; }

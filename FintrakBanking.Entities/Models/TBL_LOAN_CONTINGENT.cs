@@ -94,13 +94,6 @@ namespace FintrakBanking.Entities.Models
 
         public int? OPERATIONID { get; set; }
 
-        public int? CUSTOMERGROUPID { get; set; }
-
-        public short LOANTYPEID { get; set; }
-
-        [StringLength(50)]
-        public string TRANCHEBATCHCODE { get; set; }
-
         public bool DISCHARGELETTER { get; set; }
 
         public int CREATEDBY { get; set; }
@@ -117,8 +110,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual TBL_CUSTOMER_GROUP TBL_CUSTOMER_GROUP { get; set; }
-
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF { get; set; }
@@ -130,8 +121,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
 
         public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
-
-        public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_CONTINGENT_USAGE> TBL_LOAN_CONTINGENT_USAGE { get; set; }

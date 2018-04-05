@@ -673,7 +673,7 @@ namespace FintrakBanking.Repositories.Credit
                     productClassId = x.a.PRODUCTCLASSID,
                     productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                     customerGroupId = x.a.CUSTOMERGROUPID,
-                    loanTypeId = x.a.LOANTYPEID,
+                    loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
                     relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
                     newApplicationDate = x.a.APPLICATIONDATE,
@@ -699,7 +699,7 @@ namespace FintrakBanking.Repositories.Credit
                     relationshipManagerName = x.a.TBL_STAFF1.FIRSTNAME + " " + x.a.TBL_STAFF1.MIDDLENAME + " " + x.a.TBL_STAFF1.LASTNAME,
                     misCode = x.a.MISCODE,
                     customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                    loanTypeName = x.a.TBL_LOAN_TYPE.LOANTYPENAME,
+                    loanTypeName = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                     createdBy = x.a.CREATEDBY,
                     loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                     customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
@@ -709,12 +709,7 @@ namespace FintrakBanking.Repositories.Credit
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 .OrderByDescending(x => x.newApplicationDate)
-                .ThenByDescending(x => x.loanApplicationId)
-                ;
-
-            //var list = applications.ToList();
-            //var count = applications.Count();
-            //var levs = levelIds.ToList();
+                .ThenByDescending(x => x.loanApplicationId);
 
             return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
