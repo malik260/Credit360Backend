@@ -212,6 +212,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatus;
         public bool isOverdraft;
         public bool isBidbond;
+        public short accrualBasis;
 
         public int loanId { get; set; }
         public int customerId { get; set; }

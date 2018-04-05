@@ -1219,7 +1219,7 @@ namespace FintrakBanking.Repositories.Credit
                         orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
-                            customerName = a.TBL_LOAN_APPLICATION.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             proposedAmount = a.APPROVEDAMOUNT,
                             approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                             deferredDate = b.DEFEREDDATE,
@@ -1344,7 +1344,7 @@ namespace FintrakBanking.Repositories.Credit
                             deferralReason = b.DEFERRALREASON,
                             createdBy = c.TBL_STAFF.FIRSTNAME + " " + c.TBL_STAFF.LASTNAME,
                             dateCreated = b.DATETIMECREATED,
-                            customerName = c.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup ? c.TBL_CUSTOMER_GROUP.GROUPNAME : c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_CUSTOMER.LASTNAME,
+                            customerName = c.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? c.TBL_CUSTOMER_GROUP.GROUPNAME : c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_CUSTOMER.LASTNAME,
                             applicationRefNo = c.APPLICATIONREFERENCENUMBER,
                             loanApplicationId = c.LOANAPPLICATIONID
                         });

@@ -29,7 +29,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                       {
                                           companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
                                           //customerId = b.CustomerId,
-                                          customerName = a.LOANTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
+                                          customerName = a.LOANAPPLICATIONTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
                                           customerGroupName = c.GROUPNAME + " - " + c.GROUPCODE,
                                           customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                                           applicationDate = a.APPLICATIONDATE
@@ -166,7 +166,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        loanAmount = b.APPROVEDAMOUNT,
                                        exchangeRate = b.EXCHANGERATE,
                                        companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
-                                       customerName = a.LOANTYPEID != 3 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
+                                       customerName = a.LOANAPPLICATIONTYPEID != 3 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
                                        customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                                        applicationDate = a.APPLICATIONDATE,
                                        customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
@@ -255,7 +255,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                   {
                                       companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
                                       //customerId = b.CustomerId,
-                                      customerName = a.LOANTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
+                                      customerName = a.LOANAPPLICATIONTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
                                       customerGroupName = c.GROUPNAME + " - " + c.GROUPCODE,
                                       customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                                       customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
@@ -285,7 +285,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                    interestRate = b.APPROVEDINTERESTRATE,
                                    loanAmount = b.APPROVEDAMOUNT,
                                    exchangeRate = b.EXCHANGERATE,
-                                   loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                                   loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                }).ToList();
 
             var facilityType = loanDetails.FirstOrDefault().loanTypeName;

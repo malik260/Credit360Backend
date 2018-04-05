@@ -741,4 +741,22 @@ namespace FintrakBanking.ViewModels.Credit
         public int stockPriceId { get; set; }
         public decimal stockPrice { get; set; }
     }
+
+    public class loanApplicationColateral
+    {
+        public int loanApplicationCollateralId   { get; set; }
+        public int collateralCustomerId          { get; set; }
+        public int loanApplicationId             { get; set; }
+        public int loanApplicationDetailId       { get; set; }
+        public bool legalFeeTaken                { get; set; }
+        public decimal legalFeeAmount            { get; set; }
+        public DateTime legalFeeDate             { get; set; }
+        public string collateralTypeName         { get; set; }
+        public decimal collateralValue               { get; set; }
+        public double hairCut                       { get; set; }
+        public decimal valuationCycle                { get; set; }
+        public int currencyId                    { get; set; }
+        public string currencyCode               { get; set; }
+        public string currency                   { get; set; }
+    }                                         
 }

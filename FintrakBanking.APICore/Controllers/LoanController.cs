@@ -200,12 +200,12 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("gaurantor/application/{applicationReferenceNumber}")]
-        public HttpResponseMessage GetLoanGuarantors(int applicationReferenceNumber)
+        [Route("gaurantor/application/{loanApplicationId}")]
+        public HttpResponseMessage GetLoanGuarantors(int loanApplicationId)
         {
             try
             {
-                var data = repo.GetLoanGuarantors(applicationReferenceNumber);
+                var data = repo.GetLoanGuarantors(loanApplicationId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -246,6 +246,46 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
+        [HttpGet]
+        [Route("loan-customer-accounts/{customerId}/application-detail/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetLoanCustomerAccounts(int customerId, int loanApplicationDetailId)
+        {
+            try
+            {
+                var data = repo.GetLoanCustomerAccounts(customerId, loanApplicationDetailId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        //[HttpGet]
+        //[Route("loan-customer-company/{customerId}/application-detail/{loanApplicationDetailId}")]
+        //public HttpResponseMessage GetLoanCustomerCompanyInfo(int customerId, int loanApplicationDetailId)
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetLoanCustomerCompanyInfo(customerId, loanApplicationDetailId);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //        }
+
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
         [HttpPost]
         [Route("gaurantor/product-type/{productTypeId}/application/{applicationReferenceNumber}")]
@@ -319,11 +359,27 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpGet]
         [Route("monitoring-trigger")]
-        public HttpResponseMessage GetLoan()
+        public HttpResponseMessage GetLoanMonitoringTrigger()
         {
             try
             {
                 var data = repo.GetLoanMonitoringTrigger();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("monitoring-trigger/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetLoanMonitoringTriggerByLoanApplicationDetailId(int loanApplicationDetailId)
+        {
+            try
+            {
+                var data = repo.GetLoanMonitoringTriggerByLoanApplicationDetailId(loanApplicationDetailId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }

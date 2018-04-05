@@ -2833,8 +2833,8 @@ namespace FintrakBanking.Repositories.Credit
                              disburserComment = a.DISBURSERCOMMENT,
                              disburseDate = a.DISBURSEDATE,
                              operationId = a.OPERATIONID,
-                             customerGroupId = a.CUSTOMERGROUPID,
-                             loanTypeId = a.LOANTYPEID,
+                             customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                             loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                              equityContribution = a.EQUITYCONTRIBUTION,
                              firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
                              firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
@@ -2915,8 +2915,8 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.DISBURSERCOMMENT = item.disburserComment;
                 addLoanArchive.DISBURSEDATE = item.disburseDate;
                 addLoanArchive.OPERATIONID = operationId;
-                addLoanArchive.CUSTOMERGROUPID = item.customerGroupId;
-                addLoanArchive.LOANTYPEID = item.loanTypeId;
+                addLoanArchive.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID = item.customerGroupId;
+                //addLoanArchive.LOANTYPEID = item.loanTypeId;
                 //addLoanArchive.TrancheBatchCode = item.trancheBatchCode;
                 addLoanArchive.EQUITYCONTRIBUTION = item.equityContribution;
                 addLoanArchive.FIRSTPRINCIPALPAYMENTDATE = item.firstPrincipalPaymentDate;
@@ -3986,8 +3986,8 @@ namespace FintrakBanking.Repositories.Credit
                              disburserComment = a.DISBURSERCOMMENT,
                              disburseDate = a.DISBURSEDATE,
                              operationId = a.OPERATIONID,
-                             customerGroupId = a.CUSTOMERGROUPID,
-                             loanTypeId = a.LOANTYPEID,
+                             customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                             loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                              equityContribution = a.EQUITYCONTRIBUTION,
                              firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
                              firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
@@ -4068,8 +4068,8 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.DISBURSERCOMMENT = item.disburserComment;
                 addLoanArchive.DISBURSEDATE = item.disburseDate;
                 addLoanArchive.OPERATIONID = (int)item.operationId;
-                addLoanArchive.CUSTOMERGROUPID = item.customerGroupId;
-                addLoanArchive.LOANTYPEID = item.loanTypeId;
+                //addLoanArchive.CUSTOMERGROUPID = item.customerGroupId;
+               // addLoanArchive.LOANTYPEID = item.loanTypeId;
                 //addLoanArchive.TrancheBatchCode = item.trancheBatchCode;
                 addLoanArchive.EQUITYCONTRIBUTION = item.equityContribution;
                 addLoanArchive.FIRSTPRINCIPALPAYMENTDATE = item.firstPrincipalPaymentDate;
@@ -5927,9 +5927,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             ////approvedAmount = ln.tbl_Loan_Application_Detail.ApprovedAmount,
 
-                            customerGroupId = ln.CUSTOMERGROUPID,
+                            customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
                             operationId = ln.OPERATIONID,
-                            loanTypeId = ln.LOANTYPEID,
+                            loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                             equityContribution = ln.EQUITYCONTRIBUTION,
                             subSectorId = ln.SUBSECTORID,
                             subSectorName = ln.TBL_SUB_SECTOR.NAME,
@@ -5955,7 +5955,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
                             productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
                             productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
-                            loanTypeName = ln.TBL_LOAN_TYPE.LOANTYPENAME,
+                            loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                             customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
                             currencyId = ln.CURRENCYID,
 
@@ -6023,9 +6023,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             ////approvedAmount = ln.tbl_Loan_Application_Detail.ApprovedAmount,
 
-                            customerGroupId = ln.CUSTOMERGROUPID,
+                            customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
                             operationId = ln.OPERATIONID,
-                            loanTypeId = ln.LOANTYPEID,
+                            loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                             equityContribution = ln.EQUITYCONTRIBUTION,
                             subSectorId = ln.SUBSECTORID,
                             subSectorName = ln.TBL_SUB_SECTOR.NAME,
@@ -6051,7 +6051,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
                             productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
                             productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
-                            loanTypeName = ln.TBL_LOAN_TYPE.LOANTYPENAME,
+                            loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                             customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
                             currencyId = ln.CURRENCYID,
 
@@ -6729,7 +6729,7 @@ namespace FintrakBanking.Repositories.Credit
                              companyId = a.COMPANYID,
                              branchId = a.BRANCHID,
                              customerGroupId = a.CUSTOMERGROUPID,
-                             loanTypeId = a.LOANTYPEID,
+                             loanTypeId = a.LOANAPPLICATIONTYPEID,
                              relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                              relationshipManagerId = a.RELATIONSHIPMANAGERID,
                              casaAccountId = a.CASAACCOUNTID,
@@ -6782,7 +6782,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanApplicationArchive.COMPANYID = item.companyId;
                 addLoanApplicationArchive.BRANCHID = (short)item.branchId;
                 addLoanApplicationArchive.CUSTOMERGROUPID = item.customerGroupId;
-                addLoanApplicationArchive.LOANTYPEID = item.loanTypeId;
+                addLoanApplicationArchive.LOANAPPLICATIONTYPEID = item.loanTypeId;
                 addLoanApplicationArchive.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
                 addLoanApplicationArchive.RELATIONSHIPMANAGERID = item.relationshipManagerId;
                 addLoanApplicationArchive.CASAACCOUNTID = item.casaAccountId;
@@ -6820,7 +6820,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanApplicationArchive.NOTINCRC = item.notInCrc;
                 addLoanApplicationArchive.OPERATIONID = (int)item.operationId;
                 addLoanApplicationArchive.CUSTOMERGROUPID = item.customerGroupId;
-                addLoanApplicationArchive.LOANTYPEID = item.loanTypeId;
+                addLoanApplicationArchive.LOANAPPLICATIONTYPEID = item.loanTypeId;
 
                 LoanApplicationArchive.Add(addLoanApplicationArchive);
 
@@ -6921,8 +6921,8 @@ namespace FintrakBanking.Repositories.Credit
                              productId = a.PRODUCTID,
                              companyId = a.COMPANYID,
                              branchId = a.BRANCHID,
-                             customerGroupId = a.CUSTOMERGROUPID,
-                             loanTypeId = a.LOANTYPEID,
+                             customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                             loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                              relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                              relationshipManagerId = a.RELATIONSHIPMANAGERID,
                              casaAccountId = a.CASAACCOUNTID,
@@ -6951,7 +6951,7 @@ namespace FintrakBanking.Repositories.Credit
                              disbursedBy = a.DISBURSEDBY,
                              disburserComment = a.DISBURSERCOMMENT,
                              disburseDate = a.DISBURSEDATE,
-                             trancheBatchCode = a.TRANCHEBATCHCODE,
+                            // trancheBatchCode = a.TRANCHEBATCHCODE,
                              dischargeLetter = a.DISCHARGELETTER,
                              suspendInterest = a.SUSPENDINTEREST,
                              internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
@@ -6977,8 +6977,8 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanRevolvingArchive.PRODUCTID = item.productId;
                 addLoanRevolvingArchive.COMPANYID = item.companyId;
                 addLoanRevolvingArchive.BRANCHID = item.branchId;
-                addLoanRevolvingArchive.CUSTOMERGROUPID = item.customerGroupId;
-                addLoanRevolvingArchive.LOANTYPEID = item.loanTypeId;
+                addLoanRevolvingArchive.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID = item.customerGroupId;
+                addLoanRevolvingArchive.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID = item.loanTypeId;
                 addLoanRevolvingArchive.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
                 addLoanRevolvingArchive.RELATIONSHIPMANAGERID = item.relationshipManagerId;
                 addLoanRevolvingArchive.CASAACCOUNTID = item.casaAccountId;
@@ -7011,9 +7011,9 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanRevolvingArchive.DISBURSERCOMMENT = item.disburserComment;
                 addLoanRevolvingArchive.DISBURSEDATE = item.disburseDate;
                 addLoanRevolvingArchive.OPERATIONID = (int)item.operationId;
-                addLoanRevolvingArchive.CUSTOMERGROUPID = item.customerGroupId;
-                addLoanRevolvingArchive.LOANTYPEID = item.loanTypeId;
-                addLoanRevolvingArchive.TRANCHEBATCHCODE = item.trancheBatchCode;
+                addLoanRevolvingArchive.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID = item.customerGroupId;
+                addLoanRevolvingArchive.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID = item.loanTypeId;
+               // addLoanRevolvingArchive.TRANCHEBATCHCODE = item.trancheBatchCode;
                 addLoanRevolvingArchive.DISCHARGELETTER = item.dischargeLetter;
                 addLoanRevolvingArchive.SUSPENDINTEREST = item.suspendInterest;
                 addLoanRevolvingArchive.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;

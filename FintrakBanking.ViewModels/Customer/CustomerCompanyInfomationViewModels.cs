@@ -17,7 +17,7 @@ namespace FintrakBanking.ViewModels.Customer
         public int? paidUpCapital { get; set; }
         public int? authorizedCapital { get; set; }
         public decimal? shareholderFund { get; set; }
-        public List<CustomerCompanyDirectorsViewModels> companyDiretcors { get; set; }
+        public List<CustomerCompanyDirectorsViewModels> companyDirectors { get; set; }
         public List<CustomerCompanyShareholdersViewModels> companyShareholders { get; set; }
         public List<CustomerCompanyAccountSignatoryViewModels> companyAccountSignatories { get; set; }
 

@@ -31,7 +31,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CUSTOMERGROUPID { get; set; }
 
-        public short LOANTYPEID { get; set; }
+        public short LOANAPPLICATIONTYPEID { get; set; }
 
         public int RELATIONSHIPOFFICERID { get; set; }
 
@@ -141,6 +141,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_LOAN_PRELIMINARY_EVALUATN TBL_LOAN_PRELIMINARY_EVALUATN { get; set; }
 
-        public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
+        public virtual TBL_LOAN_APPLICATION_TYPE TBL_LOAN_APPLICATION_TYPE { get; set; }
     }
 }
