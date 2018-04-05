@@ -12,6 +12,14 @@ namespace FintrakBanking.Entities.DocumentModels
         public int DOCUMENTID { get; set; }
 
         [Required]
+        [StringLength(100)]
+        public string DOCUMENTCODE { get; set; }
+
+        public int COLLATERALCUSTOMERID { get; set; }
+
+        public bool ISPRIMARYDOCUMENT { get; set; }
+
+        [Required]
         [StringLength(400)]
         public string FILENAME { get; set; }
 
@@ -23,12 +31,6 @@ namespace FintrakBanking.Entities.DocumentModels
         public byte[] FILEDATA { get; set; }
 
         public DateTime SYSTEMDATETIME { get; set; }
-
-        [Required]
-        [StringLength(100)]
-        public string DOCUMENTCODE { get; set; }
-
-        public int COLLATERALCUSTOMERID { get; set; }
 
         public int CREATEDBY { get; set; }
     }

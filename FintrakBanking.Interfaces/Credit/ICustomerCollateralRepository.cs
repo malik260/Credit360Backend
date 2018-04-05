@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         #region Collateral
 
-        Task<bool> AddCollateral(CollateralViewModel entity);
+        bool AddCollateral(CollateralViewModel entity, byte[] file);
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId);

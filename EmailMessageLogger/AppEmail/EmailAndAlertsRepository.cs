@@ -874,7 +874,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
                                                join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                                               where a.TBL_PRODUCT.PRODUCTTYPEID == 2 && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate) < (int?)alertOnSelfLiquidatingLoanExpiry.NOTIFICATION_PERIOD1
+                                               where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.SelfLiquidating && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate) < (int?)alertOnSelfLiquidatingLoanExpiry.NOTIFICATION_PERIOD1
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -1048,7 +1048,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
                                                join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                                               where a.TBL_PRODUCT.PRODUCTTYPEID == 6 && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate) < (int?)alertOnOverDraftLoansAlmostDue.NOTIFICATION_PERIOD1
+                                               where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.RevolvingLoan && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)applDate) < (int?)alertOnOverDraftLoansAlmostDue.NOTIFICATION_PERIOD1
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -1217,7 +1217,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                               where s.HASLIEN == true && (s.POSTNOSTATUSID == 2 || s.POSTNOSTATUSID == 4)
+                                               where s.HASLIEN == true && (s.POSTNOSTATUSID == (int)LoanStatusEnum.Suspended || s.POSTNOSTATUSID == (int)LoanStatusEnum.Terminated)
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -1389,7 +1389,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) < (int?)InActiveBondAndGuarantee.NOTIFICATION_PERIOD1 && a.LOANSTATUSID == 1
+                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) < (int?)InActiveBondAndGuarantee.NOTIFICATION_PERIOD1 && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
