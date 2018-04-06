@@ -1120,6 +1120,7 @@ namespace FintrakBanking.Repositories.Credit
                 interestPaymentFrequency = specifics.INTERESTPAYMENTFREQUENCY,
                 remark = specifics.REMARK,
                 fundName = specifics.FUNDNAME,
+                bank=specifics.BANKPURCHASEDFROM,
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
