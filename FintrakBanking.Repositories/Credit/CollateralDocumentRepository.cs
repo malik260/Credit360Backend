@@ -18,6 +18,7 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private ICustomerCollateralRepository coll;
+         private ICollateralDocumentRepository document;
 
         public CollateralDocumentRepository(CustomerCollateralRepository coll, FinTrakBankingDocumentsContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
         {
@@ -38,6 +39,7 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALCUSTOMERID = model.collateralId,
                 SYSTEMDATETIME = DateTime.Now,
                 CREATEDBY = (int)model.createdBy,
+                ISPRIMARYDOCUMENT = model.isPrimaryDocument
             };
 
             context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);
@@ -134,7 +136,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public CollateralVisitationDocumentViewModel GetCollateralVisitationDocument(int collateralVisitationId)
         {
-            var data = (from x in this.context.TBL_COLLATERAL_VISITATION
+            var data = (from x in this.context.TBL_DOC_COLLATERAL_VISITATION
                         where x.COLLATERALVISITATIONID == collateralVisitationId
                         select new CollateralVisitationDocumentViewModel
                         {
@@ -158,7 +160,7 @@ namespace FintrakBanking.Repositories.Credit
             {
 
 
-                var data = new Entities.DocumentModels.TBL_COLLATERAL_VISITATION
+                var data = new Entities.DocumentModels.TBL_DOC_COLLATERAL_VISITATION
                 {
                     FILEDATA = file,
                     FILENAME = model.fileName,
@@ -170,7 +172,7 @@ namespace FintrakBanking.Repositories.Credit
                     // COLLATERALCODE ="aaasss",
                 };
 
-                context.TBL_COLLATERAL_VISITATION.Add(data);
+                context.TBL_DOC_COLLATERAL_VISITATION.Add(data);
             }
            // Audit Section ---------------------------
            var audit = new TBL_AUDIT

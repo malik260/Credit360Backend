@@ -15,6 +15,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime lastVisitaionDate { get; set; }
         public string visitationRemark { get; set; }
         public int? CollateralVisitationID { get; set; }
+        public bool isPrimaryDocument { get; set; }
     }
 
     public class CollateralVisitationDocumentViewModel : GeneralEntity
