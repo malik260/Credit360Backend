@@ -86,7 +86,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 CREATEDBY = model.createdBy,
                 LOANAMOUNT = model.loanAmount,
-                LOANTYPEID = model.loanTypeId,
+                //LOANTYPEID = model.loanTypeId,
                 // SubSectorId = model.subSectorId,
                 PRODUCTCLASSID = model.productClassId
             };
@@ -215,7 +215,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     CREATEDBY = item.createdBy,
                     LOANAMOUNT = item.loanAmount,
-                    LOANTYPEID = item.loanTypeId,
+                    //LOANTYPEID = item.loanTypeId,
                     SUBSECTORID = item.subSectorId,
                     PRODUCTCLASSID = item.productClassId
                 };
@@ -329,7 +329,7 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.TBL_BRANCH on pen.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && pen.ISCURRENT == true
-                            && pen.LOANTYPEID == (short)LoanTypeEnum.Single && atrail.RESPONSESTAFFID == null
+                            && pen.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single && atrail.RESPONSESTAFFID == null
                               && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new LoanPreliminaryEvaluationViewModel()
                         {
@@ -429,8 +429,8 @@ namespace FintrakBanking.Repositories.Credit
                                  client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                              }).ToList(),
                             loanAmount = pen.LOANAMOUNT,
-                            loanTypeId = pen.LOANTYPEID,
-                            loanTypeName = pen.TBL_LOAN_TYPE.LOANTYPENAME,
+                            loanTypeId = pen.LOANAPPLICATIONTYPEID,
+                            loanTypeName = pen.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                             productClassId = (short)pen.PRODUCTCLASSID,
                             productClassName = pen.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             //subSectorId = pen.SubSectorId,
@@ -449,7 +449,7 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.TBL_BRANCH on pen.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && pen.ISCURRENT == true
-                              && pen.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup && atrail.RESPONSESTAFFID == null
+                              && pen.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup && atrail.RESPONSESTAFFID == null
                               && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new LoanPreliminaryEvaluationViewModel()
                         {
@@ -566,8 +566,8 @@ namespace FintrakBanking.Repositories.Credit
                             sentForLoanApplication = pen.SENTFORLOANAPPLICATION,
                             sentForEvaluation = pen.SENTFOREVALUATION,
                             loanAmount = pen.LOANAMOUNT,
-                            loanTypeId = pen.LOANTYPEID,
-                            loanTypeName = pen.TBL_LOAN_TYPE.LOANTYPENAME,
+                            loanTypeId = pen.LOANAPPLICATIONTYPEID,
+                            loanTypeName = pen.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                             productClassId = (short)pen.PRODUCTCLASSID,
                             productClassName = pen.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                         });
@@ -666,7 +666,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on p.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
-                        where p.ISCURRENT == false && p.LOANTYPEID == (short)LoanTypeEnum.Single && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        where p.ISCURRENT == false && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                         && p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
@@ -770,8 +770,8 @@ namespace FintrakBanking.Repositories.Credit
                             sentForLoanApplication = p.SENTFORLOANAPPLICATION,
                             sentForEvaluation = p.SENTFOREVALUATION,
                             loanAmount = p.LOANAMOUNT,
-                            loanTypeId = p.LOANTYPEID,
-                            loanTypeName = p.TBL_LOAN_TYPE.LOANTYPENAME,
+                            loanTypeId = p.LOANAPPLICATIONTYPEID,
+                            loanTypeName = p.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                             productClassId = (short)p.PRODUCTCLASSID,
                             productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             //subSectorId = p.SubSectorId,
@@ -789,7 +789,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on p.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
-                        where p.ISCURRENT == false && p.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        where p.ISCURRENT == false && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                         && p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
@@ -900,8 +900,8 @@ namespace FintrakBanking.Repositories.Credit
                             sentForLoanApplication = p.SENTFORLOANAPPLICATION,
                             sentForEvaluation = p.SENTFOREVALUATION,
                             loanAmount = p.LOANAMOUNT,
-                            loanTypeId = p.LOANTYPEID,
-                            loanTypeName = p.TBL_LOAN_TYPE.LOANTYPENAME,
+                            loanTypeId = p.LOANAPPLICATIONTYPEID,
+                            loanTypeName = p.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                             productClassId = (short)p.PRODUCTCLASSID,
                             productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             //subSectorId = p.SubSectorId,
@@ -958,7 +958,7 @@ namespace FintrakBanking.Repositories.Credit
                 penRecord.DATETIMEUPDATED = DateTime.Now;
                 penRecord.CREATEDBY = model.createdBy;
                 penRecord.LOANAMOUNT = model.loanAmount;
-                penRecord.LOANTYPEID = model.loanTypeId;
+                //penRecord.LOANTYPEID = model.loanTypeId;
                 //penRecord.SubSectorId = model.subSectorId;
                 penRecord.PRODUCTCLASSID = model.productClassId;
             }

@@ -596,46 +596,6 @@ namespace FintrakBanking.Repositories.Credit
             return documentation;
         }
 
-        //public bool Confirmation(int type, int applicationId)
-        //{
-        //    var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
-        //    bool result = false;
-
-        //    switch (type)
-        //    {
-        //        case 1:
-        //            application.CUSTOMERINFOVALIDATED = (application.CUSTOMERINFOVALIDATED == false) ? true : false;
-        //            result = application.CUSTOMERINFOVALIDATED;
-        //            break;
-        //        //case 2:
-        //        //    application.NOTINNEGATIVECRMS = (application.NOTINNEGATIVECRMS == false) ? true : false;
-        //        //    result = application.NOTINNEGATIVECRMS;
-        //        //    break;
-        //        //case 3:
-        //        //    application.NOTINBLACKBOOK = (application.NOTINBLACKBOOK == false) ? true : false;
-        //        //    result = application.NOTINBLACKBOOK;
-        //        //    break;
-        //        //case 4:
-        //        //    application.NOTINCAMSOL = (application.NOTINCAMSOL == false) ? true : false;
-        //        //    result = application.NOTINCAMSOL;
-        //        //    break;
-        //        //case 5:
-        //        //    application.NOTINXDS = (application.NOTINXDS == false) ? true : false;
-        //        //    result = application.NOTINXDS;
-        //        //    break;
-        //        //case 6:
-        //        //    application.NOTINCRC = (application.NOTINCRC == false) ? true : false;
-        //        //    result = application.NOTINCRC;
-        //        //    break;
-        //        default:
-        //            break;
-        //    }
-
-        //    context.SaveChanges();
-
-        //    return result;
-        //}
-
         #region CAM Pending Applications
 
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int companyId, int branchId, int staffId, int? classId)
@@ -673,7 +633,7 @@ namespace FintrakBanking.Repositories.Credit
                     productClassId = x.a.PRODUCTCLASSID,
                     productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                     customerGroupId = x.a.CUSTOMERGROUPID,
-                    loanTypeId = x.a.LOANTYPEID,
+                    loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
                     relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
                     newApplicationDate = x.a.APPLICATIONDATE,
@@ -698,10 +658,10 @@ namespace FintrakBanking.Repositories.Credit
                     relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
                     relationshipManagerName = x.a.TBL_STAFF1.FIRSTNAME + " " + x.a.TBL_STAFF1.MIDDLENAME + " " + x.a.TBL_STAFF1.LASTNAME,
                     misCode = x.a.MISCODE,
-                    customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                    loanTypeName = x.a.TBL_LOAN_TYPE.LOANTYPENAME,
+                    loanTypeName = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                     createdBy = x.a.CREATEDBY,
                     loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
+                    customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                     customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                     operationId = x.a.OPERATIONID,
                     productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
@@ -709,12 +669,7 @@ namespace FintrakBanking.Repositories.Credit
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 .OrderByDescending(x => x.newApplicationDate)
-                .ThenByDescending(x => x.loanApplicationId)
-                ;
-
-            //var list = applications.ToList();
-            //var count = applications.Count();
-            //var levs = levelIds.ToList();
+                .ThenByDescending(x => x.loanApplicationId);
 
             return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }

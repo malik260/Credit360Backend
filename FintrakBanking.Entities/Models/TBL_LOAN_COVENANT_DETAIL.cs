@@ -35,7 +35,7 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? NEXTCOVENANTDATE { get; set; }
 
-        public int? SAVINGSACCOUNTID { get; set; }
+        public int? CASAACCOUNTID { get; set; }
 
         public int COMPANYID { get; set; }
 
@@ -52,6 +52,8 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual TBL_CASA TBL_CASA { get; set; }
 
         public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }
 

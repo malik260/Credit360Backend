@@ -10,5 +10,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         StaffRoleViewModel GetStaffRole(int rankId);
 
         IEnumerable<StaffRoleViewModel> GetStaffRoleByCompanyId(int companyId);
+
+        IEnumerable<StaffRoleViewModel> GetStaffRoles();
     }
 }

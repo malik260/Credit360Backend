@@ -29,7 +29,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime principalFirstpaymentDate { get; set; }
         public DateTime interestFirstpaymentDate { get; set; }
         public DateTime maturityDate { get; set; }
-        public short accurialBasis { get; set; }
+        public short accrualBasis { get; set; }
         public double integralFeeAmount { get; set; }
         public short firstDayType { get; set; }
  

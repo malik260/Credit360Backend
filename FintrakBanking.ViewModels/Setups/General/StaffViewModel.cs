@@ -7,6 +7,9 @@ namespace FintrakBanking.ViewModels.Setups.General
     public class StaffInfoViewModel : GeneralEntity
     {
         public IQueryable<DepartmentViewModel> departmentUnits;
+        public string supervisorStaffName;
+
+        public int? supervisorStaffId { get; set; }
 
         public bool npl_LimitExceeded { get; set; }
 
@@ -93,6 +96,9 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class StaffDetailsModel : StaffInfoViewModel
     {
+        public int? supervisorStaff;
+        public string supervisorStaffName;
+
         public string JobTitle { get; set; }
         public string Rank { get; set; }
         public string MisInfo { get; set; }
@@ -160,12 +166,12 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string rankName { get; set; }
     }
 
-    public class RelieverViewModel : GeneralEntity
+    public class SupervisorViewModel : GeneralEntity
     {
         public int statusId { get; set; }
         public string status { get; set; }
-        public int? relieverId { get; set; }
-        public int relievedStaffId { get; set; }
+        public int? supervisorId { get; set; }
+        public int supervisorStaffId { get; set; }
         public string staffCode { get; set; }
     }
 }

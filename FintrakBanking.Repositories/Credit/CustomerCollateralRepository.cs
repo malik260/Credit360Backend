@@ -14,6 +14,7 @@ using FintrakBanking.Interfaces.Setups.Credit;
 using System.Data.Entity;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Entities.DocumentModels;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -26,6 +27,7 @@ namespace FintrakBanking.Repositories.Credit
         private IMediaRepository media;
         private ICollateralTypeRepository collateralType;
         private IWorkflow workflow;
+        private FinTrakBankingDocumentsContext documentContext;
 
 
         public CustomerCollateralRepository(
@@ -34,7 +36,8 @@ namespace FintrakBanking.Repositories.Credit
             IAuditTrailRepository _auditTrail, IProductRepository _product,
             IMediaRepository _media,
             ICollateralTypeRepository _collateralType,
-            IWorkflow workflow
+            IWorkflow workflow,
+            FinTrakBankingDocumentsContext _documentContext
             )
         {
             this.context = _context;
@@ -44,13 +47,15 @@ namespace FintrakBanking.Repositories.Credit
             this.media = _media;
             this.collateralType = _collateralType;
             this.workflow = workflow;
+            this.documentContext = _documentContext;
+
         }
 
         #region New 
 
         // ADD
 
-        public async Task<bool> AddCollateral(CollateralViewModel entity)
+        public bool AddCollateral(CollateralViewModel entity, byte[] file)
         {
             int collateralId = AddCollateralMainForm(entity);
 
@@ -75,10 +80,12 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (entity.hasInsurance) { AddItemInsurancePolicy(collateralId, entity); }
 
+                if (file!=null){ SaveCollateralMainDocument(entity, collateralId, file); }
+
                 bool saved;
                 try
                 {
-                    saved = await context.SaveChangesAsync() != 0;
+                    saved =  context.SaveChanges() != 0;
                 }
                 catch (Exception ex)
                 {
@@ -343,6 +350,25 @@ namespace FintrakBanking.Repositories.Credit
                 DELETED = false
                  
             });
+        }
+
+        public bool SaveCollateralMainDocument(CollateralViewModel model, int collateralId, byte[] file)
+        {
+            var data = new TBL_MEDIA_COLLATERAL_DOCUMENTS
+            {
+                FILEDATA = file,
+                DOCUMENTCODE = model.documentTitle,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                COLLATERALCUSTOMERID = collateralId,
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = (int)model.createdBy,
+                ISPRIMARYDOCUMENT = model.isPrimaryDocument
+            };
+
+            documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);
+
+            return documentContext.SaveChanges() != 0;
         }
 
         private void UpdateItemInsurancePolicy(CollateralViewModel entity)
@@ -1094,6 +1120,7 @@ namespace FintrakBanking.Repositories.Credit
                 interestPaymentFrequency = specifics.INTERESTPAYMENTFREQUENCY,
                 remark = specifics.REMARK,
                 fundName = specifics.FUNDNAME,
+                bank=specifics.BANKPURCHASEDFROM,
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -1292,7 +1319,7 @@ namespace FintrakBanking.Repositories.Credit
                     collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
                     //currencyId = x.CollateralApplication.Application.CurrencyId,
                     //productId = x.CollateralApplication.Application.ProductId,
-                    loanTypeId = x.CollateralApplication.Application.LOANTYPEID,
+                    loanTypeId = x.CollateralApplication.Application.LOANAPPLICATIONTYPEID,
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
                     //loanId = x.Mapping.LoanId,
                     loanApplicationId = x.Mapping.LOANID,
@@ -1444,7 +1471,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     customerId = x.CollateralApplication.Application.CUSTOMERID,
                     collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
-                    loanTypeId = x.CollateralApplication.Application.LOANTYPEID,
+                    loanTypeId = x.CollateralApplication.Application.LOANAPPLICATIONTYPEID,
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
                     loanApplicationId = x.Mapping.LOANID,
                     isReleased = x.Mapping.ISRELEASED,

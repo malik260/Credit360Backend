@@ -58,8 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
-    <Compile Include="DocumentModels\TBL_COLLATERAL_VISITATION.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
+    <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_CONDITION_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_CHECKLIST_DOCUMENTS.cs" />
@@ -260,6 +260,7 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_STA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_TRA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATN_DETL_MTRIG.cs" />
     <Compile Include="Models\TBL_LOAN_APPLTN_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />

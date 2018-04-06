@@ -55,5 +55,14 @@ namespace FintrakBanking.Repositories.Setups.General
             return role;
         }
 
+        public IEnumerable<StaffRoleViewModel> GetStaffRoles()
+        {
+            return from a in context.TBL_STAFF_ROLE
+                   select new StaffRoleViewModel
+                   {
+                       staffRoleName = a.STAFFROLENAME,
+                       staffRoleId = a.STAFFROLEID
+                   };
+        }
     }
 }

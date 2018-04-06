@@ -19,6 +19,10 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }
 
+        [Required]
+        [StringLength(2000)]
+        public string REMARK { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
