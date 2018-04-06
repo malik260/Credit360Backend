@@ -54,6 +54,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
                 entity.userBranchId = (short)token.GetBranchId;
 
                 var response = repo.SaveContigentLoans(entity, token.GetCompanyId);
