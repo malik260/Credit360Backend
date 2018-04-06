@@ -2135,7 +2135,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
         private bool AddLoanCovenant(List<LoanCovenantDetailViewModel> covenantModel, int loanApplicationId, int loanId, short productTypeId)
-        {
+        { 
             foreach (LoanCovenantDetailViewModel entity in covenantModel)
             {
                 var covenant = new TBL_LOAN_COVENANT_DETAIL
@@ -2149,8 +2149,8 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now,
                     FREQUENCYTYPEID = entity.frequencyTypeId,
                     LOANID = loanId,
-                    SAVINGSACCOUNTID = entity.casaAccountId,
-                    PRODUCTTYPEID = productTypeId
+                    CASAACCOUNTID = entity.casaAccountId,
+                    PRODUCTTYPEID = productTypeId,
                 };
 
                 context.TBL_LOAN_COVENANT_DETAIL.Add(covenant);
@@ -2223,6 +2223,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTTYPEID = productTypeId,
                 COVENANTTYPEID = entity.covenantTypeId,
                 FREQUENCYTYPEID = entity.frequencyTypeId,
+                CASAACCOUNTID = entity.casaAccountId,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now // generalSetup.GetApplicationDate(),
             });
@@ -2813,8 +2814,8 @@ namespace FintrakBanking.Repositories.Credit
                             covenantTypeId = a.COVENANTTYPEID,
                             frequencyTypeId = a.FREQUENCYTYPEID,
                             covenantAmount = a.COVENANTAMOUNT,
-                            covenantDate = a.COVENANTDATE
-
+                            covenantDate = a.COVENANTDATE,
+                            casaAccountId = a.CASAACCOUNTID
                         }).ToList();
             return data;
         }
@@ -2876,8 +2877,7 @@ namespace FintrakBanking.Repositories.Credit
                             feeDependentAmount = c.FEEDEPENDENTAMOUNT,
                             feeAmount = c.FEEAMOUNT,
                             feeIntervalId = c.TBL_CHARGE_FEE.FEEINTERVALID,
-                            feeIntervalName = c.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME
-
+                            feeIntervalName = c.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
                         }).ToList();
             return data;
         }

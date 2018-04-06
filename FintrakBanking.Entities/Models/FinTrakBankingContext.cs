@@ -4537,6 +4537,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CHART_OF_ACCOUNT)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
+                .HasMany(e => e.TBL_TEMP_PRODUCT6)
+                .WithOptional(e => e.TBL_CHART_OF_ACCOUNT6)
+                .HasForeignKey(e => e.PRINCIPALBALANCEGL2);
 
             modelBuilder.Entity<TBL_CHART_OF_ACCOUNT_CLASS>()
                 .HasMany(e => e.TBL_CHART_OF_ACCOUNT)

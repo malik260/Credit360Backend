@@ -129,6 +129,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              StaffCode = c.STAFFCODE,
                              staffRoleId = c.STAFFROLEID,
                              staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                             supervisorStaffId = c.SUPERVISOR_STAFFID,
+                             supervisorStaffName = c.FIRSTNAME +" " + c.MIDDLENAME + " " +  c.LASTNAME,
                              BranchName = br.BRANCHNAME,
                              departmentName = dept.DEPARTMENTNAME,
                              departmentUnitId = c.DEPARTMENT_UNITID,
@@ -179,6 +181,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              StaffCode = c.STAFFCODE,
                              staffRoleId = c.STAFFROLEID,
                              staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                             supervisorStaffId = c.SUPERVISOR_STAFFID,
+                             supervisorStaffName = c.FIRSTNAME +" " + c.MIDDLENAME + " " + c.LASTNAME,
                              //BranchName = br.BranchName,
 
                              //DepartmentName = c.Department.DepartmentName,
@@ -219,6 +223,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.JOBTITLEID = staffModel.JobTitleId;
                 tempStaffToUpdate.COMPANYID = staffModel.companyId;
                 tempStaffToUpdate.STAFFROLEID = staffModel.staffRoleId;
+                tempStaffToUpdate.SUPERVISOR_STAFFID = staffModel.supervisorStaffId;
                 tempStaffToUpdate.ADDRESS = staffModel.Address;
                 tempStaffToUpdate.ADDRESSOFNOK = staffModel.AddressOfNok;
                 tempStaffToUpdate.BRANCHID = staffModel.BranchId;
@@ -258,6 +263,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     JOBTITLEID = staffModel.JobTitleId,
                     COMPANYID = staffModel.companyId,
                     STAFFROLEID = staffModel.staffRoleId,
+                    SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
                     ADDRESS = staffModel.Address,
                     ADDRESSOFNOK = staffModel.AddressOfNok,
                     BRANCHID = staffModel.BranchId,
@@ -437,6 +443,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.STAFFCODE = temp.STAFFCODE;
                 entity.JOBTITLEID = temp.JOBTITLEID;
                 entity.STAFFROLEID = temp.STAFFROLEID;
+                entity.SUPERVISOR_STAFFID = temp.SUPERVISOR_STAFFID;
                 entity.ADDRESS = temp.ADDRESS;
                 entity.ADDRESSOFNOK = temp.ADDRESSOFNOK;
                 entity.BRANCHID = temp.BRANCHID;
@@ -446,6 +453,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                 entity.DATETIMEUPDATED = DateTime.Now;
                 entity.DEPARTMENTID = temp.DEPARTMENTID;
+                entity.DEPARTMENT_UNITID = temp.DEPARTMENTUNITID;
                 entity.EMAIL = temp.EMAIL;
                 entity.EMAILOFNOK = temp.EMAILOFNOK;
                 entity.GENDER = temp.GENDER;
@@ -470,6 +478,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFCODE = temp.STAFFCODE,
                     JOBTITLEID = temp.JOBTITLEID,
                     STAFFROLEID = temp.STAFFROLEID,
+                    SUPERVISOR_STAFFID = temp.SUPERVISOR_STAFFID,
+                    DEPARTMENT_UNITID = temp.DEPARTMENTUNITID,
                     ADDRESS = temp.ADDRESS,
                     ADDRESSOFNOK = temp.ADDRESSOFNOK,
                     BRANCHID = temp.BRANCHID,
@@ -490,6 +500,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     PHONEOFNOK = temp.PHONEOFNOK,
                     STATEID = temp.STATEID,
                     CITYID = temp.CITYID,
+                    
                 };
                 context.TBL_STAFF.Add(staff);
             }
@@ -559,6 +570,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFCODE = StaticHelpers.GetUniqueKey(6),
                 JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
+                SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
                 ADDRESS = staffModel.Address,
                 ADDRESSOFNOK = staffModel.AddressOfNok,
                 BRANCHID = staffModel.BranchId,
@@ -568,7 +580,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 DATEOFBIRTH = staffModel.DateOfBirth,
                 DATETIMECREATED = DateTime.Now,
                 DEPARTMENTID = staffModel.DepartmentId,
-                DEPARTMENTUNITID = (short)staffModel.departmentUnitId,
+                DEPARTMENTUNITID = staffModel.departmentUnitId,
                 EMAIL = staffModel.Email,
                 EMAILOFNOK = staffModel.EmailOfNok,
                 GENDER = staffModel.Gender,
@@ -751,7 +763,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         LastName = c.LASTNAME,
                         StaffCode = c.STAFFCODE,
                         staffRoleId = c.STAFFROLEID,
-                        Rank = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                        staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                        supervisorStaff = c.SUPERVISOR_STAFFID,
+                        supervisorStaffName = c.FIRSTNAME +" " + c.MIDDLENAME + " " + c.LASTNAME,
                         departmentName = dept.DEPARTMENTNAME,
                         departmentUnitId = c.DEPARTMENTUNITID,
                         departmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
@@ -807,7 +821,9 @@ namespace FintrakBanking.Repositories.Setups.General
                             LastName = c.LASTNAME,
                             StaffCode = c.STAFFCODE,
                             staffRoleId = c.STAFFROLEID,
-                            Rank = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                            staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                            supervisorStaff = c.SUPERVISOR_STAFFID,
+                            supervisorStaffName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
                             departmentName = dept.DEPARTMENTNAME,
                             departmentUnitId = (short)c.DEPARTMENT_UNITID,
                             departmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
@@ -828,7 +844,8 @@ namespace FintrakBanking.Repositories.Setups.General
                            middleName = st.MIDDLENAME,
                            lastName = st.LASTNAME,
                            departmentId = (short)st.DEPARTMENTID,
-                           departmentUnitId = (short)st.DEPARTMENT_UNITID
+                           departmentUnitId = (short)st.DEPARTMENT_UNITID,
+                           
                        };
 
             return data;
@@ -1192,7 +1209,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         #endregion Staff Signature
 
-        public bool UpdateReliever(RelieverViewModel model)
+        public bool UpdateSupervisor(SupervisorViewModel model)
         {
             var pending = context.TBL_TEMP_STAFF.Where(x =>
                 x.ISCURRENT == true
@@ -1203,12 +1220,13 @@ namespace FintrakBanking.Repositories.Setups.General
             if (pending.Any()) throw new Exception("Staff is already undergoing approval");
 
             string comment = model.status + " delegate";
-            int staffid = model.relievedStaffId;
-            var staff = context.TBL_STAFF.Find(model.relievedStaffId);
+            int staffid = model.supervisorStaffId;
+            var staff = context.TBL_STAFF.Find(model.supervisorStaffId);
+
 
             var temp = context.TBL_TEMP_STAFF.Add(new TBL_TEMP_STAFF()
             {
-                TEMPSTAFFID = (int)model.relieverId, // <-------- real item changing here
+                TEMPSTAFFID = (int)staffid, // <-------- real item changing here
                 FIRSTNAME = staff.FIRSTNAME,
                 MIDDLENAME = staff.MIDDLENAME,
                 LASTNAME = staff.LASTNAME,
@@ -1216,6 +1234,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 JOBTITLEID = staff.JOBTITLEID,
                 COMPANYID = staff.COMPANYID,
                 STAFFROLEID = staff.STAFFROLEID,
+                SUPERVISOR_STAFFID = model.supervisorId,
                 ADDRESS = staff.ADDRESS,
                 ADDRESSOFNOK = staff.ADDRESSOFNOK,
                 BRANCHID = staff.BRANCHID,
@@ -1225,7 +1244,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 DATEOFBIRTH = staff.DATEOFBIRTH,
                 DATETIMECREATED = DateTime.Now,
                 DEPARTMENTID = staff.DEPARTMENTID,
-                DEPARTMENTUNITID = (short)staff.DEPARTMENT_UNITID, // ----------------- TYPE MISMATCH ERROR PRONE!!!!!
+                DEPARTMENTUNITID = staff.DEPARTMENT_UNITID, // ----------------- TYPE MISMATCH ERROR PRONE!!!!!
                 EMAIL = staff.EMAIL,
                 EMAILOFNOK = staff.EMAILOFNOK,
                 GENDER = staff.GENDER,
