@@ -32,8 +32,7 @@ namespace FintrakBanking.Interfaces.Customer
 
         IEnumerable<CustomerViewModels> GetCustomerByTypeId(int customerTypeId);
 
-
-        dynamic GetCustomerAndType(int custormerId);
+        IEnumerable<GroupCustomerMembersViewModel> GetCustomerAndType(int custormerId);     
 
         dynamic GetCustomerRating(int custormerId);
 

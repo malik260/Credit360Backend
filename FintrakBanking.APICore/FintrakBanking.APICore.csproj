@@ -334,6 +334,7 @@
     <Compile Include="Controllers\BranchController.cs" />
     <Compile Include="Controllers\CallMemoController.cs" />
     <Compile Include="Controllers\ConditionPrecedentController.cs" />
+    <Compile Include="Controllers\ContingentLoanUsageController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
     <Compile Include="Controllers\CustomerCreditBureauController.cs" />
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
