@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
@@ -23,6 +24,7 @@ namespace FintrakBanking.Repositories.Customer
 {
     public class CustomerRepository : ICustomerRepository
     {
+        private ICustomerCreditBureauRepository bureau;
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository _genSetup;
@@ -35,13 +37,15 @@ namespace FintrakBanking.Repositories.Customer
                                     IGeneralSetupRepository genSetup,
                                      IWorkflow _workFlow,
                                       IApprovalLevelStaffRepository _level,
-                                    FinTrakBankingContext _context)
+                                    FinTrakBankingContext _context, 
+                                    ICustomerCreditBureauRepository bureau)
         {
             context = _context;
             workflow = _workFlow;
             auditTrail = _auditTrail;
             _genSetup = genSetup;
             level = _level;
+            this.bureau = bureau;
         }
 
 
@@ -3241,16 +3245,27 @@ namespace FintrakBanking.Repositories.Customer
             }).ToList();
             return nextOfKin;
         }
-        public dynamic GetCustomerAndType(int custormerId)
+        public IEnumerable< GroupCustomerMembersViewModel> GetCustomerAndType(int custormerId)
         {
-            var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId).Select(c => new
+            List<GroupCustomerMembersViewModel> lstCustomer = new List<GroupCustomerMembersViewModel>();
+            var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId && c.VALIDATED == true).Select(c => new GroupCustomerMembersViewModel()
             {
                 customerId = c.CUSTOMERID,
-                customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                firstName  =    c.FIRSTNAME + " " + c.MIDDLENAME,
+                lastName = c.LASTNAME,
                 customerTypeId = c.CUSTOMERTYPEID,
                 customerType = c.TBL_CUSTOMER_TYPE.NAME
             });
-            return data;
+
+            foreach( var item in data)
+            {
+                if(bureau.VerifyCustomerValidCreditBureau(item.customerId))
+                {
+                    lstCustomer.Add(item);
+                }
+            }
+
+            return lstCustomer;
         }
         #endregion
 

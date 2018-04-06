@@ -25,6 +25,7 @@ namespace FintrakBanking.Repositories.Customer
         private IApprovalLevelStaffRepository level;
         private ICreditLimitValidationsRepository creditLimitRepo;
         private ICustomerCreditBureauRepository creditBureau;
+       
 
         public CustomerGroupRepository(FinTrakBankingContext _context,
                                         IGeneralSetupRepository _genSetup,
@@ -732,9 +733,13 @@ namespace FintrakBanking.Repositories.Customer
         {
             try
             {
-                var customerGroupMapping = from b in context.TBL_CUSTOMER_GROUP_MAPPING
+                List<GroupCustomerMembersViewModel> lstCustomer = new List<GroupCustomerMembersViewModel>();
+
+                var data = from b in context.TBL_CUSTOMER_GROUP_MAPPING
                                            
-                                           where b.CUSTOMERGROUPID == customerGroupId && b.DELETED  == false && b.TBL_CUSTOMER.COMPANYID == companyId
+                                           where b.CUSTOMERGROUPID == customerGroupId && b.DELETED  == false 
+                                           && b.TBL_CUSTOMER.COMPANYID == companyId 
+                                           && b.TBL_CUSTOMER.VALIDATED == true
                                            select new GroupCustomerMembersViewModel
                                            {
                                                customerId = b.CUSTOMERID,
@@ -743,7 +748,17 @@ namespace FintrakBanking.Repositories.Customer
                                                firstName = b.TBL_CUSTOMER.FIRSTNAME
                                            };
 
-                return customerGroupMapping;
+                foreach (var item in data)
+                {
+                    if (creditBureau.VerifyCustomerValidCreditBureau(item.customerId))
+                    {
+                        lstCustomer.Add(item);
+                    }
+                }
+
+                return lstCustomer;
+
+              
 
             }
             catch (Exception ex)

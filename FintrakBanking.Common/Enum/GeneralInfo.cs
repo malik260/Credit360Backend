@@ -218,6 +218,8 @@ namespace FintrakBanking.Common.Enum
         StaffReliefAdded = 197,
         StaffReliefUpdated = 198,
         EndPendingSession = 197,
+
+        ContingentLoanUsageAdd=199,
     };
 
 

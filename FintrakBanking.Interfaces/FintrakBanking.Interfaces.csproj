@@ -97,6 +97,7 @@
     <Compile Include="Finance\IEndOfDayRepository.cs" />
     <Compile Include="Finance\IFinanceTransactionRepository.cs" />
     <Compile Include="Helper\ICultureHelper.cs" />
+    <Compile Include="Credit\IContingentLoanUsageRepository.cs" />
     <Compile Include="Reports\IFinanceTransactionsReport.cs" />
     <Compile Include="Reports\ILimitAndMonitoringRepository.cs" />
     <Compile Include="Reports\IReportingObjects.cs" />
