@@ -264,7 +264,7 @@ namespace FintrakBanking.Repositories.Admin
                         join br in context.TBL_BRANCH on c.TBL_STAFF.BRANCHID equals br.BRANCHID
                         join st in context.TBL_STAFF on c.STAFFID equals st.STAFFID
                         join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                        join dept in context.TBL_DEPARTMENT on c.TBL_STAFF.DEPARTMENTID equals dept.DEPARTMENTID
+                        join dept in context.TBL_DEPARTMENT on c.TBL_STAFF.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.USERID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                         //&& c.ApprovalStatus == false

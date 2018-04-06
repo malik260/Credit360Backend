@@ -53,7 +53,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short ApprovalStatusId { get; set; }
         public int OperationId { get; set; }
 
-        public string StaffFullName { get { return this.FirstName + " " + this.MiddleName.Trim() + " " + this.LastName; } }
+        public string StaffFullName { get { return this.FirstName + " " + this.MiddleName + " " + this.LastName; } }
 
         public string JobTitleName { get; set; }
         public string documentTitle { get; set; }
