@@ -108,10 +108,6 @@ namespace FintrakBanking.Entities.Models
 
         public int? OPERATIONID { get; set; }
 
-        public int? CUSTOMERGROUPID { get; set; }
-
-        public short LOANTYPEID { get; set; }
-
         [Column(TypeName = "money")]
         public decimal EQUITYCONTRIBUTION { get; set; }
 
@@ -187,8 +183,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual TBL_CUSTOMER_GROUP TBL_CUSTOMER_GROUP { get; set; }
-
         public virtual TBL_DAY_COUNT_CONVENTION TBL_DAY_COUNT_CONVENTION { get; set; }
 
         public virtual TBL_DAY_INTEREST_TYPE TBL_DAY_INTEREST_TYPE { get; set; }
@@ -216,7 +210,5 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_SCHEDULE_TYPE TBL_LOAN_SCHEDULE_TYPE { get; set; }
 
         public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
-
-        public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
     }
 }

@@ -233,6 +233,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_STA> TBL_LOAN_APPLICATION_DETL_STA { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_TRA> TBL_LOAN_APPLICATION_DETL_TRA { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_STATUS> TBL_LOAN_APPLICATION_STATUS { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_TYPE> TBL_LOAN_APPLICATION_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATN_DETL_MTRIG> TBL_LOAN_APPLICATN_DETL_MTRIG { get; set; }
         public virtual DbSet<TBL_LOAN_APPLTN_CREDIT_BUREAU> TBL_LOAN_APPLTN_CREDIT_BUREAU { get; set; }
         public virtual DbSet<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
@@ -284,7 +285,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_STATUS> TBL_LOAN_STATUS { get; set; }
         public virtual DbSet<TBL_LOAN_TRANSACTION_DYNAMICS> TBL_LOAN_TRANSACTION_DYNAMICS { get; set; }
         public virtual DbSet<TBL_LOAN_TRANSACTION_TYPE> TBL_LOAN_TRANSACTION_TYPE { get; set; }
-        public virtual DbSet<TBL_LOAN_TYPE> TBL_LOAN_TYPE { get; set; }
         public virtual DbSet<TBL_LOANAPPLICATION_COLTRL_MAP> TBL_LOANAPPLICATION_COLTRL_MAP { get; set; }
         public virtual DbSet<TBL_MACHINEVALUE_BASE> TBL_MACHINEVALUE_BASE { get; set; }
         public virtual DbSet<TBL_OFFERLETTER> TBL_OFFERLETTER { get; set; }
@@ -2666,6 +2666,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.RELATIONSHIPMANAGERID)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_STAFF>()
+                .HasMany(e => e.TBL_TEMP_STAFF)
+                .WithOptional(e => e.TBL_STAFF)
+                .HasForeignKey(e => e.SUPERVISOR_STAFFID);
+
             modelBuilder.Entity<TBL_STAFF_JOBTITLE>()
                 .HasMany(e => e.TBL_STAFF)
                 .WithRequired(e => e.TBL_STAFF_JOBTITLE)
@@ -3563,6 +3568,21 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_LOAN_APPLICATION_STATUS)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_TYPE>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION)
+                .WithRequired(e => e.TBL_LOAN_APPLICATION_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_TYPE>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_ARCHIVE)
+                .WithRequired(e => e.TBL_LOAN_APPLICATION_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_TYPE>()
+                .HasMany(e => e.TBL_LOAN_PRELIMINARY_EVALUATN)
+                .WithRequired(e => e.TBL_LOAN_APPLICATION_TYPE)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_LOAN_ARCHIVE>()
                 .Property(e => e.TEAMMISCODE)
                 .IsUnicode(false);
@@ -4302,51 +4322,6 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_LOAN_TRANSACTION_TYPE)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_LOAN_TYPE>()
-                .HasMany(e => e.TBL_LOAN)
-                .WithRequired(e => e.TBL_LOAN_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_TYPE>()
-                .HasMany(e => e.TBL_LOAN_APPLICATION)
-                .WithRequired(e => e.TBL_LOAN_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_TYPE>()
-                .HasMany(e => e.TBL_LOAN_APPLICATION_ARCHIVE)
-                .WithRequired(e => e.TBL_LOAN_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_TYPE>()
-                .HasMany(e => e.TBL_LOAN_ARCHIVE)
-                .WithRequired(e => e.TBL_LOAN_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_TYPE>()
-                .HasMany(e => e.TBL_LOAN_CONTINGENT)
-                .WithRequired(e => e.TBL_LOAN_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_TYPE>()
-                .HasMany(e => e.TBL_LOAN_PRELIMINARY_EVALUATN)
-                .WithRequired(e => e.TBL_LOAN_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_TYPE>()
-                .HasMany(e => e.TBL_LOAN_REVOLVING)
-                .WithRequired(e => e.TBL_LOAN_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_TYPE>()
-                .HasMany(e => e.TBL_LOAN_REVOLVING_ARCHIVE)
-                .WithRequired(e => e.TBL_LOAN_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_TYPE>()
-                .HasMany(e => e.TBL_TEMP_LOAN)
-                .WithRequired(e => e.TBL_LOAN_TYPE)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<TBL_LOANAPPLICATION_COLTRL_MAP>()
                 .HasOptional(e => e.TBL_LOANAPPLICATION_COLTRL_MAP1)
                 .WithRequired(e => e.TBL_LOANAPPLICATION_COLTRL_MAP2);
@@ -4561,6 +4536,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_TEMP_FEE)
                 .WithRequired(e => e.TBL_CHART_OF_ACCOUNT)
                 .WillCascadeOnDelete(false);
+
 
             modelBuilder.Entity<TBL_CHART_OF_ACCOUNT_CLASS>()
                 .HasMany(e => e.TBL_CHART_OF_ACCOUNT)

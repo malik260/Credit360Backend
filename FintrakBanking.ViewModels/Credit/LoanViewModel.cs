@@ -200,7 +200,10 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         public decimal overdraftLimit { get; set; }
-        public bool maintainTonor { get; set; }
+        public bool maintainTenor { get; set; }
+        public decimal accrualedAmount { get; set; }
+
+        //public int tenor  { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
@@ -212,6 +215,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatus;
         public bool isOverdraft;
         public bool isBidbond;
+        public short accrualBasis;
 
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -563,6 +567,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanCovenantDetailViewModel : GeneralEntity
     {
+        public int? casaAccountId;
+
         public int loanCovenantDetailId { get; set; }
         public string covenantDetail { get; set; }
         public int loanId { get; set; }

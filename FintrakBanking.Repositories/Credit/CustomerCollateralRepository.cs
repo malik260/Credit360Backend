@@ -1319,7 +1319,7 @@ namespace FintrakBanking.Repositories.Credit
                     collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
                     //currencyId = x.CollateralApplication.Application.CurrencyId,
                     //productId = x.CollateralApplication.Application.ProductId,
-                    loanTypeId = x.CollateralApplication.Application.LOANTYPEID,
+                    loanTypeId = x.CollateralApplication.Application.LOANAPPLICATIONTYPEID,
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
                     //loanId = x.Mapping.LoanId,
                     loanApplicationId = x.Mapping.LOANID,
@@ -1471,7 +1471,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     customerId = x.CollateralApplication.Application.CUSTOMERID,
                     collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
-                    loanTypeId = x.CollateralApplication.Application.LOANTYPEID,
+                    loanTypeId = x.CollateralApplication.Application.LOANAPPLICATIONTYPEID,
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
                     loanApplicationId = x.Mapping.LOANID,
                     isReleased = x.Mapping.ISRELEASED,
