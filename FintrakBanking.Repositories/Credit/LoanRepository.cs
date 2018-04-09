@@ -1567,7 +1567,7 @@ namespace FintrakBanking.Repositories.Credit
                                         .Where(x=>x.PRODUCTID == loanProductInfo.PRODUCTID).FirstOrDefault().ALLOWFUNDUSAGE == true)
                     {
 
-                        var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID).FirstOrDefault();
+                        var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID && x.CUSTOMERID == contingentLoanRecord.CUSTOMERID).FirstOrDefault();
 
                         var lienModel = new CasaLienViewModel
                         {
