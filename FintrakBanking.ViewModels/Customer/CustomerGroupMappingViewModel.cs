@@ -51,7 +51,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string customerName { get { return lastName + ' ' + firstName; } }
         public string customerCode { get; set; }
         public string customerType { get; set; }
-        public short customerTypeId { get; set; }
+        public short? customerTypeId { get; set; }
         //public string productAccountNumber { get; set; }
         //public string productAccountName { get; set; }
         //public decimal balance { get; set; }

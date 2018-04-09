@@ -82,6 +82,7 @@
     <Compile Include="Credit\CollateralDocumentViewModel.cs" />
     <Compile Include="Credit\ColleralCustomFieldsDataViewModel.cs" />
     <Compile Include="Credit\ConditionPrecedentViewModel.cs" />
+    <Compile Include="Credit\ContingentLoansViewModel.cs" />
     <Compile Include="Credit\CreditBereauViewModel.cs" />
     <Compile Include="Credit\CurrentCustomerExposure.cs" />
     <Compile Include="Credit\DeferredChecklistViewModel.cs" />

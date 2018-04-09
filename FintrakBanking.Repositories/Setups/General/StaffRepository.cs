@@ -97,7 +97,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var staff = (from c in context.TBL_STAFF
                          join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
                          join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                         join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
+                         //join dept in context.TBL_DEPARTMENT on c.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
                          select new StaffInfoViewModel()
                          {
                              StaffId = c.STAFFID,
@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              customerSensitivityLevelId = c.TBL_CUSTOMER_SENSITIVITY_LEVEL.CUSTOMERSENSITIVITYLEVELID,
                              DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                              //dateTimeCreated = c.DateTimeCreated,
-                             DepartmentId = c.DEPARTMENTID,
+                             DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
                              Email = c.EMAIL,
                              EmailOfNok = c.EMAILOFNOK,
                              Gender = c.GENDER,
@@ -129,15 +129,17 @@ namespace FintrakBanking.Repositories.Setups.General
                              StaffCode = c.STAFFCODE,
                              staffRoleId = c.STAFFROLEID,
                              staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                             supervisorStaffId = c.SUPERVISOR_STAFFID,
+                             supervisorStaffName = c.FIRSTNAME +" " + c.MIDDLENAME + " " +  c.LASTNAME,
                              BranchName = br.BRANCHNAME,
-                             departmentName = dept.DEPARTMENTNAME,
-                             departmentUnitId = c.DEPARTMENT_UNITID,
-                             departmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
-                             departmentUnits = from k in context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTID == c.DEPARTMENTID) select new DepartmentViewModel
+                             departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
+                             departmentUnitId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
+                             departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
+                             departmentUnits = from k in context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTID == c.TBL_DEPARTMENT_UNIT.DEPARTMENTID) select new DepartmentViewModel
                              {
                                 DepartmentId = (short) k.DEPARTMENTID,
-                                departmentUnitId = k.DEPARTMENT_UNITID,
-                                departmentUnitName = k.UNIT_NAME
+                                departmentUnitId = k.DEPARTMENTUNITID,
+                                departmentUnitName = k.DEPARTMENTUNITNAME
                              },
                              //MisInfoCode = c.MISC,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
@@ -161,7 +163,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                              DateOfBirth = c.DATEOFBIRTH,
                              dateTimeCreated = (DateTime)c.DATETIMECREATED,
-                             DepartmentId = c.DEPARTMENTID,
+                             DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
                              Email = c.EMAIL,
                              EmailOfNok = c.EMAILOFNOK,
                              Gender = c.GENDER,
@@ -179,6 +181,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              StaffCode = c.STAFFCODE,
                              staffRoleId = c.STAFFROLEID,
                              staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                             supervisorStaffId = c.SUPERVISOR_STAFFID,
+                             supervisorStaffName = c.FIRSTNAME +" " + c.MIDDLENAME + " " + c.LASTNAME,
                              //BranchName = br.BranchName,
 
                              //DepartmentName = c.Department.DepartmentName,
@@ -219,6 +223,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.JOBTITLEID = staffModel.JobTitleId;
                 tempStaffToUpdate.COMPANYID = staffModel.companyId;
                 tempStaffToUpdate.STAFFROLEID = staffModel.staffRoleId;
+                tempStaffToUpdate.SUPERVISOR_STAFFID = staffModel.supervisorStaffId;
                 tempStaffToUpdate.ADDRESS = staffModel.Address;
                 tempStaffToUpdate.ADDRESSOFNOK = staffModel.AddressOfNok;
                 tempStaffToUpdate.BRANCHID = staffModel.BranchId;
@@ -227,7 +232,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId;
                 tempStaffToUpdate.DATEOFBIRTH = staffModel.DateOfBirth;
                 tempStaffToUpdate.DATETIMEUPDATED = DateTime.Now;
-                tempStaffToUpdate.DEPARTMENTID = staffModel.DepartmentId;
+                //tempStaffToUpdate.DEPARTMENTID = staffModel.DepartmentId;
                 tempStaffToUpdate.DEPARTMENTUNITID = (short)staffModel.departmentUnitId;
                 tempStaffToUpdate.EMAIL = staffModel.Email;
                 tempStaffToUpdate.EMAILOFNOK = staffModel.EmailOfNok;
@@ -258,6 +263,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     JOBTITLEID = staffModel.JobTitleId,
                     COMPANYID = staffModel.companyId,
                     STAFFROLEID = staffModel.staffRoleId,
+                    SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
                     ADDRESS = staffModel.Address,
                     ADDRESSOFNOK = staffModel.AddressOfNok,
                     BRANCHID = staffModel.BranchId,
@@ -266,7 +272,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
                     DATEOFBIRTH = staffModel.DateOfBirth,
                     DATETIMECREATED = DateTime.Now,
-                    DEPARTMENTID = staffModel.DepartmentId,
+                    //DEPARTMENTID = staffModel.DepartmentId,
                     DEPARTMENTUNITID = (short)staffModel.departmentUnitId,
                     EMAIL = staffModel.Email,
                     EMAILOFNOK = staffModel.EmailOfNok,
@@ -437,6 +443,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.STAFFCODE = temp.STAFFCODE;
                 entity.JOBTITLEID = temp.JOBTITLEID;
                 entity.STAFFROLEID = temp.STAFFROLEID;
+                entity.SUPERVISOR_STAFFID = temp.SUPERVISOR_STAFFID;
                 entity.ADDRESS = temp.ADDRESS;
                 entity.ADDRESSOFNOK = temp.ADDRESSOFNOK;
                 entity.BRANCHID = temp.BRANCHID;
@@ -445,7 +452,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                 entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                 entity.DATETIMEUPDATED = DateTime.Now;
-                entity.DEPARTMENTID = temp.DEPARTMENTID;
+                //entity.DEPARTMENTID = temp.DEPARTMENTID;
+                entity.DEPARTMENTUNITID = temp.DEPARTMENTUNITID;
                 entity.EMAIL = temp.EMAIL;
                 entity.EMAILOFNOK = temp.EMAILOFNOK;
                 entity.GENDER = temp.GENDER;
@@ -470,6 +478,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFCODE = temp.STAFFCODE,
                     JOBTITLEID = temp.JOBTITLEID,
                     STAFFROLEID = temp.STAFFROLEID,
+                    SUPERVISOR_STAFFID = temp.SUPERVISOR_STAFFID,
+                    DEPARTMENTUNITID = temp.DEPARTMENTUNITID,
                     ADDRESS = temp.ADDRESS,
                     ADDRESSOFNOK = temp.ADDRESSOFNOK,
                     BRANCHID = temp.BRANCHID,
@@ -478,7 +488,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID,
                     DATEOFBIRTH = temp.DATEOFBIRTH,
                     DATETIMECREATED = DateTime.Now,
-                    DEPARTMENTID = temp.DEPARTMENTID,
+                    //DEPARTMENTID = temp.DEPARTMENTID,
                     EMAIL = temp.EMAIL,
                     EMAILOFNOK = temp.EMAILOFNOK,
                     GENDER = temp.GENDER,
@@ -490,6 +500,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     PHONEOFNOK = temp.PHONEOFNOK,
                     STATEID = temp.STATEID,
                     CITYID = temp.CITYID,
+                    
                 };
                 context.TBL_STAFF.Add(staff);
             }
@@ -559,6 +570,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFCODE = StaticHelpers.GetUniqueKey(6),
                 JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
+                SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
                 ADDRESS = staffModel.Address,
                 ADDRESSOFNOK = staffModel.AddressOfNok,
                 BRANCHID = staffModel.BranchId,
@@ -567,8 +579,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
                 DATEOFBIRTH = staffModel.DateOfBirth,
                 DATETIMECREATED = DateTime.Now,
-                DEPARTMENTID = staffModel.DepartmentId,
-                DEPARTMENTUNITID = (short)staffModel.departmentUnitId,
+                //DEPARTMENTID = staffModel.DepartmentId,
+                DEPARTMENTUNITID = staffModel.departmentUnitId,
                 EMAIL = staffModel.Email,
                 EMAILOFNOK = staffModel.EmailOfNok,
                 GENDER = staffModel.Gender,
@@ -650,7 +662,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var staff =  (from c in context.TBL_TEMP_STAFF
                     join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
                     join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                    join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
+                    //join dept in context.TBL_DEPARTMENT on c.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
                     join t in context.TBL_APPROVAL_TRAIL on c.TEMPSTAFFID equals t.TARGETID
                     where 
                         (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
@@ -672,7 +684,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         Comment = c.COMMENT,
                         customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                         DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
-                        DepartmentId = c.DEPARTMENTID,
+                        DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
                         Email = c.EMAIL,
                         EmailOfNok = c.EMAILOFNOK,
                         Gender = c.GENDER,
@@ -696,9 +708,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         staffRoleId = c.STAFFROLEID,
                         staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
                         BranchName = br.BRANCHNAME,
-                        departmentName = dept.DEPARTMENTNAME,
+                        departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
                         departmentUnitId = c.DEPARTMENTUNITID,
-                        departmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
+                        departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
 
                         OperationId = t.OPERATIONID,
                         SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION
@@ -714,7 +726,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return (from c in context.TBL_TEMP_STAFF
                     join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
                     join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                    join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
+                    //join dept in context.TBL_DEPARTMENT on c.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
                     where c.TEMPSTAFFID == staffId //c.ApprovalStatusId == (int)ApprovalStatusEnum.Approved && c.IsCurrent == true
                     select new StaffDetailsModel()
                     {
@@ -727,7 +739,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         Comment = c.COMMENT,
                         customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                         DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
-                        DepartmentId = c.DEPARTMENTID ?? 0,
+                        DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
                         CityId = c.CITYID ?? 0,
                         City = c.TBL_CITY.CITYNAME,
                         company = coy.NAME,
@@ -751,10 +763,12 @@ namespace FintrakBanking.Repositories.Setups.General
                         LastName = c.LASTNAME,
                         StaffCode = c.STAFFCODE,
                         staffRoleId = c.STAFFROLEID,
-                        Rank = c.TBL_STAFF_ROLE.STAFFROLENAME,
-                        departmentName = dept.DEPARTMENTNAME,
+                        staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                        supervisorStaff = c.SUPERVISOR_STAFFID,
+                        supervisorStaffName = c.FIRSTNAME +" " + c.MIDDLENAME + " " + c.LASTNAME,
+                        departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
                         departmentUnitId = c.DEPARTMENTUNITID,
-                        departmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
+                        departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
                         ApprovalStatusId = c.APPROVALSTATUSID,
                         SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                     }).FirstOrDefault();
@@ -770,7 +784,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var data = (from c in context.TBL_STAFF
                         join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
                         join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                        join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
+                        //join dept in context.TBL_DEPARTMENT on c.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
                         where c.COMPANYID == companyId
                         select new StaffDetailsModel()
                         {
@@ -783,13 +797,12 @@ namespace FintrakBanking.Repositories.Setups.General
                             Comment = c.COMMENT,
                             customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                             DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
-                            DepartmentId = c.DEPARTMENTID ?? 0,
+                            DepartmentId =  c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
                             CityId = c.CITYID ?? 0,
                             City = c.TBL_CITY.CITYNAME,
                             company = coy.NAME,
                             JobTitle = c.TBL_STAFF_JOBTITLE.JOBTITLENAME,
                             MisInfo = context.TBL_MIS_INFO.Find(c.MISINFOID).MISNAME,
-                            //StaffSignature = c.STAFFSIGNATURE,
                             Email = c.EMAIL,
                             EmailOfNok = c.EMAILOFNOK,
                             Gender = c.GENDER,
@@ -807,10 +820,12 @@ namespace FintrakBanking.Repositories.Setups.General
                             LastName = c.LASTNAME,
                             StaffCode = c.STAFFCODE,
                             staffRoleId = c.STAFFROLEID,
-                            Rank = c.TBL_STAFF_ROLE.STAFFROLENAME,
-                            departmentName = dept.DEPARTMENTNAME,
-                            departmentUnitId = (short)c.DEPARTMENT_UNITID,
-                            departmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
+                            staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                            supervisorStaff = c.SUPERVISOR_STAFFID,
+                            supervisorStaffName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                            departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
+                            departmentUnitId = (short)c.DEPARTMENTUNITID,
+                            departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                         });
 
@@ -827,8 +842,9 @@ namespace FintrakBanking.Repositories.Setups.General
                            firstName = st.FIRSTNAME,
                            middleName = st.MIDDLENAME,
                            lastName = st.LASTNAME,
-                           departmentId = (short)st.DEPARTMENTID,
-                           departmentUnitId = (short)st.DEPARTMENT_UNITID
+                           departmentId = st.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
+                           departmentUnitId = (short)st.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
+                           
                        };
 
             return data;
@@ -899,7 +915,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     || x.MIDDLENAME.ToLower().Contains(searchQuery)
                     || x.LASTNAME.ToLower().Contains(searchQuery)
                     || x.STAFFCODE.Contains(searchQuery)
-                    && x.DEPARTMENTID == departmentId)
+                    && x.TBL_DEPARTMENT_UNIT.DEPARTMENTID == departmentId)
                     .Select(o => new simpleStaffModel
                     {
                         staffId = o.STAFFID,
@@ -952,7 +968,7 @@ namespace FintrakBanking.Repositories.Setups.General
             // Loads a spreadsheet from a file with the specified path
 
             // If using Professional version, put your serial key below.
-            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5"); //SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
 
             string path = "_" + model.createdBy + "." + model.fileExtension;
             path = StoredTicket(path);
@@ -985,7 +1001,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         case "B":
                             var roleInfo = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE == cell.Value.ToString()).FirstOrDefault();
                             if (roleInfo != null) staffRowData.staffRoleId = roleInfo.STAFFROLEID;
-                            else { throw new Exception("the RANKCODE @" + cellColumn + " does not exist in the rank log"); }
+                            else { throw new Exception("the ROLECODE @" + cellColumn + " does not exist in the role log"); }
                             break;
                         case "C":
                             var branchInfo = context.TBL_BRANCH.Where(x => x.BRANCHCODE == cell.Value.ToString()).FirstOrDefault();
@@ -1017,9 +1033,66 @@ namespace FintrakBanking.Repositories.Setups.General
                             else { throw new Exception($"the 'Department Code' @" + cellColumn + " does not exist."); }
                             break;
                         case "J":
+                            var unit = context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTUNITNAME.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+                            if (unit != null) staffRowData.departmentUnitId = unit.DEPARTMENTUNITID;
+                            else { throw new Exception($"the 'Department Code' @" + cellColumn + " does not exist."); }
+                            break;
+                        case "K":
                             if (cell.Value.ToString().ToLower()  == "yes") staffRowData.npl_LimitExceeded = true;
                             else if (cell.Value.ToString().ToLower() == "no") staffRowData.npl_LimitExceeded = false;
                             else { throw new Exception($"the value at column " + cellColumn + " must be a 'Yes' or 'No'."); }
+                            break;
+                        case "N":
+                            var state = context.TBL_STATE.Where(x => x.STATECODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+                            if (state != null) staffRowData.StateId = state.STATEID;
+                            else { throw new Exception($"the 'State Code' @" + cellColumn + " does not exist."); }
+                            break;
+                        case "O":
+                            staffRowData.CityId =  (int)cell.Value ;
+                            break;
+                        case "P":
+                            var supervisor = context.TBL_STAFF.Where(x => x.STAFFCODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+                            if (supervisor != null) staffRowData.staffId = supervisor.STAFFID;
+                            else { throw new Exception($"the 'State Code' @" + cellColumn + " does not exist."); }
+                            break;
+                        case "Q":
+                            staffRowData.Phone = cell.Value.ToString();
+                            break;
+                        case "R":
+                            staffRowData.Email = cell.Value.ToString();
+                            break;
+                        case "S":
+                            staffRowData.Address = cell.Value.ToString();
+                            break;
+                        case "T":
+                            staffRowData.DateOfBirth = (DateTime)cell.Value ;
+                            break;
+                        case "U":
+                            staffRowData.Gender = cell.Value.ToString();
+                            break;
+                        case "V":
+                            staffRowData.NameOfNok = cell.Value.ToString();
+                            break;
+                        case "W":
+                            staffRowData.PhoneOfNok = cell.Value.ToString();
+                            break;
+                        case "X":
+                            staffRowData.EmailOfNok = cell.Value.ToString();
+                            break;
+                        case "Y":
+                            staffRowData.AddressOfNok = cell.Value.ToString();
+                            break;
+                        case "Z":
+                            staffRowData.GenderOfNok = cell.Value.ToString();
+                            break;
+                        case "AA":
+                            staffRowData.NokrelationShip = cell.Value.ToString();
+                            break;
+                        case "AB":
+                            staffRowData.Comment = cell.Value.ToString();
+                            break;
+                        case "AC":
+                            staffRowData.MisInfoCode = cell.Value.ToString();
                             break;
                             //default:
                             //    staffInfo[Convert.ToInt32(cellRow)].LastName = cell.Value.ToString();
@@ -1035,7 +1108,8 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 var staffObj = new TBL_TEMP_STAFF()
                 {
-                    DEPARTMENTID = staffInfoRow.DepartmentId,
+                    //DEPARTMENTID = staffInfoRow.DepartmentId,
+                    DEPARTMENTUNITID = staffInfoRow.departmentUnitId,
                     STAFFCODE = staffInfoRow.StaffCode,
                     STAFFROLEID = staffInfoRow.staffRoleId,
                     BRANCHID = staffInfoRow.BranchId,
@@ -1047,8 +1121,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     COMPANYID = model.companyId,
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                     ISCURRENT = true
-
-
                 };
                 context.TBL_TEMP_STAFF.Add(staffObj);
             };
@@ -1192,7 +1264,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         #endregion Staff Signature
 
-        public bool UpdateReliever(RelieverViewModel model)
+        public bool UpdateSupervisor(SupervisorViewModel model)
         {
             var pending = context.TBL_TEMP_STAFF.Where(x =>
                 x.ISCURRENT == true
@@ -1203,12 +1275,13 @@ namespace FintrakBanking.Repositories.Setups.General
             if (pending.Any()) throw new Exception("Staff is already undergoing approval");
 
             string comment = model.status + " delegate";
-            int staffid = model.relievedStaffId;
-            var staff = context.TBL_STAFF.Find(model.relievedStaffId);
+            int staffid = model.supervisorStaffId;
+            var staff = context.TBL_STAFF.Find(model.supervisorStaffId);
+
 
             var temp = context.TBL_TEMP_STAFF.Add(new TBL_TEMP_STAFF()
             {
-                TEMPSTAFFID = (int)model.relieverId, // <-------- real item changing here
+                TEMPSTAFFID = (int)staffid, // <-------- real item changing here
                 FIRSTNAME = staff.FIRSTNAME,
                 MIDDLENAME = staff.MIDDLENAME,
                 LASTNAME = staff.LASTNAME,
@@ -1216,6 +1289,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 JOBTITLEID = staff.JOBTITLEID,
                 COMPANYID = staff.COMPANYID,
                 STAFFROLEID = staff.STAFFROLEID,
+                SUPERVISOR_STAFFID = model.supervisorId,
                 ADDRESS = staff.ADDRESS,
                 ADDRESSOFNOK = staff.ADDRESSOFNOK,
                 BRANCHID = staff.BRANCHID,
@@ -1224,8 +1298,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 CUSTOMERSENSITIVITYLEVELID = staff.CUSTOMERSENSITIVITYLEVELID,
                 DATEOFBIRTH = staff.DATEOFBIRTH,
                 DATETIMECREATED = DateTime.Now,
-                DEPARTMENTID = staff.DEPARTMENTID,
-                DEPARTMENTUNITID = (short)staff.DEPARTMENT_UNITID, // ----------------- TYPE MISMATCH ERROR PRONE!!!!!
+                DEPARTMENTUNITID = staff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
                 EMAIL = staff.EMAIL,
                 EMAILOFNOK = staff.EMAILOFNOK,
                 GENDER = staff.GENDER,
@@ -1237,7 +1310,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 PHONEOFNOK = staff.PHONEOFNOK,
                 STATEID = staff.STATEID,
                 CITYID = staff.CITYID,
-                //STAFFSIGNATURE = staff.STAFFSIGNATURE,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 ISCURRENT = true,
             });

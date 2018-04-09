@@ -811,6 +811,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         lookupId = data.FSCAPTIONID,
                         lookupName = data.FSCAPTION + " -- " + data.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME
                     });
+            
         }
 
         public IEnumerable<ChartOfAccountClassViewModel> GetChartOfAccountClasses()

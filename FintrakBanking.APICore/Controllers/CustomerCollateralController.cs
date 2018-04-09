@@ -20,6 +20,8 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 using System.Globalization;
 using FintrakBanking.Common;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -47,27 +49,79 @@ namespace FintrakBanking.APICore.Controllers
         #region New
 
         [HttpPost, Route("customer-collateral")]
-        public async Task<HttpResponseMessage> AddCollateral([FromBody] CollateralViewModel entity)
+        public async Task<HttpResponseMessage> AddCollateral() 
         {
+
             try
             {
-                entity.createdBy = token.GetStaffId;
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.companyId = token.GetCompanyId;
-
-                var response = await repo.AddCollateral(entity);
-                if (response)
+                if (!Request.Content.IsMimeMultipartContent())
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                var formData = provider.FormData["formData"];
+              
+                var errors = new List<string>();
+                CollateralViewModel incomingData = JsonConvert.DeserializeObject<CollateralViewModel>(formData,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Include,
+                        Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs earg)
+                        {
+                            errors.Add(earg.ErrorContext.Member.ToString());
+                            earg.ErrorContext.Handled = true;
+                        }
+                    });
+
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                incomingData.userBranchId = (short)token.GetBranchId;
+                incomingData.companyId = token.GetCompanyId;
+                incomingData.createdBy = token.GetStaffId;
+                incomingData.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = repo.AddCollateral(incomingData, buffer);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
             }
+
+            //try
+            //{
+            //    entity.createdBy = token.GetStaffId;
+            //    entity.userBranchId = (short)token.GetBranchId;
+            //    entity.applicationUrl = HttpContext.Current.Request.Path;
+            //    entity.companyId = token.GetCompanyId;
+
+            //    var response = await repo.AddCollateral(entity);
+            //    if (response)
+            //    {
+            //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+            //    }
+
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            //}
+            //catch (Exception ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            //}
         }
 
         [HttpPut, Route("customer-collateral/{collateralId}")]

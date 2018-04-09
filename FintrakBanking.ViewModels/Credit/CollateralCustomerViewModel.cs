@@ -242,6 +242,16 @@ namespace FintrakBanking.ViewModels.Credit
         public bool allowApplicationMapping { get; set; }
         public string  bank { get; set; }
         public int stateId { get; set; }
+
+        //File Upload
+        public string documentTitle { get; set; }
+        public string fileName  { get; set; }
+        public string fileExtension { get; set; }
+        public byte[] file { get; set; }
+
+        public bool isPrimaryDocument { get; set; }
+        public string formData { get; set; }
+        public string collateralPrimaryDocumentTitle { get; set; }
     }
 
     public class MiscellaneousNote
@@ -742,7 +752,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal stockPrice { get; set; }
     }
 
-    public class loanApplicationColateral
+    public class loanApplicationColateralViewModel
     {
         public int loanApplicationCollateralId   { get; set; }
         public int collateralCustomerId          { get; set; }

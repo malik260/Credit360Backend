@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool REQUIREFREQUENCY { get; set; }
 
+        public bool REQUIRECASAACCOUNT { get; set; }
+
         public bool ISCLEANUPCYCLE { get; set; }
 
         public int COMPANYID { get; set; }

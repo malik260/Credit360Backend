@@ -18,11 +18,11 @@ namespace FintrakBanking.Entities.Models
         }
 
         [Key]
-        public short DEPARTMENT_UNITID { get; set; }
+        public short DEPARTMENTUNITID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string UNIT_NAME { get; set; }
+        public string DEPARTMENTUNITNAME { get; set; }
 
         public short DEPARTMENTID { get; set; }
 

@@ -632,8 +632,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [Route("staff/update-reliever")]
-        public HttpResponseMessage UpdateReliever([FromBody]RelieverViewModel entity)
+        [Route("staff/update-supervisor")]
+        public HttpResponseMessage UpdateSupervisor([FromBody]SupervisorViewModel entity)
         {
             try
             {
@@ -641,8 +641,8 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
-                bool success = repo.UpdateReliever(entity);
-                string message = success == true ? "Reliever Updated Successfully." : "Reliever Update Failed.";
+                bool success = repo.UpdateSupervisor(entity);
+                string message = success == true ? "Supervisor Updated Successfully." : "Supervisor Update Failed.";
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = success, message = message });
             }
             catch (System.Exception ex)
