@@ -54,9 +54,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 COMPANYID = entity.companyId,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
-                DEPARTMENTCODE = entity.DepartmentCode,
-                DEPARTMENTNAME = entity.DepartmentName,
-                DESCRIPTION = entity.Description
+                DEPARTMENTCODE = entity.departmentCode,
+                DEPARTMENTNAME = entity.departmentName,
+                DESCRIPTION = entity.description
             };
 
             this.context.TBL_DEPARTMENT.Add(department);
@@ -91,24 +91,24 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <returns></returns>
         public bool AddUnit(DepartmentViewModel entity)
         {
-
+            
             var unit = new TBL_DEPARTMENT_UNIT
             {
-               DEPARTMENTID = entity.DepartmentId,
-               EMAIL = entity.departmentUnitEmail,
-               DEPARTMENTUNITNAME = entity.departmentUnitName
+               DEPARTMENTID = entity.departmentId,
+               EMAIL = entity.unitEmail,
+               DEPARTMENTUNITNAME = entity.unitName
             };
 
             this.context.TBL_DEPARTMENT_UNIT.Add(unit);
 
             // Audit Section ----------------------------
-            var departmentName = context.TBL_DEPARTMENT.Where(x => x.DEPARTMENTID == entity.DepartmentId).FirstOrDefault().DEPARTMENTNAME;
+            var departmentName = context.TBL_DEPARTMENT.Where(x => x.DEPARTMENTID == entity.departmentId).FirstOrDefault().DEPARTMENTNAME;
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.DepartmentUnitAdded,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Added new department unit {entity.departmentUnitName} to {departmentName} department",
+                DETAIL = $"Added new department unit {entity.unitName} to {departmentName} department",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -129,10 +129,10 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var unit = context.TBL_DEPARTMENT_UNIT.Find(unitId);
 
-            unit.DEPARTMENTID = entity.DepartmentId;
+            unit.DEPARTMENTID = entity.departmentId;
             unit.DEPARTMENTUNITID = unitId;
-            unit.DEPARTMENTUNITNAME = entity.departmentUnitName;
-            unit.EMAIL = entity.departmentUnitEmail;
+            unit.DEPARTMENTUNITNAME = entity.unitName;
+            unit.EMAIL = entity.unitEmail;
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
             {
@@ -198,10 +198,10 @@ namespace FintrakBanking.Repositories.Setups.General
                               select new DepartmentViewModel()
                               {
                                   createdBy = d.CREATEDBY.Value,
-                                  DepartmentName = d.DEPARTMENTNAME,
-                                  DepartmentCode = d.DEPARTMENTCODE,
-                                  Description = d.DESCRIPTION,
-                                  DepartmentId = d.DEPARTMENTID
+                                  departmentName = d.DEPARTMENTNAME,
+                                  departmentCode = d.DEPARTMENTCODE,
+                                  description = d.DESCRIPTION,
+                                  departmentId = d.DEPARTMENTID
                               });
             return department;
         }
@@ -220,10 +220,10 @@ namespace FintrakBanking.Repositories.Setups.General
                              select new DepartmentViewModel()
                              {
                                  createdBy = d.CREATEDBY.Value,
-                                 DepartmentName = d.DEPARTMENTNAME,
-                                 DepartmentCode = d.DEPARTMENTCODE,
-                                 Description = d.DESCRIPTION,
-                                 DepartmentId = d.DEPARTMENTID
+                                 departmentName = d.DEPARTMENTNAME,
+                                 departmentCode = d.DEPARTMENTCODE,
+                                 description = d.DESCRIPTION,
+                                 departmentId = d.DEPARTMENTID
                              }).ToList();
 
                 foreach (var dept in depts)
@@ -241,24 +241,25 @@ namespace FintrakBanking.Repositories.Setups.General
             var departmentUnits = (from d in context.TBL_DEPARTMENT_UNIT where d.DEPARTMENTID == departmentId
                                    select new DepartmentViewModel()
                               {
-                                  departmentUnitId = d.DEPARTMENTUNITID,
-                                  DepartmentId = d.DEPARTMENTID,
-                                  departmentUnitName = d.DEPARTMENTUNITNAME,
-                                  departmentUnitEmail = d.EMAIL
+                                  unitId = d.DEPARTMENTUNITID,
+                                  departmentId = d.DEPARTMENTID,
+                                  unitName = d.DEPARTMENTUNITNAME,
+                                  unitEmail = d.EMAIL
                               });
             return departmentUnits;
         }
 
-        public IEnumerable<DepartmentViewModel> GetAllUnits()
+        public IEnumerable<DepartmentViewModel> GetAllUnits(int companyId)
         {
             var departmentUnits = (from d in context.TBL_DEPARTMENT_UNIT
+                                   where d.TBL_DEPARTMENT.COMPANYID == companyId
                                    select new DepartmentViewModel()
                                    {
-                                       departmentUnitId = d.DEPARTMENTUNITID,
-                                       DepartmentId = d.DEPARTMENTID,
-                                       DepartmentName = d.TBL_DEPARTMENT.DEPARTMENTNAME,
-                                       departmentUnitName = d.DEPARTMENTUNITNAME,
-                                       departmentUnitEmail = d.EMAIL
+                                       unitId = d.DEPARTMENTUNITID,
+                                       departmentId = d.DEPARTMENTID,
+                                       departmentName = d.TBL_DEPARTMENT.DEPARTMENTNAME,
+                                       unitName = d.DEPARTMENTUNITNAME,
+                                       unitEmail = d.EMAIL
                                    });
             return departmentUnits;
         }
@@ -272,10 +273,10 @@ namespace FintrakBanking.Repositories.Setups.General
                               select new DepartmentCustomersViewModel()
                               {
                                   createdBy = d.CREATEDBY.Value,
-                                  DepartmentName = d.DEPARTMENTNAME,
-                                  DepartmentCode = d.DEPARTMENTCODE,
-                                  Description = d.DESCRIPTION,
-                                  DepartmentId = d.DEPARTMENTID,
+                                  departmentName = d.DEPARTMENTNAME,
+                                  departmentCode = d.DEPARTMENTCODE,
+                                  description = d.DESCRIPTION,
+                                  departmentId = d.DEPARTMENTID,
                                   firstname = c.FIRSTNAME,
                                   lastname = c.LASTNAME,
                                   staffId = c.STAFFID,
@@ -308,7 +309,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     .Where(x => x.firstname.Contains(searchQuery)
                || x.lastname.Contains(searchQuery)
                || x.middlename.Contains(searchQuery)
-               && x.DepartmentId == departmentId
+               && x.departmentId == departmentId
                 );
             }
 
@@ -364,10 +365,10 @@ namespace FintrakBanking.Repositories.Setups.General
                               select new DepartmentCustomersViewModel
                               {
                                   createdBy = dept.CREATEDBY.Value,
-                                  DepartmentName = dept.DEPARTMENTNAME,
-                                  DepartmentCode = dept.DEPARTMENTCODE,
-                                  Description = dept.DESCRIPTION,
-                                  DepartmentId = dept.DEPARTMENTID,
+                                  departmentName = dept.DEPARTMENTNAME,
+                                  departmentCode = dept.DEPARTMENTCODE,
+                                  description = dept.DESCRIPTION,
+                                  departmentId = dept.DEPARTMENTID,
                                   firstname = s.FIRSTNAME,
                                   lastname = s.LASTNAME,
                                   middlename = s.MIDDLENAME,                                
@@ -404,9 +405,9 @@ namespace FintrakBanking.Repositories.Setups.General
                               select new DepartmentViewModel()
                               {
                                   createdBy = d.CREATEDBY.Value,
-                                  DepartmentName = d.DEPARTMENTNAME,
-                                  Description = d.DESCRIPTION,
-                                  DepartmentId = d.DEPARTMENTID
+                                  departmentName = d.DEPARTMENTNAME,
+                                  description = d.DESCRIPTION,
+                                  departmentId = d.DEPARTMENTID
                               }).SingleOrDefault();
             return department;
         }
@@ -424,9 +425,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 a => a.TBL_DEPARTMENT_UNIT.DEPARTMENTID, b => b.DEPARTMENTID, (a, b) => new { a, b })
                 .Select(x => new DepartmentViewModel
                 {
-                    DepartmentName = x.b.DEPARTMENTNAME,
-                    Description = x.b.DESCRIPTION,
-                    DepartmentId = x.b.DEPARTMENTID
+                    departmentName = x.b.DEPARTMENTNAME,
+                    description = x.b.DESCRIPTION,
+                    departmentId = x.b.DEPARTMENTID
                 })
                 .FirstOrDefault();
             if (department != null)
@@ -446,15 +447,15 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var department = context.TBL_DEPARTMENT.Find(departmentId);
 
-            department.DEPARTMENTNAME = entity.DepartmentName;
-            department.DESCRIPTION = entity.Description;
+            department.DEPARTMENTNAME = entity.departmentName;
+            department.DESCRIPTION = entity.description;
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.DepartmentUpdated,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Updated tbl_Department with Id: {entity.DepartmentId} ",
+                DETAIL = $"Updated tbl_Department with Id: {entity.departmentId} ",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),

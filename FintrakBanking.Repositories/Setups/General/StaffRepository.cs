@@ -137,9 +137,9 @@ namespace FintrakBanking.Repositories.Setups.General
                              departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
                              departmentUnits = from k in context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTID == c.TBL_DEPARTMENT_UNIT.DEPARTMENTID) select new DepartmentViewModel
                              {
-                                DepartmentId = (short) k.DEPARTMENTID,
-                                departmentUnitId = k.DEPARTMENTUNITID,
-                                departmentUnitName = k.DEPARTMENTUNITNAME
+                                departmentId = (short) k.DEPARTMENTID,
+                                unitId = k.DEPARTMENTUNITID,
+                                unitName = k.DEPARTMENTUNITNAME
                              },
                              //MisInfoCode = c.MISC,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,

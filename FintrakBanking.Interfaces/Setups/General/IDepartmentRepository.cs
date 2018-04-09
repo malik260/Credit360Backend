@@ -11,7 +11,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<DepartmentViewModel> GetAllDepartmentUnits(short departmentId);
 
         IEnumerable<DepartmentViewModel> GetJobDepartmentByJobTypeId(short jobTypeId);
-        IEnumerable<DepartmentViewModel> GetAllUnits();
+        IEnumerable<DepartmentViewModel> GetAllUnits(int companyId);
         bool AddUnit(DepartmentViewModel entity);
         bool UpdateUnit(short unitId, DepartmentViewModel entity);
 

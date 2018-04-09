@@ -304,7 +304,6 @@ namespace FintrakBanking.Repositories.Credit
         private string addContingentLiability(LoanViewModel entity)
         {
             var contingentLoanInput = entity.contingentLoanInput;
-
             var contingentAmount = from a in context.TBL_LOAN_CONTINGENT
                                    where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
                                    let sumAmount = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.CONTINGENTAMOUNT)
@@ -326,6 +325,15 @@ namespace FintrakBanking.Repositories.Credit
 
             if (CurrRatings != null) currentExchangeRate = CurrRatings.SELLINGRATE;
 
+            var bgData = context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId);
+            var isTenored = false;
+            var isBankFormat = false;
+            if (bgData.Any())
+            {
+                var bgRecord = bgData.FirstOrDefault();
+                if (bgRecord.ISTENORED) isTenored = true;
+                if (bgRecord.ISBANKFORMAT) isBankFormat = true;
+            }
 
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId, entity.productTypeId);
             var data = new TBL_LOAN_CONTINGENT
@@ -345,7 +353,8 @@ namespace FintrakBanking.Repositories.Credit
                 TEAMMISCODE = entity.teamMiscode,
                 EFFECTIVEDATE = contingentLoanInput.effectiveDate,
                 MATURITYDATE = contingentLoanInput.maturityDate,
-
+                ISBANKFORMAT = isBankFormat,
+                ISTENORED = isTenored,
                 BOOKINGDATE = DateTime.Now,
 
                 CONTINGENTAMOUNT = contingentLoanInput.contingentAmount,

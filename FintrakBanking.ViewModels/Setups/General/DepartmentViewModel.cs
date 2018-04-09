@@ -2,15 +2,15 @@
 {
     public class DepartmentViewModel : GeneralEntity
     {
-        public short DepartmentId { get; set; }
+        public short departmentId { get; set; }
         public short? BranchId { get; set; }
         public string BranchName { get; set; }
-        public string DepartmentCode { get; set; }
-        public string DepartmentName { get; set; }
-        public string Description { get; set; }
-        public short? departmentUnitId { get; set; }
-        public string departmentUnitName { get; set; }
-        public string departmentUnitEmail { get; set; }
+        public string departmentCode { get; set; }
+        public string departmentName { get; set; }
+        public string description { get; set; }
+        public short? unitId { get; set; }
+        public string unitName { get; set; }
+        public string unitEmail { get; set; }
     }
 
     public class DepartmentCustomersViewModel : DepartmentViewModel
