@@ -569,6 +569,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanCovenantDetailViewModel : GeneralEntity
     {
+        public int? casaAccountId;
+
         public int loanCovenantDetailId { get; set; }
         public string covenantDetail { get; set; }
         public int loanId { get; set; }

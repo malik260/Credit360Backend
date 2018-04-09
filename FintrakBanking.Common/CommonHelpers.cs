@@ -75,6 +75,11 @@ namespace FintrakBanking.Common
             return retVal;
         }
 
+        public static string FormatNumberTwoPlaces(decimal value)
+        {
+            return string.Format("{0:0,0.00}", value); 
+        }
+
 
         /// <summary>
         /// Ensures the subscriber email or throw.

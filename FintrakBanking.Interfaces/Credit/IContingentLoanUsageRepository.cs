@@ -1,0 +1,18 @@
+﻿using FintrakBanking.ViewModels.Credit;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FintrakBanking.Interfaces.Credit
+{
+    public interface IContingentLoanUsageRepository
+    {
+        IEnumerable<ContingentLoansViewModel> GetAllContingentLoans(int staffId, int companyId);
+
+        bool SaveContigentLoans(ContingentLoanUsageViewModel entity, int companyId);
+
+        IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId, int branchId);
+    }
+}

@@ -189,8 +189,8 @@ namespace FintrakBanking.Repositories.Credit
                 MISCODE = model.misCode,
                 TEAMMISCODE = model.teamMiscode,
                 INTERESTRATE = model.interestRate,
-                EFFECTIVEDATE = model.effectiveDate,
-                MATURITYDATE = model.maturityDate,
+                EFFECTIVEDATE = revolvingLoanInput.effectiveDate,
+                MATURITYDATE = revolvingLoanInput.maturityDate,
                 BOOKINGDATE = DateTime.Now, 
                 OVERDRAFTLIMIT = revolvingLoanInput.overdraftLimit,
                 DAYCOUNTCONVENTIONID = revolvingLoanInput.accrualBasis,
@@ -343,10 +343,10 @@ namespace FintrakBanking.Repositories.Credit
                 RELATIONSHIPMANAGERID = entity.relationshipManagerId,
                 MISCODE = entity.misCode,
                 TEAMMISCODE = entity.teamMiscode,
-                EFFECTIVEDATE = entity.effectiveDate,
-                MATURITYDATE = entity.maturityDate,
+                EFFECTIVEDATE = contingentLoanInput.effectiveDate,
+                MATURITYDATE = contingentLoanInput.maturityDate,
 
-                BOOKINGDATE = entity.bookingDate,
+                BOOKINGDATE = DateTime.Now,
 
                 CONTINGENTAMOUNT = contingentLoanInput.contingentAmount,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
@@ -697,12 +697,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public void PostLoanFees(LoanViewModel entity)
         {
-
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
             inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
 
-            financeTransaction.PostTransaction(inputTransactions);
+            if(inputTransactions.Count > 0 )financeTransaction.PostTransaction(inputTransactions);
         }
 
         public List<ApprovalLevelStaffViewModel> GetLoanOperationApprovers(int operation, int companyId)
@@ -2015,22 +2014,13 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public List<FinanceTransactionViewModel> BuildLoanChargeFeesPosting(LoanViewModel loanDetails)
         {
-            //foreach ( var model in data.loanChargeFee)
-            //{
-            //    //model.ledgerAccountId = data.
-            //}
-            //data.loanChargeFee
-
-            // LoanChargeFeeViewModel model = new LoanChargeFeeViewModel();
-
+         
             List<FinanceTransactionViewModel> output = new List<FinanceTransactionViewModel>();
 
             foreach (var item in loanDetails.loanChargeFee)
             {
                 if (item.feeAmount != 0)
                 {
-
-
                     var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanDetails.casaAccountId);
 
                     FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -2145,7 +2135,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
         private bool AddLoanCovenant(List<LoanCovenantDetailViewModel> covenantModel, int loanApplicationId, int loanId, short productTypeId)
-        {
+        { 
             foreach (LoanCovenantDetailViewModel entity in covenantModel)
             {
                 var covenant = new TBL_LOAN_COVENANT_DETAIL
@@ -2156,10 +2146,11 @@ namespace FintrakBanking.Repositories.Credit
                     COVENANTDETAIL = entity.covenantDetail,
                     COVENANTTYPEID = entity.covenantTypeId,
                     CREATEDBY = entity.createdBy,
-                    DATETIMECREATED = DateTime.Now, // this.generalSetup.GetApplicationDate().Date,
+                    DATETIMECREATED = DateTime.Now,
                     FREQUENCYTYPEID = entity.frequencyTypeId,
                     LOANID = loanId,
-                    PRODUCTTYPEID = productTypeId
+                    CASAACCOUNTID = entity.casaAccountId,
+                    PRODUCTTYPEID = productTypeId,
                 };
 
                 context.TBL_LOAN_COVENANT_DETAIL.Add(covenant);
@@ -2232,6 +2223,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTTYPEID = productTypeId,
                 COVENANTTYPEID = entity.covenantTypeId,
                 FREQUENCYTYPEID = entity.frequencyTypeId,
+                CASAACCOUNTID = entity.casaAccountId,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now // generalSetup.GetApplicationDate(),
             });
@@ -2822,8 +2814,8 @@ namespace FintrakBanking.Repositories.Credit
                             covenantTypeId = a.COVENANTTYPEID,
                             frequencyTypeId = a.FREQUENCYTYPEID,
                             covenantAmount = a.COVENANTAMOUNT,
-                            covenantDate = a.COVENANTDATE
-
+                            covenantDate = a.COVENANTDATE,
+                            casaAccountId = a.CASAACCOUNTID
                         }).ToList();
             return data;
         }
@@ -2885,8 +2877,7 @@ namespace FintrakBanking.Repositories.Credit
                             feeDependentAmount = c.FEEDEPENDENTAMOUNT,
                             feeAmount = c.FEEAMOUNT,
                             feeIntervalId = c.TBL_CHARGE_FEE.FEEINTERVALID,
-                            feeIntervalName = c.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME
-
+                            feeIntervalName = c.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
                         }).ToList();
             return data;
         }
@@ -3567,7 +3558,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
 
-                        }).ToList();
+                        }).ToList().Take(500);
 
             data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
@@ -3630,7 +3621,6 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                             applicationStatusId = m.APPLICATIONSTATUSID,
 
-                            //// casaAccountId = m.CasaAccountId,
                             customerId = d.CUSTOMERID,
                             customerCode = cust.CUSTOMERCODE,
                             customerName = m.CUSTOMERID.HasValue ? m.TBL_CUSTOMER.FIRSTNAME + " " + m.TBL_CUSTOMER.MIDDLENAME + " " + m.TBL_CUSTOMER.LASTNAME : "",
@@ -3746,7 +3736,6 @@ namespace FintrakBanking.Repositories.Credit
                             applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
- 
                         }).ToList();
 
             return data.ToList();
@@ -3764,6 +3753,8 @@ namespace FintrakBanking.Repositories.Credit
                              productAccountName = k.PRODUCTACCOUNTNAME,
                              casaAccountId = k.CASAACCOUNTID,
                              currencyId = k.CURRENCYID,
+                             customerCode = k.TBL_CURRENCY.CURRENCYCODE,
+                             customerName = k.TBL_CURRENCY.CURRENCYNAME,
                              productId = k.PRODUCTID,
                              customerId = k.CUSTOMERID,
                              isCurrentAccount = k.ISCURRENTACCOUNT,
@@ -3772,11 +3763,11 @@ namespace FintrakBanking.Repositories.Credit
                 return customerAccounts;
         }
 
-        public List<loanApplicationColateral> GetLoanApplicationCollateralsByApplicationDetailId( int loanApplicationDetailId)
+        public List<loanApplicationColateralViewModel> GetLoanApplicationCollateralsByApplicationId( int loanApplicationId)
         {
-            var loanCollateral = (from cm in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId) // ------------------ REFACTOR TO LOANID!
+            var loanCollateral = (from cm in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId) // ------------------ REFACTOR TO LOANID!
                                   select (
-                                           new loanApplicationColateral
+                                           new loanApplicationColateralViewModel
                                            {
                                              legalFeeTaken = (bool)cm.LEGAL_FEE_TAKEN,
                                              legalFeeDate = (DateTime) cm.LEGAL_FEE_DATE,
