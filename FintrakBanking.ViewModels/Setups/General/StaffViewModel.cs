@@ -91,7 +91,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string lastName { get; set; }
         public short departmentId { get; set; }
         public short? departmentUnitId { get; set; }
-        public string fullName { get { return $"{this.firstName} {this.middleName.Trim()} {this.lastName} - {this.staffCode}"; } }
+        public string fullName { get { return $"{this.firstName} {this.middleName} {this.lastName} - {this.staffCode}"; } }
     }
 
     public class StaffDetailsModel : StaffInfoViewModel
