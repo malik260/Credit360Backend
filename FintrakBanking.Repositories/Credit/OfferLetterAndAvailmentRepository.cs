@@ -1283,7 +1283,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = null;
-            workflow.StatusId = entity.approvalStatusId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Approved;// entity.approvalStatusId;
             workflow.Comment = entity.comment;
             workflow.Amount = entity.amount;
             workflow.DeferredExecution = true;
