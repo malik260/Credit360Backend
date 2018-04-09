@@ -49,6 +49,12 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId)
         {
+            var exceptIds = context.TBL_LOAN_RATE_FEE_CONCESSION_.Where(x =>
+                x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+            .Select(x => (int)x.TBL_LOAN_APPLICATION_DETAIL.PROPOSEDPRODUCTID)
+            .ToList();
+
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in context.TBL_CREDIT_APPRAISAL_MEMORANDM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID into cam
@@ -57,7 +63,10 @@ namespace FintrakBanking.Repositories.Credit
                         from d in camDoc.DefaultIfEmpty()
                         join e in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals e.TARGETID into apprTrail
                         from e in apprTrail.DefaultIfEmpty()
-                        where a.COMPANYID == companyId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                        where a.COMPANYID == companyId 
+                            && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
+                            && !exceptIds.Contains(a.LOANAPPLICATIONID)
+                            && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
                         {
                             loanApplicationId = a.LOANAPPLICATIONID,
@@ -1274,7 +1283,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = null;
-            workflow.StatusId = entity.approvalStatusId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Approved;// entity.approvalStatusId;
             workflow.Comment = entity.comment;
             workflow.Amount = entity.amount;
             workflow.DeferredExecution = true;
