@@ -178,6 +178,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int staffId { get; set; }
         public bool hasLein { get; set; }
         public int postNoStatusId { get; set; }
+        
 
         public List<ApprovalLevelStaffViewModel> loanOperationApprovers { get; set; }
 
@@ -201,9 +202,10 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         public decimal overdraftLimit { get; set; }
         public bool maintainTenor { get; set; }
-        public decimal accrualedAmount { get; set; }
-
-        //public int tenor  { get; set; }
+        public decimal accrualedAmount { get; set; }       
+        public int newtenor { get; set; }
+        public short scheduleTypeCategoryId { get; set; }
+        public DateTime previousEffectiveDate { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
