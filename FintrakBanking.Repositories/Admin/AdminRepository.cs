@@ -264,7 +264,7 @@ namespace FintrakBanking.Repositories.Admin
                         join br in context.TBL_BRANCH on c.TBL_STAFF.BRANCHID equals br.BRANCHID
                         join st in context.TBL_STAFF on c.STAFFID equals st.STAFFID
                         join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                        join dept in context.TBL_DEPARTMENT on c.TBL_STAFF.DEPARTMENTID equals dept.DEPARTMENTID
+                        join dept in context.TBL_DEPARTMENT on c.TBL_STAFF.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.USERID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                         //&& c.ApprovalStatus == false
@@ -797,30 +797,22 @@ namespace FintrakBanking.Repositories.Admin
                 data.DATETIMEUPDATED = DateTime.Now;
                 data.LASTUPDATEDBY = entity.lastUpdatedBy;
 
-                if (entity.isLocked && entity.isActive)
+                if (entity.isLocked )
                 {
+                    data.FAILEDLOGONATTEMPT = 0;
                     data.ISLOCKED = entity.isLocked;
                     data.LASTLOCKOUTDATE = DateTime.Now;
                     entity.actionMessage = "Account has been locked successfully";
                 }
+ 
 
-                if(!entity.isLocked && entity.isActive)
-                {
-                    data.ISLOCKED = entity.isLocked;
-                    entity.actionMessage = "Account has been unlocked successfully";
-                }
-
-                if (!entity.isActive && !entity.isLocked)
+                if (!entity.isActive)
                 {
                     data.ISACTIVE = entity.isActive;
                     data.DEACTIVATEDDATE = DateTime.Now;
                     entity.actionMessage = "Account has been deactivated successfully";
                 }
-                if (entity.isActive && entity.isLocked)
-                {
-                    data.ISACTIVE = entity.isActive;
-                    entity.actionMessage = "Account has been activated successfully";
-                }
+                 
 
             }
             message = entity.actionMessage;

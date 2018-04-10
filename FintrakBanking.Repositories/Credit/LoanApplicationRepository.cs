@@ -863,6 +863,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
                 OPERATIONID = (int)OperationsEnum.CAM,
+                 LOANAPPLICATIONTYPEID = loan.loanTypeId
 
             };
             if (isGroupLoan)
@@ -1007,6 +1008,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = createdBy,
                     DATETIMECREATED = DateTime.Now,
                     LOANPURPOSE = a.loanPurpose
+                     
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
@@ -1793,6 +1795,8 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = appl.CUSTOMERID,
                 SUBMITTEDFORAPPRAISAL = appl.SUBMITTEDFORAPPRAISAL,
                 OPERATIONID = appl.OPERATIONID,
+                LOANAPPLICATIONTYPEID = appl.LOANAPPLICATIONTYPEID,
+                PRODUCT_CLASS_PROCESSID = appl.PRODUCT_CLASS_PROCESSID,
             });
 
             var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);

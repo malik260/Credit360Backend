@@ -15,13 +15,12 @@ namespace FintrakBanking.Entities.Models
             TBL_DEPARTMENT_UNIT = new HashSet<TBL_DEPARTMENT_UNIT>();
             TBL_JOB_REQUEST = new HashSet<TBL_JOB_REQUEST>();
             TBL_JOB_TYPE_DEPARTMENT = new HashSet<TBL_JOB_TYPE_DEPARTMENT>();
-            TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
 
         [Key]
         public short DEPARTMENTID { get; set; }
 
-        public short? BRANCHID { get; set; }
+        public int COMPANYID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -43,7 +42,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? DELETED { get; set; }
 
-        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_DEPARTMENT_UNIT> TBL_DEPARTMENT_UNIT { get; set; }
@@ -53,8 +52,5 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_JOB_TYPE_DEPARTMENT> TBL_JOB_TYPE_DEPARTMENT { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
     }
 }

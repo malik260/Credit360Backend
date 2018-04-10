@@ -214,7 +214,7 @@ namespace FintrakBanking.ReportObjects
                                 payAccountTo = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
                                 interestToDate = a.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(c => c.DATE == DateTime.Now.Date).ACCRUEDINTEREST,
                                 currency = a.TBL_CURRENCY.CURRENCYCODE,
-                                businessGroup = context.TBL_DEPARTMENT.FirstOrDefault(d => d.DEPARTMENTID == a.TBL_STAFF.DEPARTMENTID).DEPARTMENTNAME
+                                businessGroup = context.TBL_DEPARTMENT.FirstOrDefault(d => d.DEPARTMENTID == a.TBL_STAFF.TBL_DEPARTMENT_UNIT.DEPARTMENTID).DEPARTMENTNAME
 
                             }).ToList();
                 return data;
@@ -246,7 +246,7 @@ namespace FintrakBanking.ReportObjects
                                 payAccountTo = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
                                 interestToDate = a.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(c => c.DATE == DateTime.Now.Date).ACCRUEDINTEREST,
                                 currency = a.TBL_CURRENCY.CURRENCYCODE,
-                                businessGroup = context.TBL_DEPARTMENT.FirstOrDefault(d => d.DEPARTMENTID == a.TBL_STAFF.DEPARTMENTID).DEPARTMENTNAME
+                                businessGroup = context.TBL_DEPARTMENT.FirstOrDefault(d => d.DEPARTMENTID == a.TBL_STAFF.TBL_DEPARTMENT_UNIT.DEPARTMENTID).DEPARTMENTNAME
 
                             }).ToList();
                 return data;

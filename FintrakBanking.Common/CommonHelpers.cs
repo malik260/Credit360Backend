@@ -75,6 +75,11 @@ namespace FintrakBanking.Common
             return retVal;
         }
 
+        public static string FormatNumberTwoPlaces(decimal value)
+        {
+            return string.Format("{0:0,0.00}", value); 
+        }
+
 
         /// <summary>
         /// Ensures the subscriber email or throw.
@@ -310,6 +315,29 @@ namespace FintrakBanking.Common
             }
         }
 
+        public static int MaxInvalidPasswordAttempts
+        {
+            get
+            {
+                return  int.Parse( (ConfigurationManager.AppSettings["maxInvalidPasswordAttempts"]).ToString());
+            }
+        }
+
+        public static string minRequiredPasswordLength
+        {
+            get
+            {
+                return (ConfigurationManager.AppSettings["minRequiredPasswordLength"]).ToString();
+            }
+        }
+
+        public static string minRequiredNonalphanumericCharacters
+        {
+            get
+            {
+                return (ConfigurationManager.AppSettings["minRequiredNonalphanumericCharacters"]).ToString();
+            }
+        }
 
         public static string GetUserIP()
         {

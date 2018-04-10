@@ -468,7 +468,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             });
 
               return  context.TBL_JOB_REQUEST
-               .Where(t => ((t.DEPARTMENTUNITID == context.TBL_STAFF.Where(l=>l.STAFFID == staffId).FirstOrDefault().DEPARTMENT_UNITID) || (t.SENDERSTAFFID == staffId) || (t.REASSIGNEDTO == staffId) ))
+               .Where(t => ((t.DEPARTMENTUNITID == context.TBL_STAFF.Where(l=>l.STAFFID == staffId).FirstOrDefault().TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID) || (t.SENDERSTAFFID == staffId) || (t.REASSIGNEDTO == staffId) ))
                .Select(
                   x =>
                      new JobRequestViewModel
@@ -690,7 +690,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var operationId = (int)OperationsEnum.CAM;
             var departmentId = 0;
             var staff = context.TBL_STAFF.Find(staffId);
-            if (staff != null) { departmentId = (int)staff.DEPARTMENTID; }
+            if (staff != null) { departmentId = (int)staff.TBL_DEPARTMENT_UNIT.DEPARTMENTID; }
 
             var allstaff = this.context.TBL_STAFF.Select(s => new
             {

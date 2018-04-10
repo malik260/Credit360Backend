@@ -124,9 +124,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? MISINFOID { get; set; }
 
-        public short? DEPARTMENTID { get; set; }
-
-        public short? DEPARTMENT_UNITID { get; set; }
+        public short? DEPARTMENTUNITID { get; set; }
 
         public int? STATEID { get; set; }
 

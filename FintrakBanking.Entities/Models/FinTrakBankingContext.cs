@@ -1047,6 +1047,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COMPANY>()
+                .HasMany(e => e.TBL_DEPARTMENT)
+                .WithRequired(e => e.TBL_COMPANY)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_FINANCE_ENDOFDAY)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
@@ -1803,13 +1808,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_DEPARTMENT_UNIT>()
                 .HasMany(e => e.TBL_JOB_REQUEST)
                 .WithRequired(e => e.TBL_DEPARTMENT_UNIT)
-                .HasForeignKey(e => e.DEPARTMENTUNITID)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_DEPARTMENT_UNIT>()
-                .HasMany(e => e.TBL_TEMP_STAFF)
-                .WithRequired(e => e.TBL_DEPARTMENT_UNIT)
-                .HasForeignKey(e => e.DEPARTMENTUNITID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_FEE>()
@@ -4537,6 +4535,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CHART_OF_ACCOUNT)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
+                .HasMany(e => e.TBL_TEMP_PRODUCT6)
+                .WithOptional(e => e.TBL_CHART_OF_ACCOUNT6)
+                .HasForeignKey(e => e.PRINCIPALBALANCEGL2);
 
             modelBuilder.Entity<TBL_CHART_OF_ACCOUNT_CLASS>()
                 .HasMany(e => e.TBL_CHART_OF_ACCOUNT)

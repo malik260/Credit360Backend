@@ -236,7 +236,8 @@ namespace FintrakBanking.Repositories.Customer
                 covenantTypeId = c.COVENANTTYPEID,
                 covenantTypeName = c.COVENANTTYPENAME,
                 requireAmount = c.REQUIREAMOUNT,
-                requireFrequency = c.REQUIREFREQUENCY
+                requireFrequency = c.REQUIREFREQUENCY,
+                requireCasaAccount = c.REQUIRECASAACCOUNT
             });
         }
 
