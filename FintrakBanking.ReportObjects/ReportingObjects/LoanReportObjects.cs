@@ -805,8 +805,6 @@ namespace FintrakBanking.ReportObjects
 
         public IEnumerable<DisburstLoanViewModel> GetLoansInterestReceivable(DateTime startDate, DateTime endDate, int companyId, string searchParamemter, int? productClassId)
         {
-
-
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var data = from a in context.TBL_LOAN
@@ -853,9 +851,38 @@ namespace FintrakBanking.ReportObjects
 
                            };
                 return data.ToList();
-
-
             }
+        }
+
+        public List<CollateralViewModel> CollateralPropertyApproachingRevaluation(DateTime startDate, DateTime endDate)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var loanDetails = from a in context.TBL_COLLATERAL_CUSTOMER
+                                  join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                  join c in context.TBL_STAFF on a.CREATEDBY equals c.STAFFID
+                                  join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
+                                  join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
+                                  join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
+                                  where DbFunctions.TruncateTime(f.LASTVALUATIONDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(f.LASTVALUATIONDATE) <= DbFunctions.TruncateTime(endDate)
+                                  select new CollateralViewModel
+                                  {
+                                      collateralTypeId = a.COLLATERALTYPEID,
+                                      collateralType = d.COLLATERALTYPENAME,
+                                      collateralCode = a.COLLATERALCODE,
+                                      collateralSubType = e.COLLATERALSUBTYPENAME,
+                                      customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                      propertyName = f.PROPERTYNAME,
+                                      lastValuationDate = f.LASTVALUATIONDATE,
+                                      valuationCycle = e.VISITATIONCYCLE,
+                                      valuationDate = f.LASTVALUATIONDATE.AddDays((double)e.VISITATIONCYCLE),
+                                      relationshipManagerId = a.CREATEDBY,
+                                      relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
+                                      relationshipManagerEmail = c.EMAIL,
+                                  };
+                return loanDetails.ToList();
+            }
+      
         }
 
     }
