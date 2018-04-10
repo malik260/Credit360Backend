@@ -53,7 +53,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short ApprovalStatusId { get; set; }
         public int OperationId { get; set; }
 
-        public string StaffFullName { get { return this.FirstName + " " + this.MiddleName.Trim() + " " + this.LastName; } }
+        public string StaffFullName { get { return this.FirstName + " " + this.MiddleName + " " + this.LastName; } }
 
         public string JobTitleName { get; set; }
         public string documentTitle { get; set; }
@@ -91,7 +91,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string lastName { get; set; }
         public short departmentId { get; set; }
         public short? departmentUnitId { get; set; }
-        public string fullName { get { return $"{this.firstName} {this.middleName.Trim()} {this.lastName} - {this.staffCode}"; } }
+        public string fullName { get { return $"{firstName} {middleName} {lastName} - {staffCode}"; } }
     }
 
     public class StaffDetailsModel : StaffInfoViewModel

@@ -77,7 +77,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? MISINFOID { get; set; }
 
-        public short? DEPARTMENTID { get; set; }
+        public short? DEPARTMENTUNITID { get; set; }
 
         public int? STATEID { get; set; }
 
@@ -97,8 +97,6 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }
 
-        public short? DEPARTMENTUNITID { get; set; }
-
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
@@ -106,8 +104,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CITY TBL_CITY { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
-
-        public virtual TBL_DEPARTMENT TBL_DEPARTMENT { get; set; }
 
         public virtual TBL_DEPARTMENT_UNIT TBL_DEPARTMENT_UNIT { get; set; }
 

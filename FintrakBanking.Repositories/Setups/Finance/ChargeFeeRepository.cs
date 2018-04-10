@@ -22,8 +22,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private IWorkflow workFlow;
 
         public ChargeFeeRepository(
-            FinTrakBankingContext context, 
-            IGeneralSetupRepository general, 
+            FinTrakBankingContext context,
+            IGeneralSetupRepository general,
             IAuditTrailRepository _auditTrail,
             IWorkflow _workflow
             )
@@ -130,45 +130,45 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 AUDITTYPEID = (short)AuditTypeEnum.CreateStaffInitiated,
                 STAFFID = chargeFeemodel.createdBy,
                 BRANCHID = (short)chargeFeemodel.userBranchId,
-                DETAIL ="", // $"Initiated Staff Creation for '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
+                DETAIL = "", // $"Initiated Staff Creation for '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
                 IPADDRESS = chargeFeemodel.userIPAddress,
                 URL = chargeFeemodel.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
-/*
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.FeeCreation, chargeFeemodel.companyId))
-            {
-                using (var trans = context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        auditTrail.AddAuditTrail(audit);
-                        this.context.TBL_TEMP_CHARGE_FEE.Add(chargeFee);
-                        output = context.SaveChanges() != 0;
-
-                        var entity = new ApprovalViewModel
+            /*
+                        if (workFlow.CheckRouteForOperation((int)OperationsEnum.FeeCreation, chargeFeemodel.companyId))
                         {
-                            staffId = chargeFeemodel.createdBy,
-                            companyId = chargeFeemodel.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = (int)chargeFee.CHARGEFEEID,
-                            operationId = (int)OperationsEnum.FeeCreation,
-                            BranchId = chargeFeemodel.userBranchId
-                        };
-                        var response = workFlow.LogForApproval(entity);
-                        trans.Commit();
-                    }
-                    catch (Exception)
-                    {
-                        trans.Rollback();
-                    }
-                }
-            }
-            else
-            {
-                throw new Exception("Approval route have not been defined for this operation");
-            }*/
+                            using (var trans = context.Database.BeginTransaction())
+                            {
+                                try
+                                {
+                                    auditTrail.AddAuditTrail(audit);
+                                    this.context.TBL_TEMP_CHARGE_FEE.Add(chargeFee);
+                                    output = context.SaveChanges() != 0;
+
+                                    var entity = new ApprovalViewModel
+                                    {
+                                        staffId = chargeFeemodel.createdBy,
+                                        companyId = chargeFeemodel.companyId,
+                                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                                        targetId = (int)chargeFee.CHARGEFEEID,
+                                        operationId = (int)OperationsEnum.FeeCreation,
+                                        BranchId = chargeFeemodel.userBranchId
+                                    };
+                                    var response = workFlow.LogForApproval(entity);
+                                    trans.Commit();
+                                }
+                                catch (Exception)
+                                {
+                                    trans.Rollback();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Approval route have not been defined for this operation");
+                        }*/
             return output;
 
         }
@@ -198,7 +198,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 CREATEDBY = (int)model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate()
             };
-            
+
             context.TBL_CHARGE_FEE.Add(data);
             context.SaveChanges();
 
@@ -340,7 +340,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 primaryTaxId = x.PRIMARYTAXID,
                 secondaryTaxId = x.SECONDARYTAXID,
                 ranges = context.TBL_CHARGE_RANGE.Where(r => r.CHARGEFEEID == x.CHARGEFEEID)
-                    .Select(r => new ChargeRangeViewModel {
+                    .Select(r => new ChargeRangeViewModel
+                    {
                         chargeRangeId = r.CHARGERANGEID,
                         minimum = r.MINIMUM,
                         maximum = r.MAXIMUM,
