@@ -5,7 +5,8 @@
         PrincipalRepayment = 2,
         InterestRepayment = 3,
         OverdraftCleanUp = 4,
-        APGBooking = 5
+        APGBooking = 5,
+        APSRequest = 6
     };
 
 }

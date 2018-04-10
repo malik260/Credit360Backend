@@ -199,7 +199,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.LoggedIn,
                     STAFFID = currUser.staffId,
-                    BRANCHID = currUser.branchId,
+                    BRANCHID =(short) currUser.branchId,
                     DETAIL = $"{currUser.username} logged in",
                     IPADDRESS = CommonHelpers.GetUserIP(),
                     URL = Request.RequestUri.AbsoluteUri,
