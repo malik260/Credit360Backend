@@ -13,6 +13,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool SaveContigentLoans(ContingentLoanUsageViewModel entity, int companyId);
 
-        IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId, int branchId);
+        IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId);
     }
 }

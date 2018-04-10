@@ -23,7 +23,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string staffName { get; set; }
         public int companyId { get; set; }
         public int countryId { get; set; }
-        public short branchId { get; set; }
+        public short? branchId { get; set; }
         public string branchName { get; set; }
         public string companyName { get; set; }
         public string email { get; set; }
