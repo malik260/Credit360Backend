@@ -1646,14 +1646,12 @@ namespace FintrakBanking.Repositories.Credit
                         DisburseLoan(loanDisbursementModel);
                     }
 
-
                     loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                     loanRecord.ISDISBURSED = true;
                     loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
                     loanRecord.DISBURSEDBY = user.createdBy;
                     loanRecord.APPROVEDBY = user.createdBy;
                     //==========================================================================================
-
 
                     // Audit Section ---------------------------
                     var audit = new TBL_AUDIT
