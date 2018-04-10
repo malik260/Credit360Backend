@@ -1277,13 +1277,15 @@ namespace FintrakBanking.Repositories.Credit
             var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
             //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
+            var initiated = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == appl.LOANAPPLICATIONID).Any();
+
             workflow.StaffId = entity.createdBy;
             workflow.OperationId = operationId;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = null;
-            workflow.StatusId = (int)ApprovalStatusEnum.Approved;// entity.approvalStatusId;
+            workflow.StatusId = initiated == true ? (int)ApprovalStatusEnum.Approved : (int)ApprovalStatusEnum.Processing;
             workflow.Comment = entity.comment;
             workflow.Amount = entity.amount;
             workflow.DeferredExecution = true;
