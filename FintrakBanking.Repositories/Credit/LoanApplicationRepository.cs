@@ -1795,6 +1795,8 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = appl.CUSTOMERID,
                 SUBMITTEDFORAPPRAISAL = appl.SUBMITTEDFORAPPRAISAL,
                 OPERATIONID = appl.OPERATIONID,
+                LOANAPPLICATIONTYPEID = appl.LOANAPPLICATIONTYPEID,
+                PRODUCT_CLASS_PROCESSID = appl.PRODUCT_CLASS_PROCESSID,
             });
 
             var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);

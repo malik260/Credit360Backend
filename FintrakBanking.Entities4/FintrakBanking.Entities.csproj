@@ -1,0 +1,443 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FB338A9B-9C63-46ED-A8C3-D75A08DAD6F0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FintrakBanking.Entities</RootNamespace>
+    <AssemblyName>FintrakBanking.Entities</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.SqlServerCompact.6.2.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
+    <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
+    <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
+    <Compile Include="DocumentModels\TBL_LOAN_CONDITION_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_CHECKLIST_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_COLLATERAL_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_JOB_REQUEST_DOCUMENT.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_KYC_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_LOAN_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_STAFF_PICTURE.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_STAFF_SIGNATURE.cs" />
+    <Compile Include="Models\DEV_CHECKLIST.cs" />
+    <Compile Include="Models\ELMAH_Error.cs" />
+    <Compile Include="Models\SYSDIAGRAMS.cs" />
+    <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
+    <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
+    <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
+    <Compile Include="Models\TBL_ACCREDITEDCONSULTANT.cs" />
+    <Compile Include="Models\TBL_ACCREDITEDCONSULTANT_STATE.cs" />
+    <Compile Include="Models\TBL_ACCREDITEDCONSULTANT_TYPE.cs" />
+    <Compile Include="Models\TBL_APPROVAL_GROUP.cs" />
+    <Compile Include="Models\TBL_APPROVAL_GROUP_MAPPING.cs" />
+    <Compile Include="Models\TBL_APPROVAL_LEVEL.cs" />
+    <Compile Include="Models\TBL_APPROVAL_LEVEL_STAFF.cs" />
+    <Compile Include="Models\TBL_APPROVAL_STATE.cs" />
+    <Compile Include="Models\TBL_APPROVAL_STATUS.cs" />
+    <Compile Include="Models\TBL_APPROVAL_TRAIL.cs" />
+    <Compile Include="Models\TBL_APPROVAL_VOTE_OPTION.cs" />
+    <Compile Include="Models\TBL_AUDIT.cs" />
+    <Compile Include="Models\TBL_AUDIT_TYPE.cs" />
+    <Compile Include="Models\TBL_BRANCH.cs" />
+    <Compile Include="Models\TBL_BRANCH_REGION.cs" />
+    <Compile Include="Models\TBL_CALL_MEMO.cs" />
+    <Compile Include="Models\TBL_CALL_MEMO_LIMIT.cs" />
+    <Compile Include="Models\TBL_CALL_MEMO_TYPE.cs" />
+    <Compile Include="Models\TBL_CASA.cs" />
+    <Compile Include="Models\TBL_CASA_ACCOUNTSTATUS.cs" />
+    <Compile Include="Models\TBL_CASA_LIEN.cs" />
+    <Compile Include="Models\TBL_CASA_LIEN_TYPE.cs" />
+    <Compile Include="Models\TBL_CASA_OVERDRAFT.cs" />
+    <Compile Include="Models\TBL_CASA_POSTNOSTATUS.cs" />
+    <Compile Include="Models\TBL_CHARGES.cs" />
+    <Compile Include="Models\TBL_CHARGES_VALUESOURCE.cs" />
+    <Compile Include="Models\TBL_CHARGE_FEE.cs" />
+    <Compile Include="Models\TBL_CHARGE_RANGE.cs" />
+    <Compile Include="Models\TBL_CHART_OF_ACCOUNT.cs" />
+    <Compile Include="Models\TBL_CHART_OF_ACCOUNT_CLASS.cs" />
+    <Compile Include="Models\TBL_CHART_OF_ACCOUNT_CURRENCY.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_DEFERRAL.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_DEFINITION.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_DETAIL.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_ITEM.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_RESPONSE_TYPE.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_STATUS.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_TARGETTYPE.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_TYPE.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_TYPE_APROV_LEVL.cs" />
+    <Compile Include="Models\TBL_CITY.cs" />
+    <Compile Include="Models\TBL_CITY_CLASS.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_CASA.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_CUSTOMER.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_DEPOSIT.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_DOCUMENTS.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_GAURANTEE.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_IMMOVE_PROPERTY.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_ITEM_POLICY.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_MISCELLANEOUS.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_MISC_NOTES.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_MKT_SECURITY.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_PERFECTN_STAT.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_PLANT_AND_EQUIP.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_POLICY.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_PRECIOUSMETAL.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_SENIORITY_CLAIM.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_STOCK.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_TYPE.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_TYPE_SUB.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_VALUEBASE_TYPE.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_VALUER.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_VALUER_TYPE.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_VEHICLE.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_VISITATION.cs" />
+    <Compile Include="Models\TBL_COMPANY.cs" />
+    <Compile Include="Models\TBL_COMPANY_CLASS.cs" />
+    <Compile Include="Models\TBL_COMPANY_TYPE.cs" />
+    <Compile Include="Models\TBL_COMPLIANCE_TIMELINE.cs" />
+    <Compile Include="Models\TBL_CONDITION_PRECEDENT.cs" />
+    <Compile Include="Models\TBL_CONTENT_PLACEHOLDER.cs" />
+    <Compile Include="Models\TBL_COT.cs" />
+    <Compile Include="Models\TBL_COUNTRY.cs" />
+    <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMORANDM.cs" />
+    <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_DETL.cs" />
+    <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_DOCU.cs" />
+    <Compile Include="Models\TBL_CREDIT_APPRAISAL_MEMO_LOG.cs" />
+    <Compile Include="Models\TBL_CREDIT_BUREAU.cs" />
+    <Compile Include="Models\TBL_CREDIT_TEMPLATE.cs" />
+    <Compile Include="Models\TBL_CURRENCY.cs" />
+    <Compile Include="Models\TBL_CURRENCY_RATE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_ACCOUNT_KYC_ITEM.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_ADDRESS.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_ADDRESS_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_BLACKLIST.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_BVN.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_CHILDREN.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_CLIENT_SUPPLIER.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_CLIENT_SUPPLR_TYP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_COMPANYINFOMATION.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_COMPANY_BENEFICIA.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_COMPANY_DIRECTOR.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_COMPANY_DIREC_TYP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_CUSTOM_FIELD.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_EDIT_HISTORY.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_EDUCATIONLEVELTYP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_EMPLOYER.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_EMPLOYER_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_EMPLOYER_TYPE_SUB.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_EMPLOYMENTHISTORY.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION_DETAIL.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION_GROUP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DETAIL.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DIVI_TYP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_VALUETYP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_GROUP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_GROUP_MAPPING.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_GROUP_RELATN_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_GRP_FS_CAPTN_DET.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_GUARDIAN.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_IDENTIFICATION.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_IDENTI_MODE_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_MODIFICATION.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_MODIFICATN_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_NEXTOFKIN.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_PHONECONTACT.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_PRODUCT_FEE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_RISK_RATING.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_SENSITIVITY_LEVEL.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_SIGNATORY.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOM_CRCBUREAU_PRODUCT.cs" />
+    <Compile Include="Models\TBL_CUSTOM_FIANCE_TRANSACTION.cs" />
+    <Compile Include="Models\TBL_CUSTOM_FIELDS.cs" />
+    <Compile Include="Models\TBL_CUSTOM_FIELDS_DATA.cs" />
+    <Compile Include="Models\TBL_CUSTOM_FIELD_DATA_UPLOAD.cs" />
+    <Compile Include="Models\TBL_CUSTOM_FIELD_OPTION.cs" />
+    <Compile Include="Models\TBL_CUSTOM_HOSTPAGE.cs" />
+    <Compile Include="Models\TBL_CUSTOM_LIEN_PROCESS.cs" />
+    <Compile Include="Models\TBL_DAILY_ACCRUAL.cs" />
+    <Compile Include="Models\TBL_DAILY_ACCRUAL_CATEGORY.cs" />
+    <Compile Include="Models\TBL_DAY_COUNT_CONVENTION.cs" />
+    <Compile Include="Models\TBL_DAY_INTEREST_TYPE.cs" />
+    <Compile Include="Models\TBL_DEAL_CLASSIFICATION.cs" />
+    <Compile Include="Models\TBL_DEAL_TYPE.cs" />
+    <Compile Include="Models\TBL_DEPARTMENT.cs" />
+    <Compile Include="Models\TBL_ERRORLOG.cs" />
+    <Compile Include="Models\TBL_FEE.cs" />
+    <Compile Include="Models\TBL_FEE_AMORTISATION_TYPE.cs" />
+    <Compile Include="Models\TBL_FEE_INTERVAL.cs" />
+    <Compile Include="Models\TBL_FEE_TARGET.cs" />
+    <Compile Include="Models\TBL_FEE_TYPE.cs" />
+    <Compile Include="Models\TBL_FINANCECURRENTDATE.cs" />
+    <Compile Include="Models\TBL_FINANCE_ENDOFDAY.cs" />
+    <Compile Include="Models\TBL_FINANCE_TRANSACTION.cs" />
+    <Compile Include="Models\TBL_FINANCIAL_STATEMENT_CAPTN.cs" />
+    <Compile Include="Models\TBL_FINANCIAL_STATEMENT_TYPE.cs" />
+    <Compile Include="Models\TBL_FREQUENCY_TYPE.cs" />
+    <Compile Include="Models\TBL_JOB_REQUEST.cs" />
+    <Compile Include="Models\TBL_JOB_REQUEST_DETAIL.cs" />
+    <Compile Include="Models\TBL_JOB_REQUEST_DOCUMENT_MAPPN.cs" />
+    <Compile Include="Models\TBL_JOB_REQUEST_MESSAGE.cs" />
+    <Compile Include="Models\TBL_JOB_REQUEST_STATUS.cs" />
+    <Compile Include="Models\TBL_JOB_REQUEST_STATUS_FEEDBAK.cs" />
+    <Compile Include="Models\TBL_JOB_TYPE.cs" />
+    <Compile Include="Models\TBL_JOB_TYPE_DEPARTMENT.cs" />
+    <Compile Include="Models\TBL_JOB_TYPE_SUB.cs" />
+    <Compile Include="Models\TBL_KYC_DOCUMENTTYPE.cs" />
+    <Compile Include="Models\TBL_KYC_ITEM.cs" />
+    <Compile Include="Models\TBL_LIMIT.cs" />
+    <Compile Include="Models\TBL_LIMIT_DETAIL.cs" />
+    <Compile Include="Models\TBL_LIMIT_METRIC.cs" />
+    <Compile Include="Models\TBL_LIMIT_TYPE.cs" />
+    <Compile Include="Models\TBL_LIMIT_VALUE_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN.cs" />
+    <Compile Include="Models\TBL_LOANAPPLICATION_COLTRL_MAP.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATERL.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATRL2.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_ARCH.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_BG.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_EDU.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_FEE.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_INV.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_LOG.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_STA.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_TRA.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATN_DETL_MTRIG.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLTN_CREDIT_BUREAU.cs" />
+    <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_LOAN_BOOKING_REQUEST.cs" />
+    <Compile Include="Models\TBL_LOAN_BULK_INTEREST_REVIEW.cs" />
+    <Compile Include="Models\TBL_LOAN_CAMSOL.cs" />
+    <Compile Include="Models\TBL_LOAN_COLLATERAL_MAPPING.cs" />
+    <Compile Include="Models\TBL_LOAN_COMMENT.cs" />
+    <Compile Include="Models\TBL_LOAN_CONCESSION_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN_CONDITION_DEFERRAL.cs" />
+    <Compile Include="Models\TBL_LOAN_CONDITION_PRECEDENT.cs" />
+    <Compile Include="Models\TBL_LOAN_CONTINGENT.cs" />
+    <Compile Include="Models\TBL_LOAN_CONTINGENT_USAGE.cs" />
+    <Compile Include="Models\TBL_LOAN_COVENANT_DETAIL.cs" />
+    <Compile Include="Models\TBL_LOAN_COVENANT_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN_DOCUMENT_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN_FEE.cs" />
+    <Compile Include="Models\TBL_LOAN_FEE_SCHEDULE.cs" />
+    <Compile Include="Models\TBL_LOAN_FORCE_DEBIT.cs" />
+    <Compile Include="Models\TBL_LOAN_GUARANTOR.cs" />
+    <Compile Include="Models\TBL_LOAN_MARKET.cs" />
+    <Compile Include="Models\TBL_LOAN_MONITORING_TRIGGER.cs" />
+    <Compile Include="Models\TBL_LOAN_MONITORING_TRIG_SETUP.cs" />
+    <Compile Include="Models\TBL_LOAN_OPERATION.cs" />
+    <Compile Include="Models\TBL_LOAN_PAST_DUE.cs" />
+    <Compile Include="Models\TBL_LOAN_PRELIMINARY_EVALUATN.cs" />
+    <Compile Include="Models\TBL_LOAN_PRICEINDEX_EXCEPTION.cs" />
+    <Compile Include="Models\TBL_LOAN_PRINCIPAL.cs" />
+    <Compile Include="Models\TBL_LOAN_PRUDENTIALGUIDELINE.cs" />
+    <Compile Include="Models\TBL_LOAN_RATE_FEE_CONCESSION_.cs" />
+    <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN.cs" />
+    <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN_PAYMNT.cs" />
+    <Compile Include="Models\TBL_LOAN_RELATIONSHIP_OFF_HIST.cs" />
+    <Compile Include="Models\TBL_LOAN_REVIEW_APPLICATION.cs" />
+    <Compile Include="Models\TBL_LOAN_REVIEW_APPLICATN_CAM.cs" />
+    <Compile Include="Models\TBL_LOAN_REVIEW_OPERATION.cs" />
+    <Compile Include="Models\TBL_LOAN_REVIEW_OPRATN_IREG_SC.cs" />
+    <Compile Include="Models\TBL_LOAN_REVOLVING.cs" />
+    <Compile Include="Models\TBL_LOAN_REVOLVING_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_LOAN_SCHEDULE_CATEGORY.cs" />
+    <Compile Include="Models\TBL_LOAN_SCHEDULE_DAILY.cs" />
+    <Compile Include="Models\TBL_LOAN_SCHEDULE_DAILY_ARCHIV.cs" />
+    <Compile Include="Models\TBL_LOAN_SCHEDULE_DAILY_TEMP.cs" />
+    <Compile Include="Models\TBL_LOAN_SCHEDULE_IREGUL_INPUT.cs" />
+    <Compile Include="Models\TBL_LOAN_SCHEDULE_PERIODIC.cs" />
+    <Compile Include="Models\TBL_LOAN_SCHEDULE_PERIODIC_ARC.cs" />
+    <Compile Include="Models\TBL_LOAN_SCHEDULE_PERIODIC_TMP.cs" />
+    <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE_PRODUCT.cs" />
+    <Compile Include="Models\TBL_LOAN_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_TRANSACTION_DYNAMICS.cs" />
+    <Compile Include="Models\TBL_LOAN_TRANSACTION_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN_TYPE.cs" />
+    <Compile Include="Models\TBL_LOCALGOVERNMENT.cs" />
+    <Compile Include="Models\TBL_MACHINEVALUE_BASE.cs" />
+    <Compile Include="Models\TBL_MANAGEMENT_TYPE.cs" />
+    <Compile Include="Models\TBL_MESSAGE_LOG.cs" />
+    <Compile Include="Models\TBL_MESSAGE_LOG_STATUS.cs" />
+    <Compile Include="Models\TBL_MESSAGE_LOG_TYPE.cs" />
+    <Compile Include="Models\TBL_MIS_INFO.cs" />
+    <Compile Include="Models\TBL_MIS_TYPE.cs" />
+    <Compile Include="Models\TBL_MONITORING_ALERT_SETUP.cs" />
+    <Compile Include="Models\TBL_NATURE_OF_BUSINESS.cs" />
+    <Compile Include="Models\TBL_NOTIFICATION_LOG.cs" />
+    <Compile Include="Models\TBL_OFFERLETTER.cs" />
+    <Compile Include="Models\TBL_OPERATIONS.cs" />
+    <Compile Include="Models\TBL_OPERATIONS_TYPE.cs" />
+    <Compile Include="Models\TBL_OVERRIDE_DETAIL.cs" />
+    <Compile Include="Models\TBL_OVERRIDE_ITEM.cs" />
+    <Compile Include="Models\TBL_PRODUCT.cs" />
+    <Compile Include="Models\TBL_PRODUCT_BEHAVIOUR.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CATEGORY.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CLASS.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CLASS_PROCESS.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CLASS_TYPE.cs" />
+    <Compile Include="Models\TBL_PRODUCT_COLLATERALTYPE.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CURRENCY.cs" />
+    <Compile Include="Models\TBL_PRODUCT_GROUP.cs" />
+    <Compile Include="Models\TBL_PRODUCT_PRICE_INDEX.cs" />
+    <Compile Include="Models\TBL_PRODUCT_PRICE_INDEX_DAILY.cs" />
+    <Compile Include="Models\TBL_PRODUCT_TYPE.cs" />
+    <Compile Include="Models\TBL_PROFILE_ACTIVITY.cs" />
+    <Compile Include="Models\TBL_PROFILE_ACTIVITY_PARENT.cs" />
+    <Compile Include="Models\TBL_PROFILE_ADDITIONALACTIVITY.cs" />
+    <Compile Include="Models\TBL_PROFILE_GROUP.cs" />
+    <Compile Include="Models\TBL_PROFILE_GROUP_ACTIVITY.cs" />
+    <Compile Include="Models\TBL_PROFILE_PRIVILEDGE.cs" />
+    <Compile Include="Models\TBL_PROFILE_PRIVILEDGE_ACTIVIT.cs" />
+    <Compile Include="Models\TBL_PROFILE_USER.cs" />
+    <Compile Include="Models\TBL_PROFILE_USERGROUP.cs" />
+    <Compile Include="Models\TBL_PUBLIC_HOLIDAY.cs" />
+    <Compile Include="Models\TBL_REGION.cs" />
+    <Compile Include="Models\TBL_RISK_ASSESSMENT.cs" />
+    <Compile Include="Models\TBL_RISK_ASSESSMENT_INDEX.cs" />
+    <Compile Include="Models\TBL_RISK_ASSESSMENT_INDEX_TYPE.cs" />
+    <Compile Include="Models\TBL_RISK_ASSESSMENT_RESULT.cs" />
+    <Compile Include="Models\TBL_RISK_ASSESSMENT_TITLE.cs" />
+    <Compile Include="Models\TBL_RISK_RATING.cs" />
+    <Compile Include="Models\TBL_SECTOR.cs" />
+    <Compile Include="Models\TBL_SETUP_COMPANY.cs" />
+    <Compile Include="Models\TBL_SETUP_GLOBAL.cs" />
+    <Compile Include="Models\TBL_SIGNATURE_DOCUMENT_STAFF.cs" />
+    <Compile Include="Models\TBL_SIGNATURE_DOCUMENT_TYPE.cs" />
+    <Compile Include="Models\TBL_SOLICITOR.cs" />
+    <Compile Include="Models\TBL_SOLICITOR_STATE_MAPPING.cs" />
+    <Compile Include="Models\TBL_SOURCE_APPLICATION.cs" />
+    <Compile Include="Models\TBL_STAFF.cs" />
+    <Compile Include="Models\TBL_STAFF_JOBTITLE.cs" />
+    <Compile Include="Models\TBL_STAFF_RELIEF.cs" />
+    <Compile Include="Models\TBL_STAFF_ROLE.cs" />
+    <Compile Include="Models\TBL_STATE.cs" />
+    <Compile Include="Models\TBL_STOCK_COMPANY.cs" />
+    <Compile Include="Models\TBL_STOCK_PRICE.cs" />
+    <Compile Include="Models\TBL_SUB_SECTOR.cs" />
+    <Compile Include="Models\TBL_TAX.cs" />
+    <Compile Include="Models\TBL_TEMP_CHARGE_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_CHART_OF_ACCOUNT.cs" />
+    <Compile Include="Models\TBL_TEMP_CHART_OF_ACCOUNT_CUR.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_CASA.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_CUSTOMER.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_DEPOSIT.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_DOCUMENTS.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_GAURANTEE.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_IMMOVE_PRP.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_MISC.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_MISC_NOTES.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_MKT_SEC.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_PLANT_EQUP.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_POLICY.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_PREC_METAL.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_STOCK.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_VEHICLE.cs" />
+    <Compile Include="Models\TBL_TEMP_COMPANY_BENEFICIA.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMEREMPLOYMENT.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_ADDRESS.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_COMPANYINFO.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_DIRECTOR.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_EMPLOYER.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP_MAPPNG.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_NEXTOFKIN.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_PHONCONTACT.cs" />
+    <Compile Include="Models\TBL_TEMP_CUST_CLIENT_SUPPLIER.cs" />
+    <Compile Include="Models\TBL_TEMP_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_LOAN.cs" />
+    <Compile Include="Models\TBL_TEMP_OFFERLETTER.cs" />
+    <Compile Include="Models\TBL_TEMP_PRODUCT.cs" />
+    <Compile Include="Models\TBL_TEMP_PRODUCT_BEHAVIOUR.cs" />
+    <Compile Include="Models\TBL_TEMP_PRODUCT_CHARGE_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_PRODUCT_COLLATERALTYP.cs" />
+    <Compile Include="Models\TBL_TEMP_PRODUCT_CURRENCY.cs" />
+    <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_STAFF.cs" />
+    <Compile Include="Models\TBL_TENOR_MODE.cs" />
+    <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
+    <Compile Include="StagingModels\STG_BRANCH.cs" />
+    <Compile Include="StagingModels\STG_CUSTOMER.cs" />
+    <Compile Include="StagingModels\STG_STAFF.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

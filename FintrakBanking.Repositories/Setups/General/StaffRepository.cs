@@ -137,9 +137,9 @@ namespace FintrakBanking.Repositories.Setups.General
                              departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
                              departmentUnits = from k in context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTID == c.TBL_DEPARTMENT_UNIT.DEPARTMENTID) select new DepartmentViewModel
                              {
-                                DepartmentId = (short) k.DEPARTMENTID,
-                                departmentUnitId = k.DEPARTMENTUNITID,
-                                departmentUnitName = k.DEPARTMENTUNITNAME
+                                departmentId = (short) k.DEPARTMENTID,
+                                unitId = k.DEPARTMENTUNITID,
+                                unitName = k.DEPARTMENTUNITNAME
                              },
                              //MisInfoCode = c.MISC,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
@@ -449,7 +449,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.BRANCHID = temp.BRANCHID;
                 entity.COMMENT = temp.COMMENT;
                 entity.CREATEDBY = temp.CREATEDBY;
-                entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
+                if(temp.CUSTOMERSENSITIVITYLEVELID >0)entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                 entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                 entity.DATETIMEUPDATED = DateTime.Now;
                 //entity.DEPARTMENTID = temp.DEPARTMENTID;
@@ -485,7 +485,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     BRANCHID = temp.BRANCHID,
                     COMMENT = temp.COMMENT,
                     CREATEDBY = temp.CREATEDBY,
-                    CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID,
                     DATEOFBIRTH = temp.DATEOFBIRTH,
                     DATETIMECREATED = DateTime.Now,
                     //DEPARTMENTID = temp.DEPARTMENTID,
@@ -502,6 +501,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CITYID = temp.CITYID,
                     
                 };
+                if (temp.CUSTOMERSENSITIVITYLEVELID > 0) staff.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                 context.TBL_STAFF.Add(staff);
             }
 

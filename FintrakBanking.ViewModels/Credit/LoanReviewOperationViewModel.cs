@@ -74,6 +74,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
+        public string currencyCode;
+        public bool isBankFormat;
+        public int companyId;
+        public string createdByName;
+        public DateTime dateTimeCreated;
+
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }

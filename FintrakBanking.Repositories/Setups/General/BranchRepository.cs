@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return regions;
         }
-       
+
         public bool AddUpdateBranchRegion(BranchRegionViewModel entity)
         {
             if (entity != null)
@@ -140,21 +140,27 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<BranchViewModel> GetAllBranch()
         {
-            var branches = context.TBL_BRANCH.Where(x => x.DELETED == false).Select(x => new BranchViewModel
-            {
-                branchId = x.BRANCHID,
-                stateId = x.STATEID,
-                cityId = (int)x.CITYID,
-                companyId = x.COMPANYID,
-                stateName = x.TBL_STATE.STATENAME,
-                cityName = context.TBL_CITY.FirstOrDefault(c => c.CITYID == x.CITYID).CITYNAME ?? "",
-                branchName = x.BRANCHNAME,
-                branchCode = x.BRANCHCODE,
-                addressLine1 = x.ADDRESSLINE1,
-                addressLine2 = x.ADDRESSLINE2,
-                comment = x.COMMENT,
-                deleted = x.DELETED,
-            });
+            var branches = from x in context.TBL_BRANCH
+                           join r in context.TBL_BRANCH_REGION on x.REGIONID equals r.REGIONID
+                           where x.DELETED == false
+                           select new BranchViewModel
+                           {
+                               branchId = x.BRANCHID,
+                               stateId = x.STATEID,
+                               cityId = (int)x.CITYID,
+                               companyId = x.COMPANYID,
+                               stateName = x.TBL_STATE.STATENAME,
+                               cityName = context.TBL_CITY.FirstOrDefault(c => c.CITYID == x.CITYID).CITYNAME ?? "",
+                               branchName = x.BRANCHNAME,
+                               branchCode = x.BRANCHCODE,
+                               addressLine1 = x.ADDRESSLINE1,
+                               addressLine2 = x.ADDRESSLINE2,
+                               comment = x.COMMENT,
+                               deleted = x.DELETED,
+                               regionId = x.REGIONID,
+                               regionName = r.REGION_NAME
+                               
+                           };
 
             return branches.ToList();
         }
@@ -206,21 +212,21 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 this.context.TBL_BRANCH.Add(branch);
 
-                 response = await context.SaveChangesAsync();
-          
-           
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.BranchAdded,
-                STAFFID = (int)model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added branch: '{model.branchName}' with code: {model.branchCode} ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
+                response = await context.SaveChangesAsync();
+
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.BranchAdded,
+                    STAFFID = (int)model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added branch: '{model.branchName}' with code: {model.branchCode} ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
                 //end of Audit section -------------------------------
             }
             catch (Exception ex) { }
@@ -270,7 +276,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
 
-        public bool UpdateBranches (BranchViewModel model, short id)
+        public bool UpdateBranches(BranchViewModel model, short id)
         {
             var response = 0;
             var branch = context.TBL_BRANCH.Find(id);

@@ -131,6 +131,36 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
 
+        public async Task<bool> GetCollateral(CollateralViewModel entity, int collateralId)
+        {
+            UpdateCollateralMainForm(entity, collateralId);
+
+            switch (entity.collateralTypeId)
+            {
+                case (int)CollateralTypeEnum.TermDeposit: UpdateDepositCollateral(entity); break;
+                case (int)CollateralTypeEnum.PlantAndMachinery: UpdateEquipmentCollateral(entity); break;
+                case (int)CollateralTypeEnum.Miscellaneous: UpdateMiscellaneousCollateral(entity); break;
+                case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(entity); break;
+                case (int)CollateralTypeEnum.CASA: UpdateCasaCollateral(entity); break;
+                case (int)CollateralTypeEnum.Property: UpdateImmovablePropertyCollateral(entity); break;
+                case (int)CollateralTypeEnum.MarketableSecurities: UpdateMarketableSecuritiesCollateral(entity); break;
+                case (int)CollateralTypeEnum.InsurancePolicy: UpdatePolicyCollateral(entity); break;
+                case (int)CollateralTypeEnum.PreciousMetal: UpdatePreciousMetalCollateral(entity); break;
+                case (int)CollateralTypeEnum.Stock: UpdateStockCollateral(entity); break;
+                case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(entity); break;
+
+                default: break;
+            }
+
+            if (entity.hasInsurance) { UpdateItemInsurancePolicy(entity); }
+
+            bool saved = await context.SaveChangesAsync() != 0;
+
+            if (saved) { return true; } // audit here
+
+            return false;
+        }
+
         // MAIN collateral
 
         private int AddCollateralMainForm(CollateralViewModel model)
@@ -594,6 +624,7 @@ namespace FintrakBanking.Repositories.Credit
                 details.sumInsured = insurance.SUMINSURED;
                 details.startDate = insurance.STARTDATE;
                 details.expiryDate = insurance.ENDDATE;
+                details.insuranceType = insurance.INSURANCETYPE;
             }
             return details;
         }
@@ -3176,7 +3207,28 @@ namespace FintrakBanking.Repositories.Credit
             return stock;
         }
 
+        public string FlagExpiredItemPolicies(DateTime currentDate)
+        {
+            var ExpiredPolicies = from x in context.TBL_COLLATERAL_ITEM_POLICY
+                                  where x.ENDDATE > currentDate && x.HASEXPIRED != false
+                                  select x;
+            if (ExpiredPolicies!=null)
+            {
+                foreach(var x in ExpiredPolicies)
+                {
+                    x.HASEXPIRED = true;
+                    x.DATETIMEDELETED = DateTime.Now;
+                }
+            }
+            try
+            {
+                if (context.SaveChanges() > 0) { return "Expired Insurance Policies has been update on : " + DateTime.Now; } else { return "No available Expired Insurance Policies, No update made"; } ;
 
+            }catch(Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 
 }

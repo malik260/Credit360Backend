@@ -48,7 +48,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\Tosin\Documents\Visual Studio 2017\Projects\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
         <rd:TableName>LoanCovenantInformation</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -63,6 +63,9 @@
           <Tablix Name="Tablix1">
             <TablixBody>
               <TablixColumns>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
                 <TablixColumn>
                   <Width>1.24107in</Width>
                 </TablixColumn>
@@ -87,8 +90,43 @@
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.37215in</Height>
+                  <Height>0.29923in</Height>
                   <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>S/N</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Textbox1">
@@ -100,7 +138,7 @@
                                 <TextRun>
                                   <Value>Loan Ref #</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -115,6 +153,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -134,7 +173,7 @@
                                 <TextRun>
                                   <Value>Covenant Detail</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -149,6 +188,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -168,7 +208,7 @@
                                 <TextRun>
                                   <Value>Covenant Type</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -183,6 +223,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -202,7 +243,7 @@
                                 <TextRun>
                                   <Value>Covenant Amount</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -217,6 +258,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -236,7 +278,7 @@
                                 <TextRun>
                                   <Value>Frequency Type</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -251,6 +293,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -270,7 +313,7 @@
                                 <TextRun>
                                   <Value>Covenant Date</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -285,6 +328,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -304,7 +348,7 @@
                                 <TextRun>
                                   <Value>Due Date</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -319,6 +363,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -330,8 +375,40 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.37215in</Height>
+                  <Height>0.24715in</Height>
                   <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=RowNumber(nothing)</Value>
+                                  <Style>
+                                    <FontFamily>Cambria</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox4</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="loanRefNumber">
@@ -343,7 +420,7 @@
                                 <TextRun>
                                   <Value>=Fields!loanRefNumber.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Cambria</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -375,7 +452,7 @@
                                 <TextRun>
                                   <Value>=Fields!covenantDetail.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Cambria</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -407,7 +484,7 @@
                                 <TextRun>
                                   <Value>=Fields!covenantTypeName.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Cambria</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -439,7 +516,7 @@
                                 <TextRun>
                                   <Value>=Fields!covenantAmount.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Cambria</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -473,7 +550,7 @@
                                 <TextRun>
                                   <Value>=Fields!frequencyTypeName.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Cambria</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -505,7 +582,7 @@
                                 <TextRun>
                                   <Value>=Fields!covenantDate.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Cambria</FontFamily>
                                     <Format>dd-MMM-yyyy</Format>
                                   </Style>
                                 </TextRun>
@@ -538,7 +615,7 @@
                                 <TextRun>
                                   <Value>=Fields!dueDate.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Cambria</FontFamily>
                                     <Format>dd-MMM-yyyy</Format>
                                   </Style>
                                 </TextRun>
@@ -573,6 +650,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -588,78 +666,14 @@
             <DataSetName>CovenantDetails</DataSetName>
             <Top>1.06125in</Top>
             <Left>0.11333in</Left>
-            <Height>0.7443in</Height>
-            <Width>8.68749in</Width>
+            <Height>0.54638in</Height>
+            <Width>9.68749in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="Textbox10">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=Parameters!currentDate.Value</Value>
-                    <Style>
-                      <FontFamily>Garamond</FontFamily>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <Top>0.61in</Top>
-            <Left>1.38764in</Left>
-            <Height>0.25in</Height>
-            <Width>0.91667in</Width>
-            <ZIndex>1</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox12">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>:</Value>
-                    <Style />
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Center</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox3</rd:DefaultName>
-            <Top>0.61in</Top>
-            <Left>1.16889in</Left>
-            <Height>0.25in</Height>
-            <Width>0.16319in</Width>
-            <ZIndex>2</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Textbox Name="Textbox14">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -667,7 +681,28 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Current Date</Value>
+                    <Value>Report Spooled for Next Covenant Date Between </Value>
+                    <Style>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!sDate.Value</Value>
+                    <Style>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value> And </Value>
+                    <Style>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!eDate.Value</Value>
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                       <FontWeight>Bold</FontWeight>
@@ -679,10 +714,10 @@
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
             <Top>0.61in</Top>
-            <Left>0.11333in</Left>
+            <Left>0.155in</Left>
             <Height>0.25in</Height>
-            <Width>1in</Width>
-            <ZIndex>3</ZIndex>
+            <Width>4.40625in</Width>
+            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -697,7 +732,7 @@
         <Height>2in</Height>
         <Style />
       </Body>
-      <Width>8.91667in</Width>
+      <Width>9.80082in</Width>
       <Page>
         <PageHeader>
           <Height>0.97222in</Height>
@@ -788,6 +823,14 @@
       </DefaultValue>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
+    <ReportParameter Name="sDate">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="eDate">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -798,6 +841,16 @@
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>0</RowIndex>
           <ParameterName>currentDate</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>sDate</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>eDate</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

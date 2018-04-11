@@ -28,8 +28,8 @@ namespace FintrakBanking.Interfaces.Reports
 
         string GetGeneratedOfferLetter(string applicationRefNumber);
 
-        string GetCovenantsApproachingDueDateReport(int companyId, int staffId);
-        string GetCollateralPropertyRevaluationReport(int companyId,int value, int staffId);
+        string GetCovenantsApproachingDueDateReport(int companyId, int staffId, DateRange dateRange);
+        string GetCollateralPropertyRevaluationReport(int companyId,DateRange dateRange, int staffId);
         string GetExpiredSelfLiquidatingLoansReport(int companyId, int staffId);
         string GetNonPerformingLoansReport(int companyId, int staffId);
         string GetExpiredOverdraftLoansReport(int companyId, int staffId);
