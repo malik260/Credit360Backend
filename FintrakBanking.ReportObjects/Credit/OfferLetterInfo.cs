@@ -39,7 +39,7 @@ namespace FintrakBanking.ReportObjects.Credit
             {
                 return offerLetterDetails;
             }
-
+           
             return new OfferLetterViewModel();
         }
 
