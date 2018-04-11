@@ -18,7 +18,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 
         IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaffByOperationId(int operationId, int companyId);
 
-        //ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId, int operationId);
+        ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId, int operationId);
 
         IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaff(int companyId);
 
