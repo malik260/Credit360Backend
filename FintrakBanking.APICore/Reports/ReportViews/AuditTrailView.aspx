@@ -25,11 +25,10 @@
             </LocalReport>
         </rsweb:ReportViewer>
      
-        <asp:ObjectDataSource ID="ObjectDataSourceAudit" runat="server" SelectMethod="GetAuditTrailByParam" TypeName="FintrakBanking.ReportObjects.ReportingObjects.Audit">
+        <asp:ObjectDataSource ID="ObjectDataSourceAudit" runat="server" SelectMethod="CollateralPropertyApproachingRevaluation" TypeName="FintrakBanking.ReportObjects.ReportingObjects.LimitsMonitoringReportsObjects">
             <SelectParameters> 
                 <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
-                <asp:ControlParameter ControlID="username" Name="username" PropertyName="Text" Type="String" />
           
             </SelectParameters>
         </asp:ObjectDataSource>

@@ -110,7 +110,8 @@ namespace FintrakBanking.APICore.Controllers
             var Message = string.Empty;
             try
             {
-                var units = repo.GetAllUnits().ToList();
+                
+                var units = repo.GetAllUnits(token.GetCompanyId).ToList();
                 if (units.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = units, count = units.Count });
@@ -138,6 +139,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
                 var unit = repo.AddUnit(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = unit, message = "The record has been created successfully" });
             }

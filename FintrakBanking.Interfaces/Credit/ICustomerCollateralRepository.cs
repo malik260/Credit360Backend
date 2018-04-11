@@ -79,5 +79,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<CollateralDocumentViewModel> GetPropertyVistation(int collateralVisitationId);
 
         IEnumerable<StockCompanyViewModel> getStockPrice();
+
+        string FlagExpiredItemPolicies(DateTime currentDate);
     }
 }

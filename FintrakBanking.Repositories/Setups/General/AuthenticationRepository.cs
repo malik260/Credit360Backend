@@ -196,6 +196,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (result.state > 0)
             {
                 data = UserLoginDetails(username, password);
+             
                 data.sessionStatusInfo = result;
 
                 return data;
@@ -222,6 +223,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         _user.LOGINCODE = null;
                         _user.FAILEDLOGONATTEMPT += 1;
+                        if (_user.FAILEDLOGONATTEMPT == CommonHelpers.MaxInvalidPasswordAttempts)
+                        {
+                            _user.ISLOCKED = true;
+                            _user.LASTLOCKOUTDATE = DateTime.Now;
+                        }
                     }
                     else
                     {
@@ -233,14 +239,20 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
                 catch (Exception ex)
                 {
-                    context.Dispose();
+                  //  context.Dispose();
                     throw new Exception(ex.Message);
                 }
             }
             else
             {
+                
                 _user.LOGINCODE = null;
                 _user.FAILEDLOGONATTEMPT += 1;
+                if (_user.FAILEDLOGONATTEMPT ==  CommonHelpers.MaxInvalidPasswordAttempts)
+                {
+                    _user.ISLOCKED = true;
+                    _user.LASTLOCKOUTDATE = DateTime.Now;
+                }
                 context.SaveChanges();
             }
 
@@ -248,28 +260,52 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         
         private UserViewModel UserLoginDetails(string username, string password)
-        {
-            return (from p in context.TBL_PROFILE_USER
-                    join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
-                    join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
-                    join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                    where p.USERNAME == username && p.PASSWORD == password && p.ISACTIVE  && !p.ISLOCKED  
-                    select new UserViewModel
+        {           
+
+            var data = context.TBL_PROFILE_USER.Where(c => c.USERNAME == username).ToList();
+            if (!data.FirstOrDefault().ISACTIVE)
+                throw new Exception("1001 Your account is inactive");
+
+            if (data.FirstOrDefault().ISLOCKED)
+                throw new Exception("1001 Your account has been locked");
+
+            if (data.Any())
+            {
+             var result =  data.Where(p => p.PASSWORD == password);
+                if (result.Any())
+                {
+                    return result.Select(c => new UserViewModel
                     {
-                        companyId = coy.COMPANYID,
-                        staffId = p.STAFFID,
-                        user_id = p.USERID,
-                        username = p.USERNAME,
-                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                        branchId = st.BRANCHID.Value,
-                        countryId = coy.COUNTRYID,
-                        branchName = br.BRANCHNAME,
-                        companyName = coy.NAME,
-                        logincode = p.LOGINCODE,
-                        lastLoginDate = p.LASTLOGINDATE
+                        companyId = c.TBL_STAFF.COMPANYID,
+                        staffId = c.STAFFID,
+                        user_id = c.USERID,
+                        username = c.USERNAME,
+                        staffName = c.TBL_STAFF.FIRSTNAME + " " + c.TBL_STAFF.MIDDLENAME + " " + c.TBL_STAFF.LASTNAME,
+                        branchId = c.TBL_STAFF.BRANCHID.Value,
+                        countryId = c.TBL_STAFF.TBL_COMPANY.COUNTRYID,
+                        branchName = context.TBL_BRANCH.FirstOrDefault(d => d.BRANCHID == c.TBL_STAFF.BRANCHID.Value).BRANCHNAME,
+                        companyName = c.TBL_STAFF.TBL_COMPANY.NAME,
+                        logincode = c.LOGINCODE,
+                        lastLoginDate = c.LASTLOGINDATE
 
 
-                    }).First();
+                    }).FirstOrDefault();
+                }
+                else
+                {
+                    data.FirstOrDefault().LOGINCODE = null;
+                    data.FirstOrDefault().FAILEDLOGONATTEMPT += 1;
+                    if (data.FirstOrDefault().FAILEDLOGONATTEMPT == CommonHelpers.MaxInvalidPasswordAttempts)
+                    {
+                        data.FirstOrDefault().ISLOCKED = true;
+                        data.FirstOrDefault().LASTLOCKOUTDATE = DateTime.Now;
+                    }
+                    context.SaveChanges();
+                    return null;
+                }                
+            }
+            return null;
+       
         }
 
         public bool IsUserExits(string username)

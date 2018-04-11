@@ -315,6 +315,29 @@ namespace FintrakBanking.Common
             }
         }
 
+        public static int MaxInvalidPasswordAttempts
+        {
+            get
+            {
+                return  int.Parse( (ConfigurationManager.AppSettings["maxInvalidPasswordAttempts"]).ToString());
+            }
+        }
+
+        public static string minRequiredPasswordLength
+        {
+            get
+            {
+                return (ConfigurationManager.AppSettings["minRequiredPasswordLength"]).ToString();
+            }
+        }
+
+        public static string minRequiredNonalphanumericCharacters
+        {
+            get
+            {
+                return (ConfigurationManager.AppSettings["minRequiredNonalphanumericCharacters"]).ToString();
+            }
+        }
 
         public static string GetUserIP()
         {

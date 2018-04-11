@@ -4281,6 +4281,28 @@ namespace FintrakBanking.Repositories.Credit
                     ArchiveDailySchedule(loanId);
 
 
+                    //---------------save irregular loan schedule input---------------------------
+                    List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
+                    LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
+                    if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                    {
+                        var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
+                        foreach (var item in data)
+                        {
+                            TBL_LOAN_REVIEW_OPRATN_IREG_SC schedule = new TBL_LOAN_REVIEW_OPRATN_IREG_SC();
+                            schedule.LOANREVIEWOPERATIONID = loanId;
+                            schedule.PAYMENTDATE = item.paymentDate;
+                            schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);
+                            schedule.CREATEDBY = staffId;
+                            schedule.DATETIMECREATED = applicationDate;
+
+                            tblIrregularSchedule.Add(schedule);
+                        }
+
+                    }
+                    //----------------------------------------------
+
+
                     //----------generate and save periodic loan schedule -----------------------------------
 
                     loanInput.principalAmount = loanInput.newAmount;
@@ -4363,30 +4385,6 @@ namespace FintrakBanking.Repositories.Credit
                         tblDailyScheduleTemp.Add(scheduleTemp);
                     }
                     //----------------------------------------------------------------
-
-
-
-                    //---------------save irregular loan schedule input---------------------------
-                    List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
-                    LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
-                    if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
-                    {
-                        var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
-                        foreach (var item in data)
-                        {
-                            TBL_LOAN_REVIEW_OPRATN_IREG_SC schedule = new TBL_LOAN_REVIEW_OPRATN_IREG_SC();
-                            schedule.LOANREVIEWOPERATIONID = loanId;
-                            schedule.PAYMENTDATE = item.paymentDate;
-                            schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);
-                            schedule.CREATEDBY = staffId;
-                            schedule.DATETIMECREATED = applicationDate;
-
-                            tblIrregularSchedule.Add(schedule);
-                        }
-
-                    }
-                    //----------------------------------------------
-
 
                     //------------adding records to the database--------------------------
 
@@ -5784,7 +5782,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool DoesOperationExist(int loanId, int operationTypeId)
         {
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION where a.LOANID == loanId
-                       && a.OPERATIONTYPEID == operationTypeId //&& a.OperationCompleted == false
+                       && a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false
                        select a;
             if (data.Any())
             {
@@ -5794,6 +5792,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
+        
             List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
             //Storing the Irregular Schedule Payment Plan
             if (model.reviewIrregularSchedule.Count > 0)
@@ -5830,7 +5829,7 @@ namespace FintrakBanking.Repositories.Credit
                 CASA_ACCOUNTID = model.cASA_AccountId,
                 OVERDRAFTTOPUP = model.overDraftTopup,
                 FEE_CHARGES = model.fee_Charges,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                APPROVALSTATUSID = model.approvalStatusId,
                 ISMANAGEMENTINTERESTRATE = model.isManagementRate,
                 OPERATIONCOMPLETED = false,
                 CREATEDBY = model.createdBy,
@@ -7282,6 +7281,67 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetBandGReadyForRenewal()
+        {
+
+            var data = (from ln in context.TBL_LOAN_CONTINGENT
+                        where ln.ISTENORED == true && DbFunctions.DiffDays(ln.EFFECTIVEDATE , DateTime.Now)  > 365
+                        orderby ln.EFFECTIVEDATE descending
+                        select new LoanReviewOperationApprovalViewModel
+                        {
+                            loanId = ln.CONTINGENTLOANID,
+                            customerId = ln.CUSTOMERID,
+                            productId = ln.PRODUCTID,
+                            casaAccountId = ln.CASAACCOUNTID,
+                            branchId = ln.BRANCHID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                            isBankFormat  = ln.ISBANKFORMAT,
+                            companyId = ln.COMPANYID,
+                            exchangeRate = ln.EXCHANGERATE,
+                            approvedAmount = ln.CONTINGENTAMOUNT,
+                            dateTimeCreated = ln.DATETIMECREATED,
+                            createdByName = ln.TBL_STAFF.FIRSTNAME + " "+ ln.TBL_STAFF.LASTNAME,
+                            dischargeLetter  = ln.DISCHARGELETTER,
+
+                            relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                            misCode = ln.MISCODE,
+                            teamMiscode = ln.TEAMMISCODE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+
+                            approverComment = ln.APPROVERCOMMENT,
+                            dateApproved = ln.DATEAPPROVED,
+
+                            isDisbursed = ln.ISDISBURSED,
+                            disburserComment = ln.DISBURSERCOMMENT,
+                            disburseDate = ln.DISBURSEDATE,
+
+                            customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                            operationId = ln.OPERATIONID,
+                            loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                            subSectorId = ln.SUBSECTORID,
+                            subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                            sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+
+                            customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
+                            productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                            productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            currencyId = ln.CURRENCYID,
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            loanStatusId = ln.LOANSTATUSID,
+                            comment = "",
+                        }).ToList();
+            return data;
+        }
         #endregion
     }
 }

@@ -61,7 +61,7 @@ namespace EmailMessageLogger
 
             repo.SendAlertsForCollateralPropertyApproachingRevaluation(title, body, alertSetups);
 
-         //   repo.SendAlertsForLoanNplMonitoring(title, body, alertSetups);
+            repo.SendAlertsForCollateralPropertyDueForVisitation(title, body, alertSetups);
 
             repo.SendAlertsOnExpiredActiveBondAndGuarantee(title, body, alertSetups);
 
