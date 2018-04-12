@@ -62,97 +62,152 @@ namespace FintrakBanking.Repositories.Credit
             return data;
 
         }
-        public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId)
+        public IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId)
         {
             var detailItem = (from s in context.TBL_CHECKLIST_DETAIL
                               join k in context.TBL_CHECKLIST_DEFINITION
                               on s.CHECKLISTDEFINITIONID equals k.CHECKLISTDEFINITIONID
                               where s.TARGETID == loanTargetId && k.CHECKLIST_TYPEID == checkListTypeId
-                              select s.CHECKLISTDEFINITIONID).ToList();
+                              select new ChecklistDefinitionAndDetailViewModel
+                              {
+                                  checkListDefinitionId = s.CHECKLISTDEFINITIONID,
+                                  responseTypeId = k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID,
+                                  requireUpload = k.TBL_CHECKLIST_ITEM.REQUIREUPLOAD,
+                                  checkListTypeId = k.CHECKLIST_TYPEID,
+                                  checkListTypeName = k.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+                                  checkListItemId = k.CHECKLISTITEMID,
+                                  checkListItemName = k.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                                  itemDescription = k.ITEMDESCRIPTION,
+                                  checklistStatusId = s.CHECKLISTSTATUSID
+                              }).ToList();
             var proposedProductId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == loanTargetId select (short?)id.PROPOSEDPRODUCTID).ToList();
             var isproductBased = context.TBL_CHECKLIST_TYPE.FirstOrDefault(x => x.CHECKLIST_TYPEID == checkListTypeId).ISPRODUCT_BASED;
-            if (isproductBased)
-            {
+           
                 var data = (from a in context.TBL_CHECKLIST_DEFINITION
                             join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
                             join b in context.TBL_APPROVAL_LEVEL_STAFF on
                             a.APPROVALLEVELID equals b.APPROVALLEVELID
                             where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
                             where a.CHECKLIST_TYPEID == checkListTypeId
-                            && a.OPERATIONID == operationId && a.DELETED == false // && (productId == a.PRODUCTID || productId == null)
-                            select new ChecklistDefinitionViewModel
+                            && a.OPERATIONID == operationId && a.DELETED == false 
+                            select new ChecklistDefinitionAndDetailViewModel
                             {
                                 checkListDefinitionId = a.CHECKLISTDEFINITIONID,
-                                approvalLevelId = a.APPROVALLEVELID,
-                                approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
-                                isActive = a.ISACTIVE,
-                                isRequired = a.ISREQUIRED,
-                                productId = a.PRODUCTID,
                                 responseTypeId = d.RESPONSE_TYPEID,
                                 requireUpload = d.REQUIREUPLOAD,
                                 checkListTypeId = a.CHECKLIST_TYPEID,
                                 checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
-                                productName = a.TBL_PRODUCT.PRODUCTNAME,
                                 checkListItemId = a.CHECKLISTITEMID,
                                 checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
                                 itemDescription = a.ITEMDESCRIPTION,
-                                companyId = a.COMPANYID,
-                                companyName = a.TBL_COMPANY.NAME,
-                                dateTimeCreated = a.DATETIMECREATED,
-                                createdBy = a.CREATEDBY
+                                productId = a.PRODUCTID,
                             });
-                if (detailItem.Any())
-                {
-                    data = data.Where(x => !detailItem.Contains(x.checkListDefinitionId));
-                }
-                if (productId > 0)
-                {
-                    data = data.Where(x => x.productId == productId);
-                }
-                else if (proposedProductId.Any())
-                {
-                    data = data.Where(x => proposedProductId.Contains(x.productId));
-                }
 
-                return data;
-            }
-            else
+            if (productId > 0)
             {
-                var data = (from a in context.TBL_CHECKLIST_DEFINITION
-                            join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
-                            join b in context.TBL_APPROVAL_LEVEL_STAFF on
-                            a.APPROVALLEVELID equals b.APPROVALLEVELID
-                            where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
-                            where a.CHECKLIST_TYPEID == checkListTypeId
-                        && a.OPERATIONID == operationId && a.DELETED == false
-                            select new ChecklistDefinitionViewModel
-                            {
-                                checkListDefinitionId = a.CHECKLISTDEFINITIONID,
-                                approvalLevelId = a.APPROVALLEVELID,
-                                approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
-                                isActive = a.ISACTIVE,
-                                isRequired = a.ISREQUIRED,
-                                productId = a.PRODUCTID,
-                                checkListTypeId = a.CHECKLIST_TYPEID,
-                                checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
-                                productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                checkListItemId = a.CHECKLISTITEMID,
-                                requireUpload = d.REQUIREUPLOAD,
-                                responseTypeId = d.RESPONSE_TYPEID,
-                                checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
-                                itemDescription = a.ITEMDESCRIPTION,
-                                companyId = a.COMPANYID,
-                                companyName = a.TBL_COMPANY.NAME,
-                                dateTimeCreated = a.DATETIMECREATED,
-                                createdBy = a.CREATEDBY
-                            });
-                if (detailItem.Any())
-                {
-                    data = data.Where(x => !detailItem.Contains(x.checkListDefinitionId));
-                }
-                return data;
+                data = data.Where(x => x.productId == productId);
             }
+            else if (proposedProductId.Any())
+            {
+                data = data.Where(x => proposedProductId.Contains(x.productId));
+            }
+            var definitionList = data.ToList();
+            var detailId = (from a in detailItem select a.checkListDefinitionId).ToList();
+            var checklist = detailItem.Concat(definitionList.Where(x => !detailId.Contains(x.checkListDefinitionId)));
+            return checklist;
+          
         }
+        //    public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId)
+        //{
+        //    var detailItem = (from s in context.TBL_CHECKLIST_DETAIL
+        //                      join k in context.TBL_CHECKLIST_DEFINITION
+        //                      on s.CHECKLISTDEFINITIONID equals k.CHECKLISTDEFINITIONID
+        //                      where s.TARGETID == loanTargetId && k.CHECKLIST_TYPEID == checkListTypeId
+        //                      select s.CHECKLISTDEFINITIONID).ToList();
+        //    var proposedProductId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == loanTargetId select (short?)id.PROPOSEDPRODUCTID).ToList();
+        //    var isproductBased = context.TBL_CHECKLIST_TYPE.FirstOrDefault(x => x.CHECKLIST_TYPEID == checkListTypeId).ISPRODUCT_BASED;
+        //    if (isproductBased)
+        //    {
+        //        var data = (from a in context.TBL_CHECKLIST_DEFINITION
+        //                    join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
+        //                    join b in context.TBL_APPROVAL_LEVEL_STAFF on
+        //                    a.APPROVALLEVELID equals b.APPROVALLEVELID
+        //                    where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
+        //                    where a.CHECKLIST_TYPEID == checkListTypeId
+        //                    && a.OPERATIONID == operationId && a.DELETED == false // && (productId == a.PRODUCTID || productId == null)
+        //                    select new ChecklistDefinitionViewModel
+        //                    {
+        //                        checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+        //                        approvalLevelId = a.APPROVALLEVELID,
+        //                        approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+        //                        isActive = a.ISACTIVE,
+        //                        isRequired = a.ISREQUIRED,
+        //                        productId = a.PRODUCTID,
+        //                        responseTypeId = d.RESPONSE_TYPEID,
+        //                        requireUpload = d.REQUIREUPLOAD,
+        //                        checkListTypeId = a.CHECKLIST_TYPEID,
+        //                        checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+        //                        productName = a.TBL_PRODUCT.PRODUCTNAME,
+        //                        checkListItemId = a.CHECKLISTITEMID,
+        //                        checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+        //                        itemDescription = a.ITEMDESCRIPTION,
+        //                        companyId = a.COMPANYID,
+        //                        companyName = a.TBL_COMPANY.NAME,
+        //                        dateTimeCreated = a.DATETIMECREATED,
+        //                        createdBy = a.CREATEDBY
+        //                    });
+        //        if (detailItem.Any())
+        //        {
+        //            data = data.Where(x => !detailItem.Contains(x.checkListDefinitionId));
+        //        }
+        //        if (productId > 0)
+        //        {
+        //            data = data.Where(x => x.productId == productId);
+        //        }
+        //        else if (proposedProductId.Any())
+        //        {
+        //            data = data.Where(x => proposedProductId.Contains(x.productId));
+        //        }
+
+        //        return data;
+        //    }
+        //    else
+        //    {
+        //        var data = (from a in context.TBL_CHECKLIST_DEFINITION
+        //                    join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
+        //                    join b in context.TBL_APPROVAL_LEVEL_STAFF on
+        //                    a.APPROVALLEVELID equals b.APPROVALLEVELID
+        //                    where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
+        //                    where a.CHECKLIST_TYPEID == checkListTypeId
+        //                && a.OPERATIONID == operationId && a.DELETED == false
+        //                    select new ChecklistDefinitionViewModel
+        //                    {
+        //                        checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+        //                        approvalLevelId = a.APPROVALLEVELID,
+        //                        approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+        //                        isActive = a.ISACTIVE,
+        //                        isRequired = a.ISREQUIRED,
+        //                        productId = a.PRODUCTID,
+        //                        checkListTypeId = a.CHECKLIST_TYPEID,
+        //                        checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+        //                        productName = a.TBL_PRODUCT.PRODUCTNAME,
+        //                        checkListItemId = a.CHECKLISTITEMID,
+        //                        requireUpload = d.REQUIREUPLOAD,
+        //                        responseTypeId = d.RESPONSE_TYPEID,
+        //                        checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+        //                        itemDescription = a.ITEMDESCRIPTION,
+        //                        companyId = a.COMPANYID,
+        //                        companyName = a.TBL_COMPANY.NAME,
+        //                        dateTimeCreated = a.DATETIMECREATED,
+        //                        createdBy = a.CREATEDBY
+        //                    });
+        //        if (detailItem.Any())
+        //        {
+        //            data = data.Where(x => !detailItem.Contains(x.checkListDefinitionId));
+        //        }
+        //        return data;
+        //    }
+        //}
 
         public IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistType()
         {

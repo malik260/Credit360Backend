@@ -2703,7 +2703,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
             return (context.TBL_LOAN //.Include("tbl_Customer").Include("tbl_CASA_AccountStatus")
-                .Where(x => x.COMPANYID == companyId && x.MATURITYDATE >= systemDate)
+                .Where(x => x.COMPANYID == companyId )
                 .Select(o => new LoanViewModel
                 {
                     loanId = o.TERMLOANID,

@@ -859,7 +859,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
-    <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.rdlc" />

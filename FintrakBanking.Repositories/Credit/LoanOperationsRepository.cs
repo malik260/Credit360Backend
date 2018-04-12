@@ -5818,7 +5818,7 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
-                INTERATERATE = (double)model.interateRate ,
+                INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate,
                 PREPAYMENT = model.prepayment ?? 0,
                 PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
                 INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
