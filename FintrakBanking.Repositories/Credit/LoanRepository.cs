@@ -4122,6 +4122,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IQueryable<LoanViewModel> SearchForLoan(string searchQuery)
         {
+            var applicationDate = generalSetup.GetApplicationDate();
             try
             {
                 IQueryable<LoanViewModel> allFilteredLoan = null;
@@ -4136,7 +4137,7 @@ namespace FintrakBanking.Repositories.Credit
                     allFilteredLoan = (from a in context.TBL_LOAN
                                        join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                        join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                       where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                       where a.ISDISBURSED == true && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate) && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
                                        b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                        b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                        b.LASTNAME.ToLower().Contains(searchQuery) ||
