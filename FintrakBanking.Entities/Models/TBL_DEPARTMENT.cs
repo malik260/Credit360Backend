@@ -42,8 +42,6 @@ namespace FintrakBanking.Entities.Models
 
         public bool? DELETED { get; set; }
 
-        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_DEPARTMENT_UNIT> TBL_DEPARTMENT_UNIT { get; set; }
 

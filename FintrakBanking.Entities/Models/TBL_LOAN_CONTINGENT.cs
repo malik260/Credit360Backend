@@ -71,7 +71,7 @@ namespace FintrakBanking.Entities.Models
 
         public int APPROVALSTATUSID { get; set; }
 
-        [StringLength(50)]
+        [StringLength(30)]
         public string APPROVEDBY { get; set; }
 
         [StringLength(500)]

@@ -1047,11 +1047,6 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COMPANY>()
-                .HasMany(e => e.TBL_DEPARTMENT)
-                .WithRequired(e => e.TBL_COMPANY)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_FINANCE_ENDOFDAY)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
