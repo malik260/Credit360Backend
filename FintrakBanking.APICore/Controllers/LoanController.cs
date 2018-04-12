@@ -604,17 +604,27 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var data = repo.GoForApproval(model, loanBookingRequestId);
+                var responseId = repo.GoForApproval(model, loanBookingRequestId);
 
-                if (data)
+                if (responseId == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+                else if(responseId == 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, message = "Loan has been successfully disbursed" });
                 }
+                else if (responseId == 3)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, message = "Loan disapproval was successful" });
+                }
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                        new { success = false, message = "Operation unsuccessful, an error occured while saving changes" });
                 }
             }
             catch (Exception ex)

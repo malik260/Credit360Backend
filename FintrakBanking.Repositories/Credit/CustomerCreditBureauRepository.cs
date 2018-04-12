@@ -311,7 +311,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                               && (a.DATETIMECREATED.Day <= DbFunctions.DiffDays(DateTime.Now , a.DATETIMECREATED) - 30)
+                                               && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now) <= 30 ) 
                                                select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,
@@ -333,14 +333,23 @@ namespace FintrakBanking.Repositories.Credit
         public bool VerifyCustomerValidCreditBureau(int customerId)
         {
             var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId);
-
+            var creditBureau = GetCreditBureauInformation();
+            int creditCount = 0;
             foreach (var customer in customers)
             {
-                var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId); 
-             
-                if (customerCreditBureauLog.Count() < 3) return false;
-            };
+                var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId);
+                if(customerCreditBureauLog.Count() > 0)
+                {
+                    foreach(var cb in creditBureau)
+                    {
 
+                        if (customerCreditBureauLog.Where(x => x.creditBureauId == cb.creditBureauId).Any()) creditCount++;
+                    }
+                }
+                if (creditCount < 3) return false;
+                creditCount = 0;
+            };
+            
             return true;
 
         }

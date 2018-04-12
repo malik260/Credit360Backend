@@ -125,8 +125,12 @@ namespace FintrakBanking.APICore.Providers
 
             }
             catch (Exception ex)
-            {
+            {                  
                 context.SetError("invalid_grant", "The user name or password is incorrect.");
+                if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
+                {
+                    context.SetError("invalid_grant", ex.Message.Replace("1001", ""));
+                }
             }
         }
 

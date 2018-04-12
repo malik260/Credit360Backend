@@ -452,7 +452,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.staffId <= 0) throw new Exception("Invalid Call! staffid cannot be " + this.staffId);
             if (this.operationId <= 0) throw new Exception("Invalid Call! operationId cannot be " + this.operationId);
-            if (this.targetId <= 0) throw new Exception("Invalid Call! targetId cannot be " + this.targetId);
+            if (this.targetId <= 0 && !this.deferredExecution) throw new Exception("Invalid Call! targetId cannot be " + this.targetId);
             if (this.companyId <= 0) throw new Exception("Invalid Call! companyId cannot be " + this.companyId);
             if (this.statusId < 0) throw new Exception("Invalid Call! statusId cannot be " + this.statusId);
             if (this.nextLevelId < 1) { this.nextLevelId = null; }

@@ -12,6 +12,9 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Common;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.Interfaces.CASA;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -21,12 +24,14 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingContext context;
         private IWorkflow workflow;
         private IAuditTrailRepository auditTrail;
-        public ContingentLoanUsageRepository(FinTrakBankingContext context, IGeneralSetupRepository genSetup, IAuditTrailRepository auditTrail, IWorkflow workflow)
+                private ICasaLienRepository casaLien;
+        public ContingentLoanUsageRepository(FinTrakBankingContext context, IGeneralSetupRepository genSetup, IAuditTrailRepository auditTrail, IWorkflow workflow, ICasaLienRepository casaLien)
         {
             this.context = context;
             this.genSetup = genSetup;
             this.auditTrail = auditTrail;
             this.workflow = workflow;
+            this.casaLien = casaLien;
         }
 
         public IEnumerable<ContingentLoansViewModel> GetAllContingentLoans(int staffId, int companyId)
@@ -36,7 +41,9 @@ namespace FintrakBanking.Repositories.Credit
                 List<ContingentLoansViewModel> contingentData = new List<ContingentLoansViewModel>();
                 DateTime currentDate = genSetup.GetApplicationDate();
                 var data = context.TBL_LOAN_CONTINGENT
-                    .Where(c => c.MATURITYDATE <= currentDate)
+                    .Where(c => c.MATURITYDATE <= currentDate 
+                    && context.TBL_PRODUCT_BEHAVIOUR.Where(d=> d.PRODUCTID == c.PRODUCTID)
+                    .FirstOrDefault().ALLOWFUNDUSAGE == true)
                     .Select(c => new ContingentLoansViewModel()
                     {
                         principalName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
@@ -52,8 +59,7 @@ namespace FintrakBanking.Repositories.Credit
                         middleName = c.TBL_CUSTOMER.MIDDLENAME,
                         productId = c.PRODUCTID,
                         effectiveDate = c.EFFECTIVEDATE,
-                        exchangeRate = c.EXCHANGERATE,
-                        //  requestedAmount = ,
+                        exchangeRate = c.EXCHANGERATE,                          
                         loanApplicationReferenceNumber = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                         loanReferenceNumber = c.LOANREFERENCENUMBER,
                         maturityDate = c.MATURITYDATE,
@@ -73,61 +79,107 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
-                return contingentData.Where(c => c.percentageUsed < 100).OrderByDescending(d => d.bookingDate).ToList();
+                return contingentData.Where(c => c.percentageUsed < 100).OrderByDescending(d => d.contingentLoanId).ToList();
             }
             catch (Exception ex)
             {
                 throw;
             }
+        }
+        private bool LogForApproval(ApproveAPSRequestViewModel entity)
+        {
+            bool response =  false;
+            workflow.StaffId = entity.staffId;
+            workflow.OperationId = entity.operationId;
+            workflow.TargetId = entity.contingenliabilityUsageId;
+            workflow.CompanyId = entity.companyId;
+            workflow.ProductClassId = context.TBL_PRODUCT.Where(c => c.PRODUCTID == entity.productId).FirstOrDefault().PRODUCTCLASSID;
+            workflow.StatusId = entity.approvalStatusId;
+            workflow.Comment = entity.comment;
+            workflow.ExternalInitialization = true;
+            workflow.DeferredExecution = true;
+          return   response = workflow.LogActivity();
         }
 
         public bool SaveContigentLoans(ContingentLoanUsageViewModel entity, int companyId)
         {
+            using (var trans = context.Database.BeginTransaction())
+            {
+
+                try
+                {
+                    var data = new TBL_LOAN_CONTINGENT_USAGE
+                    {
+                        AMOUNTREQUESTED = entity.amountRequuested,
+                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                        CONTINGENTLOANID = entity.contingentLoanId,
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                        DELETED = false,
+                        REMARK = entity.remark
+                    };
+                    context.TBL_LOAN_CONTINGENT_USAGE.Add(data);
+
+
+
+
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.ContingentLoanUsageAdd,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = (short)entity.userBranchId,
+                        DETAIL = $"Applied for APS for {entity.productName} with reference number: {entity.loanReferenceNumber}",
+                        IPADDRESS = entity.userIPAddress,
+                        URL = entity.applicationUrl,
+                        APPLICATIONDATE = genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        TARGETID = data.CONTINGENTLOANUSAGEID
+                    };
+
+                    this.auditTrail.AddAuditTrail(audit);
+                    bool response = false;
+                    //--------------------------------------------------
+                    response = context.SaveChanges() > 0;
+                    if (response)
+                    {
+
+                        // ----------------Drop into CAM-------------------
+                        if (data.CONTINGENTLOANUSAGEID > 0)
+                        {
+                          var log =  new ApproveAPSRequestViewModel
+                            {
+                                staffId = entity.staffId,
+                                operationId = (int)OperationsEnum.ContingentLiabilityUsage,
+                                targetId = data.CONTINGENTLOANUSAGEID,
+                                companyId = entity.companyId,
+                                productId = entity.productId,
+                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                                comment = "New APS Request",
+                                externalInitialization = true,
+                                deferredExecution = true
+                            };
+
+                           response  = LogForApproval(log);
+                          
+                        }
+                    }
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }      
+      
+
+        public IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId)
+        {
             try
             {
-                var data = new TBL_LOAN_CONTINGENT_USAGE
-                {
-                    AMOUNTREQUESTED = entity.amountRequuested,
-                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                    CONTINGENTLOANID = entity.contingentLoanId,
-                    CREATEDBY = entity.createdBy,
-                    DATETIMECREATED = DateTime.Now,
-                    DELETED = false,
-                };
-                context.TBL_LOAN_CONTINGENT_USAGE.Add(data);
-
-
-                // ----------------Drop into CAM-------------------
-                workflow.StaffId = entity.staffId;
-                workflow.OperationId = (int)OperationsEnum.ContingentLiabilityUsage;
-                workflow.TargetId = data.CONTINGENTLOANID;
-                workflow.CompanyId = companyId;
-             //   workflow.ProductClassId = context.TBL_PRODUCT.Where(c => c.PRODUCTID == entity.productId).FirstOrDefault().PRODUCTCLASSID;
-                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                workflow.Comment = "New APS";
-                workflow.ExternalInitialization = true;
-                workflow.DeferredExecution = true;
-                workflow.LogActivity();
-                // --
-
-                // Audit Section ---------------------------
-                var audit = new TBL_AUDIT
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.ContingentLoanUsageAdd,
-                    STAFFID = entity.createdBy,
-                    BRANCHID = (short)entity.userBranchId,
-                    DETAIL = $"Applied for APS for {entity.productName} with reference number: {entity.loanReferenceNumber}",
-                    IPADDRESS = entity.userIPAddress,
-                    URL = entity.applicationUrl,
-                    APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = data.CONTINGENTLOANUSAGEID
-                };
-
-                this.auditTrail.AddAuditTrail(audit);
-
-                //--------------------------------------------------
-                return context.SaveChanges() > 0;
+                return GetRequestWaitingApprovalByOperation(staffId).ToList();
             }
             catch (Exception ex)
             {
@@ -135,72 +187,126 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId,int branchId)
+        public IQueryable<ContingentLoansViewModel> GetRequestWaitingApprovalByOperation( int staffId)
         {
-            try
-            {
-               return GetRequestWaitingApprovalByOperation((int)OperationsEnum.ContingentLiabilityUsage,  branchId, staffId).ToList();
-            }
-            catch (Exception)
-            {
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContingentLiabilityUsage).ToList();
 
-                throw;
-            }
-           
-        }
 
-        public IQueryable<ContingentLoansViewModel> GetRequestWaitingApprovalByOperation(int operationId,  int branchId, int staffId)
-        {
-            bool isHeadOffice = (branchId == 1) ? true : false;
+            var applications = from lcu in context.TBL_LOAN_CONTINGENT_USAGE
+                               join atrail in context.TBL_APPROVAL_TRAIL on lcu.CONTINGENTLOANUSAGEID equals atrail.TARGETID
+                               where atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                                     && atrail.OPERATIONID == (int)OperationsEnum.ContingentLiabilityUsage
+                                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                                     && atrail.RESPONSESTAFFID == null
+                               orderby lcu.CONTINGENTLOANUSAGEID descending
 
-            var staffApprovalLevelIds =
-                context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId  )
-                .Select(x => x.TBL_APPROVAL_GROUP)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL).Where(l => l.ISACTIVE == true)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId))
-                .Select(x => x.APPROVALLEVELID)
-                .ToList();
-
-            var applications = context.TBL_LOAN_CONTINGENT_USAGE
-                .Where(x =>
-                (isHeadOffice || x.TBL_LOAN_CONTINGENT.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.BRANCHID == branchId)
-                && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved // <-------------------------------------hard codes!!!
-                  
-            //  && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BondAndGuaranteesInProgress // <--------hard codes!!!
-            )
-            .Join(
-                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
-                && staffApprovalLevelIds.Contains((int)x.TOAPPROVALLEVELID) && x.RESPONSESTAFFID == null
-                ),
-                a => a.CONTINGENTLOANUSAGEID,
-                b => b.TARGETID,
-                (a, b) => new { a, b })
-                .Select(x => new ContingentLoansViewModel()
-                {
-                    principalName = x.a.TBL_LOAN_CONTINGENT.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
-                    bookingDate = x.a.TBL_LOAN_CONTINGENT.BOOKINGDATE,
-                    casaAccountNumber = x.a.TBL_LOAN_CONTINGENT.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                    facilityAmount = x.a.TBL_LOAN_CONTINGENT.CONTINGENTAMOUNT,
-                    contingentLoanId = x.a.TBL_LOAN_CONTINGENT.CONTINGENTLOANID,
-                    currencyCode = x.a.TBL_LOAN_CONTINGENT.TBL_CURRENCY.CURRENCYCODE,
-                    currencyId = x.a.TBL_LOAN_CONTINGENT.CURRENCYID,
-                    customerId = x.a.TBL_LOAN_CONTINGENT.CUSTOMERID,
-                    firstName = x.a.TBL_LOAN_CONTINGENT.TBL_CUSTOMER.FIRSTNAME,
-                    lastName = x.a.TBL_LOAN_CONTINGENT.TBL_CUSTOMER.LASTNAME,
-                    middleName = x.a.TBL_LOAN_CONTINGENT.TBL_CUSTOMER.MIDDLENAME,
-                    productId = x.a.TBL_LOAN_CONTINGENT.PRODUCTID,
-                    effectiveDate = x.a.TBL_LOAN_CONTINGENT.EFFECTIVEDATE,
-                    exchangeRate = x.a.TBL_LOAN_CONTINGENT.EXCHANGERATE,
-                    //  requestedAmount = ,
-                    loanApplicationReferenceNumber = x.a.TBL_LOAN_CONTINGENT.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                    loanReferenceNumber = x.a.TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
-                    maturityDate = x.a.TBL_LOAN_CONTINGENT.MATURITYDATE,
-                    productName = x.a.TBL_LOAN_CONTINGENT.TBL_PRODUCT.PRODUCTNAME,
-                    loanStatus = x.a.TBL_LOAN_CONTINGENT.TBL_LOAN_STATUS.ACCOUNTSTATUS
-                });
+                               select new ContingentLoansViewModel()
+                               {
+                                   principalName = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
+                                   bookingDate = lcu.TBL_LOAN_CONTINGENT.BOOKINGDATE,
+                                   casaAccountNumber = lcu.TBL_LOAN_CONTINGENT.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                   facilityAmount = lcu.TBL_LOAN_CONTINGENT.CONTINGENTAMOUNT,
+                                   contingentLoanId = lcu.TBL_LOAN_CONTINGENT.CONTINGENTLOANID,
+                                   currencyCode = lcu.TBL_LOAN_CONTINGENT.TBL_CURRENCY.CURRENCYCODE,
+                                   currencyId = lcu.TBL_LOAN_CONTINGENT.CURRENCYID,
+                                   customerId = lcu.TBL_LOAN_CONTINGENT.CUSTOMERID,
+                                   firstName = lcu.TBL_LOAN_CONTINGENT.TBL_CUSTOMER.FIRSTNAME,
+                                   lastName = lcu.TBL_LOAN_CONTINGENT.TBL_CUSTOMER.LASTNAME,
+                                   middleName = lcu.TBL_LOAN_CONTINGENT.TBL_CUSTOMER.MIDDLENAME,
+                                   productId = lcu.TBL_LOAN_CONTINGENT.PRODUCTID,
+                                   effectiveDate = lcu.TBL_LOAN_CONTINGENT.EFFECTIVEDATE,
+                                   exchangeRate = lcu.TBL_LOAN_CONTINGENT.EXCHANGERATE,
+                                   loanApplicationReferenceNumber = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                   loanReferenceNumber = lcu.TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
+                                   maturityDate = lcu.TBL_LOAN_CONTINGENT.MATURITYDATE,
+                                   productName = lcu.TBL_LOAN_CONTINGENT.TBL_PRODUCT.PRODUCTNAME,
+                                   loanStatus = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_STATUS.ACCOUNTSTATUS
+                               };
             return applications;
         }
 
+        private bool ApproveAPSRequest(ApproveAPSRequestViewModel entity)
+        {
+           
+            var contingentLoanRecord = context.TBL_LOAN_CONTINGENT_USAGE.Where(d => d.CONTINGENTLOANUSAGEID == entity.contingenliabilityUsageId);
+
+            var log = new ApproveAPSRequestViewModel
+            {
+                staffId = entity.staffId,
+                operationId = (int)OperationsEnum.ContingentLiabilityUsage,
+                targetId = entity.contingenliabilityUsageId,
+                companyId = entity.companyId,
+                productId = entity.productId,
+                approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                comment =entity.comment,
+                externalInitialization = true,
+                deferredExecution = true
+            };
+
+            LogForApproval(log);
+            
+
+
+            if (workflow.NewState == (int)ApprovalState.Ended)
+            {                
+                decimal newLienAmount = 0;
+
+                string lienReferenceNumber = string.Empty;
+
+                if (contingentLoanRecord.Count() == 0)
+                {
+                      lienReferenceNumber = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER;
+                }
+                else
+                {
+                    lienReferenceNumber =  contingentLoanRecord.OrderByDescending(c=> c.CONTINGENTLOANUSAGEID).FirstOrDefault().LIENREFERENCENUMBER;
+                }
+
+                decimal oldLien = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.CONTINGENTAMOUNT;
+
+                var casaAccountId =   contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.CASAACCOUNTID;
+       
+                var lienModel = new CasaLienViewModel
+                {
+                    productAccountNumber = context.TBL_CASA.FirstOrDefault(c=> c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
+                    sourceReferenceNumber = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
+                    userBranchId = (short)entity.BranchId,
+                    branchId = (short)entity.BranchId,
+                    companyId = entity.companyId,
+                    lienAmount = oldLien,
+                    description = "Release Lien for APS Fund",
+                    lienTypeId = (short)LienTypeEnum.APSRequest,
+                    createdBy = entity.createdBy,
+                    userIPAddress = entity.userIPAddress,
+                    applicationUrl = entity.applicationUrl,
+                };
+
+                casaLien.ReleaseLien(lienModel);
+
+
+                lienReferenceNumber = string.Concat( lienReferenceNumber, contingentLoanRecord.Count());
+                newLienAmount = oldLien - contingentLoanRecord.FirstOrDefault().AMOUNTREQUESTED;
+                var lienModel2 = new CasaLienViewModel
+                {
+                    productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
+                    sourceReferenceNumber = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
+                    userBranchId = (short)entity.BranchId,
+                    branchId = (short)entity.BranchId,
+                    companyId = entity.companyId,
+                    lienAmount = newLienAmount,
+                    description = "Place Lien on APG Fund",
+                    lienTypeId = (short)LienTypeEnum.APSRequest,
+                    createdBy = entity.createdBy,
+                    userIPAddress = entity.userIPAddress,
+                    applicationUrl = entity.applicationUrl,
+                };
+
+                casaLien.PlaceLien(lienModel);
+            }
+                   
+
+            return this.context.SaveChanges() > 0;
+        }
 
 
     }

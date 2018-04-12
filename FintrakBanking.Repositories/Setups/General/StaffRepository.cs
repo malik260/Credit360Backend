@@ -449,7 +449,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.BRANCHID = temp.BRANCHID;
                 entity.COMMENT = temp.COMMENT;
                 entity.CREATEDBY = temp.CREATEDBY;
-                entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
+                if(temp.CUSTOMERSENSITIVITYLEVELID >0)entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                 entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                 entity.DATETIMEUPDATED = DateTime.Now;
                 //entity.DEPARTMENTID = temp.DEPARTMENTID;
@@ -485,7 +485,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     BRANCHID = temp.BRANCHID,
                     COMMENT = temp.COMMENT,
                     CREATEDBY = temp.CREATEDBY,
-                    CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID,
                     DATEOFBIRTH = temp.DATEOFBIRTH,
                     DATETIMECREATED = DateTime.Now,
                     //DEPARTMENTID = temp.DEPARTMENTID,
@@ -502,6 +501,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CITYID = temp.CITYID,
                     
                 };
+                if (temp.CUSTOMERSENSITIVITYLEVELID > 0) staff.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                 context.TBL_STAFF.Add(staff);
             }
 
@@ -842,11 +842,41 @@ namespace FintrakBanking.Repositories.Setups.General
                            firstName = st.FIRSTNAME,
                            middleName = st.MIDDLENAME,
                            lastName = st.LASTNAME,
-                           departmentId = st.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
-                           departmentUnitId = (short)st.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
+                           //departmentId = st.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
+                           //departmentUnitId = (short)st.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
                            
                        };
 
+            return data;
+        }
+
+        public IEnumerable<simpleStaffModel> GetStaffRelationshipManagerByStaffId(int staffId)
+        {
+            var data = from st in context.TBL_STAFF
+                       where st.STAFFID == staffId
+                       select new simpleStaffModel
+                       {
+                           staffId = st.STAFFID,
+                           staffCode = st.STAFFCODE,
+                           firstName = st.FIRSTNAME,
+                           middleName = st.MIDDLENAME,
+                           lastName = st.LASTNAME,
+                       };
+            return data;
+        }
+
+        public IEnumerable<simpleStaffModel> GetStaffBusinessManagerByStaffId(int staffId)
+        {
+            var data = from st in context.TBL_STAFF
+                       where st.STAFFID == staffId
+                       select new simpleStaffModel
+                       {
+                           staffId = st.STAFFID,
+                           staffCode = st.STAFFCODE,
+                           firstName = st.FIRSTNAME,
+                           middleName = st.MIDDLENAME,
+                           lastName = st.LASTNAME,
+                       };
             return data;
         }
 

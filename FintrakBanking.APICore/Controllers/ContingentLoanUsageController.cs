@@ -75,7 +75,7 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                var data = repo.GetPendingRequest(token.GetStaffId, token.GetBranchId);
+                var data = repo.GetPendingRequest(token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }

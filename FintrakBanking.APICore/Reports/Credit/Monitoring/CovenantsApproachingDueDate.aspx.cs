@@ -16,12 +16,25 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
         {
             if (!IsPostBack)
             {
+                startDate.Text = Request.QueryString["startDate"];
+                endDate.Text = Request.QueryString["endDate"];
+                companyId.Text = Request.QueryString["companyId"];
+                branchId.Text = Request.QueryString["branchId"];
+                loanRefNo.Text = Request.QueryString["loanRefNo"];
+                productClassId.Text = Request.QueryString["productClassId"];
+                staffId.Text = Request.QueryString["staffId"];
+
+                ReportParameter sDate = new ReportParameter("startDate", startDate.Text);
+                ReportParameter eDate = new ReportParameter("endDate", endDate.Text);
+
                 FinTrakBankingContext context = new FinTrakBankingContext();
                 GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
                 ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToShortDateString());
 
-                covDueDateRv.LocalReport.SetParameters(new ReportParameter[] { date });
+              //  covDueDateRv.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                 covDueDateRv.LocalReport.Refresh();
+
+
             }
         }
     }

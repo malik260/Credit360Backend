@@ -201,12 +201,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
         #region Loan Monitoring Reports
 
-        public string GetCovenantsApproachingDueDateReport(int companyId, int staffId)
+        public string GetCovenantsApproachingDueDateReport(int companyId, int staffId, DateRange dateRange)
         {
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/CovenantsApproachingDueDate.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId;
+                path = reportPath + "Credit/Monitoring/CovenantsApproachingDueDate.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
                 return path;
             }
             catch (Exception ex)
@@ -215,12 +215,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        public string GetCollateralPropertyRevaluationReport(int companyId,int value, int staffId)
+        public string GetCollateralPropertyRevaluationReport(int companyId,DateRange dateRange, int staffId)
         {
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/CollateralPropertyRevaluation.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&value=" +value;
+                path = reportPath + "ReportViews/CollateralPropertyRevaluation.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
                 return path;
             }
             catch (Exception ex)

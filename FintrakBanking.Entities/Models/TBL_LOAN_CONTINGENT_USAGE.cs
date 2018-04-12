@@ -9,6 +9,8 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.TBL_LOAN_CONTINGENT_USAGE")]
     public partial class TBL_LOAN_CONTINGENT_USAGE
     {
+        public string LIENREFERENCENUMBER;
+
         [Key]
         public int CONTINGENTLOANUSAGEID { get; set; }
 

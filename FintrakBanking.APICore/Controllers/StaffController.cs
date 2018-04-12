@@ -156,7 +156,53 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo.ToList() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-relationship-Manager/{staffId}")]
+        public HttpResponseMessage GetStaffRelationshipManagerByStaffId(int staffId)
+        {
+            try
+            {
+                var staffInfo = repo.GetStaffRelationshipManagerByStaffId(staffId);
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-business-Manager/{staffId}")]
+        public HttpResponseMessage GetStaffBusinessManagerByStaffId(int staffId)
+        {
+            try
+            {
+                var staffInfo = repo.GetStaffBusinessManagerByStaffId(staffId);
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
             }
             catch (System.Exception ex)
             {

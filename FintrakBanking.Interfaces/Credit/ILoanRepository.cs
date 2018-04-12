@@ -70,7 +70,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanChargeFeeViewModel> GetDeferredRevolvingLoanFeeAwaitingApproval(int staffId, int companyId);
         IEnumerable<LoanChargeFeeViewModel> GetDeferredContingentLoanFeeAwaitingApproval(int staffId, int companyId);
 
-        bool GoForApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId);
         bool GoForFeeOverrideApproval(ApprovalViewModel entity);
 
         void PostLoanFees(LoanViewModel entity);

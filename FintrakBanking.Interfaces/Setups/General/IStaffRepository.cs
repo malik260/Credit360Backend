@@ -23,6 +23,10 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<StaffViewModel> GetStaffName();
 
+        IEnumerable<simpleStaffModel> GetStaffRelationshipManagerByStaffId(int staffId);
+
+        IEnumerable<simpleStaffModel> GetStaffBusinessManagerByStaffId(int staffId);
+
         IEnumerable<simpleStaffModel> GetStaffByUnitId(short departmentUnitId);
 
         bool DeleteStaff(int staffId, UserInfo user);
