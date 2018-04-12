@@ -435,7 +435,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public IEnumerable<ChartOfAccountViewModel> GetAllAccounts()
         {
-            var data = GetAllAccountsDetails();
+            var data = GetAllAccountsDetails().OrderByDescending(x => x.accountCode);
 
             return data;
         }

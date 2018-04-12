@@ -842,11 +842,41 @@ namespace FintrakBanking.Repositories.Setups.General
                            firstName = st.FIRSTNAME,
                            middleName = st.MIDDLENAME,
                            lastName = st.LASTNAME,
-                           departmentId = st.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
-                           departmentUnitId = (short)st.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
+                           //departmentId = st.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
+                           //departmentUnitId = (short)st.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
                            
                        };
 
+            return data;
+        }
+
+        public IEnumerable<simpleStaffModel> GetStaffRelationshipManagerByStaffId(int staffId)
+        {
+            var data = from st in context.TBL_STAFF
+                       where st.STAFFID == staffId
+                       select new simpleStaffModel
+                       {
+                           staffId = st.STAFFID,
+                           staffCode = st.STAFFCODE,
+                           firstName = st.FIRSTNAME,
+                           middleName = st.MIDDLENAME,
+                           lastName = st.LASTNAME,
+                       };
+            return data;
+        }
+
+        public IEnumerable<simpleStaffModel> GetStaffBusinessManagerByStaffId(int staffId)
+        {
+            var data = from st in context.TBL_STAFF
+                       where st.STAFFID == staffId
+                       select new simpleStaffModel
+                       {
+                           staffId = st.STAFFID,
+                           staffCode = st.STAFFCODE,
+                           firstName = st.FIRSTNAME,
+                           middleName = st.MIDDLENAME,
+                           lastName = st.LASTNAME,
+                       };
             return data;
         }
 

@@ -220,6 +220,7 @@ namespace FintrakBanking.Common.Enum
         EndPendingSession = 197,
 
         ContingentLoanUsageAdd=199,
+        LoanBookingDisapproved = 200,
     };
 
 
