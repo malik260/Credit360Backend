@@ -4281,6 +4281,28 @@ namespace FintrakBanking.Repositories.Credit
                     ArchiveDailySchedule(loanId);
 
 
+                    //---------------save irregular loan schedule input---------------------------
+                    List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
+                    LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
+                    if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                    {
+                        var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
+                        foreach (var item in data)
+                        {
+                            TBL_LOAN_REVIEW_OPRATN_IREG_SC schedule = new TBL_LOAN_REVIEW_OPRATN_IREG_SC();
+                            schedule.LOANREVIEWOPERATIONID = loanId;
+                            schedule.PAYMENTDATE = item.paymentDate;
+                            schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);
+                            schedule.CREATEDBY = staffId;
+                            schedule.DATETIMECREATED = applicationDate;
+
+                            tblIrregularSchedule.Add(schedule);
+                        }
+
+                    }
+                    //----------------------------------------------
+
+
                     //----------generate and save periodic loan schedule -----------------------------------
 
                     loanInput.principalAmount = loanInput.newAmount;
@@ -4363,30 +4385,6 @@ namespace FintrakBanking.Repositories.Credit
                         tblDailyScheduleTemp.Add(scheduleTemp);
                     }
                     //----------------------------------------------------------------
-
-
-
-                    //---------------save irregular loan schedule input---------------------------
-                    List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
-                    LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
-                    if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
-                    {
-                        var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
-                        foreach (var item in data)
-                        {
-                            TBL_LOAN_REVIEW_OPRATN_IREG_SC schedule = new TBL_LOAN_REVIEW_OPRATN_IREG_SC();
-                            schedule.LOANREVIEWOPERATIONID = loanId;
-                            schedule.PAYMENTDATE = item.paymentDate;
-                            schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);
-                            schedule.CREATEDBY = staffId;
-                            schedule.DATETIMECREATED = applicationDate;
-
-                            tblIrregularSchedule.Add(schedule);
-                        }
-
-                    }
-                    //----------------------------------------------
-
 
                     //------------adding records to the database--------------------------
 
@@ -5784,7 +5782,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool DoesOperationExist(int loanId, int operationTypeId)
         {
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION where a.LOANID == loanId
-                       && a.OPERATIONTYPEID == operationTypeId //&& a.OperationCompleted == false
+                       && a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false
                        select a;
             if (data.Any())
             {
@@ -5794,6 +5792,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
+        
             List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
             //Storing the Irregular Schedule Payment Plan
             if (model.reviewIrregularSchedule.Count > 0)
@@ -5830,7 +5829,7 @@ namespace FintrakBanking.Repositories.Credit
                 CASA_ACCOUNTID = model.cASA_AccountId,
                 OVERDRAFTTOPUP = model.overDraftTopup,
                 FEE_CHARGES = model.fee_Charges,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                APPROVALSTATUSID = model.approvalStatusId,
                 ISMANAGEMENTINTERESTRATE = model.isManagementRate,
                 OPERATIONCOMPLETED = false,
                 CREATEDBY = model.createdBy,

@@ -180,13 +180,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("monitoring/collateral-property-revaluation/{value}")]
-        public HttpResponseMessage GetCollateralPropertyRevaluationReport(int value)
+        [HttpPost]
+        [Route("monitoring/collateral-property-revaluation")]
+        public HttpResponseMessage GetCollateralPropertyRevaluationReport(DateRange dateRange)
         {
             try
             {
-                var data = repo.GetCollateralPropertyRevaluationReport(token.GetCompanyId, value, token.GetStaffId);
+                var data = repo.GetCollateralPropertyRevaluationReport(token.GetCompanyId, dateRange, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -202,13 +202,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("monitoring/almost-due-covenants")]
-        public HttpResponseMessage GetCovenantsApproachingDueDateReport()
+        public HttpResponseMessage GetCovenantsApproachingDueDateReport(DateRange dateRange)
         {
             try
             {
-                var data = repo.GetCovenantsApproachingDueDateReport(token.GetCompanyId, token.GetStaffId);
+                var data = repo.GetCovenantsApproachingDueDateReport(token.GetCompanyId, token.GetStaffId, dateRange);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
