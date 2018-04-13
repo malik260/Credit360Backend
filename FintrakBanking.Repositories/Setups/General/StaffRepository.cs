@@ -832,9 +832,10 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
-        public IEnumerable<simpleStaffModel> GetStaffNames()
+        public IEnumerable<simpleStaffModel> GetStaffNames(int companyId)
         {
             var data = from st in context.TBL_STAFF
+                       where st.COMPANYID == companyId
                        select new simpleStaffModel
                        {
                            staffId = st.STAFFID,
@@ -842,17 +843,47 @@ namespace FintrakBanking.Repositories.Setups.General
                            firstName = st.FIRSTNAME,
                            middleName = st.MIDDLENAME,
                            lastName = st.LASTNAME,
-                           departmentId = st.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
-                           departmentUnitId = (short)st.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
+                           //departmentId = st.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
+                           //departmentUnitId = (short)st.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
                            
                        };
 
             return data;
         }
 
-        public IEnumerable<simpleStaffModel> GetStaffByUnitId(short departmentUnitId)
+        public IEnumerable<simpleStaffModel> GetStaffRelationshipManagerByStaffId(int staffId)
         {
-            return this.GetStaffNames().Where(x => x.departmentUnitId == departmentUnitId);
+            var data = from st in context.TBL_STAFF
+                       where st.STAFFID == staffId
+                       select new simpleStaffModel
+                       {
+                           staffId = st.STAFFID,
+                           staffCode = st.STAFFCODE,
+                           firstName = st.FIRSTNAME,
+                           middleName = st.MIDDLENAME,
+                           lastName = st.LASTNAME,
+                       };
+            return data;
+        }
+
+        public IEnumerable<simpleStaffModel> GetStaffBusinessManagerByStaffId(int staffId)
+        {
+            var data = from st in context.TBL_STAFF
+                       where st.STAFFID == staffId
+                       select new simpleStaffModel
+                       {
+                           staffId = st.STAFFID,
+                           staffCode = st.STAFFCODE,
+                           firstName = st.FIRSTNAME,
+                           middleName = st.MIDDLENAME,
+                           lastName = st.LASTNAME,
+                       };
+            return data;
+        }
+
+        public IEnumerable<simpleStaffModel> GetStaffByUnitId(int companyId, short departmentUnitId)
+        {
+            return this.GetStaffNames(companyId).Where(x => x.departmentUnitId == departmentUnitId);
         }
 
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()

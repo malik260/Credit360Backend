@@ -62,6 +62,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string COLLATERALARRANGEMENT { get; set; }
 
+        public string RELATEDCOMPANIES { get; set; }
+
         [Required]
         public string PROPOSEDTERMSANDCONDITIONS { get; set; }
 

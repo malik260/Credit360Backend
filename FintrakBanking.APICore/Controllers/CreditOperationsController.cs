@@ -357,9 +357,11 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                model.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+                if ((int)OperationsEnum.Prepayment == model.operationTypeId)
 
-                if((int)OperationsEnum.Prepayment == model.operationTypeId)
                 {
+                    model.approvalStatusId = (int)ApprovalStatusEnum.Approved;
                     if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
