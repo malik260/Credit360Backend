@@ -405,21 +405,16 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
 
             var appl = context.TBL_LOAN_REVIEW_APPLICATION.Find(model.applicationId);
+            int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && model.operationId != lastOperationId) // jump process OR end flag
                 {
-                    if (model.operationId != (int)OperationsEnum.LoanReviewApprovalAvailment) // last operation check
-                        PassApplicationToOperation(model.applicationId, model.operationId + 1, model.lastUpdatedBy, "New application");
+                    PassApplicationToOperation(model.applicationId, model.operationId + 1, model.lastUpdatedBy, "New application");
                 }
-
-                if (model.operationId != (int)OperationsEnum.LoanReviewApprovalAvailment) // approval flag (cam?/availment?)
-                {
-                    appl.APPROVALSTATUSID = (short)workflow.StatusId;
-                    context.SaveChanges();
-                }
-
+                appl.APPROVALSTATUSID = (short)workflow.StatusId;
+                context.SaveChanges();
                 return workflow.StatusId;
             }
 
