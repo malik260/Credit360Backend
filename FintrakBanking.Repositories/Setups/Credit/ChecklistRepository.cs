@@ -79,7 +79,7 @@ namespace FintrakBanking.Repositories.Credit
                                   checkListItemName = k.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
                                   itemDescription = k.ITEMDESCRIPTION,
                                   checklistStatusId = s.CHECKLISTSTATUSID
-                              }).ToList();
+                              });
             var proposedProductId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == loanTargetId select (short?)id.PROPOSEDPRODUCTID).ToList();
             var isproductBased = context.TBL_CHECKLIST_TYPE.FirstOrDefault(x => x.CHECKLIST_TYPEID == checkListTypeId).ISPRODUCT_BASED;
            
@@ -102,19 +102,26 @@ namespace FintrakBanking.Repositories.Credit
                                 itemDescription = a.ITEMDESCRIPTION,
                                 productId = a.PRODUCTID,
                             });
-
-            if (productId > 0)
+            if (isproductBased)
             {
-                data = data.Where(x => x.productId == productId);
-            }
-            else if (proposedProductId.Any())
-            {
-                data = data.Where(x => proposedProductId.Contains(x.productId));
+                if (productId > 0)
+                {
+                    data = data.Where(x => x.productId == productId);
+                }
+                else if (proposedProductId.Any())
+                {
+                    data = data.Where(x => proposedProductId.Contains(x.productId));
+                }
             }
             var definitionList = data.ToList();
-            var detailId = (from a in detailItem select a.checkListDefinitionId).ToList();
-            var checklist = detailItem.Concat(definitionList.Where(x => !detailId.Contains(x.checkListDefinitionId)));
-            return checklist;
+            var detailList = detailItem.ToList();
+            var detailId = detailItem.Select(a=> a.checkListDefinitionId).ToList();
+            if (detailItem.Any())
+            {
+              var  checklist = detailList.Concat(definitionList.Where(x => !detailId.Contains(x.checkListDefinitionId)));
+                return checklist.ToList();
+            }
+            return data.ToList();
           
         }
         //    public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId)
