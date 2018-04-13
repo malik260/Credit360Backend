@@ -245,7 +245,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? disbursedAmount { get; set; }
         public decimal? interestAmount { get; set; }
         public int approvalStatusId { get; set; }
-        public string approvedBy { get; set; }
+        public int approvedBy { get; set; }
         public string approverComment { get; set; }
         public DateTime? dateApproved { get; set; }
         public short loanStatusId { get; set; }
@@ -328,7 +328,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal contingentAmount { get; set; }
         public decimal approvedAmount { get; set; }
         public int approvalStatusId { get; set; }
-        public string approvedBy { get; set; }
+        public int approvedBy { get; set; }
         public string approverComment { get; set; }
         public DateTime? dateApproved { get; set; }
         public short loanStatusId { get; set; }

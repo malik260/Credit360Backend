@@ -340,6 +340,7 @@
     <Compile Include="Controllers\ContingentLoanUsageController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
     <Compile Include="Controllers\CustomerCreditBureauController.cs" />
+    <Compile Include="Controllers\EditorController.cs" />
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
     <Compile Include="Controllers\EndOfDayController.cs" />
@@ -797,6 +798,8 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Views\Editor\Upload.cshtml" />
+    <Content Include="Views\Editor\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -806,12 +809,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\CustomerCreditBureau\" />
-    <Folder Include="Views\EndOfDay\" />
-    <Folder Include="Views\FeeConcession\" />
-    <Folder Include="Views\LoanOperation\" />
-    <Folder Include="Views\Override\" />
-    <Folder Include="Views\TransactionDynamics\" />
+    <Folder Include="Content\Images\Editor\Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -859,7 +857,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
-    <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.rdlc" />

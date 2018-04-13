@@ -6979,7 +6979,7 @@ namespace FintrakBanking.Repositories.Credit
                              disbursedAmount = a.DISBURSED_AMOUNT,
                              interestAmount = a.INTEREST_AMOUNT,
                              approverComment = a.APPROVERCOMMENT,
-                             approvedBy = a.APPROVEDBY,
+                             approvedBy =(int) a.APPROVEDBY,
                              dateApproved = a.DATEAPPROVED,
                              loanStatusId = a.LOANSTATUSID,
                              isDisbursed = a.ISDISBURSED,

@@ -116,6 +116,10 @@ namespace FintrakBanking.Entities.Models
 
         public short APPLICATIONSTATUSID { get; set; }
 
+        public int? FINALAPPROVAL_LEVELID { get; set; }
+
+        public short? NEXTAPPLICATIONSTATUSID { get; set; }
+
         public DateTime? DATEACTEDON { get; set; }
 
         public int? ACTEDONBY { get; set; }
@@ -133,6 +137,8 @@ namespace FintrakBanking.Entities.Models
         public bool DISPUTED { get; set; }
 
         public bool REQUIRECOLLATERAL { get; set; }
+
+        public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
@@ -173,6 +179,8 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_APPLICATION_DETL_ARCH> TBL_LOAN_APPLICATION_DETL_ARCH { get; set; }
 
         public virtual TBL_LOAN_APPLICATION_STATUS TBL_LOAN_APPLICATION_STATUS { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION_STATUS TBL_LOAN_APPLICATION_STATUS1 { get; set; }
 
         public virtual TBL_LOAN_PRELIMINARY_EVALUATN TBL_LOAN_PRELIMINARY_EVALUATN { get; set; }
 

@@ -23,7 +23,11 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<StaffViewModel> GetStaffName();
 
-        IEnumerable<simpleStaffModel> GetStaffByUnitId(short departmentUnitId);
+        IEnumerable<simpleStaffModel> GetStaffRelationshipManagerByStaffId(int staffId);
+
+        IEnumerable<simpleStaffModel> GetStaffBusinessManagerByStaffId(int staffId);
+
+        IEnumerable<simpleStaffModel> GetStaffByUnitId(int companyId, short departmentUnitId);
 
         bool DeleteStaff(int staffId, UserInfo user);
 
@@ -39,7 +43,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         StaffDetailsModel GetStaffDetail(string staffCode, int companyId);
 
-        IEnumerable<simpleStaffModel> GetStaffNames(); 
+        IEnumerable<simpleStaffModel> GetStaffNames(int companyId); 
 
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
 
