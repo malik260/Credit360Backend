@@ -127,7 +127,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.DATETIMEUPDATED = DateTime.Now;
                     data.LASTUPDATEDBY = model.createdBy;
                 }
-            }
+            } 
             else
             {
                 data = new TBL_LOAN_RATE_FEE_CONCESSION();
