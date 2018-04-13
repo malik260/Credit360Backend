@@ -809,6 +809,7 @@
     <Folder Include="Views\CustomerCreditBureau\" />
     <Folder Include="Views\EndOfDay\" />
     <Folder Include="Views\FeeConcession\" />
+    <Folder Include="Views\GuaranteeCollateralCustomer\" />
     <Folder Include="Views\LoanOperation\" />
     <Folder Include="Views\Override\" />
     <Folder Include="Views\TransactionDynamics\" />
