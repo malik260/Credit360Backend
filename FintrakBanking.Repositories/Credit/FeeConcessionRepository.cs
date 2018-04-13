@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<FeeConcessionViewModel> GetAllConcessionFee(int loanApplicationDetailId)
         {
-            var feeConcession = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION_
+            var feeConcession = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION
                                  where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                                  orderby a.DATETIMECREATED descending
                                  select new FeeConcessionViewModel()
@@ -86,7 +86,7 @@ namespace FintrakBanking.Repositories.Credit
             int staffApprovalLevelId = 0;
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var feeConcession = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION_
+            var feeConcession = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION
                                  join atrail in context.TBL_APPROVAL_TRAIL on a.CONCESSIONID equals atrail.TARGETID
                                  where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                                  && atrail.OPERATIONID == (int)OperationsEnum.FeeConcessionApproval
@@ -113,10 +113,10 @@ namespace FintrakBanking.Repositories.Credit
         public int AddUpdateFeeConcession(FeeConcessionViewModel model)
         {
             if (model == null) return 0;
-            TBL_LOAN_RATE_FEE_CONCESSION_ data;
+            TBL_LOAN_RATE_FEE_CONCESSION data;
             if (model.concessionId > 0)
             {
-                data = context.TBL_LOAN_RATE_FEE_CONCESSION_.Find(model.concessionId);
+                data = context.TBL_LOAN_RATE_FEE_CONCESSION.Find(model.concessionId);
                 if (data != null)
                 {
                     data.CONCESSION = model.concession;
@@ -127,10 +127,10 @@ namespace FintrakBanking.Repositories.Credit
                     data.DATETIMEUPDATED = DateTime.Now;
                     data.LASTUPDATEDBY = model.createdBy;
                 }
-            }
+            } 
             else
             {
-                data = new TBL_LOAN_RATE_FEE_CONCESSION_();
+                data = new TBL_LOAN_RATE_FEE_CONCESSION();
                 data.CONCESSION = model.concession;
                 data.CONCESSIONTYPEID = (short)model.concessionTypeId;
                 data.CONSESSIONREASON = model.concessionReason;
@@ -161,7 +161,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     try
                     {
-                        context.TBL_LOAN_RATE_FEE_CONCESSION_.Add(data);
+                        context.TBL_LOAN_RATE_FEE_CONCESSION.Add(data);
                         this.auditTrail.AddAuditTrail(audit);
                         var output = context.SaveChanges() > 0;
 
@@ -240,7 +240,7 @@ namespace FintrakBanking.Repositories.Credit
         private bool ApproveFeeConcession(int targetId, ApprovalViewModel user)
         {
             bool output = false;
-            var feeConcessionRecord = (from s in context.TBL_LOAN_RATE_FEE_CONCESSION_
+            var feeConcessionRecord = (from s in context.TBL_LOAN_RATE_FEE_CONCESSION
                                        where s.CONCESSIONID == targetId
                                       && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                        select s).FirstOrDefault();
@@ -308,7 +308,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool ValidateFeeConcession(int loanApplicationDetailId, int? loanChargeFeeId)
         {
             bool returnVal = false;
-            var exist = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION_
+            var exist = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION
                          where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId &&
                          a.LOANCHARGEFEEID == loanChargeFeeId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                          select a).ToList();
@@ -322,7 +322,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool ValidateApprovedFeeConcession(int concessionId)
         {
             bool returnVal = false;
-            var isApproved = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION_
+            var isApproved = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION
                          where a.CONCESSIONID == concessionId &&
                            a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                          select a).FirstOrDefault();

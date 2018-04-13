@@ -149,7 +149,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var staffInfo = repo.GetStaffNames();
+                var staffInfo = repo.GetStaffNames(token.GetCompanyId);
 
                 if (staffInfo == null)
                 {
@@ -218,7 +218,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var staffInfo = repo.GetStaffByUnitId(departmentUnitId);
+                var staffInfo = repo.GetStaffByUnitId(token.GetCompanyId, departmentUnitId);
 
                 if (staffInfo == null)
                 {

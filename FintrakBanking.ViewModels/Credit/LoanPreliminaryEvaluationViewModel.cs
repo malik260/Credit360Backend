@@ -6,6 +6,7 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class LoanPreliminaryEvaluationViewModel: GeneralEntity
     {
+
         public LoanPreliminaryEvaluationViewModel()
         {
             customerBvnInformation = new List<CustomerBvnViewModels>();
@@ -14,7 +15,8 @@ namespace FintrakBanking.ViewModels.Credit
             customerClients = new List<CustomerClientOrSupplierViewModels>();
             customerSuppliers = new List<CustomerSupplierViewModels>();
         }
-
+        public short loanApplicationtypeId { get; set; }
+        public string relatedCompanies { get; set; }
         public int loanPreliminaryEvaluationId { get; set; }
         public string preliminaryEvaluationCode { get; set; }
         public short branchId { get; set; }
