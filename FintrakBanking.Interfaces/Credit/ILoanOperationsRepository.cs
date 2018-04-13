@@ -56,7 +56,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId);
         IEnumerable<LoanClassificationViewModel> CalLoanClassification(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
-        IEnumerable<LoanViewModel> GetRunningLoans(int companyId, string refNo);
+        // IEnumerable<LoanViewModel> GetRunningLoans(int companyId, string refNo);
+        LoanViewModel GetRunningLoans(int companyId, string refNo);
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD();
     }
 }
