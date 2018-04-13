@@ -131,6 +131,7 @@ namespace FintrakBanking.APICore.Controllers
                     fileExtension = provider.FormData["fileExtension"],
                     physicalFileNumber = provider.FormData["physicalFileNumber"],
                     physicalLocation = provider.FormData["physicalLocation"],
+                    isPrimaryDocument = provider.FormData["isPrimaryDocument"] == "true",
                 };
 
                 if (!provider.FileStreams.Any())

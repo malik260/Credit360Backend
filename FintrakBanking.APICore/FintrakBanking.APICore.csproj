@@ -809,6 +809,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\CustomerCreditBureau\" />
+    <Folder Include="Views\EndOfDay\" />
+    <Folder Include="Views\FeeConcession\" />
+    <Folder Include="Views\GuaranteeCollateralCustomer\" />
+    <Folder Include="Views\LoanOperation\" />
+    <Folder Include="Views\Override\" />
+    <Folder Include="Views\TransactionDynamics\" />
     <Folder Include="Content\Images\Editor\Uploads\" />
   </ItemGroup>
   <ItemGroup>

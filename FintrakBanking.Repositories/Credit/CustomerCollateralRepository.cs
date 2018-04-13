@@ -55,7 +55,7 @@ namespace FintrakBanking.Repositories.Credit
 
         // ADD
 
-        public bool AddCollateral(CollateralViewModel entity, byte[] file)
+        public bool AddCollateral(CollateralViewModel entity, byte[] file) //, 
         {
             int collateralId = AddCollateralMainForm(entity);
 
@@ -66,7 +66,7 @@ namespace FintrakBanking.Repositories.Credit
                     case (int)CollateralTypeEnum.TermDeposit: AddDepositCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.PlantAndMachinery: AddEquipmentCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Miscellaneous: AddMiscellaneousCollateral(collateralId, entity); break;
-                    case (int)CollateralTypeEnum.Gaurantee: AddGuaranteeCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.Gaurantee: AddGuaranteeCollateral(collateralId, entity);  break;
                     case (int)CollateralTypeEnum.CASA: AddCasaCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Property: AddImmovablePropertyCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.MarketableSecurities: AddMarketableSecuritiesCollateral(collateralId, entity); break;
@@ -91,7 +91,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new Exception(ex.InnerException.ToString());
                 }
-                if (saved) { return true; } // audit here
+                if (saved) { return true; } 
 
                 DeleteCollateral(collateralId);
             }
@@ -166,6 +166,38 @@ namespace FintrakBanking.Repositories.Credit
         private int AddCollateralMainForm(CollateralViewModel model)
         {
             if (context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == model.collateralCode).Any() == true)
+            {
+                throw new Exception("The specified Collateral Code is already used in the system!");
+            }
+
+            var collateral = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
+            {
+                COLLATERALTYPEID = model.collateralTypeId,
+                COLLATERALSUBTYPEID = model.collateralSubTypeId,
+                COLLATERALCODE = model.collateralCode,
+                COLLATERALVALUE = (decimal)model.collateralValue,
+                COMPANYID = model.companyId,
+                ALLOWSHARING = model.allowSharing,
+                ISLOCATIONBASED = model.isLocationBased,
+                VALUATIONCYCLE = model.valuationCycle,
+                HAIRCUT = model.haircut,
+                CURRENCYID = model.currencyId,
+                CUSTOMERID = model.customerId,
+                CAMREFNUMBER = model.camRefNumber,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate()
+            });
+
+            if (context.SaveChanges() == 1)
+            {
+                return collateral.COLLATERALCUSTOMERID;
+            }
+
+            return 0;
+        }
+        private int AddCollateralMainFormForGurantee(CollateralViewModel model)
+        {
+            if (context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == model.collateralId).Any() == true)
             {
                 throw new Exception("The specified Collateral Code is already used in the system!");
             }
@@ -393,7 +425,8 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALCUSTOMERID = collateralId,
                 SYSTEMDATETIME = DateTime.Now,
                 CREATEDBY = (int)model.createdBy,
-                ISPRIMARYDOCUMENT = model.isPrimaryDocument
+                ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+                TARGETID = model.TargetId
             };
 
             documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);
@@ -868,29 +901,137 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddGuaranteeCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_GAURANTEE.Add(new TBL_COLLATERAL_GAURANTEE
-            {
-                COLLATERALCUSTOMERID = collateralId,
-                // ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
-                INSTITUTIONNAME = entity.institutionName,
-                GUARANTORADDRESS = entity.guarantorAddress,
-                // GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber,
-                GUARANTEEVALUE = entity.guaranteeValue,
-                STARTDATE = entity.cStartDate,
-                ENDDATE = entity.endDate,
-                REMARK = entity.remark,
-                FIRSTNAME = entity.firstName,
-                MIDDLENAME = entity.middleName,
-                LASTNAME = entity.lastName,
-                BVN = entity.bvn,
-                RCNUMBER = entity.rcNumber,
-                PHONENUMBER1 = entity.phoneNumber1,
-                PHONENUMBER2 = entity.phoneNumber2,
-                EMAILADDRESS = entity.emailAddress,
-                RELATIONSHIP = entity.relationship,
-                RELATIONSHIPDURATION = entity.relationshipDuration
+            
+                context.TBL_COLLATERAL_GAURANTEE.Add(new TBL_COLLATERAL_GAURANTEE
+                {
+                    COLLATERALCUSTOMERID = collateralId,
+                    // ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
+                    INSTITUTIONNAME = entity.institutionName,
+                    GUARANTORADDRESS = entity.guarantorAddress,
+                    // GUARANTORREFERENCENUMBER = entity.guarantorReferenceNumber,
+                    GUARANTEEVALUE = entity.guaranteeValue,
+                    STARTDATE = entity.cStartDate,
+                    ENDDATE = entity.endDate,
+                    REMARK = entity.remark,
+                    FIRSTNAME = entity.firstName,
+                    MIDDLENAME = entity.middleName,
+                    LASTNAME = entity.lastName,
+                    BVN = entity.bvn,
+                    RCNUMBER = entity.rcNumber,
+                    PHONENUMBER1 = entity.phoneNumber1,
+                    PHONENUMBER2 = entity.phoneNumber2,
+                    EMAILADDRESS = entity.emailAddress,
+                    RELATIONSHIP = entity.relationship,
+                    RELATIONSHIPDURATION = entity.relationshipDuration
 
-            });
+                });
+        }
+        public List<CollateralViewModel> AddGuaranteeJoinCollateral( CollateralViewModel entity,byte[] buffer)
+        {
+            int collateralId = 0;
+            List<CollateralViewModel> listOfJoinCollateralGuarantee = new List<CollateralViewModel>();
+
+            if (context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == entity.collateralId).Any() != true)
+            {
+                 collateralId = AddCollateralMainFormForGurantee(entity);
+
+                var guarantee = context.TBL_COLLATERAL_GAURANTEE.Add(new TBL_COLLATERAL_GAURANTEE
+                {
+                    COLLATERALCUSTOMERID = collateralId,
+                    INSTITUTIONNAME = entity.institutionName,
+                    GUARANTORADDRESS = entity.guarantorAddress,
+                    GUARANTEEVALUE = entity.guaranteeValue,
+                    STARTDATE = entity.cStartDate,
+                    ENDDATE = entity.endDate,
+                    REMARK = entity.remark,
+                    FIRSTNAME = entity.firstName,
+                    MIDDLENAME = entity.middleName,
+                    LASTNAME = entity.lastName,
+                    BVN = entity.bvn,
+                    RCNUMBER = entity.rcNumber,
+                    PHONENUMBER1 = entity.phoneNumber1,
+                    PHONENUMBER2 = entity.phoneNumber2,
+                    EMAILADDRESS = entity.emailAddress,
+                    RELATIONSHIP = entity.relationship,
+                    RELATIONSHIPDURATION = entity.relationshipDuration
+
+
+
+                });
+                context.SaveChanges();
+                entity.TargetId = guarantee.COLLATERALGAURANTEEID;
+                if (buffer != null) { SaveCollateralMainDocument(entity, collateralId, buffer); }
+                listOfJoinCollateralGuarantee = GetCollateralJoinGuarantiee(collateralId);
+            }
+            else
+            {
+                if (entity.collateralId > 0)
+                {
+
+                    var guarantee = context.TBL_COLLATERAL_GAURANTEE.Add(new TBL_COLLATERAL_GAURANTEE
+                    {
+                        COLLATERALCUSTOMERID = entity.collateralId,
+                        INSTITUTIONNAME = entity.institutionName,
+                        GUARANTORADDRESS = entity.guarantorAddress,
+                        GUARANTEEVALUE = entity.guaranteeValue,
+                        STARTDATE = entity.cStartDate,
+                        ENDDATE = entity.endDate,
+                        REMARK = entity.remark,
+                        FIRSTNAME = entity.firstName,
+                        MIDDLENAME = entity.middleName,
+                        LASTNAME = entity.lastName,
+                        BVN = entity.bvn,
+                        RCNUMBER = entity.rcNumber,
+                        PHONENUMBER1 = entity.phoneNumber1,
+                        PHONENUMBER2 = entity.phoneNumber2,
+                        EMAILADDRESS = entity.emailAddress,
+                        RELATIONSHIP = entity.relationship,
+                        RELATIONSHIPDURATION = entity.relationshipDuration
+
+                    });
+                    context.SaveChanges();
+                    entity.TargetId = guarantee.COLLATERALGAURANTEEID;
+                   if (buffer != null) { SaveCollateralMainDocument(entity, entity.collateralId, buffer); }
+                    listOfJoinCollateralGuarantee = GetCollateralJoinGuarantiee(entity.collateralId);
+
+                }
+            }
+            return listOfJoinCollateralGuarantee;
+
+
+
+
+
+        }
+
+        private List<CollateralViewModel> GetCollateralJoinGuarantiee(int collateralId) {
+
+            var guarantee =from x in context.TBL_COLLATERAL_GAURANTEE
+                           where  x.COLLATERALCUSTOMERID == collateralId
+                
+                        select new CollateralViewModel {
+
+                      institutionName = x.INSTITUTIONNAME,
+                         guarantorAddress=x.GUARANTORADDRESS,
+                        guaranteeValue =x.GUARANTEEVALUE,
+                         cStartDate= x.STARTDATE,
+                        endDate = x.ENDDATE,
+                        remark =x.REMARK,
+                         firstName=x.FIRSTNAME,
+                        middleName=x.MIDDLENAME,
+                        lastName= x.LASTNAME,
+                        bvn=x.BVN,
+                        rcNumber = x.RCNUMBER,
+                        phoneNumber1=x.PHONENUMBER1,
+                        phoneNumber2=x.PHONENUMBER2,
+                        emailAddress=x.EMAILADDRESS,
+                        relationship=x.RELATIONSHIP,
+                        relationshipDuration=x.RELATIONSHIPDURATION,
+                        collateralId = collateralId,
+                        TargetId = x.COLLATERALGAURANTEEID
+                        
+                };
+            return guarantee.ToList();
         }
 
         private void UpdateGuaranteeCollateral(CollateralViewModel entity)
@@ -3229,6 +3370,8 @@ namespace FintrakBanking.Repositories.Credit
                 return ex.Message;
             }
         }
+
+       
     }
 
 }
