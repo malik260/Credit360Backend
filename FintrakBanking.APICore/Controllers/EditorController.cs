@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace FintrakBanking.APICore.Controllers
+{
+    public class EditorController : Controller
+    {
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Upload(HttpPostedFileBase upload, string CKEditorFuncNum, string CKEditor, string langCode)
+        {
+            string message;
+            var file = upload;
+            string path = String.Empty;
+
+            if (file != null && file.ContentLength > 0)
+            {
+                string fileExtension = System.IO.Path.GetExtension(file.FileName); 
+                if (fileExtension == ".jpg"
+                    || fileExtension == ".jpeg"
+                    || fileExtension == ".png"
+                    )
+                {
+                    var fileName = System.IO.Path.GetFileName(file.FileName);
+                    //var path = System.IO.Path.Combine(Server.MapPath("~/App_Data/Editor/Uploads"), fileName);
+                    path = System.IO.Path.Combine(Server.MapPath("~/Content/Images/Editor/Uploads"), this.UniqueFileName(fileName)); // + guid
+                    file.SaveAs(path);
+                }
+            }
+
+            message = "Image was saved correctly";
+
+            return Content($"<html><body>" +
+                $"<script>window.parent.CKEDITOR.tools.callFunction({ CKEditorFuncNum },{ path },{ message });</script>" +
+                $"<font color=\"green\"> Successfull upload!</color>" +
+                $"<img src=\"{ path }\" />" +
+                $"</body></html>");
+        }
+
+        private string UniqueFileName(string actualfilename)
+        {
+            var guid = Guid.NewGuid();
+            actualfilename = actualfilename.ToLower();
+            return guid.ToString() + "-" + actualfilename.Replace(" ", "-");
+        }
+    }
+}

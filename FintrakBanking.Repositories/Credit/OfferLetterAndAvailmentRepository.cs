@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId)
         {
-            var exceptIds = context.TBL_LOAN_RATE_FEE_CONCESSION_.Where(x =>
+            var exceptIds = context.TBL_LOAN_RATE_FEE_CONCESSION.Where(x =>
                 x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
             .Select(x => (int)x.TBL_LOAN_APPLICATION_DETAIL.PROPOSEDPRODUCTID)

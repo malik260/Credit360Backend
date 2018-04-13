@@ -832,9 +832,10 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
-        public IEnumerable<simpleStaffModel> GetStaffNames()
+        public IEnumerable<simpleStaffModel> GetStaffNames(int companyId)
         {
             var data = from st in context.TBL_STAFF
+                       where st.COMPANYID == companyId
                        select new simpleStaffModel
                        {
                            staffId = st.STAFFID,
@@ -880,9 +881,9 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
-        public IEnumerable<simpleStaffModel> GetStaffByUnitId(short departmentUnitId)
+        public IEnumerable<simpleStaffModel> GetStaffByUnitId(int companyId, short departmentUnitId)
         {
-            return this.GetStaffNames().Where(x => x.departmentUnitId == departmentUnitId);
+            return this.GetStaffNames(companyId).Where(x => x.departmentUnitId == departmentUnitId);
         }
 
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()

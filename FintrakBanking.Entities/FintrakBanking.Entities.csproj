@@ -290,7 +290,7 @@
     <Compile Include="Models\TBL_LOAN_PRICEINDEX_EXCEPTION.cs" />
     <Compile Include="Models\TBL_LOAN_PRINCIPAL.cs" />
     <Compile Include="Models\TBL_LOAN_PRUDENTIALGUIDELINE.cs" />
-    <Compile Include="Models\TBL_LOAN_RATE_FEE_CONCESSION_.cs" />
+    <Compile Include="Models\TBL_LOAN_RATE_FEE_CONCESSION.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN_PAYMNT.cs" />
     <Compile Include="Models\TBL_LOAN_RELATIONSHIP_OFF_HIST.cs" />
@@ -313,7 +313,6 @@
     <Compile Include="Models\TBL_LOAN_STATUS.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_TYPE.cs" />
-    <Compile Include="Models\TBL_LOAN_TYPE.cs" />
     <Compile Include="Models\TBL_LOCALGOVERNMENT.cs" />
     <Compile Include="Models\TBL_MACHINEVALUE_BASE.cs" />
     <Compile Include="Models\TBL_MANAGEMENT_TYPE.cs" />
