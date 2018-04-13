@@ -80,7 +80,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (entity.hasInsurance) { AddItemInsurancePolicy(collateralId, entity); }
 
-                //if (file!=null){ SaveCollateralMainDocument(entity, collateralId, file); }
+                if (file!=null){ SaveCollateralMainDocument(entity, collateralId, file); }
 
                 bool saved;
                 try
@@ -425,7 +425,8 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALCUSTOMERID = collateralId,
                 SYSTEMDATETIME = DateTime.Now,
                 CREATEDBY = (int)model.createdBy,
-                ISPRIMARYDOCUMENT = model.isPrimaryDocument
+                ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+                TARGETID = model.TargetId
             };
 
             documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);
@@ -928,6 +929,8 @@ namespace FintrakBanking.Repositories.Credit
         public List<CollateralViewModel> AddGuaranteeJoinCollateral( CollateralViewModel entity,byte[] buffer)
         {
             int collateralId = 0;
+            List<CollateralViewModel> listOfJoinCollateralGuarantee = new List<CollateralViewModel>();
+
             if (context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == entity.collateralId).Any() != true)
             {
                  collateralId = AddCollateralMainFormForGurantee(entity);
@@ -952,7 +955,13 @@ namespace FintrakBanking.Repositories.Credit
                     RELATIONSHIP = entity.relationship,
                     RELATIONSHIPDURATION = entity.relationshipDuration
 
+
+
                 });
+                context.SaveChanges();
+                entity.TargetId = guarantee.COLLATERALGAURANTEEID;
+                if (buffer != null) { SaveCollateralMainDocument(entity, collateralId, buffer); }
+                listOfJoinCollateralGuarantee = GetCollateralJoinGuarantiee(collateralId);
             }
             else
             {
@@ -961,7 +970,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var guarantee = context.TBL_COLLATERAL_GAURANTEE.Add(new TBL_COLLATERAL_GAURANTEE
                     {
-                        COLLATERALCUSTOMERID = collateralId,
+                        COLLATERALCUSTOMERID = entity.collateralId,
                         INSTITUTIONNAME = entity.institutionName,
                         GUARANTORADDRESS = entity.guarantorAddress,
                         GUARANTEEVALUE = entity.guaranteeValue,
@@ -980,19 +989,27 @@ namespace FintrakBanking.Repositories.Credit
                         RELATIONSHIPDURATION = entity.relationshipDuration
 
                     });
+                    context.SaveChanges();
+                    entity.TargetId = guarantee.COLLATERALGAURANTEEID;
+                   if (buffer != null) { SaveCollateralMainDocument(entity, entity.collateralId, buffer); }
+                    listOfJoinCollateralGuarantee = GetCollateralJoinGuarantiee(entity.collateralId);
 
-                    
                 }
             }
-            context.SaveChanges();
-            return GetCollateralJoinGuarantiee(collateralId);
-            
+            return listOfJoinCollateralGuarantee;
+
+
+
+
+
         }
 
         private List<CollateralViewModel> GetCollateralJoinGuarantiee(int collateralId) {
 
-            var guarantee = context.TBL_COLLATERAL_GAURANTEE.Where(x => x.COLLATERALCUSTOMERID == collateralId)
-                .Select(x => new CollateralViewModel {
+            var guarantee =from x in context.TBL_COLLATERAL_GAURANTEE
+                           where  x.COLLATERALCUSTOMERID == collateralId
+                
+                        select new CollateralViewModel {
 
                       institutionName = x.INSTITUTIONNAME,
                          guarantorAddress=x.GUARANTORADDRESS,
@@ -1010,9 +1027,10 @@ namespace FintrakBanking.Repositories.Credit
                         emailAddress=x.EMAILADDRESS,
                         relationship=x.RELATIONSHIP,
                         relationshipDuration=x.RELATIONSHIPDURATION,
-                        collateralId = collateralId
+                        collateralId = collateralId,
+                        TargetId = x.COLLATERALGAURANTEEID
                         
-                });
+                };
             return guarantee.ToList();
         }
 

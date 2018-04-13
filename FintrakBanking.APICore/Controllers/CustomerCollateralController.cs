@@ -299,7 +299,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [Route("collateral-guarantee/{targetId}")]
+        public HttpResponseMessage GetCollaterGuaranteeFile(int targetId)
+        {
+            try
+            {
+                var data = document.GetCollateralGuaranteeDocument(targetId); //CollateralVisitationDocumentViewModel
 
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        
 
         [HttpGet]
         [Route("loan-visitation/{collateralVisitationId}")]

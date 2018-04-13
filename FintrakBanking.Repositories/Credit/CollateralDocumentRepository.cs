@@ -104,6 +104,7 @@ namespace FintrakBanking.Repositories.Credit
                 fileData = x.FILEDATA,
                 fileName = x.FILENAME,
                 fileExtension = x.FILEEXTENSION,
+                targetId  = x.TARGETID
             });
         }
 
@@ -130,7 +131,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             return this.GetAllCollateralDocument().Where(x => x.collateralId == documentId).ToList();
         }
-
+        public IEnumerable<CollateralDocumentViewModel> GetCollateralGuaranteeDocument(int targetId)
+        {
+            return this.GetAllCollateralDocument().Where(x => x.targetId == targetId).ToList();
+        }
 
 
 

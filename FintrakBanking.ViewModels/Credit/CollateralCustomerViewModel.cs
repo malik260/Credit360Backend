@@ -252,6 +252,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string fileName { get; set; }
         public string fileExtension { get; set; }
         public byte[] file { get; set; }
+        public int? TargetId { get; set; }
 
         public bool isPrimaryDocument { get; set; }
         public string formData { get; set; }
