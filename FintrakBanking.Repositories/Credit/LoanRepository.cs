@@ -2761,8 +2761,9 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IQueryable<LoanViewModel> GetLoansByCompanyId(int companyId) // EXTEND FOR ORDER LOAN TYPES
         {
+            var systemDate = generalSetup.GetApplicationDate();
             return (context.TBL_LOAN //.Include("tbl_Customer").Include("tbl_CASA_AccountStatus")
-                .Where(x => x.COMPANYID == companyId)
+                .Where(x => x.COMPANYID == companyId )
                 .Select(o => new LoanViewModel
                 {
                     loanId = o.TERMLOANID,
