@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.APICore.core;
 using System.Web;
+using FintrakBanking.ViewModels.Setups.General;
+using System;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -93,5 +95,49 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("staff-role")]
+        public HttpResponseMessage AddUpdateStaffRole([FromBody] StaffRoleViewModel entity)
+        {
+            try
+            {
+                string createUpdate = "";
+                if (entity.staffRoleId != 0 || entity.staffRoleId > 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                    if (repo.ValidateStaffRole(entity.staffRoleCode, entity.staffRoleName))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                               new { success = false, message = "Staff Role with same Name or Code already exist." });
+                    }
+                }
+                entity.userBranchId = (short)token.GetBranchId;
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = (short)token.GetCompanyId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddUpdateStaffRole(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+      
     }
 }

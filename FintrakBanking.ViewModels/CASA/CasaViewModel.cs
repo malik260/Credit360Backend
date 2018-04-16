@@ -33,7 +33,7 @@ namespace FintrakBanking.ViewModels.CASA
         public string productCode { get; set; }
         public string productName { get; set; }
         //public int companyId { get; set; }
-        public string accountDetail { get { return (productAccountNumber +"("+ customerCode.ToUpper()+" " + productAccountName.ToUpper() + ")"); } }
+        public string accountDetail { get { return (productAccountNumber +"("+ customerCode +" " + productAccountName + ")"); } }
         public string productAccountDetail{ get { return (productAccountNumber + "(" + productName + " -" + currency + ")"); } }
         public short branchId { get; set; }
         public string branchCode { get; set; }

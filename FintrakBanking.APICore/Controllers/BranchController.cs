@@ -210,9 +210,9 @@ namespace FintrakBanking.APICore.Controllers
                 var result =  repo.UpdateBranches(model, id);
                 if (result)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Branch has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Changes saved successfully" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Saved changes not successfull" });
             }
             catch (System.Exception ex)
             {
