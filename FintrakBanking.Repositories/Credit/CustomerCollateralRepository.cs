@@ -1127,6 +1127,7 @@ namespace FintrakBanking.Repositories.Credit
                     PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
                     PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
                     VALUATIONAMOUNT = entity.valuationAmount,
+
                    
                     //   STATEID = entity.stateId
                 });
