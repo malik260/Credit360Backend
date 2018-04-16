@@ -449,7 +449,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.BRANCHID = temp.BRANCHID;
                 entity.COMMENT = temp.COMMENT;
                 entity.CREATEDBY = temp.CREATEDBY;
-                if(temp.CUSTOMERSENSITIVITYLEVELID >0)entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
+                if(temp.CUSTOMERSENSITIVITYLEVELID >= 1)entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                 entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                 entity.DATETIMEUPDATED = DateTime.Now;
                 //entity.DEPARTMENTID = temp.DEPARTMENTID;
@@ -501,7 +501,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CITYID = temp.CITYID,
                     
                 };
-                if (temp.CUSTOMERSENSITIVITYLEVELID > 0) staff.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
+                if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) staff.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                 context.TBL_STAFF.Add(staff);
             }
 
