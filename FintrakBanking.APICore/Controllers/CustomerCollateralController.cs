@@ -265,7 +265,32 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
-
+        [HttpGet, Route("insurance-policies/{collateralId}")]
+        public HttpResponseMessage GetInsurancePolicies(int collateralId)
+        {
+            try
+            {
+                var response = repo.GetCollateralInsurancePolicies(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+        [HttpPost, Route("add-insurance-policy")]
+        public HttpResponseMessage AddNewInsurancePolicy(InsurancePolicies insurancePolicies)
+        {
+            try
+            {
+               var respo  =  repo.AddNewItemInsurancePolicy(insurancePolicies);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = repo });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
         [HttpGet, Route("collateral-document/{collateralId}")]
         public HttpResponseMessage GetCollateralDocumentByCollateral(int collateralId)
         {

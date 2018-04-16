@@ -2983,14 +2983,6 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.REMARK)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
-                .Property(e => e.LONGITUDE)
-                .HasPrecision(12, 9);
-
-            modelBuilder.Entity<TBL_COLLATERAL_IMMOVE_PROPERTY>()
-                .Property(e => e.LATITUDE)
-                .HasPrecision(12, 9);
-
             modelBuilder.Entity<TBL_COLLATERAL_ITEM_POLICY>()
                 .Property(e => e.SUMINSURED)
                 .HasPrecision(19, 4);

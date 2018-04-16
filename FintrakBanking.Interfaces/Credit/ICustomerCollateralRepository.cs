@@ -85,5 +85,11 @@ namespace FintrakBanking.Interfaces.Credit
         string FlagExpiredItemPolicies(DateTime currentDate);
 
         List<CollateralViewModel> AddGuaranteeJoinCollateral(CollateralViewModel entity, byte[] bufer);
+
+        List<InsurancePolicies> GetCollateralInsurancePolicies(int collateralId);
+
+        void AddItemInsurancePolicy(int collateralId, CollateralViewModel entity);
+
+        bool AddNewItemInsurancePolicy(InsurancePolicies entity);
     }
 }

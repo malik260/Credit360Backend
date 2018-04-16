@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class CollateralViewModel : GeneralEntity
+    public class CollateralViewModel : GeneralEntity 
     {
         public bool requireInsurancePolicy;
         public string collateralDetail { get; set; }
@@ -46,6 +46,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceCompany { get; set; }
         public DateTime? startDate { get; set; }
         public DateTime? expiryDate { get; set; }
+        public InsurancePolicies insurancePolicies { get; set; }
 
         // deposit
         public int collateralDepositId { get; set; }
@@ -132,8 +133,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? collateralUsableAmount { get; set; }
         public string nearestLandMark { get; set; }
         public string nearestBusStop { get; set; }
-        public decimal? longitude { get; set; }
-        public decimal? latitude { get; set; }
+        //public float? longitude { get; set; }
+        //public float? latitude { get; set; }
         public byte? perfectionStatusId { get; set; }
         public string perfectionStatusReason { get; set; }
 
@@ -326,6 +327,17 @@ namespace FintrakBanking.ViewModels.Credit
     //    public CollateralCustomerPolicyViewModel collateralCustomerPolicy { get; set; }
     //}
 
+    public class InsurancePolicies : GeneralEntity
+        {
+        public string referenceNumber { get; set; }
+        public decimal sumInsured { get; set; }
+        public string insuranceCompany { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? expiryDate { get; set; }
+        public string insuranceType { get; set; }
+        public bool hasExpired { get; set; }
+        public int collateraalId { get; set; }
+    }
     public class AllCollateralViewModel : CollateralViewModel
     {
 
