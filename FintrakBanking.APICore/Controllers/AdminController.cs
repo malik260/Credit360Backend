@@ -221,7 +221,7 @@ namespace FintrakBanking.APICore.Controllers
                 group.companyId = token.GetCompanyId;
 
                 var data = repo.AddGroup(group);
-                if (data.IsCompleted)
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = group, message = "Group has been created successfully" });
@@ -257,7 +257,7 @@ namespace FintrakBanking.APICore.Controllers
                 group.companyId = token.GetCompanyId;
 
                 var data = repo.UpdateGroup(id, group);
-                if (data.IsCompleted)
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = group, message = "Group has been updated successfully" });

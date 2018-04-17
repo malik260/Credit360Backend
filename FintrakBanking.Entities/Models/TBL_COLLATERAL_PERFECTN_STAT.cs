@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_COLLATERAL_PERFECTN_STAT()
         {
             TBL_COLLATERAL_IMMOVE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVE_PROPERTY>();
+            TBL_TEMP_COLLATERAL_IMMOV_PROP = new HashSet<TBL_TEMP_COLLATERAL_IMMOV_PROP>();
         }
 
         [Key]
@@ -24,5 +25,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_COLLATERAL_IMMOVE_PROPERTY> TBL_COLLATERAL_IMMOVE_PROPERTY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOV_PROP> TBL_TEMP_COLLATERAL_IMMOV_PROP { get; set; }
     }
 }
