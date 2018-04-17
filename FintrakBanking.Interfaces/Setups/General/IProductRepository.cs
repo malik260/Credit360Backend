@@ -83,5 +83,12 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateProductClassProcess(int productClassProcessId, ProductClassProcessViewModel model);
         ProductClassProcessViewModel GetProductProcessByProcessId(int proccessId);
         #endregion Product Class Process
+
+        #region Product Classification 
+        IEnumerable<LookupViewModel> GetAllProductClassType();
+        IEnumerable<ProductClassificationViewModel> GetAllProductClassification();
+        bool AddUpdateProductClassification(ProductClassificationViewModel model);
+        bool ValidateProductClassification(string productClassName);
+        #endregion Product Classification 
     }
 }

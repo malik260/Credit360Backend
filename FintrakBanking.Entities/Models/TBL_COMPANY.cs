@@ -104,6 +104,8 @@ namespace FintrakBanking.Entities.Models
 
         public short CURRENCYID { get; set; }
 
+        public short LANGUAGEID { get; set; }
+
         public short? NATUREOFBUSINESSID { get; set; }
 
         [StringLength(50)]
@@ -241,6 +243,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_COMPANY TBL_COMPANY2 { get; set; }
 
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
+
+        public virtual TBL_LANGUAGE TBL_LANGUAGE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMORANDM> TBL_CREDIT_APPRAISAL_MEMORANDM { get; set; }

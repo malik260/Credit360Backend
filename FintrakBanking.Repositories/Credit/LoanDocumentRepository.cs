@@ -27,6 +27,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region TBL_MEDIA_LOAN_DOCUMENTS
+
         public bool AddLoanDocument(LoanDocumentViewModel model, byte[] file)
         {
             try
@@ -45,8 +46,8 @@ namespace FintrakBanking.Repositories.Credit
                     SYSTEMDATETIME = DateTime.Now,
                     PHYSICALFILENUMBER = model.physicalFileNumber,
                     PHYSICALLOCATION = model.physicalLocation,
+                    ISPRIMARYDOCUMENT = model.isPrimaryDocument,
                     CREATEDBY = (int)model.createdBy,
-
                 };
 
                 context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
@@ -93,6 +94,7 @@ namespace FintrakBanking.Repositories.Credit
             data.SYSTEMDATETIME = DateTime.Now;
             data.PHYSICALFILENUMBER = model.physicalFileNumber;
             data.PHYSICALLOCATION = model.physicalLocation;
+            data.ISPRIMARYDOCUMENT = model.isPrimaryDocument;
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -127,29 +129,32 @@ namespace FintrakBanking.Repositories.Credit
                 systemDateTime = x.SYSTEMDATETIME,
                 physicalFileNumber = x.PHYSICALFILENUMBER,
                 physicalLocation = x.PHYSICALLOCATION,
+                isPrimaryDocument = x.ISPRIMARYDOCUMENT,
             });
         }
 
 
         public void GetAllLoanDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
         {
-            result = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x=>x.LOANAPPLICATIONNUMBER==model.loanApplicationNumber)
+            result = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x => x.LOANAPPLICATIONNUMBER == model.loanApplicationNumber)
                 .Select(x => new LoanDocumentViewModel
-            {
-                documentId = x.DOCUMENTID,
-                loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
-                loanReferenceNumber = x.LOANREFERENCENUMBER,
-                documentTitle = x.DOCUMENTTITLE,
-                documentTypeId = x.DOCUMENTTYPEID,
-                fileData = x.FILEDATA,
-                fileName = x.FILENAME,
-                fileExtension = x.FILEEXTENSION,
-                systemDateTime = x.SYSTEMDATETIME,
-                physicalFileNumber = x.PHYSICALFILENUMBER,
-                physicalLocation = x.PHYSICALLOCATION,
+                {
+                    documentId = x.DOCUMENTID,
+                    loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                    loanReferenceNumber = x.LOANREFERENCENUMBER,
+                    documentTitle = x.DOCUMENTTITLE,
+                    documentTypeId = x.DOCUMENTTYPEID,
+                    fileData = x.FILEDATA,
+                    fileName = x.FILENAME,
+                    fileExtension = x.FILEEXTENSION,
+                    systemDateTime = x.SYSTEMDATETIME,
+                    physicalFileNumber = x.PHYSICALFILENUMBER,
+                    physicalLocation = x.PHYSICALLOCATION,
+                    isPrimaryDocument = x.ISPRIMARYDOCUMENT,
                     dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
                 }).ToList();
         }
+
         public LoanDocumentViewModel GetLoanDocument(int documentId)
         {
             var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
@@ -161,12 +166,13 @@ namespace FintrakBanking.Repositories.Credit
                             loanReferenceNumber = x.LOANREFERENCENUMBER,
                             documentTitle = x.DOCUMENTTITLE,
                             documentTypeId = x.DOCUMENTTYPEID,
-                             fileData = x.FILEDATA,
+                            fileData = x.FILEDATA,
                             fileName = x.FILENAME,
                             fileExtension = x.FILEEXTENSION,
                             systemDateTime = x.SYSTEMDATETIME,
                             physicalFileNumber = x.PHYSICALFILENUMBER,
                             physicalLocation = x.PHYSICALLOCATION,
+                            isPrimaryDocument = x.ISPRIMARYDOCUMENT,
                             dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
                         });
 
@@ -184,12 +190,13 @@ namespace FintrakBanking.Repositories.Credit
                             loanReferenceNumber = x.LOANREFERENCENUMBER,
                             documentTitle = x.DOCUMENTTITLE,
                             documentTypeId = x.DOCUMENTTYPEID,
-                             fileData = x.FILEDATA,
+                            fileData = x.FILEDATA,
                             fileName = x.FILENAME,
                             fileExtension = x.FILEEXTENSION,
                             systemDateTime = x.SYSTEMDATETIME,
                             physicalFileNumber = x.PHYSICALFILENUMBER,
                             physicalLocation = x.PHYSICALLOCATION,
+                            isPrimaryDocument = x.ISPRIMARYDOCUMENT,
                         });
 
             return data.ToList();
@@ -213,6 +220,7 @@ namespace FintrakBanking.Repositories.Credit
                             systemDateTime = x.SYSTEMDATETIME,
                             physicalFileNumber = x.PHYSICALFILENUMBER,
                             physicalLocation = x.PHYSICALLOCATION,
+                            isPrimaryDocument = x.ISPRIMARYDOCUMENT,
                             dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
                         });
 
@@ -251,6 +259,7 @@ namespace FintrakBanking.Repositories.Credit
                     systemDateTime = x.SYSTEMDATETIME,
                     physicalFileNumber = x.PHYSICALFILENUMBER,
                     physicalLocation = x.PHYSICALLOCATION,
+                    isPrimaryDocument = x.ISPRIMARYDOCUMENT,
                     dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
                 }).FirstOrDefault();
             return media;
@@ -265,7 +274,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.TBL_MEDIA_LOAN_DOCUMENTS
                         where a.LOANREFERENCENUMBER == invoiceNo
-&& a.LOANAPPLICATIONNUMBER == applicationNumber
+                         && a.LOANAPPLICATIONNUMBER == applicationNumber
                         select a).FirstOrDefault();
             if (data != null)
             {

@@ -75,6 +75,7 @@
     <Compile Include="Enum\CASAAccountStatusEnum.cs" />
     <Compile Include="Enum\CheckListStatusEnum.cs" />
     <Compile Include="Enum\CheckListTargetTypeEnum.cs" />
+    <Compile Include="Enum\CollateralSubTypeEnum.cs" />
     <Compile Include="Enum\CollateralTypeEnum.cs" />
     <Compile Include="Enum\CompanyDirectorTypeEnum.cs" />
     <Compile Include="Enum\CreditBureauEnum.cs" />

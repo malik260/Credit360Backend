@@ -311,7 +311,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllProductClass().ToList(); 
+                var data = repo.GetAllProductClass().ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -332,7 +332,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetProductClassByProcessId(id) ;
+                var data = repo.GetProductClassByProcessId(id);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -532,7 +532,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                 
+
                 var data = repo.GetAllProductByProductClass(id).ToList();
                 if (data == null)
                 {
@@ -1170,5 +1170,92 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion Product Class Process
 
+        #region Product Classification
+
+        [HttpGet]
+        [Route("product-class-type")]
+        public HttpResponseMessage GetAllProductClassTypes()
+        {
+            try
+            {
+                var data = repo.GetAllProductClassType();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+            }
+
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("product-classification")]
+        public HttpResponseMessage GetAllProductClassification()
+        {
+            try
+            {
+                var data = repo.GetAllProductClassification();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+            }
+
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("product-classification")]
+        public HttpResponseMessage AddProductClassification([FromBody] ProductClassificationViewModel model)
+        {
+            try
+            {
+                string createUpdate = "";
+                if (model.productClassId != 0 || model.productClassId > 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                    if (repo.ValidateProductClassification(model.productClassName))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                               new { success = false, message = "Product Class with same name already exist." });
+                    }
+                }
+                model.userBranchId = (short)token.GetBranchId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = (short)token.GetCompanyId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+
+                var data = repo.AddUpdateProductClassification(model);
+                if (!data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"Product class not {createUpdate} successfully!" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = true, message = $"Product class {createUpdate} successfully!" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        #endregion Product Classification
     }
 }

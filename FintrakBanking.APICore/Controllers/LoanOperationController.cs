@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetRunningLoans(token.GetCompanyId, refNo);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
             {

@@ -34,6 +34,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     ADDRESS = company.address,
                     TELEPHONE = company.telephone,
                     EMAIL = company.email,
+                    LANGUAGEID = company.languageId,
                     DATEOFINCORPORATION = company.dateOfIncorporation.Value,
                     COUNTRYID = company.countryId,
                     CURRENCYID = company.currencyId,
@@ -50,6 +51,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     INITIALSUBSCRIPTION = company.initialSubscription,
                     REGISTEREDBY = company.registeredBy,
                     PARENTID = company.parentId,
+                    WEBSITE = company.website,
                     TRUSTEESADDRESS = company.trusteesAddress,
                     INVESTMENTOBJECTIVE = company.investmentObjective,
 
@@ -96,6 +98,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                  website = data.WEBSITE,
                                  countryId = data.COUNTRYID,
                                  country = c.NAME,
+                                 currencyId = data.CURRENCYID,
+                                 languageId = data.LANGUAGEID,
                                  companyClassId = data.COMPANYCLASSID ?? 1,
                                  companyTypeId = data.COMPANYTYPEID ?? 1,
                                  accountingStandardId = data.ACCOUNTINGSTANDARDID ?? 1,
@@ -120,7 +124,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                  companyName = data.NAME,
                                  address = data.ADDRESS,
                                  telephone = data.TELEPHONE,
+                                 languageId = data.LANGUAGEID,
                                  email = data.EMAIL,
+                                 currencyId = data.CURRENCYID,
                                  dateOfIncorporation = data.DATEOFINCORPORATION ?? DateTime.Now,
                                  natureOfBusinessId = data.NATUREOFBUSINESSID ?? 0,
                                  natureOfBusiness = data.TBL_NATURE_OF_BUSINESS.NAME,
@@ -178,6 +184,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     data.NAME = model.companyName;
                     data.ADDRESS = model.address;
                     data.TELEPHONE = model.telephone;
+                    data.LANGUAGEID = model.languageId;
                     data.EMAIL = model.email;
                     data.DATEOFINCORPORATION = model.dateOfIncorporation;
                     data.NATUREOFBUSINESSID = model.natureOfBusinessId;
@@ -231,7 +238,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (data != null)
                 {
                     data.COMPANYID = companyId;
-                    data.NAME = model.companyName;                  
+                    data.NAME = model.companyName;
                     data.SHAREHOLDERSFUND = model.shareHoldersFund;
 
                     return context.SaveChanges() > 0;
@@ -246,6 +253,27 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 throw ex;
             }
+        }
+        public IEnumerable<LanguageViewModel> GetLanguages()
+        {
+            var languages = (from data in context.TBL_LANGUAGE
+                             select new LanguageViewModel()
+                             {
+                                 languageCode = data.LANGUAGECODE,
+                                 language = data.LANGUAGENAME,
+                                 languageId = data.LANGUAGEID
+                             }).ToList();
+            return languages;
+        }
+        public IEnumerable<NatureOfBusinessViewModel> GetNatureOfBusiness()
+        {
+            var languages = (from data in context.TBL_NATURE_OF_BUSINESS
+                             select new NatureOfBusinessViewModel()
+                             {
+                                 natureOfBusinessId = data.NATUREOFBUSINESSID,
+                                 natureOfBusiness = data.NAME
+                             }).ToList();
+            return languages;
         }
     }
 }

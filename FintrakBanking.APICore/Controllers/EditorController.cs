@@ -36,12 +36,22 @@ namespace FintrakBanking.APICore.Controllers
             }
 
             message = "Image was saved correctly";
+            Response.AddHeader("Access-Control-Allow-Origin", "*");
 
-            return Content($"<html><body>" +
-                $"<script>window.parent.CKEDITOR.tools.callFunction({ CKEditorFuncNum },{ path },{ message });</script>" +
+            return Content(
+                //message
+                $"<html><body>" +
+                $"<script>" +
+                $"document.domain = \"http://172.0.0.1:88.com\";" +
+                $"var header = new Headers();" +
+                $"header.append(\"Access-Control-Allow-Origin\", \"*\");" +
+                $"alert(\"JAVASCRIPT OK!\");" +
+                $"window.parent.CKEDITOR.tools.callFunction({ CKEditorFuncNum },\"{ path }\",\"{ message }\");" +
+                $"</script>" +
                 $"<font color=\"green\"> Successfull upload!</color>" +
                 $"<img src=\"{ path }\" />" +
-                $"</body></html>");
+                $"</body></html>"
+                );
         }
 
         private string UniqueFileName(string actualfilename)

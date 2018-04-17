@@ -40,5 +40,9 @@ namespace FintrakBanking.Interfaces.Credit
         #region Frequency Type
         IEnumerable<FrequencyTypeViewModel> GetAllFrequencyType();
         #endregion
+
+        IEnumerable<ObligorLimitViewModel> GetAllObligorLimit();
+        bool AddUpdateRiskRating(ObligorLimitViewModel entity);
+        bool ValidateRiskRating(string riskRating);
     }
 }
