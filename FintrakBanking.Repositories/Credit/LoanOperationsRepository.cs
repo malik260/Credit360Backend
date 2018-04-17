@@ -5572,7 +5572,8 @@ namespace FintrakBanking.Repositories.Credit
                                        newtenor = 0,
                                        accrualedAmount = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero),
                                        totalAmount = decimal.Round(accruedInterest + l.OUTSTANDINGPRINCIPAL, 2, MidpointRounding.AwayFromZero),
-                                   });
+                                       firstInterestPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == refNo && x.PAYMENTDATE >= applicationDate).PAYMENTDATE,
+        });
             
             return runningLoan.ToList();
         }
