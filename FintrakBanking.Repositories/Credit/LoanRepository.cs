@@ -737,7 +737,7 @@ namespace FintrakBanking.Repositories.Credit
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join atrail in context.TBL_APPROVAL_TRAIL on ln.TERMLOANID equals atrail.TARGETID
                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                                  && atrail.OPERATIONID == (int)OperationsEnum.TermLoanBooking
+                                   && atrail.OPERATIONID == (int)OperationsEnum.TermLoanBooking
                                   && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                   && atrail.RESPONSESTAFFID == null
                             orderby ln.TERMLOANID descending
@@ -1465,34 +1465,34 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     workflow.StaffId = entity.createdBy;
                     workflow.CompanyId = entity.companyId;
-                    workflow.StatusId = (short)entity.approvalStatusId;
+                    workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
                     workflow.TargetId = entity.targetId;
                     workflow.Comment = entity.comment;
                     workflow.OperationId = entity.operationId;
                     workflow.DeferredExecution = true;
                     workflow.ExternalInitialization = false;
-                    workflow.Amount = entity.amount;
+                    //workflow.Amount = entity.amount;
                     workflow.LogActivity();
 
                     context.SaveChanges();
 
-                    var b = workflow.NextLevelId ?? 0;
-                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended)
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
+                    //var b = workflow.NextLevelId ?? 0;
+                    //if (b == 0 && workflow.NewState != (int)ApprovalState.Ended)
+                    //{
+                    //    trans.Rollback();
+                    //    throw new Exception("Approval Failed");
+                    //}
 
                     if (ApproveLoanBooking(entity.targetId, loanBookingRequestId, (short)workflow.StatusId, entity))
                     {
                         trans.Commit();
                         if (workflow.NewState != (int)ApprovalState.Ended)
                         {
-                            if (entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) return 1;
+                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 1;
                             else return 3;
                         } else
                         {
-                            if (entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) return 2;
+                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 2;
                             else return 3;
                         }
                     }
@@ -1504,8 +1504,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 catch (Exception e)
                 {
-                    trans.Rollback();
-                    throw new Exception("Approval failed. " + e.Message);
+                    //trans.Rollback();
+                    throw new Exception("Approval failed. Operation unsuccessful, an error occured while saving changes" );
                 }
             }
 
@@ -1524,6 +1524,7 @@ namespace FintrakBanking.Repositories.Credit
             var revolvingLoanRecord = context.TBL_LOAN_REVOLVING.Find(loanId);
             var contingentLoanRecord = context.TBL_LOAN_CONTINGENT.Find(loanId);
             var loanReferenceNumber = string.Empty;
+
             /* HANDLING APPROVAL THAT ARE STILL IN PROCESSING STATE */
             if (workflow.NewState != (int)ApprovalState.Ended)
             {
@@ -1531,27 +1532,37 @@ namespace FintrakBanking.Repositories.Credit
                 if (user.operationId == (int)OperationsEnum.TermLoanBooking)
                 {
                     loanReferenceNumber = loanRecord.LOANREFERENCENUMBER;
-                    if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    if (user.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                     {
                         loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
                         loanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
                         loanRecord.APPROVEDBY = user.staffId;
                         loanRecord.APPROVERCOMMENT = user.comment;
                     }
-                    else loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    else
+                    {
+                        loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                        context.SaveChanges();
+                        return true;
+                    }
                 }
                 /* SETTING THE CONTINGENT TABLE STATUS TO DISAPPROVE */
                 if (user.operationId == (int)OperationsEnum.ContigentLoanBooking)
                 {
                     loanReferenceNumber = contingentLoanRecord.LOANREFERENCENUMBER;
-                    if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    if (user.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                     {
                         contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
                         contingentLoanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
                         contingentLoanRecord.APPROVEDBY = user.staffId;
                         contingentLoanRecord.APPROVERCOMMENT = user.comment;
                     }
-                    else contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    else
+                    {
+                        contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                        context.SaveChanges();
+                        return true;
+                    }
                 }
                 /* SETTING THE REVOLVING LOAN TABLE STATUS TO DISAPPROVE */
                 if (user.operationId == (int)OperationsEnum.RevolvingLoanBooking)
@@ -1564,7 +1575,12 @@ namespace FintrakBanking.Repositories.Credit
                         revolvingLoanRecord.APPROVEDBY = user.staffId;
                         revolvingLoanRecord.APPROVERCOMMENT = user.comment;
                     }
-                    else revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    else
+                    {
+                        revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                        context.SaveChanges();
+                        return true;
+                    }
                 }
             }
 
@@ -1746,9 +1762,8 @@ namespace FintrakBanking.Repositories.Credit
                 //===================================================
 
             }
-
-            return this.context.SaveChanges() > 0 ;
-
+            
+              return this.context.SaveChanges() > 0;
         }
 
         /// <summary>
