@@ -44,9 +44,12 @@ namespace FintrakBanking.Interfaces.Admin
 
         bool isGroupExist(string groupName);
 
-        Task<bool> AddGroup(AppGroupViewModel group);
+        bool AddGroup(AppGroupViewModel group);
 
-        Task<bool> UpdateGroup(short groupId, AppGroupViewModel groupModel);
+        bool UpdateGroup(short groupId, AppGroupViewModel groupModel);
+        //Task<bool> AddGroup(AppGroupViewModel group);
+
+        // Task<bool> UpdateGroup(short groupId, AppGroupViewModel groupModel);
 
         #endregion
 

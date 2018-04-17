@@ -95,8 +95,13 @@ namespace FintrakBanking.ViewModels.Setups.Credit
 
     }
     public class ChecklistDefinitionAndDetailViewModel
-    {                
+    {
+        public ChecklistDefinitionAndDetailViewModel()
+        {
+            responseTypes = new List<CheckListStatusViewModel>();
+        }
         public int checkListDefinitionId { get; set; }
+        public long checkListDetailId { get; set; }
         public int responseTypeId { get; set; }
         public bool requireUpload { get; set; }
         public int checkListTypeId { get; set; }
@@ -106,5 +111,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string itemDescription { get; set; }
         public int checklistStatusId { get; set; }
         public short? productId { get; set; }
+
+        public List<CheckListStatusViewModel> responseTypes { get; set; }
     }
 }

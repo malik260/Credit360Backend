@@ -60,6 +60,7 @@ namespace FintrakBanking.Common.Enum
         FeeConcessionApproval = 49,
         CreditBureauSearch = 50,
         Restructured = 51,
-        ContingentLiabilityUsage = 52
+        ContingentLiabilityUsage = 52,
+        StaffRoleCreation = 55
     }
 }
