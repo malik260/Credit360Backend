@@ -68,4 +68,14 @@
         public decimal limitAmount { get; set; }
         public decimal amount { get; set; }
     }
+
+    public class ObligorLimitViewModel: GeneralEntity
+    {
+        public int riskRatingId { get; set; }
+        public string riskRating { get; set; }
+        public int companyId { get; set; }
+        public string description { get; set; }
+        public bool isInvestmentGrade { get; set; }
+        public double maxShareholderPercentage { get; set; }
+    }
 }

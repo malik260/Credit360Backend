@@ -194,11 +194,11 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, message = "company has been updated successfully" });
+                   new { success = true, message = "Changes Saved successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "company has not been updated successfully" });
+                   new { success = false, message = "Saved changes not successfull" });
             }
             catch (System.Exception ex)
             {

@@ -66,9 +66,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(250)]
         public string NEARESTBUSSTOP { get; set; }
 
-        public double? LONGITUDE { get; set; }
+        //public float? LONGITUDE { get; set; }
 
-        public double? LATITUDE { get; set; }
+        //public float? LATITUDE { get; set; }
 
         public byte PERFECTIONSTATUSID { get; set; }
 

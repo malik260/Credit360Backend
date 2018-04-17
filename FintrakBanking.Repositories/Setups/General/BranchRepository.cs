@@ -156,6 +156,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                addressLine1 = x.ADDRESSLINE1,
                                addressLine2 = x.ADDRESSLINE2,
                                comment = x.COMMENT,
+                               branchLimit = x.NPL_LIMIT,
                                deleted = x.DELETED,
                                regionId = x.REGIONID,
                                regionName = r.REGION_NAME
@@ -287,14 +288,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 branch.BRANCHNAME = model.branchName;
                 branch.BRANCHCODE = model.branchCode;
                 branch.NPL_LIMIT = model.branchLimit;
-
-                response = context.SaveChanges();
-
+            }
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.BranchUpdated,
-                    STAFFID = (int)model.lastUpdatedBy,
+                    STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Updated branch: '{model.branchName}' with code: {model.branchCode} ",
                     IPADDRESS = model.userIPAddress,
@@ -302,10 +301,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };
-                //end of Audit section -------------------------------
-            }
+            //end of Audit section -------------------------------
+            this.auditTrail.AddAuditTrail(audit);
 
-            return response != 0;
+            return context.SaveChanges() > 0;
         }
 
         public async Task<bool> DeleteBranch(short id, UserInfo user)
