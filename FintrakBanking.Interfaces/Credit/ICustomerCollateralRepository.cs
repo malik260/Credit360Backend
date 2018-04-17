@@ -14,6 +14,8 @@ namespace FintrakBanking.Interfaces.Credit
         #region Collateral
 
         bool AddCollateral(CollateralViewModel entity, byte[] file);
+     //   bool AddCollateral(CollateralViewModel entity);
+
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId);
@@ -81,5 +83,13 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<StockCompanyViewModel> getStockPrice();
 
         string FlagExpiredItemPolicies(DateTime currentDate);
+
+        List<CollateralViewModel> AddGuaranteeJoinCollateral(CollateralViewModel entity, byte[] bufer);
+
+        List<InsurancePolicies> GetCollateralInsurancePolicies(int collateralId);
+
+        void AddItemInsurancePolicy(int collateralId, CollateralViewModel entity);
+
+        bool AddNewItemInsurancePolicy(InsurancePolicies entity);
     }
 }

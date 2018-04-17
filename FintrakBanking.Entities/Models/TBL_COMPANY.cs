@@ -27,7 +27,6 @@ namespace FintrakBanking.Entities.Models
             TBL_CHART_OF_ACCOUNT = new HashSet<TBL_CHART_OF_ACCOUNT>();
             TBL_TEMP_CHART_OF_ACCOUNT = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT>();
             TBL_COLLATERAL_CUSTOMER = new HashSet<TBL_COLLATERAL_CUSTOMER>();
-            TBL_TEMP_COLLATERAL_CUSTOMER = new HashSet<TBL_TEMP_COLLATERAL_CUSTOMER>();
             TBL_COMPANY1 = new HashSet<TBL_COMPANY>();
             TBL_CREDIT_APPRAISAL_MEMORANDM = new HashSet<TBL_CREDIT_APPRAISAL_MEMORANDM>();
             TBL_CREDIT_TEMPLATE = new HashSet<TBL_CREDIT_TEMPLATE>();
@@ -37,6 +36,7 @@ namespace FintrakBanking.Entities.Models
             TBL_CUSTOMER_RISK_RATING = new HashSet<TBL_CUSTOMER_RISK_RATING>();
             TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
             TBL_DAILY_ACCRUAL = new HashSet<TBL_DAILY_ACCRUAL>();
+            TBL_DEPARTMENT = new HashSet<TBL_DEPARTMENT>();
             TBL_FINANCE_ENDOFDAY = new HashSet<TBL_FINANCE_ENDOFDAY>();
             TBL_FINANCE_TRANSACTION = new HashSet<TBL_FINANCE_TRANSACTION>();
             TBL_FINANCECURRENTDATE = new HashSet<TBL_FINANCECURRENTDATE>();
@@ -61,10 +61,10 @@ namespace FintrakBanking.Entities.Models
             TBL_PRODUCT_PRICE_INDEX = new HashSet<TBL_PRODUCT_PRICE_INDEX>();
             TBL_SETUP_COMPANY = new HashSet<TBL_SETUP_COMPANY>();
             TBL_SIGNATURE_DOCUMENT_STAFF = new HashSet<TBL_SIGNATURE_DOCUMENT_STAFF>();
-            TBL_SOLICITOR = new HashSet<TBL_SOLICITOR>();
             TBL_STAFF = new HashSet<TBL_STAFF>();
             TBL_TAX = new HashSet<TBL_TAX>();
             TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
+            TBL_TEMP_COLLATERAL_CUSTOMER = new HashSet<TBL_TEMP_COLLATERAL_CUSTOMER>();
             TBL_TEMP_CUSTOMER_EMPLOYER = new HashSet<TBL_TEMP_CUSTOMER_EMPLOYER>();
             TBL_TEMP_CUSTOMER_GROUP_MAPPNG = new HashSet<TBL_TEMP_CUSTOMER_GROUP_MAPPNG>();
             TBL_TEMP_CUSTOMER_GROUP = new HashSet<TBL_TEMP_CUSTOMER_GROUP>();
@@ -103,6 +103,8 @@ namespace FintrakBanking.Entities.Models
         public int COUNTRYID { get; set; }
 
         public short CURRENCYID { get; set; }
+
+        public short LANGUAGEID { get; set; }
 
         public short? NATUREOFBUSINESSID { get; set; }
 
@@ -233,14 +235,13 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_COLLATERAL_CUSTOMER> TBL_COLLATERAL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_CUSTOMER> TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_COMPANY> TBL_COMPANY1 { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY2 { get; set; }
 
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
+
+        public virtual TBL_LANGUAGE TBL_LANGUAGE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMORANDM> TBL_CREDIT_APPRAISAL_MEMORANDM { get; set; }
@@ -265,6 +266,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_DAILY_ACCRUAL> TBL_DAILY_ACCRUAL { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_DEPARTMENT> TBL_DEPARTMENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_FINANCE_ENDOFDAY> TBL_FINANCE_ENDOFDAY { get; set; }
@@ -339,9 +343,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_SIGNATURE_DOCUMENT_STAFF> TBL_SIGNATURE_DOCUMENT_STAFF { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_STAFF> TBL_STAFF { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -349,6 +350,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_COLLATERAL_CUSTOMER> TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_CUSTOMER_EMPLOYER> TBL_TEMP_CUSTOMER_EMPLOYER { get; set; }

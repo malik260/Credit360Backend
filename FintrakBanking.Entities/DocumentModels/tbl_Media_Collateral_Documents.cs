@@ -23,6 +23,8 @@ namespace FintrakBanking.Entities.DocumentModels
         [StringLength(400)]
         public string FILENAME { get; set; }
 
+        public int? TARGETID { get; set; }
+
         [Required]
         [StringLength(10)]
         public string FILEEXTENSION { get; set; }
