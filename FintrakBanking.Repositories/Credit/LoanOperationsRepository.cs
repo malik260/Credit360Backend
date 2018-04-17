@@ -5559,6 +5559,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal accruedInterest = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == refNo && x.DATE == applicationDate).ACCRUEDINTEREST;
             accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
             decimal outStandingBalance = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId).OUTSTANDINGPRINCIPAL;
+            DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == refNo && x.PAYMENTDATE >= applicationDate).PAYMENTDATE;
             outStandingBalance = decimal.Round(outStandingBalance, 2, MidpointRounding.AwayFromZero);
 
             decimal totalamount = (accruedInterest + outStandingBalance);
@@ -5590,10 +5591,10 @@ namespace FintrakBanking.Repositories.Credit
                                    newtenor = 0,
                                    accrualedAmount = accruedInterest,
                                    totalAmount = totalamount,
-                                   firstPrincipalPaymentDate = l.FIRSTPRINCIPALPAYMENTDATE,
-                                   firstInterestPaymentDate = l.FIRSTINTERESTPAYMENTDATE,
+                                   firstPrincipalPaymentDate = nextPaymentDate,
+                                   firstInterestPaymentDate = nextPaymentDate,
                                    principalFrequencyTypeId = l.PRINCIPALFREQUENCYTYPEID,
-                                   interestFrequencyTypeId = l.INTERESTFREQUENCYTYPEID
+                                   interestFrequencyTypeId = l.INTERESTFREQUENCYTYPEID,
                                }).FirstOrDefault();
 
             return runningLoan;
