@@ -240,8 +240,8 @@ namespace FintrakBanking.Repositories.Credit
                          //creditAppraisalCompleted = l.CreditAppraisalCompleted,
                          operationId = l.OPERATIONID,
                          operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == l.OPERATIONID).OPERATIONNAME,
-                         productAccountNumber = l.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                         productAccountName = l.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                         casaAccountNumber = l.TBL_CASA.PRODUCTACCOUNTNAME,
+                         productAccountName = l.TBL_PRODUCT.PRODUCTNAME,
                          subSectorName = l.TBL_SUB_SECTOR.NAME,
                          sectorName = l.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                          customerGroupId = l.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
@@ -269,7 +269,7 @@ namespace FintrakBanking.Repositories.Credit
                 loans = loans.Where(x =>
                 x.customerName.ToLower().Contains(search.searchString.ToLower())
                 || x.loanReferenceNumber.ToLower().Contains(search.searchString.ToLower())
-                || x.productAccountNumber.ToLower().Contains(search.searchString.ToLower())
+                || x.casaAccountNumber.ToLower().Contains(search.searchString.ToLower())
                 );
             }
 
