@@ -206,6 +206,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int newtenor { get; set; }
         public short scheduleTypeCategoryId { get; set; }
         public DateTime previousEffectiveDate { get; set; }
+        public decimal pastDueTotal { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
