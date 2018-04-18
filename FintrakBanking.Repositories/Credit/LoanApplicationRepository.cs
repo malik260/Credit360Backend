@@ -640,7 +640,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (definition.Count() != detail.Count())
                         {
                             isCheckListDone = false;
-                            str = str + "<br/>" + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                            str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
                             checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
                         }
 
@@ -648,8 +648,8 @@ namespace FintrakBanking.Repositories.Credit
                         if (ab.Any())
                         {
                             isCheckListDone = false;
-                            str = str + "One or More item(s) did not meet up with the condition."
-                                + " Please Check your response to confirm." + "<br/>";
+                            str = str + "One or More item(s) did not meet up with the condition." + Environment.NewLine
+                                + " Please Check your response to confirm." + Environment.NewLine;
                             checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
                         }
                     }

@@ -149,6 +149,25 @@ namespace FintrakBanking.Repositories.Setups.General
                         staffRole = context.TBL_STAFF_ROLE.Find(entity.staffRoleId);
                         if (staffRole != null)
                         {
+                            // Removing existing groups and activities
+                            var targetGroups = context.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == staffRole.STAFFROLEID).ToList();
+                            var targetActivities = context.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Where(x => x.STAFFROLEID == staffRole.STAFFROLEID).ToList();
+                            if (targetGroups.Any())
+                            {
+                                foreach (var item in targetGroups)
+                                {
+                                    context.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Remove(item);
+                                }
+                            }
+
+                            if (targetActivities.Any())
+                            {
+                                foreach (var item in targetActivities)
+                                {
+                                    context.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Remove(item);
+                                }
+                            }
+
                             staffRole.STAFFROLECODE = entity.staffRoleCode;
                             staffRole.STAFFROLENAME = entity.staffRoleName;
                             staffRole.TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups;
@@ -238,6 +257,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleName = c.STAFFROLENAME,
                             staffRoleCode = c.STAFFROLECODE,
                             staffRoleId = c.STAFFROLEID,
+                            operationId = (int)OperationsEnum.StaffRoleCreation,
                             userGroup = c.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == c.STAFFROLEID).Select(x => new UserGroup
                             {
                                 groupId = x.GROUPID,
@@ -348,6 +368,24 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
 
+            // Removing existing groups and activities
+            var targetGroups = context.TBL_PROFILE_STAFF_ROLE_GROUP.Where(x => x.STAFFROLEID == staffRoleId).ToList();
+            var targetActivities = context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.Where(x => x.STAFFROLEID == staffRoleId).ToList();
+            if (targetGroups.Any())
+            {
+                foreach (var item in targetGroups)
+                {
+                    context.TBL_PROFILE_STAFF_ROLE_GROUP.Remove(item);
+                }
+            }
+
+            if (targetActivities.Any())
+            {
+                foreach (var item in targetActivities)
+                {
+                    context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.Remove(item);
+                }
+            }
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {

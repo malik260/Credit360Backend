@@ -13,6 +13,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int staffRoleId { get; set; }
         public string staffRoleCode { get; set; }
         public string staffRoleName { get; set; }
+        public int operationId { get; set; }
         public List<UserGroup> userGroup { get; set; }
         public List<UserActivities> activities { get; set; }
     }
