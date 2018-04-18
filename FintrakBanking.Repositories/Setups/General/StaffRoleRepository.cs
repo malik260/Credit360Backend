@@ -232,7 +232,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         join atrail in context.TBL_APPROVAL_TRAIL on c.STAFFROLEID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                               && atrail.RESPONSESTAFFID == null
-                              && atrail.OPERATIONID == (int)OperationsEnum.UserCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                              && atrail.OPERATIONID == (int)OperationsEnum.StaffRoleCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new StaffRoleViewModel()
                         {
                             staffRoleName = c.STAFFROLENAME,
@@ -251,7 +251,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             }).ToList()
                         }).GroupBy(x => x.staffRoleId).Select(g => g.FirstOrDefault());
 
-            return data;
+            return data.ToList();
         }
 
         public bool GoForApproval(ApprovalViewModel entity)
