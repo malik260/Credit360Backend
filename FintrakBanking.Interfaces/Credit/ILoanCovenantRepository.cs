@@ -16,10 +16,14 @@ namespace FintrakBanking.Interfaces.Customer
         Task<bool> AddLoanCovenantDetail(LoanCovenantDetailViewModel entity);
         Task<bool> DeleteLoanCovenantDetail(int loanCovenantDetailId, UserInfo user );
         Task<bool> UpdateLoanCovenantDetail(int loanCovenantDetailId, LoanCovenantDetailViewModel entity);
-       // IEnumerable<LoanCovenantDetailViewModel> GetLoanCovenantDetail(int companyId);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanCovenantDetailByCovenantType(int covenantTypeId, int companyId);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanCovenantDetailByloanId(int loanId, int companyId);
         IEnumerable<LoanCovenantTypeViewModel> GetLoanCovenantDetailById(int covenantDetailId, int companyId);
+
+       bool DeleteLoanApplicationCovenant(int covenantId, UserInfo user);
+       bool AddLoanApplicationCovenant(LoanCovenantDetailViewModel entity);
+        IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationCovenant(int applicationId);
+
         #endregion Loan Covenant Detail
 
         #region Loan Covenant Type

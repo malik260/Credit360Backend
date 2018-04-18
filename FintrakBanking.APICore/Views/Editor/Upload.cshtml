@@ -6,8 +6,9 @@
 <head>
 </head>
 <body>
-    <div> 
-        Upload successful!
-    </div>
+    <script type='text/javascript'>
+        alert('@Url.Content("http://localhost:51336/Content/Images/Editor/Uploads/" + @ViewBag.FileName)');
+    </script>
+    Image Uploaded.
 </body>
 </html>

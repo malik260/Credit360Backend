@@ -130,8 +130,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? collateralUsableAmount { get; set; }
         public string nearestLandMark { get; set; }
         public string nearestBusStop { get; set; }
-        public decimal? longitude { get; set; }
-        public decimal? latitude { get; set; }
+        public double? longitude { get; set; }
+        public double? latitude { get; set; }
         public byte? perfectionStatusId { get; set; }
         public string perfectionStatusReason { get; set; }
 

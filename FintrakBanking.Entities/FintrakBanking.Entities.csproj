@@ -239,6 +239,7 @@
     <Compile Include="Models\TBL_JOB_TYPE_SUB.cs" />
     <Compile Include="Models\TBL_KYC_DOCUMENTTYPE.cs" />
     <Compile Include="Models\TBL_KYC_ITEM.cs" />
+    <Compile Include="Models\TBL_LANGUAGE.cs" />
     <Compile Include="Models\TBL_LIMIT.cs" />
     <Compile Include="Models\TBL_LIMIT_DETAIL.cs" />
     <Compile Include="Models\TBL_LIMIT_METRIC.cs" />
@@ -250,6 +251,7 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATERL.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATRL2.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_COVENANT.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_ARCH.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_BG.cs" />
@@ -349,6 +351,8 @@
     <Compile Include="Models\TBL_PROFILE_GROUP_ACTIVITY.cs" />
     <Compile Include="Models\TBL_PROFILE_PRIVILEDGE.cs" />
     <Compile Include="Models\TBL_PROFILE_PRIVILEDGE_ACTIVIT.cs" />
+    <Compile Include="Models\TBL_PROFILE_STAFF_ROLE_ADT_ACT.cs" />
+    <Compile Include="Models\TBL_PROFILE_STAFF_ROLE_GROUP.cs" />
     <Compile Include="Models\TBL_PROFILE_USER.cs" />
     <Compile Include="Models\TBL_PROFILE_USERGROUP.cs" />
     <Compile Include="Models\TBL_PUBLIC_HOLIDAY.cs" />
@@ -364,8 +368,6 @@
     <Compile Include="Models\TBL_SETUP_GLOBAL.cs" />
     <Compile Include="Models\TBL_SIGNATURE_DOCUMENT_STAFF.cs" />
     <Compile Include="Models\TBL_SIGNATURE_DOCUMENT_TYPE.cs" />
-    <Compile Include="Models\TBL_SOLICITOR.cs" />
-    <Compile Include="Models\TBL_SOLICITOR_STATE_MAPPING.cs" />
     <Compile Include="Models\TBL_SOURCE_APPLICATION.cs" />
     <Compile Include="Models\TBL_STAFF.cs" />
     <Compile Include="Models\TBL_STAFF_JOBTITLE.cs" />
