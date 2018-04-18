@@ -308,10 +308,10 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
-
-            var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
+            var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                              // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now) <= 30 ) 
+                                              // && (DateTime.Now - a.DATETIMECREATED).Days <= 30 
+                                              // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30 ) 
                                                select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,
@@ -325,9 +325,10 @@ namespace FintrakBanking.Repositories.Credit
                                                    dateTimeCreated = a.DATETIMECREATED,
                                                    searchCount = 0,
                                                    uploadCount = 0,
-                                                   createdBy = a.CREATEDBY
-                                               };
-            return customerLoanCreditBureauData.ToList();
+                                                   createdBy = a.CREATEDBY,
+                                                   dayAgo = DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value
+                                               }).ToList();
+            return customerLoanCreditBureauData;
         }
 
         public bool VerifyCustomerValidCreditBureau(int customerId)

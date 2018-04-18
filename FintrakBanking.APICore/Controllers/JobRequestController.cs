@@ -77,7 +77,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetJobRequestByStaffId(token.GetStaffId);
+                var data = repo.GetJobRequestByStaffId(token.GetStaffId, token.GetBranchId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -213,30 +213,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("job-request")]
-        public HttpResponseMessage AddJobRequest([FromBody] JobRequestViewModel entity)
-        {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+        //[HttpPost]
+        //[Route("job-request")]
+        //public HttpResponseMessage AddJobRequest([FromBody] JobRequestViewModel entity)
+        //{
+        //    try
+        //    {
+        //        entity.userBranchId = (short)token.GetBranchId;
+        //        entity.companyId = token.GetCompanyId;
+        //        entity.createdBy = token.GetStaffId;
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddJobRequest(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
+        //        var data = repo.AddJobRequest(entity);
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+        //    }
+        //}
 
         [HttpPost]
         [Route("job-request/collateral-customer/job/{actionName}/charge/{actionType}/{loanApplicationDetailId}")]

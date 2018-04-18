@@ -459,7 +459,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         
-        private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId)
+        private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId, int branchId)
         {
             var allstaff = this.context.TBL_STAFF.Select(s => new //OperationStaffViewModel
             {
@@ -467,8 +467,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 name = s.LASTNAME + " " + s.FIRSTNAME
             });
 
+            var thisStaff = this.context.TBL_STAFF.Find(staffId);
+
+
               return  context.TBL_JOB_REQUEST
-               .Where(t => ((t.DEPARTMENTUNITID == context.TBL_STAFF.Where(l=>l.STAFFID == staffId).FirstOrDefault().TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID) || (t.SENDERSTAFFID == staffId) || (t.REASSIGNEDTO == staffId) ))
+               .Where(t => ((t.DEPARTMENTUNITID == context.TBL_STAFF.Where(l=>l.STAFFID == staffId).FirstOrDefault().TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID) || (t.SENDERSTAFFID == staffId) || (t.REASSIGNEDTO == staffId)) && t.TBL_STAFF.BRANCHID == branchId)
                .Select(
                   x =>
                      new JobRequestViewModel
@@ -478,7 +481,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobRequestCode = x.JOBREQUESTCODE,
                     targetId = x.TARGETID,
                     jobTypeId = x.JOBTYPEID,
+                    jobTypeName = x.TBL_JOB_TYPE.JOBTYPENAME,
                     senderStaffId = x.SENDERSTAFFID,
+                    senderRole = context.TBL_STAFF.Where(c => c.STAFFID == x.SENDERSTAFFID).FirstOrDefault().TBL_STAFF_ROLE.STAFFROLENAME, //x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                    senderUnit = context.TBL_DEPARTMENT_UNIT.Where(c=>c.DEPARTMENTUNITID == context.TBL_STAFF.Where(z=>z.STAFFID == x.SENDERSTAFFID).FirstOrDefault().DEPARTMENTUNITID).FirstOrDefault().DEPARTMENTUNITNAME, // +"(" + x.TBL_DEPARTMENT.DEPARTMENTNAME +")",
+                   // senderDepartment =  x.TBL_DEPARTMENT.DEPARTMENTNAME,
                     receiverStaffId = (int)x.RECEIVERSTAFFID,
                     reassignedTo = x.REASSIGNEDTO,
                     isReassigned = x.ISREASSIGNED,
@@ -508,9 +515,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                      }).OrderByDescending(x=>x.arrivalDate).Take(500);
         }
 
-        public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId)
+        public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId, int branchId)
         {
-            return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId); 
+            return GetAllGlobalJobRequest(staffId, branchId).OrderByDescending(x => x.jobRequestId); 
         }
 
 
