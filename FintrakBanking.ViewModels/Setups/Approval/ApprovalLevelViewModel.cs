@@ -45,4 +45,20 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public double? feeRate { get; set; }
         public double? interestRate { get; set; }
     }
+
+    public class PresetRouteViewModel : GeneralEntity
+    {
+        public int applicationId { get; set; }
+        public int finalApprovalLevelId { get; set; }
+        public int nextApplicationStatusId { get; set; }
+
+        public List<FintrakDropDownSelectList> approvalLevels { get; set; }
+        public List<FintrakDropDownSelectList> applicationStatus { get; set; }
+    }
+
+    public class FintrakDropDownSelectList
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+    }
 }

@@ -29,5 +29,8 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int operationId, int companyId); 
         IQueryable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId);
         IQueryable<TBL_APPROVAL_TRAIL> GetApprovalTrail(int operationId, int targetId, int approvalLevelId, int numberOfApprovals);
+
+        bool PresetRoute(PresetRouteViewModel entity);
+        PresetRouteViewModel GetPresetRouteCollection(int operationId, int? classId);
     }    
 }

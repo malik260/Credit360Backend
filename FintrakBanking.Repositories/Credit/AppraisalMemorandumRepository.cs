@@ -871,7 +871,10 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationId = x.a.LOANAPPLICATIONID,
                         applicationDate = x.a.APPLICATIONDATE,
                         applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
-                        branchId = x.a.BRANCHID,
+                        branchId = x.a.PRODUCTCLASSID,
+                        productClassId = x.a.PRODUCTCLASSID,
+                        finalApprovalLevelId=x.a.FINALAPPROVAL_LEVELID,
+                        nextApplicationStatusId=x.a.NEXTAPPLICATIONSTATUSID,
                         customerId = x.a.CUSTOMERID,
                         applicationAmount = x.a.APPLICATIONAMOUNT,
                         interestRate = x.a.INTERESTRATE,
@@ -891,6 +894,7 @@ namespace FintrakBanking.Repositories.Credit
                         //sla time, timein timeout, timespent, responsible person
                         currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                         approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
+                        
                     })
                 .Where(x => levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null))
                 .GroupBy(d => d.loanApplicationId)
