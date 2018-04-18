@@ -54,12 +54,13 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
+                    if (repo.ValidateRegionName(entity.regionName.Trim()))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = $"Region with name {entity.regionName} already exist." });
+                    }
                 }
-                if (repo.ValidateRegionName(entity.regionName.Trim()))
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                  new { success = false, message = $"Region with name {entity.regionName} already exist." });
-                }
+              
                 entity.companyId = token.GetCompanyId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;

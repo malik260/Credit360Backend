@@ -1,8 +1,13 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Admin;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -17,12 +22,17 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
+        private IWorkflow workFlow;
+        private IApprovalLevelStaffRepository level;
         public StaffRoleRepository(FinTrakBankingContext _context, IAuditTrailRepository _auditTrail,
-             IGeneralSetupRepository _genSetup)
+             IGeneralSetupRepository _genSetup, IWorkflow _workFlow,
+            IApprovalLevelStaffRepository _level)
         {
             this.context = _context;
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
+            workFlow = _workFlow;
+            level = _level;
         }
 
 
@@ -46,7 +56,18 @@ namespace FintrakBanking.Repositories.Setups.General
                        staffRoleName = a.STAFFROLENAME,
                        companyId = (short)a.COMPANYID,
                        staffRoleCode = a.STAFFROLECODE,
-                       staffRoleId = a.STAFFROLEID
+                       staffRoleId = a.STAFFROLEID,
+                       userGroup = a.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == a.STAFFROLEID).Select(x => new UserGroup
+                       {
+                           groupId = x.GROUPID,
+                           groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
+                       }).ToList(),
+                       activities = a.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Where(x => x.STAFFROLEID == a.STAFFROLEID).Select(d => new UserActivities
+                       {
+                           activityId = d.ACTIVITYID,
+                           userId = d.STAFFROLEID,
+                           activityName = d.TBL_PROFILE_ACTIVITY.ACTIVITYNAME
+                       }).ToList()
                    };
 
         }
@@ -59,7 +80,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleName = a.STAFFROLENAME,
                             companyId = (short)a.COMPANYID,
                             staffRoleId = a.STAFFROLEID,
-                            staffRoleCode = a.STAFFROLECODE
+                            staffRoleCode = a.STAFFROLECODE,
                         });
             return role; 
         }
@@ -79,6 +100,48 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 try
                 {
+                    bool output = false;
+
+                    List<TBL_TEMP_PROFILE_STAFF_ROL_GRP> tempGroups = new List<TBL_TEMP_PROFILE_STAFF_ROL_GRP>();
+                    List<TBL_TEMP_PROFILE_STAFF_ROLE_AA> tempActivities = new List<TBL_TEMP_PROFILE_STAFF_ROLE_AA>();
+
+                    if (entity.activities.Any())
+                    {
+                        foreach (var item in entity.activities)
+                        {
+                            var userActivity = new TBL_TEMP_PROFILE_STAFF_ROLE_AA()
+                            {
+                                ACTIVITYID = item.activityId,
+                                CANADD = false,
+                                CANEDIT = false,
+                                CANAPPROVE = false,
+                                CANDELETE = false,
+                                CANVIEW = false,
+                                CREATEDBY = entity.createdBy,
+                                DATETIMECREATED = DateTime.Now,
+                                ISCURRENT = true,
+                                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
+                                
+                            };
+                            tempActivities.Add(userActivity);
+                        }
+                    }
+
+                    if (entity.userGroup.Count > 0)
+                    {
+                        foreach (var item in entity.userGroup)
+                        {
+                            var grpItem = new TBL_TEMP_PROFILE_STAFF_ROL_GRP()
+                            {
+                                GROUPID = item.groupId,
+                                DATETIMECREATED = DateTime.Now,
+                                CREATEDBY = entity.createdBy,
+                                 ISCURRENT = true,
+                                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
+                            };
+                            tempGroups.Add(grpItem);
+                        }
+                    }
 
                     TBL_STAFF_ROLE staffRole;
                     if (entity.staffRoleId > 0)
@@ -88,6 +151,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             staffRole.STAFFROLECODE = entity.staffRoleCode;
                             staffRole.STAFFROLENAME = entity.staffRoleName;
+                            staffRole.TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups;
+                            staffRole.TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities;
                         }
                     }
                     else
@@ -96,7 +161,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             STAFFROLECODE = entity.staffRoleCode,
                             STAFFROLENAME = entity.staffRoleName,
-                            COMPANYID = entity.companyId
+                            COMPANYID = entity.companyId,
+                            TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups,
+                            TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities
                         };
                         context.TBL_STAFF_ROLE.Add(staffRole);
                     }
@@ -113,22 +180,206 @@ namespace FintrakBanking.Repositories.Setups.General
                         SYSTEMDATETIME = DateTime.Now
                     };
 
-                    this.auditTrail.AddAuditTrail(audit);
+                    using (var trans = context.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            auditTrail.AddAuditTrail(audit);
+                            output =  context.SaveChanges() > 0;
 
-                    var response = context.SaveChanges() != 0;
-                    return response;
+                            var model = new ApprovalViewModel
+                            {
+                                staffId = entity.createdBy,
+                                companyId = entity.companyId,
+                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                                targetId = staffRole.STAFFROLEID,
+                                operationId = (int)OperationsEnum.StaffRoleCreation,
+                                BranchId = entity.userBranchId,
+                                externalInitialization = true
+                            };
+                            var response = workFlow.LogForApproval(model);
+
+                            if (response)
+                            {
+                                trans.Commit();
+                            }
+                            return output;
+                        }
+                        catch (Exception ex)
+                        {
+                            trans.Rollback();
+                            throw new Exception(ex.Message);
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
                     throw new Exception(ex.Message);
                 }
             }
-
             return false;
         }
         public bool ValidateStaffRole(string staffRoleCode, string staffRoleName)
         {
             return context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE == staffRoleCode || x.STAFFROLENAME == staffRoleName).Any();
+        }
+
+        public IEnumerable<StaffRoleViewModel> GetStaffRoleAwaitingApproval(int staffId, int companyId)
+        {
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.UserCreation).ToList();
+
+            var data = (from c in context.TBL_STAFF_ROLE
+                        join atrail in context.TBL_APPROVAL_TRAIL on c.STAFFROLEID equals atrail.TARGETID
+                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                              && atrail.RESPONSESTAFFID == null
+                              && atrail.OPERATIONID == (int)OperationsEnum.StaffRoleCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                        select new StaffRoleViewModel()
+                        {
+                            staffRoleName = c.STAFFROLENAME,
+                            staffRoleCode = c.STAFFROLECODE,
+                            staffRoleId = c.STAFFROLEID,
+                            userGroup = c.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == c.STAFFROLEID).Select(x => new UserGroup
+                            {
+                                groupId = x.GROUPID,
+                                groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
+                            }).ToList(),
+                            activities = c.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Where(x => x.STAFFROLEID == c.STAFFROLEID).Select(a => new UserActivities
+                            {
+                                activityId = a.ACTIVITYID,
+                                userId = a.STAFFROLEID,
+                                activityName = a.TBL_PROFILE_ACTIVITY.ACTIVITYNAME
+                            }).ToList()
+                        }).GroupBy(x => x.staffRoleId).Select(g => g.FirstOrDefault());
+
+            return data.ToList();
+        }
+
+        public bool GoForApproval(ApprovalViewModel entity)
+        {
+            entity.operationId = (int)OperationsEnum.StaffRoleCreation;
+
+            entity.externalInitialization = false;
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
+
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApproveUser(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+        private bool ApproveUser(int staffRoleId, short approvalStatusId, UserInfo user)
+        {
+            var tempGroup = (from a in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP where a.STAFFROLEID == staffRoleId select a).ToList();
+            var tempActivities = (from a in context.TBL_TEMP_PROFILE_STAFF_ROLE_AA where a.STAFFROLEID == staffRoleId select a).ToList();
+
+            tempGroup.FirstOrDefault().APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+            tempGroup.FirstOrDefault().ISCURRENT = false;
+            tempGroup.FirstOrDefault().DATEAPPROVED = DateTime.Now;
+
+            tempActivities.FirstOrDefault().APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+            tempActivities.FirstOrDefault().ISCURRENT = false;
+           
+            List<TBL_PROFILE_STAFF_ROLE_GROUP> userGroups = new List<TBL_PROFILE_STAFF_ROLE_GROUP>();
+            List<TBL_PROFILE_STAFF_ROLE_ADT_ACT> userActivities = new List<TBL_PROFILE_STAFF_ROLE_ADT_ACT>();
+
+            if (tempActivities.Any())
+            {
+                foreach (var item in tempActivities)
+                {
+                    var userActivity = new TBL_PROFILE_STAFF_ROLE_ADT_ACT()
+                    { 
+                        STAFFROLEID = item.STAFFROLEID,
+                        ACTIVITYID = item.ACTIVITYID,
+                        CANADD = false,
+                        CANEDIT = false,
+                        CANAPPROVE = false,
+                        CANDELETE = false,
+                        CANVIEW = false,
+                        CREATEDBY = item.CREATEDBY,
+                        DATETIMECREATED = item.DATETIMECREATED
+                    };
+                    userActivities.Add(userActivity);
+                }
+            }
+
+            if (tempGroup.Count > 0)
+            {
+                foreach (var item in tempGroup)
+                {
+                    var grpItem = new TBL_PROFILE_STAFF_ROLE_GROUP()
+                    {
+                        STAFFROLEID = item.STAFFROLEID,
+                        GROUPID = item.GROUPID,
+                        DATETIMECREATED = DateTime.Now,
+                        CREATEDBY = item.CREATEDBY,
+                        DATEAPPROVED = DateTime.Now,
+                        APPROVALSTATUS = true
+                    };
+                    userGroups.Add(grpItem);
+                }
+            }
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.UserApproved,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Approved Staff Role Group and Activities with staffRoleId : '{staffRoleId}'",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            try
+            {
+                context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.AddRange(userActivities);
+                context.TBL_PROFILE_STAFF_ROLE_GROUP.AddRange(userGroups);
+                auditTrail.AddAuditTrail(audit);
+                // Audit Section ---------------------------
+                var response = context.SaveChanges() > 0;
+
+                if (response)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
     }
 }
