@@ -5561,8 +5561,10 @@ namespace FintrakBanking.Repositories.Credit
             decimal outStandingBalance = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId).OUTSTANDINGPRINCIPAL;
             DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == refNo && x.PAYMENTDATE >= applicationDate).PAYMENTDATE;
             outStandingBalance = decimal.Round(outStandingBalance, 2, MidpointRounding.AwayFromZero);
+            var data = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId);
+            decimal pastDue = decimal.Round((data.PASTDUEINTEREST + data.PASTDUEPRINCIPAL + data.INTERESTONPASTDUEINTEREST + data.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
+            decimal totalamount = (accruedInterest + outStandingBalance + pastDue);
 
-            decimal totalamount = (accruedInterest + outStandingBalance);
 
             var runningLoan = (from l in context.TBL_LOAN
                                where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo
@@ -5578,7 +5580,7 @@ namespace FintrakBanking.Repositories.Credit
                                    outstandingInterest = l.OUTSTANDINGINTEREST,
                                    outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
                                    principalAmount = l.PRINCIPALAMOUNT,
-                                   currency = l.TBL_CURRENCY.CURRENCYCODE,
+                                   currency = l.TBL_CURRENCY.CURRENCYNAME,
                                    loanReferenceNumber = l.LOANREFERENCENUMBER,
                                    effectiveDate = applicationDate,//DateTime.Now,
                                    previousEffectiveDate = l.EFFECTIVEDATE,
@@ -5595,6 +5597,8 @@ namespace FintrakBanking.Repositories.Credit
                                    firstInterestPaymentDate = nextPaymentDate,
                                    principalFrequencyTypeId = l.PRINCIPALFREQUENCYTYPEID,
                                    interestFrequencyTypeId = l.INTERESTFREQUENCYTYPEID,
+                                   pastDueTotal = pastDue,
+
                                }).FirstOrDefault();
 
             return runningLoan;
