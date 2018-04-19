@@ -35,6 +35,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short accountingStandardId { get; set; }
         public short managementTypeId { get; set; }
         public int parentId { get; set; }
+        public short languageId { get; set; }
         public byte[] CompanyLogo { get; set; }
         public int createdBy { get; set; }
         public int? lastUpdatedBy { get; set; }
@@ -43,5 +44,18 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string natureOfBusiness { get; set; }
         public decimal? shareHoldersFund { get; set; }
 
+    }
+    public class LanguageViewModel
+    {
+        public int languageId { get; set; }
+        public string language { get; set; }
+        public string languageCode { get; set; }
+        public string languageWithCode { get { return (language + " - " + languageCode); } }
+    }
+    public class NatureOfBusinessViewModel
+    {
+        public int natureOfBusinessId { get; set; }
+        public string natureOfBusiness { get; set; }
+       
     }
 }

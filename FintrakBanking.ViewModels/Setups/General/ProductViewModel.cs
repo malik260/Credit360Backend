@@ -162,4 +162,16 @@ namespace FintrakBanking.ViewModels.Setups.General
             }
         }
     }
+
+    public class ProductClassificationViewModel: GeneralEntity
+    {
+        public short productClassId { get; set; }
+        public string productClassName { get; set; }
+        public short productClassTypeId { get; set; }
+        public string productClassType { get; set; }
+        public short productClassProcessId { get; set; }
+        public string productClassProcess { get; set; }
+        public short customerTypeId { get; set; }
+        public string customerType { get; set; }
+    }
 }

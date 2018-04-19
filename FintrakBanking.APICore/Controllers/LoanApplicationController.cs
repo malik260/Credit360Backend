@@ -553,7 +553,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
+                    new { success = false, message = $"Error: Preliminary Evaluation Note failed to save." });
             }
         }
 

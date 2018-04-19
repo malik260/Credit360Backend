@@ -596,7 +596,7 @@ namespace FintrakBanking.Repositories.Admin
             return context.TBL_PROFILE_GROUP.Any(x => x.GROUPNAME.ToLower() == groupName);
         }
 
-        public async Task<bool> AddGroup(AppGroupViewModel group)
+        public  bool AddGroup(AppGroupViewModel group)
         {
             var newGroup = new TBL_PROFILE_GROUP()
             {
@@ -604,9 +604,7 @@ namespace FintrakBanking.Repositories.Admin
                 CREATEDBY = group.createdBy,
                 DATETIMECREATED = DateTime.Now
             };
-
-            this.context.TBL_PROFILE_GROUP.Add(newGroup);
-            var response = await context.SaveChangesAsync();
+            this.context.TBL_PROFILE_GROUP.Add(newGroup);  
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -622,10 +620,10 @@ namespace FintrakBanking.Repositories.Admin
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
-            return response > 0;
+            return context.SaveChanges() > 0;
         }
 
-        public async Task<bool> UpdateGroup(short groupId, AppGroupViewModel groupModel)
+        public bool UpdateGroup(short groupId, AppGroupViewModel groupModel)
         {
             var targetGroup = context.TBL_PROFILE_GROUP.Find(groupId);
 
@@ -635,8 +633,6 @@ namespace FintrakBanking.Repositories.Admin
                 targetGroup.DATETIMEUPDATED = DateTime.Now;
                 targetGroup.LASTUPDATEDBY = groupModel.createdBy;
             }
-
-            var response = await context.SaveChangesAsync();
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -652,7 +648,7 @@ namespace FintrakBanking.Repositories.Admin
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
-            return response != 0;
+            return  context.SaveChanges() != 0;
         }
 
         #endregion Group

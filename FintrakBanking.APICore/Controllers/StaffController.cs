@@ -149,14 +149,60 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var staffInfo = repo.GetStaffNames();
+                var staffInfo = repo.GetStaffNames(token.GetCompanyId);
 
                 if (staffInfo == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo.ToList() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-relationship-Manager/{staffId}")]
+        public HttpResponseMessage GetStaffRelationshipManagerByStaffId(int staffId)
+        {
+            try
+            {
+                var staffInfo = repo.GetStaffRelationshipManagerByStaffId(staffId);
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-business-Manager/{staffId}")]
+        public HttpResponseMessage GetStaffBusinessManagerByStaffId(int staffId)
+        {
+            try
+            {
+                var staffInfo = repo.GetStaffBusinessManagerByStaffId(staffId);
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
             }
             catch (System.Exception ex)
             {
@@ -172,7 +218,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var staffInfo = repo.GetStaffByUnitId(departmentUnitId);
+                var staffInfo = repo.GetStaffByUnitId(token.GetCompanyId, departmentUnitId);
 
                 if (staffInfo == null)
                 {

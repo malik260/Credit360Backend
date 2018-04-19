@@ -265,7 +265,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var staff = level.Staff.Where(x => x.STAFFID == this.staffId);
                 if (staff.Any() == false)
                 {
-                    throw new Exception("This User is not in the current workflow level of the process!");
+                    var relieverStaff = context.TBL_STAFF_RELIEF.FirstOrDefault(x =>  x.DELETED == false && x.ISACTIVE == true
+                            && x.STARTDATE <= systemDate && x.ENDDATE >= systemDate && x.RELIEFSTAFFID == this.staffId);
+                    if (relieverStaff == null)
+                    {
+                        throw new Exception("This User is not in the current workflow level of the process!");
+                    }
+                    staff = level.Staff.Where(x => x.STAFFID == relieverStaff.STAFFID);
                 }
                 this.neededNumberOfApproval = level.NumberOfApprovals;
             }
@@ -768,7 +774,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         
         private bool Authorization() // TODO: intended to manage delegated staff actions
         {
-
             if (this.staffId > 0) // <---- mockup
             {
                 return true;

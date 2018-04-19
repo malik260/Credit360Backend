@@ -529,5 +529,82 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion
 
+        #region Obligor Limit 
+        public IEnumerable<ObligorLimitViewModel> GetAllObligorLimit()
+        {
+            var data = (from a in _context.TBL_CUSTOMER_RISK_RATING
+                        select new ObligorLimitViewModel
+                        {
+                            riskRatingId = a.RISKRATINGID,
+                            riskRating = a.RISKRATING,
+                            description = a.DESCRIPTION,
+                            companyId = a.COMPANYID,
+                            isInvestmentGrade = a.ISINVESTMENTGRADE,
+                            maxShareholderPercentage = a.MAX_SHAREHOLDER_FUND_PERCENTAG,
+                        }).ToList();
+            return data;
+        }
+        public bool AddUpdateRiskRating(ObligorLimitViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+
+                    TBL_CUSTOMER_RISK_RATING risk;
+                    if (entity.riskRatingId > 0)
+                    {
+                        risk = _context.TBL_CUSTOMER_RISK_RATING.Find(entity.riskRatingId);
+                        if (risk != null)
+                        {
+                            risk.RISKRATING = entity.riskRating;
+                            risk.DESCRIPTION = entity.description;
+                            risk.ISINVESTMENTGRADE = entity.isInvestmentGrade;
+                            risk.MAX_SHAREHOLDER_FUND_PERCENTAG = entity.maxShareholderPercentage;
+                        }
+                    }
+                    else
+                    {
+                        risk = new TBL_CUSTOMER_RISK_RATING()
+                        {
+                            RISKRATING = entity.riskRating,
+                            DESCRIPTION = entity.description,
+                            ISINVESTMENTGRADE = entity.isInvestmentGrade,
+                            MAX_SHAREHOLDER_FUND_PERCENTAG = entity.maxShareholderPercentage,
+                            COMPANYID = entity.companyId
+                        };
+                        _context.TBL_CUSTOMER_RISK_RATING.Add(risk);
+                    }
+                    // Audit Section ----------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = (short)entity.userBranchId,
+                        DETAIL = "Added/Modified Staff Role",
+                        IPADDRESS = entity.userIPAddress,
+                        URL = entity.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+
+                    this._auditTrail.AddAuditTrail(audit);
+
+                    var response = _context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+
+            return false;
+        }
+        public bool ValidateRiskRating(string riskRating)
+        {
+            return _context.TBL_CUSTOMER_RISK_RATING.Where(x => x.RISKRATING == riskRating).Any();
+        }
+        #endregion
     }
 }

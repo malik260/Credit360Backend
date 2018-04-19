@@ -23,8 +23,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(2000)]
         public string REMARK { get; set; }
 
-        public string LIENREFERENCENUMBER { get; set; }
-
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

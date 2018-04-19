@@ -26,12 +26,13 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Limits
-        [HttpGet][Route("limit")]
+        [HttpGet]
+        [Route("limit")]
         public HttpResponseMessage GetAllLimit()
         {
             try
             {
-               
+
                 var response = repo.GetAllLimit(token.GetCompanyId);
                 if (!response.Any())
                 {
@@ -40,18 +41,19 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
 
-        [HttpGet][Route("limit/{limitId}")]
+        [HttpGet]
+        [Route("limit/{limitId}")]
         public HttpResponseMessage GetLimitById(int limitId)
         {
             try
             {
-               
+
                 var response = repo.GetLimitById(limitId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
@@ -62,12 +64,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost][Route("limit")]
+        [HttpPost]
+        [Route("limit")]
         public HttpResponseMessage AddLimit([FromBody] LimitViewModel model)
         {
             try
             {
-               
+
                 model.userBranchId = (short)token.GetBranchId;
                 //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 model.applicationUrl = HttpContext.Current.Request.Path;
@@ -87,7 +90,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut][Route("limit/{limitId}")]
+        [HttpPut]
+        [Route("limit/{limitId}")]
         public HttpResponseMessage UpdateLimit(int LimitId, [FromBody] LimitViewModel model)
         {
             try
@@ -112,12 +116,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete][Route("limit/{limitId}")]
+        [HttpDelete]
+        [Route("limit/{limitId}")]
         public HttpResponseMessage DeleteLimit(int LimitId)
         {
             try
             {
-               
+
 
                 UserInfo user = new UserInfo()
                 {
@@ -140,7 +145,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Limits Details
-        [HttpGet][Route("limit-detailObligor")]
+        [HttpGet]
+        [Route("limit-detailObligor")]
         public HttpResponseMessage GetLimitDetailObligor()
         {
             try
@@ -242,12 +248,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("limit-detail/{limitDetailId}")]
+        [HttpGet]
+        [Route("limit-detail/{limitDetailId}")]
         public HttpResponseMessage GetLimitDetailById(int limitDetailId)
         {
             try
             {
-               
+
                 var response = repo.GetLimitDetailById(limitDetailId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
@@ -258,18 +265,19 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost][Route("limit-detail")]
+        [HttpPost]
+        [Route("limit-detail")]
         public HttpResponseMessage AddLimitDetail([FromBody] LimitDetailViewModel model)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper() ;
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
                 //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-                if(model.limitTypeId != (int)LimitType.PrelimemaryEvaluationNote && model.targetId == -1)
+                if (model.limitTypeId != (int)LimitType.PrelimemaryEvaluationNote && model.targetId == -1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Please select your entry to continue" });
                 }
@@ -286,7 +294,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost][Route("limit-detail-multiple")]
+        [HttpPost]
+        [Route("limit-detail-multiple")]
         public HttpResponseMessage AddMultipleLimitDetail([FromBody] List<LimitDetailViewModel> model)
         {
             try
@@ -313,12 +322,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut][Route("limit-detail/{limitDetailId}")]
+        [HttpPut]
+        [Route("limit-detail/{limitDetailId}")]
         public HttpResponseMessage UpdateLimitDetail(int limitDetailId, [FromBody] LimitDetailViewModel model)
         {
             try
             {
-               
+
                 model.userBranchId = (short)token.GetBranchId;
                 //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 model.applicationUrl = HttpContext.Current.Request.Path;
@@ -338,7 +348,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete][Route("limit-detail/{limitDetailId}")]
+        [HttpDelete]
+        [Route("limit-detail/{limitDetailId}")]
         public HttpResponseMessage DeleteLimitDetail(int limitDetailId)
         {
             try
@@ -365,7 +376,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Limits Metric
-        [HttpGet][Route("limit-metric")]
+        [HttpGet]
+        [Route("limit-metric")]
         public HttpResponseMessage GetAllLimitMetric()
         {
             try
@@ -382,7 +394,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Limits Type
-        [HttpGet][Route("limit-type")]
+        [HttpGet]
+        [Route("limit-type")]
         public HttpResponseMessage GetAllLimitType()
         {
             try
@@ -399,7 +412,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Limits Value Type
-        [HttpGet][Route("limit-value-type")]
+        [HttpGet]
+        [Route("limit-value-type")]
         public HttpResponseMessage GetAllLimitValueType()
         {
             try
@@ -416,18 +430,79 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Frequency Type
-        [HttpGet][Route("limit-frequency-type")]
+        [HttpGet]
+        [Route("limit-frequency-type")]
         public HttpResponseMessage GetAllFrequencyType()
         {
             try
             {
                 var response = repo.GetAllFrequencyType();
 
-                return  Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
             }
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        #endregion
+
+        #region Obligor Limit 
+        [HttpGet]
+        [Route("obligor-limit")]
+        public HttpResponseMessage GetAllObligorLimit()
+        {
+            try
+            {
+                var response = repo.GetAllObligorLimit();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("obligor-limit")]
+        public HttpResponseMessage AddUpdateObligorLimit([FromBody] ObligorLimitViewModel entity)
+        {
+            try
+            {
+                string createUpdate = "";
+                if (entity.riskRatingId != 0 || entity.riskRatingId > 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                    if (repo.ValidateRiskRating(entity.riskRating))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                               new { success = false, message = "Risk Rating with same Name or Code already exist." });
+                    }
+                }
+                entity.userBranchId = (short)token.GetBranchId;
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = (short)token.GetCompanyId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddUpdateRiskRating(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Changes Saved Successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Saved Changes not Successfull" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error saving this record {e.Message}" });
             }
         }
         #endregion

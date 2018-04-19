@@ -17,6 +17,10 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<CompanyViewModel> GetCompanies();
 
+
+        IEnumerable<LanguageViewModel> GetLanguages();
+
+        IEnumerable<NatureOfBusinessViewModel> GetNatureOfBusiness();
         //bool DeleteAccount(short accountId);
     }
 }

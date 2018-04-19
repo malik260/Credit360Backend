@@ -377,8 +377,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 return context.TBL_APPROVAL_LEVEL.Where(x => groups.Contains(x.GROUPID)).Select(x => x.APPROVALLEVELID).Distinct();
             }
 
-            return staffLevels.Union(roleLevelIds); // without relief code
-            //return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
+            //return staffLevels.Union(roleLevelIds); // without relief code
+            return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
         }
     }
 }

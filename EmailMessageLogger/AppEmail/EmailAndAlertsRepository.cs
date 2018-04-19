@@ -2669,6 +2669,173 @@ namespace FintrakBanking.Repositories.AppEmail
 
 
 
+        public bool SendAlertsForCollateralPropertyDueForVisitation(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        {
+            TBL_MONITORING_ALERT_SETUP alertsetupForCovenantsOverDue = (from x in alertSetups
+                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.CollateralApproachingRevaluation
+                                                                        select x).FirstOrDefault();
+            DateTime currentDate = DateTime.Now;
+            List<CollateralViewModel> loanDetails = (from a in context.TBL_COLLATERAL_CUSTOMER
+                                                     join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                                     join c in context.TBL_STAFF on a.CREATEDBY equals c.STAFFID
+                                                     join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
+                                                     join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
+                                                     join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
+                                                      join v in context.TBL_COLLATERAL_VISITATION on a.COLLATERALCUSTOMERID equals v.COLLATERALCUSTOMERID
+                                                     where DbFunctions.DiffDays((DateTime?)v.VISITATIONDATE, (DateTime?)currentDate) < (int?)alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
+                                                     && d.REQUIREVISITATION == true
+                                                     select new CollateralViewModel
+                                                     {
+                                                         collateralTypeId = a.COLLATERALTYPEID,
+                                                         collateralType = d.COLLATERALTYPENAME,
+                                                         collateralCode = a.COLLATERALCODE,
+                                                         collateralSubType = e.COLLATERALSUBTYPENAME,
+                                                         customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                                         propertyName = f.PROPERTYNAME,
+                                                         lastVisitationDate = v.VISITATIONDATE,
+                                                         nextVisitationDate = v.VISITATIONDATE,
+                                                         visitationCycle = (int)e.VISITATIONCYCLE,
+                                                         relationshipManagerId = a.CREATEDBY,
+                                                         relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
+                                                         relationshipManagerEmail = c.EMAIL,
+                                                         notificationDuration = (int)DbFunctions.DiffDays((DateTime?)f.LASTVALUATIONDATE, (DateTime?)currentDate)
+                                                     }).ToList();
+            if (loanDetails.Count != 0)
+            {
+                SendAlertsForCollateralPropertyDueForVisitationRM(loanDetails, alertsetupForCovenantsOverDue.MESSAGE_TITLE);
+                if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS1.Trim() != string.Empty)
+                {
+                    List<CollateralViewModel> escalationLevelOne = (from x in loanDetails
+                                                                    where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD1
+                                                                    select x).ToList();
+                    if (escalationLevelOne.Count != 0)
+                    {
+                        SendAlertsForCollateralPropertyDueForVisitationMonitoringTeam(escalationLevelOne, alertsetupForCovenantsOverDue);
+                    }
+                }
+                if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS2.Trim() != string.Empty)
+                {
+                    List<CollateralViewModel> escalationLevelTwo = (from x in loanDetails
+                                                                    where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD2
+                                                                    select x).ToList();
+                    if (escalationLevelTwo.Count != 0)
+                    {
+                        SendAlertsForCollateralPropertyDueForVisitationMonitoringTeam(escalationLevelTwo, alertsetupForCovenantsOverDue);
+                    }
+                }
+                if (alertsetupForCovenantsOverDue.RECIPIENTEMAILS3.Trim() != string.Empty)
+                {
+                    List<CollateralViewModel> escalationLevelThree = (from x in loanDetails
+                                                                      where x.notificationDuration <= alertsetupForCovenantsOverDue.NOTIFICATION_PERIOD3
+                                                                      select x).ToList();
+                    if (escalationLevelThree.Count != 0)
+                    {
+                        SendAlertsForCollateralPropertyDueForVisitationMonitoringTeam(escalationLevelThree, alertsetupForCovenantsOverDue);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public void SendAlertsForCollateralPropertyDueForVisitationRM(List<CollateralViewModel> loanDetails, string title)
+        {
+            try
+            {
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
+                List<int> dataList = (from g in loanDetails
+                                      select g.relationshipManagerId).ToList();
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
+                {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
+                    List<CollateralViewModel> mailList = (from x in loanDetails
+                                                          where x.relationshipManagerId == item2.STAFFID
+                                                          select x).ToList();
+                    string dataTable2 = "<table><tr><th>Collateral Code</th><th>Collateral Type</th><th>Collateral Sub Type</th><th>Property</th><th>Last Visitation Date</th><th>Visitation Cycle</th><th>Next Visitation Date</th></tr>";
+                    foreach (CollateralViewModel item3 in mailList)
+                    {
+                        dataTable2 = dataTable2 + $"<tr><td>{item3.collateralCode}</td><td>{item3.collateralType}</td><td>{item3.collateralSubType}</td>" + $"<td>{item3.propertyName}</td><td>{item3.lastVisitationDate:d}</td><td>{item3.visitationCycle}</td><td>{item3.nextVisitationDate:d}</td></tr>";
+                    }
+                    dataTable2 += "</table>";
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following collaterals which are due for visitation. <br /><br />" + $"{dataTable2}";
+                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                    MessageLogViewModel messageModel = new MessageLogViewModel
+                    {
+                        MessageSubject = title,
+                        MessageBody = mailBody,
+                        MessageStatusId = 1,
+                        MessageTypeId = 1,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = recipient,
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = DateTime.Now
+                    };
+                    if (SaveMessageDetails(messageModel) != 0)
+                    {
+                        response += (response = " Collateral  Property Revaluation was logged successfully, ");
+                    }
+                    else
+                    {
+                        response += (response = " Collateral  Property Revaluation logged has failed, ");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void SendAlertsForCollateralPropertyDueForVisitationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
+        {
+            try
+            {
+                string recipient = alertSetups.RECIPIENTEMAILS2.Trim();
+                string dataTable = "<table><tr><th>Collateral Code</th><th>Collateral Type</th><th>Collateral Sub Type</th><th>Property</th><th>Last Visitation Date</th><th>Visitation Cycle</th><th>Next Visitation Date</th></tr>";
+                foreach (CollateralViewModel item3 in loanDetails)
+                {
+                    dataTable = dataTable + $"<tr><td>{item3.collateralCode}</td><td>{item3.collateralType}</td><td>{item3.collateralSubType}</td>" + $"<td>{item3.propertyName}</td><td>{item3.lastVisitationDate:d}</td><td>{item3.visitationCycle}</td><td>{item3.nextVisitationDate:d}</td></tr>";
+                }
+                dataTable += "</table>";
+                string messageSubject = alertSetups.MESSAGE_TITLE;
+                string messageContent = "Dear Team, <br /><br />This is to bring your attention the following collaterals which are due for visitation. <br /><br />" + $"{dataTable}";
+                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = recipient,
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now
+                };
+                if (SaveMessageDetails(messageModel) != 0)
+                {
+                    response += (response = " Collateral  Property Revaluation was logged successfully, ");
+                }
+                else
+                {
+                    response += (response = " Collateral  Property Revaluation logged has failed, ");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
         public int SaveMessageDetails(MessageLogViewModel model)
         {
             var message = new TBL_MESSAGE_LOG()

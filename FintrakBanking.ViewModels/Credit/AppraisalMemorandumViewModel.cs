@@ -97,6 +97,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalLevelId { get; set; }
         public int groupRoleId { get; set; }
         public bool canEscalate { get; set; }
+        public bool owner { get; set; }
     }
 
     public class DocumentationViewModel : GeneralEntity

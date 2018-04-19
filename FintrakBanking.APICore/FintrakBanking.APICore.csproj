@@ -423,7 +423,6 @@
     </Compile>
     <Compile Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx.designer.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>

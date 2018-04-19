@@ -13,7 +13,9 @@ namespace FintrakBanking.Entities.Models
         public TBL_PROFILE_GROUP()
         {
             TBL_PROFILE_GROUP_ACTIVITY = new HashSet<TBL_PROFILE_GROUP_ACTIVITY>();
+            TBL_PROFILE_STAFF_ROLE_GROUP = new HashSet<TBL_PROFILE_STAFF_ROLE_GROUP>();
             TBL_PROFILE_USERGROUP = new HashSet<TBL_PROFILE_USERGROUP>();
+            TBL_TEMP_PROFILE_STAFF_ROL_GRP = new HashSet<TBL_TEMP_PROFILE_STAFF_ROL_GRP>();
         }
 
         [Key]
@@ -35,6 +37,12 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_PROFILE_GROUP_ACTIVITY> TBL_PROFILE_GROUP_ACTIVITY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_PROFILE_STAFF_ROLE_GROUP> TBL_PROFILE_STAFF_ROLE_GROUP { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PROFILE_USERGROUP> TBL_PROFILE_USERGROUP { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_PROFILE_STAFF_ROL_GRP> TBL_TEMP_PROFILE_STAFF_ROL_GRP { get; set; }
     }
 }
