@@ -374,7 +374,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new Exception("Timed out");
             }
-
         }
 
         public CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo)
@@ -388,7 +387,6 @@ namespace FintrakBanking.Repositories.Credit
                 createdBy = searchInfo.createdBy,
                 casaAccountId = searchInfo.casaAccountId,
                 creditBureauId = searchInfo.creditBureauId
-
             };
 
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -414,7 +412,6 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var creditBureauProcess = new CreditBureauProcess();
-
             CRCSearchResult searchResponse = new CRCSearchResult();
 
             using (var docTrans = docContext.Database.BeginTransaction())
@@ -467,13 +464,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool saveCrcPdfFile(CRCRequestViewModel searchInfo, SearchInput creditBureauInputs)
         {
-
             var creditBureauProcess = new CreditBureauProcess();
-
             CRCSearchResult searchResponse = new CRCSearchResult();
 
             using (var docTrans = docContext.Database.BeginTransaction())
-
             using (var trans = context.Database.BeginTransaction())
             {
                 try
@@ -509,7 +503,6 @@ namespace FintrakBanking.Repositories.Credit
                             //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                             throw new Exception("An error occured");
                         }
-
                     }
                     else
                     {
@@ -523,7 +516,6 @@ namespace FintrakBanking.Repositories.Credit
                     throw new Exception(ex.Message.ToString());
                 }
             }
-
         }
 
         private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)

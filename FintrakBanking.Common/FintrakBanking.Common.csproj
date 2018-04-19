@@ -88,6 +88,7 @@
     <Compile Include="Enum\FeeConcessionTypeEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />
     <Compile Include="Enum\CASAPostNoStatusEnum.cs" />
+    <Compile Include="Enum\JobSubTypeEnum.cs" />
     <Compile Include="Enum\JobTypeEnum.cs" />
     <Compile Include="Enum\LimitValueTypeEnum.cs" />
     <Compile Include="Enum\LoanApplicationStatusEnum.cs" />

@@ -213,30 +213,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpPost]
-        //[Route("job-request")]
-        //public HttpResponseMessage AddJobRequest([FromBody] JobRequestViewModel entity)
-        //{
-        //    try
-        //    {
-        //        entity.userBranchId = (short)token.GetBranchId;
-        //        entity.companyId = token.GetCompanyId;
-        //        entity.createdBy = token.GetStaffId;
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
+        [HttpPost]
+        [Route("job-request/legal-collateral-job")]
+        public HttpResponseMessage EffectLegaCollateralJobs([FromBody] JobRequestCollateralSearchViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
 
-        //        var data = repo.AddJobRequest(entity);
-        //        if (data)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-        //        }
+                var data = repo.EffectLegaCollateralJobs(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Collateral Instructions Saved Successfully" });
+                }
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Collateral Instructions failed to save " });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record", error = ex.InnerException });
+            }
+        }
 
         [HttpPost]
         [Route("job-request/collateral-customer/job/{actionName}/charge/{actionType}/{loanApplicationDetailId}")]
