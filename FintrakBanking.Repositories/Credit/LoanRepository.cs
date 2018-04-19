@@ -806,8 +806,8 @@ namespace FintrakBanking.Repositories.Credit
                                 middleName = ln.TBL_CUSTOMER.MIDDLENAME,
                                 lastName = ln.TBL_CUSTOMER.LASTNAME,
                                 customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
-                                productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                                productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                                casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                productAccountName = ln.TBL_PRODUCT.PRODUCTNAME,
                                 loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                 customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
                                 currencyId = ln.CURRENCYID,
@@ -2529,8 +2529,8 @@ namespace FintrakBanking.Repositories.Credit
                             //creditAppraisalCompleted = l.CreditAppraisalCompleted,
                             operationId = l.OPERATIONID,
                             operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == l.OPERATIONID).OPERATIONNAME,
-                            productAccountNumber = l.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                            productAccountName = l.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            casaAccountNumber = l.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            productAccountName = l.TBL_PRODUCT.PRODUCTNAME,
                             subSectorName = l.TBL_SUB_SECTOR.NAME,
                             sectorName = l.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                             customerGroupId = l.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
@@ -2839,7 +2839,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (!String.IsNullOrEmpty(searchModel.productAccountNumber))
             {
-                loans = loans.Where(x => x.productAccountNumber == searchModel.productAccountNumber);
+                loans = loans.Where(x => x.casaAccountNumber == searchModel.productAccountNumber);
             }
 
             if (!String.IsNullOrEmpty(searchModel.customerName))
@@ -2857,7 +2857,7 @@ namespace FintrakBanking.Repositories.Credit
                 loans = loans.Where(x => x.productAccountName.ToLower().Contains(searchModel.loanName.ToLower()));
             }
 
-            loans.OrderBy(x => x.productAccountNumber).ThenBy(x => x.productAccountName);
+            loans.OrderBy(x => x.casaAccountNumber).ThenBy(x => x.productAccountName);
 
             return loans;
         }
@@ -4290,8 +4290,8 @@ namespace FintrakBanking.Repositories.Credit
                                            operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                            subSectorName = a.TBL_SUB_SECTOR.NAME,
                                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                                           productAccountNumber = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                                           productAccountName = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                                           casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                           productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
                                            customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
                                            loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
@@ -4398,8 +4398,8 @@ namespace FintrakBanking.Repositories.Credit
                                            operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                            subSectorName = a.TBL_SUB_SECTOR.NAME,
                                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                                           productAccountNumber = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                                           productAccountName = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                                           casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                           productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
                                            customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
                                            loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
@@ -4510,8 +4510,8 @@ namespace FintrakBanking.Repositories.Credit
                                            operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                            subSectorName = a.TBL_SUB_SECTOR.NAME,
                                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                                           productAccountNumber = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                                           productAccountName = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                                           casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                           productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
                                            customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
                                            loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
@@ -4663,8 +4663,8 @@ namespace FintrakBanking.Repositories.Credit
                                    operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                    subSectorName = a.TBL_SUB_SECTOR.NAME,
                                    sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                                   productAccountNumber = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                                   productAccountName = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                                   casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                   productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
                                    customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
                                    loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                                    loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
@@ -4750,8 +4750,8 @@ namespace FintrakBanking.Repositories.Credit
                                    operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                    subSectorName = a.TBL_SUB_SECTOR.NAME,
                                    sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                                   productAccountNumber = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                                   productAccountName = a.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                                   casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                   productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
                                    customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
                                    loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                                    loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
