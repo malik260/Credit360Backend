@@ -80,6 +80,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class JobRequestCollateralSearchViewModel : GeneralEntity
     {
+        public int casaAccountId { get; set; }
+
         public bool requireCharting { get; set; }
         public bool requireVerification { get; set; }
         public bool requireSearch { get; set; }

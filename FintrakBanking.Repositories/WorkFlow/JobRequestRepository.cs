@@ -763,8 +763,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             var jobRequest = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
             var baseApplication = context.TBL_LOAN_APPLICATION_DETAIL.Find(jobRequest.TARGETID);
             var state = context.TBL_STATE.Find(model.collateralStateId);
+
+            var casa = context.TBL_CASA.Find(model.casaAccountId);
+
+            if (casa == null)
+                throw new Exception("Customer account number is not supplied");
+
             Decimal chargeAmount = 0;
-            
 
             var collateralStateDetails = context.TBL_STATE.Find(model.collateralStateId);
             if (model.requireCharting)
@@ -772,12 +777,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 chargeAmount = chargeAmount + (collateralStateDetails.CHARTINGAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                     JobSubTypeId = (short)JobSubTypeEnum.LegalCharting,
-                     amount = collateralStateDetails.CHARTINGAMOUNT,
-                     jobRequestId = model.jobRequestId,
-                     createdBy = model.createdBy,
-                     accreditedConsultantId = model.solicitorId,
-                     accountNumber = model.accountNumber
+                    JobSubTypeId = (short)JobSubTypeEnum.LegalCharting,
+                    amount = collateralStateDetails.CHARTINGAMOUNT,
+                    jobRequestId = model.jobRequestId,
+                    createdBy = model.createdBy,
+                    accreditedConsultantId = model.solicitorId,
+                    accountNumber = model.accountNumber
                 };
                 saveJobRequestDetail(detail);
             }
@@ -812,29 +817,38 @@ namespace FintrakBanking.Repositories.WorkFlow
                 saveJobRequestDetail(detail);
             }
 
-                if (model.additionalCharge > 0)
+            if (model.additionalCharge > 0)
+            {
+                chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
+                var detail = new JobRequestDetailViewModel
                 {
-                    chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
-                    var detail = new JobRequestDetailViewModel
-                    {
-                        JobSubTypeId = (short)JobSubTypeEnum.OtherLegalJobs,
-                        amount = model.additionalCharge,
-                        description = model.additionalChargeJustification,
-                        jobRequestId = model.jobRequestId,
-                        createdBy = model.createdBy,
-                        accreditedConsultantId = model.solicitorId,
-                        accountNumber = model.accountNumber
-                    };
-                    saveJobRequestDetail(detail);
-                }
- 
-                if (baseApplication != null)
-                {
-                    var casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == baseApplication.TBL_LOAN_APPLICATION.CASAACCOUNTID);
-                    BasicTrasactionSourceInputModel input = new BasicTrasactionSourceInputModel();
+                    JobSubTypeId = (short)JobSubTypeEnum.OtherLegalJobs,
+                    amount = model.additionalCharge,
+                    description = model.additionalChargeJustification,
+                    jobRequestId = model.jobRequestId,
+                    createdBy = model.createdBy,
+                    accreditedConsultantId = model.solicitorId,
+                    accountNumber = model.accountNumber
+                };
+                saveJobRequestDetail(detail);
+            }
 
-                    //DebitAccount(0, 3, casa.FirstOrDefault(), chargeAmount, 3, input);  // SERIOUS ERROR
-                }
+            if (baseApplication != null)
+            {
+                BasicTrasactionSourceInputModel input = new BasicTrasactionSourceInputModel();
+                input.createdBy = model.createdBy;
+                input.description = "Collateral Search";
+                input.sourceApplicationId = (short)baseApplication.LOANAPPLICATIONDETAILID;
+                input.companyId = model.companyId;
+                input.userBranchId = model.userBranchId;
+
+                var suspense = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == (short)OperationsEnum.CollateralSearch);
+
+                if (!suspense.Any())
+                    throw new Exception("Suspense account not defined");
+
+                //DebitCustomer(suspense.FirstOrDefault().GLACCOUNTID, casa, chargeAmount, input);
+            }
 
             return context.SaveChanges() > 0;
         }
@@ -1127,55 +1141,55 @@ namespace FintrakBanking.Repositories.WorkFlow
         #endregion Job-Request Document
 
         #region Account Posting (Debit & Credit)
-        private void DebitAccount(int debitGLId, int creditGLId, TBL_CASA casa, decimal chargeAmount, int? debitAccountId, BasicTrasactionSourceInputModel basicInput)
+        private void DebitCustomer(int glAccountIdCR, TBL_CASA casa, decimal chargeAmount, BasicTrasactionSourceInputModel inputs)
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            debit.operationId = (int)OperationsEnum.CreditBureauSearch;
-            debit.description = basicInput.description;
+            debit.operationId = (int)OperationsEnum.CollateralSearch;
+            debit.description = inputs.description;
             debit.valueDate = general.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = casa.CURRENCYID;
-            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, basicInput.companyId).sellingRate;
+            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, inputs.companyId).sellingRate;
             debit.isApproved = true;
-            debit.postedBy = basicInput.createdBy;
-            debit.approvedBy = basicInput.createdBy;
+            debit.postedBy = inputs.createdBy;
+            debit.approvedBy = inputs.createdBy;
             debit.approvedDate = debit.transactionDate;
             debit.approvedDateTime = DateTime.Now;
-            debit.sourceApplicationId = basicInput.sourceApplicationId;
-            debit.companyId = basicInput.companyId;
+            debit.sourceApplicationId = inputs.sourceApplicationId;
+            debit.companyId = inputs.companyId;
             debit.batchCode = transactionCode;
-            debit.glAccountId = debitGLId; // (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
+            debit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL ;
             debit.sourceReferenceNumber = transactionCode;
-            debit.casaAccountId = debitAccountId;
+            debit.casaAccountId = casa.CASAACCOUNTID;
             debit.debitAmount = chargeAmount;
             debit.creditAmount = 0;
-            debit.sourceBranchId = basicInput.userBranchId;
+            debit.sourceBranchId = inputs.userBranchId;
             debit.destinationBranchId = casa.BRANCHID;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.CreditBureauSearch;
-            credit.description = basicInput.description;
+            credit.operationId = (int)OperationsEnum.CollateralSearch;
+            credit.description = inputs.description;
             credit.valueDate = general.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = casa.CURRENCYID;
-            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, basicInput.companyId).sellingRate;
+            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, inputs.companyId).sellingRate;
             credit.isApproved = true;
-            credit.postedBy = basicInput.createdBy;
-            credit.approvedBy = basicInput.createdBy;
+            credit.postedBy = inputs.createdBy;
+            credit.approvedBy = inputs.createdBy;
             credit.approvedDate = credit.transactionDate;
             credit.approvedDateTime = DateTime.Now;
-            credit.sourceApplicationId = basicInput.sourceApplicationId;
-            credit.companyId = basicInput.companyId;
+            credit.sourceApplicationId = inputs.sourceApplicationId;
+            credit.companyId = inputs.companyId;
             credit.batchCode = transactionCode;
-            credit.glAccountId = creditGLId;
+            credit.glAccountId = glAccountIdCR; 
             credit.sourceReferenceNumber = transactionCode;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = chargeAmount;
-            credit.sourceBranchId = basicInput.userBranchId;
-            credit.destinationBranchId = basicInput.userBranchId;
+            credit.sourceBranchId = inputs.userBranchId;
+            credit.destinationBranchId = inputs.userBranchId;
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
@@ -1184,62 +1198,61 @@ namespace FintrakBanking.Repositories.WorkFlow
             financeTransaction.PostTransaction(inputTransactions);
         }
 
-        private void ReverseDebit(int debitGLId, int creditGLId, TBL_CASA casa, decimal chargeAmount, int? creditAccountId, BasicTrasactionSourceInputModel basicInput)
+        private void ReverseDebit(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, BasicTrasactionSourceInputModel inputs)
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            debit.operationId = (int)OperationsEnum.CreditBureauSearch;
-            debit.description = basicInput.description;
+            debit.operationId = (int)OperationsEnum.CollateralSearch;
+            debit.description = inputs.description;
             debit.valueDate = general.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = casa.CURRENCYID;
-            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, basicInput.companyId).sellingRate;
+            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, inputs.companyId).sellingRate;
             debit.isApproved = true;
-            debit.postedBy = basicInput.createdBy;
-            debit.approvedBy = basicInput.createdBy;
+            debit.postedBy = inputs.createdBy;
+            debit.approvedBy = inputs.createdBy;
             debit.approvedDate = debit.transactionDate;
             debit.approvedDateTime = DateTime.Now;
-            debit.sourceApplicationId = basicInput.sourceApplicationId;
-            debit.companyId = basicInput.companyId;
+            debit.sourceApplicationId = inputs.sourceApplicationId;
+            debit.companyId = inputs.companyId;
             debit.batchCode = transactionCode;
-            debit.glAccountId = debitGLId;
+            debit.glAccountId = creditBureau.GLACCOUNTID;
             debit.sourceReferenceNumber = transactionCode;
             debit.casaAccountId = null;
             debit.debitAmount = chargeAmount;
             debit.creditAmount = 0;
-            debit.sourceBranchId = basicInput.userBranchId;
+            debit.sourceBranchId = inputs.userBranchId;
             debit.destinationBranchId = casa.BRANCHID;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.CreditBureauSearch;
-            credit.description = basicInput.description;
+            credit.operationId = (int)OperationsEnum.CollateralSearch;
+            credit.description = inputs.description;
             credit.valueDate = general.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = casa.CURRENCYID;
-            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, basicInput.companyId).sellingRate;
+            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, inputs.companyId).sellingRate;
             credit.isApproved = true;
-            credit.postedBy = basicInput.createdBy;
-            credit.approvedBy = basicInput.createdBy;
+            credit.postedBy = inputs.createdBy;
+            credit.approvedBy = inputs.createdBy;
             credit.approvedDate = credit.transactionDate;
             credit.approvedDateTime = DateTime.Now;
-            credit.sourceApplicationId = basicInput.sourceApplicationId;
-            credit.companyId = basicInput.companyId;
+            credit.sourceApplicationId = inputs.sourceApplicationId;
+            credit.companyId = inputs.companyId;
             credit.batchCode = transactionCode;
             credit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
             credit.sourceReferenceNumber = transactionCode;
-            credit.casaAccountId = creditAccountId;
+            credit.casaAccountId = casa.CASAACCOUNTID;
             credit.debitAmount = 0;
             credit.creditAmount = chargeAmount;
-            credit.sourceBranchId = basicInput.userBranchId;
-            credit.destinationBranchId = basicInput.userBranchId;
+            credit.sourceBranchId = inputs.userBranchId;
+            credit.destinationBranchId = inputs.userBranchId;
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
             financeTransaction.PostTransaction(inputTransactions);
         }
-
         #endregion
     }
 }
