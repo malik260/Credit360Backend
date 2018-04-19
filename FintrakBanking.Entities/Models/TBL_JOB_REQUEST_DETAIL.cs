@@ -16,11 +16,16 @@ namespace FintrakBanking.Entities.Models
 
         public short JOB_SUB_TYPEID { get; set; }
 
+        public int? ACCREDITEDCONSULTANTID { get; set; }
+
         [StringLength(2000)]
         public string DESCRIPTION { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? AMOUNT { get; set; }
+
+        [StringLength(50)]
+        public string ACCOUNTNUMBER { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -35,6 +40,8 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual TBL_ACCREDITEDCONSULTANT TBL_ACCREDITEDCONSULTANT { get; set; }
 
         public virtual TBL_JOB_REQUEST TBL_JOB_REQUEST { get; set; }
 
