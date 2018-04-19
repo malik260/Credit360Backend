@@ -280,6 +280,9 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Untenored = model.untenored;
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
+            workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+            // workflow.NextProcess = appl.NEXTAPPLICATIONSTATUSID;
+
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
@@ -339,6 +342,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
                 if (model.forwardAction == (int)ApprovalStatusEnum.Approved) { appl.APPROVEDDATE = applicationDate; }
                 if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+                if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; }
                 // MEMORANDUM update
                 var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
                 if (memo != null) { memo.ISCOMPLETED = true; }

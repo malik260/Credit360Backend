@@ -33,6 +33,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int statusId = (int)ApprovalStatusEnum.Processing;
         private int groupStatusId = (int)ApprovalStatusEnum.Processing;
         private int? nextLevelId = null; // for refer backs
+        private int? finalLevel = null; // preset force to end
         private bool emailNotification = false;
         private bool smsNotification = false;
 
@@ -82,6 +83,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int GroupStatusId { get { return groupStatusId; } }
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
+        public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
         public int? ProductClassId { set { productClassId = value; } }
         public bool EmailNotification { set { emailNotification = value; } }
@@ -555,6 +557,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void SetState()
         {
             if (this.nextLevelId == null && ActionIsApprovalDecision())
+            {
+                this.EndProcess(this.statusId);
+            }
+
+            if (this.fromLevelId == this.finalLevel)
             {
                 this.EndProcess(this.statusId);
             }
