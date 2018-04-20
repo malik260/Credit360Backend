@@ -16,9 +16,10 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         public ActionResult Upload(HttpPostedFileBase upload, string CKEditorFuncNum, string CKEditor, string langCode)
         {
-            string message;
+            //string message;
             var file = upload;
             string path = String.Empty;
+            string newFileName = String.Empty;
 
             if (file != null && file.ContentLength > 0)
             {
@@ -29,20 +30,24 @@ namespace FintrakBanking.APICore.Controllers
                     )
                 {
                     var fileName = System.IO.Path.GetFileName(file.FileName);
+                    newFileName = this.UniqueFileName(fileName);
                     //var path = System.IO.Path.Combine(Server.MapPath("~/App_Data/Editor/Uploads"), fileName);
-                    path = System.IO.Path.Combine(Server.MapPath("~/Content/Images/Editor/Uploads"), this.UniqueFileName(fileName)); // + guid
+                    path = System.IO.Path.Combine(Server.MapPath("~/Content/Images/Editor/Uploads"), newFileName); // + guid
                     file.SaveAs(path);
                 }
             }
-
-            message = "Image was saved correctly";
+            
+            ViewBag.FileName = newFileName;
+            ViewBag.FuncName = CKEditorFuncNum;
+            ViewBag.Message = "Image was saved correctly";
             Response.AddHeader("Access-Control-Allow-Origin", "*");
 
+            /*
             return Content(
                 //message
                 $"<html><body>" +
                 $"<script>" +
-                $"document.domain = \"http://172.0.0.1:88.com\";" +
+                //$"document.domain = \"http://172.0.0.1:88.com\";" +
                 $"var header = new Headers();" +
                 $"header.append(\"Access-Control-Allow-Origin\", \"*\");" +
                 $"alert(\"JAVASCRIPT OK!\");" +
@@ -51,7 +56,9 @@ namespace FintrakBanking.APICore.Controllers
                 $"<font color=\"green\"> Successfull upload!</color>" +
                 $"<img src=\"{ path }\" />" +
                 $"</body></html>"
-                );
+                );*/
+
+            return View();
         }
 
         private string UniqueFileName(string actualfilename)

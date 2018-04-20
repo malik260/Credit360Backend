@@ -512,6 +512,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationId { get; set; }
         public decimal loanAmount { get; set; }
         public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
+        public DateTime date  { get; set; }
 
     }
 
@@ -596,6 +597,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipManagerId { get; set; }
 
         public int notificationDuration { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public bool isPercentage { get; set; }
+        public DateTime? nextCovenantDate { get; set; }
     }
 
     public class LoanMonitoringTriggerViewModel : GeneralEntity

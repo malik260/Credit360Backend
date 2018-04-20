@@ -10,8 +10,9 @@ namespace FintrakBanking.Common.Enum
         TermLoan = 1,
         AuthorisedOverdraft = 2,
         UnauthorisedOverdraft = 3,
-        PastDueObligation = 4,
-        CreditCards = 5
+        PastDuePrincipal  = 4,
+        CreditCards = 5,
+        PastDueInterest  = 6,
 
     }
 }

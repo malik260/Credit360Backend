@@ -1234,7 +1234,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Deferred)
             {
                 var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
-                deferral.CONDITIONID = data.LOANCONDITIONID;
+                deferral.LOANCONDITIONID = data.LOANCONDITIONID;
                 deferral.DEFERRALREASON = model.reason;
                 deferral.DEFERREDDATE = model.deferedDate == null ? DateTime.Now : (DateTime)model.deferedDate;
                 deferral.DATETIMECREATED = DateTime.Now;
@@ -1380,7 +1380,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                    select s).FirstOrDefault();
             var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
-                                  where s.CONDITIONID == targetId
+                                  where s.LOANCONDITIONID == targetId
                                  && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                   select s).FirstOrDefault();
             if (workFlow.NewState != (int)ApprovalState.Ended)
@@ -1418,7 +1418,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.TBL_LOAN_CONDITION_PRECEDENT
                         join b in context.TBL_LOAN_CONDITION_DEFERRAL
-                        on a.LOANCONDITIONID equals b.CONDITIONID
+                        on a.LOANCONDITIONID equals b.LOANCONDITIONID
                         join c in context.TBL_LOAN_APPLICATION
                         on a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived)
@@ -1426,7 +1426,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             checklistDeferralId = b.CHECKLISTDEFERRALID,
                             deferredDate = b.DEFERREDDATE,
-                            conditionId = b.CONDITIONID,
+                            conditionId = b.LOANCONDITIONID,
                             checklistStatus = a.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                             condition = a.CONDITION,
                             approvalStatusId = b.APPROVALSTATUSID,
@@ -1461,7 +1461,7 @@ namespace FintrakBanking.Repositories.Credit
             data.LASTUPDATEDBY = (int)model.createdBy;
 
             var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
-            deferral.CONDITIONID = data.LOANCONDITIONID;
+            deferral.LOANCONDITIONID = data.LOANCONDITIONID;
             deferral.DEFERRALREASON = model.reason;
             deferral.DEFERREDDATE = (DateTime)model.deferedDate;
             deferral.DATETIMECREATED = DateTime.Now;
@@ -1523,7 +1523,7 @@ namespace FintrakBanking.Repositories.Credit
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.LASTUPDATEDBY = (int)model.createdBy;
 
-            var deferral = (from a in this.context.TBL_LOAN_CONDITION_DEFERRAL where a.CONDITIONID == model.conditionId select a).FirstOrDefault();
+            var deferral = (from a in this.context.TBL_LOAN_CONDITION_DEFERRAL where a.LOANCONDITIONID == model.conditionId select a).FirstOrDefault();
             if (deferral == null)
                 deferral.APPROVALSTATUSID = (int)CheckListStatusEnum.Provided;
 

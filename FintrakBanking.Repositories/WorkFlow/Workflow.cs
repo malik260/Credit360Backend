@@ -33,6 +33,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int statusId = (int)ApprovalStatusEnum.Processing;
         private int groupStatusId = (int)ApprovalStatusEnum.Processing;
         private int? nextLevelId = null; // for refer backs
+        private int? finalLevel = null; // preset force to end
         private bool emailNotification = false;
         private bool smsNotification = false;
 
@@ -82,6 +83,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int GroupStatusId { get { return groupStatusId; } }
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
+        public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
         public int? ProductClassId { set { productClassId = value; } }
         public bool EmailNotification { set { emailNotification = value; } }
@@ -262,17 +264,32 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     throw new Exception("This Approval Level is not in the workflow setup!");
                 }
-                var staff = level.Staff.Where(x => x.STAFFID == this.staffId);
+
+                var staff = level.Staff.Where(x => x.STAFFID == this.staffId); // check if staff is in approval_level_staff
+
+                TBL_STAFF defaultRole = null;
                 if (staff.Any() == false)
                 {
-                    var relieverStaff = context.TBL_STAFF_RELIEF.FirstOrDefault(x =>  x.DELETED == false && x.ISACTIVE == true
-                            && x.STARTDATE <= systemDate && x.ENDDATE >= systemDate && x.RELIEFSTAFFID == this.staffId);
-                    if (relieverStaff == null)
-                    {
-                        throw new Exception("This User is not in the current workflow level of the process!");
-                    }
-                    staff = level.Staff.Where(x => x.STAFFID == relieverStaff.STAFFID);
+                    defaultRole = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == this.staffId && x.STAFFROLEID == level.DefaultRoleId);
                 }
+
+                TBL_STAFF_RELIEF relieverStaff = null;
+                if (defaultRole == null)
+                {
+                    relieverStaff = context.TBL_STAFF_RELIEF.FirstOrDefault(x => x.DELETED == false // check if staff is in staff_relief
+                        && x.ISACTIVE == true
+                        && x.STARTDATE <= systemDate
+                        && x.ENDDATE >= systemDate
+                        && x.RELIEFSTAFFID == this.staffId
+                    );
+                    if (relieverStaff != null) staff = level.Staff.Where(x => x.STAFFID == relieverStaff.STAFFID); // ?
+                }
+
+                if (staff.Any() == false && defaultRole == null && relieverStaff == null)
+                {
+                    throw new Exception("This User is not in the current workflow level of the process!");
+                }
+
                 this.neededNumberOfApproval = level.NumberOfApprovals;
             }
 
@@ -559,6 +576,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.EndProcess(this.statusId);
             }
 
+            if (this.fromLevelId != null && this.fromLevelId == this.finalLevel)
+            {
+                this.EndProcess(this.statusId);
+            }
+
             if (this.nextLevelId == null && this.amount == 0)
             {
                 this.EndProcess(this.statusId);
@@ -645,6 +667,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                CanRecieveEmail = x.Level.CANRECIEVEEMAIL,
                                ApprovalLevelId = x.Level.APPROVALLEVELID,
                                RouteViaStaffOrganogram = x.Level.ROUTEVIASTAFFORGANOGRAM,
+                               DefaultRoleId = x.Level.STAFFROLEID,
                            })
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition);
@@ -830,6 +853,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public decimal MaximumAmount { get; set; }
 
         public decimal? InvestmentGradeAmount { get; set; }
+
+        public int? DefaultRoleId { get; internal set; }
 
         public TBL_APPROVAL_LEVEL Level { get; set; }
 

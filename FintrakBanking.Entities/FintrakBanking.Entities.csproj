@@ -72,7 +72,6 @@
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\SYSDIAGRAM.cs" />
     <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
@@ -372,7 +371,6 @@
     <Compile Include="Models\TBL_SOURCE_APPLICATION.cs" />
     <Compile Include="Models\TBL_STAFF.cs" />
     <Compile Include="Models\TBL_STAFF_ACCOUNT_HISTORY.cs" />
-    <Compile Include="Models\TBL_STAFF_ACCOUNT_HISTORY_DTL.cs" />
     <Compile Include="Models\TBL_STAFF_JOBTITLE.cs" />
     <Compile Include="Models\TBL_STAFF_RELIEF.cs" />
     <Compile Include="Models\TBL_STAFF_ROLE.cs" />

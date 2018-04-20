@@ -46,6 +46,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICustomerRepository customers;
         private IWorkflow workflow;
         private IAuditTrailRepository audit;
+        //private ICasaRepository casa;
 
 
         public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
@@ -65,6 +66,7 @@ namespace FintrakBanking.Repositories.Credit
             this.customers = _customers;
             this.workflow = _workflow;
             this.casaLien = _casaLien;
+            //this.casa = _casa;
         }
 
         /// <summary>
@@ -4405,8 +4407,8 @@ namespace FintrakBanking.Repositories.Credit
                                            //equityContribution = a.EQUITYCONTRIBUTION,
                                            //firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
                                            //firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
-                                           outstandingPrincipal = a.OVERDRAFTLIMIT,
-                                           //outstandingInterest = a.OUTSTANDINGINTEREST,
+                                           outstandingPrincipal = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == c.CASAACCOUNTID).AVAILABLEBALANCE,
+                                           //outstandingInterest = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == c.CASAACCOUNTID).AVAILABLEBALANCE,
                                            //principalAdditionCount = a.PRINCIPALADDITIONCOUNT ?? 0,
                                            //principalReductionCount = a.PRINCIPALREDUCTIONCOUNT ?? 0,
                                            //fixedPrincipal = a.FIXEDPRINCIPAL,
@@ -4419,7 +4421,8 @@ namespace FintrakBanking.Repositories.Credit
                                            //isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.REVOLVINGLOANID).Any(),
                                            exchangeRate = a.EXCHANGERATE,
                                            currencyId = a.CURRENCYID,
-                                           currency = a.TBL_CURRENCY.CURRENCYNAME
+                                           currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                           overDraft = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == c.CASAACCOUNTID).AVAILABLEBALANCE,
                                        }).Take(10).AsQueryable();
                 }
 

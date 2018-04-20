@@ -608,40 +608,57 @@ namespace FintrakBanking.Repositories.Setups.General
                 SYSTEMDATETIME = DateTime.Now
             };
 
-            using (var trans = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    auditTrail.AddAuditTrail(audit);
-                    context.TBL_TEMP_STAFF.Add(staff);
-                    output = await context.SaveChangesAsync() > 0;
+            auditTrail.AddAuditTrail(audit);
+            context.TBL_TEMP_STAFF.Add(staff);
+            output = await context.SaveChangesAsync() > 0;
 
-                    var entity = new ApprovalViewModel
-                    {
-                        staffId = staffModel.createdBy,
-                        companyId = staffModel.companyId,
-                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = staff.TEMPSTAFFID,
-                        operationId = (int)OperationsEnum.StaffCreation,
-                        BranchId = staffModel.userBranchId,
-                        externalInitialization = true
-                    };
-                    var response = workflow.LogForApproval(entity);
+            workflow.StaffId = staffModel.createdBy;
+            workflow.CompanyId = staffModel.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.TargetId = staff.TEMPSTAFFID;
+            workflow.Comment = "New Staff Creation";
+            workflow.OperationId = (int)OperationsEnum.StaffCreation;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
 
-                    if (response)
-                    {
-                        trans.Commit();
-                    }
-
-                    return output;
-                }
-                catch (Exception)
-                {
-                    trans.Rollback();
-                }
-            }
+            context.SaveChanges();
 
             return output;
+
+            //using (var trans = context.Database.BeginTransaction())
+            //{
+            //    try
+            //    {
+            //        auditTrail.AddAuditTrail(audit);
+            //        context.TBL_TEMP_STAFF.Add(staff);
+            //        output = await context.SaveChangesAsync() > 0;
+
+            //        workflow.StaffId = staffModel.createdBy;
+            //        workflow.CompanyId = staffModel.companyId;
+            //        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            //        workflow.TargetId = staff.TEMPSTAFFID;
+            //        workflow.Comment = "New Staff Creation";
+            //        workflow.OperationId = (int)OperationsEnum.StaffCreation;
+            //        workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            //        workflow.ExternalInitialization = true;
+            //        workflow.LogActivity();
+
+            //        context.SaveChanges();
+
+            //        if (workflow.Saved)
+            //        {
+            //            trans.Commit();
+            //        }
+
+            //        return output;
+            //    }
+            //    catch (Exception)
+            //    {
+            //        trans.Rollback();
+            //    }
+            //}
+
         }
 
         public bool IsStaffCodeAlreadyExist(string staffCode)
