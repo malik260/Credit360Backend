@@ -33,6 +33,9 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         bool ReassignJobRequest(JobRequestViewModel model, int jobRequestId);
 
+        // Legal jobs
+        bool EffectLegaCollateralJobs(JobRequestCollateralSearchViewModel model);
+
         // job type
         IEnumerable<JobTypeViewModel> GetAllJobType();
         IEnumerable<JobTypeViewModel> GetJobSubType(short jobId);

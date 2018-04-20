@@ -37,6 +37,12 @@ namespace FintrakBanking.Entities.Models
 
         public bool USEINTEGRATION { get; set; }
 
+        [StringLength(50)]
+        public string USERNAME { get; set; }
+
+        [StringLength(50)]
+        public string PASSWORD { get; set; }
+
         public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

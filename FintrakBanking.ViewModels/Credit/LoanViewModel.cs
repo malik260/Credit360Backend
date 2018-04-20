@@ -124,7 +124,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string middleName { get; set; }
         public string lastName { get; set; }
         public string customerCode { get; set; }
-        public string productAccountNumber { get; set; }
+        public string casaAccountNumber  { get; set; }
         public int currencyId { get; set; }
         public string currency { get; set; }
         public short accurialBasis { get; set; }
