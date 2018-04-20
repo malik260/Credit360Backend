@@ -18,6 +18,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool ValidateStaffRole(string staffRoleCode, string staffRoleName);
 
+        bool ValidateStaffRoleUpdate(int staffRoleId);
+
         bool GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<StaffRoleViewModel> GetStaffRoleAwaitingApproval(int staffId, int companyId);
