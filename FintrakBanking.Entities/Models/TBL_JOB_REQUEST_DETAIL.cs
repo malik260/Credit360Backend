@@ -27,6 +27,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
+        public bool ACCREDITEDCONSULTANTPAID { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
