@@ -12,6 +12,7 @@ using System.Text;
 using System.Linq;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.Interfaces.CASA;
 //using System.Math;
 
 namespace FintrakBanking.Repositories.CreditLimitValidations
@@ -23,24 +24,31 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         private IGeneralSetupRepository genSetup;
         private ILoanRepository loanRepository;
         private ICustomerRepository customerRepository;
+        private IOverRideRepository customOverride;
 
         public CreditLimitValidationsRepository(IGeneralSetupRepository _genSetup, ILoanRepository _loanRepository, ICustomerRepository _customerRepository,
 
-        FinTrakBankingContext _context)
+        FinTrakBankingContext _context, IOverRideRepository customOverride)
         {
             this.context = _context;
             this.genSetup = _genSetup;
             loanRepository = _loanRepository;
             customerRepository = _customerRepository;
+            this.customOverride = customOverride;
         }
 
         public int ValidateWatchList(int customerId)
         {
+            int watchlistresults = 0;
             var watchlist = (from a in context.TBL_LOAN
                              join b in context.TBL_LOAN_PRUDENTIALGUIDELINE on a.EXT_PRUDENT_GUIDELINE_STATUSID equals b.PRUDENTIALGUIDELINESTATUSID
                              where a.CUSTOMERID == customerId && b.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList
                              select a);
-            int watchlistresults = watchlist.Count();
+            if (watchlist.Any())
+            {
+                string custCode = watchlist.FirstOrDefault().TBL_CUSTOMER.CUSTOMERCODE;
+                watchlistresults = this.customOverride.EffectOverride(custCode, (int)LoanPrudentialStatusEnum.WatchList, custCode);
+            }
 
             return watchlistresults;
         }
@@ -52,7 +60,11 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                           where b.CUSTOMERID == customerId 
                           select a);
             int camsolresults = camsol.Count();
-
+            if (camsol.Any())
+            {
+                string custCode = camsol.FirstOrDefault().CUSTOMERCODE;
+                camsolresults = this.customOverride.EffectOverride(custCode, (int)OverrideEnum.CAMSOLOverride, custCode);
+            }
             return camsolresults;
         }
         //public int ValidateBlackList(int customerId)
@@ -66,10 +78,16 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         //}
         public int ValidateBlackList(string customerCode)
         {
+            int blacklistresults = 0;
             var blacklist = (from a in context.TBL_CUSTOMER_BLACKLIST
                              where a.CUSTOMERCODE == customerCode
                              select a);
-            int blacklistresults = blacklist.Count();
+
+            if (blacklist.Any())
+            {
+                string custCode = blacklist.FirstOrDefault().CUSTOMERCODE;
+                blacklistresults = this.customOverride.EffectOverride(custCode, (int)OverrideEnum.BlackbookOverride, custCode);
+            }            
 
             return blacklistresults;
         }

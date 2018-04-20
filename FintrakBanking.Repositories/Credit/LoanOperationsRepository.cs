@@ -6242,6 +6242,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workFlow.NewState != (int)ApprovalState.Ended)
             {
                 reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+
             }
             else if (workFlow.NewState == (int)ApprovalState.Ended)
             {
@@ -6249,8 +6250,12 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             output = context.SaveChanges() > 0;
+            if (output == true && workFlow.NewState == (int)ApprovalState.Ended)
+            {
+                return output;
+            }
 
-            return output;
+            return false;
         }
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool LoanRephasementProcess(short loanReviewOperationsId, int loanId, int staffId)

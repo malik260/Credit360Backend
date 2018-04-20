@@ -1570,9 +1570,10 @@ namespace FintrakBanking.Repositories.Credit
         public ValidateDataViewModel ValidateDocumentDate(ValidateDataViewModel data)
         {
             var dat = context.TBL_PRODUCT.Where(c => c.PRODUCTID == data.productId).FirstOrDefault();
-            int days = DateTime.Now.Subtract(data.date.AddDays(-1)).Days;
+            int days = DateTime.Now.Subtract(data.date).Days - 1;
             return new ValidateDataViewModel
             {
+                dayCount = days,
                 dayInterval = dat.EXPIRYPERIOD,
                 InvoiceStatus = (days > 0 && dat.EXPIRYPERIOD >= days) ? true : false,
             };
@@ -1582,7 +1583,8 @@ namespace FintrakBanking.Repositories.Credit
         public ValidateNumberViewModel ValidateDocumentNumber(ValidateNumberViewModel data)
         {
             var dat = context.TBL_LOAN_APPLICATION_DETL_INV
-                .Where(c => c.PRINCIPALID == (int)data.principalId && c.INVOICENO == data.documentNo && c.PURCHASEORDERNUMBER == data.purchaseOrderNumber)
+                .Where(c => c.PRINCIPALID == (int)data.principalId && c.INVOICENO == data.documentNo 
+                && c.PURCHASEORDERNUMBER == data.purchaseOrderNumber && c.CONTRACTNO == data.contractNumber )
                 .FirstOrDefault();
 
             return new ValidateNumberViewModel

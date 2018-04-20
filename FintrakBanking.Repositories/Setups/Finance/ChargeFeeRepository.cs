@@ -323,7 +323,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 accountCategoryName = x.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
                 frequencyTypeId = x.FEEINTERVALID,
                 frequencyTypeName = x.TBL_FEE_INTERVAL.FEEINTERVALNAME,
-                productTypeId = x.PRODUCTTYPEID,
+                productTypeId =  x.PRODUCTTYPEID,
                 targetId = x.FEETARGETID,
                 targetName = x.TBL_FEE_TARGET.FEETARGETNAME,
                 ledgerAccountId = x.GLACCOUNTID,

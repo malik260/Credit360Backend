@@ -31,7 +31,7 @@ namespace FintrakBanking.Entities.Models
 
         public short FEEINTERVALID { get; set; }
 
-        public short PRODUCTTYPEID { get; set; }
+        public short? PRODUCTTYPEID { get; set; }
 
         public short FEETARGETID { get; set; }
 

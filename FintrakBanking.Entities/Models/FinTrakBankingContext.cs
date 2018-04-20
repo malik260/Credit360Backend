@@ -174,6 +174,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SOURCE_APPLICATION> TBL_SOURCE_APPLICATION { get; set; }
         public virtual DbSet<TBL_STAFF> TBL_STAFF { get; set; }
         public virtual DbSet<TBL_STAFF_ACCOUNT_HISTORY> TBL_STAFF_ACCOUNT_HISTORY { get; set; }
+        public virtual DbSet<TBL_STAFF_ACCOUNT_HISTORY_DTL> TBL_STAFF_ACCOUNT_HISTORY_DTL { get; set; }
         public virtual DbSet<TBL_STAFF_JOBTITLE> TBL_STAFF_JOBTITLE { get; set; }
         public virtual DbSet<TBL_STAFF_RELIEF> TBL_STAFF_RELIEF { get; set; }
         public virtual DbSet<TBL_STAFF_ROLE> TBL_STAFF_ROLE { get; set; }
@@ -305,7 +306,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_FIANCE_TRANSACTION> TBL_CUSTOM_FIANCE_TRANSACTION { get; set; }
         public virtual DbSet<TBL_CUSTOM_LIEN_PROCESS> TBL_CUSTOM_LIEN_PROCESS { get; set; }
         public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
-        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -2262,11 +2263,6 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT_TYPE>()
-                .HasMany(e => e.TBL_CHARGE_FEE)
-                .WithRequired(e => e.TBL_PRODUCT_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_TYPE>()
                 .HasMany(e => e.TBL_FEE)
                 .WithRequired(e => e.TBL_PRODUCT_TYPE)
                 .WillCascadeOnDelete(false);
@@ -2327,7 +2323,7 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT_TYPE>()
-                .HasMany(e => e.TBL_TEMP_CHARGE_FEE)
+                .HasMany(e => e.TBL_STAFF_ACCOUNT_HISTORY_DTL)
                 .WithRequired(e => e.TBL_PRODUCT_TYPE)
                 .WillCascadeOnDelete(false);
 
@@ -2681,6 +2677,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_TEMP_STAFF)
                 .WithOptional(e => e.TBL_STAFF)
                 .HasForeignKey(e => e.SUPERVISOR_STAFFID);
+
+            modelBuilder.Entity<TBL_STAFF_ACCOUNT_HISTORY>()
+                .HasMany(e => e.TBL_STAFF_ACCOUNT_HISTORY_DTL)
+                .WithRequired(e => e.TBL_STAFF_ACCOUNT_HISTORY)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_STAFF_JOBTITLE>()
                 .HasMany(e => e.TBL_STAFF)

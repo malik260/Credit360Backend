@@ -21,7 +21,10 @@ namespace FintrakBanking.Repositories.CASA
         private IGeneralSetupRepository genSetup;
         private IWorkflow workFlow;
 
-        public OverRideRepository(IAuditTrailRepository _auditTrail, IWorkflow _workFlow, IGeneralSetupRepository _genSetup,FinTrakBankingContext _context)
+        public OverRideRepository(
+            IAuditTrailRepository _auditTrail,
+            IWorkflow _workFlow, IGeneralSetupRepository _genSetup,
+            FinTrakBankingContext _context)
         {
             this.context = _context;
             this.auditTrail = _auditTrail;
@@ -33,9 +36,10 @@ namespace FintrakBanking.Repositories.CASA
         {
             var data = entity.Select(c => new TBL_OVERRIDE_DETAIL
             {
+                CUSTOMERCODE = c.customerCode,                  
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 CREATEDBY = c.createdBy,
-                //CUSTOMERID = c.customerId,
+                REASON  = c.reason,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 ISUSED = false,
                 OVERRIDE_ITEMID = c.overrideItemId,
@@ -45,6 +49,25 @@ namespace FintrakBanking.Repositories.CASA
 
             return context.SaveChanges() > 0;
 
+        }
+
+        public int EffectOverride(string customerCode, int overrideItemId,string sourceRef )
+        {
+            bool result = false;
+            var data =  context.TBL_OVERRIDE_DETAIL.Where(e => e.ISUSED == false 
+              && e.CUSTOMERCODE== customerCode 
+              && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+              && e.OVERRIDE_ITEMID == overrideItemId);
+
+            if (data.Any())
+            {
+                var detail = data.FirstOrDefault();
+
+                detail.ISUSED = true;
+                detail.SOURCE_REFERENCE_NUMBER = sourceRef;
+                result = true;
+            }
+            return data.Count();
         }
 
         public bool ApproveOverRideRequest(OverrideDetailVeiwModel entity)
@@ -69,32 +92,39 @@ namespace FintrakBanking.Repositories.CASA
                itemId = c.OVERRIDE_ITEMID ,
                 itemName = c.OVERIDE_ITEMNAME 
             });
-
             return data.ToList();
-
         }
 
-        public IQueryable<OverrideDetailVeiwModel> AllOverRideRequest()
+        private IQueryable<OverrideDetailVeiwModel> AllOverRideRequest()
         {
-            var data = context.TBL_OVERRIDE_DETAIL.Select(c => new OverrideDetailVeiwModel
-            {
-                approvedStatusId = c.APPROVALSTATUSID,
-                createdBy = c.CREATEDBY,
-                //customerId = c.CUSTOMERID,
-                dateTimeCreated = c.DATETIMECREATED,
-                isUsed = c.ISUSED,
-                overrideDetailId = c.OVERRIDE_ITEMID,
-                overrideItemId = c.OVERRIDE_ITEMID,
-                sourceReferenceNumber = c.SOURCE_REFERENCE_NUMBER
-            });
+            var data = context.TBL_OVERRIDE_DETAIL;
+            var cust = context.TBL_CUSTOMER.Select(d => new { customer = d.LASTNAME + " " + d.FIRSTNAME + " " + d.MIDDLENAME, d.CUSTOMERCODE, d.CUSTOMERID });
 
-            return data;
+            var over = from a in cust
+                       join d in data on a.CUSTOMERCODE equals d.CUSTOMERCODE
+
+                       select new OverrideDetailVeiwModel
+                       {
+                           approvedStatusId = d.APPROVALSTATUSID,
+                           createdBy = d.CREATEDBY,
+                           itemId = d.OVERRIDE_ITEMID,
+                           itemName = d.TBL_OVERRIDE_ITEM.OVERIDE_ITEMNAME,
+                           approvalStatus = d.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                           customerCode = d.CUSTOMERCODE,
+                           customerName = a.customer,
+                           sourceReferenceNumber = d.SOURCE_REFERENCE_NUMBER,
+                           isUsed = d.ISUSED,
+                           customerId = a.CUSTOMERID,
+                           dateTimeCreated = d.DATETIMECREATED,
+                           overrideDetailId = d.OVERRIDE_DETAILID
+                       };
+
+            return over;
         }
 
-        public IQueryable<OverrideDetailVeiwModel> GetAllOverRideRequest()
+        public IEnumerable<OverrideDetailVeiwModel> GetAllOverRideRequest()
         {
-            return AllOverRideRequest();
-            
+            return AllOverRideRequest().OrderBy(c=> c.customerCode).ToList();            
         }
 
         public OverrideDetailVeiwModel GetOverRideRequestById(int id)
