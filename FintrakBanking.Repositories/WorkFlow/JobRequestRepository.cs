@@ -119,13 +119,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                         switch (actionName)
                         {
                             case "Search":
-                                if(actionType.ToLower() == "debit")inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge"));
-                                else if(actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge Reversal"));
+                                //if(actionType.ToLower() == "debit")inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge"));
+                                //else if(actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge Reversal"));
 
                                 break;
                             case "Chart":
-                                if (actionType.ToLower() == "debit") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.CHARTINGAMOUNT, crdGL, "Collateral Charting Charge"));
-                                else if (actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.CHARTINGAMOUNT, crdGL, "Collateral Charting Charge Reversal"));
+                                //if (actionType.ToLower() == "debit") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.CHARTINGAMOUNT, crdGL, "Collateral Charting Charge"));
+                                //else if (actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.CHARTINGAMOUNT, crdGL, "Collateral Charting Charge Reversal"));
 
                                 break;
                             default:
