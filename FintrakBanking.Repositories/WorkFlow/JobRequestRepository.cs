@@ -40,52 +40,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.financeTransaction = _financeTransaction;
     }
 
-        public bool AddJobRequest(JobRequestViewModel model)
-        {
-             
-            var date = DateTime.Now;
-            var applicationDate = general.GetApplicationDate();
-           
-           var data = new TBL_JOB_REQUEST
-            {
-                JOBREQUESTCODE = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
-                JOBTYPEID = model.jobTypeId,
-                JOB_TITLE = model.requestTitle,
-                SENDERSTAFFID = model.createdBy,
-                RECEIVERSTAFFID = model.receiverStaffId,
-                DEPARTMENTID = model.departmentId,
-                REASSIGNEDTO = model.reassignedTo,
-                ISREASSIGNED = model.isReassigned,
-                ISACKNOWLEDGED = model.isAcknowledged,
-                TARGETID = model.targetId,
-                OPERATIONSID = model.operationsId, // cam enum
-                REQUESTSTATUSID = model.requestStatusId, // status enum
-                SENDERCOMMENT = model.senderComment,
-                RESPONSECOMMENT = model.responseComment,
-                ARRIVALDATE = applicationDate,
-                SYSTEMARRIVALDATE = date,
-            };
-
-            context.TBL_JOB_REQUEST.Add(data);
-
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.audit.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-
-            return context.SaveChanges() != 0;
-        }
-
         public bool ChargeCustomerJob(CollateralViewModel model, string actionName, string actionType, int loanApplicationDetailId)
         {
             TBL_LOAN_APPLICATION loanApplication;
@@ -523,7 +477,56 @@ namespace FintrakBanking.Repositories.WorkFlow
             return GetAllGlobalJobRequest(staffId, branchId).OrderByDescending(x => x.jobRequestId); 
         }
 
+        private IEnumerable<JobRequestDetailViewModel> GetJobRequestDetails()
+        {
+            var allstaff = this.context.TBL_STAFF.Select(s => new 
+            {
+                id = s.STAFFID,
+                name = s.LASTNAME + " " + s.FIRSTNAME
+            });
 
+            var details= this.context.TBL_JOB_REQUEST_DETAIL
+                .Where(i=> (i.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || i.JOB_SUB_TYPEID ==  (short)JobSubTypeEnum.LegalSearch || (short)JobSubTypeEnum.LegalVerification == i.JOB_SUB_TYPEID || i.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs )
+                && i.DELETED == false).Select(x => new JobRequestDetailViewModel
+            {
+                jobRequestId = x.JOBREQUESTID,
+                jobRequestDetailId = x.JOBREQUEST_DETAILID,
+                accreditedConsultantId = (int)x.ACCREDITEDCONSULTANTID,
+                accreditedConsultantName = x.TBL_ACCREDITEDCONSULTANT.FIRMNAME,
+                jobSubTypeId = x.JOB_SUB_TYPEID,
+                jobSubTypeName = x.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME,
+                jobTypeId = x.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPEID,
+                jobTypeName = x.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPENAME,
+                description = x.DESCRIPTION,
+                targetId = x.TBL_JOB_REQUEST.TARGETID,
+                operationsId = x.TBL_JOB_REQUEST.OPERATIONSID,
+                operationsName = x.TBL_JOB_REQUEST.TBL_OPERATIONS.OPERATIONNAME,
+                amount = x.AMOUNT,
+                accountNumber = x.ACCOUNTNUMBER,
+                dateTimeCreated = x.DATETIMECREATED,
+            });
+
+            foreach(var item in details)
+            {
+                //var x = from v in context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONDETAILID == item.targetId && item.operationsId == (int)OperationsEnum.LoanApplication) select v;
+                var x = from v in context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONDETAILID == item.targetId) select v;
+                if (x.Any())
+                {
+                    item.customerName = x.FirstOrDefault().TBL_CUSTOMER.LASTNAME + " " + x.FirstOrDefault().TBL_CUSTOMER.FIRSTNAME + " " + x.FirstOrDefault().TBL_CUSTOMER.MIDDLENAME;
+                    item.applicationReferenceNumber = x.FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+                }
+            };
+
+            var d = details.ToList();
+            return details;
+        }
+
+        public IEnumerable<JobRequestDetailViewModel> GetJobRequestLegalJobDetails()
+        {
+
+            return GetJobRequestDetails().Where(x => x.jobTypeId == (short)JobTypeEnum.legal);
+        }
+        
         public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId)
         {
             var requests = this.context.TBL_JOB_REQUEST.Where(d=>d.TARGETID == applicationDetailId
@@ -666,35 +669,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
 
-        public IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId)
-        {
-            return this.context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
-                 .Select(g => g.TBL_APPROVAL_GROUP)
-                 .SelectMany(l => l.TBL_APPROVAL_LEVEL)
-                 .SelectMany(s => s.TBL_APPROVAL_LEVEL_STAFF)
-                 .Select(s => new OperationStaffViewModel
-                 {
-                     id = s.STAFFID,
-                     name = s.TBL_STAFF.FIRSTNAME,
-                     groupId = (int)s.TBL_APPROVAL_LEVEL.GROUPID
-                 }).ToList();
-        }
-
-        public IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId)
-        {
-            var operationId = (int)OperationsEnum.CAM;
-
-            var approvalGroupIds = context.TBL_APPROVAL_GROUP_MAPPING
-                .Join(context.TBL_APPROVAL_LEVEL,
-                    a => a.GROUPID, b => b.GROUPID, (a, b) => new { a, b })
-                .Join(context.TBL_APPROVAL_LEVEL_STAFF,
-                    c => c.b.APPROVALLEVELID, d => d.APPROVALLEVELID, (c, d) => new { c, d })
-                .Where(x => x.c.a.OPERATIONID == operationId && x.d.STAFFID == staffId)
-                    .Select(x => x.c.b.GROUPID);
-
-            return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.departmentId)).OrderByDescending(x => x.jobRequestId).ToList();
-        }
-
         public IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId)
         {
             var operationId = (int)OperationsEnum.CAM;
@@ -777,7 +751,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 chargeAmount = chargeAmount + (collateralStateDetails.CHARTINGAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    JobSubTypeId = (short)JobSubTypeEnum.LegalCharting,
+                    jobSubTypeId = (short)JobSubTypeEnum.LegalCharting,
                     amount = collateralStateDetails.CHARTINGAMOUNT,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
@@ -792,7 +766,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 chargeAmount = chargeAmount + (collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT);
                 var detail = new JobRequestDetailViewModel
                 {
-                    JobSubTypeId = (short)JobSubTypeEnum.LegalSearch,
+                    jobSubTypeId = (short)JobSubTypeEnum.LegalSearch,
                     amount = collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
@@ -807,7 +781,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 chargeAmount = chargeAmount + (collateralStateDetails.VERIFICATIONAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    JobSubTypeId = (short)JobSubTypeEnum.LegalVerification,
+                    jobSubTypeId = (short)JobSubTypeEnum.LegalVerification,
                     amount = collateralStateDetails.VERIFICATIONAMOUNT,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
@@ -822,7 +796,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    JobSubTypeId = (short)JobSubTypeEnum.OtherLegalJobs,
+                    jobSubTypeId = (short)JobSubTypeEnum.OtherLegalJobs,
                     amount = model.additionalCharge,
                     description = model.additionalChargeJustification,
                     jobRequestId = model.jobRequestId,
@@ -859,7 +833,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             jobDetail.AMOUNT = model.amount;
             jobDetail.DESCRIPTION = model.description;
             jobDetail.JOBREQUESTID = model.jobRequestId;
-            jobDetail.JOB_SUB_TYPEID = model.JobSubTypeId;
+            jobDetail.JOB_SUB_TYPEID = model.jobSubTypeId;
             jobDetail.DESCRIPTION = model.description;
             jobDetail.ACCREDITEDCONSULTANTID = model.accreditedConsultantId;
             jobDetail.ACCOUNTNUMBER = model.accountNumber;
@@ -887,6 +861,36 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added JobType '{ model.jobTypeName }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool ConfirmLegalCollateralJobSearch(int jobRequestDetailId, bool payStatus, UserInfo model)
+        {
+            var data = this.context.TBL_JOB_REQUEST_DETAIL.Find(jobRequestDetailId);
+            if (data == null)
+            {
+                return false;
+            }
+
+            data.ACCREDITEDCONSULTANTPAID = payStatus;
+
+            //CreditSolicitor()
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralSearchJob,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.BranchId,
+                DETAIL = $"Updated Job request details table with accredited consultant payment status as'{ payStatus }' on job request with code '{data.TBL_JOB_REQUEST.JOBREQUESTCODE}' for '{data.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME}' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
@@ -1254,5 +1258,80 @@ namespace FintrakBanking.Repositories.WorkFlow
             financeTransaction.PostTransaction(inputTransactions);
         }
         #endregion
+
+        //public bool AddJobRequest(JobRequestViewModel model)
+        //{
+
+        //    var date = DateTime.Now;
+        //    var applicationDate = general.GetApplicationDate();
+
+        //    var data = new TBL_JOB_REQUEST
+        //    {
+        //        JOBREQUESTCODE = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
+        //        JOBTYPEID = model.jobTypeId,
+        //        JOB_TITLE = model.requestTitle,
+        //        SENDERSTAFFID = model.createdBy,
+        //        RECEIVERSTAFFID = model.receiverStaffId,
+        //        DEPARTMENTID = model.departmentId,
+        //        REASSIGNEDTO = model.reassignedTo,
+        //        ISREASSIGNED = model.isReassigned,
+        //        ISACKNOWLEDGED = model.isAcknowledged,
+        //        TARGETID = model.targetId,
+        //        OPERATIONSID = model.operationsId, // cam enum
+        //        REQUESTSTATUSID = model.requestStatusId, // status enum
+        //        SENDERCOMMENT = model.senderComment,
+        //        RESPONSECOMMENT = model.responseComment,
+        //        ARRIVALDATE = applicationDate,
+        //        SYSTEMARRIVALDATE = date,
+        //    };
+
+        //    context.TBL_JOB_REQUEST.Add(data);
+
+        //    Audit Section ---------------------------
+        //   var audit = new TBL_AUDIT
+        //   {
+        //       AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
+        //       STAFFID = model.createdBy,
+        //       BRANCHID = (short)model.userBranchId,
+        //       DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
+        //       IPADDRESS = model.userIPAddress,
+        //       URL = model.applicationUrl,
+        //       APPLICATIONDATE = applicationDate,
+        //       SYSTEMDATETIME = DateTime.Now
+        //   };
+        //    this.audit.AddAuditTrail(audit);
+        //    End of Audit Section ---------------------
+
+        //    return context.SaveChanges() != 0;
+        //}
+
+        //public IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId)
+        //{
+        //    return this.context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+        //         .Select(g => g.TBL_APPROVAL_GROUP)
+        //         .SelectMany(l => l.TBL_APPROVAL_LEVEL)
+        //         .SelectMany(s => s.TBL_APPROVAL_LEVEL_STAFF)
+        //         .Select(s => new OperationStaffViewModel
+        //         {
+        //             id = s.STAFFID,
+        //             name = s.TBL_STAFF.FIRSTNAME,
+        //             groupId = (int)s.TBL_APPROVAL_LEVEL.GROUPID
+        //         }).ToList();
+        //}
+
+        //public IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId)
+        //{
+        //    var operationId = (int)OperationsEnum.CAM;
+
+        //    var approvalGroupIds = context.TBL_APPROVAL_GROUP_MAPPING
+        //        .Join(context.TBL_APPROVAL_LEVEL,
+        //            a => a.GROUPID, b => b.GROUPID, (a, b) => new { a, b })
+        //        .Join(context.TBL_APPROVAL_LEVEL_STAFF,
+        //            c => c.b.APPROVALLEVELID, d => d.APPROVALLEVELID, (c, d) => new { c, d })
+        //        .Where(x => x.c.a.OPERATIONID == operationId && x.d.STAFFID == staffId)
+        //            .Select(x => x.c.b.GROUPID);
+
+        //    return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.departmentId)).OrderByDescending(x => x.jobRequestId).ToList();
+        //}
     }
 }

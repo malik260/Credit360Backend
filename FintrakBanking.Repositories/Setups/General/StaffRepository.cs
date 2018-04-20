@@ -383,22 +383,21 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)OperationsEnum.StaffCreation;
-
-            entity.externalInitialization = false;
-
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    workflow.LogForApproval(entity);
+                    workflow.StaffId = entity.staffId;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workflow.TargetId = entity.targetId;
+                    workflow.Comment = entity.comment;
+                    workflow.OperationId = (int)OperationsEnum.StaffCreation;
+                    workflow.ExternalInitialization = false;
+                    workflow.DeferredExecution = true;
+                    workflow.LogActivity();
 
-                    var b = workflow.NextLevelId ?? 0;
-                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
+                    context.SaveChanges();
 
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {

@@ -1465,7 +1465,6 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.OperationId = entity.operationId;
                     workflow.DeferredExecution = true;
                     workflow.ExternalInitialization = false;
-                    //workflow.Amount = entity.amount;
                     workflow.LogActivity();
 
                     context.SaveChanges();

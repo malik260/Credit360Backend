@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_PAST_DUE = new HashSet<TBL_LOAN_PAST_DUE>();
             TBL_LOAN_RECOVERY_PLAN = new HashSet<TBL_LOAN_RECOVERY_PLAN>();
             TBL_LOAN_SCHEDULE_TYPE_PRODUCT = new HashSet<TBL_LOAN_SCHEDULE_TYPE_PRODUCT>();
-            TBL_STAFF_ACCOUNT_HISTORY_DTL = new HashSet<TBL_STAFF_ACCOUNT_HISTORY_DTL>();
+            TBL_STAFF_ACCOUNT_HISTORY = new HashSet<TBL_STAFF_ACCOUNT_HISTORY>();
             TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
             TBL_TEMP_FEE = new HashSet<TBL_TEMP_FEE>();
         }
@@ -109,7 +109,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_DEAL_CLASSIFICATION TBL_DEAL_CLASSIFICATION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_STAFF_ACCOUNT_HISTORY_DTL> TBL_STAFF_ACCOUNT_HISTORY_DTL { get; set; }
+        public virtual ICollection<TBL_STAFF_ACCOUNT_HISTORY> TBL_STAFF_ACCOUNT_HISTORY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
