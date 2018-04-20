@@ -370,6 +370,7 @@
     <Compile Include="Models\TBL_SIGNATURE_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_SOURCE_APPLICATION.cs" />
     <Compile Include="Models\TBL_STAFF.cs" />
+    <Compile Include="Models\TBL_STAFF_ACCOUNT_HISTORY.cs" />
     <Compile Include="Models\TBL_STAFF_JOBTITLE.cs" />
     <Compile Include="Models\TBL_STAFF_RELIEF.cs" />
     <Compile Include="Models\TBL_STAFF_ROLE.cs" />

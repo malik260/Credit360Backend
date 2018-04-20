@@ -282,7 +282,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         && x.ENDDATE >= systemDate
                         && x.RELIEFSTAFFID == this.staffId
                     );
-                    staff = level.Staff.Where(x => x.STAFFID == relieverStaff.STAFFID); // ?
+                    if (relieverStaff != null) staff = level.Staff.Where(x => x.STAFFID == relieverStaff.STAFFID); // ?
                 }
 
                 if (staff.Any() == false && defaultRole == null && relieverStaff == null)
@@ -576,7 +576,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.EndProcess(this.statusId);
             }
 
-            if (this.fromLevelId == this.finalLevel)
+            if (this.fromLevelId != null && this.fromLevelId == this.finalLevel)
             {
                 this.EndProcess(this.statusId);
             }
