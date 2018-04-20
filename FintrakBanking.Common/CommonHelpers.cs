@@ -389,5 +389,16 @@ namespace FintrakBanking.Common
             return System.Text.Encoding.ASCII.GetBytes(str);
         }
 
+        public static string FileToBase64(this string imgPath)
+        {
+            byte[] imageBytes = System.IO.File.ReadAllBytes(imgPath);
+            string base64String = Convert.ToBase64String(imageBytes);
+            return base64String;
+        }
+        public static byte[] Base64ToByte(this string base64String)
+        {
+            byte[] byteBuffer = Convert.FromBase64String(base64String);
+            return byteBuffer;
+        }
     }
 }

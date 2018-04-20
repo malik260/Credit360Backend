@@ -96,6 +96,46 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("languages")]
+        public HttpResponseMessage GetLanguages()
+        {
+            try
+            {
+                var data = repo.GetLanguages();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("nature-of-business")]
+        public HttpResponseMessage GetNatureOfBusiness()
+        {
+            try
+            {
+                var data = repo.GetNatureOfBusiness();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         // POST api/values
         [HttpPost]
         [Route("company")]
@@ -154,11 +194,11 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, message = "company has been updated successfully" });
+                   new { success = true, message = "Changes Saved successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "company has not been updated successfully" });
+                   new { success = false, message = "Saved changes not successfull" });
             }
             catch (System.Exception ex)
             {

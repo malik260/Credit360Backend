@@ -10,5 +10,9 @@ namespace FintrakBanking.Interfaces.Setups.General
         JobTitleViewModel GetJobTitle(int jobTitleId);
 
         IEnumerable<JobTitleViewModel> GetJobTitleByCompanyId(int companyId);
+
+        bool AddUpdateJobTitle(JobTitleViewModel entity);
+
+        bool ValidateJobTitle(string jobTitleName);
     }
 }

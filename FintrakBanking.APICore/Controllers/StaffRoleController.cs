@@ -5,6 +5,9 @@ using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.APICore.core;
 using System.Web;
+using FintrakBanking.ViewModels.Setups.General;
+using System;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -22,7 +25,8 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet][Route("staff-role")]
+        [HttpGet]
+        [Route("staff-role")]
         public HttpResponseMessage GetStaffRole()
         {
             try
@@ -36,7 +40,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("staff-role/{staffRoleId}")]
+        [HttpGet]
+        [Route("staff-role/{staffRoleId}")]
         public HttpResponseMessage GetStaffRole(int rankId)
         {
             try
@@ -55,7 +60,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("staff-role/company")]
+        [HttpGet]
+        [Route("staff-role/company")]
         public HttpResponseMessage GetStaffRoleByCompanyId()
         {
             try
@@ -93,5 +99,106 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("staff-role")]
+        public HttpResponseMessage AddUpdateStaffRole([FromBody] StaffRoleViewModel entity)
+        {
+            try
+            {
+                string createUpdate = "";
+                if (entity.staffRoleId != 0 || entity.staffRoleId > 0)
+                {
+                    createUpdate = "updated";
+                    if (repo.ValidateStaffRoleUpdate(entity.staffRoleId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                               new { success = false, message = "This Staff Role is undergoing approval."
+                                               + Environment.NewLine + "Approve previous entry to continue."});
+                    }
+                }
+                else
+                {
+                    createUpdate = "created";
+                    if (repo.ValidateStaffRole(entity.staffRoleCode, entity.staffRoleName))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                               new { success = false, message = "Staff Role with same Name or Code already exist." });
+                    }
+                }
+                entity.userBranchId = (short)token.GetBranchId;
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = (short)token.GetCompanyId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddUpdateStaffRole(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("staff-role-approval")]
+        public HttpResponseMessage GetStaffRoleAwaitingApproval()
+        {
+            try
+            {
+                var staffinfo = repo.GetStaffRoleAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (staffinfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+        [HttpPost]
+        [Route("staff-role/approval")]
+        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.GoForApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Staff Role has been approved successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

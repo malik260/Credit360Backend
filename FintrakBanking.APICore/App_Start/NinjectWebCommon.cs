@@ -196,6 +196,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IApprovalReliefRepository>().To<ApprovalReliefRepository>();
             kernel.Bind<ICasaLienRepository>().To<CasaLienRepository>();
             kernel.Bind<IContingentLoanUsageRepository>().To<ContingentLoanUsageRepository>();
+            kernel.Bind<IOverRideRepository>().To<OverRideRepository>();
             
 
 

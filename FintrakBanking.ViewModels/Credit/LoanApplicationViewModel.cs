@@ -148,9 +148,11 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime date { get; set; }
         public int? dayInterval { get; set; }
         public bool InvoiceStatus { get; set; }
+        public int dayCount { get; set; }
     }
     public class ValidateNumberViewModel
     {
+        public string contractNumber { get; set; }
         public int productId { get; set; }
         public int principalId { get; set; }
         public bool invoiceStatus { get; set; }

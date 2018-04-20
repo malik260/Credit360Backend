@@ -55,7 +55,7 @@ namespace FintrakBanking.Repositories.Credit
 
         // ADD
 
-        public bool AddCollateral(CollateralViewModel entity, byte[] file)
+        public bool AddCollateral(CollateralViewModel entity, byte[] file) //, 
         {
             int collateralId = AddCollateralMainForm(entity);
 
@@ -80,18 +80,18 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (entity.hasInsurance) { AddItemInsurancePolicy(collateralId, entity); }
 
-                if (file!=null){ SaveCollateralMainDocument(entity, collateralId, file); }
+                if (file != null) { SaveCollateralMainDocument(entity, collateralId, file); }
 
                 bool saved;
                 try
                 {
-                    saved =  context.SaveChanges() != 0;
+                    saved = context.SaveChanges() != 0;
                 }
                 catch (Exception ex)
                 {
                     throw new Exception(ex.InnerException.ToString());
                 }
-                if (saved) { return true; } // audit here
+                if (saved) { return true; }
 
                 DeleteCollateral(collateralId);
             }
@@ -166,6 +166,38 @@ namespace FintrakBanking.Repositories.Credit
         private int AddCollateralMainForm(CollateralViewModel model)
         {
             if (context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == model.collateralCode).Any() == true)
+            {
+                throw new Exception("The specified Collateral Code is already used in the system!");
+            }
+
+            var collateral = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
+            {
+                COLLATERALTYPEID = model.collateralTypeId,
+                COLLATERALSUBTYPEID = model.collateralSubTypeId,
+                COLLATERALCODE = model.collateralCode,
+                COLLATERALVALUE = (decimal)model.collateralValue,
+                COMPANYID = model.companyId,
+                ALLOWSHARING = model.allowSharing,
+                ISLOCATIONBASED = model.isLocationBased,
+                VALUATIONCYCLE = model.valuationCycle,
+                HAIRCUT = model.haircut,
+                CURRENCYID = model.currencyId,
+                CUSTOMERID = model.customerId,
+                CAMREFNUMBER = model.camRefNumber,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate()
+            });
+
+            if (context.SaveChanges() == 1)
+            {
+                return collateral.COLLATERALCUSTOMERID;
+            }
+
+            return 0;
+        }
+        private int AddCollateralMainFormForGurantee(CollateralViewModel model)
+        {
+            if (context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == model.collateralId).Any() == true)
             {
                 throw new Exception("The specified Collateral Code is already used in the system!");
             }
@@ -364,7 +396,7 @@ namespace FintrakBanking.Repositories.Credit
 
         // ITEM INSURANCE
 
-        private void AddItemInsurancePolicy(int collateralId, CollateralViewModel entity)
+        public void AddItemInsurancePolicy(int collateralId, CollateralViewModel entity)
         {
             context.TBL_COLLATERAL_ITEM_POLICY.Add(new TBL_COLLATERAL_ITEM_POLICY
             {
@@ -378,10 +410,41 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 DELETED = false
-                 
+
             });
         }
 
+        public bool AddNewItemInsurancePolicy(InsurancePolicies entity)
+        {
+            context.TBL_COLLATERAL_ITEM_POLICY.Add(new TBL_COLLATERAL_ITEM_POLICY
+            {
+                COLLATERALCUSTOMERID = entity.collateraalId,
+                POLICYREFERENCENUMBER = entity.referenceNumber,
+                INSURANCECOMPANYNAME = entity.insuranceCompany,
+                SUMINSURED = entity.sumInsured,
+                STARTDATE = (DateTime)entity.startDate,
+                ENDDATE = (DateTime)entity.expiryDate,
+                INSURANCETYPE = entity.insuranceType,
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false
+
+            });
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.CollateralReleaseAction,
+            //    STAFFID = entity.createdBy,
+            //    BRANCHID = (short)entity.userBranchId,
+            //    DETAIL = $"Add new item policy with id : " + entity.collateraalId,
+            //    IPADDRESS = entity.userIPAddress,
+            //    URL = entity.applicationUrl,
+            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
+            //this.auditTrail.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) { return true; } else { return false; } ;
+        }
         public bool SaveCollateralMainDocument(CollateralViewModel model, int collateralId, byte[] file)
         {
             var data = new TBL_MEDIA_COLLATERAL_DOCUMENTS
@@ -393,7 +456,8 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALCUSTOMERID = collateralId,
                 SYSTEMDATETIME = DateTime.Now,
                 CREATEDBY = (int)model.createdBy,
-                ISPRIMARYDOCUMENT = model.isPrimaryDocument
+                ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+                TARGETID = model.TargetId
             };
 
             documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);
@@ -625,10 +689,26 @@ namespace FintrakBanking.Repositories.Credit
                 details.startDate = insurance.STARTDATE;
                 details.expiryDate = insurance.ENDDATE;
                 details.insuranceType = insurance.INSURANCETYPE;
+
             }
             return details;
-        }
 
+        }
+        public List<InsurancePolicies> GetCollateralInsurancePolicies(int collateralId)
+        {
+            var insurance = context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == collateralId)
+                .Select(i => new InsurancePolicies
+                {
+                    referenceNumber = i.POLICYREFERENCENUMBER,
+                    insuranceCompany = i.INSURANCECOMPANYNAME,
+                    sumInsured = i.SUMINSURED,
+                    startDate = i.STARTDATE,
+                    expiryDate = i.ENDDATE,
+                    insuranceType = i.INSURANCETYPE,
+                    hasExpired = i.HASEXPIRED
+                }).ToList();
+            return insurance;
+        }
         // stock collateral
 
         private void AddStockCollateral(int collateralId, CollateralViewModel entity)
@@ -868,6 +948,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddGuaranteeCollateral(int collateralId, CollateralViewModel entity)
         {
+
             context.TBL_COLLATERAL_GAURANTEE.Add(new TBL_COLLATERAL_GAURANTEE
             {
                 COLLATERALCUSTOMERID = collateralId,
@@ -891,6 +972,115 @@ namespace FintrakBanking.Repositories.Credit
                 RELATIONSHIPDURATION = entity.relationshipDuration
 
             });
+        }
+        public List<CollateralViewModel> AddGuaranteeJoinCollateral(CollateralViewModel entity, byte[] buffer)
+        {
+            int collateralId = 0;
+            List<CollateralViewModel> listOfJoinCollateralGuarantee = new List<CollateralViewModel>();
+
+            if (context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == entity.collateralId).Any() != true)
+            {
+                collateralId = AddCollateralMainFormForGurantee(entity);
+
+                var guarantee = context.TBL_COLLATERAL_GAURANTEE.Add(new TBL_COLLATERAL_GAURANTEE
+                {
+                    COLLATERALCUSTOMERID = collateralId,
+                    INSTITUTIONNAME = entity.institutionName,
+                    GUARANTORADDRESS = entity.guarantorAddress,
+                    GUARANTEEVALUE = entity.guaranteeValue,
+                    STARTDATE = entity.cStartDate,
+                    ENDDATE = entity.endDate,
+                    REMARK = entity.remark,
+                    FIRSTNAME = entity.firstName,
+                    MIDDLENAME = entity.middleName,
+                    LASTNAME = entity.lastName,
+                    BVN = entity.bvn,
+                    RCNUMBER = entity.rcNumber,
+                    PHONENUMBER1 = entity.phoneNumber1,
+                    PHONENUMBER2 = entity.phoneNumber2,
+                    EMAILADDRESS = entity.emailAddress,
+                    RELATIONSHIP = entity.relationship,
+                    RELATIONSHIPDURATION = entity.relationshipDuration
+
+
+
+                });
+                context.SaveChanges();
+                entity.TargetId = guarantee.COLLATERALGAURANTEEID;
+                if (buffer != null) { SaveCollateralMainDocument(entity, collateralId, buffer); }
+                listOfJoinCollateralGuarantee = GetCollateralJoinGuarantiee(collateralId);
+            }
+            else
+            {
+                if (entity.collateralId > 0)
+                {
+
+                    var guarantee = context.TBL_COLLATERAL_GAURANTEE.Add(new TBL_COLLATERAL_GAURANTEE
+                    {
+                        COLLATERALCUSTOMERID = entity.collateralId,
+                        INSTITUTIONNAME = entity.institutionName,
+                        GUARANTORADDRESS = entity.guarantorAddress,
+                        GUARANTEEVALUE = entity.guaranteeValue,
+                        STARTDATE = entity.cStartDate,
+                        ENDDATE = entity.endDate,
+                        REMARK = entity.remark,
+                        FIRSTNAME = entity.firstName,
+                        MIDDLENAME = entity.middleName,
+                        LASTNAME = entity.lastName,
+                        BVN = entity.bvn,
+                        RCNUMBER = entity.rcNumber,
+                        PHONENUMBER1 = entity.phoneNumber1,
+                        PHONENUMBER2 = entity.phoneNumber2,
+                        EMAILADDRESS = entity.emailAddress,
+                        RELATIONSHIP = entity.relationship,
+                        RELATIONSHIPDURATION = entity.relationshipDuration
+
+                    });
+                    context.SaveChanges();
+                    entity.TargetId = guarantee.COLLATERALGAURANTEEID;
+                    if (buffer != null) { SaveCollateralMainDocument(entity, entity.collateralId, buffer); }
+                    listOfJoinCollateralGuarantee = GetCollateralJoinGuarantiee(entity.collateralId);
+
+                }
+            }
+            return listOfJoinCollateralGuarantee;
+
+
+
+
+
+        }
+
+        private List<CollateralViewModel> GetCollateralJoinGuarantiee(int collateralId)
+        {
+
+            var guarantee = from x in context.TBL_COLLATERAL_GAURANTEE
+                            where x.COLLATERALCUSTOMERID == collateralId
+
+                            select new CollateralViewModel
+                            {
+
+                                institutionName = x.INSTITUTIONNAME,
+                                guarantorAddress = x.GUARANTORADDRESS,
+                                guaranteeValue = x.GUARANTEEVALUE,
+                                cStartDate = x.STARTDATE,
+                                endDate = x.ENDDATE,
+                                remark = x.REMARK,
+                                firstName = x.FIRSTNAME,
+                                middleName = x.MIDDLENAME,
+                                lastName = x.LASTNAME,
+                                bvn = x.BVN,
+                                rcNumber = x.RCNUMBER,
+                                phoneNumber1 = x.PHONENUMBER1,
+                                phoneNumber2 = x.PHONENUMBER2,
+                                emailAddress = x.EMAILADDRESS,
+                                relationship = x.RELATIONSHIP,
+                                relationshipDuration = x.RELATIONSHIPDURATION,
+                                collateralId = collateralId,
+                                TargetId = x.COLLATERALGAURANTEEID
+
+                            };
+            return guarantee.ToList();
         }
 
         private void UpdateGuaranteeCollateral(CollateralViewModel entity)
@@ -981,12 +1171,13 @@ namespace FintrakBanking.Repositories.Credit
                     REMARK = entity.remark,
                     NEARESTLANDMARK = entity.nearestLandMark,
                     NEARESTBUSSTOP = entity.nearestBusStop,
-                    LONGITUDE = entity.longitude,
-                    LATITUDE = entity.latitude,
+                    //LONGITUDE = entity.longitude,
+                    //LATITUDE = entity.latitude,
                     PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
                     PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
                     VALUATIONAMOUNT = entity.valuationAmount,
-                   
+
+
                     //   STATEID = entity.stateId
                 });
             }
@@ -1026,8 +1217,8 @@ namespace FintrakBanking.Repositories.Credit
             collateral.REMARK = entity.remark;
             collateral.NEARESTLANDMARK = entity.nearestLandMark;
             collateral.NEARESTBUSSTOP = entity.nearestBusStop;
-            collateral.LONGITUDE = entity.longitude;
-            collateral.LATITUDE = entity.latitude;
+            //collateral.LONGITUDE = entity.longitude;
+            //collateral.LATITUDE = entity.latitude;
             collateral.PERFECTIONSTATUSID = (byte)entity.perfectionStatusId;
             collateral.PERFECTIONSTATUSREASON = entity.perfectionStatusReason;
             collateral.VALUATIONAMOUNT = entity.valuationAmount;
@@ -1065,8 +1256,8 @@ namespace FintrakBanking.Repositories.Credit
                 remark = specifics.REMARK,
                 nearestLandMark = specifics.NEARESTLANDMARK,
                 nearestBusStop = specifics.NEARESTBUSSTOP,
-                longitude = specifics.LONGITUDE,
-                latitude = specifics.LATITUDE,
+                //longitude = specifics.LONGITUDE,
+                //latitude = specifics.LATITUDE,
                 perfectionStatusId = specifics.PERFECTIONSTATUSID,
                 perfectionStatusReason = specifics.PERFECTIONSTATUSREASON,
                 valuationAmount = specifics.VALUATIONAMOUNT
@@ -1151,7 +1342,7 @@ namespace FintrakBanking.Repositories.Credit
                 interestPaymentFrequency = specifics.INTERESTPAYMENTFREQUENCY,
                 remark = specifics.REMARK,
                 fundName = specifics.FUNDNAME,
-                bank=specifics.BANKPURCHASEDFROM,
+                bank = specifics.BANKPURCHASEDFROM,
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -3212,9 +3403,9 @@ namespace FintrakBanking.Repositories.Credit
             var ExpiredPolicies = from x in context.TBL_COLLATERAL_ITEM_POLICY
                                   where x.ENDDATE > currentDate && x.HASEXPIRED != false
                                   select x;
-            if (ExpiredPolicies!=null)
+            if (ExpiredPolicies != null)
             {
-                foreach(var x in ExpiredPolicies)
+                foreach (var x in ExpiredPolicies)
                 {
                     x.HASEXPIRED = true;
                     x.DATETIMEDELETED = DateTime.Now;
@@ -3222,13 +3413,16 @@ namespace FintrakBanking.Repositories.Credit
             }
             try
             {
-                if (context.SaveChanges() > 0) { return "Expired Insurance Policies has been update on : " + DateTime.Now; } else { return "No available Expired Insurance Policies, No update made"; } ;
+                if (context.SaveChanges() > 0) { return "Expired Insurance Policies has been update on : " + DateTime.Now; } else { return "No available Expired Insurance Policies, No update made"; };
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return ex.Message;
             }
         }
+
+
     }
 
 }

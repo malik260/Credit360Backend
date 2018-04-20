@@ -22,6 +22,7 @@ using System.Globalization;
 using FintrakBanking.Common;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
+using System.Net.Http.Formatting;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -34,22 +35,25 @@ namespace FintrakBanking.APICore.Controllers
         private ICustomerCollateralRepository repo;
         private ICollateralDocumentRepository document;
         private ICollateralTypeRepository type;
+       // private IGuaranteeCollateralRepository guaratee;
 
         public CustomerCollateralController(
             ICustomerCollateralRepository repo,
             ICollateralTypeRepository type,
             ICollateralDocumentRepository document
+           // IGuaranteeCollateralRepository guaratee
             )
         {
             this.repo = repo;
             this.type = type;
             this.document = document;
+          //  this.guaratee = guaratee;
         }
 
         #region New
 
         [HttpPost, Route("customer-collateral")]
-        public async Task<HttpResponseMessage> AddCollateral() 
+        public async Task<HttpResponseMessage> AddCollateral()
         {
 
             try
@@ -63,7 +67,7 @@ namespace FintrakBanking.APICore.Controllers
                 await Request.Content.ReadAsMultipartAsync(provider);
 
                 var formData = provider.FormData["formData"];
-              
+
                 var errors = new List<string>();
                 CollateralViewModel incomingData = JsonConvert.DeserializeObject<CollateralViewModel>(formData,
                     new JsonSerializerSettings
@@ -122,6 +126,62 @@ namespace FintrakBanking.APICore.Controllers
             //{
             //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             //}
+        }
+
+
+        [HttpPost, Route("customer-join-collateral")]
+        public async Task<HttpResponseMessage> AddJoinCollateralInformation()
+        {
+
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                var formData = provider.FormData["formData"];
+
+                var errors = new List<string>();
+                CollateralViewModel incomingData = JsonConvert.DeserializeObject<CollateralViewModel>(formData,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Include,
+                        Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs earg)
+                        {
+                            errors.Add(earg.ErrorContext.Member.ToString());
+                            earg.ErrorContext.Handled = true;
+                        }
+                    });
+
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                incomingData.userBranchId = (short)token.GetBranchId;
+                incomingData.companyId = token.GetCompanyId;
+                incomingData.createdBy = token.GetStaffId;
+                incomingData.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = repo.AddGuaranteeJoinCollateral(incomingData, buffer);
+
+                if (data.Count > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
         }
 
         [HttpPut, Route("customer-collateral/{collateralId}")]
@@ -205,7 +265,32 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
-
+        [HttpGet, Route("insurance-policies/{collateralId}")]
+        public HttpResponseMessage GetInsurancePolicies(int collateralId)
+        {
+            try
+            {
+                var response = repo.GetCollateralInsurancePolicies(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+        [HttpPost, Route("add-insurance-policy")]
+        public HttpResponseMessage AddNewInsurancePolicy(InsurancePolicies insurancePolicies)
+        {
+            try
+            {
+               var respo  =  repo.AddNewItemInsurancePolicy(insurancePolicies);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = repo });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
         [HttpGet, Route("collateral-document/{collateralId}")]
         public HttpResponseMessage GetCollateralDocumentByCollateral(int collateralId)
         {
@@ -239,7 +324,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [Route("collateral-guarantee/{targetId}")]
+        public HttpResponseMessage GetCollaterGuaranteeFile(int targetId)
+        {
+            try
+            {
+                var data = document.GetCollateralGuaranteeDocument(targetId); //CollateralVisitationDocumentViewModel
 
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        
 
         [HttpGet]
         [Route("loan-visitation/{collateralVisitationId}")]
@@ -263,7 +367,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("visitation-document")]
-        public async Task<HttpResponseMessage> AddVisitationDocument( )
+        public async Task<HttpResponseMessage> AddVisitationDocument()
         {
             try
             {
@@ -281,14 +385,14 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
                 }
 
-              var visitationDate =  provider.FormData["lastVisitaionDate"];
+                var visitationDate = provider.FormData["lastVisitaionDate"];
 
                 var actualDate = visitationDate.Substring(0, 15);
                 var dateVisited = DateTime.ParseExact(actualDate, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
 
                 var entity = new CollateralDocumentViewModel
                 {
-                    lastVisitaionDate = dateVisited, 
+                    lastVisitaionDate = dateVisited,
                     visitationRemark = provider.FormData["visitationRemark"],
                     collateralCustomerId = Convert.ToInt32(provider.FormData["collateralCustomerId"]),
                     fileName = provider.FormData["fileName"],
@@ -333,8 +437,8 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.companyId = token.GetCompanyId;
 
-                var response =  repo.AddPropertyVistation(entity);
-                if (response>0)
+                var response = repo.AddPropertyVistation(entity);
+                if (response > 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
                 }
@@ -525,7 +629,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.SearchCollateral(queryString, token.GetCompanyId);
-                return Request.CreateResponse(HttpStatusCode.OK,  new { success = true, result = data.ToList() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
             catch (Exception ex)
             {
