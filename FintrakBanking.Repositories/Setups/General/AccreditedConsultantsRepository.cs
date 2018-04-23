@@ -54,6 +54,38 @@ namespace FintrakBanking.Repositories.Setups.General
                            }).ToList()
                     });
         }
+
+        public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId)
+        {
+            return (from m in context.TBL_ACCREDITEDCONSULTANT
+                    join c in context.TBL_ACCREDITEDCONSULTANT_STATE on m.ACCREDITEDCONSULTANTID equals c.ACCREDITEDCONSULTANTID
+                    where m.COMPANYID == companyId && c.STATEID == stateId && m.ACCREDITEDCONSULTANTTYPEID == (short)AccreditedConsultantTypeEnum.Solicitor
+                    select new AccreditedConsultantsViewModel
+                    {
+                        accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
+                        registrationNumber = m.REGISTRATIONNUMBER,
+                        name = m.NAME,
+                        firmName = m.FIRMNAME,
+                        accreditedConsultantTypeId = m.ACCREDITEDCONSULTANTTYPEID,
+                        cityId = m.CITYID,
+                        accountNumber = m.ACCOUNTNUMBER,
+                        solicitorBVN = m.SOLICITORBVN,
+                        countryId = m.COUNTRYID,
+                        emailAddress = m.EMAILADDRESS,
+                        phoneNumber = m.PHONENUMBER,
+                        address = m.ADDRESS,
+                        coreCompetence = m.CORECOMPETENCE,
+                        accreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID).Select(k =>
+                           new AccreditedConsultantStateViewModel()
+                           {
+                               accreditedConsultantStateCoveredID = k.CONSULT_STATE_COVREDID,
+                               stateId = k.STATEID,
+                               stateName = context.TBL_STATE.FirstOrDefault(x => x.STATEID == k.STATEID).STATENAME,
+                               accreditedConsultantId = k.ACCREDITEDCONSULTANTID
+                           }).ToList()
+                    });
+        }
+
         public async Task<bool> AddAccreditedConsultants(AccreditedConsultantsViewModel entity)
         {
             if (entity == null)

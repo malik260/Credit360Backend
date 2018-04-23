@@ -68,6 +68,7 @@
     <Compile Include="CreditBureauHelp.cs" />
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />
+    <Compile Include="Enum\AccreditedConsultantTypeEnum.cs" />
     <Compile Include="Enum\AlertMessageEnum.cs" />
     <Compile Include="Enum\ApprovalGroupEnum.cs" />
     <Compile Include="Enum\ApprovalState.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Enum\FeeConcessionTypeEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />
     <Compile Include="Enum\CASAPostNoStatusEnum.cs" />
+    <Compile Include="Enum\JobSubTypeEnum.cs" />
     <Compile Include="Enum\JobTypeEnum.cs" />
     <Compile Include="Enum\LimitValueTypeEnum.cs" />
     <Compile Include="Enum\LoanApplicationStatusEnum.cs" />

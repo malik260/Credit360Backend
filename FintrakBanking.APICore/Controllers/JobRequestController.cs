@@ -40,6 +40,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("job-request-detail/legal")]
+        public HttpResponseMessage GetJobRequestLegalJobDetails()
+        {
+            try
+            {
+                var data = repo.GetJobRequestLegalJobDetails();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [Route("job-request/loan-application-details/{applicationId}")]
@@ -77,7 +91,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetJobRequestByStaffId(token.GetStaffId);
+                var data = repo.GetJobRequestByStaffId(token.GetStaffId, token.GetBranchId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -147,41 +161,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("operation-staff/{operationId}")]
-        public HttpResponseMessage GetOperationStaff(int operationId)
-        {
-            try
-            {
-                var data = repo.GetOperationStaff(operationId);
-
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpGet]
-        [Route("job-request/group")]
-        public HttpResponseMessage GetJobRequestByGroupId()
-        {
-            try
-            {
-                var data = repo.GetJobRequestByGroupId(token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
-        }
-
-        [HttpGet]
         [Route("job-request/department")]
         public HttpResponseMessage GetJobRequestByDepartment()
         {
@@ -214,8 +193,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("job-request")]
-        public HttpResponseMessage AddJobRequest([FromBody] JobRequestViewModel entity)
+        [Route("job-request/legal-collateral-job")]
+        public HttpResponseMessage EffectLegaCollateralJobs([FromBody] JobRequestCollateralSearchViewModel entity)
         {
             try
             {
@@ -224,17 +203,17 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddJobRequest(entity);
+                var data = repo.EffectLegaCollateralJobs(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Collateral Search Instructions Saved Successfully" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Collateral Search Instructions failed to save " });
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " + ex.Message, error = ex.InnerException });
             }
         }
 
@@ -601,6 +580,41 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion job-type
+
+        //[HttpGet]
+        //[Route("operation-staff/{operationId}")]
+        //public HttpResponseMessage GetOperationStaff(int operationId)
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetOperationStaff(operationId);
+
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        //[HttpGet]
+        //[Route("job-request/group")]
+        //public HttpResponseMessage GetJobRequestByGroupId()
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetJobRequestByGroupId(token.GetStaffId);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+        //    }
+        //}
 
     }
 }

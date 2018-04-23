@@ -33,7 +33,6 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
@@ -61,8 +60,6 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 UserInfo user = new UserInfo()
                 {
                     BranchId = token.GetBranchId,
@@ -92,7 +89,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.lastUpdatedBy = token.GetStaffId;
@@ -119,8 +115,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetLoanCovenantDetailByCovenantType(id, token.GetCompanyId);
                 if (data == null)
                 {
@@ -140,8 +134,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetLoanCovenantDetailById(id, token.GetCompanyId);
                 if (data == null)
                 {
@@ -161,8 +153,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetLoanCovenantDetailByloanId(id, token.GetCompanyId);
                 if (data == null)
                 {
@@ -176,7 +166,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
 
 
         [HttpPost][Route("covenant-type")]
@@ -251,6 +240,72 @@ namespace FintrakBanking.APICore.Controllers
             {
                 //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+
+        // application
+
+
+        [HttpGet]
+        [Route("covenant/loan-application/{id}")]
+        public HttpResponseMessage GetLoanApplicationCovenant(int id)
+        {
+            try
+            {
+                var data = repo.GetLoanApplicationCovenant(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-application-covenant")]
+        public HttpResponseMessage AddLoanApplicationCovenant([FromBody] LoanCovenantDetailViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                var data = repo.AddLoanApplicationCovenant(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
+        }
+
+        [HttpDelete]
+        [Route("loan-application-covenant/{id}")]
+        public HttpResponseMessage DeleteLoanApplicationCovenant(int id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                };
+                var data = repo.DeleteLoanApplicationCovenant(id, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
     }

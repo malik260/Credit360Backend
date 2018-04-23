@@ -40,6 +40,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanCreditBereauViewModel : GeneralEntity
     {
+        public int dayAgo { get; set; }
+
         public short creditBureauId { get; set; }
         public string creditBureauName { get; set; }
         public int customerCreditBureauId { get; set; }

@@ -308,10 +308,10 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
-
-            var customerLoanCreditBureauData = from a in context.TBL_CUSTOMER_CREDIT_BUREAU
+            var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                              // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now) <= 30 ) 
+                                              // && (DateTime.Now - a.DATETIMECREATED).Days <= 30 
+                                              // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30 ) 
                                                select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,
@@ -325,9 +325,10 @@ namespace FintrakBanking.Repositories.Credit
                                                    dateTimeCreated = a.DATETIMECREATED,
                                                    searchCount = 0,
                                                    uploadCount = 0,
-                                                   createdBy = a.CREATEDBY
-                                               };
-            return customerLoanCreditBureauData.ToList();
+                                                   createdBy = a.CREATEDBY,
+                                                   dayAgo = DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value
+                                               }).ToList();
+            return customerLoanCreditBureauData;
         }
 
         public bool VerifyCustomerValidCreditBureau(int customerId)
@@ -373,7 +374,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new Exception("Timed out");
             }
-
         }
 
         public CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo)
@@ -387,7 +387,6 @@ namespace FintrakBanking.Repositories.Credit
                 createdBy = searchInfo.createdBy,
                 casaAccountId = searchInfo.casaAccountId,
                 creditBureauId = searchInfo.creditBureauId
-
             };
 
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -413,7 +412,6 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var creditBureauProcess = new CreditBureauProcess();
-
             CRCSearchResult searchResponse = new CRCSearchResult();
 
             using (var docTrans = docContext.Database.BeginTransaction())
@@ -466,13 +464,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool saveCrcPdfFile(CRCRequestViewModel searchInfo, SearchInput creditBureauInputs)
         {
-
             var creditBureauProcess = new CreditBureauProcess();
-
             CRCSearchResult searchResponse = new CRCSearchResult();
 
             using (var docTrans = docContext.Database.BeginTransaction())
-
             using (var trans = context.Database.BeginTransaction())
             {
                 try
@@ -508,7 +503,6 @@ namespace FintrakBanking.Repositories.Credit
                             //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                             throw new Exception("An error occured");
                         }
-
                     }
                     else
                     {
@@ -522,7 +516,6 @@ namespace FintrakBanking.Repositories.Credit
                     throw new Exception(ex.Message.ToString());
                 }
             }
-
         }
 
         private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)

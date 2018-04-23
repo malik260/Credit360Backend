@@ -11,15 +11,16 @@ namespace FintrakBanking.Interfaces.CASA
    public  interface IOverRideRepository
     {
         bool AddOverRideRequest(IEnumerable<OverrideDetailVeiwModel> entity);
-        IQueryable<OverrideDetailVeiwModel> AllOverRideRequest();
+        
         bool ApproveOverRideRequest(OverrideDetailVeiwModel entity);
         bool DeleteOverRideRequest(OverrideDetailVeiwModel entity);
         IEnumerable<OverrideItemVeiwModel> GetAllOverRideItems();
-        IQueryable<OverrideDetailVeiwModel> GetAllOverRideRequest();
+        IEnumerable<OverrideDetailVeiwModel> GetAllOverRideRequest();
         OverrideDetailVeiwModel GetOverRideRequestById(int id);
         IEnumerable<OverrideDetailVeiwModel> GetOverRideRequestByOverRideItemsId(int id);
         IEnumerable<OverrideDetailVeiwModel> GetOverRideRequestByReferenceNumber(string refNo);
         bool UpdateOverRideRequest(OverrideDetailVeiwModel entity);
+        int EffectOverride(string customerCode, int overrideItemId, string sourceRef);
 
 
     }

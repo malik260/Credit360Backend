@@ -33,6 +33,10 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime DATETIMECREATED { get; set; }
 
+        public DateTime? DATETIMEUSED { get; set; }
+
+        public int? USEDBY { get; set; }
+
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_OVERRIDE_ITEM TBL_OVERRIDE_ITEM { get; set; }

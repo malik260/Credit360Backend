@@ -383,22 +383,21 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)OperationsEnum.StaffCreation;
-
-            entity.externalInitialization = false;
-
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    workflow.LogForApproval(entity);
+                    workflow.StaffId = entity.staffId;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workflow.TargetId = entity.targetId;
+                    workflow.Comment = entity.comment;
+                    workflow.OperationId = (int)OperationsEnum.StaffCreation;
+                    workflow.ExternalInitialization = false;
+                    workflow.DeferredExecution = true;
+                    workflow.LogActivity();
 
-                    var b = workflow.NextLevelId ?? 0;
-                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
+                    context.SaveChanges();
 
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
@@ -609,40 +608,57 @@ namespace FintrakBanking.Repositories.Setups.General
                 SYSTEMDATETIME = DateTime.Now
             };
 
-            using (var trans = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    auditTrail.AddAuditTrail(audit);
-                    context.TBL_TEMP_STAFF.Add(staff);
-                    output = await context.SaveChangesAsync() > 0;
+            auditTrail.AddAuditTrail(audit);
+            context.TBL_TEMP_STAFF.Add(staff);
+            output = await context.SaveChangesAsync() > 0;
 
-                    var entity = new ApprovalViewModel
-                    {
-                        staffId = staffModel.createdBy,
-                        companyId = staffModel.companyId,
-                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = staff.TEMPSTAFFID,
-                        operationId = (int)OperationsEnum.StaffCreation,
-                        BranchId = staffModel.userBranchId,
-                        externalInitialization = true
-                    };
-                    var response = workflow.LogForApproval(entity);
+            workflow.StaffId = staffModel.createdBy;
+            workflow.CompanyId = staffModel.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.TargetId = staff.TEMPSTAFFID;
+            workflow.Comment = "New Staff Creation";
+            workflow.OperationId = (int)OperationsEnum.StaffCreation;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
 
-                    if (response)
-                    {
-                        trans.Commit();
-                    }
-
-                    return output;
-                }
-                catch (Exception)
-                {
-                    trans.Rollback();
-                }
-            }
+            context.SaveChanges();
 
             return output;
+
+            //using (var trans = context.Database.BeginTransaction())
+            //{
+            //    try
+            //    {
+            //        auditTrail.AddAuditTrail(audit);
+            //        context.TBL_TEMP_STAFF.Add(staff);
+            //        output = await context.SaveChangesAsync() > 0;
+
+            //        workflow.StaffId = staffModel.createdBy;
+            //        workflow.CompanyId = staffModel.companyId;
+            //        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            //        workflow.TargetId = staff.TEMPSTAFFID;
+            //        workflow.Comment = "New Staff Creation";
+            //        workflow.OperationId = (int)OperationsEnum.StaffCreation;
+            //        workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            //        workflow.ExternalInitialization = true;
+            //        workflow.LogActivity();
+
+            //        context.SaveChanges();
+
+            //        if (workflow.Saved)
+            //        {
+            //            trans.Commit();
+            //        }
+
+            //        return output;
+            //    }
+            //    catch (Exception)
+            //    {
+            //        trans.Rollback();
+            //    }
+            //}
+
         }
 
         public bool IsStaffCodeAlreadyExist(string staffCode)

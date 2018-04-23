@@ -124,7 +124,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string middleName { get; set; }
         public string lastName { get; set; }
         public string customerCode { get; set; }
-        public string productAccountNumber { get; set; }
+        public string casaAccountNumber  { get; set; }
         public int currencyId { get; set; }
         public string currency { get; set; }
         public short accurialBasis { get; set; }
@@ -206,6 +206,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int newtenor { get; set; }
         public short scheduleTypeCategoryId { get; set; }
         public DateTime previousEffectiveDate { get; set; }
+        public decimal pastDueTotal { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
@@ -511,6 +512,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationId { get; set; }
         public decimal loanAmount { get; set; }
         public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
+        public DateTime date  { get; set; }
 
     }
 
@@ -595,6 +597,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipManagerId { get; set; }
 
         public int notificationDuration { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public bool isPercentage { get; set; }
+        public DateTime? nextCovenantDate { get; set; }
     }
 
     public class LoanMonitoringTriggerViewModel : GeneralEntity

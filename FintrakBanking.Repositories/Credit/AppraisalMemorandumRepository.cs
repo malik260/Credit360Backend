@@ -280,6 +280,9 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Untenored = model.untenored;
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
+            workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+            // workflow.NextProcess = appl.NEXTAPPLICATIONSTATUSID;
+
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
@@ -339,6 +342,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
                 if (model.forwardAction == (int)ApprovalStatusEnum.Approved) { appl.APPROVEDDATE = applicationDate; }
                 if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+                if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; }
                 // MEMORANDUM update
                 var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
                 if (memo != null) { memo.ISCOMPLETED = true; }
@@ -477,7 +481,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
-            if (grant == null) { grant = GetRelieverPrivilege(entity); }
+            if (grant == null) { return GetRelieverPrivilege(entity); }
             grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
             grant.owner = grant.userApprovalLevelIds.Contains((int)entity.levelId);
 
@@ -871,7 +875,10 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationId = x.a.LOANAPPLICATIONID,
                         applicationDate = x.a.APPLICATIONDATE,
                         applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
-                        branchId = x.a.BRANCHID,
+                        branchId = x.a.PRODUCTCLASSID,
+                        productClassId = x.a.PRODUCTCLASSID,
+                        finalApprovalLevelId=x.a.FINALAPPROVAL_LEVELID,
+                        nextApplicationStatusId=x.a.NEXTAPPLICATIONSTATUSID,
                         customerId = x.a.CUSTOMERID,
                         applicationAmount = x.a.APPLICATIONAMOUNT,
                         interestRate = x.a.INTERESTRATE,
@@ -891,6 +898,7 @@ namespace FintrakBanking.Repositories.Credit
                         //sla time, timein timeout, timespent, responsible person
                         currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                         approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
+                        
                     })
                 .Where(x => levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null))
                 .GroupBy(d => d.loanApplicationId)

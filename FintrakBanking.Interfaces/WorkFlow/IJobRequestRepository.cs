@@ -18,21 +18,23 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         IEnumerable<JobRequestViewModel> GetAllJobRequest();
 
-
-        IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId);
+       // IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId);
 
         IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId);
-        IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId);
+        IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId, int branchId);
 
         IEnumerable<JobRequestMessageViewModel> GetJobComments(int jobRequestId);
 
-        bool AddJobRequest(JobRequestViewModel model);
+       // bool AddJobRequest(JobRequestViewModel model);
         string AddGlobalJobRequest(JobRequestViewModel model);
         bool AddJobComment(JobRequestMessageViewModel model);
 
         bool ReplyJobRequest(JobRequestViewModel model, int jobRequestId);
 
         bool ReassignJobRequest(JobRequestViewModel model, int jobRequestId);
+
+        // Legal jobs
+        bool EffectLegaCollateralJobs(JobRequestCollateralSearchViewModel model);
 
         // job type
         IEnumerable<JobTypeViewModel> GetAllJobType();
@@ -43,8 +45,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool UpdateJobType(JobTypeViewModel model, short jobTypeId);
 
         // staff
-        IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId);
-
+        //IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId);
+        IEnumerable<JobRequestDetailViewModel> GetJobRequestLegalJobDetails();
         bool AddJobDocument(RequestDocumentViewModel model, byte[] file);
         bool AddJobReplyAndDocument(RequestDocumentViewModel model, byte[] file);
         bool UpdateJobDocument(RequestDocumentViewModel model, int documentId);

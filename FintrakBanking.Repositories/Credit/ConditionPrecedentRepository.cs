@@ -24,14 +24,11 @@ namespace FintrakBanking.Repositories.Credit
             this.audit = audit;
         }
 
-        public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByApplicationId(int applicationId)
+        public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByDetailId(int detailId)
         {
-            var ids = context.TBL_LOAN_APPLICATION_DETAIL
-                .Where(x => x.LOANAPPLICATIONID == applicationId)
-                .Select(x => x.APPROVEDPRODUCTID)
-                .Distinct();
+            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId);
 
-            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => ids.Contains((short)x.PRODUCTID) || x.PRODUCTID == null)
+            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => applicationDetail.APPROVEDPRODUCTID == x.PRODUCTID || x.PRODUCTID == null)
             .Select(c => new ConditionPrecedentViewModel
             {
                 conditionId = c.CONDITIONID,
@@ -45,10 +42,9 @@ namespace FintrakBanking.Repositories.Credit
                 timelineId = c.TIMELINEID,
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
-            });
+            })
+            .OrderBy(x => x.isSubsequent).ThenBy(x => x.isExternal);
 
-            var testids = ids.ToList();
-            var testcond = conditions.ToList();
             return conditions.ToList();
         }
 
@@ -89,13 +85,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<ConditionPrecedentViewModel> AddSelectedConditionPrecedent(SelectedIdsViewModel entity)
         {
-            var conditions = context.TBL_CONDITION_PRECEDENT.Where(x => entity.selectedIds.Contains(x.CONDITIONID)).ToList();
 
-            var loanconditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x =>
-                x.CONDITIONID != null
+            var loanconditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.CONDITIONID != null
                 && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == entity.id
             );
+            var deletableIds = loanconditions.Where(x => x.CONDITIONID != null && !entity.selectedIds.Contains((int)x.CONDITIONID)).Select(x => x.LOANCONDITIONID);
 
+            var conditions = context.TBL_CONDITION_PRECEDENT.Where(x => entity.selectedIds.Contains(x.CONDITIONID)).ToList();
             foreach (var c in conditions)
             {
                 if (!loanconditions.Any(x => x.CONDITIONID == (int)c.CONDITIONID))
@@ -116,12 +112,15 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
+            context.TBL_LOAN_CONDITION_DEFERRAL.RemoveRange(
+                context.TBL_LOAN_CONDITION_DEFERRAL.Where(x => deletableIds.Contains((int)x.LOANCONDITIONID))
+            );
             context.TBL_LOAN_CONDITION_PRECEDENT.RemoveRange(
-                context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.CONDITIONID != null && entity.selectedIds.Contains((int)x.CONDITIONID) == false)
+                context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => deletableIds.Contains((int)x.LOANCONDITIONID))
             );
             context.SaveChanges();
 
-            return GetConditionPrecedentByApplicationId(entity.id).ToList();
+            return GetConditionPrecedentByDetailId(entity.detailId).ToList();
         }
 
         public bool EditLoanConditionPrecedent(int id, ConditionPrecedentViewModel model)
@@ -188,9 +187,9 @@ namespace FintrakBanking.Repositories.Credit
             return x;
         }
 
-        public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByApplicationId(int applicationId)
+        public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByDetailId(int detailId)
         {
-            return this.GetAllConditionPrecedent().Where(x => x.loanApplicationId == applicationId);
+            return this.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == detailId);
         }
 
         #region CP Template

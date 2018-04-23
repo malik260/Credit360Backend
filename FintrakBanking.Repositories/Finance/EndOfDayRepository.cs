@@ -58,6 +58,7 @@ namespace FintrakBanking.Repositories.Finance
                 do
                 {
                     ProcessEndOfDay(runDate, model.companyId, model.createdBy);
+
                     runDate = runDate.AddDays(1);
                 }
                 while (runDate < nextWorkDay);
@@ -121,7 +122,7 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
 
-            loanOperation.CalLoanClassification(date);
+
 
             loanOperation.ProcessLoanRepaymentPostingPastDue(date);
             loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue (date);
@@ -132,6 +133,8 @@ namespace FintrakBanking.Repositories.Finance
             loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
             loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
             loanOperation.ProcessIntervalFeeandCommissionPosting(date);
+
+            loanOperation.CalLoanClassification(date);
 
 
             endOfDay.ENDDATETIME = DateTime.Now;
