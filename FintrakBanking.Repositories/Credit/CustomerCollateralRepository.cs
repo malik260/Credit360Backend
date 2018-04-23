@@ -63,22 +63,22 @@ namespace FintrakBanking.Repositories.Credit
             {
                 switch (entity.collateralTypeId)
                 {
-                    case (int)CollateralTypeEnum.TermDeposit: AddDepositCollateral(collateralId, entity); break;
-                    case (int)CollateralTypeEnum.PlantAndMachinery: AddEquipmentCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.TermDeposit: AddTempDepositCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.PlantAndMachinery: AddTempEquipmentCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Miscellaneous: AddMiscellaneousCollateral(collateralId, entity); break;
-                    case (int)CollateralTypeEnum.Gaurantee: AddGuaranteeCollateral(collateralId, entity); break;
-                    case (int)CollateralTypeEnum.CASA: AddCasaCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.Gaurantee: AddTempGuaranteeCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.CASA: AddTempCasaCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Property: AddTempImmovablePropertyCollateral(collateralId, entity); break;
-                    case (int)CollateralTypeEnum.MarketableSecurities: AddMarketableSecuritiesCollateral(collateralId, entity); break;
-                    case (int)CollateralTypeEnum.InsurancePolicy: AddPolicyCollateral(collateralId, entity); break;
-                    case (int)CollateralTypeEnum.PreciousMetal: AddPreciousMetalCollateral(collateralId, entity); break;
-                    case (int)CollateralTypeEnum.Stock: AddStockCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.MarketableSecurities: AddTempMarketableSecuritiesCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.InsurancePolicy: AddTempPolicyCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.PreciousMetal: AddTempPreciousMetalCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.Stock: AddTempStockCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Vehicle: AddVehicleCollateral(collateralId, entity); break;
 
                     default: break;
                 }
 
-                 // if (entity.hasInsurance) { AddItemInsurancePolicy(collateralId, entity); }
+                 if (entity.hasInsurance) { AddTempItemInsurancePolicy(collateralId, entity); }
 
                 // if (file != null) { SaveCollateralMainDocument(entity, collateralId, file); }
 
@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.Credit
 
         // MAIN collateral
 
-        
+
         private int AddCollateralMainFormForGurantee(CollateralViewModel model)
         {
             if (context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == model.collateralId).Any() == true)
@@ -234,11 +234,11 @@ namespace FintrakBanking.Repositories.Credit
 
         // EQUIPMENT collateral
 
-        private void AddEquipmentCollateral(int collateralId, CollateralViewModel entity)
+        private void AddTempEquipmentCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_PLANT_AND_EQUIP.Add(new TBL_COLLATERAL_PLANT_AND_EQUIP
+            context.TBL_TEMP_COLLATERAL_PLANT_EQUP.Add(new TBL_TEMP_COLLATERAL_PLANT_EQUP
             {
-                COLLATERALCUSTOMERID = collateralId,
+                TEMPCOLLATERALCUSTOMERID = collateralId,
                 MACHINENAME = entity.machineName,
                 DESCRIPTION = entity.description,
                 MACHINENUMBER = entity.machineNumber,
@@ -254,6 +254,16 @@ namespace FintrakBanking.Repositories.Credit
                 REMARK = entity.remark,
 
             });
+
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for plant and equipment collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
         }
 
         private void UpdateEquipmentCollateral(CollateralViewModel model)
@@ -278,26 +288,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        // FIX DEPOSIT collateral
 
-        private void AddDepositCollateral(int collateralId, CollateralViewModel entity)
-        {
-            context.TBL_COLLATERAL_DEPOSIT.Add(new TBL_COLLATERAL_DEPOSIT
-            {
-                COLLATERALCUSTOMERID = collateralId,
-                DEALREFERENCENUMBER = entity.dealReferenceNumber,
-                ACCOUNTNUMBER = "0",
-                EXISTINGLIENAMOUNT = 0,
-                LIENAMOUNT = entity.lienAmount,
-                AVAILABLEBALANCE = entity.availableBalance,
-                SECURITYVALUE = entity.securityValue,
-                MATURITYDATE = entity.maturityDate,
-                MATURITYAMOUNT = 0,
-                EFFECTIVEDATE = entity.effectiveDate,
-                REMARK = entity.remark,
-                BANK = entity.bank
-            });
-        }
 
         private void UpdateDepositCollateral(CollateralViewModel entity)
         {
@@ -375,9 +366,9 @@ namespace FintrakBanking.Repositories.Credit
 
         // ITEM INSURANCE
 
-        public void AddItemInsurancePolicy(int collateralId, CollateralViewModel entity)
+        public void AddTempItemInsurancePolicy(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_ITEM_POLICY.Add(new TBL_COLLATERAL_ITEM_POLICY
+            context.TBL_TEMP_COLLATERAL_ITEM_POLI.Add(new TBL_TEMP_COLLATERAL_ITEM_POLI
             {
                 COLLATERALCUSTOMERID = collateralId,
                 POLICYREFERENCENUMBER = entity.referenceNumber,
@@ -510,15 +501,11 @@ namespace FintrakBanking.Repositories.Credit
 
             return collaterals;
         }
-
-
-       
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)
         {
             return GetCustomerCollateral(companyId).Where(x => x.collateralTypeId == collateralTypeId && (x.customerId == customerId || x.customerId == thirdpartyCustomerId));
 
         }
-
         public IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId)
         {
             var collateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false
@@ -582,7 +569,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
-
         public CollateralViewModel GetTempCollateralTypeByCollateralId(int collateralId, int typeId)
         {
             var data = new CollateralViewModel();
@@ -606,7 +592,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
-
         private CollateralViewModel GetCollateralMiscellaneous(int collateralId)
         {
             var specifics = context.TBL_COLLATERAL_MISCELLANEOUS.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
@@ -621,7 +606,6 @@ namespace FintrakBanking.Repositories.Credit
             details = GetCollateralInsurancePolicy(details);
             return details;
         }
-
         private CollateralViewModel GetMiscellaneousNotes(CollateralViewModel details)
         {
             var notes = context.TBL_COLLATERAL_MISC_NOTES.Where(x => x.MISCELLANEOUSID == details.detailId);
@@ -638,7 +622,6 @@ namespace FintrakBanking.Repositories.Credit
             details.notes = list;
             return details;
         }
-
         private CollateralViewModel GetCollateralMachinery(int collateralId)
         {
             var specifics = context.TBL_COLLATERAL_PLANT_AND_EQUIP.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
@@ -661,7 +644,6 @@ namespace FintrakBanking.Repositories.Credit
             details = GetCollateralInsurancePolicy(details);
             return details;
         }
-
         private CollateralViewModel GetCollateralDeposit(int collateralId)
         {
             var specifics = context.TBL_COLLATERAL_DEPOSIT.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
@@ -682,7 +664,6 @@ namespace FintrakBanking.Repositories.Credit
             details = GetCollateralInsurancePolicy(details);
             return details;
         }
-
         private CollateralViewModel GetCollateralInsurancePolicy(CollateralViewModel details)
         {
             var insurance = context.TBL_COLLATERAL_ITEM_POLICY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == details.collateralId);
@@ -716,11 +697,11 @@ namespace FintrakBanking.Repositories.Credit
         }
         // stock collateral
 
-        private void AddStockCollateral(int collateralId, CollateralViewModel entity)
+        private void AddTempStockCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_STOCK.Add(new TBL_COLLATERAL_STOCK
+            context.TBL_TEMP_COLLATERAL_STOCK.Add(new TBL_TEMP_COLLATERAL_STOCK
             {
-                COLLATERALCUSTOMERID = collateralId,
+                TEMPCOLLATERALCUSTOMERID = collateralId,
                 COMPANYNAME = entity.companyName,
                 SHAREQUANTITY = entity.shareQuantity,
                 MARKETPRICE = entity.marketPrice,
@@ -728,6 +709,16 @@ namespace FintrakBanking.Repositories.Credit
                 SHARESSECURITYVALUE = entity.sharesSecurityValue,
                 SHAREVALUEAMOUNTTOUSE = entity.shareValueAmountToUse,
             });
+
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for stock collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
         }
 
         private void UpdateStockCollateral(CollateralViewModel entity)
@@ -768,9 +759,9 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddVehicleCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_VEHICLE.Add(new TBL_COLLATERAL_VEHICLE
+            context.TBL_TEMP_COLLATERAL_VEHICLE.Add(new TBL_TEMP_COLLATERAL_VEHICLE
             {
-                COLLATERALCUSTOMERID = collateralId,
+                TEMPCOLLATERALCUSTOMERID = collateralId,
                 VEHICLETYPE = entity.vehicleType,
                 VEHICLESTATUS = entity.vehicleStatus,
                 VEHICLEMAKE = entity.vehicleMake,
@@ -788,6 +779,15 @@ namespace FintrakBanking.Repositories.Credit
                 INVOICEVALUE = entity.invoiceValue,
                 REMARK = entity.remark,
             });
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for vehicle collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
         }
 
         private void UpdateVehicleCollateral(CollateralViewModel entity)
@@ -845,11 +845,11 @@ namespace FintrakBanking.Repositories.Credit
 
         // preciousMetal collateral
 
-        private void AddPreciousMetalCollateral(int collateralId, CollateralViewModel entity)
+        private void AddTempPreciousMetalCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_PRECIOUSMETAL.Add(new TBL_COLLATERAL_PRECIOUSMETAL
+            context.TBL_TEMP_COLLATERAL_PREC_METAL.Add(new TBL_TEMP_COLLATERAL_PREC_METAL
             {
-                COLLATERALCUSTOMERID = collateralId,
+                TEMPCOLLATERALCUSTOMERID = collateralId,
                 //ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 PRECIOUSMETALNAME = entity.preciousMetalName,
                 WEIGHTINGRAMMES = entity.weightInGrammes,
@@ -859,6 +859,16 @@ namespace FintrakBanking.Repositories.Credit
                 METALTYPE = entity.metalType,
                 REMARK = entity.remark,
             });
+
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for precious metal collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
         }
 
         private void UpdatePreciousMetalCollateral(CollateralViewModel entity)
@@ -898,22 +908,6 @@ namespace FintrakBanking.Repositories.Credit
             return details;
         }
 
-        // casa collateral
-
-        private void AddCasaCollateral(int collateralId, CollateralViewModel entity)
-        {
-            context.TBL_COLLATERAL_CASA.Add(new TBL_COLLATERAL_CASA
-            {
-                COLLATERALCUSTOMERID = collateralId,
-                ACCOUNTNUMBER = entity.collateralCode,
-                //  ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
-                AVAILABLEBALANCE = entity.availableBalance,
-                // EXISTINGLIENAMOUNT = entity.existingLienAmount,
-                LIENAMOUNT = entity.lienAmount,
-                SECURITYVALUE = entity.securityValue,
-                REMARK = entity.remark,
-            });
-        }
 
         private void UpdateCasaCollateral(CollateralViewModel entity)
         {
@@ -951,12 +945,11 @@ namespace FintrakBanking.Repositories.Credit
 
         // guarantee collateral
 
-        private void AddGuaranteeCollateral(int collateralId, CollateralViewModel entity)
+        private void AddTempGuaranteeCollateral(int collateralId, CollateralViewModel entity)
         {
-
-            context.TBL_COLLATERAL_GAURANTEE.Add(new TBL_COLLATERAL_GAURANTEE
+            context.TBL_TEMP_COLLATERAL_GAURANTEE.Add(new TBL_TEMP_COLLATERAL_GAURANTEE
             {
-                COLLATERALCUSTOMERID = collateralId,
+                TEMPCOLLATERALCUSTOMERID = collateralId,
                 // ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 INSTITUTIONNAME = entity.institutionName,
                 GUARANTORADDRESS = entity.guarantorAddress,
@@ -975,8 +968,17 @@ namespace FintrakBanking.Repositories.Credit
                 EMAILADDRESS = entity.emailAddress,
                 RELATIONSHIP = entity.relationship,
                 RELATIONSHIPDURATION = entity.relationshipDuration
-
             });
+
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for guarantee collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
         }
         public List<CollateralViewModel> AddGuaranteeJoinCollateral(CollateralViewModel entity, byte[] buffer)
         {
@@ -1145,54 +1147,7 @@ namespace FintrakBanking.Repositories.Credit
             return details;
         }
 
-        // immovableProperty collateral
 
-        private void AddTempImmovablePropertyCollateral(int collateralId, CollateralViewModel entity)
-        {
-
-            context.TBL_TEMP_COLLATERAL_IMMOV_PROP.Add(new TBL_TEMP_COLLATERAL_IMMOV_PROP
-            {
-                TEMPCOLLATERALCUSTOMERID = collateralId,
-                PROPERTYNAME = entity.propertyName,
-                CITYID = (int)entity.cityId,
-                COUNTRYID = entity.countryId,
-                CONSTRUCTIONDATE = entity.constructionDate,
-                PROPERTYADDRESS = entity.propertyAddress,
-                DATEOFACQUISITION = entity.dateOfAcquisition,
-                LASTVALUATIONDATE = entity.lastValuationDate,
-                VALUERID = entity.valuerId,
-                VALUERREFERENCENUMBER = entity.valuerReferenceNumber,
-                PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId,
-                OPENMARKETVALUE = entity.openMarketValue,
-                FORCEDSALEVALUE = entity.forcedSaleValue,
-                STAMPTOCOVER = entity.stampToCoverAmount.ToString(),
-                SECURITYVALUE = entity.securityValue,
-                COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
-                REMARK = entity.remark,
-                NEARESTLANDMARK = entity.nearestLandMark,
-                NEARESTBUSSTOP = entity.nearestBusStop,
-                LONGITUDE = entity.longitude,
-                LATITUDE = entity.latitude,
-                PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
-                PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
-                VALUATIONAMOUNT = entity.valuationAmount,
-
-
-
-                //   STATEID = entity.stateId
-            });
-
-            workflow.StaffId = entity.createdBy;
-            workflow.CompanyId = entity.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = collateralId;
-            workflow.Comment = "Request for collateral approval";
-            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
-            workflow.DeferredExecution = false; // false by default will call the internal SaveChanges()
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
-
-        }
 
         private void UpdateImmovablePropertyCollateral(CollateralViewModel entity)
         {
@@ -1314,11 +1269,11 @@ namespace FintrakBanking.Repositories.Credit
         }
         // marketableSecurities collateral
 
-        private void AddMarketableSecuritiesCollateral(int collateralId, CollateralViewModel entity)
+        private void AddTempMarketableSecuritiesCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_MKT_SECURITY.Add(new TBL_COLLATERAL_MKT_SECURITY
+            context.TBL_TEMP_COLLATERAL_MKT_SEC.Add(new TBL_TEMP_COLLATERAL_MKT_SEC
             {
-                COLLATERALCUSTOMERID = collateralId,
+                TEMPCOLLATERALCUSTOMERID = collateralId,
                 SECURITYTYPE = entity.securityType,
                 //    DEALREFERENCENUMBER = entity.dealReferenceNumber,
                 EFFECTIVEDATE = entity.effectiveDate,
@@ -1337,6 +1292,16 @@ namespace FintrakBanking.Repositories.Credit
                 FUNDNAME = entity.fundName,
                 BANKPURCHASEDFROM = entity.bank,
             });
+
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for marketable security collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
         }
 
         private void UpdateMarketableSecuritiesCollateral(CollateralViewModel entity)
@@ -1397,11 +1362,11 @@ namespace FintrakBanking.Repositories.Credit
 
         // policy collateral
 
-        private void AddPolicyCollateral(int collateralId, CollateralViewModel entity)
+        private void AddTempPolicyCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_POLICY.Add(new TBL_COLLATERAL_POLICY
+            context.TBL_TEMP_COLLATERAL_POLICY.Add(new TBL_TEMP_COLLATERAL_POLICY
             {
-                COLLATERALCUSTOMERID = collateralId,
+                TEMPCOLLATERALCUSTOMERID = collateralId,
                 ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 //  INSURANCEPOLICYNUMBER = entity.insurancePolicyNumber,
                 PREMIUMAMOUNT = entity.premiumAmount,
@@ -1416,6 +1381,15 @@ namespace FintrakBanking.Repositories.Credit
                 REMARK = entity.remark,
                 INSURANCETYPE = entity.insuranceType,
             });
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for policy collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
         }
 
         private void UpdatePolicyCollateral(CollateralViewModel entity)
@@ -3468,12 +3442,111 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        // immovableProperty collateral
+
+        private void AddTempImmovablePropertyCollateral(int collateralId, CollateralViewModel entity)
+        {
+
+            context.TBL_TEMP_COLLATERAL_IMMOV_PROP.Add(new TBL_TEMP_COLLATERAL_IMMOV_PROP
+            {
+                TEMPCOLLATERALCUSTOMERID = collateralId,
+                PROPERTYNAME = entity.propertyName,
+                CITYID = (int)entity.cityId,
+                COUNTRYID = entity.countryId,
+                CONSTRUCTIONDATE = entity.constructionDate,
+                PROPERTYADDRESS = entity.propertyAddress,
+                DATEOFACQUISITION = entity.dateOfAcquisition,
+                LASTVALUATIONDATE = entity.lastValuationDate,
+                VALUERID = entity.valuerId,
+                VALUERREFERENCENUMBER = entity.valuerReferenceNumber,
+                PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId,
+                OPENMARKETVALUE = entity.openMarketValue,
+                FORCEDSALEVALUE = entity.forcedSaleValue,
+                STAMPTOCOVER = entity.stampToCoverAmount.ToString(),
+                SECURITYVALUE = entity.securityValue,
+                COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
+                REMARK = entity.remark,
+                NEARESTLANDMARK = entity.nearestLandMark,
+                NEARESTBUSSTOP = entity.nearestBusStop,
+                LONGITUDE = entity.longitude,
+                LATITUDE = entity.latitude,
+                PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
+                PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
+                VALUATIONAMOUNT = entity.valuationAmount,
+            });
+
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for property collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
+
+        }
+
+        private void AddTempCasaCollateral(int collateralId, CollateralViewModel entity)
+        {
+            context.TBL_TEMP_COLLATERAL_CASA.Add(new TBL_TEMP_COLLATERAL_CASA
+            {
+                TEMPCOLLATERALCUSTOMERID = collateralId,
+                ACCOUNTNUMBER = entity.collateralCode,
+                AVAILABLEBALANCE = entity.availableBalance,
+                LIENAMOUNT = entity.lienAmount,
+                SECURITYVALUE = entity.securityValue,
+                REMARK = entity.remark,
+            });
+
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for property collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
+        }
+
+        // FIX DEPOSIT collateral
+
+        private void AddTempDepositCollateral(int collateralId, CollateralViewModel entity)
+        {
+            context.TBL_TEMP_COLLATERAL_DEPOSIT.Add(new TBL_TEMP_COLLATERAL_DEPOSIT
+            {
+                TEMPCOLLATERALCUSTOMERID = collateralId,
+                DEALREFERENCENUMBER = entity.dealReferenceNumber,
+                ACCOUNTNUMBER = "0",
+                EXISTINGLIENAMOUNT = 0,
+                LIENAMOUNT = entity.lienAmount,
+                AVAILABLEBALANCE = entity.availableBalance,
+                SECURITYVALUE = entity.securityValue,
+                MATURITYDATE = entity.maturityDate,
+                MATURITYAMOUNT = 0,
+                EFFECTIVEDATE = entity.effectiveDate,
+                REMARK = entity.remark,
+                BANK = entity.bank
+            });
+
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for FD collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
+        }
         public IEnumerable<CollateralViewModel> GetTempCustomerCollateral(int companyId, int staffId)
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ProductCreation).ToList();
 
             var collaterals = (from x in context.TBL_TEMP_COLLATERAL_CUSTOMER
-                               join c in context.TBL_COLLATERAL_TYPE on x.COLLATERALTYPEID equals c.COLLATERALTYPEID                              join atrail in context.TBL_APPROVAL_TRAIL on x.TEMPCOLLATERALCUSTOMERID equals atrail.TARGETID
+                               join c in context.TBL_COLLATERAL_TYPE on x.COLLATERALTYPEID equals c.COLLATERALTYPEID
+                               join atrail in context.TBL_APPROVAL_TRAIL on x.TEMPCOLLATERALCUSTOMERID equals atrail.TARGETID
                                where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing //|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
                                      && x.ISCURRENT == true
                                      && atrail.RESPONSESTAFFID == null
@@ -3505,9 +3578,9 @@ namespace FintrakBanking.Repositories.Credit
 
                                }).ToList();
 
-            return collaterals;  
+            return collaterals;
         }
-        
+
         private int AddTempCollateralMainForm(CollateralViewModel model)
         {
             if (context.TBL_TEMP_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == model.collateralCode).Any() == true)
@@ -3545,7 +3618,6 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool GoForApproval(ApprovalViewModel model)
         {
-
             workflow.StaffId = model.createdBy;
             workflow.CompanyId = model.companyId;
             workflow.StatusId = (short)model.approvalStatusId;
@@ -3555,19 +3627,362 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
-         
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
                 UpdateCutomerCollateralApprovalStatus(model.targetId, (short)workflow.StatusId);
             }
 
-         return   context.SaveChanges() > 0;
+            return context.SaveChanges() > 0;
         }
 
-        private void UpdateCutomerCollateralApprovalStatus(int collateralId, short status)
+        private void UpdateCutomerCollateralApprovalStatus(int TempCollateralId, short status)
         {
-            var collaterInformation = context.TBL_TEMP_COLLATERAL_CUSTOMER.Where(x => x.TEMPCOLLATERALCUSTOMERID == collateralId).FirstOrDefault();
-            collaterInformation.APPROVALSTATUSID = status;
+            var mainCollateral = (from x in context.TBL_TEMP_COLLATERAL_CUSTOMER
+                                  join t in context.TBL_COLLATERAL_TYPE on x.COLLATERALTYPEID equals t.COLLATERALTYPEID
+                                  where x.TEMPCOLLATERALCUSTOMERID == TempCollateralId
+                                  select new { x.COLLATERALTYPEID, t.REQUIREINSURANCEPOLICY, t.REQUIREVISITATION }).FirstOrDefault();
+
+            if (mainCollateral.COLLATERALTYPEID > 0)
+            {
+                int collateralId = UpdateCollateralMain(TempCollateralId);
+
+                if (collateralId > 0)
+                {
+                    UpdateTempApprovalStatus(TempCollateralId, status);
+
+                    switch (mainCollateral.COLLATERALTYPEID)
+                    {
+                        case (int)CollateralTypeEnum.TermDeposit: UpdateDepositCollateral(TempCollateralId, collateralId); break;
+                          case (int)CollateralTypeEnum.PlantAndMachinery: UpdatePlantAndEquipmentCollateral(TempCollateralId, collateralId); break;
+                        //  case (int)CollateralTypeEnum.Miscellaneous: AddMiscellaneousCollateral(TempCollateralId, collateralId); break;
+                          case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(TempCollateralId, collateralId); break;
+                        case (int)CollateralTypeEnum.CASA: UpdateCASAcollateral(TempCollateralId, collateralId); break;
+                        case (int)CollateralTypeEnum.Property: UpdateApprovedImmovableCollateral(TempCollateralId, collateralId); break;
+                           case (int)CollateralTypeEnum.MarketableSecurities: UpdateMarketSecurityCollateral(TempCollateralId, collateralId); break;
+                          case (int)CollateralTypeEnum.InsurancePolicy: UpdatePolicyCollateral(TempCollateralId, collateralId); break;
+                           case (int)CollateralTypeEnum.PreciousMetal: UpdateMetalCollateral(TempCollateralId, collateralId); break;
+                           case (int)CollateralTypeEnum.Stock: UpdateStockCollateral(TempCollateralId, collateralId); break;
+                           case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(TempCollateralId, collateralId); break;
+
+                        default: break;
+                    }
+
+                    if (mainCollateral.REQUIREINSURANCEPOLICY) { UpdateItemPolicyDetail(TempCollateralId, collateralId); } //insurance documents
+                }
+                else
+                {
+                    //abort transaction
+                }
+            }
+
+        }
+        private int UpdateCollateralMain(int collateralId)
+        {
+            var mainCollateral = context.TBL_TEMP_COLLATERAL_CUSTOMER.Where(x => x.TEMPCOLLATERALCUSTOMERID == collateralId)
+                .Select(x => x).FirstOrDefault();
+            if (mainCollateral != null)
+            {
+                var data = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
+                {
+                    ACTEDONBY = mainCollateral.ACTEDONBY,
+                    ALLOWSHARING = mainCollateral.ALLOWSHARING,
+                    CAMREFNUMBER = mainCollateral.CAMREFNUMBER,
+                    COLLATERALCODE = mainCollateral.COLLATERALCODE,
+                    COLLATERALSUBTYPEID = mainCollateral.COLLATERALSUBTYPEID,
+                    COLLATERALTYPEID = mainCollateral.COLLATERALTYPEID,
+                    COLLATERALVALUE = mainCollateral.COLLATERALVALUE,
+                    COMPANYID = mainCollateral.COMPANYID,
+                    CREATEDBY = mainCollateral.CREATEDBY,
+                    CURRENCYID = mainCollateral.CURRENCYID,
+                    CUSTOMERID = mainCollateral.CUSTOMERID,
+                    DATEACTEDON = mainCollateral.DATEACTEDON,
+                    DATETIMECREATED = mainCollateral.DATETIMECREATED,
+                    HAIRCUT = mainCollateral.HAIRCUT,
+                    ISLOCATIONBASED = mainCollateral.ISLOCATIONBASED,
+                    VALUATIONCYCLE = mainCollateral.VALUATIONCYCLE,
+                });
+                context.SaveChanges();
+                return data.COLLATERALCUSTOMERID;
+            }
+            return 0;
+
+        }
+        private void UpdateTempApprovalStatus(int TempCollateralId, short status)
+        {
+            var collaterInformation = context.TBL_TEMP_COLLATERAL_CUSTOMER.Where(x => x.TEMPCOLLATERALCUSTOMERID == TempCollateralId).FirstOrDefault();
+            if (collaterInformation != null)
+            {
+                collaterInformation.APPROVALSTATUSID = status;
+            }
+        }
+        private void UpdateItemPolicyDetail(int TempCollateralId, int collateralId)
+        {
+            var pol = context.TBL_TEMP_COLLATERAL_ITEM_POLI.Where(x => x.COLLATERALCUSTOMERID == TempCollateralId).FirstOrDefault();
+            if (pol != null)
+            {
+                context.TBL_COLLATERAL_ITEM_POLICY.Add(new TBL_COLLATERAL_ITEM_POLICY
+                {
+                    COLLATERALCUSTOMERID = collateralId,
+                    CREATEDBY = pol.CREATEDBY,
+                    DATETIMECREATED = pol.DATETIMECREATED,
+                    ENDDATE = pol.ENDDATE,
+                    INSURANCECOMPANYNAME = pol.INSURANCECOMPANYNAME,
+                    INSURANCETYPE = pol.INSURANCETYPE,
+                    LASTUPDATEDBY = pol.LASTUPDATEDBY,
+                    POLICYREFERENCENUMBER = pol.POLICYREFERENCENUMBER,
+                    STARTDATE = pol.STARTDATE,
+                    SUMINSURED = pol.SUMINSURED,
+                });
+            }
+        }
+        private void UpdateApprovedImmovableCollateral(int TempCollateralId, int collateralId)
+        {
+            var immovColl = context.TBL_TEMP_COLLATERAL_IMMOV_PROP.Where(x => x.TEMPCOLLATERALCUSTOMERID == TempCollateralId).FirstOrDefault();
+            if (immovColl != null)
+            {
+                if (immovColl != null)
+                {
+                    context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(new TBL_COLLATERAL_IMMOVE_PROPERTY
+                    {
+                        CITYID = immovColl.CITYID,
+                        COLLATERALCUSTOMERID = collateralId,
+                        COLLATERALUSABLEAMOUNT = immovColl.COLLATERALUSABLEAMOUNT,
+                        CONSTRUCTIONDATE = immovColl.CONSTRUCTIONDATE,
+                        COUNTRYID = immovColl.COUNTRYID,
+                        DATEOFACQUISITION = immovColl.DATEOFACQUISITION,
+                        FORCEDSALEVALUE = immovColl.FORCEDSALEVALUE,
+                        LASTVALUATIONDATE = immovColl.LASTVALUATIONDATE,
+                        LATITUDE = immovColl.LATITUDE,
+                        LONGITUDE = immovColl.LONGITUDE,
+                        NEARESTBUSSTOP = immovColl.NEARESTBUSSTOP,
+                        NEARESTLANDMARK = immovColl.NEARESTLANDMARK,
+                        OPENMARKETVALUE = immovColl.OPENMARKETVALUE,
+                        PERFECTIONSTATUSID = immovColl.PERFECTIONSTATUSID,
+                        PERFECTIONSTATUSREASON = immovColl.PERFECTIONSTATUSREASON,
+                        PROPERTYADDRESS = immovColl.PROPERTYADDRESS,
+                        PROPERTYNAME = immovColl.PROPERTYNAME,
+                        PROPERTYVALUEBASETYPEID = immovColl.PROPERTYVALUEBASETYPEID,
+                        REMARK = immovColl.REMARK,
+                        SECURITYVALUE = immovColl.SECURITYVALUE,
+                        STAMPTOCOVER = immovColl.STAMPTOCOVER,
+                        VALUATIONAMOUNT = immovColl.VALUATIONAMOUNT,
+                        VALUERID = immovColl.VALUERID,
+                        VALUERREFERENCENUMBER = immovColl.VALUERREFERENCENUMBER,
+                    });
+                }
+            }
+
+        }
+        private void UpdateDepositCollateral(int tempCollateralId, int collateralId)
+        {
+            var deposit = context.TBL_TEMP_COLLATERAL_DEPOSIT.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).FirstOrDefault();
+            if (deposit != null)
+            {
+                context.TBL_COLLATERAL_DEPOSIT.Add(new TBL_COLLATERAL_DEPOSIT
+                {
+                    ACCOUNTNUMBER = deposit.ACCOUNTNUMBER,
+                    AVAILABLEBALANCE = deposit.AVAILABLEBALANCE,
+                    BANK = deposit.BANK,
+                    COLLATERALCUSTOMERID = collateralId,
+                    DEALREFERENCENUMBER = deposit.DEALREFERENCENUMBER,
+                    EFFECTIVEDATE = deposit.EFFECTIVEDATE,
+                    EXISTINGLIENAMOUNT = deposit.EXISTINGLIENAMOUNT,
+                    LIENAMOUNT = deposit.LIENAMOUNT,
+                    MATURITYAMOUNT = deposit.MATURITYAMOUNT,
+                    MATURITYDATE = deposit.MATURITYDATE,
+                    REMARK = deposit.REMARK,
+                    SECURITYVALUE = deposit.SECURITYVALUE,
+                });
+            }
+
+        }
+        private void UpdateGuaranteeCollateral(int tempCollateralId, int collateralId)
+        {
+            var gua = context.TBL_TEMP_COLLATERAL_GAURANTEE.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).FirstOrDefault();
+            if (gua != null)
+            {
+                context.TBL_TEMP_COLLATERAL_GAURANTEE.Add(new TBL_TEMP_COLLATERAL_GAURANTEE
+                {
+                    TEMPCOLLATERALGAURANTEEID = collateralId,
+                    BVN = gua.BVN,
+                    EMAILADDRESS = gua.EMAILADDRESS,
+                    ENDDATE = gua.ENDDATE,
+                    FIRSTNAME = gua.FIRSTNAME,
+                    GUARANTEEVALUE = gua.GUARANTEEVALUE,
+                    GUARANTORADDRESS = gua.GUARANTORADDRESS,
+                    INSTITUTIONNAME = gua.INSTITUTIONNAME,
+                    LASTNAME = gua.LASTNAME,
+                    MIDDLENAME = gua.MIDDLENAME,
+                    PHONENUMBER1 = gua.PHONENUMBER1,
+                    PHONENUMBER2 = gua.PHONENUMBER2,
+                    RCNUMBER = gua.RCNUMBER,
+                    RELATIONSHIP = gua.RELATIONSHIP,
+                    RELATIONSHIPDURATION = gua.RELATIONSHIPDURATION,
+                    REMARK = gua.REMARK,
+                    STARTDATE = gua.STARTDATE,
+                    TAXNUMBER = gua.TAXNUMBER,
+
+                });
+            }
+
+        }
+        private void UpdateMarketSecurityCollateral(int tempCollateralId, int collateralId)
+        {
+            var mkt = context.TBL_TEMP_COLLATERAL_MKT_SEC.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).FirstOrDefault();
+            if (mkt != null)
+            {
+                context.TBL_TEMP_COLLATERAL_MKT_SEC.Add(new TBL_TEMP_COLLATERAL_MKT_SEC
+                {
+                    TEMPCOLLATERALCUSTOMERID = collateralId,
+                    DEALAMOUNT = mkt.DEALAMOUNT,
+                    DEALREFERENCENUMBER = mkt.DEALREFERENCENUMBER,
+                    EFFECTIVEDATE = mkt.EFFECTIVEDATE,
+                    INTERESTPAYMENTFREQUENCY = mkt.INTERESTPAYMENTFREQUENCY,
+                    ISSUERNAME = mkt.ISSUERNAME,
+                    ISSUERREFERENCENUMBER = mkt.ISSUERREFERENCENUMBER,
+                    LIENUSABLEAMOUNT = mkt.LIENUSABLEAMOUNT,
+                    MATURITYDATE = mkt.MATURITYDATE,
+                    NUMBEROFUNITS = mkt.NUMBEROFUNITS,
+                    PERCENTAGEINTEREST = mkt.PERCENTAGEINTEREST,
+                    RATING = mkt.RATING,
+                    REMARK = mkt.REMARK,
+                    SECURITYTYPE = mkt.SECURITYTYPE,
+                    SECURITYVALUE = mkt.SECURITYVALUE,
+                    UNITVALUE = mkt.UNITVALUE,
+                });
+            }
+
+        }
+        private void UpdatePlantAndEquipmentCollateral(int tempCollateralId, int collateralId)
+        {
+            var equi = context.TBL_TEMP_COLLATERAL_PLANT_EQUP.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).FirstOrDefault();
+            if (equi != null)
+            {
+                context.TBL_TEMP_COLLATERAL_PLANT_EQUP.Add(new TBL_TEMP_COLLATERAL_PLANT_EQUP
+                {
+                    TEMPCOLLATERALCUSTOMERID = collateralId,
+                    REMARK = equi.REMARK,
+                    DESCRIPTION = equi.DESCRIPTION,
+                    INTENDEDUSE= equi.INTENDEDUSE,
+                    EQUIPMENTSIZE = equi.EQUIPMENTSIZE,
+                    MACHINECONDITION =equi.MACHINECONDITION,
+                    MACHINENAME = equi.MACHINENAME,
+                    MACHINENUMBER = equi.MACHINENUMBER,
+                    MACHINERYLOCATION =equi.MACHINERYLOCATION,
+                    MANUFACTURERNAME =equi.MANUFACTURERNAME,
+                    REPLACEMENTVALUE =equi.REPLACEMENTVALUE,
+                    VALUEBASETYPEID=equi.VALUEBASETYPEID,
+                    YEAROFMANUFACTURE = equi.YEAROFMANUFACTURE,
+                    YEAROFPURCHASE=equi.YEAROFPURCHASE,
+                });
+            }
+
+        }
+        private void UpdatePolicyCollateral(int tempCollateralId, int collateralId)
+        {
+            var pol = context.TBL_TEMP_COLLATERAL_POLICY.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).FirstOrDefault();
+            if (pol != null)
+            {
+                context.TBL_TEMP_COLLATERAL_POLICY.Add(new TBL_TEMP_COLLATERAL_POLICY
+                {
+                    TEMPCOLLATERALCUSTOMERID = collateralId,
+                    REMARK = pol.REMARK,
+                    ASSIGNDATE =pol.ASSIGNDATE,
+                    INSURANCECOMPANYNAME =pol.INSURANCECOMPANYNAME,
+                    INSURANCEPOLICYNUMBER =pol.INSURANCEPOLICYNUMBER,
+                    INSURERADDRESS =pol.INSURERADDRESS,
+                    INSURERDETAILS = pol.INSURERDETAILS,
+                    ISOWNEDBYCUSTOMER = pol.ISOWNEDBYCUSTOMER,
+                    POLICYAMOUNT=pol.POLICYAMOUNT,
+                    POLICYRENEWALDATE = pol.POLICYRENEWALDATE,
+                    POLICYSTARTDATE = pol.POLICYSTARTDATE,
+                    PREMIUMAMOUNT=pol.PREMIUMAMOUNT,
+                    RENEWALFREQUENCYTYPEID = pol.RENEWALFREQUENCYTYPEID,
+                });
+            }
+
+        }
+        private void UpdateMetalCollateral(int tempCollateralId, int collateralId)
+        {
+            var met = context.TBL_TEMP_COLLATERAL_PREC_METAL.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).FirstOrDefault();
+            if (met != null)
+            {
+                context.TBL_TEMP_COLLATERAL_PREC_METAL.Add(new TBL_TEMP_COLLATERAL_PREC_METAL
+                {
+                    TEMPCOLLATERALCUSTOMERID = collateralId,
+                    REMARK = met.REMARK,
+                    METALTYPE = met.METALTYPE,
+                    PRECIOUSMETALFORM = met.PRECIOUSMETALFORM,
+                    PRECIOUSMETALNAME = met.PRECIOUSMETALNAME,
+                    UNITRATE = met.UNITRATE,
+                    VALUATIONAMOUNT = met.VALUATIONAMOUNT,
+                    WEIGHTINGRAMMES = met.WEIGHTINGRAMMES,
+                    
+                });
+            }
+
+        }
+        private void UpdateStockCollateral(int tempCollateralId, int collateralId)
+        {
+            var stk = context.TBL_TEMP_COLLATERAL_STOCK.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).FirstOrDefault();
+            if (stk != null)
+            {
+                context.TBL_TEMP_COLLATERAL_STOCK.Add(new TBL_TEMP_COLLATERAL_STOCK
+                {
+                    TEMPCOLLATERALCUSTOMERID = collateralId,
+                    AMOUNT = stk.AMOUNT,
+                    COMPANYNAME =stk.COMPANYNAME,
+                    MARKETPRICE = stk.MARKETPRICE,
+                    SHAREQUANTITY =stk.SHAREQUANTITY,
+                    SHARESSECURITYVALUE =stk.SHARESSECURITYVALUE,
+                    SHAREVALUEAMOUNTTOUSE = stk.SHAREVALUEAMOUNTTOUSE,
+                });
+            }
+
+        }
+        private void UpdateVehicleCollateral(int tempCollateralId, int collateralId)
+        {
+            var veh = context.TBL_TEMP_COLLATERAL_VEHICLE.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).FirstOrDefault();
+            if (veh != null)
+            {
+                context.TBL_TEMP_COLLATERAL_VEHICLE.Add(new TBL_TEMP_COLLATERAL_VEHICLE
+                {
+                    TEMPCOLLATERALCUSTOMERID = collateralId,
+                    CHASISNUMBER = veh.CHASISNUMBER,
+                    INVOICEVALUE = veh.INVOICEVALUE,
+                    ENGINENUMBER = veh.ENGINENUMBER,
+                    LASTVALUATIONAMOUNT = veh.LASTVALUATIONAMOUNT,
+                    MANUFACTUREDDATE = veh.MANUFACTUREDDATE,
+                    MODELNAME=veh.MODELNAME,
+                    NAMEOFOWNER = veh.NAMEOFOWNER,
+                    REGISTRATIONCOMPANY = veh.REGISTRATIONCOMPANY,
+                    REGISTRATIONNUMBER = veh.REGISTRATIONNUMBER,
+                    REMARK = veh.REMARK,
+                    RESALEVALUE = veh.RESALEVALUE,
+                    SERIALNUMBER =veh.SERIALNUMBER,
+                    VEHICLESTATUS = veh.VEHICLESTATUS,
+                    VALUATIONDATE =veh.VALUATIONDATE,
+                    VEHICLEMAKE = veh.VEHICLEMAKE,
+                    VEHICLETYPE =veh.VEHICLETYPE,
+                    
+                });
+            }
+
+        }
+        private void UpdateCASAcollateral(int TempCollateralId, int collateralId)
+        {
+            var casa = context.TBL_TEMP_COLLATERAL_CASA.Where(x => x.TEMPCOLLATERALCUSTOMERID == TempCollateralId).FirstOrDefault();
+            context.TBL_COLLATERAL_CASA.Add(new TBL_COLLATERAL_CASA
+            {
+                ACCOUNTNUMBER = casa.ACCOUNTNUMBER,
+                AVAILABLEBALANCE = casa.AVAILABLEBALANCE,
+                COLLATERALCUSTOMERID = collateralId,
+                EXISTINGLIENAMOUNT = casa.EXISTINGLIENAMOUNT,
+                ISOWNEDBYCUSTOMER = casa.ISOWNEDBYCUSTOMER,
+                LIENAMOUNT = casa.LIENAMOUNT,
+                REMARK = casa.REMARK,
+                SECURITYVALUE = casa.SECURITYVALUE,
+            });
         }
     }
 
