@@ -1467,6 +1467,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.OperationId = entity.operationId;
                     workflow.DeferredExecution = true;
                     workflow.ExternalInitialization = false;
+                    //workflow.Amount = entity.amount;
                     workflow.LogActivity();
 
                     context.SaveChanges();
@@ -4422,10 +4423,14 @@ namespace FintrakBanking.Repositories.Credit
                                            exchangeRate = a.EXCHANGERATE,
                                            currencyId = a.CURRENCYID,
                                            currency = a.TBL_CURRENCY.CURRENCYNAME,
-                                           overDraft = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == c.CASAACCOUNTID).AVAILABLEBALANCE,
+                                           overDraftCheckAmount = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == c.CASAACCOUNTID).AVAILABLEBALANCE,
+                                          
                                        }).Take(10).AsQueryable();
                 }
-
+                if (allFilteredLoan.FirstOrDefault().overDraftCheckAmount > 0)
+                {
+                   
+                }
                 var test = allFilteredLoan.ToList();
                 return allFilteredLoan;
             }
