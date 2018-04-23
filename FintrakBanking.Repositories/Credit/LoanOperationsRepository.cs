@@ -165,6 +165,7 @@ namespace FintrakBanking.Repositories.Credit
                              companyId = groupedQ.Key.COMPANYID,
                              currencyId = groupedQ.Key.CURRENCYID,
                              exchangeRate = groupedQ.Key.EXCHANGERATE,
+                             //referenceNumber = groupedQ.Key.REFERENCENUMBER,
                              dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                          }).ToList();
 
@@ -172,6 +173,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in model)
             {
+                item.date = applicationDate;
                 financeTransaction.PostDailyLoansInterestAccrual(item);
             }
             context.SaveChanges();
@@ -252,11 +254,13 @@ namespace FintrakBanking.Repositories.Credit
                              companyId = groupedQ.Key.COMPANYID,
                              currencyId = groupedQ.Key.CURRENCYID,
                              exchangeRate = groupedQ.Key.EXCHANGERATE,
+                             //referenceNumber = groupedQ.Key.REFERENCENUMBER,
                              dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                          });
 
             foreach (var item in model)
             {
+                item.date = applicationDate;
                 financeTransaction.PostDailyAuthorisedOverdraftInterestAccrual(item);
             }
             return data;
@@ -338,11 +342,13 @@ namespace FintrakBanking.Repositories.Credit
                              companyId = groupedQ.Key.COMPANYID,
                              currencyId = groupedQ.Key.CURRENCYID,
                              exchangeRate = groupedQ.Key.EXCHANGERATE,
+                             //referenceNumber = groupedQ.Key.REFERENCENUMBER,
                              dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                          }).ToList();
 
             foreach (var item in model)
             {
+                item.date = applicationDate;
                 financeTransaction.PostDailyUnauthorisedOverdraftInterestAccrual(item);
             }
             return data;
@@ -373,7 +379,7 @@ namespace FintrakBanking.Repositories.Credit
                             date = applicationDate,
                             dailyAccuralAmount = a.INTERESTRATE,/// change to global charge rate 
                             mainAmount = a.PASTDUEINTEREST,
-                            categoryId = (short)DailyAccrualCategory.PastDueObligation,
+                            categoryId = (short)DailyAccrualCategory.PastDueInterest,
                             availableBalance = a.PASTDUEINTEREST,
                             transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                             baseReferenceNumber = null,
@@ -415,7 +421,7 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
 
             var model = (from a in context.TBL_DAILY_ACCRUAL
-                         where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.PastDueObligation
+                         where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest
                          group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, a.EXCHANGERATE } into groupedQ
                          select new DailyInterestAccrualViewModel()
                          {
@@ -424,11 +430,13 @@ namespace FintrakBanking.Repositories.Credit
                              companyId = groupedQ.Key.COMPANYID,
                              currencyId = groupedQ.Key.CURRENCYID,
                              exchangeRate = groupedQ.Key.EXCHANGERATE,
+                             //referenceNumber = groupedQ.Key.REFERENCENUMBER,
                              dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                          }).ToList();
 
             foreach (var item in model)
             {
+                item.date = applicationDate;
                 financeTransaction.PostDailyPastDueInterestAccrual(item);
             }
             return data;
@@ -458,9 +466,9 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = a.EXCHANGERATE,
                             interestRate = a.INTERESTRATE,
                             date = applicationDate,
-                            dailyAccuralAmount = (double)a.INTERESTONPASTDUEPRINCIPAL,/// change to global charge rate 
+                            dailyAccuralAmount = a.INTERESTRATE,/// change to global charge rate 
                             mainAmount = a.PASTDUEPRINCIPAL,
-                            categoryId = (short)DailyAccrualCategory.PastDueObligation,
+                            categoryId = (short)DailyAccrualCategory.PastDuePrincipal,
                             availableBalance = a.PASTDUEPRINCIPAL,
                             transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                             baseReferenceNumber = null,
@@ -500,8 +508,8 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
 
             var model = (from a in context.TBL_DAILY_ACCRUAL
-                         where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.PastDueObligation
-                         group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, a.EXCHANGERATE } into groupedQ
+                         where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.PastDuePrincipal
+                         group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, a.EXCHANGERATE} into groupedQ
                          select new DailyInterestAccrualViewModel()
                          {
                              productId = groupedQ.Key.PRODUCTID,
@@ -509,11 +517,13 @@ namespace FintrakBanking.Repositories.Credit
                              companyId = groupedQ.Key.COMPANYID,
                              currencyId = groupedQ.Key.CURRENCYID,
                              exchangeRate = groupedQ.Key.EXCHANGERATE,
+                             //referenceNumber = groupedQ.Key.REFERENCENUMBER,
                              dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                          }).ToList();
 
             foreach (var item in model)
             {
+                item.date = applicationDate;
                 financeTransaction.PostDailyPastDuePrincipalAccrual(item);
             }
             return data;
@@ -731,6 +741,28 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
+        public void updateloanTablePastDuePrincipal(int loanId, decimal amoumt)
+        {
+            TBL_LOAN result = (from p in context.TBL_LOAN
+                               where p.TERMLOANID == loanId
+                               select p).SingleOrDefault();
+
+            result.PASTDUEPRINCIPAL = result.PASTDUEPRINCIPAL + amoumt;
+
+            context.SaveChanges();
+        }
+
+        public void updateloanTablePastDueInterest(int loanId, decimal amoumt)
+        {
+            TBL_LOAN result = (from p in context.TBL_LOAN
+                               where p.TERMLOANID == loanId
+                               select p).SingleOrDefault();
+
+            result.PASTDUEINTEREST = result.PASTDUEINTEREST + amoumt;
+
+            context.SaveChanges();
+        }
+
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate)
         {
             var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
@@ -907,7 +939,7 @@ namespace FintrakBanking.Repositories.Credit
             var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
                          join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                          where a.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
-                         && b.ALLOWFORCEDEBITREPAYMENT == false
+                         && b.ALLOWFORCEDEBITREPAYMENT == false && a.PERIODPRINCIPALAMOUNT !=0 && a.PERIODINTERESTAMOUNT != 0
                          select new LoanRepaymentViewModel()
                          {
                              productId = b.PRODUCTID,
@@ -963,7 +995,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
 
-                    financeTransaction.PostTransaction(inputTransactions);
+                    //financeTransaction.PostTransaction(inputTransactions);
                 }
                 else if (casabalance > item.periodInterestAmount && casabalance < item.totalAmount)
                 {
@@ -984,12 +1016,14 @@ namespace FintrakBanking.Repositories.Credit
 
                     transPastDue.Add(pastDue);
 
+                    updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialPrincipalAmountCollected, product.PRINCIPALBALANCEGL.Value, "partial principal repayment"));
                     // place lien on the customer account on partial principal
-                    financeTransaction.PostTransaction(inputTransactions);
+                    //financeTransaction.PostTransaction(inputTransactions);
 
                     //var data = new TBL_CASA_LIEN
                     //{
@@ -1041,6 +1075,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     transPastDue.Add(pastDueInterest);
 
+                    updateloanTablePastDueInterest(pastDueInterest.LOANID, pastDueInterest.DEBITAMOUNT);
+
                     TBL_LOAN_PAST_DUE pastDuePrincipal = new TBL_LOAN_PAST_DUE();
 
                     pastDuePrincipal.LOANID = item.loanId;
@@ -1055,10 +1091,12 @@ namespace FintrakBanking.Repositories.Credit
 
                     transPastDue.Add(pastDuePrincipal);
 
+                    updateloanTablePastDuePrincipal(pastDuePrincipal.LOANID, pastDuePrincipal.DEBITAMOUNT);
+
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialInterestAmountCollected, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
-                    financeTransaction.PostTransaction(inputTransactions);
+                    //financeTransaction.PostTransaction(inputTransactions);
 
                     //var data = new TBL_CASA_LIEN
                     //{
@@ -1139,6 +1177,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDueInterest.PRODUCTTYPEID = product.PRODUCTTYPEID;
 
                     transPastDue.Add(pastDueInterest);
+                    updateloanTablePastDueInterest(pastDueInterest.LOANID, pastDueInterest.DEBITAMOUNT);
 
                     TBL_LOAN_PAST_DUE pastDuePrincipal = new TBL_LOAN_PAST_DUE();
 
@@ -1153,7 +1192,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDuePrincipal.PRODUCTTYPEID = product.PRODUCTTYPEID;
 
                     transPastDue.Add(pastDuePrincipal);
-
+                    updateloanTablePastDuePrincipal(pastDuePrincipal.LOANID, pastDuePrincipal.DEBITAMOUNT);
                     //var data = new TBL_CASA_LIEN
                     //{
                     //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
@@ -2601,13 +2640,13 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
 
             feeInput.feeAmountDiff = feeInput.newFeeAmount - feeInput.feeAmount;
-
+            feeInput.date = applicationDate;
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
             inputTransactions.Add(financeTransaction.BuildChargeReversalPosting(feeInput));
 
-            financeTransaction.PostTransaction(inputTransactions);
+            //financeTransaction.PostTransaction(inputTransactions);
             AddChargeReversal(feeInput, applicationDate, staffId);
 
 
@@ -4712,7 +4751,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
-
+            loanInput.date = applicationDate;
             var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanInput.productId);
 
             var interestAmount = (from p in context.TBL_LOAN_SCHEDULE_DAILY
@@ -4862,6 +4901,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
+            loanInput.date = applicationDate;
 
             var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanInput.productId);
             var refNo = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault().LOANREFERENCENUMBER;
@@ -5181,6 +5221,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in model)
             {
+                item.date = applicationDate;
                 financeTransaction.PostDailyInterestSuspension(item, loanId, applicationDate, staffId);
             }
 
@@ -6206,6 +6247,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workFlow.NewState != (int)ApprovalState.Ended)
             {
                 reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+
             }
             else if (workFlow.NewState == (int)ApprovalState.Ended)
             {
@@ -6213,8 +6255,12 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             output = context.SaveChanges() > 0;
+            if (output == true && workFlow.NewState == (int)ApprovalState.Ended)
+            {
+                return output;
+            }
 
-            return output;
+            return false;
         }
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool LoanRephasementProcess(short loanReviewOperationsId, int loanId, int staffId)

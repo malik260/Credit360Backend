@@ -25,7 +25,8 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet][Route("staff-role")]
+        [HttpGet]
+        [Route("staff-role")]
         public HttpResponseMessage GetStaffRole()
         {
             try
@@ -39,7 +40,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("staff-role/{staffRoleId}")]
+        [HttpGet]
+        [Route("staff-role/{staffRoleId}")]
         public HttpResponseMessage GetStaffRole(int rankId)
         {
             try
@@ -58,7 +60,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("staff-role/company")]
+        [HttpGet]
+        [Route("staff-role/company")]
         public HttpResponseMessage GetStaffRoleByCompanyId()
         {
             try
@@ -107,6 +110,12 @@ namespace FintrakBanking.APICore.Controllers
                 if (entity.staffRoleId != 0 || entity.staffRoleId > 0)
                 {
                     createUpdate = "updated";
+                    if (repo.ValidateStaffRoleUpdate(entity.staffRoleId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                               new { success = false, message = "This Staff Role is undergoing approval."
+                                               + Environment.NewLine + "Approve previous entry to continue."});
+                    }
                 }
                 else
                 {

@@ -42,12 +42,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("condition-precedent/application/{applicationId}")]
-        public HttpResponseMessage GetConditionPrecedentByApplicationId(int applicationId)
+        [Route("condition-precedent/application-detail/{detailId}")]
+        public HttpResponseMessage GetConditionPrecedentByApplicationId(int detailid)
         {
             try
             {
-                var data = repo.GetConditionPrecedentByApplicationId(applicationId);
+                var data = repo.GetConditionPrecedentByDetailId(detailid);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -106,12 +106,12 @@ namespace FintrakBanking.APICore.Controllers
         #region CP template
 
         [HttpGet]
-        [Route("condition-precedent-template/application/{applicationId}")]
-        public HttpResponseMessage GetConditionPrecedentDefaultByApplicationId(int applicationId)
+        [Route("condition-precedent-template/application-detail/{detailId}")]
+        public HttpResponseMessage GetConditionPrecedentDefaultByApplicationId(int detailId)
         {
             try
             {
-                List<ConditionPrecedentViewModel> data= repo.GetConditionPrecedentDefaultByApplicationId(applicationId);
+                List<ConditionPrecedentViewModel> data= repo.GetConditionPrecedentDefaultByDetailId(detailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)

@@ -45,6 +45,10 @@ namespace FintrakBanking.Repositories.Admin
             return context.TBL_PROFILE_USER.Any(x => x.USERNAME.ToLower() == username.ToLower());
         }
 
+        public bool isStaffExist(long staffId)
+        {
+            return context.TBL_PROFILE_USER.Any(x => x.STAFFID == staffId);
+        }
         public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.UserCreation;
@@ -100,7 +104,7 @@ namespace FintrakBanking.Repositories.Admin
                 userRecord.APPROVALSTATUS = true;
                 userRecord.DATEAPPROVED = DateTime.Now;
                 userRecord.DATETIMEUPDATED = DateTime.Now;
-                
+
             }
 
             // Audit Section ---------------------------
@@ -136,7 +140,7 @@ namespace FintrakBanking.Repositories.Admin
 
         }
 
-        public async Task<bool> CreateUser(AppUserViewModel user)
+        public bool CreateUser(AppUserViewModel user)
         {
             if (user == null)
             {
@@ -227,7 +231,7 @@ namespace FintrakBanking.Repositories.Admin
                     context.TBL_PROFILE_USER.Add(_user);
                     auditTrail.AddAuditTrail(audit);
 
-                    output = await context.SaveChangesAsync() > 0;
+                    output = context.SaveChanges() > 0;
 
                     var entity = new ApprovalViewModel
                     {
@@ -404,7 +408,7 @@ namespace FintrakBanking.Repositories.Admin
                     }).FirstOrDefault();
         }
 
-        public async Task<bool> UpdateUser(int userId, AppUserViewModel user)
+        public bool UpdateUser(int userId, AppUserViewModel user)
         {
             bool output = false;
             var targetUser = context.TBL_PROFILE_USER.Find(userId);
@@ -503,7 +507,7 @@ namespace FintrakBanking.Repositories.Admin
                     {
                         auditTrail.AddAuditTrail(audit);
 
-                        output = await context.SaveChangesAsync() > 0;
+                        output = context.SaveChanges() > 0;
 
                         var entity = new ApprovalViewModel
                         {
@@ -596,7 +600,7 @@ namespace FintrakBanking.Repositories.Admin
             return context.TBL_PROFILE_GROUP.Any(x => x.GROUPNAME.ToLower() == groupName);
         }
 
-        public  bool AddGroup(AppGroupViewModel group)
+        public bool AddGroup(AppGroupViewModel group)
         {
             var newGroup = new TBL_PROFILE_GROUP()
             {
@@ -604,7 +608,7 @@ namespace FintrakBanking.Repositories.Admin
                 CREATEDBY = group.createdBy,
                 DATETIMECREATED = DateTime.Now
             };
-            this.context.TBL_PROFILE_GROUP.Add(newGroup);  
+            this.context.TBL_PROFILE_GROUP.Add(newGroup);
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -648,7 +652,7 @@ namespace FintrakBanking.Repositories.Admin
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
-            return  context.SaveChanges() != 0;
+            return context.SaveChanges() != 0;
         }
 
         #endregion Group
@@ -718,8 +722,31 @@ namespace FintrakBanking.Repositories.Admin
 
         public List<string> GetUserActivitiesByUser(int userId)
         {
+            List<string> listOfActivities = new List<string>();
+
             var userGroupIds = context.TBL_PROFILE_USERGROUP.Where(x => x.USERID == userId)
                                 .Select(x => x.GROUPID).ToList();
+
+            var staffRoleId = (from a in context.TBL_PROFILE_USER
+                               join b in context.TBL_STAFF
+                               on a.STAFFID equals b.STAFFID
+                               where a.USERID == userId
+                               select b.STAFFROLEID).FirstOrDefault();
+
+            var staffGroupIds = context.TBL_PROFILE_STAFF_ROLE_GROUP.Where(x => x.STAFFROLEID == staffRoleId)
+                                .Select(x => x.GROUPID).ToList();
+
+            var staffRoleActivities = (from grpAct in context.TBL_PROFILE_GROUP_ACTIVITY
+                                       join act in context.TBL_PROFILE_ACTIVITY on grpAct.ACTIVITYID
+                                      equals act.ACTIVITYID
+                                       where staffGroupIds.Contains(grpAct.GROUPID)
+                                       select act.ACTIVITYNAME.ToLower()).ToList();
+
+            var staffRoleAdditionalActivities = (from addAct in context.TBL_PROFILE_STAFF_ROLE_ADT_ACT
+                                        join act in context.TBL_PROFILE_ACTIVITY
+                                        on addAct.ACTIVITYID equals act.ACTIVITYID
+                                        where addAct.STAFFROLEID == staffRoleId
+                                        select act.ACTIVITYNAME.ToLower()).ToList();
 
             var activities = (from grpAct in context.TBL_PROFILE_GROUP_ACTIVITY
                               join act in context.TBL_PROFILE_ACTIVITY on grpAct.ACTIVITYID
@@ -732,15 +759,24 @@ namespace FintrakBanking.Repositories.Admin
                                         on addAct.ACTIVITYID equals act.ACTIVITYID
                                         where addAct.USERID == userId
                                         select act.ACTIVITYNAME.ToLower()).ToList();
-
+            if (activities.Any())
+            {
+                listOfActivities = listOfActivities.Concat(activities).Distinct().ToList();
+            }
             if (additionalActivities.Any())
             {
-                return activities.Concat(additionalActivities).Distinct().ToList();
+                listOfActivities = listOfActivities.Concat(additionalActivities).Distinct().ToList();
             }
-            else
+            if (staffRoleActivities.Any())
             {
-                return activities.Distinct().ToList();
+                listOfActivities = listOfActivities.Concat(staffRoleActivities).Distinct().ToList();
             }
+            if (staffRoleAdditionalActivities.Any())
+            {
+                listOfActivities = listOfActivities.Concat(staffRoleAdditionalActivities).Distinct().ToList();              
+            }
+            
+            return listOfActivities.Distinct().ToList();
         }
 
         #endregion Activies
@@ -755,34 +791,34 @@ namespace FintrakBanking.Repositories.Admin
         private IQueryable<ActiveUserDetails> UserDetails(int companyId)
         {
             return from p in context.TBL_PROFILE_USER
-                    join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
-                    join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
-                    join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                    where   st.COMPANYID == companyId 
-                    select new ActiveUserDetails
-                    {
-                        companyId = coy.COMPANYID,
-                        staffId = p.STAFFID,
-                        user_id = p.USERID,
-                        username = p.USERNAME,
-                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                        branchId = st.BRANCHID.Value,
-                        countryId = coy.COUNTRYID,
-                        branchName = br.BRANCHNAME,
-                        companyName = coy.NAME,
-                        logincode = p.LOGINCODE,
-                        lastLoginDate = p.LASTLOGINDATE,
-                        isActive = p.ISACTIVE,
-                        isLocked = p.ISLOCKED,
-                        failedLogonAttempt = p.FAILEDLOGONATTEMPT  ,
-                         lastLockedOutDate = p.LASTLOCKOUTDATE
-                         
-                    } ;
+                   join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
+                   join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                   join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                   where st.COMPANYID == companyId
+                   select new ActiveUserDetails
+                   {
+                       companyId = coy.COMPANYID,
+                       staffId = p.STAFFID,
+                       user_id = p.USERID,
+                       username = p.USERNAME,
+                       staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                       branchId = st.BRANCHID.Value,
+                       countryId = coy.COUNTRYID,
+                       branchName = br.BRANCHNAME,
+                       companyName = coy.NAME,
+                       logincode = p.LOGINCODE,
+                       lastLoginDate = p.LASTLOGINDATE,
+                       isActive = p.ISACTIVE,
+                       isLocked = p.ISLOCKED,
+                       failedLogonAttempt = p.FAILEDLOGONATTEMPT,
+                       lastLockedOutDate = p.LASTLOCKOUTDATE
+
+                   };
         }
 
-        public bool UpdateUserStatus(ActiveUserDetails entity , out string message)
+        public bool UpdateUserStatus(ActiveUserDetails entity, out string message)
         {
-           // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
+            // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
 
             var data = context.TBL_PROFILE_USER.Find(entity.user_id);
 
@@ -793,14 +829,14 @@ namespace FintrakBanking.Repositories.Admin
                 data.DATETIMEUPDATED = DateTime.Now;
                 data.LASTUPDATEDBY = entity.lastUpdatedBy;
 
-                if (entity.isLocked )
+                if (entity.isLocked)
                 {
                     data.FAILEDLOGONATTEMPT = 0;
                     data.ISLOCKED = entity.isLocked;
                     data.LASTLOCKOUTDATE = DateTime.Now;
                     entity.actionMessage = "Account has been locked successfully";
                 }
- 
+
 
                 if (!entity.isActive)
                 {
@@ -808,15 +844,15 @@ namespace FintrakBanking.Repositories.Admin
                     data.DEACTIVATEDDATE = DateTime.Now;
                     entity.actionMessage = "Account has been deactivated successfully";
                 }
-                 
+
 
             }
             message = entity.actionMessage;
 
             return context.SaveChanges() > 0;
         }
-        
-        #endregion  
+
+        #endregion
 
     }
 

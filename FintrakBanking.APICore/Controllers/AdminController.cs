@@ -114,13 +114,17 @@ namespace FintrakBanking.APICore.Controllers
                         return Request.CreateResponse(HttpStatusCode.OK,
                            new { suucess = false, message = "A user with this username already exist" });
                     }
-
+                    if (repo.isStaffExist(user.staffId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { suucess = false, message = "Selected staff is already a user." });
+                    }
                     user.createdBy = token.GetStaffId;
                     user.userBranchId = (short)token.GetBranchId;
                     user.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                     user.applicationUrl = HttpContext.Current.Request.Path;
                     user.companyId = token.GetCompanyId;
-                    var result = await repo.CreateUser(user);
+                    var result =  repo.CreateUser(user);
                     if (result)
                     {
                         //repo.CreateUser(user);
@@ -158,7 +162,7 @@ namespace FintrakBanking.APICore.Controllers
                 user.userIPAddress = HttpContext.Current.Request.Url.AbsoluteUri;
                 user.applicationUrl = HttpContext.Current.Request.Path;
                 user.companyId = token.GetCompanyId;
-                var data = await repo.UpdateUser(id, user);
+                var data =  repo.UpdateUser(id, user);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

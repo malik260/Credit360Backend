@@ -82,7 +82,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleId = a.STAFFROLEID,
                             staffRoleCode = a.STAFFROLECODE,
                         });
-            return role; 
+            return role;
         }
 
         public IEnumerable<StaffRoleViewModel> GetStaffRoles()
@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 DATETIMECREATED = DateTime.Now,
                                 ISCURRENT = true,
                                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
-                                
+
                             };
                             tempActivities.Add(userActivity);
                         }
@@ -136,7 +136,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 GROUPID = item.groupId,
                                 DATETIMECREATED = DateTime.Now,
                                 CREATEDBY = entity.createdBy,
-                                 ISCURRENT = true,
+                                ISCURRENT = true,
                                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
                             };
                             tempGroups.Add(grpItem);
@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         try
                         {
                             auditTrail.AddAuditTrail(audit);
-                            output =  context.SaveChanges() > 0;
+                            output = context.SaveChanges() > 0;
 
                             var model = new ApprovalViewModel
                             {
@@ -242,14 +242,19 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE == staffRoleCode || x.STAFFROLENAME == staffRoleName).Any();
         }
+        public bool ValidateStaffRoleUpdate(int staffRoleId)
+        {
+            return context.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == staffRoleId && x.ISCURRENT == true && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved).Any();
+        }
 
         public IEnumerable<StaffRoleViewModel> GetStaffRoleAwaitingApproval(int staffId, int companyId)
         {
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.UserCreation).ToList();
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.StaffRoleCreation).ToList();
 
             var data = (from c in context.TBL_STAFF_ROLE
                         join atrail in context.TBL_APPROVAL_TRAIL on c.STAFFROLEID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                           && c.TBL_TEMP_PROFILE_STAFF_ROL_GRP.FirstOrDefault().APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                               && atrail.RESPONSESTAFFID == null
                               && atrail.OPERATIONID == (int)OperationsEnum.StaffRoleCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new StaffRoleViewModel()
@@ -258,11 +263,13 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleCode = c.STAFFROLECODE,
                             staffRoleId = c.STAFFROLEID,
                             operationId = (int)OperationsEnum.StaffRoleCreation,
+                           approvalStatusId = c.TBL_TEMP_PROFILE_STAFF_ROL_GRP.FirstOrDefault().APPROVALSTATUSID,
                             userGroup = c.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == c.STAFFROLEID).Select(x => new UserGroup
                             {
                                 groupId = x.GROUPID,
                                 groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
-                            }).ToList(),
+                               
+                            }).ToList(),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
                             activities = c.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Where(x => x.STAFFROLEID == c.STAFFROLEID).Select(a => new UserActivities
                             {
                                 activityId = a.ACTIVITYID,
@@ -304,6 +311,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     else
                     {
+                        var tempGroup = (from a in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP where a.STAFFROLEID == entity.targetId select a).ToList();
+                        tempGroup.FirstOrDefault().APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                        tempGroup.FirstOrDefault().ISCURRENT = true;
+                        tempGroup.FirstOrDefault().DATEAPPROVED = DateTime.Now;
+
+                        context.SaveChanges();
                         trans.Commit();
                     }
 
@@ -321,12 +334,13 @@ namespace FintrakBanking.Repositories.Setups.General
             var tempGroup = (from a in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP where a.STAFFROLEID == staffRoleId select a).ToList();
             var tempActivities = (from a in context.TBL_TEMP_PROFILE_STAFF_ROLE_AA where a.STAFFROLEID == staffRoleId select a).ToList();
 
-            tempGroup.FirstOrDefault().APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-            tempGroup.FirstOrDefault().ISCURRENT = false;
-            tempGroup.FirstOrDefault().DATEAPPROVED = DateTime.Now;
+          
+                tempGroup.FirstOrDefault().APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                tempGroup.FirstOrDefault().ISCURRENT = false;
+                tempGroup.FirstOrDefault().DATEAPPROVED = DateTime.Now;
 
-            tempActivities.FirstOrDefault().APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-            tempActivities.FirstOrDefault().ISCURRENT = false;
+                tempActivities.FirstOrDefault().APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                tempActivities.FirstOrDefault().ISCURRENT = false;
            
             List<TBL_PROFILE_STAFF_ROLE_GROUP> userGroups = new List<TBL_PROFILE_STAFF_ROLE_GROUP>();
             List<TBL_PROFILE_STAFF_ROLE_ADT_ACT> userActivities = new List<TBL_PROFILE_STAFF_ROLE_ADT_ACT>();
@@ -336,7 +350,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 foreach (var item in tempActivities)
                 {
                     var userActivity = new TBL_PROFILE_STAFF_ROLE_ADT_ACT()
-                    { 
+                    {
                         STAFFROLEID = item.STAFFROLEID,
                         ACTIVITYID = item.ACTIVITYID,
                         CANADD = false,
