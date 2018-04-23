@@ -396,7 +396,7 @@
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TestController.cs" />
-    <Compile Include="Controllers\TransactionDynamicsController.cs" />
+    <Compile Include="TransactionDynamicsController.cs" />
     <Compile Include="core\ApiControllerBase.cs" />
     <Compile Include="Filters\DeflateCompressionAttribute.cs" />
     <Compile Include="Filters\JWTAuthorizeAttribute.cs" />
