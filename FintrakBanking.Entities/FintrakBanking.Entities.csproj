@@ -73,7 +73,6 @@
     <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
-    <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -372,7 +371,6 @@
     <Compile Include="Models\TBL_SOURCE_APPLICATION.cs" />
     <Compile Include="Models\TBL_STAFF.cs" />
     <Compile Include="Models\TBL_STAFF_ACCOUNT_HISTORY.cs" />
-    <Compile Include="Models\TBL_STAFF_ACCOUNT_HISTORY_DTL.cs" />
     <Compile Include="Models\TBL_STAFF_JOBTITLE.cs" />
     <Compile Include="Models\TBL_STAFF_RELIEF.cs" />
     <Compile Include="Models\TBL_STAFF_ROLE.cs" />
@@ -384,8 +382,11 @@
     <Compile Include="Models\TBL_TEMP_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_CHART_OF_ACCOUNT.cs" />
     <Compile Include="Models\TBL_TEMP_CHART_OF_ACCOUNT_CUR.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_CASA.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_CUSTOMER.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_DEPOSIT.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_IMMOV_PROP.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_ITEM_POLI.cs" />
     <Compile Include="Models\TBL_TEMP_COMPANY_BENEFICIA.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMEREMPLOYMENT.cs" />
@@ -407,8 +408,11 @@
     <Compile Include="Models\TBL_TEMP_PRODUCT_COLLATERALTYP.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_CURRENCY.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_PROFILE_ADTN_ACTIVITY.cs" />
     <Compile Include="Models\TBL_TEMP_PROFILE_STAFF_ROLE_AA.cs" />
     <Compile Include="Models\TBL_TEMP_PROFILE_STAFF_ROL_GRP.cs" />
+    <Compile Include="Models\TBL_TEMP_PROFILE_USER.cs" />
+    <Compile Include="Models\TBL_TEMP_PROFILE_USERGROUP.cs" />
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />

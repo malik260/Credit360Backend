@@ -561,6 +561,72 @@ namespace FintrakBanking.Repositories.Setups.General
                 throw new Exception("Staff Information already exist and is undergoing approval");
             }
 
+
+
+            //List<TBL_TEMP_PROFILE_USERGROUP> userGroups = new List<TBL_TEMP_PROFILE_USERGROUP>();
+            //List<TBL_TEMP_PROFILE_ADTN_ACTIVITY> userActivities = new List<TBL_TEMP_PROFILE_ADTN_ACTIVITY>();
+
+            //if (user.activities.Any())
+            //{
+            //    foreach (var item in user.activities)
+            //    {
+            //        var userActivity = new TBL_TEMP_PROFILE_ADTN_ACTIVITY()
+            //        {
+            //            ACTIVITYID = item.activityId,
+            //            CANADD = false,
+            //            CANEDIT = false,
+            //            CANAPPROVE = false,
+            //            CANDELETE = false,
+            //            CANVIEW = false,
+            //            CREATEDBY = entity.createdBy,
+            //            DATETIMECREATED = DateTime.Now,
+            //        };
+
+            //        userActivities.Add(userActivity);
+            //    }
+            //}
+
+            //if (user.group.Count > 0)
+            //{
+            //    foreach (var item in user.group)
+            //    {
+            //        var grpItem = new TBL_TEMP_PROFILE_USERGROUP()
+            //        {
+            //            GROUPID = item.groupId,
+            //            DATETIMECREATED = DateTime.Now,
+            //            CREATEDBY = entity.createdBy,
+            //            ISCURRENT = true,
+            //            APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
+            //        };
+            //        userGroups.Add(grpItem);
+            //    }
+            //}
+
+            //var _user = new TBL_TEMP_PROFILE_USER()
+            //{
+            //    TEMPSTAFFID = user.staffId,
+            //    USERNAME = user.username,
+            //    PASSWORD = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey),
+            //    ISFIRSTLOGINATTEMPT = false,
+            //    ISACTIVE = false,
+            //    ISLOCKED = true,
+            //    FAILEDLOGONATTEMPT = 0,
+            //    SECURITYQUESTION = user.securityQuestion,
+            //    SECURITYANSWER = user.securityAnswer,
+            //    NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+            //    CREATEDBY = user.createdBy,
+            //    LASTUPDATEDBY = user.createdBy,
+            //    DATETIMECREATED = DateTime.Now,
+            //    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+            //    APPROVALSTATUS = false,
+
+            //    TBL_PROFILE_ADDITIONALACTIVITY = userActivities,
+            //    TBL_PROFILE_USERGROUP = userGroups
+            //};
+
+
+
+
             var staff = new TBL_TEMP_STAFF()
             {
                 FIRSTNAME = staffModel.FirstName,

@@ -9,12 +9,6 @@ namespace FintrakBanking.Entities.Models
     [Table("core.TBL_STAFF_ACCOUNT_HISTORY")]
     public partial class TBL_STAFF_ACCOUNT_HISTORY
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_STAFF_ACCOUNT_HISTORY()
-        {
-            TBL_STAFF_ACCOUNT_HISTORY_DTL = new HashSet<TBL_STAFF_ACCOUNT_HISTORY_DTL>();
-        }
-
         [Key]
         public int STAFFACCOUNTHISTORYID { get; set; }
 
@@ -27,6 +21,10 @@ namespace FintrakBanking.Entities.Models
         public DateTime ENDDATE { get; set; }
 
         public int NEWSTAFFID { get; set; }
+
+        public short PRODUCTTYPEID { get; set; }
+
+        public int TARGETID { get; set; }
 
         [Required]
         [StringLength(2000)]
@@ -48,7 +46,12 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_STAFF_ACCOUNT_HISTORY_DTL> TBL_STAFF_ACCOUNT_HISTORY_DTL { get; set; }
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
+
+        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
+
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
+
+        public virtual TBL_STAFF TBL_STAFF1 { get; set; }
     }
 }
