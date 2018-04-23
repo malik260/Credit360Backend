@@ -9,9 +9,12 @@ namespace FintrakBanking.Entities.StagingModels
     public partial class STG_BRANCH
     {
         [Key]
-        [Column(Order = 0)]
         [StringLength(10)]
         public string BRANCHCODE { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string BRANCHNAME { get; set; }
 
         [StringLength(500)]
         public string ADDRESSLINE1 { get; set; }
@@ -19,16 +22,14 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(500)]
         public string ADDRESSLINE2 { get; set; }
 
-        [Key]
-        [Column(Order = 1)]
+        [Required]
         [StringLength(10)]
         public string STATECODE { get; set; }
 
         [StringLength(10)]
         public string SHORTNAME { get; set; }
 
-        [Key]
-        [Column(Order = 2)]
+        [Required]
         [StringLength(10)]
         public string CITYCODE { get; set; }
 
@@ -37,10 +38,5 @@ namespace FintrakBanking.Entities.StagingModels
 
         [StringLength(100)]
         public string CITYNAME { get; set; }
-
-        [Key]
-        [Column(Order = 3)]
-        [StringLength(100)]
-        public string BRANCHNAME { get; set; }
     }
 }

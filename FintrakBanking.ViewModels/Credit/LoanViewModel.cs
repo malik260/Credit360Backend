@@ -512,6 +512,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationId { get; set; }
         public decimal loanAmount { get; set; }
         public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
+        public DateTime date  { get; set; }
 
     }
 

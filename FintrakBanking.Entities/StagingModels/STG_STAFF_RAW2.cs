@@ -6,25 +6,30 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class STG_STAFF
+    public partial class STG_STAFF_RAW2
     {
-        [Required]
+        [Key]
+        [Column(Order = 0)]
         [StringLength(20)]
         public string USERNAME { get; set; }
 
         [Key]
+        [Column(Order = 1)]
         [StringLength(10)]
         public string STAFFCODE { get; set; }
 
-        [Required]
+        [Key]
+        [Column(Order = 2)]
         [StringLength(20)]
         public string STAFFNAME { get; set; }
 
-        [Required]
+        [Key]
+        [Column(Order = 3)]
         [StringLength(50)]
         public string FIRSTNAME { get; set; }
 
-        [Required]
+        [Key]
+        [Column(Order = 4)]
         [StringLength(50)]
         public string LASTNAME { get; set; }
 
@@ -46,10 +51,13 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(10)]
         public string GENDER { get; set; }
 
-        [Required]
+        [Key]
+        [Column(Order = 5)]
         [StringLength(10)]
         public string BRANCHCODE { get; set; }
 
+        [Key]
+        [Column(Order = 6)]
         public double DEPARTMENTCODE { get; set; }
 
         [StringLength(10)]

@@ -389,6 +389,7 @@
     <Compile Include="Controllers\ProductFeeController.cs" />
     <Compile Include="Controllers\PrudentialGuidelineController.cs" />
     <Compile Include="Controllers\PublicHolidayController.cs" />
+    <Compile Include="Controllers\StaffAccountHistoryController.cs" />
     <Compile Include="Controllers\StaffRoleController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RiskAssessmentController.cs" />

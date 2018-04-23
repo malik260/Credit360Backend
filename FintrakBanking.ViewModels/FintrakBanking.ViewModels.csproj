@@ -100,6 +100,7 @@
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
     <Compile Include="Credit\LoanPreliminaryEvaluationViewModel.cs" />
     <Compile Include="Credit\LoanPrincipalViewModel.cs" />
+    <Compile Include="Credit\StaffAccountHistoryViewModel.cs" />
     <Compile Include="Credit\LoanReviewOperationViewModel.cs" />
     <Compile Include="Credit\LoanViewModel.cs" />
     <Compile Include="Credit\OfferLetterViewModel.cs" />

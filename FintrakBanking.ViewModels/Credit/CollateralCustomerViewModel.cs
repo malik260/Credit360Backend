@@ -48,6 +48,9 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? expiryDate { get; set; }
         public InsurancePolicies insurancePolicies { get; set; }
 
+        public List<InsurancePolicies> insurancePolicy { get; set; }
+
+        public List<CollateralDocumentViewModel> collateralVisitation { get; set; }
         // deposit
         public int collateralDepositId { get; set; }
 
@@ -133,8 +136,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? collateralUsableAmount { get; set; }
         public string nearestLandMark { get; set; }
         public string nearestBusStop { get; set; }
-        //public float? longitude { get; set; }
-        //public float? latitude { get; set; }
+        public double? longitude { get; set; }
+        public double? latitude { get; set; }
         public byte? perfectionStatusId { get; set; }
         public string perfectionStatusReason { get; set; }
 
@@ -262,6 +265,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime nextVisitationDate { get { return lastVisitationDate.AddDays((double)(visitationCycle)); } set { } }
         public DateTime lastVisitationDate { get; set; }
         public int visitationCycle { get; set; }
+        public bool requireVisitation { get; set; }
     }
 
     public class crossGarantee
@@ -338,6 +342,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool hasExpired { get; set; }
         public int collateraalId { get; set; }
     }
+
+   
     public class AllCollateralViewModel : CollateralViewModel
     {
 
