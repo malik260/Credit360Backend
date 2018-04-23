@@ -389,6 +389,7 @@
     <Compile Include="Controllers\ProductFeeController.cs" />
     <Compile Include="Controllers\PrudentialGuidelineController.cs" />
     <Compile Include="Controllers\PublicHolidayController.cs" />
+    <Compile Include="Controllers\StaffAccountHistoryController.cs" />
     <Compile Include="Controllers\StaffRoleController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RiskAssessmentController.cs" />
@@ -420,12 +421,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Credit.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx.cs">
-      <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx.designer.cs">
-      <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.aspx.cs">
       <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
@@ -651,7 +646,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Reports\Collateral\ScheduledCollateralReport.aspx" />
-    <Content Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\Credit\Monitoring\NonPeformingLoans.aspx" />
     <Content Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.aspx" />
@@ -866,7 +860,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
-    <EmbeddedResource Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.rdlc" />

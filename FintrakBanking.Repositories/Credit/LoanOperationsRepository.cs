@@ -5570,6 +5570,7 @@ namespace FintrakBanking.Repositories.Credit
                                where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo
                                select new LoanViewModel()
                                {
+                                   loanId = l.TERMLOANID,
                                    companyName = l.TBL_COMPANY.NAME,
                                    companyId = l.COMPANYID,
                                    customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.MIDDLENAME + " " + l.TBL_CUSTOMER.LASTNAME,
@@ -5598,11 +5599,15 @@ namespace FintrakBanking.Repositories.Credit
                                    principalFrequencyTypeId = l.PRINCIPALFREQUENCYTYPEID,
                                    interestFrequencyTypeId = l.INTERESTFREQUENCYTYPEID,
                                    pastDueTotal = pastDue,
-
+                                   relationshipManagerId =  l.RELATIONSHIPMANAGERID,
+                                   relationshipOfficerId =  l.RELATIONSHIPOFFICERID,
+                                   productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID
                                }).FirstOrDefault();
 
             return runningLoan;
         }
+
+      
 
         //public int GetAccrualedInterest(DateTime applicationDate,string refNo, int companyId)
         //{

@@ -50,6 +50,8 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_REVOLVING_ARCHIVE1 = new HashSet<TBL_LOAN_REVOLVING_ARCHIVE>();
             TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN_REVOLVING1 = new HashSet<TBL_LOAN_REVOLVING>();
+            TBL_STAFF_ACCOUNT_HISTORY = new HashSet<TBL_STAFF_ACCOUNT_HISTORY>();
+            TBL_STAFF_ACCOUNT_HISTORY1 = new HashSet<TBL_STAFF_ACCOUNT_HISTORY>();
             TBL_STAFF_RELIEF = new HashSet<TBL_STAFF_RELIEF>();
             TBL_STAFF_RELIEF1 = new HashSet<TBL_STAFF_RELIEF>();
             TBL_STAFF1 = new HashSet<TBL_STAFF>();
@@ -275,6 +277,12 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_STAFF_ACCOUNT_HISTORY> TBL_STAFF_ACCOUNT_HISTORY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_STAFF_ACCOUNT_HISTORY> TBL_STAFF_ACCOUNT_HISTORY1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_STAFF_RELIEF> TBL_STAFF_RELIEF { get; set; }

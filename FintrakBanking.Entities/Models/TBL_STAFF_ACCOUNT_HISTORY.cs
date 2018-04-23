@@ -10,11 +10,7 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_STAFF_ACCOUNT_HISTORY
     {
         [Key]
-        public int STAFFREASSIGNMENTID { get; set; }
-
-        public short PRODUCTTYPEID { get; set; }
-
-        public int TARGETID { get; set; }
+        public int STAFFACCOUNTHISTORYID { get; set; }
 
         public int STAFFID { get; set; }
 
@@ -24,10 +20,15 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime ENDDATE { get; set; }
 
+        public int NEWSTAFFID { get; set; }
+
+        public short PRODUCTTYPEID { get; set; }
+
+        public int TARGETID { get; set; }
+
+        [Required]
         [StringLength(2000)]
         public string REASONFORCHANGE { get; set; }
-
-        public int? PREVIOUSSTAFFID { get; set; }
 
         public short APPROVALSTATUSID { get; set; }
 
@@ -44,5 +45,13 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
+
+        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
+
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
+
+        public virtual TBL_STAFF TBL_STAFF1 { get; set; }
     }
 }
