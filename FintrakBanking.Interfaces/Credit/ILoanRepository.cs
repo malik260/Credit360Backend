@@ -105,6 +105,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanViewModel> SearchForOverdraft(string searchQuery);
 
+        string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId);
+
 
     }
 }

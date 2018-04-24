@@ -91,7 +91,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
         /// <exception cref="Exception">Loan Product Type not defined for Loan Booking</exception>
-        private string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId)
+        public string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId)
         {
             var customerCode = this.context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == customerId).CUSTOMERCODE;
             var productCode = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == productId).PRODUCTCODE;
