@@ -5038,11 +5038,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
                 {
-                    if ((int)LoanProductTypeEnum.TermLoan == productTypeId)
+                    if (productTypeId == 1)
                     {
                         allFilteredLoan = SearchTermLoan(searchQuery);       
                     }
-                    else if ((int)LoanProductTypeEnum.RevolvingLoan == productTypeId)
+                    else if (productTypeId == 2)
                     {
                         allFilteredLoan = SearchRevolvingLoan(searchQuery);
                     }
