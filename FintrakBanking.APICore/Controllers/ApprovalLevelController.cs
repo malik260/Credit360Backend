@@ -210,7 +210,42 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
-        #region
+        #region preset route
+
+        [HttpGet]
+        [Route("preset-route-collection/operation/{operationId}/product-class/{classId}")]
+        public HttpResponseMessage GetPresetRouteCollection(int operationId, int? classId)
+        {
+            try
+            {
+                PresetRouteViewModel response = repo.GetPresetRouteCollection(operationId, classId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("preset-route")]
+        public HttpResponseMessage PresetRoute([FromBody] PresetRouteViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                bool response = repo.PresetRoute(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion preset route
+
+        #region trail
         [HttpGet]
         [Route("workflowtracker/operation/{oId}/target/{tId}")]
         public HttpResponseMessage GetApprovalTrailByOperationIdAndTargetId(int oId, int tId)

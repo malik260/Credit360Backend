@@ -35,5 +35,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public virtual TBL_PROFILE_ACTIVITY TBL_PROFILE_ACTIVITY { get; set; }
+
+        public virtual TBL_TEMP_STAFF TBL_TEMP_STAFF { get; set; }
     }
 }

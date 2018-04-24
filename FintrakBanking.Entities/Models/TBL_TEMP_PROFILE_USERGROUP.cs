@@ -33,5 +33,7 @@ namespace FintrakBanking.Entities.Models
         public short APPROVALSTATUSID { get; set; }
 
         public virtual TBL_PROFILE_GROUP TBL_PROFILE_GROUP { get; set; }
+
+        public virtual TBL_TEMP_STAFF TBL_TEMP_STAFF { get; set; }
     }
 }

@@ -64,7 +64,10 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId)
         {
-            List<CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+
+            
+            List <CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
             var detailItem = (from s in context.TBL_CHECKLIST_DETAIL
                               join k in context.TBL_CHECKLIST_DEFINITION
                               on s.CHECKLISTDEFINITIONID equals k.CHECKLISTDEFINITIONID
@@ -93,10 +96,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from a in context.TBL_CHECKLIST_DEFINITION
                         join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
-                        join b in context.TBL_APPROVAL_LEVEL_STAFF on
-                        a.APPROVALLEVELID equals b.APPROVALLEVELID
-                        where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
-                        where a.CHECKLIST_TYPEID == checkListTypeId
+                        where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checkListTypeId 
                         && a.OPERATIONID == operationId && a.DELETED == false
                         select new ChecklistDefinitionAndDetailViewModel
                         {
@@ -246,7 +246,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId)
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
-
+           
             var checkType = (from a in context.TBL_CHECKLIST_TYPE
                              join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
                              where ids.Contains((int)b.APPROVALLEVELID)

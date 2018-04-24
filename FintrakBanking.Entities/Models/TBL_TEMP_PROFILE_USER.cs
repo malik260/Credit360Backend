@@ -61,5 +61,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISCURRENT { get; set; }
 
         public short APPROVALSTATUSID { get; set; }
+
+        public virtual TBL_TEMP_STAFF TBL_TEMP_STAFF { get; set; }
     }
 }

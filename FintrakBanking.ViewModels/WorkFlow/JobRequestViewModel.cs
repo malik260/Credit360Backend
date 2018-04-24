@@ -69,10 +69,22 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class JobRequestDetailViewModel : GeneralEntity
     {
+        public string operationsName { get; set; }
+
+        public string customerName { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int targetId { get; set; }
+        public int operationsId { get; set; }
+
+        public string accreditedConsultantName { get; set; }
+        public object jobSubTypeName { get; set; }
+        public short jobTypeId { get; set; }
+        public string jobTypeName { get; set; }
+
         public int jobRequestDetailId { get; set; }
         public int jobRequestId { get; set; }
         public int accreditedConsultantId { get; set; }
-        public short JobSubTypeId { get; set; }
+        public short jobSubTypeId { get; set; }
         public string description { get; set; }
         public decimal? amount { get; set; }
         public string accountNumber { get; set; }

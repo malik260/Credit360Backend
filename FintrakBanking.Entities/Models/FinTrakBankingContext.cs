@@ -4779,6 +4779,23 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.GENDEROFNOK)
                 .IsFixedLength();
 
+            modelBuilder.Entity<TBL_TEMP_STAFF>()
+                .HasMany(e => e.TBL_TEMP_PROFILE_ADTN_ACTIVITY)
+                .WithRequired(e => e.TBL_TEMP_STAFF)
+                .HasForeignKey(e => e.TEMPUSERID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_TEMP_STAFF>()
+                .HasMany(e => e.TBL_TEMP_PROFILE_USER)
+                .WithRequired(e => e.TBL_TEMP_STAFF)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_TEMP_STAFF>()
+                .HasMany(e => e.TBL_TEMP_PROFILE_USERGROUP)
+                .WithRequired(e => e.TBL_TEMP_STAFF)
+                .HasForeignKey(e => e.TEMPUSERID)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_DEAL_CLASSIFICATION>()
                 .HasMany(e => e.TBL_PRODUCT_TYPE)
                 .WithRequired(e => e.TBL_DEAL_CLASSIFICATION)

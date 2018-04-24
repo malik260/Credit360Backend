@@ -383,22 +383,21 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)OperationsEnum.StaffCreation;
-
-            entity.externalInitialization = false;
-
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    workflow.LogForApproval(entity);
+                    workflow.StaffId = entity.staffId;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workflow.TargetId = entity.targetId;
+                    workflow.Comment = entity.comment;
+                    workflow.OperationId = (int)OperationsEnum.StaffCreation;
+                    workflow.ExternalInitialization = false;
+                    workflow.DeferredExecution = true;
+                    workflow.LogActivity();
 
-                    var b = workflow.NextLevelId ?? 0;
-                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
+                    context.SaveChanges();
 
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
@@ -563,66 +562,68 @@ namespace FintrakBanking.Repositories.Setups.General
 
 
 
-            //List<TBL_TEMP_PROFILE_USERGROUP> userGroups = new List<TBL_TEMP_PROFILE_USERGROUP>();
-            //List<TBL_TEMP_PROFILE_ADTN_ACTIVITY> userActivities = new List<TBL_TEMP_PROFILE_ADTN_ACTIVITY>();
+            List<TBL_TEMP_PROFILE_USERGROUP> userGroups = new List<TBL_TEMP_PROFILE_USERGROUP>();
+            List<TBL_TEMP_PROFILE_ADTN_ACTIVITY> userActivities = new List<TBL_TEMP_PROFILE_ADTN_ACTIVITY>();
+            List<TBL_TEMP_PROFILE_USER> user = new List<TBL_TEMP_PROFILE_USER>();
+            
+            if (staffModel.user.activities.Any())
+            {
+                foreach (var item in staffModel.user.activities)
+                {
+                    var userActivity = new TBL_TEMP_PROFILE_ADTN_ACTIVITY()
+                    {
+                        ACTIVITYID = item.activityId,
+                        CANADD = false,
+                        CANEDIT = false,
+                        CANAPPROVE = false,
+                        CANDELETE = false,
+                        CANVIEW = false,
+                        CREATEDBY = staffModel.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                    };
 
-            //if (user.activities.Any())
-            //{
-            //    foreach (var item in user.activities)
-            //    {
-            //        var userActivity = new TBL_TEMP_PROFILE_ADTN_ACTIVITY()
-            //        {
-            //            ACTIVITYID = item.activityId,
-            //            CANADD = false,
-            //            CANEDIT = false,
-            //            CANAPPROVE = false,
-            //            CANDELETE = false,
-            //            CANVIEW = false,
-            //            CREATEDBY = entity.createdBy,
-            //            DATETIMECREATED = DateTime.Now,
-            //        };
+                    userActivities.Add(userActivity);
+                }
+            }
 
-            //        userActivities.Add(userActivity);
-            //    }
-            //}
-
-            //if (user.group.Count > 0)
-            //{
-            //    foreach (var item in user.group)
-            //    {
-            //        var grpItem = new TBL_TEMP_PROFILE_USERGROUP()
-            //        {
-            //            GROUPID = item.groupId,
-            //            DATETIMECREATED = DateTime.Now,
-            //            CREATEDBY = entity.createdBy,
-            //            ISCURRENT = true,
-            //            APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
-            //        };
-            //        userGroups.Add(grpItem);
-            //    }
-            //}
-
-            //var _user = new TBL_TEMP_PROFILE_USER()
-            //{
-            //    TEMPSTAFFID = user.staffId,
-            //    USERNAME = user.username,
-            //    PASSWORD = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey),
-            //    ISFIRSTLOGINATTEMPT = false,
-            //    ISACTIVE = false,
-            //    ISLOCKED = true,
-            //    FAILEDLOGONATTEMPT = 0,
-            //    SECURITYQUESTION = user.securityQuestion,
-            //    SECURITYANSWER = user.securityAnswer,
-            //    NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
-            //    CREATEDBY = user.createdBy,
-            //    LASTUPDATEDBY = user.createdBy,
-            //    DATETIMECREATED = DateTime.Now,
-            //    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-            //    APPROVALSTATUS = false,
-
-            //    TBL_PROFILE_ADDITIONALACTIVITY = userActivities,
-            //    TBL_PROFILE_USERGROUP = userGroups
-            //};
+            if (staffModel.user.group.Count > 0)
+            {
+                foreach (var item in staffModel.user.group)
+                {
+                    var grpItem = new TBL_TEMP_PROFILE_USERGROUP()
+                    {
+                        GROUPID = item.groupId,
+                        DATETIMECREATED = DateTime.Now,
+                        CREATEDBY = staffModel.createdBy,
+                        ISCURRENT = true,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
+                    };
+                    userGroups.Add(grpItem);
+                }
+            }
+            if (staffModel.user != null)
+            {
+                    var _user = new TBL_TEMP_PROFILE_USER()
+                    {
+                        TEMPSTAFFID = staffModel.staffId,
+                        USERNAME = staffModel.user.username,
+                        PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
+                        ISFIRSTLOGINATTEMPT = false,
+                        ISACTIVE = false,
+                        ISLOCKED = true,
+                        FAILEDLOGONATTEMPT = 0,
+                        SECURITYQUESTION = staffModel.user.securityQuestion,
+                        SECURITYANSWER = staffModel.user.securityAnswer,
+                        NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                        CREATEDBY = staffModel.createdBy,
+                        LASTUPDATEDBY = staffModel.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                        APPROVALSTATUS = false,
+                };
+                user.Add(_user);
+            }
+           
 
 
 
@@ -660,7 +661,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 CITYID = staffModel.CityId,
                 STAFFSIGNATURE = staffModel.StaffSignature,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                ISCURRENT = true
+                ISCURRENT = true,
+                TBL_TEMP_PROFILE_USER = user,
+                TBL_TEMP_PROFILE_ADTN_ACTIVITY = userActivities,
+                TBL_TEMP_PROFILE_USERGROUP = userGroups
             };
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -675,40 +679,57 @@ namespace FintrakBanking.Repositories.Setups.General
                 SYSTEMDATETIME = DateTime.Now
             };
 
-            using (var trans = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    auditTrail.AddAuditTrail(audit);
-                    context.TBL_TEMP_STAFF.Add(staff);
-                    output = await context.SaveChangesAsync() > 0;
+            auditTrail.AddAuditTrail(audit);
+            context.TBL_TEMP_STAFF.Add(staff);
+            output = await context.SaveChangesAsync() > 0;
 
-                    var entity = new ApprovalViewModel
-                    {
-                        staffId = staffModel.createdBy,
-                        companyId = staffModel.companyId,
-                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = staff.TEMPSTAFFID,
-                        operationId = (int)OperationsEnum.StaffCreation,
-                        BranchId = staffModel.userBranchId,
-                        externalInitialization = true
-                    };
-                    var response = workflow.LogForApproval(entity);
+            workflow.StaffId = staffModel.createdBy;
+            workflow.CompanyId = staffModel.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.TargetId = staff.TEMPSTAFFID;
+            workflow.Comment = "New Staff Creation";
+            workflow.OperationId = (int)OperationsEnum.StaffCreation;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
 
-                    if (response)
-                    {
-                        trans.Commit();
-                    }
-
-                    return output;
-                }
-                catch (Exception)
-                {
-                    trans.Rollback();
-                }
-            }
+            context.SaveChanges();
 
             return output;
+
+            //using (var trans = context.Database.BeginTransaction())
+            //{
+            //    try
+            //    {
+            //        auditTrail.AddAuditTrail(audit);
+            //        context.TBL_TEMP_STAFF.Add(staff);
+            //        output = await context.SaveChangesAsync() > 0;
+
+            //        workflow.StaffId = staffModel.createdBy;
+            //        workflow.CompanyId = staffModel.companyId;
+            //        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            //        workflow.TargetId = staff.TEMPSTAFFID;
+            //        workflow.Comment = "New Staff Creation";
+            //        workflow.OperationId = (int)OperationsEnum.StaffCreation;
+            //        workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            //        workflow.ExternalInitialization = true;
+            //        workflow.LogActivity();
+
+            //        context.SaveChanges();
+
+            //        if (workflow.Saved)
+            //        {
+            //            trans.Commit();
+            //        }
+
+            //        return output;
+            //    }
+            //    catch (Exception)
+            //    {
+            //        trans.Rollback();
+            //    }
+            //}
+
         }
 
         public bool IsStaffCodeAlreadyExist(string staffCode)
