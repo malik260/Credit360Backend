@@ -25,7 +25,6 @@ namespace FintrakBanking.Repositories.ErrorLogger
             {
                 errorMsg += " " + ex.InnerException.Message;
             }
-
             
             var errorDetails = new TBL_ERRORLOG()
             {

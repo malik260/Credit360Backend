@@ -33,11 +33,13 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
         private ICasaLienRepository casaLien;
+        private ILoanRepository loan;
 
         public LoanOperationsRepository(
 
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
-            ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien)
+            ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien
+            , ILoanRepository _loan )
         {
 
             this.context = _context;
@@ -48,6 +50,7 @@ namespace FintrakBanking.Repositories.Credit
             this.workFlow = _workFlow;
             this.level = _level;
             this.casaLien = _casaLien;
+            this.loan = _loan;
         }
 
         public decimal GetCollateralSearchChargeAmount(int stateId)
@@ -2718,7 +2721,124 @@ namespace FintrakBanking.Repositories.Credit
 
         public void OverdraftTopUp(int loanId, decimal amount)
         {
-            var desc = "Overdraft Top";
+            var systemDate = generalSetup.GetApplicationDate();
+            ArchiveOverDraft(loanId);
+            var model = (from a in context.TBL_LOAN_REVOLVING
+                         join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
+                         where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                         select new RevolvingLoanViewModel()
+                         {
+                             loanId = a.REVOLVINGLOANID,
+                             customerId = a.CUSTOMERID,
+                             productId = a.PRODUCTID,
+                             companyId = a.COMPANYID,
+                             casaAccountId = a.CASAACCOUNTID,
+                             casaAccountId2 = a.CASAACCOUNTID2,
+                             branchId = a.BRANCHID,
+                             currencyId = a.CURRENCYID,
+                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                             exchangeRate = a.EXCHANGERATE,
+                             loanReferenceNumber = a.LOANREFERENCENUMBER,
+                             relatedLoanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                             subSectorId = a.SUBSECTORID,
+                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                             misCode = a.MISCODE,
+                             teamMiscode = a.TEAMMISCODE,
+                             interestRate = (double)b.INTERATERATE,
+                             effectiveDate = b.EFFECTIVEDATE,
+                             maturityDate = (DateTime)b.MATURITYDATE,
+                             bookingDate = DateTime.Today,
+                             overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
+                             disbursedAmount = a.DISBURSED_AMOUNT,
+                             interestAmount = a.INTEREST_AMOUNT,
+                             pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                             pastDueInterest = a.PASTDUEINTEREST,
+                             interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                             interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                             penalChargeAmount = a.PENALCHARGEAMOUNT,
+                             approvalStatusId = a.APPROVALSTATUSID,
+                             approvedBy = (int)a.APPROVEDBY,
+                             approverComment = a.APPROVERCOMMENT,
+                             dateApproved = a.DATEAPPROVED,
+                             loanStatusId = a.LOANSTATUSID,
+                             isDisbursed = a.ISDISBURSED,
+                             disbursedBy = a.DISBURSEDBY,
+                             disburserComment = a.DISBURSERCOMMENT,
+                             disburseDate = a.DISBURSEDATE,
+                             operationId = b.OPERATIONTYPEID,
+                             dischargeLetter = a.DISCHARGELETTER,
+                             suspendInterest = a.SUSPENDINTEREST,
+                             dayCountConventionId = a.DAYCOUNTCONVENTIONID,
+                             internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
+                             externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
+                             nplDate = a.NPLDATE,
+                             createdBy = a.CREATEDBY,
+                             dateTimeCreated = DateTime.Today,
+
+                         }).ToList();
+
+            List<TBL_LOAN_REVOLVING> overDraft = new List<TBL_LOAN_REVOLVING>();
+
+
+
+            foreach (var item in model)
+            {
+                var loanReferenceNumber = loan.GenerateLoanReferenceNumber(item.customerId, item.productId, item.productTypeId);
+                TBL_LOAN_REVOLVING addOverDraft = new TBL_LOAN_REVOLVING();
+
+                addOverDraft.CUSTOMERID = item.customerId;
+                addOverDraft.PRODUCTID = item.productId;
+                addOverDraft.COMPANYID = item.companyId;
+                addOverDraft.CASAACCOUNTID = item.casaAccountId;
+                addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
+                addOverDraft.BRANCHID = item.branchId;
+                addOverDraft.CURRENCYID = item.currencyId;
+                addOverDraft.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
+                addOverDraft.EXCHANGERATE = item.exchangeRate;
+                addOverDraft.LOANREFERENCENUMBER = loanReferenceNumber;
+                addOverDraft.RELATED_LOAN_REFERENCE_NUMBER = item.loanReferenceNumber;
+                addOverDraft.SUBSECTORID = item.subSectorId;
+                addOverDraft.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
+                addOverDraft.RELATIONSHIPMANAGERID = item.relationshipManagerId;
+                addOverDraft.MISCODE = item.misCode;
+                addOverDraft.TEAMMISCODE = item.teamMiscode;
+                addOverDraft.INTERESTRATE = item.interestRate;
+                addOverDraft.EFFECTIVEDATE = item.effectiveDate;
+                addOverDraft.MATURITYDATE = item.maturityDate;
+                addOverDraft.BOOKINGDATE = item.bookingDate;
+                addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
+                addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
+                addOverDraft.INTEREST_AMOUNT = item.interestAmount;
+                addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
+                addOverDraft.APPROVEDBY = item.approvedBy;
+                addOverDraft.APPROVERCOMMENT = item.approverComment;
+                addOverDraft.DATEAPPROVED = item.dateApproved;
+                addOverDraft.LOANSTATUSID = item.loanStatusId;
+                addOverDraft.ISDISBURSED = item.isDisbursed;
+                addOverDraft.DISBURSEDBY = item.disbursedBy;
+                addOverDraft.DISBURSERCOMMENT = item.disburserComment;
+                addOverDraft.DISBURSEDATE = item.disburseDate;
+                addOverDraft.OPERATIONID = item.operationId;
+                addOverDraft.CREATEDBY = item.createdBy;
+                addOverDraft.DATETIMECREATED = item.dateTimeCreated;
+                addOverDraft.DISCHARGELETTER = item.dischargeLetter;
+                addOverDraft.SUSPENDINTEREST = item.suspendInterest;
+                addOverDraft.DAYCOUNTCONVENTIONID = (short)item.dayCountConventionId;
+                addOverDraft.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
+                addOverDraft.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
+                addOverDraft.NPLDATE = item.nplDate;
+                addOverDraft.CREATEDBY = item.createdBy;
+                addOverDraft.DATETIMECREATED = item.dateTimeCreated;
+
+                overDraft.Add(addOverDraft);
+            }
+
+            this.context.TBL_LOAN_REVOLVING.AddRange(overDraft);
+
+            context.SaveChanges();
+
+            //var desc = "Overdraft Top";
 
             TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
                                          where p.REVOLVINGLOANID == loanId
@@ -2728,13 +2848,283 @@ namespace FintrakBanking.Repositories.Credit
             result.OVERDRAFTLIMIT = result.OVERDRAFTLIMIT + amount;
 
 
-            AddCASAOverdraft(result.CASAACCOUNTID, amount, desc);
+           // AddCASAOverdraft(result.CASAACCOUNTID, amount, desc);
+
+            context.SaveChanges();
+        }
+
+        public void OverdraftRenewal(int loanId, decimal amount)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+            ArchiveOverDraft(loanId);
+            var model = (from a in context.TBL_LOAN_REVOLVING
+                         join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
+                         where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                         select new RevolvingLoanViewModel()
+                         {
+                             loanId = a.REVOLVINGLOANID,
+                             customerId = a.CUSTOMERID,
+                             productId = a.PRODUCTID,
+                             companyId = a.COMPANYID,
+                             casaAccountId = a.CASAACCOUNTID,
+                             casaAccountId2 = a.CASAACCOUNTID2,
+                             branchId = a.BRANCHID,
+                             currencyId = a.CURRENCYID,
+                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                             exchangeRate = a.EXCHANGERATE,
+                             loanReferenceNumber = a.LOANREFERENCENUMBER,
+                             relatedLoanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                             subSectorId = a.SUBSECTORID,
+                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                             misCode = a.MISCODE,
+                             teamMiscode = a.TEAMMISCODE,
+                             interestRate = (double)b.INTERATERATE,
+                             effectiveDate = b.EFFECTIVEDATE,
+                             maturityDate = (DateTime)b.MATURITYDATE,
+                             bookingDate = DateTime.Today,
+                             overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
+                             disbursedAmount = a.DISBURSED_AMOUNT,
+                             interestAmount = a.INTEREST_AMOUNT,
+                             pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                             pastDueInterest = a.PASTDUEINTEREST,
+                             interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                             interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                             penalChargeAmount = a.PENALCHARGEAMOUNT,
+                             approvalStatusId = a.APPROVALSTATUSID,
+                             approvedBy = (int)a.APPROVEDBY,
+                             approverComment = a.APPROVERCOMMENT,
+                             dateApproved = a.DATEAPPROVED,
+                             loanStatusId = a.LOANSTATUSID,
+                             isDisbursed = a.ISDISBURSED,
+                             disbursedBy = a.DISBURSEDBY,
+                             disburserComment = a.DISBURSERCOMMENT,
+                             disburseDate = a.DISBURSEDATE,
+                             operationId = b.OPERATIONTYPEID,
+                             dischargeLetter = a.DISCHARGELETTER,
+                             suspendInterest = a.SUSPENDINTEREST,
+                             dayCountConventionId = a.DAYCOUNTCONVENTIONID,
+                             internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
+                             externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
+                             nplDate = a.NPLDATE,
+                             createdBy = a.CREATEDBY,
+                             dateTimeCreated = DateTime.Today,
+
+                         }).ToList();
+
+            List<TBL_LOAN_REVOLVING> overDraft = new List<TBL_LOAN_REVOLVING>();
+
+
+
+            foreach (var item in model)
+            {
+                var loanReferenceNumber = loan.GenerateLoanReferenceNumber(item.customerId, item.productId, item.productTypeId);
+                TBL_LOAN_REVOLVING addOverDraft = new TBL_LOAN_REVOLVING();
+
+                addOverDraft.CUSTOMERID = item.customerId;
+                addOverDraft.PRODUCTID = item.productId;
+                addOverDraft.COMPANYID = item.companyId;
+                addOverDraft.CASAACCOUNTID = item.casaAccountId;
+                addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
+                addOverDraft.BRANCHID = item.branchId;
+                addOverDraft.CURRENCYID = item.currencyId;
+                addOverDraft.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
+                addOverDraft.EXCHANGERATE = item.exchangeRate;
+                addOverDraft.LOANREFERENCENUMBER = loanReferenceNumber;
+                addOverDraft.RELATED_LOAN_REFERENCE_NUMBER = item.loanReferenceNumber;
+                addOverDraft.SUBSECTORID = item.subSectorId;
+                addOverDraft.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
+                addOverDraft.RELATIONSHIPMANAGERID = item.relationshipManagerId;
+                addOverDraft.MISCODE = item.misCode;
+                addOverDraft.TEAMMISCODE = item.teamMiscode;
+                addOverDraft.INTERESTRATE = item.interestRate;
+                addOverDraft.EFFECTIVEDATE = item.effectiveDate;
+                addOverDraft.MATURITYDATE = item.maturityDate;
+                addOverDraft.BOOKINGDATE = item.bookingDate;
+                addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
+                addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
+                addOverDraft.INTEREST_AMOUNT = item.interestAmount;
+                addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
+                addOverDraft.APPROVEDBY = item.approvedBy;
+                addOverDraft.APPROVERCOMMENT = item.approverComment;
+                addOverDraft.DATEAPPROVED = item.dateApproved;
+                addOverDraft.LOANSTATUSID = item.loanStatusId;
+                addOverDraft.ISDISBURSED = item.isDisbursed;
+                addOverDraft.DISBURSEDBY = item.disbursedBy;
+                addOverDraft.DISBURSERCOMMENT = item.disburserComment;
+                addOverDraft.DISBURSEDATE = item.disburseDate;
+                addOverDraft.OPERATIONID = item.operationId;
+                addOverDraft.CREATEDBY = item.createdBy;
+                addOverDraft.DATETIMECREATED = item.dateTimeCreated;
+                addOverDraft.DISCHARGELETTER = item.dischargeLetter;
+                addOverDraft.SUSPENDINTEREST = item.suspendInterest;
+                addOverDraft.DAYCOUNTCONVENTIONID = (short)item.dayCountConventionId;
+                addOverDraft.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
+                addOverDraft.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
+                addOverDraft.NPLDATE = item.nplDate;
+                addOverDraft.CREATEDBY = item.createdBy;
+                addOverDraft.DATETIMECREATED = item.dateTimeCreated;
+
+                overDraft.Add(addOverDraft);
+            }
+
+            this.context.TBL_LOAN_REVOLVING.AddRange(overDraft);
+
+            context.SaveChanges();
+
+            //var desc = "Overdraft Top";
+
+            //TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
+            //                             where p.REVOLVINGLOANID == loanId
+            //                             && p.LOANSTATUSID == (short)LoanStatusEnum.Active
+            //                             select p).SingleOrDefault();
+
+            //result.OVERDRAFTLIMIT = amount;
+
+
+            // AddCASAOverdraft(result.CASAACCOUNTID, amount, desc);
+
+            context.SaveChanges();
+        }
+
+        public void OverdraftExtension(int loanId, decimal amount)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+            ArchiveOverDraft(loanId);
+            var model = (from a in context.TBL_LOAN_REVOLVING
+                         join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
+                         where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                         select new RevolvingLoanViewModel()
+                         {
+                             loanId = a.REVOLVINGLOANID,
+                             customerId = a.CUSTOMERID,
+                             productId = a.PRODUCTID,
+                             companyId = a.COMPANYID,
+                             casaAccountId = a.CASAACCOUNTID,
+                             casaAccountId2 = a.CASAACCOUNTID2,
+                             branchId = a.BRANCHID,
+                             currencyId = a.CURRENCYID,
+                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                             exchangeRate = a.EXCHANGERATE,
+                             loanReferenceNumber = a.LOANREFERENCENUMBER,
+                             relatedLoanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                             subSectorId = a.SUBSECTORID,
+                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                             misCode = a.MISCODE,
+                             teamMiscode = a.TEAMMISCODE,
+                             interestRate = (double)b.INTERATERATE,
+                             effectiveDate = b.EFFECTIVEDATE,
+                             maturityDate = (DateTime)b.MATURITYDATE,
+                             bookingDate = DateTime.Today,
+                             overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
+                             disbursedAmount = a.DISBURSED_AMOUNT,
+                             interestAmount = a.INTEREST_AMOUNT,
+                             pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                             pastDueInterest = a.PASTDUEINTEREST,
+                             interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                             interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                             penalChargeAmount = a.PENALCHARGEAMOUNT,
+                             approvalStatusId = a.APPROVALSTATUSID,
+                             approvedBy = (int)a.APPROVEDBY,
+                             approverComment = a.APPROVERCOMMENT,
+                             dateApproved = a.DATEAPPROVED,
+                             loanStatusId = a.LOANSTATUSID,
+                             isDisbursed = a.ISDISBURSED,
+                             disbursedBy = a.DISBURSEDBY,
+                             disburserComment = a.DISBURSERCOMMENT,
+                             disburseDate = a.DISBURSEDATE,
+                             operationId = b.OPERATIONTYPEID,
+                             dischargeLetter = a.DISCHARGELETTER,
+                             suspendInterest = a.SUSPENDINTEREST,
+                             dayCountConventionId = a.DAYCOUNTCONVENTIONID,
+                             internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
+                             externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
+                             nplDate = a.NPLDATE,
+                             createdBy = a.CREATEDBY,
+                             dateTimeCreated = DateTime.Today,
+
+                         }).ToList();
+
+            List<TBL_LOAN_REVOLVING> overDraft = new List<TBL_LOAN_REVOLVING>();
+
+
+
+            foreach (var item in model)
+            {
+                var loanReferenceNumber = loan.GenerateLoanReferenceNumber(item.customerId, item.productId, item.productTypeId);
+                TBL_LOAN_REVOLVING addOverDraft = new TBL_LOAN_REVOLVING();
+
+                addOverDraft.CUSTOMERID = item.customerId;
+                addOverDraft.PRODUCTID = item.productId;
+                addOverDraft.COMPANYID = item.companyId;
+                addOverDraft.CASAACCOUNTID = item.casaAccountId;
+                addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
+                addOverDraft.BRANCHID = item.branchId;
+                addOverDraft.CURRENCYID = item.currencyId;
+                addOverDraft.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
+                addOverDraft.EXCHANGERATE = item.exchangeRate;
+                addOverDraft.LOANREFERENCENUMBER = loanReferenceNumber;
+                addOverDraft.RELATED_LOAN_REFERENCE_NUMBER = item.loanReferenceNumber;
+                addOverDraft.SUBSECTORID = item.subSectorId;
+                addOverDraft.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
+                addOverDraft.RELATIONSHIPMANAGERID = item.relationshipManagerId;
+                addOverDraft.MISCODE = item.misCode;
+                addOverDraft.TEAMMISCODE = item.teamMiscode;
+                addOverDraft.INTERESTRATE = item.interestRate;
+                addOverDraft.EFFECTIVEDATE = item.effectiveDate;
+                addOverDraft.MATURITYDATE = item.maturityDate;
+                addOverDraft.BOOKINGDATE = item.bookingDate;
+                addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
+                addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
+                addOverDraft.INTEREST_AMOUNT = item.interestAmount;
+                addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
+                addOverDraft.APPROVEDBY = item.approvedBy;
+                addOverDraft.APPROVERCOMMENT = item.approverComment;
+                addOverDraft.DATEAPPROVED = item.dateApproved;
+                addOverDraft.LOANSTATUSID = item.loanStatusId;
+                addOverDraft.ISDISBURSED = item.isDisbursed;
+                addOverDraft.DISBURSEDBY = item.disbursedBy;
+                addOverDraft.DISBURSERCOMMENT = item.disburserComment;
+                addOverDraft.DISBURSEDATE = item.disburseDate;
+                addOverDraft.OPERATIONID = item.operationId;
+                addOverDraft.CREATEDBY = item.createdBy;
+                addOverDraft.DATETIMECREATED = item.dateTimeCreated;
+                addOverDraft.DISCHARGELETTER = item.dischargeLetter;
+                addOverDraft.SUSPENDINTEREST = item.suspendInterest;
+                addOverDraft.DAYCOUNTCONVENTIONID = (short)item.dayCountConventionId;
+                addOverDraft.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
+                addOverDraft.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
+                addOverDraft.NPLDATE = item.nplDate;
+                addOverDraft.CREATEDBY = item.createdBy;
+                addOverDraft.DATETIMECREATED = item.dateTimeCreated;
+
+                overDraft.Add(addOverDraft);
+            }
+
+            this.context.TBL_LOAN_REVOLVING.AddRange(overDraft);
+
+            context.SaveChanges();
+
+            //var desc = "Overdraft Top";
+
+            TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
+                                         where p.REVOLVINGLOANID == loanId
+                                         && p.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                         select p).SingleOrDefault();
+
+            result.OVERDRAFTLIMIT = amount;
+
+
+            // AddCASAOverdraft(result.CASAACCOUNTID, amount, desc);
 
             context.SaveChanges();
         }
 
         public void ChangeOperativeAccount(int casaAccountId, int newCasaAccountId)
         {
+
+
             TBL_LOAN result = (from p in context.TBL_LOAN
                                where p.CASAACCOUNTID == casaAccountId
                                 && p.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -2745,25 +3135,135 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
-        public void SubAllocation(List<SubAllocationViewModel> fromAccount, int toLoanId, DateTime applicationDate, int staffId)
+        public void SubAllocation(int loanId, decimal amount, DateTime applicationDate, int staffId)
         {
-            foreach (var item in fromAccount)
-            {
-                TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
-                                             where p.REVOLVINGLOANID == toLoanId
-                                             && p.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                             select p).SingleOrDefault();
 
-                result.OVERDRAFTLIMIT = result.OVERDRAFTLIMIT + item.fromAmount;
+            var systemDate = generalSetup.GetApplicationDate();
+            ArchiveOverDraft(loanId);
+            var model = (from a in context.TBL_LOAN_REVOLVING
+                         join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
+                         where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                         select new RevolvingLoanViewModel()
+                         {
+                             loanId = a.REVOLVINGLOANID,
+                             customerId = a.CUSTOMERID,
+                             productId = a.PRODUCTID,
+                             companyId = a.COMPANYID,
+                             casaAccountId = a.CASAACCOUNTID,
+                             casaAccountId2 = b.CASA_ACCOUNTID,
+                             branchId = a.BRANCHID,
+                             currencyId = a.CURRENCYID,
+                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                             exchangeRate = a.EXCHANGERATE,
+                             loanReferenceNumber = a.LOANREFERENCENUMBER,
+                             relatedLoanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                             subSectorId = a.SUBSECTORID,
+                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                             misCode = a.MISCODE,
+                             teamMiscode = a.TEAMMISCODE,
+                             interestRate = (double)b.INTERATERATE,
+                             effectiveDate = b.EFFECTIVEDATE,
+                             maturityDate = (DateTime)b.MATURITYDATE,
+                             bookingDate = DateTime.Today,
+                             overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
+                             disbursedAmount = a.DISBURSED_AMOUNT,
+                             interestAmount = a.INTEREST_AMOUNT,
+                             pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                             pastDueInterest = a.PASTDUEINTEREST,
+                             interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                             interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                             penalChargeAmount = a.PENALCHARGEAMOUNT,
+                             approvalStatusId = a.APPROVALSTATUSID,
+                             approvedBy = (int)a.APPROVEDBY,
+                             approverComment = a.APPROVERCOMMENT,
+                             dateApproved = a.DATEAPPROVED,
+                             loanStatusId = a.LOANSTATUSID,
+                             isDisbursed = a.ISDISBURSED,
+                             disbursedBy = a.DISBURSEDBY,
+                             disburserComment = a.DISBURSERCOMMENT,
+                             disburseDate = a.DISBURSEDATE,
+                             operationId = b.OPERATIONTYPEID,
+                             dischargeLetter = a.DISCHARGELETTER,
+                             suspendInterest = a.SUSPENDINTEREST,
+                             dayCountConventionId = a.DAYCOUNTCONVENTIONID,
+                             internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
+                             externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
+                             nplDate = a.NPLDATE,
+                             createdBy = a.CREATEDBY,
+                             dateTimeCreated = DateTime.Today,
+
+                         }).ToList();
+
+            List<TBL_LOAN_REVOLVING> overDraft = new List<TBL_LOAN_REVOLVING>();
+
+
+
+            foreach (var item in model)
+            {
+                var loanReferenceNumber = loan.GenerateLoanReferenceNumber(item.customerId, item.productId, item.productTypeId);
+                TBL_LOAN_REVOLVING addOverDraft = new TBL_LOAN_REVOLVING();
+
+                addOverDraft.CUSTOMERID = item.customerId;
+                addOverDraft.PRODUCTID = item.productId;
+                addOverDraft.COMPANYID = item.companyId;
+                addOverDraft.CASAACCOUNTID = item.casaAccountId;
+                addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
+                addOverDraft.BRANCHID = item.branchId;
+                addOverDraft.CURRENCYID = item.currencyId;
+                addOverDraft.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
+                addOverDraft.EXCHANGERATE = item.exchangeRate;
+                addOverDraft.LOANREFERENCENUMBER = loanReferenceNumber;
+                addOverDraft.RELATED_LOAN_REFERENCE_NUMBER = item.loanReferenceNumber;
+                addOverDraft.SUBSECTORID = item.subSectorId;
+                addOverDraft.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
+                addOverDraft.RELATIONSHIPMANAGERID = item.relationshipManagerId;
+                addOverDraft.MISCODE = item.misCode;
+                addOverDraft.TEAMMISCODE = item.teamMiscode;
+                addOverDraft.INTERESTRATE = item.interestRate;
+                addOverDraft.EFFECTIVEDATE = item.effectiveDate;
+                addOverDraft.MATURITYDATE = item.maturityDate;
+                addOverDraft.BOOKINGDATE = item.bookingDate;
+                addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
+                addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
+                addOverDraft.INTEREST_AMOUNT = item.interestAmount;
+                addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
+                addOverDraft.APPROVEDBY = item.approvedBy;
+                addOverDraft.APPROVERCOMMENT = item.approverComment;
+                addOverDraft.DATEAPPROVED = item.dateApproved;
+                addOverDraft.LOANSTATUSID = item.loanStatusId;
+                addOverDraft.ISDISBURSED = item.isDisbursed;
+                addOverDraft.DISBURSEDBY = item.disbursedBy;
+                addOverDraft.DISBURSERCOMMENT = item.disburserComment;
+                addOverDraft.DISBURSEDATE = item.disburseDate;
+                addOverDraft.OPERATIONID = item.operationId;
+                addOverDraft.CREATEDBY = item.createdBy;
+                addOverDraft.DATETIMECREATED = item.dateTimeCreated;
+                addOverDraft.DISCHARGELETTER = item.dischargeLetter;
+                addOverDraft.SUSPENDINTEREST = item.suspendInterest;
+                addOverDraft.DAYCOUNTCONVENTIONID = (short)item.dayCountConventionId;
+                addOverDraft.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
+                addOverDraft.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
+                addOverDraft.NPLDATE = item.nplDate;
+                addOverDraft.CREATEDBY = item.createdBy;
+                addOverDraft.DATETIMECREATED = item.dateTimeCreated;
+
+                overDraft.Add(addOverDraft);
+            }
+
+            this.context.TBL_LOAN_REVOLVING.AddRange(overDraft);
+
+            context.SaveChanges();
+
 
                 TBL_LOAN_REVOLVING results = (from p in context.TBL_LOAN_REVOLVING
-                                              where p.REVOLVINGLOANID == item.fromLoanId
+                                              where p.REVOLVINGLOANID == loanId
                                               && p.LOANSTATUSID == (short)LoanStatusEnum.Active
                                               select p).SingleOrDefault();
 
-                results.OVERDRAFTLIMIT = results.OVERDRAFTLIMIT - item.fromAmount;
-                context.SaveChanges();
-            }
+                results.OVERDRAFTLIMIT = results.OVERDRAFTLIMIT - amount;
+            context.SaveChanges();
+  
         }
 
         #endregion
@@ -2803,6 +3303,10 @@ namespace FintrakBanking.Repositories.Credit
                                                      where p.LOANID == loanId
                                                      select p);
 
+            var removeOD_Archive = (from p in context.TBL_LOAN_REVOLVING_ARCHIVE
+                                      where p.REVOLVINGLOANID == loanId
+                                      select p);
+
             if (removeLoan_Archive != null)
             {
                 context.TBL_LOAN_ARCHIVE.RemoveRange(removeLoan_Archive);
@@ -2825,6 +3329,11 @@ namespace FintrakBanking.Repositories.Credit
             if (removeLoan_Schedule_Periodic_Temp != null)
             {
                 context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.RemoveRange(removeLoan_Schedule_Periodic_Temp);
+
+            }
+            if (removeOD_Archive != null)
+            {
+                context.TBL_LOAN_REVOLVING_ARCHIVE.RemoveRange(removeOD_Archive);
 
             }
             try
@@ -3002,6 +3511,128 @@ namespace FintrakBanking.Repositories.Credit
             }
             //tbl_Loan
             this.context.TBL_LOAN_ARCHIVE.AddRange(loanArchive);
+
+            context.SaveChanges();
+            return model;
+        }
+
+        public IEnumerable<RevolvingLoanViewModel> ArchiveOverDraft (int overDraftId)
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+            var model = (from a in context.TBL_LOAN_REVOLVING
+                         where a.REVOLVINGLOANID == overDraftId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                         select new RevolvingLoanViewModel()
+                         {
+                             loanId = a.REVOLVINGLOANID,
+                             customerId = a.CUSTOMERID,
+                             productId = a.PRODUCTID,
+                             companyId = a.COMPANYID,
+                             casaAccountId = a.CASAACCOUNTID,
+                             casaAccountId2 = a.CASAACCOUNTID2,
+                             branchId = a.BRANCHID,
+                             currencyId = a.CURRENCYID,
+                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                             exchangeRate = a.EXCHANGERATE,                          
+                             loanReferenceNumber = a.LOANREFERENCENUMBER,
+                             relatedLoanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                             subSectorId = a.SUBSECTORID,
+                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                             misCode = a.MISCODE,
+                             teamMiscode = a.TEAMMISCODE,
+                             interestRate = a.INTERESTRATE,
+                             effectiveDate = a.EFFECTIVEDATE,
+                             maturityDate = a.MATURITYDATE,
+                             bookingDate = a.BOOKINGDATE,
+                             overdraftLimit = a.OVERDRAFTLIMIT,
+                             disbursedAmount = a.DISBURSED_AMOUNT,
+                             interestAmount = a.INTEREST_AMOUNT,
+                             pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                             pastDueInterest = a.PASTDUEINTEREST,
+                             interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                             interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                             penalChargeAmount = a.PENALCHARGEAMOUNT,
+                             approvalStatusId = a.APPROVALSTATUSID,
+                             approvedBy = (int)a.APPROVEDBY,
+                             approverComment = a.APPROVERCOMMENT,
+                             dateApproved = a.DATEAPPROVED,
+                             loanStatusId = a.LOANSTATUSID,
+                             isDisbursed = a.ISDISBURSED,
+                             disbursedBy = a.DISBURSEDBY,
+                             disburserComment = a.DISBURSERCOMMENT,
+                             disburseDate = a.DISBURSEDATE,
+                             operationId = a.OPERATIONID,
+                             dischargeLetter = a.DISCHARGELETTER,
+                             suspendInterest = a.SUSPENDINTEREST,
+                             dayCountConventionId = a.DAYCOUNTCONVENTIONID,
+                             internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
+                             externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
+                             nplDate = a.NPLDATE,
+                             createdBy = a.CREATEDBY,
+                             dateTimeCreated = a.DATETIMECREATED,
+
+                         }).ToList();
+
+            List<TBL_LOAN_REVOLVING_ARCHIVE> overDraftArchive = new List<TBL_LOAN_REVOLVING_ARCHIVE>();
+
+
+
+            foreach (var item in model)
+            {
+
+                TBL_LOAN_REVOLVING_ARCHIVE addOverDraftArchive  = new TBL_LOAN_REVOLVING_ARCHIVE();
+
+
+                addOverDraftArchive.ARCHIVEDATE = DateTime.Today;
+                addOverDraftArchive.REVOLVINGLOANID = item.loanId;
+                addOverDraftArchive.CUSTOMERID = item.customerId;
+                addOverDraftArchive.PRODUCTID = item.productId;
+                addOverDraftArchive.COMPANYID = item.companyId;
+                addOverDraftArchive.CASAACCOUNTID = item.casaAccountId;
+                addOverDraftArchive.CASAACCOUNTID2 = item.casaAccountId2;
+                addOverDraftArchive.BRANCHID = item.branchId;
+                addOverDraftArchive.CURRENCYID = item.currencyId;
+                addOverDraftArchive.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
+                addOverDraftArchive.EXCHANGERATE = item.exchangeRate;
+                addOverDraftArchive.LOANREFERENCENUMBER = item.loanReferenceNumber;
+                addOverDraftArchive.RELATED_LOAN_REFERENCE_NUMBER = item.relatedLoanReferenceNumber;
+                addOverDraftArchive.SUBSECTORID = item.subSectorId;
+                addOverDraftArchive.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
+                addOverDraftArchive.RELATIONSHIPMANAGERID = item.relationshipManagerId;
+                addOverDraftArchive.MISCODE = item.misCode;
+                addOverDraftArchive.TEAMMISCODE = item.teamMiscode;
+                addOverDraftArchive.INTERESTRATE = item.interestRate;
+                addOverDraftArchive.EFFECTIVEDATE = item.effectiveDate;
+                addOverDraftArchive.MATURITYDATE = item.maturityDate;
+                addOverDraftArchive.BOOKINGDATE = item.bookingDate;
+                addOverDraftArchive.OVERDRAFTLIMIT = item.overdraftLimit;
+                addOverDraftArchive.DISBURSED_AMOUNT = item.disbursedAmount;
+                addOverDraftArchive.INTEREST_AMOUNT = item.interestAmount;
+                addOverDraftArchive.APPROVALSTATUSID = item.approvalStatusId;
+                addOverDraftArchive.APPROVEDBY = item.approvedBy;
+                addOverDraftArchive.APPROVERCOMMENT = item.approverComment;
+                addOverDraftArchive.DATEAPPROVED = item.dateApproved;
+                addOverDraftArchive.LOANSTATUSID = item.loanStatusId;
+                addOverDraftArchive.ISDISBURSED = item.isDisbursed;
+                addOverDraftArchive.DISBURSEDBY = item.disbursedBy;
+                addOverDraftArchive.DISBURSERCOMMENT = item.disburserComment;
+                addOverDraftArchive.DISBURSEDATE = item.disburseDate;
+                addOverDraftArchive.OPERATIONID = item.operationId;
+                addOverDraftArchive.CREATEDBY = item.createdBy;
+                addOverDraftArchive.DATETIMECREATED = item.dateTimeCreated;
+                addOverDraftArchive.DISCHARGELETTER = item.dischargeLetter;
+                addOverDraftArchive.SUSPENDINTEREST = item.suspendInterest;
+                addOverDraftArchive.DAYCOUNTCONVENTIONID = (short)item.dayCountConventionId;
+                addOverDraftArchive.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
+                addOverDraftArchive.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
+                addOverDraftArchive.NPLDATE = item.nplDate;
+                addOverDraftArchive.CREATEDBY = item.createdBy;
+                addOverDraftArchive.DATETIMECREATED = item.dateTimeCreated;
+
+                overDraftArchive.Add(addOverDraftArchive);
+            }
+            //tbl_Loan
+            this.context.TBL_LOAN_REVOLVING_ARCHIVE.AddRange(overDraftArchive);
 
             context.SaveChanges();
             return model;
@@ -5864,8 +6495,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool DoesOperationExist(int loanId, int operationTypeId)
         {
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
-                       where a.LOANID == loanId
-&& a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false
+                       where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false
                        select a;
             if (data.Any())
             {
@@ -6423,6 +7053,19 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         OverdraftTopUp(loanId, (decimal)item.newAmount);
                     }
+                    else if ((int)OperationsEnum.OverdraftRenewal == item.operationId)
+                    {
+                        OverdraftRenewal(loanId, (decimal)item.newAmount);
+                    }
+                    else if ((int)OperationsEnum.OverdraftTenorExtension == item.operationId)
+                    {
+                        OverdraftExtension(loanId, (decimal)item.newAmount);
+                    }
+
+                    else if ((int)OperationsEnum.OverdraftSubAllocation == item.operationId)
+                    {
+                        SubAllocation(loanId, (decimal)item.newAmount, applicationDate, staffId);
+                    }
                     else if ((int)OperationsEnum.TenorChange == item.operationId)
                     {
                         item.maturityDate = item.maturityDate.AddMonths((int)item.proposedTenor);
@@ -6585,6 +7228,19 @@ namespace FintrakBanking.Repositories.Credit
                     else if ((int)OperationsEnum.OverdraftTopup == item.operationId)
                     {
                         OverdraftTopUp(loanId, (decimal)item.newAmount);
+                    }
+                    else if ((int)OperationsEnum.OverdraftRenewal == item.operationId)
+                    {
+                        OverdraftRenewal(loanId, (decimal)item.newAmount);
+                    }
+                    else if ((int)OperationsEnum.OverdraftTenorExtension == item.operationId)
+                    {
+                        OverdraftExtension(loanId, (decimal)item.newAmount);
+                    }
+
+                    else if ((int)OperationsEnum.OverdraftSubAllocation == item.operationId)
+                    {
+                        SubAllocation(loanId, (decimal)item.newAmount, applicationDate, staffId);
                     }
                     else if ((int)OperationsEnum.TenorChange == item.operationId)
                     {

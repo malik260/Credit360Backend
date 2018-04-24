@@ -300,12 +300,13 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RISK_ASSESSMENT_RESULT> TBL_RISK_ASSESSMENT_RESULT { get; set; }
         public virtual DbSet<TBL_RISK_ASSESSMENT_TITLE> TBL_RISK_ASSESSMENT_TITLE { get; set; }
         public virtual DbSet<TBL_RISK_RATING> TBL_RISK_RATING { get; set; }
+        public virtual DbSet<TBL_TEMP_COLLATERAL_ITEM_POLI> TBL_TEMP_COLLATERAL_ITEM_POLI { get; set; }
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
         public virtual DbSet<TBL_CUSTOM_CRCBUREAU_PRODUCT> TBL_CUSTOM_CRCBUREAU_PRODUCT { get; set; }
         public virtual DbSet<TBL_CUSTOM_FIANCE_TRANSACTION> TBL_CUSTOM_FIANCE_TRANSACTION { get; set; }
         public virtual DbSet<TBL_CUSTOM_LIEN_PROCESS> TBL_CUSTOM_LIEN_PROCESS { get; set; }
         public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -321,7 +322,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
         public virtual DbSet<TBL_TEMP_CHART_OF_ACCOUNT> TBL_TEMP_CHART_OF_ACCOUNT { get; set; }
         public virtual DbSet<TBL_TEMP_CHART_OF_ACCOUNT_CUR> TBL_TEMP_CHART_OF_ACCOUNT_CUR { get; set; }
+        public virtual DbSet<TBL_TEMP_COLLATERAL_CASA> TBL_TEMP_COLLATERAL_CASA { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_CUSTOMER> TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
+        public virtual DbSet<TBL_TEMP_COLLATERAL_DEPOSIT> TBL_TEMP_COLLATERAL_DEPOSIT { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_IMMOV_PROP> TBL_TEMP_COLLATERAL_IMMOV_PROP { get; set; }
         public virtual DbSet<TBL_TEMP_COMPANY_BENEFICIA> TBL_TEMP_COMPANY_BENEFICIA { get; set; }
         public virtual DbSet<TBL_TEMP_CUST_CLIENT_SUPPLIER> TBL_TEMP_CUST_CLIENT_SUPPLIER { get; set; }
@@ -344,8 +347,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_PRODUCT_COLLATERALTYP> TBL_TEMP_PRODUCT_COLLATERALTYP { get; set; }
         public virtual DbSet<TBL_TEMP_PRODUCT_CURRENCY> TBL_TEMP_PRODUCT_CURRENCY { get; set; }
         public virtual DbSet<TBL_TEMP_PRODUCT_FEE> TBL_TEMP_PRODUCT_FEE { get; set; }
+        public virtual DbSet<TBL_TEMP_PROFILE_ADTN_ACTIVITY> TBL_TEMP_PROFILE_ADTN_ACTIVITY { get; set; }
         public virtual DbSet<TBL_TEMP_PROFILE_STAFF_ROL_GRP> TBL_TEMP_PROFILE_STAFF_ROL_GRP { get; set; }
         public virtual DbSet<TBL_TEMP_PROFILE_STAFF_ROLE_AA> TBL_TEMP_PROFILE_STAFF_ROLE_AA { get; set; }
+        public virtual DbSet<TBL_TEMP_PROFILE_USER> TBL_TEMP_PROFILE_USER { get; set; }
+        public virtual DbSet<TBL_TEMP_PROFILE_USERGROUP> TBL_TEMP_PROFILE_USERGROUP { get; set; }
         public virtual DbSet<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
         public virtual DbSet<TBL_DEAL_CLASSIFICATION> TBL_DEAL_CLASSIFICATION { get; set; }
         public virtual DbSet<TBL_DEAL_TYPE> TBL_DEAL_TYPE { get; set; }
@@ -1036,6 +1042,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_DAILY_ACCRUAL)
+                .WithRequired(e => e.TBL_COMPANY)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_COMPANY>()
+                .HasMany(e => e.TBL_DEPARTMENT)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
 
@@ -2337,6 +2348,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PROFILE_ACTIVITY>()
+                .HasMany(e => e.TBL_TEMP_PROFILE_ADTN_ACTIVITY)
+                .WithRequired(e => e.TBL_PROFILE_ACTIVITY)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_PROFILE_ACTIVITY>()
                 .HasMany(e => e.TBL_PROFILE_GROUP_ACTIVITY)
                 .WithRequired(e => e.TBL_PROFILE_ACTIVITY)
                 .WillCascadeOnDelete(false);
@@ -2378,6 +2394,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_PROFILE_GROUP>()
                 .HasMany(e => e.TBL_TEMP_PROFILE_STAFF_ROL_GRP)
+                .WithRequired(e => e.TBL_PROFILE_GROUP)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_PROFILE_GROUP>()
+                .HasMany(e => e.TBL_TEMP_PROFILE_USERGROUP)
                 .WithRequired(e => e.TBL_PROFILE_GROUP)
                 .WillCascadeOnDelete(false);
 
@@ -4366,6 +4387,10 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.RATESDESCRIPTION)
                 .IsFixedLength();
 
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_ITEM_POLI>()
+                .Property(e => e.SUMINSURED)
+                .HasPrecision(19, 4);
+
             modelBuilder.Entity<TBL_CUSTOM_LIEN_PROCESS>()
                 .Property(e => e.AMOUNT)
                 .HasPrecision(19, 4);
@@ -4570,12 +4595,56 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_TEMP_CHART_OF_ACCOUNT)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_CASA>()
+                .Property(e => e.AVAILABLEBALANCE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_CASA>()
+                .Property(e => e.EXISTINGLIENAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_CASA>()
+                .Property(e => e.LIENAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_CASA>()
+                .Property(e => e.SECURITYVALUE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_CASA>()
+                .Property(e => e.REMARK)
+                .IsUnicode(false);
+
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_CUSTOMER>()
                 .Property(e => e.COLLATERALVALUE)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_CUSTOMER>()
                 .Property(e => e.CAMREFNUMBER)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_DEPOSIT>()
+                .Property(e => e.EXISTINGLIENAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_DEPOSIT>()
+                .Property(e => e.LIENAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_DEPOSIT>()
+                .Property(e => e.AVAILABLEBALANCE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_DEPOSIT>()
+                .Property(e => e.SECURITYVALUE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_DEPOSIT>()
+                .Property(e => e.MATURITYAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_TEMP_COLLATERAL_DEPOSIT>()
+                .Property(e => e.REMARK)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_IMMOV_PROP>()
@@ -4709,6 +4778,23 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_TEMP_STAFF>()
                 .Property(e => e.GENDEROFNOK)
                 .IsFixedLength();
+
+            modelBuilder.Entity<TBL_TEMP_STAFF>()
+                .HasMany(e => e.TBL_TEMP_PROFILE_ADTN_ACTIVITY)
+                .WithRequired(e => e.TBL_TEMP_STAFF)
+                .HasForeignKey(e => e.TEMPUSERID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_TEMP_STAFF>()
+                .HasMany(e => e.TBL_TEMP_PROFILE_USER)
+                .WithRequired(e => e.TBL_TEMP_STAFF)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_TEMP_STAFF>()
+                .HasMany(e => e.TBL_TEMP_PROFILE_USERGROUP)
+                .WithRequired(e => e.TBL_TEMP_STAFF)
+                .HasForeignKey(e => e.TEMPUSERID)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_DEAL_CLASSIFICATION>()
                 .HasMany(e => e.TBL_PRODUCT_TYPE)

@@ -380,5 +380,5 @@ namespace FintrakBanking.Repositories.Setups.General
             //return staffLevels.Union(roleLevelIds); // without relief code
             return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
         }
-    }
+      }
 }

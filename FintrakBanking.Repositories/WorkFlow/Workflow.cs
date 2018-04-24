@@ -137,7 +137,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (ProcessIsClosed()) { throw new Exception("Process is closed!"); }
             }
 
-            if (ResolveLevelConfigurations() == false) { return false; }
+            if (ResolveLevelConfigurations() == false) { throw new Exception("Could not resolve approval level configurations!"); }
 
             if (this.useOrganogram == true) { OrganogramRouting(); } // force to superior in organogram
 
@@ -163,7 +163,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
            // this.SendNotifications();
 
-            if (this.comment == "flow_test") { throw new Exception("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", CURRL:" + this.fromLevelId + ", NEXTL:" + this.nextLevelId + ", TO:" + this.toStaffId); }
+            if (this.comment == "flow_test") { throw new Exception("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", CURRL:" + this.fromLevelId + ", NEXTL:" + this.nextLevelId + ", TOSTAFFID:" + this.toStaffId); }
 
             var trail = new TBL_APPROVAL_TRAIL
             {
@@ -480,16 +480,16 @@ namespace FintrakBanking.Repositories.WorkFlow
             var position = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (position == null) { return false; }
 
-            var lineManagerPosition = context.TBL_STAFF.Where(x => x.STAFFID == position.SUPERVISOR_STAFFID).FirstOrDefault();
-            if (lineManagerPosition == null) { return false; }
-
-            var lineManager = approvalGrid.SelectMany(x => x.Staff)
-                .Where(x => x.STAFFID == lineManagerPosition.STAFFID)
-                .FirstOrDefault();
-
+            var lineManager = context.TBL_STAFF.Where(x => x.STAFFID == position.SUPERVISOR_STAFFID).FirstOrDefault();
             if (lineManager == null) { return false; }
 
-            this.nextLevelId = lineManager.APPROVALLEVELID;
+            //var lineManager = approvalGrid.SelectMany(x => x.Staff)
+            //    .Where(x => x.STAFFID == lineManagerPosition.STAFFID)
+            //    .FirstOrDefault();
+
+            //if (lineManager == null) { return false; }
+
+            //this.nextLevelId = lineManager.APPROVALLEVELID;
             this.toStaffId = lineManager.STAFFID;
 
             return true;

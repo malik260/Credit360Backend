@@ -271,6 +271,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class SearchViewModel
     {
+        public int productTypeId { get; set; }
         public string searchString { get; set; }
     }
 

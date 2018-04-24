@@ -19,10 +19,11 @@ namespace FintrakBanking.APICore.Controllers
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         private ILoanReviewApplicationRepository repo;
-
-        public LoanReviewApplicationController(ILoanReviewApplicationRepository repo)
+        private ILoanRepository loanRepo;
+        public LoanReviewApplicationController(ILoanReviewApplicationRepository _repo, ILoanRepository _loanRepo)
         {
-            this.repo = repo;
+            this.repo = _repo;
+            this.loanRepo = _loanRepo;
         }
 
         [HttpGet, Route("review-application")]
@@ -109,7 +110,8 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
+                // List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
+                var data = loanRepo.SearchForLoanAndRevolvingLoan(search.productTypeId, search.searchString);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
             catch (Exception e)
