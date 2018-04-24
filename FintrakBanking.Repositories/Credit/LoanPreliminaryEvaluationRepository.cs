@@ -112,7 +112,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.customerId != null)
             {
                 auditRecord.DETAIL =
-                    $"Created Prelimenary Evaluation with code ({model.preliminaryEvaluationCode}) for customer {customerRecord?.FIRSTNAME} {customerRecord?.LASTNAME}";
+                    $"Created Prelimenary Evaluation Note with code ({model.preliminaryEvaluationCode}) for customer {customerRecord?.FIRSTNAME} {customerRecord?.LASTNAME}";
             }
             else
             {
@@ -128,33 +128,31 @@ namespace FintrakBanking.Repositories.Credit
 
                     output = await SaveAllAsync();
 
-                    if (model.sentForEvaluation)
+                    if (model.sendForEvaluation)
                     {
-                        var entity = new ApprovalViewModel
-                        {
-                            staffId = penRecord.CREATEDBY,
-                            companyId = penRecord.COMPANYID,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = penRecord.LOANPRELIMINARYEVALUATIONID,
-                            operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
-                            BranchId = model.userBranchId,
-                            externalInitialization = false
-                        };
-                        var response = workFlow.LogForApproval(entity);
+                        workFlow.StaffId = penRecord.CREATEDBY;
+                        workFlow.CompanyId = penRecord.COMPANYID;
+                        workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                        workFlow.TargetId = penRecord.LOANPRELIMINARYEVALUATIONID;
+                        workFlow.Comment = "Request Preliminary Evaluation";
+                        workFlow.OperationId = (int)OperationsEnum.LoanPreliminaryEvaluation;
+                        workFlow.DeferredExecution = true; 
+                        workFlow.ExternalInitialization = true;
 
-                        if (response)
-                        {
-                            trans.Commit();
-                        }
+                        workFlow.LogActivity();
+
+                        context.SaveChanges();
+
+                        trans.Commit();
                     }
-
-                    trans.Commit();
+                    else trans.Commit();
 
                     if (output)
                     {
                         return new LoanPreliminaryEvaluationViewModel
                         {
-                            preliminaryEvaluationCode = penRecord.PRELIMINARYEVALUATIONCODE
+                            preliminaryEvaluationCode = penRecord.PRELIMINARYEVALUATIONCODE,
+                            sendForEvaluation = model.sendForEvaluation
                         };
                     }
                     return null;
@@ -248,27 +246,24 @@ namespace FintrakBanking.Repositories.Credit
 
                         output = await SaveAllAsync();
 
-                        if (item.sentForEvaluation)
+                        if (item.sendForEvaluation)
                         {
-                            var entity = new ApprovalViewModel
-                            {
-                                staffId = penRecord.CREATEDBY,
-                                companyId = penRecord.COMPANYID,
-                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                targetId = penRecord.LOANPRELIMINARYEVALUATIONID,
-                                operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
-                                BranchId = item.userBranchId,
-                                externalInitialization = true
-                            };
+                            workFlow.StaffId = penRecord.CREATEDBY;
+                            workFlow.CompanyId = penRecord.COMPANYID;
+                            workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                            workFlow.TargetId = penRecord.LOANPRELIMINARYEVALUATIONID;
+                            workFlow.Comment = "Request Preliminary Evaluation";
+                            workFlow.OperationId = (int)OperationsEnum.LoanPreliminaryEvaluation;
+                            workFlow.DeferredExecution = true;
+                            workFlow.ExternalInitialization = true;
 
-                            var response = workFlow.LogForApproval(entity);
+                            workFlow.LogActivity();
 
-                            if (response)
-                            {
-                                trans.Commit();
-                            }
+                            context.SaveChanges();
+
+                            trans.Commit();
                         }
-                        trans.Commit();
+                        else trans.Commit();
                     }
 
                     catch (Exception ex)
@@ -331,8 +326,10 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.TBL_BRANCH on pen.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && pen.ISCURRENT == true
-                            && pen.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single && atrail.RESPONSESTAFFID == null
-                              && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && pen.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single 
+                            && atrail.RESPONSESTAFFID == null
+                            && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation 
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.COMPANYID,
@@ -566,7 +563,7 @@ namespace FintrakBanking.Repositories.Credit
                             }).ToList(),
                             approvalStatusId = pen.APPROVALSTATUSID,
                             sentForLoanApplication = pen.SENTFORLOANAPPLICATION,
-                            sentForEvaluation = pen.SENTFOREVALUATION,
+                            sendForEvaluation = pen.SENTFOREVALUATION,
                             loanAmount = pen.LOANAMOUNT,
                             loanTypeId = pen.LOANAPPLICATIONTYPEID,
                             loanTypeName = pen.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
@@ -586,13 +583,15 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-                    workFlow.LogForApproval(entity);
-                    var b = workFlow.NextLevelId ?? 0;
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
+                    workFlow.StaffId = entity.createdBy;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = (short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.OperationId = (int)OperationsEnum.LoanPreliminaryEvaluation;
+                    workFlow.DeferredExecution = true;
+                    workFlow.LogActivity();
+                    context.SaveChanges();
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
@@ -668,8 +667,9 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on p.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
-                        where p.ISCURRENT == false && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                        && p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                        where p.ISCURRENT == false && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single 
+                        && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        && p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.COMPANYID,
@@ -770,7 +770,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatusId = p.APPROVALSTATUSID,
                             dateTimeCreated = p.DATETIMECREATED,
                             sentForLoanApplication = p.SENTFORLOANAPPLICATION,
-                            sentForEvaluation = p.SENTFOREVALUATION,
+                            sendForEvaluation = p.SENTFOREVALUATION,
                             loanAmount = p.LOANAMOUNT,
                             loanTypeId = p.LOANAPPLICATIONTYPEID,
                             loanTypeName = p.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
@@ -791,8 +791,10 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on p.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
-                        where p.ISCURRENT == false && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                        && p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                        where p.ISCURRENT == false 
+                        && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup 
+                        && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        && p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.COMPANYID,
@@ -900,7 +902,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatusId = p.APPROVALSTATUSID,
                             dateTimeCreated = p.DATETIMECREATED,
                             sentForLoanApplication = p.SENTFORLOANAPPLICATION,
-                            sentForEvaluation = p.SENTFOREVALUATION,
+                            sendForEvaluation = p.SENTFOREVALUATION,
                             loanAmount = p.LOANAMOUNT,
                             loanTypeId = p.LOANAPPLICATIONTYPEID,
                             loanTypeName = p.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
@@ -952,10 +954,10 @@ namespace FintrakBanking.Repositories.Credit
                 penRecord.PRUDENT_EXPOSUR_LIMIT_IMPLCATN = model.prudentialExposureLimitImplications;
                 penRecord.RELATIONSHIPMANAGERID = model.relationshipManagerId;
                 penRecord.RELATIONSHIPOFFICERID = model.relationshipOfficerId;
-                penRecord.APPROVALSTATUSID = model.sentForEvaluation ? (short)ApprovalStatusEnum.Processing
+                penRecord.APPROVALSTATUSID = model.sendForEvaluation ? (short)ApprovalStatusEnum.Processing
                     : (short)ApprovalStatusEnum.Pending;
                 penRecord.ISCURRENT = model.isCurrent;
-                penRecord.SENTFOREVALUATION = model.sentForEvaluation;
+                penRecord.SENTFOREVALUATION = model.sendForEvaluation;
                 penRecord.SENTFORLOANAPPLICATION = model.sentForLoanApplication;
                 penRecord.DATETIMEUPDATED = DateTime.Now;
                 penRecord.CREATEDBY = model.createdBy;
@@ -992,7 +994,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     output = await SaveAllAsync();
 
-                    if (model.sentForEvaluation)
+                    if (model.sendForEvaluation)
                     {
                         var entity = new ApprovalViewModel
                         {

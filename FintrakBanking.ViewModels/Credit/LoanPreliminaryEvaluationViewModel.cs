@@ -46,7 +46,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string bankParticipationJustification { get; set; }
         public string portfolioStrategicAlignment { get; set; }
         public string commercialViabilityAssessment { get; set; }
-        public bool sentForEvaluation { get; set; }
+        public bool sendForEvaluation { get; set; }
         public bool sentForLoanApplication { get; set; }
         public bool isCurrent { get; set; }
         public int operationId { get; set; }
