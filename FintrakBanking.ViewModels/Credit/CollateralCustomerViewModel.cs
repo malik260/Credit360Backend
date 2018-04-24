@@ -175,9 +175,10 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string preciousMetalName { get; set; }
         public string weightInGrammes { get; set; }
+        public decimal? metalValuationAmount { get; set; }
+        public double? metalUnitRate { get; set; }
+        public string preciousMetalFrm { get; set; }
         public decimal? valuationAmount { get; set; }
-        public double? unitRate { get; set; }
-        public string preciousMetalForm { get; set; }
 
         // stock
         public int? collateralStockId { get; set; }
