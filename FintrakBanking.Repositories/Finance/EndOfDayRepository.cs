@@ -125,8 +125,8 @@ namespace FintrakBanking.Repositories.Finance
 
 
             loanOperation.ProcessLoanRepaymentPostingPastDue(date);
-            loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue (date);
-            loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue  (date);
+            //loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue (date);
+            //loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue  (date);
             loanOperation.ProcessIDFExpiryAndlocking(date);
             loanOperation.ProcessCFFExpiryAndlocking(date);
             loanOperation.ProcessLPOExpiryAndlocking(date); 
