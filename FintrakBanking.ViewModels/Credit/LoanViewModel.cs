@@ -301,6 +301,13 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         //......End f Loan Relational Table View Mapping Models......//
+
+        public decimal pastDuePrincipal { get; set; }
+        public decimal pastDueInterest { get; set; }
+        public decimal interestOnPastDuePrincipal { get; set; }
+        public decimal interesrtOnPastDueInterest { get; set; }
+        public decimal penalChargeAmount { get; set; }
+        public int dayCountConventionId { get; set; }
     }
 
     public class ContingentLoanViewModel : GeneralEntity
@@ -654,6 +661,10 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int fromLoanId  { get; set; }
         public decimal fromAmount  { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime maturityDate { get; set; }
+
+
     }
 
     public class LoanAvailmentApprovalViewModel: ApprovalViewModel
