@@ -30,6 +30,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string currentRMStaffName { get; set; }
 
+       
 
     }
 
