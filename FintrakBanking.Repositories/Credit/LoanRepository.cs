@@ -2437,6 +2437,7 @@ namespace FintrakBanking.Repositories.Credit
                         applicationId = fee.LOANCHARGEFEEID,
                         comment = "Please approve this fee ",
                         amount = fee.FEEAMOUNT,
+
                     };
                     LogApproval(approvalModel, (int)OperationsEnum.LoanBookingFeeDeferral, true, (int)ApprovalStatusEnum.Pending);
                 }
