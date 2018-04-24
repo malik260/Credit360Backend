@@ -42,12 +42,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("transaction-dynamics/application/{applicationId}")]
-        public HttpResponseMessage GetTransactionDynamicsByApplicationId(int applicationId)
+        [Route("transaction-dynamics/application-detail/{detailId}")]
+        public HttpResponseMessage GetTransactionDynamicsByDetailId(int detailId)
         {
             try
             {
-                var data = repo.GetTransactionDynamicsByApplicationId(applicationId);
+                var data = repo.GetTransactionDynamicsByDetailId(detailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -201,12 +201,12 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("transaction-dynamics-template/application/{applicationId}")]
-        public HttpResponseMessage GetTransactionDynamicsDefaultByApplicationId(int applicationId)
+        [Route("transaction-dynamics-template/application-detail/{detailId}")]
+        public HttpResponseMessage GetTransactionDynamicsDefaultByDetailId(int detailId)
         {
             try
             {
-                List<TransactionDynamicsViewModel> data = repo.GetTransactionDynamicsDefaultByApplicationId(applicationId);
+                List<TransactionDynamicsViewModel> data = repo.GetTransactionDynamicsDefaultByDetailId(detailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)

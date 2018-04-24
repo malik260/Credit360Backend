@@ -689,7 +689,7 @@ namespace FintrakBanking.Repositories.Credit
             applications = context.TBL_LOAN_APPLICATION.Where(x =>
                     x.DELETED == false
                     && x.COMPANYID == companyId
-                    && (x.BRANCHID == branchId || isHeadOffice) // branch filter
+                    //&& (x.BRANCHID == branchId || isHeadOffice) // branch filter
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                 )
             .GroupJoin(
@@ -921,11 +921,9 @@ namespace FintrakBanking.Repositories.Credit
             var applications = context.TBL_LOAN_APPLICATION.Where(x =>
                 x.DELETED == false
                 && x.COMPANYID == user.companyId
-                && (x.BRANCHID == user.BranchId || isHeadOffice) // branch filter
+                //&& (x.BRANCHID == user.BranchId || isHeadOffice) // branch filter
                 && x.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == productBasedId
                 && x.PRODUCTCLASSID != null
-                //&& x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                //&& x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
             )
             .GroupJoin(
                 context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
@@ -945,13 +943,7 @@ namespace FintrakBanking.Repositories.Credit
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
-            //var levs = levelIds.ToList();
-
-            //var test = applications.ToList();
-
             applications = applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
-
-            //var test2 = applications.ToList();
 
             var productClasses = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCT_CLASS_PROCESSID == productBasedId)
                 .Select(item => new PendingProductProgramViewModel

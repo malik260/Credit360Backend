@@ -46,7 +46,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
@@ -54,6 +53,5 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_STAFF TBL_STAFF { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF1 { get; set; }
-
     }
 }

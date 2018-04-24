@@ -6,7 +6,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ITransactionDynamicsRepository
     {
-        IEnumerable<TransactionDynamicsViewModel> GetTransactionDynamicsByApplicationId(int applicationId);
+        IEnumerable<TransactionDynamicsViewModel> GetTransactionDynamicsByDetailId(int detailId);
 
         IEnumerable<TransactionDynamicsViewModel> GetAllTransactionDynamics();
 
@@ -22,7 +22,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool EditLoanTransactionDynamics(int id, TransactionDynamicsViewModel entity);
 
-        List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByApplicationId(int applicationId);
+        List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByDetailId(int detailId);
 
         List<TransactionDynamicsViewModel> AddSelectedTransactionDynamics(SelectedIdsViewModel entity);
     }

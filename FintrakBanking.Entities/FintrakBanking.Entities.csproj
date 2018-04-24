@@ -414,7 +414,9 @@
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
     <Compile Include="StagingModels\STG_BRANCH.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />
+    <Compile Include="StagingModels\STG_LOAN_MART.cs" />
     <Compile Include="StagingModels\STG_STAFF.cs" />
+    <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

@@ -222,7 +222,36 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("temp-customer-collateral")]
+        public HttpResponseMessage GetTempCustomerCollateral()
+        {
+            try
+            {
+                var response = repo.GetTempCustomerCollateral(token.GetCompanyId,token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
 
+        [HttpPost, Route("temp/customer-collateral-approval")]
+        public HttpResponseMessage PostCustomerCollateralApproval([FromBody]ApprovalViewModel model)
+        {
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var response = repo.GoForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
 
         //[HttpGet, Route("customer-collateral/customer/{customerId}")]
         //public HttpResponseMessage GetCustomerCollateralFiltered(int customerId)
@@ -258,6 +287,19 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.GetCollateralTypeByCollateralId(collateralId, typeId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+        [HttpGet, Route("temp-customer-collateral/type/collateral/{collateralId}/type/{typeId}")]
+        public HttpResponseMessage GetTempCollateralTypeByCollateralId(int collateralId, int typeId)
+        {
+            try
+            {
+                var response = repo.GetTempCollateralTypeByCollateralId(collateralId, typeId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
@@ -324,6 +366,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         [HttpGet]
         [Route("collateral-guarantee/{targetId}")]
         public HttpResponseMessage GetCollaterGuaranteeFile(int targetId)
