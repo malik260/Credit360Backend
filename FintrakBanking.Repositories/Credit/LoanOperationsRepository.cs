@@ -823,7 +823,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    updateloanTable(item);
+                    //updateloanTable(item);
 
                 }
                 else if (casabalance > item.periodInterestAmount && casabalance < item.totalAmount)
@@ -855,7 +855,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    updateloanTable(item);
+                    //updateloanTable(item);
 
                     //financeTransaction.PostAnniversaryTeamLoansAllowForceDebit(item);
                 }
@@ -897,7 +897,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    updateloanTable(item);
+                    //updateloanTable(item);
                 }
                 else if (casabalance <= 0)
                 {
@@ -937,7 +937,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    updateloanTable(item);
+                    //updateloanTable(item);
                 }
             }
 
@@ -1556,7 +1556,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    updateloanTable(item);
+                    //updateloanTable(item);
 
                 }
                 else if (casabalance > item.periodInterestAmount && casabalance < item.totalAmount)
@@ -1588,7 +1588,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    updateloanTable(item);
+                    //updateloanTable(item);
 
                     //financeTransaction.PostAnniversaryTeamLoansAllowForceDebit(item);
                 }
@@ -1630,7 +1630,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    updateloanTable(item);
+                    //updateloanTable(item);
                 }
                 else if (casabalance <= 0)
                 {
@@ -1670,7 +1670,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     financeTransaction.PostTransaction(inputTransactions);
 
-                    updateloanTable(item);
+                    //updateloanTable(item);
                 }
             }
 
