@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Credit
 {
-   public  interface IStaffAccountHistoryRepository
+   public interface IStaffAccountHistoryRepository
     {
-        bool AddStaffAccountHistory(StaffAccountHistoryViewModel entity);
-        IEnumerable<StaffAccountHistoryViewModel> GetStaffAccountHistory(StaffAccountHistoryViewModel entity);
-        bool UpdateStaffAccountHistory(StaffAccountHistoryViewModel entity);
-        bool ApproveStaffAccountHistory(StaffAccountHistoryViewModel entity);
+       bool AddStaffAccountHistory(StaffAccountHistoryViewModel entity);
+        IEnumerable<StaffAccountHistoryViewModel> GetStaffAccountHistory(int staffId);
+        bool ApproveStaffAccountHistory(ApprovalViewModel entity);
+
     }
 }
