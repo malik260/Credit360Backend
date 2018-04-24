@@ -560,6 +560,74 @@ namespace FintrakBanking.Repositories.Setups.General
                 throw new Exception("Staff Information already exist and is undergoing approval");
             }
 
+
+
+            List<TBL_TEMP_PROFILE_USERGROUP> userGroups = new List<TBL_TEMP_PROFILE_USERGROUP>();
+            List<TBL_TEMP_PROFILE_ADTN_ACTIVITY> userActivities = new List<TBL_TEMP_PROFILE_ADTN_ACTIVITY>();
+            List<TBL_TEMP_PROFILE_USER> user = new List<TBL_TEMP_PROFILE_USER>();
+            
+            if (staffModel.user.activities.Any())
+            {
+                foreach (var item in staffModel.user.activities)
+                {
+                    var userActivity = new TBL_TEMP_PROFILE_ADTN_ACTIVITY()
+                    {
+                        ACTIVITYID = item.activityId,
+                        CANADD = false,
+                        CANEDIT = false,
+                        CANAPPROVE = false,
+                        CANDELETE = false,
+                        CANVIEW = false,
+                        CREATEDBY = staffModel.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                    };
+
+                    userActivities.Add(userActivity);
+                }
+            }
+
+            if (staffModel.user.group.Count > 0)
+            {
+                foreach (var item in staffModel.user.group)
+                {
+                    var grpItem = new TBL_TEMP_PROFILE_USERGROUP()
+                    {
+                        GROUPID = item.groupId,
+                        DATETIMECREATED = DateTime.Now,
+                        CREATEDBY = staffModel.createdBy,
+                        ISCURRENT = true,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
+                    };
+                    userGroups.Add(grpItem);
+                }
+            }
+            if (staffModel.user != null)
+            {
+                    var _user = new TBL_TEMP_PROFILE_USER()
+                    {
+                        TEMPSTAFFID = staffModel.staffId,
+                        USERNAME = staffModel.user.username,
+                        PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
+                        ISFIRSTLOGINATTEMPT = false,
+                        ISACTIVE = false,
+                        ISLOCKED = true,
+                        FAILEDLOGONATTEMPT = 0,
+                        SECURITYQUESTION = staffModel.user.securityQuestion,
+                        SECURITYANSWER = staffModel.user.securityAnswer,
+                        NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                        CREATEDBY = staffModel.createdBy,
+                        LASTUPDATEDBY = staffModel.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                        APPROVALSTATUS = false,
+                };
+                user.Add(_user);
+            }
+           
+
+
+
+
             var staff = new TBL_TEMP_STAFF()
             {
                 FIRSTNAME = staffModel.FirstName,
@@ -593,7 +661,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 CITYID = staffModel.CityId,
                 STAFFSIGNATURE = staffModel.StaffSignature,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                ISCURRENT = true
+                ISCURRENT = true,
+                TBL_TEMP_PROFILE_USER = user,
+                TBL_TEMP_PROFILE_ADTN_ACTIVITY = userActivities,
+                TBL_TEMP_PROFILE_USERGROUP = userGroups
             };
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT

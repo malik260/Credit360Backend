@@ -137,12 +137,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("overdraft-search/")]
-        public HttpResponseMessage SearchForOverdraft(string searchQuery)
+        [Route("term-and-revolving-loan-search/")]
+        public HttpResponseMessage SearchForLoanAndRevolvingLoan(int productTypeId, string searchQuery)
         {
             try
             {
-                var data = loanRepo.SearchForOverdraft (searchQuery);
+                var data = loanRepo.SearchForLoanAndRevolvingLoan(productTypeId, searchQuery);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -158,6 +158,49 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("approved-overdraft-review-application")]
+        public HttpResponseMessage GetLoanReviewApplicationOverDraft()
+        {
+            try
+            {
+                var data = loanRepo.GetLoanReviewApplicationOverDraft();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("overdraft-detail/")]
+        public HttpResponseMessage SearchForOverdraft(int revolvingLoanId)
+        {
+            try
+            {
+                var data = loanRepo.GetOverdraftDetailsByLoanId(revolvingLoanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [Route("approved-loan-review")]
         public HttpResponseMessage GetApprovedLoanReview()
