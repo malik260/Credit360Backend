@@ -119,7 +119,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (model.receiverStaffId == model.createdBy)
                 throw new Exception("You cannot assign a job to yourself");
 
-            var date = DateTime.Now;    
+           var date = DateTime.Now;    
             var applicationDate = general.GetApplicationDate();
             model.jobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode();
             model.requestStatusId = 1;
@@ -375,7 +375,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             return data;
         }
 
-
         public IEnumerable<JobRequestViewModel> GetAllJobRequest()
         {
             var allstaff = this.context.TBL_STAFF.Select(s => new //OperationStaffViewModel
@@ -414,7 +413,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //assignee = allstaff.GetStaffName(s => s.id == x.ReassignedTo),
             });
         }
-
         
         private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId, int branchId)
         {
@@ -477,54 +475,60 @@ namespace FintrakBanking.Repositories.WorkFlow
             return GetAllGlobalJobRequest(staffId, branchId).OrderByDescending(x => x.jobRequestId); 
         }
 
-        private IEnumerable<JobRequestDetailViewModel> GetJobRequestDetails()
+        private List<JobRequestDetailViewModel> GetJobRequestDetails()
         {
-            var allstaff = this.context.TBL_STAFF.Select(s => new 
-            {
-                id = s.STAFFID,
-                name = s.LASTNAME + " " + s.FIRSTNAME
-            });
+            //var allstaff = this.context.TBL_STAFF.Select(s => new 
+            //{
+            //    id = s.STAFFID,
+            //    name = s.LASTNAME + " " + s.FIRSTNAME
+            //});
 
-            var details= this.context.TBL_JOB_REQUEST_DETAIL
-                .Where(i=> (i.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || i.JOB_SUB_TYPEID ==  (short)JobSubTypeEnum.LegalSearch || (short)JobSubTypeEnum.LegalVerification == i.JOB_SUB_TYPEID || i.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs )
-                && i.DELETED == false).Select(x => new JobRequestDetailViewModel
-            {
-                jobRequestId = x.JOBREQUESTID,
-                jobRequestDetailId = x.JOBREQUEST_DETAILID,
-                accreditedConsultantId = (int)x.ACCREDITEDCONSULTANTID,
-                accreditedConsultantName = x.TBL_ACCREDITEDCONSULTANT.FIRMNAME,
-                jobSubTypeId = x.JOB_SUB_TYPEID,
-                jobSubTypeName = x.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME,
-                jobTypeId = x.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPEID,
-                jobTypeName = x.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPENAME,
-                description = x.DESCRIPTION,
-                targetId = x.TBL_JOB_REQUEST.TARGETID,
-                operationsId = x.TBL_JOB_REQUEST.OPERATIONSID,
-                operationsName = x.TBL_JOB_REQUEST.TBL_OPERATIONS.OPERATIONNAME,
-                amount = x.AMOUNT,
-                accountNumber = x.ACCOUNTNUMBER,
-                dateTimeCreated = x.DATETIMECREATED,
-            });
-
-            foreach(var item in details)
-            {
-                //var x = from v in context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONDETAILID == item.targetId && item.operationsId == (int)OperationsEnum.LoanApplication) select v;
-                var x = from v in context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONDETAILID == item.targetId) select v;
-                if (x.Any())
+            var details= (from x in this.context.TBL_JOB_REQUEST_DETAIL
+                         join b in context.TBL_JOB_REQUEST on x.JOBREQUESTID equals b.JOBREQUESTID
+                         where x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification  || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs
+                //.Where(i=> (i.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || i.JOB_SUB_TYPEID ==  (short)JobSubTypeEnum.LegalSearch || (short)JobSubTypeEnum.LegalVerification == i.JOB_SUB_TYPEID || i.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs )
+                && x.DELETED == false  select new JobRequestDetailViewModel
                 {
-                    item.customerName = x.FirstOrDefault().TBL_CUSTOMER.LASTNAME + " " + x.FirstOrDefault().TBL_CUSTOMER.FIRSTNAME + " " + x.FirstOrDefault().TBL_CUSTOMER.MIDDLENAME;
-                    item.applicationReferenceNumber = x.FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+                    jobRequestId = x.JOBREQUESTID,
+                    jobRequestDetailId = x.JOBREQUEST_DETAILID,
+                    accreditedConsultantId = (int)x.ACCREDITEDCONSULTANTID,
+                    accreditedConsultantName = x.TBL_ACCREDITEDCONSULTANT.FIRMNAME,
+                    jobSubTypeId = x.JOB_SUB_TYPEID,
+                    jobRequestCode = b.JOBREQUESTCODE,
+                    jobSubTypeName = x.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME,
+                    jobTypeId = x.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPEID,
+                    jobTypeName = x.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPENAME,
+                    description = x.DESCRIPTION,
+                    targetId = x.TBL_JOB_REQUEST.TARGETID,
+                    operationsId = x.TBL_JOB_REQUEST.OPERATIONSID,
+                    operationsName = x.TBL_JOB_REQUEST.TBL_OPERATIONS.OPERATIONNAME,
+                    amount = x.AMOUNT,
+                    accountNumber = x.ACCOUNTNUMBER,
+                    dateTimeCreated = x.DATETIMECREATED,
+                   // customerName = (from v in context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONDETAILID == b.TARGETID).FirstOrDefault()).CUSTOMERID) select v.FIRSTNAME + " " + v.MIDDLENAME + " " + v.LASTNAME).FirstOrDefault()
+
+                }).ToList();
+           
+            foreach (var item in details)
+            {
+                var a =context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONDETAILID == item.targetId);
+                
+                if (a.Any())
+                {
+                    var t = a.FirstOrDefault();
+                    item.customerName = (from v in context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == t.CUSTOMERID) select v.FIRSTNAME + " " + v.MIDDLENAME + " " + v.LASTNAME).FirstOrDefault();
+                    item.applicationReferenceNumber = t.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER; // context.TBL_LOAN_APPLICATION.Find(x.FirstOrDefault().LOANAPPLICATIONID).APPLICATIONREFERENCENUMBER;
                 }
             };
 
             var d = details.ToList();
-            return details;
+            return details.ToList() ;
         }
 
-        public IEnumerable<JobRequestDetailViewModel> GetJobRequestLegalJobDetails()
+        public List<JobRequestDetailViewModel> GetJobRequestLegalJobDetails()
         {
 
-            return GetJobRequestDetails().Where(x => x.jobTypeId == (short)JobTypeEnum.legal);
+            return GetJobRequestDetails().Where(x => x.jobTypeId == (short)JobTypeEnum.legal).ToList();
         }
         
         public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId)
@@ -667,7 +671,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return data;
         }
-
 
         public IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId)
         {
@@ -1000,9 +1003,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
 
-        public bool AddJobDocument(RequestDocumentViewModel model, byte[] file)
+        public bool AddJobDocument(RequestDocumentViewModel model, JobRequestViewModel requestModel, byte[] file)
         {
-            var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENT
+            var code  = AddGlobalJobRequest(requestModel);
+            model.jobRequestCode = code;
+           var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENT
             {
                 FILEDATA = file,
                 JOBREQUESTCODE = model.jobRequestCode,
@@ -1079,7 +1084,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<RequestDocumentViewModel> GetAllJobDocument()
         {
-            return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Select(x => new RequestDocumentViewModel
+            var c = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Select(x => new RequestDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
                 jobRequestCode = x.JOBREQUESTCODE,
@@ -1092,6 +1097,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 physicalFileNumber = x.PHYSICALFILENUMBER,
                 physicalLocation = x.PHYSICALLOCATION,
             });
+            var n = c.ToList();
+            return c;
         }
 
         public RequestDocumentViewModel GetJobDocument(int documentId)
@@ -1122,7 +1129,24 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<RequestDocumentViewModel> GetJobRequestDocuments(string jobRequestCode)
         {
-            return this.GetAllJobDocument().Where(x => x.jobRequestCode == jobRequestCode);
+
+            var c = from x in this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT
+                    where x.JOBREQUESTCODE == jobRequestCode
+                    select new RequestDocumentViewModel
+            {
+                documentId = x.DOCUMENTID,
+                jobRequestCode = x.JOBREQUESTCODE,
+                documentTitle = x.DOCUMENTTITLE,
+                documentTypeId = x.DOCUMENTTYPEID,
+                //fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                systemDateTime = x.SYSTEMDATETIME,
+                physicalFileNumber = x.PHYSICALFILENUMBER,
+                physicalLocation = x.PHYSICALLOCATION,
+            };
+            var n = c.ToList();
+            return c;
         }
 
         public IEnumerable<RequestDocumentViewModel> GetJobRequestDocumentById(int documentId)

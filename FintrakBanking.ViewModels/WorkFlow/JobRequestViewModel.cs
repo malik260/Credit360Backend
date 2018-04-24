@@ -69,6 +69,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class JobRequestDetailViewModel : GeneralEntity
     {
+        public string jobRequestCode { get; set; }
+
         public string operationsName { get; set; }
 
         public string customerName { get; set; }
