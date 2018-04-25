@@ -105,9 +105,12 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int productTypeId, string searchQuery);
 
+        string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId);
+
         IEnumerable<LoanViewModel> GetLoanReviewApplicationOverDraft();
 
         LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId);
+
 
     }
 }

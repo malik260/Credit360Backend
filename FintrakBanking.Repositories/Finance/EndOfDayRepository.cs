@@ -114,9 +114,9 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
 
-            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
+            //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
+            //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
             loanOperation.ProcessDailyPastDueInterestAccrual(date);
 
@@ -125,14 +125,14 @@ namespace FintrakBanking.Repositories.Finance
 
 
             loanOperation.ProcessLoanRepaymentPostingPastDue(date);
-            loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue (date);
-            loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue  (date);
-            loanOperation.ProcessIDFExpiryAndlocking(date);
-            loanOperation.ProcessCFFExpiryAndlocking(date);
-            loanOperation.ProcessLPOExpiryAndlocking(date); 
-            loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
-            loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
-            loanOperation.ProcessIntervalFeeandCommissionPosting(date);
+            //loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue (date);
+            //loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue  (date);
+            //loanOperation.ProcessIDFExpiryAndlocking(date);
+            //loanOperation.ProcessCFFExpiryAndlocking(date);
+            //loanOperation.ProcessLPOExpiryAndlocking(date); 
+            //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
+            //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
+            //loanOperation.ProcessIntervalFeeandCommissionPosting(date);
 
             loanOperation.CalLoanClassification(date);
 

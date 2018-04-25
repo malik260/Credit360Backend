@@ -61,10 +61,26 @@ namespace FintrakBanking.APICore.Controllers
         //    return accountHistory.ApproveStaffAccountHistory(entity);
         //}
 
-        //public StaffAccountHistoryViewModel GetStaffAccountHistory(StaffAccountHistoryViewModel entity)
-        //{
-        //    return accountHistory.GetStaffAccountHistory(entity);
-        //}
+            [HttpGet]
+            [Route("get-reasigned-account-awaiting-approval")]
+        public HttpResponseMessage GetStaffAccountHistory(StaffAccountHistoryViewModel entity)
+        {           
+
+            try
+            {
+                var response = accountHistory.GetStaffAccountHistory(this.token.GetStaffId);
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         //public HttpResponseMessage UpdateStaffAccountHistory(StaffAccountHistoryViewModel entity)
         //{
