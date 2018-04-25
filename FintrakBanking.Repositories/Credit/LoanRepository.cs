@@ -2422,8 +2422,9 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now.Date,
                     ISPOSTED = ent.isPosted
                 };
-                if (feeOverride && ent.isPosted)
-                    throw new Exception("Fee posted must be must be disabled for fee override until after approval");
+
+                if (feeOverride)
+                    fee.ISPOSTED = false;
 
                 context.TBL_LOAN_FEE.Add(fee);
                 if (feeOverride)
@@ -2431,12 +2432,12 @@ namespace FintrakBanking.Repositories.Credit
                     context.SaveChanges();
                     var approvalModel = new ForwardViewModel
                     {
-
                         createdBy = fee.CREATEDBY,
                         companyId = companyId,
                         applicationId = fee.LOANCHARGEFEEID,
                         comment = "Please approve this fee ",
                         amount = fee.FEEAMOUNT,
+
                     };
                     LogApproval(approvalModel, (int)OperationsEnum.LoanBookingFeeDeferral, true, (int)ApprovalStatusEnum.Pending);
                 }
