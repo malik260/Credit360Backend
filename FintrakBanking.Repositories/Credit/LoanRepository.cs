@@ -26,12 +26,9 @@ using FintrakBanking.ViewModels.Reports;
 using System.Threading.Tasks;
 using FintrakBanking.Repositories.CASA;
 using FintrakBanking.Interfaces.CASA;
-//using XLeratorDLL_financial;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    //using FinancialTypes = XLeratorDLL_financial.FinancialTypes;
-    //using wct = XLeratorDLL_financial.XLeratorDLL_financial;
 
     public class LoanRepository : ILoanRepository
     {
@@ -224,7 +221,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-
                     //...................Adding Revolving Loan Record.........................
                     var loan = context.TBL_LOAN_REVOLVING.Add(data);
 
@@ -234,9 +230,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     //...................Update the Loan Request table.......................
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
-
-                    //...................Saving Loan Gaurantors................................
-                    //AddLoanGuarantor(model.loanGuarantor, (short)model.productTypeId, model.loanApplicationId);
 
                     //...................Adding Audit...............................
                     context.TBL_AUDIT.Add(audit);
@@ -393,9 +386,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     //...................Update the Loan Request table.......................
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
-
-                    //...................Saving Loan Gaurantors................................
-                    //AddLoanGuarantor(entity.loanGuarantor,  (short)entity.productTypeId, entity.loanApplicationId);
 
                     //...................Adding Audit...............................
                     context.TBL_AUDIT.Add(audit);
@@ -897,7 +887,6 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanBookingAwaitingApproval(int staffId, int companyId)
         {
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
-
             try
             {
                 var data = (from ln in context.TBL_LOAN_REVOLVING
@@ -1372,7 +1361,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     try
                     {
-
                         if (workflow.NewState != (int)ApprovalState.Ended)
                         {
                             var feeRec = context.TBL_LOAN_FEE.Find(entity.targetId);
@@ -1471,13 +1459,6 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.LogActivity();
 
                     context.SaveChanges();
-
-                    //var b = workflow.NextLevelId ?? 0;
-                    //if (b == 0 && workflow.NewState != (int)ApprovalState.Ended)
-                    //{
-                    //    trans.Rollback();
-                    //    throw new Exception("Approval Failed");
-                    //}
 
                     if (ApproveLoanBooking(entity.targetId, loanBookingRequestId, (short)workflow.StatusId, entity))
                     {
@@ -1772,8 +1753,6 @@ namespace FintrakBanking.Repositories.Credit
         /// 
 
         public IEnumerable<DailyInterestAccrualViewModel> ProcessAccrualTeamLoansInterestAccrual(DateTime applicationDate, int loanId)
-
-
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
             var schedule = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanId && x.DATE <= DbFunctions.TruncateTime(applicationDate));
@@ -1833,7 +1812,6 @@ namespace FintrakBanking.Repositories.Credit
             this.context.TBL_DAILY_ACCRUAL.AddRange(transAccrual);
             context.SaveChanges();
 
-
             //var model = (from a in context.TBL_DAILY_ACCRUAL
             //             where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
             //             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, a.EXCHANGERATE } into groupedQ
@@ -1846,8 +1824,6 @@ namespace FintrakBanking.Repositories.Credit
             //                 exchangeRate = groupedQ.Key.EXCHANGERATE,
             //                 dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
             //             }).ToList();
-
-
 
             //foreach (var item in model)
             //{
@@ -1876,7 +1852,7 @@ namespace FintrakBanking.Repositories.Credit
             var loanFeeData = context.TBL_LOAN_FEE.Where(x => x.LOANID == targetId && x.ISINTEGRALFEE == true);
             double integraFeeAmount = 0;
 
-            var effectiveDate = loanScheduleData.EFFECTIVEDATE; // generalSetup.GetApplicationDate();
+            var effectiveDate = loanScheduleData.EFFECTIVEDATE; 
             var maturityDate = effectiveDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
             foreach (var record in loanFeeData)
@@ -2160,19 +2136,12 @@ namespace FintrakBanking.Repositories.Credit
                     credit.sourceBranchId = loanDetails.branchId;
                     credit.destinationBranchId = loanDetails.branchId;
 
-
-
                     output.Add(debit);
                     output.Add(credit);
                 }
-
-
-            }
-
-            // Audit Section ---------------------------            
+            }         
 
             return output;
-
         }
 
         /// <summary>
@@ -2204,7 +2173,6 @@ namespace FintrakBanking.Repositories.Credit
             }
             //var result = context.SaveChanges() > 0;
             return true;
-
         }
 
         /// <summary>
@@ -2264,7 +2232,6 @@ namespace FintrakBanking.Repositories.Credit
             }
             else entity.customerTypeId = (short)CustomerTypeEnum.Individual;
 
-
             var guarantor = new TBL_LOAN_GUARANTOR
             {
                 PRODUCTTYPEID = productTypeId,
@@ -2282,8 +2249,8 @@ namespace FintrakBanking.Repositories.Credit
                 TAX_NUMBER = entity.rcNumber,
                 CUSTOMERTYPEID = entity.customerTypeId,
                 EMAILADDRESS = entity.emailAddress,
-                CREATEDBY = 1,
-                DATETIMECREATED = DateTime.Now // generalSetup.GetApplicationDate()
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = DateTime.Now
             };
             context.TBL_LOAN_GUARANTOR.Add(guarantor);
             return context.SaveChanges() > 0;
@@ -2418,13 +2385,13 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTTYPEID = productTypeId,
                     ISRECURRING = ent.recurring,
                     RECURRINGPAYMENTDAY = 28,
-                    CREATEDBY = staffId, // ent.createdBy,
+                    CREATEDBY = staffId,
                     DATETIMECREATED = DateTime.Now.Date,
                     ISPOSTED = ent.isPosted
                 };
-
                 if (feeOverride)
                     fee.ISPOSTED = false;
+                else fee.ISPOSTED = true;
 
                 context.TBL_LOAN_FEE.Add(fee);
                 if (feeOverride)
