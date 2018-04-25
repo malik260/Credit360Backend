@@ -9,6 +9,13 @@ namespace FintrakBanking.Entities.Models
     [Table("temp.TBL_TEMP_PROFILE_USER")]
     public partial class TBL_TEMP_PROFILE_USER
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_TEMP_PROFILE_USER()
+        {
+            TBL_TEMP_PROFILE_ADTN_ACTIVITY = new HashSet<TBL_TEMP_PROFILE_ADTN_ACTIVITY>();
+            TBL_TEMP_PROFILE_USERGROUP = new HashSet<TBL_TEMP_PROFILE_USERGROUP>();
+        }
+
         [Key]
         public int TEMPUSERID { get; set; }
 
@@ -62,6 +69,12 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_PROFILE_ADTN_ACTIVITY> TBL_TEMP_PROFILE_ADTN_ACTIVITY { get; set; }
+
         public virtual TBL_TEMP_STAFF TBL_TEMP_STAFF { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_PROFILE_USERGROUP> TBL_TEMP_PROFILE_USERGROUP { get; set; }
     }
 }

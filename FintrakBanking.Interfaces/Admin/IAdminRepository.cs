@@ -15,6 +15,8 @@ namespace FintrakBanking.Interfaces.Admin
         #region Users
         IEnumerable<UserViewModel> GetAllUsers();
 
+        UserViewModel GetUsersByStaffId(int staffId);
+
         List<string> GetUserActivitiesByUser(int userId);
 
         UserViewModel GetSingleUser(int userId);

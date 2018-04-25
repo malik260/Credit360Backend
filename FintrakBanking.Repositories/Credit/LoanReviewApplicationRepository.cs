@@ -151,7 +151,7 @@ namespace FintrakBanking.Repositories.Credit
             var application = new TBL_LOAN_REVIEW_APPLICATION
             {
                 LOANID = model.loanId,
-                PRODUCTTYPEID = 1, // 1. termloan
+                PRODUCTTYPEID = model.productTypeId, // 1. termloan
                 OPERATIONID = model.operationTypeId,
                 REVIEWDETAILS = model.reviewDetails,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
