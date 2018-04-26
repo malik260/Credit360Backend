@@ -4148,68 +4148,51 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId)
         {
-            try
+            IQueryable<CurrentCustomerExposure> exposure = null;
+            List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+
+            foreach (var item in customer)
             {
-                List<CurrentCustomerExposure> datalst = new List<CurrentCustomerExposure>();
+                exposure = from a in context.TBL_LOAN
+                           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                               existingLimit = a.PRINCIPALAMOUNT,
+                               proposedLimit = a.OUTSTANDINGPRINCIPAL,
+                               PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               reviewDate = DateTime.Now
+                           };
 
-                foreach (var item in customer)
-                {
-                    var data = (from a in context.TBL_LOAN
-                                where
-                                 // a.CUSTOMERID == 33 && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                                a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                                select new CurrentCustomerExposure
-                                {
-                                    facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
 
-                                    existingLimit = a.PRINCIPALAMOUNT,
+                exposure = from a in context.TBL_LOAN_REVOLVING
+                           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                               existingLimit = a.OVERDRAFTLIMIT,
+                               proposedLimit = a.OVERDRAFTLIMIT,
+                               PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               reviewDate = DateTime.Now
+                           };
 
-                                    proposedLimit = a.OUTSTANDINGINTEREST,
-                                    PastDueObligationsInterest = ((System.Decimal?)(
-                                  a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
-                                    (from c in context.TBL_LOAN_FORCE_DEBIT
-                                     where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                     select new
-                                     {
-                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                     }).Sum(p => p.DebitRepayment) :
-                                  a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
-                                    (from c in context.TBL_LOAN_FORCE_DEBIT
-                                     where c.LOANID == a.TERMLOANID &&
-                                        c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                     select new
-                                     {
-                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                     }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
-                                    PastDueObligationsPrincipal = ((System.Decimal?)(
-                                  a.ALLOWFORCEDEBITREPAYMENT == false ?
-                                    (from c in context.TBL_LOAN_FORCE_DEBIT
-                                     where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal
-                                     select new
-                                     {
-                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                     }).Sum(p => p.DebitRepayment) :
-                                  a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
-                                    (from c in context.TBL_LOAN_FORCE_DEBIT
-                                     where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal
-                                     select new
-                                     {
-                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                     }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
-                                    reviewDate = DateTime.Now
-                                });
-                    if (data.Count() > 0)
-                        datalst.AddRange(data.ToList());
-                }
-
-                return datalst;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
             }
 
+            exposures.Add(new CurrentCustomerExposure
+            {
+                facilityType = "TOTAL",
+                existingLimit = exposures.Sum(t => t.existingLimit),
+                proposedLimit = exposures.Sum(t => t.proposedLimit),
+                PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
+                PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
+                reviewDate = DateTime.Now,
+            });
+
+            return exposures;
         }
 
         /// <summary>
