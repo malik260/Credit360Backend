@@ -9,6 +9,14 @@ namespace FintrakBanking.Entities.Models
     [Table("temp.TBL_TEMP_COLLATERAL_CUSTOMER")]
     public partial class TBL_TEMP_COLLATERAL_CUSTOMER
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_TEMP_COLLATERAL_CUSTOMER()
+        {
+            TBL_TEMP_COLLATERAL_MKT_SEC = new HashSet<TBL_TEMP_COLLATERAL_MKT_SEC>();
+            TBL_TEMP_COLLATERAL_GAURANTEE = new HashSet<TBL_TEMP_COLLATERAL_GAURANTEE>();
+            TBL_TEMP_COLLATERAL_MISCELLAN = new HashSet<TBL_TEMP_COLLATERAL_MISCELLAN>();
+        }
+
         [Key]
         public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
@@ -69,5 +77,14 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
         public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_COLLATERAL_MKT_SEC> TBL_TEMP_COLLATERAL_MKT_SEC { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_COLLATERAL_GAURANTEE> TBL_TEMP_COLLATERAL_GAURANTEE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_COLLATERAL_MISCELLAN> TBL_TEMP_COLLATERAL_MISCELLAN { get; set; }
     }
 }

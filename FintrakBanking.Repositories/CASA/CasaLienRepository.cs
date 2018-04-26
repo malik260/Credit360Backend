@@ -75,7 +75,7 @@ namespace FintrakBanking.Repositories.CASA
                 PRODUCTACCOUNTNUMBER = model.productAccountNumber,
                 LIENREFERENCENUMBER = model.lienReferenceNumber,
                 SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
-                BRANCHID = model.userBranchId,
+                BRANCHID = model.branchId,
                 COMPANYID = model.companyId,
                 LIENAMOUNT = model.lienAmount,
                 DESCRIPTION = model.description,
@@ -162,7 +162,7 @@ namespace FintrakBanking.Repositories.CASA
                 PRODUCTACCOUNTNUMBER = existingLien.PRODUCTACCOUNTNUMBER,
                 LIENREFERENCENUMBER = existingLien.LIENREFERENCENUMBER,
                 SOURCEREFERENCENUMBER = existingLien.SOURCEREFERENCENUMBER,
-                BRANCHID = model.userBranchId,
+                BRANCHID = model.branchId,
                 COMPANYID = model.companyId,
                 LIENAMOUNT = Math.Abs(existingLien.LIENAMOUNT) * -1,
                 DESCRIPTION = "Lien Release -- " + model.description,
@@ -176,18 +176,18 @@ namespace FintrakBanking.Repositories.CASA
 
             // Audit Section ---------------------------            
 
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LienReleased,
-                STAFFID = model.createdBy,
-                BRANCHID = model.branchId,
-                DETAIL = $"Released lien with reference number: {existingLien.LIENREFERENCENUMBER}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.auditTrail.AddAuditTrail(audit);
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.LienReleased,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = model.branchId,
+            //    DETAIL = $"Released lien with reference number: {existingLien.LIENREFERENCENUMBER}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
+            //this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
 

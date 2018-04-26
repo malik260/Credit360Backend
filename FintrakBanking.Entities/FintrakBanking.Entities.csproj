@@ -72,7 +72,7 @@
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\SYSDIAGRAMS.cs" />
+    <Compile Include="Models\SYSDIAGRAM.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -121,7 +121,6 @@
     <Compile Include="Models\TBL_COLLATERAL_CASA.cs" />
     <Compile Include="Models\TBL_COLLATERAL_CUSTOMER.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DEPOSIT.cs" />
-    <Compile Include="Models\TBL_COLLATERAL_DOCUMENTS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_GAURANTEE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_IMMOVE_PROPERTY.cs" />
     <Compile Include="Models\TBL_COLLATERAL_ITEM_POLICY.cs" />
@@ -292,6 +291,7 @@
     <Compile Include="Models\TBL_LOAN_PRICEINDEX_EXCEPTION.cs" />
     <Compile Include="Models\TBL_LOAN_PRINCIPAL.cs" />
     <Compile Include="Models\TBL_LOAN_PRUDENTIALGUIDELINE.cs" />
+    <Compile Include="Models\TBL_LOAN_PRUDENT_GUIDE_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_RATE_FEE_CONCESSION.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PLAN_PAYMNT.cs" />
@@ -382,8 +382,19 @@
     <Compile Include="Models\TBL_TEMP_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_CHART_OF_ACCOUNT.cs" />
     <Compile Include="Models\TBL_TEMP_CHART_OF_ACCOUNT_CUR.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_CASA.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_CUSTOMER.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_DEPOSIT.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_GAURANTEE.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_IMMOV_PROP.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_ITEM_POLI.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_MISCELLAN.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_MKT_SEC.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_PLANT_EQUP.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_POLICY.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_PREC_METAL.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_STOCK.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_VEHICLE.cs" />
     <Compile Include="Models\TBL_TEMP_COMPANY_BENEFICIA.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMEREMPLOYMENT.cs" />
@@ -405,8 +416,11 @@
     <Compile Include="Models\TBL_TEMP_PRODUCT_COLLATERALTYP.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_CURRENCY.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_PROFILE_ADTN_ACTIVITY.cs" />
     <Compile Include="Models\TBL_TEMP_PROFILE_STAFF_ROLE_AA.cs" />
     <Compile Include="Models\TBL_TEMP_PROFILE_STAFF_ROL_GRP.cs" />
+    <Compile Include="Models\TBL_TEMP_PROFILE_USER.cs" />
+    <Compile Include="Models\TBL_TEMP_PROFILE_USERGROUP.cs" />
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />

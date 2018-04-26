@@ -222,12 +222,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     if (data == null)
                     {
                         _user.LOGINCODE = null;
-                        _user.FAILEDLOGONATTEMPT += 1;
+                        
                         if (_user.FAILEDLOGONATTEMPT == CommonHelpers.MaxInvalidPasswordAttempts)
                         {
                             _user.ISLOCKED = true;
                             _user.LASTLOCKOUTDATE = DateTime.Now;
                         }
+                        _user.FAILEDLOGONATTEMPT += 1;
                     }
                     else
                     {

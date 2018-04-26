@@ -202,7 +202,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.EditLoanConditionPrecedent(id, entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been modified successfully" });
+                    return Request.CreateResponse(  HttpStatusCode.OK, new { success = true, result = data, message = "The record has been modified successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
