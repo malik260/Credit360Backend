@@ -408,6 +408,27 @@ namespace FintrakBanking.APICore.Controllers
                     physicalLocation = provider.FormData["physicalLocation"],
                 };
 
+                var receiverStaffId = provider.FormData["receiverStaffId"];
+
+                var requestModel = new JobRequestViewModel
+                {
+                    departmentId = (short)Convert.ToInt32(provider.FormData["departmentId"]),
+                    departmentUnitId = (short)Convert.ToInt32(provider.FormData["departmentUnitId"]),
+                    requestTitle = provider.FormData["requestSubject"],
+                    senderComment = provider.FormData["senderComment"],
+                    isReassigned = Convert.ToBoolean(provider.FormData["isReassigned"]),
+                    isAcknowledged = Convert.ToBoolean(provider.FormData["isAcknowledged"]),
+                    targetId = Convert.ToInt32(provider.FormData["targetId"]),
+                    operationsId = Convert.ToInt32(provider.FormData["operationId"]),
+                    jobTypeId = (short)Convert.ToInt32(provider.FormData["jobTypeId"])
+                };
+
+
+
+
+                if (!(receiverStaffId == null || receiverStaffId == string.Empty || receiverStaffId == ""))
+                    requestModel.receiverStaffId = Convert.ToInt32(receiverStaffId);
+
                 if (!provider.FileStreams.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
@@ -418,9 +439,14 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
+                requestModel.userBranchId = (short)token.GetBranchId;
+                requestModel.companyId = token.GetCompanyId;
+                requestModel.createdBy = token.GetStaffId;
+                requestModel.applicationUrl = HttpContext.Current.Request.Path;
+
                 var file = provider.Contents.FirstOrDefault();
                 var buffer = await file.ReadAsByteArrayAsync();
-                var data = repo.AddJobDocument(entity, buffer);
+                var data = repo.AddJobDocument(entity, requestModel, buffer);
 
                 if (data)
                 {

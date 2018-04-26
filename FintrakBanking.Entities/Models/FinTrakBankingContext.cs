@@ -265,6 +265,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_PRELIMINARY_EVALUATN> TBL_LOAN_PRELIMINARY_EVALUATN { get; set; }
         public virtual DbSet<TBL_LOAN_PRICEINDEX_EXCEPTION> TBL_LOAN_PRICEINDEX_EXCEPTION { get; set; }
         public virtual DbSet<TBL_LOAN_PRINCIPAL> TBL_LOAN_PRINCIPAL { get; set; }
+        public virtual DbSet<TBL_LOAN_PRUDENT_GUIDE_TYPE> TBL_LOAN_PRUDENT_GUIDE_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_PRUDENTIALGUIDELINE> TBL_LOAN_PRUDENTIALGUIDELINE { get; set; }
         public virtual DbSet<TBL_LOAN_RATE_FEE_CONCESSION> TBL_LOAN_RATE_FEE_CONCESSION { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_PLAN> TBL_LOAN_RECOVERY_PLAN { get; set; }
@@ -304,7 +305,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_FIANCE_TRANSACTION> TBL_CUSTOM_FIANCE_TRANSACTION { get; set; }
         public virtual DbSet<TBL_CUSTOM_LIEN_PROCESS> TBL_CUSTOM_LIEN_PROCESS { get; set; }
         public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -3659,6 +3660,26 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_ARCHIVE>()
+                .Property(e => e.PASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_ARCHIVE>()
+                .Property(e => e.PASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_ARCHIVE>()
+                .Property(e => e.INTERESTONPASTDUEPRINCIPAL)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_ARCHIVE>()
+                .Property(e => e.INTERESTONPASTDUEINTEREST)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_ARCHIVE>()
+                .Property(e => e.PENALCHARGEAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_LOAN_ARCHIVE>()
                 .Property(e => e.SCHEDULEDPREPAYMENTAMOUNT)
                 .HasPrecision(19, 4);
 
@@ -3767,6 +3788,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_LOAN_PRINCIPAL)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_LOAN_PRUDENT_GUIDE_TYPE>()
+                .HasMany(e => e.TBL_LOAN_PRUDENTIALGUIDELINE)
+                .WithRequired(e => e.TBL_LOAN_PRUDENT_GUIDE_TYPE)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_LOAN_PRUDENTIALGUIDELINE>()
                 .HasMany(e => e.TBL_LOAN)
                 .WithOptional(e => e.TBL_LOAN_PRUDENTIALGUIDELINE)
@@ -3776,6 +3802,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN1)
                 .WithOptional(e => e.TBL_LOAN_PRUDENTIALGUIDELINE1)
                 .HasForeignKey(e => e.EXT_PRUDENT_GUIDELINE_STATUSID);
+
+            modelBuilder.Entity<TBL_LOAN_PRUDENTIALGUIDELINE>()
+                .HasMany(e => e.TBL_LOAN2)
+                .WithOptional(e => e.TBL_LOAN_PRUDENTIALGUIDELINE2)
+                .HasForeignKey(e => e.USER_PRUDENTIAL_GUIDE_STATUSID);
 
             modelBuilder.Entity<TBL_LOAN_PRUDENTIALGUIDELINE>()
                 .HasMany(e => e.TBL_LOAN_ARCHIVE)
@@ -3788,6 +3819,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.EXT_PRUDENT_GUIDELINE_STATUSID);
 
             modelBuilder.Entity<TBL_LOAN_PRUDENTIALGUIDELINE>()
+                .HasMany(e => e.TBL_LOAN_ARCHIVE2)
+                .WithOptional(e => e.TBL_LOAN_PRUDENTIALGUIDELINE2)
+                .HasForeignKey(e => e.USER_PRUDENTIAL_GUIDE_STATUSID);
+
+            modelBuilder.Entity<TBL_LOAN_PRUDENTIALGUIDELINE>()
                 .HasMany(e => e.TBL_LOAN_REVOLVING_ARCHIVE)
                 .WithOptional(e => e.TBL_LOAN_PRUDENTIALGUIDELINE)
                 .HasForeignKey(e => e.EXT_PRUDENT_GUIDELINE_STATUSID);
@@ -3798,6 +3834,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.INT_PRUDENT_GUIDELINE_STATUSID);
 
             modelBuilder.Entity<TBL_LOAN_PRUDENTIALGUIDELINE>()
+                .HasMany(e => e.TBL_LOAN_REVOLVING_ARCHIVE2)
+                .WithOptional(e => e.TBL_LOAN_PRUDENTIALGUIDELINE2)
+                .HasForeignKey(e => e.USER_PRUDENTIAL_GUIDE_STATUSID);
+
+            modelBuilder.Entity<TBL_LOAN_PRUDENTIALGUIDELINE>()
                 .HasMany(e => e.TBL_LOAN_REVOLVING)
                 .WithOptional(e => e.TBL_LOAN_PRUDENTIALGUIDELINE)
                 .HasForeignKey(e => e.EXT_PRUDENT_GUIDELINE_STATUSID);
@@ -3806,6 +3847,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_REVOLVING1)
                 .WithOptional(e => e.TBL_LOAN_PRUDENTIALGUIDELINE1)
                 .HasForeignKey(e => e.INT_PRUDENT_GUIDELINE_STATUSID);
+
+            modelBuilder.Entity<TBL_LOAN_PRUDENTIALGUIDELINE>()
+                .HasMany(e => e.TBL_LOAN_REVOLVING2)
+                .WithOptional(e => e.TBL_LOAN_PRUDENTIALGUIDELINE2)
+                .HasForeignKey(e => e.USER_PRUDENTIAL_GUIDE_STATUSID);
 
             modelBuilder.Entity<TBL_LOAN_PRUDENTIALGUIDELINE>()
                 .HasMany(e => e.TBL_TEMP_LOAN)

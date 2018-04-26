@@ -37,6 +37,7 @@ namespace FintrakBanking.Repositories.Credit
             int branchId = user.BranchId;
             int companyId = user.companyId;
             IQueryable<LoanReviewApplicationViewModel> applications = null;
+            IQueryable<LoanReviewApplicationViewModel> revolvingApplications = null;
             bool isHeadOffice = (branchId == 1) ? true : false;
             bool screenCanViewAll = operationId == (int)OperationsEnum.LoanReviewApprovalApplication;
 
@@ -47,7 +48,7 @@ namespace FintrakBanking.Repositories.Credit
             applications = context.TBL_LOAN_REVIEW_APPLICATION.Where(x =>
                     (x.BRANCHID == branchId || isHeadOffice) // branch filter
              )
-            .Join(context.TBL_LOAN, a => a.LOANID, l => l.TERMLOANID, (a, l) => new { a, l })
+            .Join(context.TBL_LOAN, a => a.LOANID, l => l.TERMLOANID, (a, l) => new { a, l }) 
             .GroupJoin(
                 context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
                 al => al.a.LOANREVIEWAPPLICATIONID,
@@ -91,16 +92,67 @@ namespace FintrakBanking.Repositories.Credit
                 .GroupBy(d => d.loanReviewApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 .OrderByDescending(x => x.applicationDate)
-                .ThenByDescending(x => x.loanReviewApplicationId)
-                ;
+                .ThenByDescending(x => x.loanReviewApplicationId);
+                
+                
+
+           revolvingApplications = context.TBL_LOAN_REVIEW_APPLICATION.Where(x =>
+                (x.BRANCHID == branchId || isHeadOffice) // branch filter
+                                                            )
+                .Join(context.TBL_LOAN_REVOLVING, a => a.LOANID, l => l.REVOLVINGLOANID, (a, l) => new { a, l })
+                .GroupJoin(
+                 context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
+    al => al.a.LOANREVIEWAPPLICATIONID,
+    t => t.TARGETID,
+    (al, t) => new { a = al.a, l = al.l, t })
+.SelectMany(
+    xy => xy.t.DefaultIfEmpty(),
+    (x, t) => new LoanReviewApplicationViewModel
+    {
+        loanReviewApplicationId = x.a.LOANREVIEWAPPLICATIONID,
+        applicationDate = x.a.DATECREATED,
+        operationTypeId = x.a.OPERATIONID,
+        operationType = context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == x.a.OPERATIONID).OPERATIONNAME,
+        referenceNumber = x.l.LOANREFERENCENUMBER,
+        approvalState = x.l.APPROVALSTATUSID == 0 ? "" : context.TBL_APPROVAL_STATUS.FirstOrDefault(k => k.APPROVALSTATUSID == x.a.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                    //principalAmount = x.l.PRINCIPALAMOUNT,
+                    //effectiveDate = x.l.EFFECTIVEDATE,
+                    //maturityDate = x.l.MATURITYDATE,
+                    //interestRate = x.l.INTERESTRATE,
+
+                    loanId = x.a.LOANID,
+
+        lastComment = t.COMMENT,
+        currentStage = t == null ? "N/A" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == t.OPERATIONID).OPERATIONNAME,
+        currentApprovalStateId = t == null ? (short)0 : t.APPROVALSTATEID,
+        currentApprovalState = t.TBL_APPROVAL_STATE.APPROVALSTATE,
+        currentApprovalLevelId = t.TOAPPROVALLEVELID,
+        currentApprovalLevel = t.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                    approvalTrailId = t == null ? 0 : t.APPROVALTRAILID, // for inner sequence ordering
+                    toStaffId = t.TOSTAFFID,
+
+        approvalStatusId = x.a.APPROVALSTATUSID,
+        approvalStatus = x.a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME, // --------------- open after rel added and scaaffold
+                    customerId = x.l.CUSTOMERID,
+        customerName = x.l.TBL_CUSTOMER.FIRSTNAME + " " + x.l.TBL_CUSTOMER.MIDDLENAME + " " + x.l.TBL_CUSTOMER.LASTNAME,
+
+        branchId = x.a.BRANCHID,
+        branchName = x.a.TBL_BRANCH.BRANCHNAME, // -------------------- open after scaffold
+                    createdBy = x.a.CREATEDBY,
+    })
+    .GroupBy(d => d.loanReviewApplicationId)
+    .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
+    .OrderByDescending(x => x.applicationDate)
+    .ThenByDescending(x => x.loanReviewApplicationId);
+
 
             //var list = applications.ToList();
             //var count = applications.Count();
             //var levs = levelIds.ToList();
 
-            if (screenCanViewAll) { return applications; };
+            if (screenCanViewAll) { return applications.Union(revolvingApplications) ; };
 
-            return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
+            return applications.Union(revolvingApplications).Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
         //private IQueryable<int> GetStaffApprovalLevelIds(int staffId, int operationId)
@@ -141,7 +193,7 @@ namespace FintrakBanking.Repositories.Credit
 
             list.casaAccounts = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
             list.productTypes = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
-            list.operationTypes = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement).Select(x => new DropDownSelect { id = x.OPERATIONID, name = x.OPERATIONNAME }).ToList();
+            list.operationTypes = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement || x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft).Select(x => new DropDownSelect { id = x.OPERATIONID, name = x.OPERATIONNAME }).OrderBy(o=>o.name).ToList();
 
             return list;
         }
@@ -151,7 +203,7 @@ namespace FintrakBanking.Repositories.Credit
             var application = new TBL_LOAN_REVIEW_APPLICATION
             {
                 LOANID = model.loanId,
-                PRODUCTTYPEID = 1, // 1. termloan
+                PRODUCTTYPEID = model.productTypeId, // 1. termloan
                 OPERATIONID = model.operationTypeId,
                 REVIEWDETAILS = model.reviewDetails,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,

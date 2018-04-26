@@ -1,11 +1,14 @@
-﻿using FintrakBanking.ViewModels.Media;
+﻿using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.ViewModels.Media;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
     public class StaffInfoViewModel : GeneralEntity
     {
+       
         public IQueryable<DepartmentViewModel> departmentUnits;
         public string supervisorStaffName;
 
@@ -61,6 +64,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string fileName { get; set; }
         public string fileExtension { get; set; }
         public string DelegateName { get; set; }
+        public AppUserViewModel user { get; set; }
+     
     }
 
     public class StaffViewModel

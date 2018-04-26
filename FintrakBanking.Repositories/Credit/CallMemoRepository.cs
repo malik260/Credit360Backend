@@ -88,7 +88,7 @@ namespace FintrakBanking.Repositories.Credit
                             FrequencyId = a.FREQUENCYID,
                             FrequencyName = a.TBL_FREQUENCY_TYPE.MODE,
                             JobTitleId = a.JOBTITLEID,
-                            JobTitleName = _context.TBL_STAFF_JOBTITLE.FirstOrDefault(d => d.JOBTITLEID == a.JOBTITLEID).JOBTITLENAME,
+                            JobTitleName = _context.TBL_STAFF_ROLE.FirstOrDefault(d => d.STAFFROLEID == a.JOBTITLEID).STAFFROLENAME,
                             CallLimitTypeId = a.CALLLIMITTYPEID,
                             CallLimitTypeName = _context.TBL_CALL_MEMO_TYPE.FirstOrDefault(i=>i.CALLLIMITTYPEID == a.CALLLIMITTYPEID).NAME
                         }).ToList();

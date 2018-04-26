@@ -69,7 +69,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.GetCurrentCustomerExposure(customer, token.GetCompanyId);
                 //if (!data.Any())
                 //{

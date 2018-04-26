@@ -11,9 +11,9 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IStaffRepository
     {
-        Task<bool> UpdateStaff(int staffid, StaffInfoViewModel staffModel);
+        bool UpdateStaff(int staffid, StaffInfoViewModel staffModel);
 
-        Task<bool> AddTempStaff(StaffInfoViewModel staffModel);
+        bool AddTempStaff(StaffInfoViewModel staffModel);
 
         bool GoForApproval(ApprovalViewModel entity);
 
