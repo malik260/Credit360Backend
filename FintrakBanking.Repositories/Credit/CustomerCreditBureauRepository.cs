@@ -360,13 +360,17 @@ namespace FintrakBanking.Repositories.Credit
         #region Integration 
         public List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
-            var creditBureau = new CreditBureauProcess();
+            var creditBureauProc = new CreditBureauProcess();
+
+            var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfoList.creditBureauId);
+            searchInfoList.userName = creditBureau.USERNAME;
+            searchInfoList.password = creditBureau.PASSWORD;
 
             List<string> searchResult = new List<string>();
+            
+            var task = Task.Run(() => searchResult.Add(creditBureauProc.XDSSearchCreditBureau(searchInfoList)));
 
-            var task = Task.Run(() => searchResult.Add(creditBureau.XDSSearchCreditBureau(searchInfoList)));
-
-            if (task.Wait(TimeSpan.FromSeconds(40)))
+            if (task.Wait(TimeSpan.FromSeconds(640)))
             {
                 return searchResult;
             }
@@ -378,6 +382,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo)
         {
+            var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
+            searchInfo.userName = creditBureau.USERNAME;
+            searchInfo.password = creditBureau.PASSWORD;
+
             var creditBureauInputs = new SearchInput()
             {
                 applicationUrl = searchInfo.applicationUrl,
@@ -386,7 +394,9 @@ namespace FintrakBanking.Repositories.Credit
                 companyId = searchInfo.companyId,
                 createdBy = searchInfo.createdBy,
                 casaAccountId = searchInfo.casaAccountId,
-                creditBureauId = searchInfo.creditBureauId
+                creditBureauId = searchInfo.creditBureauId,
+                userName = searchInfo.userName,
+                password = searchInfo.password
             };
 
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -396,8 +406,6 @@ namespace FintrakBanking.Repositories.Credit
             if (casa == null) throw new Exception("Norminated Account Does not Exist");
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
-
-            var creditBureau = context.TBL_CREDIT_BUREAU.Find(creditBureauInputs.creditBureauId);
 
             var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
@@ -473,6 +481,10 @@ namespace FintrakBanking.Repositories.Credit
                 try
                 {
                     var task = Task.Run(() => searchResponse = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
+                    var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
+
+                    searchInfo.password = creditBureau.PASSWORD;
+                    searchInfo.userName = creditBureau.USERNAME;
 
                     if (task.Wait(TimeSpan.FromSeconds(640)))
                     {
@@ -640,6 +652,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
+
+            searchInput.userName = creditBureau.USERNAME;
+            searchInput.password = creditBureau.PASSWORD;
 
             var chargeAmount = searchInput.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
