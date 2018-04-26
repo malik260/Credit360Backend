@@ -346,6 +346,19 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet, Route("temp-collateral-document/{collateralId}")]
+        public HttpResponseMessage GetTempCollateralDocumentByCollateral(int collateralId)
+        {
+            try
+            {
+                var data = document.GetTempAllCollateralDocument(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [Route("loan-visitation-file/{documentId}")]

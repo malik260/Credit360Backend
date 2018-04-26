@@ -8,7 +8,6 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public bool requireInsurancePolicy;
         public string collateralDetail { get; set; }
-
         public decimal? collateralSearchAmount { get; set; }
         public decimal? chartingAmount { get; set; }
         public decimal? verificationAmount { get; set; }
@@ -36,6 +35,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceType { get; set; }
         public string metalType { get; set; }
         public string machineType { get; set; }
+        public double exchangeRate { get; set; }
 
         // presentation
         public int approvalStatus { get; set; }
@@ -73,6 +73,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string yearOfManufacture { get; set; }
         public string yearOfPurchase { get; set; }
         public int valueBaseTypeId { get; set; }
+        public string valueBaseTypeName { get; set; }
         public string machineCondition { get; set; }
         public string machineryLocation { get; set; }
         public decimal replacementValue { get; set; }
@@ -106,7 +107,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationship { get; set; }
         public string relationshipDuration { get; set; }
         public DateTime cStartDate { get; set; }
-
+        public string taxNumber { get; set; }
 
         // casa
         public int collateralCasaId { get; set; }
@@ -405,8 +406,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralPlantsAndEquipmentViewModel
     {
         public string collateralSubTypeName;
-        public string valueBaseTypeName;
-
+        public string valueBaseTypeName { get; set; }
         public int collateralMachineDetailId { get; set; }
         public int collateralCustomerId { get; set; }
         public short collateralSubTypeId { get; set; }
