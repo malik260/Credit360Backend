@@ -81,7 +81,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<CustomerViewModels> SearchForCustomerCollateral(int companyId, string searchQuery);
 
-        List<LoanGuarantorViewModel> GetLoanGuarantors(int loanApplicationId);
+        //List<LoanGuarantorViewModel> GetLoanGuarantors(int loanApplicationId);
 
         List<CasaViewModel> GetLoanCustomerAccounts(int customerId, int loanApplicationDetailId);
 

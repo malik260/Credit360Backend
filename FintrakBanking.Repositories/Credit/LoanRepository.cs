@@ -3040,38 +3040,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        /// <summary>
-        /// Gets the loan charge fee.
-        /// </summary>
-        /// <param name="loanId">The loan identifier.</param>
-        /// <returns></returns>
-        public List<LoanGuarantorViewModel> GetLoanGuarantors(int loanApplicationId)
-        {
-            //var data = (from c in context.TBL_LOAN_GUARANTOR
-            //            where c.LOANAPPLICATIONID == loanApplicationId
-            //            select new LoanGuarantorViewModel
-            //            {
-            //                loanGuarantorId = c.LOANGUARANTORID,
-            //                loanApplicationId = (int)c.LOANAPPLICATIONID,
-            //                firstname = c.FIRSTNAME,
-            //                lastname = c.LASTNAME,
-            //                middlename = c.MIDDLENAME,
-            //                address = c.ADDRESS,
-            //                phoneNumber1 = c.PHONENUMBER1,
-            //                phoneNumber2 = c.PHONENUMBER2,
-            //                relationship = c.RELATIONSHIP,
-            //                relationshipDuration = (short)c.RELATIONSHIPDURATION,
-            //                bvn = c.BVN,
-            //                taxNumber = c.TAX_NUMBER,
-            //                rcNumber = c.REGISTRATION_NUMBER,
-            //                customerTypeId = c.CUSTOMERTYPEID,
-            //                customerTypeName = c.TBL_CUSTOMER_TYPE.NAME,
-            //                emailAddress = c.EMAILADDRESS,
-            //                fullName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME
-
-            //            }).ToList();
-            return new List<LoanGuarantorViewModel>();
-        }
+ 
 
         /// <summary>
         /// Searches the customer collateral.
@@ -4068,7 +4037,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loan.loanCovenant = GetLoanCovenant(loan.loanId);
                 loan.loanChargeFee = GetLoanChargeFee(loan.loanId);
-                loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
+               // loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
                 //loan.loanCollateral = GetLoanCollaterals(loan.loanId);
             }
 
@@ -4088,7 +4057,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loan.loanCovenant = GetLoanCovenant(loan.loanId);
                 loan.loanChargeFee = GetLoanChargeFee(loan.loanId);
-                loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
+                //loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
                 // loan.loanCollateral = GetLoanCollaterals(loan.loanId);
             }
 
@@ -4108,7 +4077,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loan.loanCovenant = GetLoanCovenant(loan.loanId);
                 loan.loanChargeFee = GetLoanChargeFee(loan.loanId);
-                loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
+               // loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
                 //loan.loanCollateral = GetLoanCollaterals(loan.loanId);
             }
 
@@ -4573,7 +4542,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loan.loanCovenant = GetLoanCovenant(loan.loanId);
                 loan.loanChargeFee = GetLoanChargeFee(loan.loanId);
-                loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
+                //loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
                 // loan.loanCollateral = GetLoanCollaterals(loan.loanId);
             }
 
