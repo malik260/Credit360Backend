@@ -818,27 +818,27 @@ namespace FintrakBanking.Repositories.Credit
                                 comment = "",
                                 isBidbond = false,
                                 isOverdraft = false,
-                                loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
-                                                 select (
-                                                          new LoanGuarantorViewModel
-                                                          {
-                                                              loanGuarantorId = g.LOANGUARANTORID,
-                                                              firstname = g.FIRSTNAME,
-                                                              lastname = g.LASTNAME,
-                                                              middlename = g.MIDDLENAME,
-                                                              fullName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
-                                                              emailAddress = g.EMAILADDRESS,
-                                                              phoneNumber1 = g.PHONENUMBER1,
-                                                              phoneNumber2 = g.PHONENUMBER2,
-                                                              address = g.ADDRESS,
-                                                              bvn = g.BVN,
-                                                              relationship = g.RELATIONSHIP,
-                                                              rcNumber = g.REGISTRATION_NUMBER,
-                                                              taxNumber = g.TAX_NUMBER,
-                                                              customerTypeId = g.CUSTOMERTYPEID,
-                                                              customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
-                                                              relationshipDuration = g.RELATIONSHIPDURATION
-                                                          })).ToList(),
+                                //loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
+                                //                 select (
+                                //                          new LoanGuarantorViewModel
+                                //                          {
+                                //                              loanGuarantorId = g.LOANGUARANTORID,
+                                //                              firstname = g.FIRSTNAME,
+                                //                              lastname = g.LASTNAME,
+                                //                              middlename = g.MIDDLENAME,
+                                //                              fullName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
+                                //                              emailAddress = g.EMAILADDRESS,
+                                //                              phoneNumber1 = g.PHONENUMBER1,
+                                //                              phoneNumber2 = g.PHONENUMBER2,
+                                //                              address = g.ADDRESS,
+                                //                              bvn = g.BVN,
+                                //                              relationship = g.RELATIONSHIP,
+                                //                              rcNumber = g.REGISTRATION_NUMBER,
+                                //                              taxNumber = g.TAX_NUMBER,
+                                //                              customerTypeId = g.CUSTOMERTYPEID,
+                                //                              customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
+                                //                              relationshipDuration = g.RELATIONSHIPDURATION
+                                //                          })).ToList(),
 
                                 loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANID == ln.TERMLOANID)
                                                   select (
@@ -2252,9 +2252,10 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now
             };
-            context.TBL_LOAN_GUARANTOR.Add(guarantor);
-            return context.SaveChanges() > 0;
-            //return true;
+            //context.TBL_LOAN_GUARANTOR.Add(guarantor);
+            //return context.SaveChanges() > 0;
+
+            return true;
         }
 
         /// <summary>
@@ -3039,38 +3040,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        /// <summary>
-        /// Gets the loan charge fee.
-        /// </summary>
-        /// <param name="loanId">The loan identifier.</param>
-        /// <returns></returns>
-        public List<LoanGuarantorViewModel> GetLoanGuarantors(int loanApplicationId)
-        {
-            var data = (from c in context.TBL_LOAN_GUARANTOR
-                        where c.LOANAPPLICATIONID == loanApplicationId
-                        select new LoanGuarantorViewModel
-                        {
-                            loanGuarantorId = c.LOANGUARANTORID,
-                            loanApplicationId = (int)c.LOANAPPLICATIONID,
-                            firstname = c.FIRSTNAME,
-                            lastname = c.LASTNAME,
-                            middlename = c.MIDDLENAME,
-                            address = c.ADDRESS,
-                            phoneNumber1 = c.PHONENUMBER1,
-                            phoneNumber2 = c.PHONENUMBER2,
-                            relationship = c.RELATIONSHIP,
-                            relationshipDuration = (short)c.RELATIONSHIPDURATION,
-                            bvn = c.BVN,
-                            taxNumber = c.TAX_NUMBER,
-                            rcNumber = c.REGISTRATION_NUMBER,
-                            customerTypeId = c.CUSTOMERTYPEID,
-                            customerTypeName = c.TBL_CUSTOMER_TYPE.NAME,
-                            emailAddress = c.EMAILADDRESS,
-                            fullName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME
-
-                        }).ToList();
-            return data;
-        }
+ 
 
         /// <summary>
         /// Searches the customer collateral.
@@ -3269,7 +3239,7 @@ namespace FintrakBanking.Repositories.Credit
                            collateralCode = x.COLLATERALCODE,
                            camRefNumber = x.CAMREFNUMBER,
                            allowSharing = x.ALLOWSHARING,
-                           isLocationBased = x.ISLOCATIONBASED,
+                           isLocationBased = (bool)x.ISLOCATIONBASED,
                            valuationCycle = x.VALUATIONCYCLE,
                            haircut = x.HAIRCUT,
                            approvalStatus = x.APPROVALSTATUS,
@@ -3498,27 +3468,27 @@ namespace FintrakBanking.Repositories.Credit
                                                                                            isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
                                                                                        }).ToList(),
                                                       }).FirstOrDefault(),
-                                loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID && x.PRODUCTTYPEID == d.TBL_PRODUCT.PRODUCTTYPEID)
-                                                 select (
-                                                          new LoanGuarantorViewModel
-                                                          {
-                                                              loanGuarantorId = g.LOANGUARANTORID,
-                                                              firstname = g.FIRSTNAME,
-                                                              lastname = g.LASTNAME,
-                                                              middlename = g.MIDDLENAME,
-                                                              fullName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
-                                                              emailAddress = g.EMAILADDRESS,
-                                                              phoneNumber1 = g.PHONENUMBER1,
-                                                              phoneNumber2 = g.PHONENUMBER2,
-                                                              address = g.ADDRESS,
-                                                              bvn = g.BVN,
-                                                              relationship = g.RELATIONSHIP,
-                                                              rcNumber = g.REGISTRATION_NUMBER,
-                                                              taxNumber = g.TAX_NUMBER,
-                                                              customerTypeId = g.CUSTOMERTYPEID,
-                                                              customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
-                                                              relationshipDuration = g.RELATIONSHIPDURATION
-                                                          })).ToList(),
+                                //loanGuarantor = null, (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID && x.PRODUCTTYPEID == d.TBL_PRODUCT.PRODUCTTYPEID)
+                                //                 select (
+                                //                          new LoanGuarantorViewModel
+                                //                          {
+                                //                              loanGuarantorId = g.LOANGUARANTORID,
+                                //                              firstname = g.FIRSTNAME,
+                                //                              lastname = g.LASTNAME,
+                                //                              middlename = g.MIDDLENAME,
+                                //                              fullName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
+                                //                              emailAddress = g.EMAILADDRESS,
+                                //                              phoneNumber1 = g.PHONENUMBER1,
+                                //                              phoneNumber2 = g.PHONENUMBER2,
+                                //                              address = g.ADDRESS,
+                                //                              bvn = g.BVN,
+                                //                              relationship = g.RELATIONSHIP,
+                                //                              rcNumber = g.REGISTRATION_NUMBER,
+                                //                              taxNumber = g.TAX_NUMBER,
+                                //                              customerTypeId = g.CUSTOMERTYPEID,
+                                //                              customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
+                                //                              relationshipDuration = g.RELATIONSHIPDURATION
+                                //                          })).ToList(),
                                 loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANID == m.LOANAPPLICATIONID) // ------------------ REFACTOR TO LOANID!
                                                   select (
                                                            new LoanCollateralMappingViewModel
@@ -3856,7 +3826,7 @@ namespace FintrakBanking.Repositories.Credit
                                                currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME,
                                                loanApplicationCollateralId = cm.LOANAPPCOLLATERALID,
                                                loanApplicationId = cm.LOANAPPLICATIONID,
-                                               loanApplicationDetailId = (int)cm.LOANAPPLICATIONDETAILID,
+                                               //loanApplicationDetailId = (int)cm.LOANAPPLICATIONDETAILID,
                                                legalFeeAmount = (decimal)cm.LEGAL_FEE_AMOUNT
 
                                            })).ToList();
@@ -4002,27 +3972,27 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = d.DATETIMECREATED,
 
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
-                            loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID)
-                                             select (
-                                                      new LoanGuarantorViewModel
-                                                      {
-                                                          loanGuarantorId = g.LOANGUARANTORID,
-                                                          firstname = g.FIRSTNAME,
-                                                          lastname = g.LASTNAME,
-                                                          middlename = g.MIDDLENAME,
-                                                          fullName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
-                                                          emailAddress = g.EMAILADDRESS,
-                                                          phoneNumber1 = g.PHONENUMBER1,
-                                                          phoneNumber2 = g.PHONENUMBER2,
-                                                          address = g.ADDRESS,
-                                                          bvn = g.BVN,
-                                                          relationship = g.RELATIONSHIP,
-                                                          rcNumber = g.REGISTRATION_NUMBER,
-                                                          taxNumber = g.TAX_NUMBER,
-                                                          customerTypeId = g.CUSTOMERTYPEID,
-                                                          customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
-                                                          relationshipDuration = g.RELATIONSHIPDURATION
-                                                      })).ToList(),
+                            //loanGuarantor = null, (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID)
+                            //                 select (
+                            //                          new LoanGuarantorViewModel
+                            //                          {
+                            //                              loanGuarantorId = g.LOANGUARANTORID,
+                            //                              firstname = g.FIRSTNAME,
+                            //                              lastname = g.LASTNAME,
+                            //                              middlename = g.MIDDLENAME,
+                            //                              fullName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
+                            //                              emailAddress = g.EMAILADDRESS,
+                            //                              phoneNumber1 = g.PHONENUMBER1,
+                            //                              phoneNumber2 = g.PHONENUMBER2,
+                            //                              address = g.ADDRESS,
+                            //                              bvn = g.BVN,
+                            //                              relationship = g.RELATIONSHIP,
+                            //                              rcNumber = g.REGISTRATION_NUMBER,
+                            //                              taxNumber = g.TAX_NUMBER,
+                            //                              customerTypeId = g.CUSTOMERTYPEID,
+                            //                              customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
+                            //                              relationshipDuration = g.RELATIONSHIPDURATION
+                            //                          })).ToList(),
 
                             loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANID == m.LOANAPPLICATIONID) // ------------------ REFACTOR TO LOANID!
                                               select (
@@ -4067,7 +4037,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loan.loanCovenant = GetLoanCovenant(loan.loanId);
                 loan.loanChargeFee = GetLoanChargeFee(loan.loanId);
-                loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
+               // loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
                 //loan.loanCollateral = GetLoanCollaterals(loan.loanId);
             }
 
@@ -4087,7 +4057,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loan.loanCovenant = GetLoanCovenant(loan.loanId);
                 loan.loanChargeFee = GetLoanChargeFee(loan.loanId);
-                loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
+                //loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
                 // loan.loanCollateral = GetLoanCollaterals(loan.loanId);
             }
 
@@ -4107,7 +4077,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loan.loanCovenant = GetLoanCovenant(loan.loanId);
                 loan.loanChargeFee = GetLoanChargeFee(loan.loanId);
-                loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
+               // loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
                 //loan.loanCollateral = GetLoanCollaterals(loan.loanId);
             }
 
@@ -4117,68 +4087,51 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId)
         {
-            try
+            IQueryable<CurrentCustomerExposure> exposure = null;
+            List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+
+            foreach (var item in customer)
             {
-                List<CurrentCustomerExposure> datalst = new List<CurrentCustomerExposure>();
+                exposure = from a in context.TBL_LOAN
+                           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                               existingLimit = a.PRINCIPALAMOUNT,
+                               proposedLimit = a.OUTSTANDINGPRINCIPAL,
+                               PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               reviewDate = DateTime.Now
+                           };
 
-                foreach (var item in customer)
-                {
-                    var data = (from a in context.TBL_LOAN
-                                where
-                                // a.CUSTOMERID == 33 && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                                a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                                select new CurrentCustomerExposure
-                                {
-                                    facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
 
-                                    existingLimit = a.PRINCIPALAMOUNT,
+                exposure = from a in context.TBL_LOAN_REVOLVING
+                           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                               existingLimit = a.OVERDRAFTLIMIT,
+                               proposedLimit = a.OVERDRAFTLIMIT,
+                               PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               reviewDate = DateTime.Now
+                           };
 
-                                    proposedLimit = a.OUTSTANDINGINTEREST,
-                                    PastDueObligationsInterest = ((System.Decimal?)(
-                                  a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
-                                    (from c in context.TBL_LOAN_FORCE_DEBIT
-                                     where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                     select new
-                                     {
-                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                     }).Sum(p => p.DebitRepayment) :
-                                  a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
-                                    (from c in context.TBL_LOAN_FORCE_DEBIT
-                                     where c.LOANID == a.TERMLOANID &&
-                                        c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                     select new
-                                     {
-                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                     }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
-                                    PastDueObligationsPrincipal = ((System.Decimal?)(
-                                  a.ALLOWFORCEDEBITREPAYMENT == false ?
-                                    (from c in context.TBL_LOAN_FORCE_DEBIT
-                                     where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal
-                                     select new
-                                     {
-                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                     }).Sum(p => p.DebitRepayment) :
-                                  a.ALLOWFORCEDEBITREPAYMENT == false ? (System.Decimal?)
-                                    (from c in context.TBL_LOAN_FORCE_DEBIT
-                                     where c.LOANID == a.TERMLOANID && c.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Principal
-                                     select new
-                                     {
-                                         DebitRepayment = (c.DEBITAMOUNT - c.CREDITAMOUNT)
-                                     }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
-                                    reviewDate = DateTime.Now
-                                });
-                    if (data.Count() > 0)
-                        datalst.AddRange(data.ToList());
-                }
-
-                return datalst;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
             }
 
+            exposures.Add(new CurrentCustomerExposure
+            {
+                facilityType = "TOTAL",
+                existingLimit = exposures.Sum(t => t.existingLimit),
+                proposedLimit = exposures.Sum(t => t.proposedLimit),
+                PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
+                PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
+                reviewDate = DateTime.Now,
+            });
+
+            return exposures;
         }
 
         /// <summary>
@@ -4589,7 +4542,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loan.loanCovenant = GetLoanCovenant(loan.loanId);
                 loan.loanChargeFee = GetLoanChargeFee(loan.loanId);
-                loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
+                //loan.loanGuarantor = GetLoanGuarantors(loan.loanId);
                 // loan.loanCollateral = GetLoanCollaterals(loan.loanId);
             }
 

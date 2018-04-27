@@ -310,8 +310,7 @@ namespace FintrakBanking.Repositories.Credit
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                              // && (DateTime.Now - a.DATETIMECREATED).Days <= 30 
-                                              // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30 ) 
+                                               && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30 ) 
                                                select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,

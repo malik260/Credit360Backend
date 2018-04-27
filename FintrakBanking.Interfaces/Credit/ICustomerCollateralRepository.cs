@@ -89,7 +89,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<InsurancePolicies> GetCollateralInsurancePolicies(int collateralId);
 
-        void AddItemInsurancePolicy(int collateralId, CollateralViewModel entity);
+        void AddTempItemInsurancePolicy(int collateralId, CollateralViewModel entity);
 
         bool AddNewItemInsurancePolicy(InsurancePolicies entity);
 

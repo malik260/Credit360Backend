@@ -69,7 +69,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.GetCurrentCustomerExposure(customer, token.GetCompanyId);
                 //if (!data.Any())
                 //{
@@ -186,26 +185,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 var data = scheduleRepo.GetLoanScheduleTypeByCategory(categoryId);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-
-        [HttpGet]
-        [Route("gaurantor/application/{loanApplicationId}")]
-        public HttpResponseMessage GetLoanGuarantors(int loanApplicationId)
-        {
-            try
-            {
-                var data = repo.GetLoanGuarantors(loanApplicationId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

@@ -48,6 +48,8 @@ namespace FintrakBanking.Repositories.Credit
                     PHYSICALLOCATION = model.physicalLocation,
                     ISPRIMARYDOCUMENT = model.isPrimaryDocument,
                     CREATEDBY = (int)model.createdBy,
+                    
+                    
                 };
 
                 context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
