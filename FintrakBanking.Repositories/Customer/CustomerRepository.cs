@@ -1986,7 +1986,7 @@ namespace FintrakBanking.Repositories.Customer
                            collateralCode = x.COLLATERALCODE,
                            camRefNumber = x.CAMREFNUMBER,
                            allowSharing = x.ALLOWSHARING,
-                           isLocationBased = x.ISLOCATIONBASED,
+                           //isLocationBased = x.ISLOCATIONBASED,
                            valuationCycle = x.VALUATIONCYCLE,
                            collateralValue = x.COLLATERALVALUE,
                            haircut = x.HAIRCUT,

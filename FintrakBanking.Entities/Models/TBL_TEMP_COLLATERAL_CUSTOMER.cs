@@ -30,6 +30,8 @@ namespace FintrakBanking.Entities.Models
 
         public short CURRENCYID { get; set; }
 
+        public double EXCHANGERATE { get; set; }
+
         public int COMPANYID { get; set; }
 
         public bool ALLOWSHARING { get; set; }
