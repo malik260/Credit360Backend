@@ -477,21 +477,12 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool OrganogramRouting() // if workflow is forced to use organogram
         {
+            if (this.externalInitialization == true) { return true; }
             var position = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (position == null) { return false; }
-
             var lineManager = context.TBL_STAFF.Where(x => x.STAFFID == position.SUPERVISOR_STAFFID).FirstOrDefault();
             if (lineManager == null) { return false; }
-
-            //var lineManager = approvalGrid.SelectMany(x => x.Staff)
-            //    .Where(x => x.STAFFID == lineManagerPosition.STAFFID)
-            //    .FirstOrDefault();
-
-            //if (lineManager == null) { return false; }
-
-            //this.nextLevelId = lineManager.APPROVALLEVELID;
             this.toStaffId = lineManager.STAFFID;
-
             return true;
         }
 

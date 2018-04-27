@@ -65,8 +65,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
 
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
-        
-        LoanApplicationUpdateMessage SubmitLoanApplicationForCam(LoanApplicationUpdateViewModel loan);
+
+        bool SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
 
         List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
 

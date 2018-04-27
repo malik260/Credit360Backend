@@ -14,7 +14,6 @@ namespace FintrakBanking.Entities.Models
         {
             TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
             TBL_CUSTOMER_COMPANY_DIRECTOR = new HashSet<TBL_CUSTOMER_COMPANY_DIRECTOR>();
-            TBL_LOAN_GUARANTOR = new HashSet<TBL_LOAN_GUARANTOR>();
             TBL_PRODUCT_CLASS = new HashSet<TBL_PRODUCT_CLASS>();
         }
 
@@ -31,9 +30,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER_COMPANY_DIRECTOR> TBL_CUSTOMER_COMPANY_DIRECTOR { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_GUARANTOR> TBL_LOAN_GUARANTOR { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PRODUCT_CLASS> TBL_PRODUCT_CLASS { get; set; }

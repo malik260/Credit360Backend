@@ -40,11 +40,44 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("users")]
-
-        public IHttpActionResult GetAllUsers()
+        public HttpResponseMessage GetAllUsers()
         {
-            var users = repo.GetAllUsers().ToList();
-            return Ok(new { result = users });
+            try
+            {
+                var users = repo.GetAllUsers().ToList();
+
+                if (!users.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = users.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("users-by-staffId/")]
+        public HttpResponseMessage GetUsersByStaffId(int staffId)
+        {
+            try
+            {
+                var users = repo.GetUsersByStaffId(staffId);
+
+                if (users == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = users });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]

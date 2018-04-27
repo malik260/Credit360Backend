@@ -250,12 +250,12 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
         [HttpGet, Route("loan-application-approval-process")]
-        public HttpResponseMessage GetPendingLoanApplications([FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString)
+        public HttpResponseMessage GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString)
         {
             try
             {
                 IQueryable<LoanApplicationViewModel> items;
-                items = repo.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
+                items = repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
 
                 if (!String.IsNullOrEmpty(searchString))
                 {

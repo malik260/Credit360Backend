@@ -357,6 +357,39 @@ namespace FintrakBanking.Repositories.Admin
                     });
         }
 
+        public UserViewModel GetUsersByStaffId(int staffId)
+        {
+            return (from u in context.TBL_PROFILE_USER
+                    join st in context.TBL_STAFF
+                    on u.STAFFID equals st.STAFFID
+                    where u.STAFFID == staffId && u.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                    select new UserViewModel()
+                    {
+                        user_id = u.USERID,
+                        staffId = u.STAFFID,
+                        username = u.USERNAME,
+                        isActive = u.ISACTIVE,
+                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                        email = st.EMAIL,
+                        securityQuestion = u.SECURITYQUESTION,
+                        securityAnswer = u.SECURITYANSWER,
+                        password = null,
+                        groupId = u.TBL_PROFILE_USERGROUP.Where(x => x.USERID == u.USERID)
+                                    .Select(x => new UserGroupId
+                                    {
+                                        groupId = x.GROUPID,
+                                        groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
+                                    }).ToList(),
+                        activities = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == u.USERID)
+                                     .Select(a => new UserActivities
+                                     {
+                                         activityId = a.ACTIVITYID,
+                                         userId = a.USERID
+                                     }).ToList(),
+                        isLocked = u.ISLOCKED
+                    }).FirstOrDefault();
+        }
+
         public UserViewModel GetSingleUser(int userId)
         {
             var user = (from u in context.TBL_PROFILE_USER
