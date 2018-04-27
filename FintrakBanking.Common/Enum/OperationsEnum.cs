@@ -67,6 +67,8 @@ namespace FintrakBanking.Common.Enum
         CollateralMaintenance = 54,
         StaffRoleCreation = 55,
         ContingentLiabilityUsage = 56,
-        ReassigningOfAccount = 57
+        ReassigningOfAccount = 57,
+        LoanSales = 58,
+        LoanWalkout = 59,
     }
 }
