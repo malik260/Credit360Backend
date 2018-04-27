@@ -1197,7 +1197,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                 collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                 loanApplicationId = c.LOANAPPLICATIONID,
-                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                 haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                 customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
             }).OrderByDescending(x => x.loanAppCollateralId);
@@ -1218,7 +1218,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         COLLATERALCUSTOMERID = ent.collateralCustomerId,
                         CREATEDBY = ent.createdBy,
-                        LOANAPPLICATIONDETAILID = ent.loanApplicationDetailId,
+                        //LOANAPPLICATIONDETAILID = ent.loanApplicationDetailId,
                         LOANAPPLICATIONID = ent.loanApplicationId
                     });
                 }
@@ -1227,7 +1227,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = unmapped.Select(item => new TBL_LOAN_APPLICATION_COLLATERL
             {
-                LOANAPPLICATIONDETAILID = item.LOANAPPLICATIONDETAILID,
+                //LOANAPPLICATIONDETAILID = item.LOANAPPLICATIONDETAILID,
                 COLLATERALCUSTOMERID = item.COLLATERALCUSTOMERID,
                 LOANAPPLICATIONID = item.LOANAPPLICATIONID,
                 CREATEDBY = item.CREATEDBY,
@@ -1788,7 +1788,7 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_LOAN_APPLICATION_COLLATERL.Add(new TBL_LOAN_APPLICATION_COLLATERL
                     {
                         LOANAPPLICATIONID = request.LOANAPPLICATIONID,
-                        LOANAPPLICATIONDETAILID = rejectedDetails[i], // ?
+                        //LOANAPPLICATIONDETAILID = rejectedDetails[i], // ?
                         COLLATERALCUSTOMERID = x.COLLATERALCUSTOMERID,
                         LOANAPPCOLLATERALID = x.LOANAPPCOLLATERALID,
                         CREATEDBY = model.createdBy,

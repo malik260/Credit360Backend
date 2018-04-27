@@ -6,20 +6,12 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class TBL_MEDIA_COLLATERAL_DOCUMENTS
+    public partial class TBL_MEDIA_COMPANY
     {
         [Key]
         public int DOCUMENTID { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string DOCUMENTCODE { get; set; }
-
-        public int COLLATERALCUSTOMERID { get; set; }
-
-        public int? TARGETID { get; set; }
-
-        public bool ISPRIMARYDOCUMENT { get; set; }
+        public int COMPANYID { get; set; }
 
         [Required]
         [StringLength(400)]
@@ -35,5 +27,11 @@ namespace FintrakBanking.Entities.DocumentModels
         public DateTime SYSTEMDATETIME { get; set; }
 
         public int CREATEDBY { get; set; }
+
+        public DateTime DATETIMECREATED { get; set; }
+
+        public int? LASTUPDATEDBY { get; set; }
+
+        public DateTime? DATETIMEUPDATED { get; set; }
     }
 }

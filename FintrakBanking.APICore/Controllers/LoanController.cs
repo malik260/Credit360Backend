@@ -198,26 +198,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpGet]
-        [Route("gaurantor/application/{loanApplicationId}")]
-        public HttpResponseMessage GetLoanGuarantors(int loanApplicationId)
-        {
-            try
-            {
-                var data = repo.GetLoanGuarantors(loanApplicationId);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-
         [HttpPost]
         [Route("loan-booking")]
         public  HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)

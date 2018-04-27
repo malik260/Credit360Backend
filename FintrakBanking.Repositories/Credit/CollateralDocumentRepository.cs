@@ -107,6 +107,19 @@ namespace FintrakBanking.Repositories.Credit
                 targetId  = x.TARGETID
             });
         }
+        public IEnumerable<CollateralDocumentViewModel> GetTempAllCollateralDocument(int collateralId)
+        {
+            return this.context.TBL_TEMP_MEDIA_COLLATERAL_DOCS.Where(x=>x.TEMPCOLLATERALCUSTOMERID==collateralId).Select(x => new CollateralDocumentViewModel
+            {
+                collateralId = x.TEMPCOLLATERALCUSTOMERID,
+                documentId = x.DOCUMENTID,
+                documentTitle = x.DOCUMENTCODE,
+                fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                targetId = x.TARGETID
+            });
+        }
 
         public CollateralDocumentViewModel GetCollateralDocument(int documentId)
         {
@@ -129,7 +142,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CollateralDocumentViewModel> GetCustomerCollateralDocument(int documentId)
         {
-            return this.GetAllCollateralDocument().Where(x => x.collateralId == documentId).ToList();
+            return this.context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(x => x.COLLATERALCUSTOMERID == documentId).Select(x => new CollateralDocumentViewModel
+            {
+                collateralId = x.COLLATERALCUSTOMERID,
+                documentId = x.DOCUMENTID,
+                documentTitle = x.DOCUMENTCODE,
+                fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                targetId = x.TARGETID
+            });
         }
         public IEnumerable<CollateralDocumentViewModel> GetCollateralGuaranteeDocument(int targetId)
         {

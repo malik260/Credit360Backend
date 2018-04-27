@@ -19,7 +19,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 var data = from l in db.TBL_LOAN
                            join m in db.TBL_LOAN_COLLATERAL_MAPPING on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals m.LOANID
-                           join g in db.TBL_LOAN_GUARANTOR on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
+                           //join g in db.TBL_LOAN_GUARANTOR on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
                            where l.COMPANYID == companyId && l.LOANSTATUSID == 1
                                 && DbFunctions.TruncateTime(l.DATEAPPROVED) >= DbFunctions.TruncateTime(startDate)
                                  && DbFunctions.TruncateTime(l.DATEAPPROVED) <= DbFunctions.TruncateTime(endDate)
@@ -41,13 +41,14 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                locationOfTheCollateral = "",
                                collateralValue = l.TBL_CUSTOMER.TBL_COLLATERAL_CUSTOMER.Where(x => x.CUSTOMERID == l.CUSTOMERID).Select(x => x.COLLATERALVALUE).ToString(),
                               // Status = l.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-                               gFirstName = g.FIRSTNAME,
-                               gMiddleName = g.MIDDLENAME,
-                               gLastName = g.LASTNAME,
-                               gAddress = g.ADDRESS,
-                               PhoneNumber1 = g.PHONENUMBER1,
-                               PhoneNumber2 = g.PHONENUMBER2,
-                               guarantorEmail = g.EMAILADDRESS
+                              //TODO: Please refactor
+                               //gFirstName = g.FIRSTNAME,
+                               //gMiddleName = g.MIDDLENAME,
+                               //gLastName = g.LASTNAME,
+                               //gAddress = g.ADDRESS,
+                               //PhoneNumber1 = g.PHONENUMBER1,
+                               //PhoneNumber2 = g.PHONENUMBER2,
+                               //guarantorEmail = g.EMAILADDRESS
 
                            };
 
@@ -65,7 +66,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 var data = from l in db.TBL_LOAN
                            join m in db.TBL_LOAN_COLLATERAL_MAPPING on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals m.LOANID
-                           join g in db.TBL_LOAN_GUARANTOR on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
+                          // join g in db.TBL_LOAN_GUARANTOR on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
                            where l.COMPANYID == companyId && l.LOANSTATUSID == 1  && l.TBL_CASA.PRODUCTACCOUNTNUMBER==accountNo
 
                            select new ScheduledCollateralModel()
@@ -86,13 +87,14 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                locationOfTheCollateral = "",
                                collateralValue = l.TBL_CUSTOMER.TBL_COLLATERAL_CUSTOMER.Where(x => x.CUSTOMERID == l.CUSTOMERID).Select(x => x.COLLATERALVALUE).ToString(),
                              //  Status = l.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-                               gFirstName = g.FIRSTNAME,
-                               gMiddleName = g.MIDDLENAME,
-                               gLastName = g.LASTNAME,
-                               gAddress = g.ADDRESS,
-                               PhoneNumber1 = g.PHONENUMBER1,
-                               PhoneNumber2 = g.PHONENUMBER2,
-                               guarantorEmail = g.EMAILADDRESS
+                             //TODO: please refactor
+                               //gFirstName = g.FIRSTNAME,
+                               //gMiddleName = g.MIDDLENAME,
+                               //gLastName = g.LASTNAME,
+                               //gAddress = g.ADDRESS,
+                               //PhoneNumber1 = g.PHONENUMBER1,
+                               //PhoneNumber2 = g.PHONENUMBER2,
+                               //guarantorEmail = g.EMAILADDRESS
 
                            };
 
@@ -109,7 +111,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 var data = from l in db.TBL_LOAN
                            join m in db.TBL_LOAN_COLLATERAL_MAPPING on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals m.LOANID
-                           join g in db.TBL_LOAN_GUARANTOR on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
+                          // join g in db.TBL_LOAN_GUARANTOR on l.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
                            where l.COMPANYID == companyId && l.LOANSTATUSID == 1 && l.TBL_CASA.PRODUCTACCOUNTNUMBER == accountNo
 
                            select new ScheduledCollateralModel()
@@ -130,13 +132,14 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                locationOfTheCollateral = "",
                                collateralValue = l.TBL_CUSTOMER.TBL_COLLATERAL_CUSTOMER.Where(x => x.CUSTOMERID == l.CUSTOMERID).Select(x => x.COLLATERALVALUE).ToString(),
                              //  Status = l.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-                               gFirstName = g.FIRSTNAME,
-                               gMiddleName = g.MIDDLENAME,
-                               gLastName = g.LASTNAME,
-                               gAddress = g.ADDRESS,
-                               PhoneNumber1 = g.PHONENUMBER1,
-                               PhoneNumber2 = g.PHONENUMBER2,
-                               guarantorEmail = g.EMAILADDRESS
+                             //TODO : please refactor
+                               //gFirstName = g.FIRSTNAME,
+                               //gMiddleName = g.MIDDLENAME,
+                               //gLastName = g.LASTNAME,
+                               //gAddress = g.ADDRESS,
+                               //PhoneNumber1 = g.PHONENUMBER1,
+                               //PhoneNumber2 = g.PHONENUMBER2,
+                               //guarantorEmail = g.EMAILADDRESS
 
                            };
 
