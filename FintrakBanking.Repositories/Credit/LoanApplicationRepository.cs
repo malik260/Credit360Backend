@@ -643,17 +643,15 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-            if (isCheckListDone)
+
+            if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
-                var data = new LoanApplicationUpdateViewModel
+                return new LoanApplicationUpdateMessage
                 {
-                    applicationId = applicationId,
-                    staffId = staffId,
-                    checkListIndex = checkListIndex
+                    isdone = isCheckListDone,
+                    messageStr = str,
+                    checkListIndex = (int)ChecklistErrorEnum.GoodChecklist, //okay
                 };
-
-                return SubmitLoanApplicationForCam(data);
-
             }
             else
             {
@@ -662,70 +660,36 @@ namespace FintrakBanking.Repositories.Credit
                     isdone = isCheckListDone,
                     messageStr = str,
                     checkListIndex = checkListIndex,
-
                 };
             }
 
         }
 
-        public LoanApplicationUpdateMessage SubmitLoanApplicationForCam(LoanApplicationUpdateViewModel loan)
+        public bool SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
         {
-            try
+            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+
+            if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
             {
-                LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
-                string str = string.Empty;
-
-                bool isCheckListDone = true;
-                var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.applicationId);
-                var appl = context.TBL_LOAN_APPLICATION.Find(loan.applicationId);
-
-                if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && loan.checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
-                {
-                    appl.PRODUCT_CLASS_PROCESSID = (int)ProductClassProcessEnum.CAMBased;
-                }
-
-                appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
-                // ----------------Drop into CAM-------------------
-                workflow.StaffId = loan.staffId;
-                workflow.OperationId = (int)OperationsEnum.CAM;
-                workflow.TargetId = appl.LOANAPPLICATIONID;
-                workflow.CompanyId = appl.COMPANYID;
-                workflow.ProductClassId = appl.PRODUCTCLASSID;
-                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                workflow.Comment = "New loan application";
-                workflow.ExternalInitialization = true;
-                workflow.DeferredExecution = true;
-                workflow.LogActivity();
-                // ----------------Drop into CAM ends-------------------
-
-                if (context.SaveChanges() != 0)
-                {
-                    result = new LoanApplicationUpdateMessage
-                    {
-                        isdone = isCheckListDone,
-                        messageStr = str,
-                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist, //okay
-
-                    };
-                }
-                else
-                {
-                    result = new LoanApplicationUpdateMessage
-                    {
-                        isdone = !isCheckListDone,
-                        messageStr = str,
-                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist,
-
-                    };
-                }
-                return result;
-            }
-            catch (Exception ex)
-            {
-
-                throw new Exception(ex.Message);
+                appl.PRODUCT_CLASS_PROCESSID = (int)ProductClassProcessEnum.CAMBased;
             }
 
+            appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+            // ----------------Drop into CAM-------------------
+            workflow.StaffId = staffId;
+            workflow.OperationId = (int)OperationsEnum.CAM;
+            workflow.TargetId = appl.LOANAPPLICATIONID;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.Comment = "New loan application";
+            workflow.ExternalInitialization = true;
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+            // ----------------Drop into CAM ends-------------------
+
+            return context.SaveChanges() != 0;
         }
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)

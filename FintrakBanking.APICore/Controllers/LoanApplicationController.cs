@@ -340,25 +340,14 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var responseMessage = string.Empty;
-
-                var data = new LoanApplicationUpdateViewModel
-                {
-                    applicationId = loan.applicationId,
-                    checkListIndex = loan.checkListIndex,
-                    staffId = token.GetStaffId
-                };
-
-                var response = repo.SubmitLoanApplicationForCam(data);
+                var response = repo.SubmitLoanApplicationForCam(loan.applicationId, token.GetStaffId, loan.checkListIndex);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-
 
         [HttpPut]
         [Route("loan-application-for-cam")]
