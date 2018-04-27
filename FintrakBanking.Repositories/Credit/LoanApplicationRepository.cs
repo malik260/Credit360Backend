@@ -667,7 +667,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
         {
-            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
             var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
 
             if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
@@ -676,7 +675,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
-            // ----------------Drop into CAM-------------------
+
             workflow.StaffId = staffId;
             workflow.OperationId = (int)OperationsEnum.CAM;
             workflow.TargetId = appl.LOANAPPLICATIONID;
@@ -685,11 +684,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
             workflow.ExternalInitialization = true;
-            workflow.DeferredExecution = true;
-            workflow.LogActivity();
-            // ----------------Drop into CAM ends-------------------
-
-            return context.SaveChanges() != 0;
+            return workflow.LogActivity();
         }
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
