@@ -6525,6 +6525,16 @@ namespace FintrakBanking.Repositories.Credit
                         operationTypeName = data.OPERATIONNAME
                     });
         }
+        public IEnumerable<LoanOperationTypeViewModel> GetRemedialOperationType()
+        {
+            return (from data in context.TBL_OPERATIONS
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
+                    select new LoanOperationTypeViewModel()
+                    {
+                        operationTypeId = data.OPERATIONID,
+                        operationTypeName = data.OPERATIONNAME
+                    });
+        }
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId)
         {
             var loanOperations = (from data in context.TBL_OPERATIONS
