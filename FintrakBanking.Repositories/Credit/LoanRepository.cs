@@ -4327,7 +4327,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId)
+       public LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId)
         {
             try
             {

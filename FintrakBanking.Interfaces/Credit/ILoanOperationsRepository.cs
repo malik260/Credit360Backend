@@ -59,5 +59,6 @@ namespace FintrakBanking.Interfaces.Credit
         // IEnumerable<LoanViewModel> GetRunningLoans(int companyId, string refNo);
         LoanViewModel GetRunningLoans(int companyId, string refNo);
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD();
+        IEnumerable<LoanOperationTypeViewModel> GetRemedialOperationType();
     }
 }

@@ -94,6 +94,7 @@
     <Compile Include="CASA\CasaRepository.cs" />
     <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="CreditLimitValidations\CreditLimitValidationsRepository.cs" />
+    <Compile Include="Credit\LoanPerformanceRepository.cs" />
     <Compile Include="Credit\StaffAccountHistoryRepository.cs" />
     <Compile Include="Credit\AppraisalMemorandumRepository.cs" />
     <Compile Include="Credit\CallMemoRepository.cs" />
