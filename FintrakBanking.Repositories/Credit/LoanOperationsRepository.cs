@@ -2713,14 +2713,9 @@ namespace FintrakBanking.Repositories.Credit
             loanFee.DELETEDBY = null;
             loanFee.DATETIMEDELETED = systemDate;
 
-
             this.context.TBL_LOAN_FEE.Add(loanFee); ////change to Temp table
 
             context.SaveChanges();
-
-
-
-
             output = true;
 
             return output;
@@ -5421,34 +5416,44 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
             loanInput.date = applicationDate;
             var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanInput.productId);
-
-            var interestAmount = (from p in context.TBL_LOAN_SCHEDULE_DAILY
-                                  where p.DATE <= DbFunctions.TruncateTime(applicationDate)
-                                  select p).SingleOrDefault();
-
-            var interest = from d in context.TBL_LOAN_SCHEDULE_DAILY
-                           where d.DATE <= DbFunctions.TruncateTime(applicationDate) && d.LOANID == loanId
-                           let sumDailyAccuralAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(a => a.DATE <= DbFunctions.TruncateTime(applicationDate)
-                           && d.LOANID == loanId).Sum(a => a.DAILYINTERESTAMOUNT)/// add repaymentpostedstatus = false after scaffording
-                           select sumDailyAccuralAmount;
-            var accruedInterest = interest.FirstOrDefault();
-
-            var principal = from d in context.TBL_LOAN_SCHEDULE_PERIODIC
-                            where d.PAYMENTDATE <= DbFunctions.TruncateTime(applicationDate) && d.LOANID == loanId
-                            let sumPrincipalAmount = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(a => a.PAYMENTDATE <= DbFunctions.TruncateTime(applicationDate)
-                            && d.LOANID == loanId).Sum(a => a.PERIODPRINCIPALAMOUNT)/// add repaymentpostedstatus = false after scaffording
-                            select sumPrincipalAmount;
-            var accruedPrincipal = principal.FirstOrDefault();
+            var loan = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
+            var loanScheDaily = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.TERMLOANID == loanId && x.DATE == applicationDate);
+            var loanSchePeriodic = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.TBL_LOAN.TERMLOANID == loanId 
+            && x.PAYMENTDATE >= applicationDate && x.PAYMENTDATE <= systemDate  && x.PAYMENTNUMBER != 0).OrderBy(x => x.PERIODICSCHEDULEID);
+            decimal principalOutStandingBalance = loan.OUTSTANDINGPRINCIPAL;
+            var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID);
+            decimal accruedInterest = loanScheDaily.FirstOrDefault().ACCRUEDINTEREST;
+            int Count = loanSchePeriodic.Count();
+            accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
+            principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
+            decimal pastDue = decimal.Round((loan.PASTDUEINTEREST + loan.INTERESTONPASTDUEINTEREST + loan.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
+            decimal totalamount = (accruedInterest + principalOutStandingBalance + pastDue);
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            if (Count < 1 && applicationDate == systemDate)
+            {
+                //inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal"));
 
-            inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                //inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Principal Balance Reversal"));
 
-            inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedPrincipal, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
+               // financeTransaction.PostTransaction(inputTransactions);
+            }
+            else if(Count < 1 && applicationDate <= systemDate)
+            {
+                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal"));
 
-            financeTransaction.PostTransaction(inputTransactions);
+                //inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Principal Balance Reversal"));
 
+                financeTransaction.PostTransaction(inputTransactions);
+            }
+            else
+            {
+                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal"));
 
+                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Principal Balance Reversal"));
+
+                financeTransaction.PostTransaction(inputTransactions);
+            }
 
             ArchiveLoan(loanId, loanId);/////loanId change this to OperationId
             ArchivePeriodicSchedule(loanId);
@@ -5548,7 +5553,7 @@ namespace FintrakBanking.Repositories.Credit
             this.context.TBL_LOAN_SCHEDULE_DAILY.AddRange(tblDailySchedule); ////change to Temp table
             context.SaveChanges();
             //----------update loan details -----------------------------------
-            var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
+            //var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
             loan.MATURITYDATE = periodicSchedule.Max(x => x.paymentDate);
             loan.PRINCIPALNUMBEROFINSTALLMENT = periodicSchedule.Count() - 1;
             loan.INTERESTNUMBEROFINSTALLMENT = loan.PRINCIPALNUMBEROFINSTALLMENT;
