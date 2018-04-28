@@ -763,7 +763,7 @@ namespace FintrakBanking.ReportObjects
                                interestRateChange = 0,
                                interestToDate = 0,
                               accountPayTo = context.TBL_CASA.Where(o=>o.ACCOUNTSTATUSID==c.CASAACCOUNTID).Select(o=>o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-                              accountReceiveFrom = context.TBL_CASA.Where(o => o.ACCOUNTSTATUSID == c.CASAACCOUNTID2).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                              //accountReceiveFrom = context.TBL_CASA.Where(o => o.ACCOUNTSTATUSID == c.CASAACCOUNTID2).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                               naration = "",
                               remark ="",
                               current="",

@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CASAACCOUNTID { get; set; }
 
+        public int? CASAACCOUNTID2 { get; set; }
+
         public short BRANCHID { get; set; }
 
         public short SUBSECTORID { get; set; }

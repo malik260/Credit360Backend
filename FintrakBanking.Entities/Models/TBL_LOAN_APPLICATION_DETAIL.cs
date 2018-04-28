@@ -91,6 +91,12 @@ namespace FintrakBanking.Entities.Models
         [StringLength(2000)]
         public string REPAYMENTSCHEDULE { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime? EFFECTIVEDATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? EXPIRYDATE { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
