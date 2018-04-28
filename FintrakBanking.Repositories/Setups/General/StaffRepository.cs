@@ -1451,6 +1451,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if (rowSuccess && excelRowPosition > 1)
                 {
+                    staffRowData.customerSensitivityLevelId = (short)CustomerSensitivityLevelENum.Negligible;
+                    staffRowData.JobTitleId = context.TBL_STAFF_JOBTITLE.FirstOrDefault().JOBTITLEID;
                     staffRowData.errorMessage = "Success";
                     staffInfo.Add(staffRowData);
                 }
@@ -1462,9 +1464,10 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 staffInfoRow.createdBy = model.createdBy;
                 staffInfoRow.companyId = model.companyId;
-                staffInfoRow.BranchId = model.branchId;
+                staffInfoRow.BranchId = model.userBranchId;
                 staffInfoRow.applicationUrl = model.applicationUrl;
                 staffInfoRow.userIPAddress = model.userIPAddress;
+                staffInfoRow.applicationUrl = model.applicationUrl;
 
                 staffBulkFeedbackViewModel.committiedRows = staffInfo;
                 staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
@@ -1535,6 +1538,7 @@ namespace FintrakBanking.Repositories.Setups.General
             auditTrail.AddAuditTrail(audit);
             context.TBL_TEMP_STAFF.Add(staff);
 
+            var output = context.SaveChanges() > 0;
 
             workflow.StaffId = staffModel.createdBy;
             workflow.CompanyId = staffModel.companyId;
@@ -1546,7 +1550,9 @@ namespace FintrakBanking.Repositories.Setups.General
             workflow.ExternalInitialization = true;
             workflow.LogActivity();
 
-            return context.SaveChanges() > 0;
+            context.SaveChanges();
+
+            return output;
         }
 
         #region Staff Signature 
