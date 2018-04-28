@@ -740,7 +740,13 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_ARCHIVE)
                 .WithRequired(e => e.TBL_CASA)
+                .HasForeignKey(e => e.CASAACCOUNTID)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CASA>()
+                .HasMany(e => e.TBL_LOAN_ARCHIVE1)
+                .WithOptional(e => e.TBL_CASA1)
+                .HasForeignKey(e => e.CASAACCOUNTID2);
 
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_CONTINGENT)
@@ -755,29 +761,23 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_REVOLVING_ARCHIVE)
                 .WithRequired(e => e.TBL_CASA)
-                .HasForeignKey(e => e.CASAACCOUNTID)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CASA>()
-                .HasMany(e => e.TBL_LOAN_REVOLVING_ARCHIVE1)
-                .WithOptional(e => e.TBL_CASA1)
-                .HasForeignKey(e => e.CASAACCOUNTID2);
 
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_REVOLVING)
                 .WithRequired(e => e.TBL_CASA)
-                .HasForeignKey(e => e.CASAACCOUNTID)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CASA>()
-                .HasMany(e => e.TBL_LOAN_REVOLVING1)
-                .WithOptional(e => e.TBL_CASA1)
-                .HasForeignKey(e => e.CASAACCOUNTID2);
 
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN)
                 .WithRequired(e => e.TBL_CASA)
+                .HasForeignKey(e => e.CASAACCOUNTID)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CASA>()
+                .HasMany(e => e.TBL_LOAN1)
+                .WithOptional(e => e.TBL_CASA1)
+                .HasForeignKey(e => e.CASAACCOUNTID2);
 
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_TEMP_LOAN)
@@ -3899,14 +3899,6 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_REVOLVING>()
-                .Property(e => e.DISBURSED_AMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
-                .Property(e => e.INTEREST_AMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_LOAN_REVOLVING>()
                 .Property(e => e.PASTDUEPRINCIPAL)
                 .HasPrecision(19, 4);
 
@@ -3937,14 +3929,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_REVOLVING_ARCHIVE>()
                 .Property(e => e.OVERDRAFTLIMIT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_LOAN_REVOLVING_ARCHIVE>()
-                .Property(e => e.DISBURSED_AMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_LOAN_REVOLVING_ARCHIVE>()
-                .Property(e => e.INTEREST_AMOUNT)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_SCHEDULE_CATEGORY>()

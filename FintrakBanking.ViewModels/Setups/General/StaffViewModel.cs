@@ -10,8 +10,10 @@ namespace FintrakBanking.ViewModels.Setups.General
     {
        
         public IQueryable<DepartmentViewModel> departmentUnits;
-        public string supervisorStaffName;
-        public string errorMessage;
+        public string supervisorStaffName { get; set; }
+        public string message { get; set; }
+        public string staffRoleCode { get; set; }
+        public string branchCode { get; set; }
 
         public int? supervisorStaffId { get; set; }
 

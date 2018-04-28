@@ -40,6 +40,8 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }
 
+        public bool ISPOLICYAPPROVAL { get; set; }
+
         public int? LASTUPDATEDBY { get; set; }
 
         public DateTime? DATETIMECREATED { get; set; }

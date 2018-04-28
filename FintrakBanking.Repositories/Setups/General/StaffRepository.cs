@@ -1373,26 +1373,36 @@ namespace FintrakBanking.Repositories.Setups.General
                             if (context.TBL_STAFF.Where(x=>x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x=>x.STAFFCODE == staffRowData.StaffCode).Any())
                             {
                                 rowSuccess = false;
-                                staffRowData.errorMessage = staffRowData.errorMessage + "Staff Code Already Exist. ";
+                                staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
                             }
                             break;
                         case "C":
                             var roleInfo = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE == cell.Value.ToString()).FirstOrDefault();
-                            if (roleInfo != null) staffRowData.staffRoleId = roleInfo.STAFFROLEID;
+                            if (roleInfo != null)
+                            {
+                                staffRowData.staffRoleId = roleInfo.STAFFROLEID;
+                                staffRowData.staffRoleName = roleInfo.STAFFROLENAME;
+                                staffRowData.staffRoleCode = cell.Value.ToString();
+                            }
                             else
                             {
                                 rowSuccess = false;
-                                staffRowData.errorMessage = staffRowData.errorMessage + $"The ROLECODE @  '{cellColumn}' does not exist in the role log. ";
+                                staffRowData.message = staffRowData.message + $"The ROLECODE @  '{cellColumn}' does not exist in the role log. ";
                                 //throw new Exception("The ROLECODE @" + cellColumn + " does not exist in the role log");
                             }
                             break;
                         case "D":
                             var branchInfo = context.TBL_BRANCH.Where(x => x.BRANCHCODE == cell.Value.ToString()).FirstOrDefault();
-                            if (branchInfo != null) staffRowData.BranchId = branchInfo.BRANCHID;
+                            if (branchInfo != null)
+                            {
+                                staffRowData.BranchId = branchInfo.BRANCHID;
+                                staffRowData.BranchName = branchInfo.BRANCHNAME;
+                                staffRowData.branchCode = cell.Value.ToString();
+                            }
                             else
                             {
                                 rowSuccess = false;
-                                staffRowData.errorMessage = staffRowData.errorMessage + $"the 'BRANCHCODE' @  '{cellColumn}' does not exist in the branch log";
+                                staffRowData.message = staffRowData.message + $"the 'BRANCHCODE' @  '{cellColumn}' does not exist in the branch log";
                                 //throw new Exception($"the 'BRANCHCODE' @" + cellColumn + " does not exist in the branch log");
                             }
                             break;
@@ -1401,7 +1411,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             if (staffRowData.FirstName == null)
                             {
                                 rowSuccess = false;
-                                staffRowData.errorMessage = staffRowData.errorMessage + $"Firstname cannot be null. ";
+                                staffRowData.message = staffRowData.message + $"Firstname cannot be null. ";
                             }
                             break;
                         case "F":
@@ -1409,7 +1419,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             if (staffRowData.LastName == null)
                             {
                                 rowSuccess = false;
-                                staffRowData.errorMessage = staffRowData.errorMessage + $"LastName cannot be null. ";
+                                staffRowData.message = staffRowData.message + $"LastName cannot be null. ";
                             }
                             break;
                         case "G":
@@ -1424,28 +1434,33 @@ namespace FintrakBanking.Repositories.Setups.General
                                 staffRowData.departmentUnitId = 10;
                             }
                             break;
-                        //case "M":
-                        //    var state = context.TBL_STATE.Where(x => x.STATECODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+                        case "I":
+                            var supervisor = context.TBL_STAFF.Where(x => x.STAFFCODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
 
-                        //    if (state != null) staffRowData.StateId = state.STATEID;
-                        //    else
-                        //    {
-                        //        rowSuccess = false;
-                        //        staffRowData.errorMessage = staffRowData.errorMessage + $"State Code @ '{cellColumn}' does not exist. ";
-                        //        //throw new Exception($"the 'State Code' @" + cellColumn + " does not exist.");
-                        //    }
-                        //    break;
-                        //case "O":
-                        //    var supervisor = context.TBL_STAFF.Where(x => x.STAFFCODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+                            if (supervisor != null)
+                            {
+                                staffRowData.staffId = supervisor.STAFFID;
+                                staffRowData.supervisorStaffName = supervisor.FIRSTNAME + " " + supervisor.MIDDLENAME + " " + supervisor.LASTNAME;
+                            }
+                            else
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + $"Supervisor Code @ '{cellColumn}' does not exist. ";
+                                // throw new Exception($"Supervisor @" + cellColumn + " does not exist.");
+                            }
+                            break;
+                            //case "M":
+                            //    var state = context.TBL_STATE.Where(x => x.STATECODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
 
-                        //    if (supervisor != null) staffRowData.staffId = supervisor.STAFFID;
-                        //    else
-                        //    {
-                        //        rowSuccess = false;
-                        //        staffRowData.errorMessage = staffRowData.errorMessage + $"Supervisor Code @ '{cellColumn}' does not exist. ";
-                        //        // throw new Exception($"Supervisor @" + cellColumn + " does not exist.");
-                        //    }
-                        //    break;
+                            //    if (state != null) staffRowData.StateId = state.STATEID;
+                            //    else
+                            //    {
+                            //        rowSuccess = false;
+                            //        staffRowData.errorMessage = staffRowData.errorMessage + $"State Code @ '{cellColumn}' does not exist. ";
+                            //        //throw new Exception($"the 'State Code' @" + cellColumn + " does not exist.");
+                            //    }
+                            //    break;
+
                     }
                 }
 
@@ -1453,7 +1468,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     staffRowData.customerSensitivityLevelId = (short)CustomerSensitivityLevelENum.Negligible;
                     staffRowData.JobTitleId = context.TBL_STAFF_JOBTITLE.FirstOrDefault().JOBTITLEID;
-                    staffRowData.errorMessage = "Success";
+                    staffRowData.message = "Success";
                     staffInfo.Add(staffRowData);
                 }
                 else if (!rowSuccess) failedStaffInfo.Add(staffRowData);
