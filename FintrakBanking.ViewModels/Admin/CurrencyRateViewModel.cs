@@ -9,6 +9,11 @@ namespace FintrakBanking.ViewModels.Admin
         public short currencyRateId { get; set; }
         public short currencyId { get; set; }
         public DateTime date { get; set; }
+
+        public short rateCodeId { get; set; }
+
+        public string rateCodeName { get; set; }
+
         public double buyingRate { get; set; }
         public short baseCurrencyId { get; set; }
         public double sellingRate { get; set; }

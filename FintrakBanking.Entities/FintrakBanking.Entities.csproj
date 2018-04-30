@@ -75,6 +75,7 @@
     <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
+    <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -157,7 +158,9 @@
     <Compile Include="Models\TBL_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_CREDIT_TEMPLATE.cs" />
     <Compile Include="Models\TBL_CURRENCY.cs" />
+    <Compile Include="Models\TBL_CURRENCY_EXCHANGERATE.cs" />
     <Compile Include="Models\TBL_CURRENCY_RATE.cs" />
+    <Compile Include="Models\TBL_CURRENCY_RATECODE.cs" />
     <Compile Include="Models\TBL_CUSTOMER.cs" />
     <Compile Include="Models\TBL_CUSTOMER_ACCOUNT_KYC_ITEM.cs" />
     <Compile Include="Models\TBL_CUSTOMER_ADDRESS.cs" />

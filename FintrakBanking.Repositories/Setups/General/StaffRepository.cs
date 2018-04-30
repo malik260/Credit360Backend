@@ -866,10 +866,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             }
 
-
-
-
-
             var staff = new TBL_TEMP_STAFF()
             {
                 FIRSTNAME = staffModel.FirstName,
@@ -888,7 +884,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
                 DATEOFBIRTH = staffModel.DateOfBirth,
                 DATETIMECREATED = DateTime.Now,
-                //DEPARTMENTID = staffModel.DepartmentId,
                 DEPARTMENTUNITID = staffModel.departmentUnitId,
                 EMAIL = staffModel.Email,
                 EMAILOFNOK = staffModel.EmailOfNok,
@@ -1294,7 +1289,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
 
-        private string StoredTicket(string filename)
+        private string StoredFilePath(string filename)
         {
             CreditBureauHelp helper = new CreditBureauHelp();
 
@@ -1324,16 +1319,19 @@ namespace FintrakBanking.Repositories.Setups.General
             //}
         }
 
-        public List<StaffInfoViewModel> UploadStaffData(StaffDocumentViewModel model, byte[] file)
+        public staffBulkFeedbackViewModel UploadStaffData(StaffDocumentViewModel model, byte[] file)
         {
             var staffInfo = new List<StaffInfoViewModel>();
-            // Loads a spreadsheet from a file with the specified path
 
-            // If using Professional version, put your serial key below.
+            var failedStaffInfo = new List<StaffInfoViewModel>();
+
+            var staffBulkFeedbackViewModel = new staffBulkFeedbackViewModel();
+
+            // Loads a spreadsheet from a file with the specified path
             SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5"); //SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
 
             string path = "_" + model.createdBy + "." + model.fileExtension;
-            path = StoredTicket(path);
+            path = StoredFilePath(path);
             File.WriteAllBytes(path, file.ToArray());
 
             ExcelFile ef = ExcelFile.Load(path);
@@ -1343,6 +1341,7 @@ namespace FintrakBanking.Repositories.Setups.General
             CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
             for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
             {
+                var rowSuccess = true;
                 int excelRowPosition = 1;
                 StaffInfoViewModel staffRowData = new StaffInfoViewModel();
                 for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
@@ -1354,148 +1353,222 @@ namespace FintrakBanking.Repositories.Setups.General
                     string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
                     excelRowPosition = Convert.ToInt32(cellRow);
                     if (Convert.ToInt32(cellRow) == 1) continue;
-
+                    
                     switch (cellColumn)
                     {
                         case "A":
-                            staffRowData.StaffCode = cell.Value.ToString();
-                            break;
+                            
+                            // staffRowData.user.username = cell.Value.ToString();
+                            // staffRowData.user.password = cell.Value.ToString();
+                            //if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
+                            //{
+                            //    rowSuccess = false;
+                            //    staffRowData.errorMessage = staffRowData.errorMessage + "Staff Code Already Exist. ";
+                            //}
+                            //break;
                         case "B":
-                            var roleInfo = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE == cell.Value.ToString()).FirstOrDefault();
-                            if (roleInfo != null) staffRowData.staffRoleId = roleInfo.STAFFROLEID;
-                            else { throw new Exception("the ROLECODE @" + cellColumn + " does not exist in the role log"); }
+                            staffRowData.StaffCode = cell.Value.ToString();
+                            // staffRowData.user.username = cell.Value.ToString();
+                            // staffRowData.user.password = cell.Value.ToString();
+                            if (context.TBL_STAFF.Where(x=>x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x=>x.STAFFCODE == staffRowData.StaffCode).Any())
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
+                            }
                             break;
                         case "C":
-                            var branchInfo = context.TBL_BRANCH.Where(x => x.BRANCHCODE == cell.Value.ToString()).FirstOrDefault();
-                            if (branchInfo != null) staffRowData.BranchId = branchInfo.BRANCHID;
-                            else { throw new Exception($"the 'BRANCHCODE' @" + cellColumn + " does not exist in the branch log"); }
+                            var roleInfo = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE == cell.Value.ToString()).FirstOrDefault();
+                            if (roleInfo != null)
+                            {
+                                staffRowData.staffRoleId = roleInfo.STAFFROLEID;
+                                staffRowData.staffRoleName = roleInfo.STAFFROLENAME;
+                                staffRowData.staffRoleCode = cell.Value.ToString();
+                            }
+                            else
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + $"The ROLECODE @  '{cellColumn}' does not exist in the role log. ";
+                                //throw new Exception("The ROLECODE @" + cellColumn + " does not exist in the role log");
+                            }
                             break;
                         case "D":
-                            staffRowData.FirstName = cell.Value.ToString();
+                            var branchInfo = context.TBL_BRANCH.Where(x => x.BRANCHCODE == cell.Value.ToString()).FirstOrDefault();
+                            if (branchInfo != null)
+                            {
+                                staffRowData.BranchId = branchInfo.BRANCHID;
+                                staffRowData.BranchName = branchInfo.BRANCHNAME;
+                                staffRowData.branchCode = cell.Value.ToString();
+                            }
+                            else
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + $"the 'BRANCHCODE' @  '{cellColumn}' does not exist in the branch log";
+                                //throw new Exception($"the 'BRANCHCODE' @" + cellColumn + " does not exist in the branch log");
+                            }
                             break;
                         case "E":
-                            staffRowData.LastName = cell.Value.ToString();
+                            staffRowData.FirstName = cell.Value.ToString();
+                            if (staffRowData.FirstName == null)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + $"Firstname cannot be null. ";
+                            }
                             break;
                         case "F":
-                            staffRowData.MiddleName = cell.Value.ToString();
+                            staffRowData.LastName = cell.Value.ToString();
+                            if (staffRowData.LastName == null)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + $"LastName cannot be null. ";
+                            }
                             break;
                         case "G":
-                            var jobTitle = context.TBL_STAFF_JOBTITLE.Where(x => x.JOBTITLENAME.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
-                            if (jobTitle != null) staffRowData.JobTitleId = jobTitle.JOBTITLEID;
-                            else { throw new Exception($"the 'Sensitivity Level' @" + cellColumn + " does not exist."); }
+                            staffRowData.MiddleName = cell.Value.ToString();
                             break;
                         case "H":
-                            var Sensitivity = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.Where(x => x.DESCRIPTION.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
-                            if (Sensitivity != null) staffRowData.customerSensitivityLevelId = Sensitivity.CUSTOMERSENSITIVITYLEVELID;
-                            else { throw new Exception($"the 'Sensitivity Level' @" + cellColumn + " does not exist."); }
+                            var unit = context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTUNITNAME.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+
+                            if (unit != null) staffRowData.departmentUnitId = unit.DEPARTMENTUNITID;
+                            else
+                            {
+                                staffRowData.departmentUnitId = 10;
+                            }
                             break;
                         case "I":
-                            var department = context.TBL_DEPARTMENT.Where(x => x.DEPARTMENTCODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
-                            if (department != null) staffRowData.DepartmentId = department.DEPARTMENTID;
-                            else { throw new Exception($"the 'Department Code' @" + cellColumn + " does not exist."); }
-                            break;
-                        case "J":
-                            var unit = context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTUNITNAME.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
-                            if (unit != null) staffRowData.departmentUnitId = unit.DEPARTMENTUNITID;
-                            else { throw new Exception($"the 'Department Code' @" + cellColumn + " does not exist."); }
-                            break;
-                        case "K":
-                            if (cell.Value.ToString().ToLower() == "yes") staffRowData.npl_LimitExceeded = true;
-                            else if (cell.Value.ToString().ToLower() == "no") staffRowData.npl_LimitExceeded = false;
-                            else { throw new Exception($"the value at column " + cellColumn + " must be a 'Yes' or 'No'."); }
-                            break;
-                        case "N":
-                            var state = context.TBL_STATE.Where(x => x.STATECODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
-                            if (state != null) staffRowData.StateId = state.STATEID;
-                            else { throw new Exception($"the 'State Code' @" + cellColumn + " does not exist."); }
-                            break;
-                        case "O":
-                            staffRowData.CityId = (int)cell.Value;
-                            break;
-                        case "P":
                             var supervisor = context.TBL_STAFF.Where(x => x.STAFFCODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
-                            if (supervisor != null) staffRowData.staffId = supervisor.STAFFID;
-                            else { throw new Exception($"the 'State Code' @" + cellColumn + " does not exist."); }
+
+                            if (supervisor != null)
+                            {
+                                staffRowData.staffId = supervisor.STAFFID;
+                                staffRowData.supervisorStaffName = supervisor.FIRSTNAME + " " + supervisor.MIDDLENAME + " " + supervisor.LASTNAME;
+                            }
+                            else
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + $"Supervisor Code @ '{cellColumn}' does not exist. ";
+                                // throw new Exception($"Supervisor @" + cellColumn + " does not exist.");
+                            }
                             break;
-                        case "Q":
-                            staffRowData.Phone = cell.Value.ToString();
-                            break;
-                        case "R":
-                            staffRowData.Email = cell.Value.ToString();
-                            break;
-                        case "S":
-                            staffRowData.Address = cell.Value.ToString();
-                            break;
-                        case "T":
-                            staffRowData.DateOfBirth = (DateTime)cell.Value;
-                            break;
-                        case "U":
-                            staffRowData.Gender = cell.Value.ToString();
-                            break;
-                        case "V":
-                            staffRowData.NameOfNok = cell.Value.ToString();
-                            break;
-                        case "W":
-                            staffRowData.PhoneOfNok = cell.Value.ToString();
-                            break;
-                        case "X":
-                            staffRowData.EmailOfNok = cell.Value.ToString();
-                            break;
-                        case "Y":
-                            staffRowData.AddressOfNok = cell.Value.ToString();
-                            break;
-                        case "Z":
-                            staffRowData.GenderOfNok = cell.Value.ToString();
-                            break;
-                        case "AA":
-                            staffRowData.NokrelationShip = cell.Value.ToString();
-                            break;
-                        case "AB":
-                            staffRowData.Comment = cell.Value.ToString();
-                            break;
-                        case "AC":
-                            staffRowData.MisInfoCode = cell.Value.ToString();
-                            break;
-                            //default:
-                            //    staffInfo[Convert.ToInt32(cellRow)].LastName = cell.Value.ToString();
+                            //case "M":
+                            //    var state = context.TBL_STATE.Where(x => x.STATECODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+
+                            //    if (state != null) staffRowData.StateId = state.STATEID;
+                            //    else
+                            //    {
+                            //        rowSuccess = false;
+                            //        staffRowData.errorMessage = staffRowData.errorMessage + $"State Code @ '{cellColumn}' does not exist. ";
+                            //        //throw new Exception($"the 'State Code' @" + cellColumn + " does not exist.");
+                            //    }
                             //    break;
 
                     }
                 }
-                if (excelRowPosition > 1) staffInfo.Add(staffRowData);
+
+                if (rowSuccess && excelRowPosition > 1)
+                {
+                    staffRowData.customerSensitivityLevelId = (short)CustomerSensitivityLevelENum.Negligible;
+                    staffRowData.JobTitleId = context.TBL_STAFF_JOBTITLE.FirstOrDefault().JOBTITLEID;
+                    staffRowData.message = "Success";
+                    staffInfo.Add(staffRowData);
+                }
+                else if (!rowSuccess) failedStaffInfo.Add(staffRowData);
 
             };
 
             foreach (var staffInfoRow in staffInfo)
             {
-                var staffObj = new TBL_TEMP_STAFF()
-                {
-                    //DEPARTMENTID = staffInfoRow.DepartmentId,
-                    DEPARTMENTUNITID = staffInfoRow.departmentUnitId,
-                    STAFFCODE = staffInfoRow.StaffCode,
-                    STAFFROLEID = staffInfoRow.staffRoleId,
-                    BRANCHID = staffInfoRow.BranchId,
-                    FIRSTNAME = staffInfoRow.FirstName,
-                    LASTNAME = staffInfoRow.LastName,
-                    MIDDLENAME = staffInfoRow.MiddleName,
-                    JOBTITLEID = staffInfoRow.JobTitleId,
-                    CUSTOMERSENSITIVITYLEVELID = staffInfoRow.customerSensitivityLevelId,
-                    COMPANYID = model.companyId,
-                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                    ISCURRENT = true
-                };
-                context.TBL_TEMP_STAFF.Add(staffObj);
-            };
+                staffInfoRow.createdBy = model.createdBy;
+                staffInfoRow.companyId = model.companyId;
+                staffInfoRow.BranchId = model.userBranchId;
+                staffInfoRow.applicationUrl = model.applicationUrl;
+                staffInfoRow.userIPAddress = model.userIPAddress;
+                staffInfoRow.applicationUrl = model.applicationUrl;
 
-            if (context.SaveChanges() > 0) return staffInfo;
-            else
-            {
-                staffInfo = null;
-                return staffInfo;
-            }
+                staffBulkFeedbackViewModel.committiedRows = staffInfo;
+                staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
+
+                var response = AddSimpleTempStaff(staffInfoRow);
+                if (!response)
+                {
+                    staffBulkFeedbackViewModel.discardedRows.Add(staffInfoRow);
+                    staffBulkFeedbackViewModel.committiedRows.Remove(staffInfoRow);
+                    staffBulkFeedbackViewModel.failureCount = staffBulkFeedbackViewModel.failureCount + 1;
+                    staffBulkFeedbackViewModel.successCount = staffBulkFeedbackViewModel.successCount - 1;
+                }
+                
+            };
+            return staffBulkFeedbackViewModel;
         }
 
+        public bool AddSimpleTempStaff(StaffInfoViewModel staffModel)
+        {
+            var staff = new TBL_TEMP_STAFF()
+            {
+                FIRSTNAME = staffModel.FirstName,
+                MIDDLENAME = staffModel.MiddleName,
+                COMPANYID = staffModel.companyId,
+                LASTNAME = staffModel.LastName,
+                STAFFCODE = StaticHelpers.GetUniqueKey(6),
+                JOBTITLEID = staffModel.JobTitleId,
+                STAFFROLEID = staffModel.staffRoleId,
+                SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
+                ADDRESS = staffModel.Address,
+                ADDRESSOFNOK = staffModel.AddressOfNok,
+                BRANCHID = staffModel.BranchId,
+                COMMENT = staffModel.Comment,
+                CREATEDBY = staffModel.createdBy,
+                CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
+                DATEOFBIRTH = staffModel.DateOfBirth,
+                DATETIMECREATED = DateTime.Now,
+                DEPARTMENTUNITID = staffModel.departmentUnitId,
+                EMAIL = staffModel.Email,
+                EMAILOFNOK = staffModel.EmailOfNok,
+                GENDER = staffModel.Gender,
+                GENDEROFNOK = staffModel.GenderOfNok,
+                MISINFOID = staffModel.MisinfoId,
+                NAMEOFNOK = staffModel.NameOfNok,
+                NOKRELATIONSHIP = staffModel.NokrelationShip,
+                PHONE = staffModel.Phone,
+                PHONEOFNOK = staffModel.PhoneOfNok,
+                STATEID = staffModel.StateId,
+                CITYID = staffModel.CityId,
+                STAFFSIGNATURE = staffModel.StaffSignature,
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                ISCURRENT = true,
 
+            };
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CreateStaffInitiated,
+                STAFFID = staffModel.createdBy,
+                BRANCHID = (short)staffModel.BranchId,
+                DETAIL = $"Initiated Staff Creation for '{staffModel?.StaffFullName}' with code'{staffModel?.StaffCode}'",
+                IPADDRESS = staffModel.userIPAddress,
+                URL = staffModel.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            auditTrail.AddAuditTrail(audit);
+            context.TBL_TEMP_STAFF.Add(staff);
+
+            var output = context.SaveChanges() > 0;
+
+            workflow.StaffId = staffModel.createdBy;
+            workflow.CompanyId = staffModel.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.TargetId = staff.TEMPSTAFFID;
+            workflow.Comment = "New Staff Creation";
+            workflow.OperationId = (int)OperationsEnum.StaffCreation;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
+
+            context.SaveChanges();
+
+            return output;
+        }
 
         #region Staff Signature 
 

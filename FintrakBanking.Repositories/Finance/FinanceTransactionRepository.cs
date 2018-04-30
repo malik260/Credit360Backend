@@ -517,8 +517,8 @@ namespace FintrakBanking.Repositories.Finance
                 else
                 {
                     //DateTime date = generalSetup.GetApplicationDate().Date;
-                    var rateInfo = (from x in this.context.TBL_CURRENCY_RATE
-                                    where x.CURRENCYID == currencyId && x.DATE == date.Date
+                    var rateInfo = (from x in this.context.TBL_CURRENCY_EXCHANGERATE
+                                    where x.CURRENCYID == currencyId && x.DATE == date.Date && x.RATECODEID == 1
                                     select x).FirstOrDefault();
 
                     if (rateInfo == null)
@@ -528,8 +528,8 @@ namespace FintrakBanking.Repositories.Finance
                     {
                         baseCurrencyId = rateInfo.BASECURRENCYID,
                         currencyId = rateInfo.CURRENCYID,
-                        buyingRate = rateInfo.BUYINGRATE,
-                        sellingRate = rateInfo.SELLINGRATE,
+                        buyingRate = rateInfo.EXCHANGERATE,
+                        sellingRate = rateInfo.EXCHANGERATE,
                         date = rateInfo.DATE,
                         isBaseCurrency = false
                     };

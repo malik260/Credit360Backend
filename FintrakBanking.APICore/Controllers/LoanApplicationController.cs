@@ -334,7 +334,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("update-loan-application")]
+        [Route("loan-application-for-cam")]
         public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] LoanApplicationUpdateViewModel loan)
         {
             try
@@ -350,7 +350,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("loan-application-for-cam")]
+        [Route("update-loan-application")]
         public HttpResponseMessage UpdateLoanApplicationDetails([FromBody]LoanApplicationDatailViewModel entity)
         {
             try

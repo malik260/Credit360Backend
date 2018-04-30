@@ -510,7 +510,7 @@ namespace FintrakBanking.Repositories.Credit
                     collateralValue = x.COLLATERALVALUE,
                     camRefNumber = x.CAMREFNUMBER,
                     allowSharing = x.ALLOWSHARING,
-                    isLocationBased = x.ISLOCATIONBASED,
+                    isLocationBased = (bool)x.ISLOCATIONBASED,
                     valuationCycle = x.VALUATIONCYCLE,
                     haircut = x.HAIRCUT,
                     approvalStatus = x.APPROVALSTATUS,
@@ -548,7 +548,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralValue = x.COLLATERALVALUE,
                 camRefNumber = x.CAMREFNUMBER,
                 allowSharing = x.ALLOWSHARING,
-                isLocationBased = x.ISLOCATIONBASED,
+                isLocationBased = (bool)x.ISLOCATIONBASED,
                 valuationCycle = x.VALUATIONCYCLE,
                 haircut = x.HAIRCUT,
                 approvalStatus = x.APPROVALSTATUS,
@@ -1502,7 +1502,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 COLLATERALCUSTOMERID = collateralId,
                 LOANAPPLICATIONID = entity.applicationId,
-                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                //LOANAPPLICATIONDETAILID = entity.applicationDetailId,
                 CREATEDBY = entity.staffId,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
@@ -1518,7 +1518,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                 collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                 loanApplicationId = c.LOANAPPLICATIONID,
-                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                 haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                 customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
             }).OrderByDescending(x => x.loanAppCollateralId);
@@ -1544,7 +1544,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                 collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                 loanApplicationId = c.LOANAPPLICATIONID,
-                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                 haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                 customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
             }).OrderByDescending(x => x.loanAppCollateralId);
@@ -1581,7 +1581,7 @@ namespace FintrakBanking.Repositories.Credit
                     collateralCode = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                     collateralValue = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                     allowSharing = x.Mapping.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                    isLocationBased = x.Mapping.TBL_COLLATERAL_CUSTOMER.ISLOCATIONBASED,
+                    isLocationBased = (bool)x.Mapping.TBL_COLLATERAL_CUSTOMER.ISLOCATIONBASED,
                     valuationCycle = x.Mapping.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
                     hairCut = x.Mapping.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                     collateralTypeId = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
@@ -1625,7 +1625,7 @@ namespace FintrakBanking.Repositories.Credit
                     collateralCode = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                     collateralValue = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                     allowSharing = x.Mapping.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                    isLocationBased = x.Mapping.TBL_COLLATERAL_CUSTOMER.ISLOCATIONBASED,
+                    isLocationBased = (bool)x.Mapping.TBL_COLLATERAL_CUSTOMER.ISLOCATIONBASED,
                     valuationCycle = x.Mapping.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
                     hairCut = x.Mapping.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                     collateralTypeId = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
@@ -1734,7 +1734,7 @@ namespace FintrakBanking.Repositories.Credit
                     collateralCode = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                     collateralValue = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                     allowSharing = x.Mapping.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                    isLocationBased = x.Mapping.TBL_COLLATERAL_CUSTOMER.ISLOCATIONBASED,
+                    isLocationBased = (bool)x.Mapping.TBL_COLLATERAL_CUSTOMER.ISLOCATIONBASED,
                     valuationCycle = x.Mapping.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
                     hairCut = x.Mapping.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                     collateralTypeId = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
@@ -1772,7 +1772,7 @@ namespace FintrakBanking.Repositories.Credit
                         currencyCode = o.TBL_CURRENCY.CURRENCYCODE,
                         collateralCode = o.COLLATERALCODE,
                         allowSharing = o.ALLOWSHARING,
-                        isLocationBased = o.ISLOCATIONBASED,
+                        isLocationBased = (bool)o.ISLOCATIONBASED,
                         valuationCycle = o.VALUATIONCYCLE,
                         haircut = o.HAIRCUT,
                     })
@@ -3098,7 +3098,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralValue = x.COLLATERALVALUE,
                 camRefNumber = x.CAMREFNUMBER,
                 allowSharing = x.ALLOWSHARING,
-                isLocationBased = x.ISLOCATIONBASED,
+                isLocationBased = (bool)x.ISLOCATIONBASED,
                 valuationCycle = x.VALUATIONCYCLE,
                 haircut = x.HAIRCUT,
                 approvalStatus = x.APPROVALSTATUS,
@@ -3395,9 +3395,9 @@ namespace FintrakBanking.Repositories.Credit
                             select new CollateralHistory
                             {
                                 customerName = c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
-                                usedBy = c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
+                               // usedBy = c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
                                 loanRef = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                expirationDate = c.TBL_LOAN_APPLICATION.EXPIRYDATE.ToString(),
+                                expirationDate = c.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().EXPIRYDATE.ToString(),
                                 collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                                 amountInUse = 0,
                                 collateralBalance = 0,
@@ -3428,10 +3428,10 @@ namespace FintrakBanking.Repositories.Credit
             return stock;
         }
 
-        public string FlagExpiredItemPolicies(DateTime currentDate)
+        public bool CheckForExpiredItemPolicies(DateTime currentDate)
         {
             var ExpiredPolicies = from x in context.TBL_COLLATERAL_ITEM_POLICY
-                                  where x.ENDDATE > currentDate && x.HASEXPIRED != false
+                                  where x.ENDDATE > currentDate && x.HASEXPIRED == false
                                   select x;
             if (ExpiredPolicies != null)
             {
@@ -3441,15 +3441,9 @@ namespace FintrakBanking.Repositories.Credit
                     x.DATETIMEDELETED = DateTime.Now;
                 }
             }
-            try
-            {
-                if (context.SaveChanges() > 0) { return "Expired Insurance Policies has been update on : " + DateTime.Now; } else { return "No available Expired Insurance Policies, No update made"; };
 
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            if (context.SaveChanges() > 0) { return true; } else { return false; }
+           
         }
 
         // immovableProperty collateral

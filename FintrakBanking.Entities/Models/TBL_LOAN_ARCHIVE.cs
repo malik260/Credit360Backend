@@ -39,6 +39,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CASAACCOUNTID { get; set; }
 
+        public int? CASAACCOUNTID2 { get; set; }
+
         public short BRANCHID { get; set; }
 
         public short CURRENCYID { get; set; }
@@ -184,6 +186,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
+
+        public virtual TBL_CASA TBL_CASA1 { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 

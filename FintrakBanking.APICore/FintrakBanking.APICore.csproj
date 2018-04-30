@@ -69,9 +69,6 @@
     <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.SqlServerCompact.6.2.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
     </Reference>
-    <Reference Include="GemBox.Spreadsheet, Version=37.3.30.1189, Culture=neutral, PublicKeyToken=b1b72c69714d4847, processorArchitecture=MSIL">
-      <HintPath>..\packages\GemBox.Spreadsheet.37.3.30.1189\lib\net30\GemBox.Spreadsheet.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.4.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
     </Reference>
@@ -382,6 +379,7 @@
     <Compile Include="Controllers\LoanDocumentController.cs" />
     <Compile Include="Controllers\LoanMarketController.cs" />
     <Compile Include="Controllers\LoanOperationController.cs" />
+    <Compile Include="Controllers\LoanPerformanceController.cs" />
     <Compile Include="Controllers\LoanPrincipalController.cs" />
     <Compile Include="Controllers\LoanReviewApplicationController.cs" />
     <Compile Include="Controllers\MisInfoController.cs" />
