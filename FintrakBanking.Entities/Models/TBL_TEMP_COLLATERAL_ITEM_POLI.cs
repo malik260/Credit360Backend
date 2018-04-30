@@ -28,6 +28,8 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal SUMINSURED { get; set; }
 
+        public bool ISPOLICYAPPROVAL { get; set; }
+
         [Column(TypeName = "date")]
         public DateTime STARTDATE { get; set; }
 

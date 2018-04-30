@@ -94,5 +94,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddNewItemInsurancePolicy(InsurancePolicies entity);
 
         bool GoForApproval(ApprovalViewModel model);
+
+        List<InsurancePolicies> GetTempCollateralInsurancePoliciesWaitingForApproval(int staffId);
+
+        bool GoForPolicyApproval(ApprovalViewModel model);
     }
 }
