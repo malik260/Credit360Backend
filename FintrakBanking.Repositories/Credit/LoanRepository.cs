@@ -3363,8 +3363,8 @@ namespace FintrakBanking.Repositories.Credit
                                 subSectorName = d.TBL_SUB_SECTOR.NAME,
                                 sectorName = d.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                 applicationTenor = m.APPLICATIONTENOR,
-                                effectiveDate = (DateTime)m.EFFECTIVEDATE,
-                                expiryDate = (DateTime)m.EXPIRYDATE,
+                                effectiveDate = (DateTime)d.EFFECTIVEDATE,
+                                expiryDate = (DateTime)d.EXPIRYDATE,
                                 relationshipOfficerId = m.RELATIONSHIPOFFICERID,
                                 relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
                                 relationshipManagerId = m.RELATIONSHIPMANAGERID,
@@ -3559,8 +3559,8 @@ namespace FintrakBanking.Repositories.Credit
                             subSectorName = d.TBL_SUB_SECTOR.NAME,
                             sectorName = d.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                             applicationTenor = m.APPLICATIONTENOR,
-                            effectiveDate = (DateTime)m.EFFECTIVEDATE,
-                            expiryDate = (DateTime)m.EXPIRYDATE,
+                            effectiveDate = (DateTime)d.EFFECTIVEDATE,
+                            expiryDate = (DateTime)d.EXPIRYDATE,
 
                             currencyId = d.CURRENCYID,
                             currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
@@ -3688,8 +3688,8 @@ namespace FintrakBanking.Repositories.Credit
                             subSectorName = d.TBL_SUB_SECTOR.NAME,
                             sectorName = d.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                             applicationTenor = m.APPLICATIONTENOR,
-                            effectiveDate = (DateTime)m.EFFECTIVEDATE,
-                            expiryDate = (DateTime)m.EXPIRYDATE,
+                            effectiveDate = (DateTime)d.EFFECTIVEDATE,
+                            expiryDate = (DateTime)d.EXPIRYDATE,
                             relationshipOfficerId = m.RELATIONSHIPOFFICERID,
                             relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
                             relationshipManagerId = m.RELATIONSHIPMANAGERID,
@@ -3928,8 +3928,8 @@ namespace FintrakBanking.Repositories.Credit
                             subSectorName = d.TBL_SUB_SECTOR.NAME,
                             sectorName = d.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                             applicationTenor = m.APPLICATIONTENOR,
-                            effectiveDate = (DateTime)m.EFFECTIVEDATE,
-                            expiryDate = (DateTime)m.EXPIRYDATE,
+                            effectiveDate = (DateTime)d.EFFECTIVEDATE,
+                            expiryDate = (DateTime)d.EXPIRYDATE,
                             relationshipOfficerId = m.RELATIONSHIPOFFICERID,
                             relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
                             relationshipManagerId = m.RELATIONSHIPMANAGERID,
@@ -4280,7 +4280,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId)
+       public LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId)
         {
             try
             {

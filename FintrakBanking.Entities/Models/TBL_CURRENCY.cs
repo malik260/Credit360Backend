@@ -17,8 +17,8 @@ namespace FintrakBanking.Entities.Models
             TBL_CHART_OF_ACCOUNT_CURRENCY = new HashSet<TBL_CHART_OF_ACCOUNT_CURRENCY>();
             TBL_TEMP_CHART_OF_ACCOUNT_CUR = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT_CUR>();
             TBL_COLLATERAL_CUSTOMER = new HashSet<TBL_COLLATERAL_CUSTOMER>();
-            TBL_CURRENCY_RATE = new HashSet<TBL_CURRENCY_RATE>();
-            TBL_CURRENCY_RATE1 = new HashSet<TBL_CURRENCY_RATE>();
+            TBL_CURRENCY_EXCHANGERATE = new HashSet<TBL_CURRENCY_EXCHANGERATE>();
+            TBL_CURRENCY_EXCHANGERATE1 = new HashSet<TBL_CURRENCY_EXCHANGERATE>();
             TBL_DAILY_ACCRUAL = new HashSet<TBL_DAILY_ACCRUAL>();
             TBL_FINANCE_TRANSACTION = new HashSet<TBL_FINANCE_TRANSACTION>();
             TBL_LOAN_APPLICATION_DETL_INV = new HashSet<TBL_LOAN_APPLICATION_DETL_INV>();
@@ -73,10 +73,10 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_COLLATERAL_CUSTOMER> TBL_COLLATERAL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CURRENCY_RATE> TBL_CURRENCY_RATE { get; set; }
+        public virtual ICollection<TBL_CURRENCY_EXCHANGERATE> TBL_CURRENCY_EXCHANGERATE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CURRENCY_RATE> TBL_CURRENCY_RATE1 { get; set; }
+        public virtual ICollection<TBL_CURRENCY_EXCHANGERATE> TBL_CURRENCY_EXCHANGERATE1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_DAILY_ACCRUAL> TBL_DAILY_ACCRUAL { get; set; }

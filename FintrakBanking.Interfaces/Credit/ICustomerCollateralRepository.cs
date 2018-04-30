@@ -83,7 +83,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<StockCompanyViewModel> getStockPrice();
 
-        string FlagExpiredItemPolicies(DateTime currentDate);
+        bool CheckForExpiredItemPolicies(DateTime currentDate);
 
         List<CollateralViewModel> AddGuaranteeJoinCollateral(CollateralViewModel entity, byte[] bufer);
 
@@ -94,5 +94,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddNewItemInsurancePolicy(InsurancePolicies entity);
 
         bool GoForApproval(ApprovalViewModel model);
+
+        List<InsurancePolicies> GetTempCollateralInsurancePoliciesWaitingForApproval(int staffId);
+
+        bool GoForPolicyApproval(ApprovalViewModel model);
     }
 }

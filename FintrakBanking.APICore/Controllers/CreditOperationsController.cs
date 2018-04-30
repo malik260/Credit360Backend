@@ -92,6 +92,28 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("loan-remedial-operationtype")]
+        public HttpResponseMessage GetRemedialOperationType()
+        {
+            try
+            {
+                var data = repo.GetRemedialOperationType();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("loan-operationtype/")]
         public HttpResponseMessage GetOperationTypeByLoanId(int productTypeId, int scheduleTypeId)
         {
@@ -244,28 +266,6 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
-
-        //[HttpGet]
-        //[Route("loan-guarantor/")]
-        //public HttpResponseMessage GetLoanGuarantor(int loanId)
-        //{
-        //    try
-        //    {
-        //        var data = loanRepo.GetLoanGuarantors(loanId);
-        //        if (data == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = false, message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = true, result = data });
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //              new { success = false, message = ex.Message });
-        //    }
-        //}
 
         [HttpGet]
         [Route("loan-convenant/")]

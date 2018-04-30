@@ -57,12 +57,6 @@ namespace FintrakBanking.Entities.Models
 
         public int APPLICATIONTENOR { get; set; }
 
-        [Column(TypeName = "date")]
-        public DateTime? EFFECTIVEDATE { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? EXPIRYDATE { get; set; }
-
         public int OPERATIONID { get; set; }
 
         public short? PRODUCTCLASSID { get; set; }

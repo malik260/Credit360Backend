@@ -47,6 +47,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? startDate { get; set; }
         public DateTime? expiryDate { get; set; }
         public InsurancePolicies insurancePolicies { get; set; }
+        public int policyId { get; set; }
 
         public List<InsurancePolicies> insurancePolicy { get; set; }
 
@@ -343,6 +344,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceType { get; set; }
         public bool hasExpired { get; set; }
         public int collateraalId { get; set; }
+        public string collateralCode { get; set; }
+        public string collateralType { get; set; }
+        public string collateralSubType { get; set; }
+        public decimal collateralValue { get; set; }
+        public int policyId { get; set; }
+        public int collateralTypeId { get; set; }
+        public short collateralSubTypeId { get; set; }
+        public string customerName { get; set; }
     }
 
    
