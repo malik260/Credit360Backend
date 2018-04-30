@@ -83,7 +83,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<StockCompanyViewModel> getStockPrice();
 
-        string CheckForExpiredItemPolicies(DateTime currentDate);
+        bool CheckForExpiredItemPolicies(DateTime currentDate)
 
         List<CollateralViewModel> AddGuaranteeJoinCollateral(CollateralViewModel entity, byte[] bufer);
 
