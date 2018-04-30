@@ -89,11 +89,14 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 catch (Exception ex)
                 {
+                    DeleteCollateral(collateralId);
+                    DeleteCollateralDocument(collateralId);
                     throw new Exception(ex.InnerException.ToString());
                 }
                 if (saved) { return true; }
 
                 DeleteCollateral(collateralId);
+                DeleteCollateralDocument(collateralId);
             }
 
             return false;
@@ -249,6 +252,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             var collateral = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId);
             collateral.DELETED = true; // audit here
+            context.SaveChanges();
+        }
+
+        private void DeleteCollateralDocument(int collateralId)
+        {
+            var collateral = documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Find(collateralId);
+            documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Remove(collateral); // audit here
             context.SaveChanges();
         }
 

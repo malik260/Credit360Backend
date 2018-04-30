@@ -324,6 +324,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         [HttpGet]
         [Route("collateral-guarantee/{targetId}")]
         public HttpResponseMessage GetCollaterGuaranteeFile(int targetId)
