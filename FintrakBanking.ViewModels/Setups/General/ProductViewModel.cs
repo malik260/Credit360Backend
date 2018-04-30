@@ -34,6 +34,7 @@ namespace FintrakBanking.ViewModels.Setups.General
     {
         public int? principalBalanceGl2;
         public string principalBalanceGl2Code;
+        public bool? requireCasaAccount;
 
         public int productId { get; set; }
         public short productTypeId { get; set; }
@@ -95,6 +96,13 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? cleanupPeriod { get; set; }
         public int? expiryPeriod { get; set; }
         public double? equityContribution { get; set; }
+
+        public double? collateralLCYLimit { get; set; }
+        public double? collateralFCYLimit { get; set; }
+        public decimal? customerLimit { get; set; }
+        public double? productLimit { get; set; }
+        public bool? invoiceBased { get; set; }
+        public bool? allowFundUsage { get; set; }
         public List<ProductCurrencyViewModel> currencies { get; set; }
 
         public List<ProductFeeViewModel> fees { get; set; }

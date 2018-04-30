@@ -40,7 +40,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         decimal GetAccountLeinAmountForCASA(string accountNumber);
 
-        IEnumerable<CollateralHistory> getCollateralHistory(short collateralID);
+        CollateralHistory getCollateralHistory(int collateralId);
         
 
         #endregion Collateral
@@ -83,16 +83,20 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<StockCompanyViewModel> getStockPrice();
 
-        string FlagExpiredItemPolicies(DateTime currentDate);
+        bool CheckForExpiredItemPolicies(DateTime currentDate);
 
         List<CollateralViewModel> AddGuaranteeJoinCollateral(CollateralViewModel entity, byte[] bufer);
 
         List<InsurancePolicies> GetCollateralInsurancePolicies(int collateralId);
 
-        void AddItemInsurancePolicy(int collateralId, CollateralViewModel entity);
+        void AddTempItemInsurancePolicy(int collateralId, CollateralViewModel entity);
 
         bool AddNewItemInsurancePolicy(InsurancePolicies entity);
 
         bool GoForApproval(ApprovalViewModel model);
+
+        List<InsurancePolicies> GetTempCollateralInsurancePoliciesWaitingForApproval(int staffId);
+
+        bool GoForPolicyApproval(ApprovalViewModel model);
     }
 }

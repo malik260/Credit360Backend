@@ -669,7 +669,7 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
                         where p.ISCURRENT == false && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single 
                         && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                        && p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                        || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.COMPANYID,
@@ -794,7 +794,7 @@ namespace FintrakBanking.Repositories.Credit
                         where p.ISCURRENT == false 
                         && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup 
                         && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                        && p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                        || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.COMPANYID,

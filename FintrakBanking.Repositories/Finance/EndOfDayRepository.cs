@@ -20,16 +20,18 @@ namespace FintrakBanking.Repositories.Finance
         private IAuditTrailRepository auditTrail;
         private ILoanOperationsRepository loanOperation;
         private IPublicHolidayRepository publicHoliday;
+        private ICustomerCollateralRepository collateralItemPolicy;
 
         public EndOfDayRepository(FinTrakBankingContext _context, IGeneralSetupRepository _generalSetup,
                                     ILoanOperationsRepository _loanOperation, IPublicHolidayRepository _publicHoliday,
-                                    IAuditTrailRepository _auditTrail)
+                                    IAuditTrailRepository _auditTrail, ICustomerCollateralRepository _collateralItemPolicy)
         {
             this.context = _context;
             this.generalSetup=_generalSetup;
             this.publicHoliday = _publicHoliday;
             this.auditTrail = _auditTrail;
             this.loanOperation = _loanOperation;
+            this.collateralItemPolicy = _collateralItemPolicy;
         }
 
 
@@ -79,6 +81,7 @@ namespace FintrakBanking.Repositories.Finance
                 SYSTEMDATETIME = DateTime.Now
             };
 
+
             auditTrail.AddAuditTrail(audit);
 
             var response = context.SaveChanges();
@@ -114,9 +117,9 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
 
-            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
+            //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
+            //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
             loanOperation.ProcessDailyPastDueInterestAccrual(date);
 
@@ -125,14 +128,16 @@ namespace FintrakBanking.Repositories.Finance
 
 
             loanOperation.ProcessLoanRepaymentPostingPastDue(date);
-            loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue (date);
-            loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue  (date);
-            loanOperation.ProcessIDFExpiryAndlocking(date);
-            loanOperation.ProcessCFFExpiryAndlocking(date);
-            loanOperation.ProcessLPOExpiryAndlocking(date); 
-            loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
-            loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
-            loanOperation.ProcessIntervalFeeandCommissionPosting(date);
+            //loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue (date);
+            //loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue  (date);
+            //loanOperation.ProcessIDFExpiryAndlocking(date);
+            //loanOperation.ProcessCFFExpiryAndlocking(date);
+            //loanOperation.ProcessLPOExpiryAndlocking(date); 
+            //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
+            //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
+            //loanOperation.ProcessIntervalFeeandCommissionPosting(date);
+
+            collateralItemPolicy.CheckForExpiredItemPolicies(date);
 
             loanOperation.CalLoanClassification(date);
 

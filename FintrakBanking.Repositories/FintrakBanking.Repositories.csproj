@@ -44,7 +44,8 @@
       <HintPath>..\packages\ExcelDataReader.3.4.0\lib\net45\ExcelDataReader.dll</HintPath>
     </Reference>
     <Reference Include="GemBox.Spreadsheet, Version=41.3.30.1147, Culture=neutral, PublicKeyToken=b1b72c69714d4847, processorArchitecture=MSIL">
-      <HintPath>..\packages\GemBox.Spreadsheet.41.3.30.1147\lib\net30\GemBox.Spreadsheet.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\GemBox.Spreadsheet.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -94,6 +95,7 @@
     <Compile Include="CASA\CasaRepository.cs" />
     <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="CreditLimitValidations\CreditLimitValidationsRepository.cs" />
+    <Compile Include="Credit\LoanPerformanceRepository.cs" />
     <Compile Include="Credit\IntegrationWithCWGAPI.cs" />
     <Compile Include="Credit\StaffAccountHistoryRepository.cs" />
     <Compile Include="Credit\AppraisalMemorandumRepository.cs" />

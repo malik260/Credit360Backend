@@ -12,9 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_TEMP_STAFF()
         {
-            TBL_TEMP_PROFILE_ADTN_ACTIVITY = new HashSet<TBL_TEMP_PROFILE_ADTN_ACTIVITY>();
             TBL_TEMP_PROFILE_USER = new HashSet<TBL_TEMP_PROFILE_USER>();
-            TBL_TEMP_PROFILE_USERGROUP = new HashSet<TBL_TEMP_PROFILE_USERGROUP>();
         }
 
         [Key]
@@ -126,12 +124,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_STATE TBL_STATE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_PROFILE_ADTN_ACTIVITY> TBL_TEMP_PROFILE_ADTN_ACTIVITY { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PROFILE_USER> TBL_TEMP_PROFILE_USER { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_PROFILE_USERGROUP> TBL_TEMP_PROFILE_USERGROUP { get; set; }
     }
 }

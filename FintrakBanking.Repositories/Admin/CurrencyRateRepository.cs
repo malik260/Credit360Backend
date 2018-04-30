@@ -56,7 +56,7 @@ namespace FintrakBanking.Repositories.Admin
 
         public IEnumerable<CurrencyRateViewModel> GetCurrencyRate()
         {
-            var data = (from a in context.TBL_CURRENCY_RATE
+            var data = (from a in context.TBL_CURRENCY_EXCHANGERATE
                         where a.DELETED == false 
                         select new CurrencyRateViewModel
                         {
@@ -66,9 +66,10 @@ namespace FintrakBanking.Repositories.Admin
                             baseCurrencyId = a.BASECURRENCYID,
                             currency = a.TBL_CURRENCY .CURRENCYNAME,
                             baseCurrency = a.TBL_CURRENCY1 .CURRENCYNAME,
-                          
-                            buyingRate = a.BUYINGRATE,
-                            sellingRate = a.SELLINGRATE,
+                            rateCodeId = a.RATECODEID,
+                            rateCodeName = a.TBL_CURRENCY_RATECODE.RATECODEDESCRIPTION,
+                            buyingRate = a.EXCHANGERATE,
+                            sellingRate = a.EXCHANGERATE,
                             date = a.DATE,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy=a.CREATEDBY
@@ -79,12 +80,12 @@ namespace FintrakBanking.Repositories.Admin
 
         public double GetCurrentCurrencyExchangeRate(short currencyId)
         {
-            return (from a in context.TBL_CURRENCY_RATE.Where(x=>x.CURRENCYID == currencyId 
-                        && x.DELETED == false) select a.SELLINGRATE).FirstOrDefault();
+            return (from a in context.TBL_CURRENCY_EXCHANGERATE.Where(x=>x.CURRENCYID == currencyId && x.RATECODEID == 1
+                        && x.DELETED == false) select a.EXCHANGERATE).FirstOrDefault();
         }
         public List<CurrencyRateViewModel> GetCurrencyRateById(short currencyRateId)
         {
-            var data = (from a in context.TBL_CURRENCY_RATE
+            var data = (from a in context.TBL_CURRENCY_EXCHANGERATE
                         where a.CURRENCYID == currencyRateId && a.DELETED == false
                         
                         select new CurrencyRateViewModel
@@ -94,9 +95,11 @@ namespace FintrakBanking.Repositories.Admin
                             baseCurrencyId = a.BASECURRENCYID,
                             currency = a.TBL_CURRENCY.CURRENCYNAME,
                             baseCurrency = a.TBL_CURRENCY1.CURRENCYNAME,
-                            buyingRate = a.BUYINGRATE,
-                            sellingRate = a.SELLINGRATE,
+                            buyingRate = a.EXCHANGERATE,
+                            sellingRate = a.EXCHANGERATE,
                             date = a.DATE,
+                            rateCodeId = a.RATECODEID,
+                            rateCodeName = a.TBL_CURRENCY_RATECODE.RATECODEDESCRIPTION,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).OrderByDescending(x=>x.dateTimeCreated).ToList();
@@ -109,18 +112,19 @@ namespace FintrakBanking.Repositories.Admin
 
         public bool AddCurrencyRate(CurrencyRateViewModel model)
         {
-            var data = new TBL_CURRENCY_RATE
+            var data = new TBL_CURRENCY_EXCHANGERATE
             {
                  CURRENCYID = model.currencyId,
                  BASECURRENCYID = model.baseCurrencyId,
-                 BUYINGRATE = model.buyingRate,
-                 SELLINGRATE = model.sellingRate ,
+                 EXCHANGERATE = model.buyingRate,
+                 //SELLINGRATE = model.sellingRate ,
+                 RATECODEID = model.rateCodeId,
                  DATE = model.date,
                  CREATEDBY = (int)model.createdBy,
                  DATETIMECREATED = _genSetup.GetApplicationDate()
             };
 
-            context.TBL_CURRENCY_RATE.Add(data);
+            context.TBL_CURRENCY_EXCHANGERATE.Add(data);
 
             // Audit Section ---------------------------
             var audit_Currency = (context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == model.currencyId)).CURRENCYNAME;
@@ -131,7 +135,7 @@ namespace FintrakBanking.Repositories.Admin
                 AUDITTYPEID = (short)AuditTypeEnum.CurrencyRateAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added Currency Rate :  { data.BUYINGRATE } for date : '{data.DATE} ' on {audit_BaseCurrency} to: {audit_Currency} conversion",
+                DETAIL = $"Added Currency Rate :  { data.EXCHANGERATE } for date : '{data.DATE} ' on {audit_BaseCurrency} to: {audit_Currency} conversion",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -145,13 +149,14 @@ namespace FintrakBanking.Repositories.Admin
         }
         public bool UpdateCurrencyRate(short currencyRateId, CurrencyRateViewModel model)
         {
-            var data = this.context.TBL_CURRENCY_RATE.Find(currencyRateId);
+            var data = this.context.TBL_CURRENCY_EXCHANGERATE.Find(currencyRateId);
             if (data == null) return false;
 
             data.CURRENCYID = model.currencyId;
             data.BASECURRENCYID = model.baseCurrencyId;
-           data. BUYINGRATE = model.buyingRate;
-           data. SELLINGRATE = model.sellingRate;
+           data. EXCHANGERATE = model.buyingRate;
+            data.RATECODEID = model.rateCodeId;
+           //data. SELLINGRATE = model.sellingRate;
             data.DATE = model.date;
 
             data.LASTUPDATEDBY = (int)model.createdBy;
@@ -166,7 +171,7 @@ namespace FintrakBanking.Repositories.Admin
                 AUDITTYPEID = (short)AuditTypeEnum.CurrencyRateUpdated,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Updated Currency Rate : { data.BUYINGRATE } for date: '{data.DATE}' on {audit_BaseCurrency} to: {audit_Currency} conversion",
+                DETAIL = $"Updated Currency Rate : { data.EXCHANGERATE } for date: '{data.DATE}' on {audit_BaseCurrency} to: {audit_Currency} conversion",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),

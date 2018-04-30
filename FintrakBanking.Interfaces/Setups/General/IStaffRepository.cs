@@ -11,9 +11,9 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IStaffRepository
     {
-        Task<bool> UpdateStaff(int staffid, StaffInfoViewModel staffModel);
+        bool UpdateStaff(int staffid, StaffInfoViewModel staffModel);
 
-        Task<bool> AddTempStaff(StaffInfoViewModel staffModel);
+        bool AddTempStaff(StaffInfoViewModel staffModel);
 
         bool GoForApproval(ApprovalViewModel entity);
 
@@ -55,7 +55,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool UpdateStaffSignature(StaffDocumentViewModel model, int documentId);
 
-        List<StaffInfoViewModel> UploadStaffData(StaffDocumentViewModel model, byte[] file);
+        staffBulkFeedbackViewModel UploadStaffData(StaffDocumentViewModel model, byte[] file);
 
         IEnumerable<StaffDocumentViewModel> GetAllStaffSignatures(int companyId);
 

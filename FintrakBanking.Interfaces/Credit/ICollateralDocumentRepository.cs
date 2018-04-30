@@ -24,5 +24,6 @@ namespace FintrakBanking.Interfaces.Credit
         CollateralVisitationDocumentViewModel GetCollateralVisitationDocument(int documentId);
 
         IEnumerable<CollateralDocumentViewModel> GetCollateralGuaranteeDocument(int targetId);
+        IEnumerable<CollateralDocumentViewModel> GetTempAllCollateralDocument(int collateralId);
     }
 }

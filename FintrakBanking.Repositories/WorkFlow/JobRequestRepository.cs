@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                                       loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
                                                       //productClassId = i.
                                                   }).ToList(),
-                            loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                            loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
                                               select new CollateralViewModel
                                               {
                                                   allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,

@@ -815,6 +815,21 @@ namespace FintrakBanking.Repositories.Setups.General
                                                   //productBehaviourId = c.PRODUCT_BEHAVIOURID,
                                                   //productBehaviourName = c.TBL_PRODUCT_BEHAVIOUR.PRODUCT_BEHAVIOUR_NAME
                                               }).GroupBy(x => x.productId).Select(g => g.FirstOrDefault());
+                foreach(var item in pendingProductsChanges)
+                {
+                    var behaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == item.productId);
+                    if (behaviour.Any())
+                    {
+                        var x = behaviour.FirstOrDefault();
+                        item.collateralLCYLimit = x.COLLATERAL_LCY_LIMIT;
+                        item.collateralFCYLimit = x.COLLATERAL_FCY_LIMIT;
+                        item.customerLimit = x.CUSTOMER_LIMIT;
+                        item.productLimit = x.PRODUCT_LIMIT;
+                        item.invoiceBased = x.ISINVOICEBASED;
+                        item.requireCasaAccount = x.REQUIRECASAACCOUNT;
+                        item.allowFundUsage = x.ALLOWFUNDUSAGE;
+                    }
+                }
                 var b = pendingProductsChanges.ToList();
 
                 return pendingProductsChanges;

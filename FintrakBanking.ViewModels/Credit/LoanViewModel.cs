@@ -717,5 +717,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int approvalTrailId { get; set; } 
     }
-
-}
+    public class PrudGuildlineTypeViewModel
+    {
+        public int prudentialGuildlineTypeId { get; set; }
+        public string prudentialGuildlineTypeName { get; set; }
+    }
+    }

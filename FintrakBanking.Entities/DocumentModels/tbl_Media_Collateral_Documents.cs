@@ -17,13 +17,13 @@ namespace FintrakBanking.Entities.DocumentModels
 
         public int COLLATERALCUSTOMERID { get; set; }
 
+        public int? TARGETID { get; set; }
+
         public bool ISPRIMARYDOCUMENT { get; set; }
 
         [Required]
         [StringLength(400)]
         public string FILENAME { get; set; }
-
-        public int? TARGETID { get; set; }
 
         [Required]
         [StringLength(10)]
