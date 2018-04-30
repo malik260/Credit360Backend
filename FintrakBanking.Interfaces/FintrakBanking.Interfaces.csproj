@@ -64,6 +64,7 @@
     <Compile Include="CASA\ICasaRepository.cs" />
     <Compile Include="CASA\IOverRideRepository.cs" />
     <Compile Include="CreditLimitValidations\ICreditLimitValidationsRepository.cs" />
+    <Compile Include="Credit\IIntegrationWithCWGAPI.cs" />
     <Compile Include="Credit\IStaffAccountHistoryRepository.cs" />
     <Compile Include="Credit\IAppraisalMemorandumRepository.cs" />
     <Compile Include="Credit\ICallMemoRepository.cs" />

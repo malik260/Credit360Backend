@@ -176,6 +176,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool feeOverride { get; set; }
         public int loanBookingRequestId { get; set; }
         public int staffId { get; set; }
+        public int staffName { get; set; }
         public bool hasLein { get; set; }
         public int postNoStatusId { get; set; }
         

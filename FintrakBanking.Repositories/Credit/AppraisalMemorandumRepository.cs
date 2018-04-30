@@ -877,8 +877,8 @@ namespace FintrakBanking.Repositories.Credit
                         applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
                         branchId = x.a.PRODUCTCLASSID,
                         productClassId = x.a.PRODUCTCLASSID,
-                        finalApprovalLevelId=x.a.FINALAPPROVAL_LEVELID,
-                        nextApplicationStatusId=x.a.NEXTAPPLICATIONSTATUSID,
+                        finalApprovalLevelId = x.a.FINALAPPROVAL_LEVELID,
+                        nextApplicationStatusId = x.a.NEXTAPPLICATIONSTATUSID,
                         customerId = x.a.CUSTOMERID,
                         applicationAmount = x.a.APPLICATIONAMOUNT,
                         interestRate = x.a.INTERESTRATE,
@@ -898,7 +898,7 @@ namespace FintrakBanking.Repositories.Credit
                         //sla time, timein timeout, timespent, responsible person
                         currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                         approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
-                        
+
                     })
                 .Where(x => levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null))
                 .GroupBy(d => d.loanApplicationId)
@@ -982,7 +982,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             context.TBL_LOAN_APPLICATN_DETL_MTRIG
                 .RemoveRange(
-                    context.TBL_LOAN_APPLICATN_DETL_MTRIG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId) 
+                    context.TBL_LOAN_APPLICATN_DETL_MTRIG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
                 );
             context.SaveChanges();
 
@@ -1039,7 +1039,7 @@ namespace FintrakBanking.Repositories.Credit
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
             detail.APPROVEDAMOUNT = entity.recommendedAmount;
 
-            if (entity.productClassId==7)
+            if (entity.productClassId == 7)
             {
                 var control = context.TBL_LOAN_APPLICATION_DETL_EDU.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == entity.applicationDetailId);
                 control.TOTAL_PREVIOUS_TERM_SCHOL_FEES = entity.controlAmount;
@@ -1098,8 +1098,8 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALDETAIL = entity.collateralDetail,
                 COLLATERALVALUE = entity.collateralValue,
                 STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
-                DATETIMECREATED=general.GetApplicationDate(),
-                SYSTEMDATETIME=DateTime.Now
+                DATETIMECREATED = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             });
             context.SaveChanges();
             return GetRecommendedCollateral(entity.applicationId);

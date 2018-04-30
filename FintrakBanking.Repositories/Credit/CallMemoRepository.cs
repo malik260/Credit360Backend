@@ -36,7 +36,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
-             
+
                 var JobRole = (from a in _context.TBL_STAFF where a.STAFFID == staffId select a.JOBTITLEID).FirstOrDefault();
                 if (JobRole > 0)
                 {
@@ -90,7 +90,7 @@ namespace FintrakBanking.Repositories.Credit
                             JobTitleId = a.JOBTITLEID,
                             JobTitleName = _context.TBL_STAFF_JOBTITLE.FirstOrDefault(d => d.JOBTITLEID == a.JOBTITLEID).JOBTITLENAME,
                             CallLimitTypeId = a.CALLLIMITTYPEID,
-                            CallLimitTypeName = _context.TBL_CALL_MEMO_TYPE.FirstOrDefault(i=>i.CALLLIMITTYPEID == a.CALLLIMITTYPEID).NAME
+                            CallLimitTypeName = _context.TBL_CALL_MEMO_TYPE.FirstOrDefault(i => i.CALLLIMITTYPEID == a.CALLLIMITTYPEID).NAME
                         }).ToList();
             return data;
         }
@@ -230,7 +230,7 @@ namespace FintrakBanking.Repositories.Credit
                             StaffId = a.STAFFID,
                             CallMemoTypeId = a.CALLLIMITTYPEID,
                             CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
-                            CustomerName = _context.TBL_CUSTOMER.FirstOrDefault(x=>x.CUSTOMERID == b.CUSTOMERID).FIRSTNAME,
+                            CustomerName = _context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == b.CUSTOMERID).FIRSTNAME,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,

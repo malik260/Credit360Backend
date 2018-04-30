@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -45,6 +46,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public DateTime webRequestDate { get; set; }
         public string responseCode { get; set; }
         public string referenceNumber { get; set; }
+        public string message { get; set; }
 
     }
     public class CustomFinanceTransactionViewModel : GeneralEntity
@@ -64,4 +66,67 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
     }
 
+    public class OverDraftNormalViewModel
+    {
+        public string accountNumber { get; set; }
+        public string sanctionReferenceNumber { get; set; }
+        public string documentDate { get; set; }
+        public string sanctionLevel { get; set; }
+        public string sanctionAuthorizer { get; set; }
+        public string reviewedDate { get; set; }
+        public string sanctionLimit { get; set; }
+        public string applicationDate { get; set; }
+        public string expiryDate { get; set; }
+        public string sanctionDate { get; set; }
+
+    }
+
+    public class OverDraftTopUpViewModel
+    {
+        public string accountNumber { get; set; }
+        public string sanctionReferenceNumber { get; set; } 
+        public string sanctionLevel { get; set; }
+        public string sanctionAuthorizer { get; set; }
+        public string reviewedDate { get; set; }
+        public string sanctionLimit { get; set; }
+        public string applicationDate { get; set; }
+        public string expiryDate { get; set; }
+
+    }     
+
+    public class OverDraftExtendViewModel
+    {
+        public string accountNumber { get; set; }
+        public string sanctionReferenceNumber { get; set; }         
+        public string sanctionLimit { get; set; }
+        public string expiryDate { get; set; }
+
+    }
+
+    public class TemporaryOverDraftViewModel
+    {
+        public string AccountNumber { get; set; }
+        public bool TemporaryOverDraftFlag { get; set; }
+        public string TemporaryOverDraftAmount { get; set; }
+        public string TemporaryOverDraftDate { get; set; }
+        public string TemporaryOverDraftNaration { get; set; }
+
+    }
+    
+    public class OverdraftResponseViewModel 
+    {
+        public string webRequestStatus { get; set; }
+        public DateTime webRequestDate { get; set; }
+        public string responseCode { get; set; }
+        public string serialNumber { get; set; }
+        public string message { get; set; }
+        public HttpResponseMessage APIMessage { get; set; }
+    }
+
+    public class ResponseMessage
+    {
+        public OverdraftResponseViewModel APIResponse { get; set; }
+        public bool APIStatus { get; set; }
+        public HttpResponseMessage Message { get; set; }
+    }
 }
