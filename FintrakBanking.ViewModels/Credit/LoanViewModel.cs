@@ -58,6 +58,7 @@ namespace FintrakBanking.ViewModels.Credit
         //public decimal productPriceIndexRate { get; set; }
         public double productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
+        public int casaAccountId2 { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
        

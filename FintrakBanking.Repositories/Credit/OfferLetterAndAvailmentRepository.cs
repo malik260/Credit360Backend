@@ -1299,6 +1299,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.AVAILMENTDATE = DateTime.Now;
 
                 var loanApplication = appl;
+                
                 if (loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
                 {
                     if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
@@ -1306,6 +1307,12 @@ namespace FintrakBanking.Repositories.Credit
                         var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
                         foreach (var record in loanApplicationDetails)
                         {
+                            if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper)
+                            {
+                                record.EFFECTIVEDATE = DateTime.Now;
+                                record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
+                            }
+                                
                             var request = new TBL_LOAN_BOOKING_REQUEST
                             {
                                 AMOUNT_REQUESTED = entity.amount,
@@ -1316,7 +1323,6 @@ namespace FintrakBanking.Repositories.Credit
                             };
                             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
                         };
-
                     }
                 }               
             }
