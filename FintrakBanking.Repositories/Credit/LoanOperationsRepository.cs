@@ -2763,7 +2763,7 @@ namespace FintrakBanking.Repositories.Credit
                              productId = a.PRODUCTID,
                              companyId = a.COMPANYID,
                              casaAccountId = a.CASAACCOUNTID,
-                             casaAccountId2 = a.CASAACCOUNTID2,
+                            // casaAccountId2 = a.CASAACCOUNTID2,
                              branchId = a.BRANCHID,
                              currencyId = a.CURRENCYID,
                              loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
@@ -2780,8 +2780,8 @@ namespace FintrakBanking.Repositories.Credit
                              maturityDate = (DateTime)b.MATURITYDATE,
                              bookingDate = DateTime.Today,
                              overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
-                             disbursedAmount = a.DISBURSED_AMOUNT,
-                             interestAmount = a.INTEREST_AMOUNT,
+                             //disbursedAmount = a.DISBURSED_AMOUNT,
+                             //interestAmount = a.INTEREST_AMOUNT,
                              pastDuePrincipal = a.PASTDUEPRINCIPAL,
                              pastDueInterest = a.PASTDUEINTEREST,
                              interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
@@ -2822,7 +2822,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.PRODUCTID = item.productId;
                 addOverDraft.COMPANYID = item.companyId;
                 addOverDraft.CASAACCOUNTID = item.casaAccountId;
-                addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
+                //addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
                 addOverDraft.BRANCHID = item.branchId;
                 addOverDraft.CURRENCYID = item.currencyId;
                 addOverDraft.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
@@ -2839,8 +2839,8 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.MATURITYDATE = item.maturityDate;
                 addOverDraft.BOOKINGDATE = item.bookingDate;
                 addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
-                addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
-                addOverDraft.INTEREST_AMOUNT = item.interestAmount;
+                //addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
+                //addOverDraft.INTEREST_AMOUNT = item.interestAmount;
                 addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
                 addOverDraft.APPROVEDBY = item.approvedBy;
                 addOverDraft.APPROVERCOMMENT = item.approverComment;
@@ -2899,7 +2899,7 @@ namespace FintrakBanking.Repositories.Credit
                              productId = a.PRODUCTID,
                              companyId = a.COMPANYID,
                              casaAccountId = a.CASAACCOUNTID,
-                             casaAccountId2 = a.CASAACCOUNTID2,
+                             //casaAccountId2 = a.CASAACCOUNTID2,
                              branchId = a.BRANCHID,
                              currencyId = a.CURRENCYID,
                              loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
@@ -2916,8 +2916,8 @@ namespace FintrakBanking.Repositories.Credit
                              maturityDate = (DateTime)b.MATURITYDATE,
                              bookingDate = DateTime.Today,
                              overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
-                             disbursedAmount = a.DISBURSED_AMOUNT,
-                             interestAmount = a.INTEREST_AMOUNT,
+                             //disbursedAmount = a.DISBURSED_AMOUNT,
+                             //interestAmount = a.INTEREST_AMOUNT,
                              pastDuePrincipal = a.PASTDUEPRINCIPAL,
                              pastDueInterest = a.PASTDUEINTEREST,
                              interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
@@ -2958,7 +2958,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.PRODUCTID = item.productId;
                 addOverDraft.COMPANYID = item.companyId;
                 addOverDraft.CASAACCOUNTID = item.casaAccountId;
-                addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
+                //addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
                 addOverDraft.BRANCHID = item.branchId;
                 addOverDraft.CURRENCYID = item.currencyId;
                 addOverDraft.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
@@ -2975,8 +2975,8 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.MATURITYDATE = item.maturityDate;
                 addOverDraft.BOOKINGDATE = item.bookingDate;
                 addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
-                addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
-                addOverDraft.INTEREST_AMOUNT = item.interestAmount;
+                //addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
+                //addOverDraft.INTEREST_AMOUNT = item.interestAmount;
                 addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
                 addOverDraft.APPROVEDBY = item.approvedBy;
                 addOverDraft.APPROVERCOMMENT = item.approverComment;
@@ -3035,7 +3035,7 @@ namespace FintrakBanking.Repositories.Credit
                              productId = a.PRODUCTID,
                              companyId = a.COMPANYID,
                              casaAccountId = a.CASAACCOUNTID,
-                             casaAccountId2 = a.CASAACCOUNTID2,
+                            // casaAccountId2 = a.CASAACCOUNTID2,
                              branchId = a.BRANCHID,
                              currencyId = a.CURRENCYID,
                              loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
@@ -3052,8 +3052,8 @@ namespace FintrakBanking.Repositories.Credit
                              maturityDate = (DateTime)b.MATURITYDATE,
                              bookingDate = DateTime.Today,
                              overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
-                             disbursedAmount = a.DISBURSED_AMOUNT,
-                             interestAmount = a.INTEREST_AMOUNT,
+                            // disbursedAmount = a.DISBURSED_AMOUNT,
+                             //interestAmount = a.INTEREST_AMOUNT,
                              pastDuePrincipal = a.PASTDUEPRINCIPAL,
                              pastDueInterest = a.PASTDUEINTEREST,
                              interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
@@ -3093,7 +3093,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.PRODUCTID = item.productId;
                 addOverDraft.COMPANYID = item.companyId;
                 addOverDraft.CASAACCOUNTID = item.casaAccountId;
-                addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
+                //addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
                 addOverDraft.BRANCHID = item.branchId;
                 addOverDraft.CURRENCYID = item.currencyId;
                 addOverDraft.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
@@ -3110,8 +3110,8 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.MATURITYDATE = item.maturityDate;
                 addOverDraft.BOOKINGDATE = item.bookingDate;
                 addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
-                addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
-                addOverDraft.INTEREST_AMOUNT = item.interestAmount;
+                //addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
+                //addOverDraft.INTEREST_AMOUNT = item.interestAmount;
                 addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
                 addOverDraft.APPROVEDBY = item.approvedBy;
                 addOverDraft.APPROVERCOMMENT = item.approverComment;
@@ -3203,8 +3203,8 @@ namespace FintrakBanking.Repositories.Credit
                              maturityDate = (DateTime)b.MATURITYDATE,
                              bookingDate = DateTime.Today,
                              overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
-                             disbursedAmount = a.DISBURSED_AMOUNT,
-                             interestAmount = a.INTEREST_AMOUNT,
+                             //disbursedAmount = a.DISBURSED_AMOUNT,
+                             //interestAmount = a.INTEREST_AMOUNT,
                              pastDuePrincipal = a.PASTDUEPRINCIPAL,
                              pastDueInterest = a.PASTDUEINTEREST,
                              interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
@@ -3245,7 +3245,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.PRODUCTID = item.productId;
                 addOverDraft.COMPANYID = item.companyId;
                 addOverDraft.CASAACCOUNTID = item.casaAccountId;
-                addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
+               // addOverDraft.CASAACCOUNTID2 = item.casaAccountId2;
                 addOverDraft.BRANCHID = item.branchId;
                 addOverDraft.CURRENCYID = item.currencyId;
                 addOverDraft.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
@@ -3262,8 +3262,8 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.MATURITYDATE = item.maturityDate;
                 addOverDraft.BOOKINGDATE = item.bookingDate;
                 addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
-                addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
-                addOverDraft.INTEREST_AMOUNT = item.interestAmount;
+               // addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
+                //addOverDraft.INTEREST_AMOUNT = item.interestAmount;
                 addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
                 addOverDraft.APPROVEDBY = item.approvedBy;
                 addOverDraft.APPROVERCOMMENT = item.approverComment;
@@ -3565,7 +3565,7 @@ namespace FintrakBanking.Repositories.Credit
                              productId = a.PRODUCTID,
                              companyId = a.COMPANYID,
                              casaAccountId = a.CASAACCOUNTID,
-                             casaAccountId2 = a.CASAACCOUNTID2,
+                            // casaAccountId2 = a.CASAACCOUNTID2,
                              branchId = a.BRANCHID,
                              currencyId = a.CURRENCYID,
                              loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
@@ -3582,8 +3582,8 @@ namespace FintrakBanking.Repositories.Credit
                              maturityDate = a.MATURITYDATE,
                              bookingDate = a.BOOKINGDATE,
                              overdraftLimit = a.OVERDRAFTLIMIT,
-                             disbursedAmount = a.DISBURSED_AMOUNT,
-                             interestAmount = a.INTEREST_AMOUNT,
+                             //disbursedAmount = a.DISBURSED_AMOUNT,
+                             //interestAmount = a.INTEREST_AMOUNT,
                              pastDuePrincipal = a.PASTDUEPRINCIPAL,
                              pastDueInterest = a.PASTDUEINTEREST,
                              interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
@@ -3626,7 +3626,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraftArchive.PRODUCTID = item.productId;
                 addOverDraftArchive.COMPANYID = item.companyId;
                 addOverDraftArchive.CASAACCOUNTID = item.casaAccountId;
-                addOverDraftArchive.CASAACCOUNTID2 = item.casaAccountId2;
+                //addOverDraftArchive.CASAACCOUNTID2 = item.casaAccountId2;
                 addOverDraftArchive.BRANCHID = item.branchId;
                 addOverDraftArchive.CURRENCYID = item.currencyId;
                 addOverDraftArchive.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
@@ -3643,8 +3643,8 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraftArchive.MATURITYDATE = item.maturityDate;
                 addOverDraftArchive.BOOKINGDATE = item.bookingDate;
                 addOverDraftArchive.OVERDRAFTLIMIT = item.overdraftLimit;
-                addOverDraftArchive.DISBURSED_AMOUNT = item.disbursedAmount;
-                addOverDraftArchive.INTEREST_AMOUNT = item.interestAmount;
+                //addOverDraftArchive.DISBURSED_AMOUNT = item.disbursedAmount;
+                //addOverDraftArchive.INTEREST_AMOUNT = item.interestAmount;
                 addOverDraftArchive.APPROVALSTATUSID = item.approvalStatusId;
                 addOverDraftArchive.APPROVEDBY = item.approvedBy;
                 addOverDraftArchive.APPROVERCOMMENT = item.approverComment;
@@ -7786,14 +7786,14 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public void CommercialPaperChangeOperativeAccount(int casaPayAccountId, int newCasaPayAccountId)
-        {
+        { //TODO rework
             TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
-                                         where p.CASAACCOUNTID2 == casaPayAccountId
-                                && p.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                         where //p.CASAACCOUNTID2 == casaPayAccountId &&
+                                 p.LOANSTATUSID == (short)LoanStatusEnum.Active
                                          select p).SingleOrDefault();
             var casa = this.context.TBL_CASA.Where(x => x.CASAACCOUNTID == newCasaPayAccountId && x.ACCOUNTSTATUSID == (short)CASAAccountStatusEnum.Active).FirstOrDefault().CASAACCOUNTID;
 
-            result.CASAACCOUNTID2 = casa;
+          // result.CASAACCOUNTID2 = casa;
             context.SaveChanges();
         }
 
@@ -7819,8 +7819,8 @@ namespace FintrakBanking.Repositories.Credit
                              newApplicationDate = a.APPLICATIONDATE,
                              interestRate = a.INTERESTRATE,
                              applicationTenor = a.APPLICATIONTENOR,
-                             effectiveDate = a.EFFECTIVEDATE,
-                             expiryDate = a.EXPIRYDATE,
+                             effectiveDate = a.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().EFFECTIVEDATE,
+                             expiryDate = a.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().EXPIRYDATE,
                              operationId = a.OPERATIONID,
                              productClassId = (short)a.PRODUCTCLASSID,
                              applicationAmount = a.APPLICATIONAMOUNT,
@@ -8009,7 +8009,7 @@ namespace FintrakBanking.Repositories.Credit
                              relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                              relationshipManagerId = a.RELATIONSHIPMANAGERID,
                              casaAccountId = a.CASAACCOUNTID,
-                             casaAccountId2 = a.CASAACCOUNTID2,
+                             //casaAccountId2 = a.CASAACCOUNTID2,
                              currencyId = a.CURRENCYID,
                              loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                              exchangeRate = a.EXCHANGERATE,
@@ -8024,8 +8024,8 @@ namespace FintrakBanking.Repositories.Credit
                              misCode = a.MISCODE,
                              teamMisCode = a.TEAMMISCODE,
                              overdraftLimit = a.OVERDRAFTLIMIT,
-                             disbursedAmount = a.DISBURSED_AMOUNT,
-                             interestAmount = a.INTEREST_AMOUNT,
+                             //disbursedAmount = a.DISBURSED_AMOUNT,
+                             //interestAmount = a.INTEREST_AMOUNT,
                              approverComment = a.APPROVERCOMMENT,
                              approvedBy = (int)a.APPROVEDBY,
                              dateApproved = a.DATEAPPROVED,
@@ -8065,7 +8065,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanRevolvingArchive.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
                 addLoanRevolvingArchive.RELATIONSHIPMANAGERID = item.relationshipManagerId;
                 addLoanRevolvingArchive.CASAACCOUNTID = item.casaAccountId;
-                addLoanRevolvingArchive.CASAACCOUNTID2 = item.casaAccountId2;
+               // addLoanRevolvingArchive.CASAACCOUNTID2 = item.casaAccountId2;
                 addLoanRevolvingArchive.CURRENCYID = (short)item.currencyId;
                 addLoanRevolvingArchive.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
                 addLoanRevolvingArchive.EXCHANGERATE = item.exchangeRate;
@@ -8080,8 +8080,8 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanRevolvingArchive.MISCODE = item.misCode;
                 addLoanRevolvingArchive.TEAMMISCODE = item.teamMiscode;
                 addLoanRevolvingArchive.OVERDRAFTLIMIT = item.overdraftLimit;
-                addLoanRevolvingArchive.DISBURSED_AMOUNT = item.disbursedAmount;
-                addLoanRevolvingArchive.INTEREST_AMOUNT = item.interestAmount;
+                //addLoanRevolvingArchive.DISBURSED_AMOUNT = item.disbursedAmount;
+                //addLoanRevolvingArchive.INTEREST_AMOUNT = item.interestAmount;
                 addLoanRevolvingArchive.APPROVALSTATUSID = item.approvalStatusId;
                 addLoanRevolvingArchive.APPROVEDBY = item.approvedBy;
                 addLoanRevolvingArchive.APPROVERCOMMENT = item.approverComment;

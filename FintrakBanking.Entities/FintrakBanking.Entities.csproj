@@ -158,7 +158,9 @@
     <Compile Include="Models\TBL_CREDIT_BUREAU.cs" />
     <Compile Include="Models\TBL_CREDIT_TEMPLATE.cs" />
     <Compile Include="Models\TBL_CURRENCY.cs" />
+    <Compile Include="Models\TBL_CURRENCY_EXCHANGERATE.cs" />
     <Compile Include="Models\TBL_CURRENCY_RATE.cs" />
+    <Compile Include="Models\TBL_CURRENCY_RATECODE.cs" />
     <Compile Include="Models\TBL_CUSTOMER.cs" />
     <Compile Include="Models\TBL_CUSTOMER_ACCOUNT_KYC_ITEM.cs" />
     <Compile Include="Models\TBL_CUSTOMER_ADDRESS.cs" />

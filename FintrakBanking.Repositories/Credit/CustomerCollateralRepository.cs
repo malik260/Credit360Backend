@@ -3347,7 +3347,7 @@ namespace FintrakBanking.Repositories.Credit
                                 customerName = c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
                                // usedBy = c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
                                 loanRef = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                expirationDate = c.TBL_LOAN_APPLICATION.EXPIRYDATE.ToString(),
+                                expirationDate = c.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().EXPIRYDATE.ToString(),
                                 collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                                 amountInUse = 0,
                                 collateralBalance = 0,
