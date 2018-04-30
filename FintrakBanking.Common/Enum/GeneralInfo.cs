@@ -227,6 +227,7 @@ namespace FintrakBanking.Common.Enum
         InitiatAccountReassigning = 201,
 
         CollateralSearchJobUpdate = 201,
+        LoanPerformanceChange = 202
     };
 
 
