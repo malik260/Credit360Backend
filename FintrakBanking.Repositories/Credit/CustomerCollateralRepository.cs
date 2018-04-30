@@ -3338,29 +3338,66 @@ namespace FintrakBanking.Repositories.Credit
             return context.TBL_COLLATERAL_CASA.Where(x => x.ACCOUNTNUMBER == accountNumber).Select(x => x.LIENAMOUNT).FirstOrDefault();
         }
 
-        public IEnumerable<CollateralHistory> getCollateralHistory(short collateralID)
+        public CollateralHistory getCollateralHistory(int collateralId)
         {
-            var cHistory = (from c in context.TBL_LOAN_APPLICATION_COLLATERL
-                            where c.TBL_COLLATERAL_CUSTOMER.COLLATERALCUSTOMERID == collateralID
-                            select new CollateralHistory
-                            {
-                                customerName = c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
-                               // usedBy = c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
-                                loanRef = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                expirationDate = c.TBL_LOAN_APPLICATION.EXPIRYDATE.ToString(),
-                                collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                                amountInUse = 0,
-                                collateralBalance = 0,
-                                dateUsed = c.DATETIMECREATED
-                            }).ToList();
-            return cHistory;
-        }
+            var termLoanCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.PRODUCTTYPEID == 1),
+                    c => c.COLLATERALCUSTOMERID, lc => lc.COLLATERALCUSTOMERID, (c, lc) => new { c, lc })
+                .Join(context.TBL_LOAN, clc => clc.lc.LOANID, l => l.TERMLOANID, (clc, l) => new { clc, l }) // TBL_LOAN
+                .Select(o => new CollateralHistoryList
+                {
+                    customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
+                    loanRef = o.l.LOANREFERENCENUMBER,
+                    expirationDate = o.l.MATURITYDATE,
+                    collateralValue = o.clc.c.COLLATERALVALUE,
+                    outstandingPrincipal = o.l.OUTSTANDINGPRINCIPAL,
+                    runningPrincipal = o.l.PRINCIPALAMOUNT,
+                    dateUsed = o.clc.lc.DATETIMECREATED,
+                    haircut = o.clc.c.HAIRCUT,
+                    exchangeRate = o.l.EXCHANGERATE,
+                    approvedLoanAmount = o.l.PRINCIPALAMOUNT,
+                });
 
+            var odCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.PRODUCTTYPEID == 2),
+                    c => c.COLLATERALCUSTOMERID, lc => lc.COLLATERALCUSTOMERID, (c, lc) => new { c, lc })
+                .Join(context.TBL_LOAN_REVOLVING, clc => clc.lc.LOANID, l => l.REVOLVINGLOANID, (clc, l) => new { clc, l }) // TBL_LOAN_REVOLVING
+                .Select(o => new CollateralHistoryList
+                {
+                    customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
+                    loanRef = o.l.LOANREFERENCENUMBER,
+                    expirationDate = o.l.MATURITYDATE,
+                    collateralValue = o.clc.c.COLLATERALVALUE,
+                    outstandingPrincipal = o.l.OVERDRAFTLIMIT,
+                    runningPrincipal = o.l.OVERDRAFTLIMIT,
+                    dateUsed = o.clc.lc.DATETIMECREATED,
+                    haircut = o.clc.c.HAIRCUT,
+                    exchangeRate = o.l.EXCHANGERATE,
+                    approvedLoanAmount = o.l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                });
+
+            var collaterals = new CollateralHistory();
+
+            collaterals.usage = termLoanCollaterals.Union(odCollaterals);
+            collaterals.totalAmountUsedByOutstanding = collaterals.usage.Sum(x => x.outstandingPrincipal);
+            collaterals.totalAmountUsedByPrincipal = collaterals.usage.Sum(x => x.approvedLoanAmount);
+            collaterals.collateralValue = collaterals.usage.Any() ? collaterals.usage.Max(x => x.collateralValue) : 0;
+            collaterals.availableValueByPrincipal = collaterals.collateralValue - collaterals.totalAmountUsedByPrincipal;
+            collaterals.availableValueByOutstanding = collaterals.collateralValue - collaterals.totalAmountUsedByOutstanding;
+
+            /*
+            var testL = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false).ToList();// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
+            var test = termLoanCollaterals.Union(odCollaterals).ToList();
+            var testTL = termLoanCollaterals.ToList();
+            var testOD = odCollaterals.ToList();
+            */
+
+            return collaterals;
+        }
 
 
         // .....END OF COMPLETE COLLATERAL INFORMATION VIEW......
         #endregion Collateral Information View
-
 
         //STCK PRICE
         public IEnumerable<StockCompanyViewModel> getStockPrice()
