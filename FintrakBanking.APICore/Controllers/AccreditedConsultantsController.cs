@@ -42,6 +42,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+
         [HttpGet, Route("accredited-solicitors")]
         public HttpResponseMessage GetAccreditedSolicitors()
         {
@@ -60,6 +61,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+
+        [HttpGet, Route("accredited-solicitors/{stateId}")]
+        public HttpResponseMessage GetAccreditedStateConsultantsByStateId(int stateId)
+        {
+            try
+            {
+                var response = repo.GetAccreditedStateConsultantsByStateId(token.GetCompanyId,stateId);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
         [HttpPost, Route("accredited-solicitors")]
         public async Task<HttpResponseMessage> AddAccreditedSolicitors([FromBody] AccreditedConsultantsViewModel entity)
         {
@@ -83,6 +104,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+
         [HttpPut, Route("accredited-solicitors/{id}")]
         public async Task<HttpResponseMessage> UpdateAccreditedSolicitors([FromBody] AccreditedConsultantsViewModel entity, int id)
         {
@@ -106,6 +128,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+
         [HttpDelete, Route("accredited-solicitors/{id}")]
         public async Task<HttpResponseMessage> DeleteAccreditedSolicitors(int id)
         {

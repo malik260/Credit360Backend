@@ -12,11 +12,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int TEMPCOLLATERALSTOCKID { get; set; }
 
-        public int COLLATERALSTOCKID { get; set; }
-
-        public int COLLATERALCUSTOMERID { get; set; }
-
-        public short COLLATERALSUBTYPEID { get; set; }
+        public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(250)]

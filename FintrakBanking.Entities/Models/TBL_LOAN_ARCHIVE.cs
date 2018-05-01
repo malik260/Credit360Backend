@@ -39,6 +39,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CASAACCOUNTID { get; set; }
 
+        public int? CASAACCOUNTID2 { get; set; }
+
         public short BRANCHID { get; set; }
 
         public short CURRENCYID { get; set; }
@@ -129,6 +131,21 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal OUTSTANDINGINTEREST { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal PASTDUEPRINCIPAL { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal PASTDUEINTEREST { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal INTERESTONPASTDUEPRINCIPAL { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal INTERESTONPASTDUEINTEREST { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal PENALCHARGEAMOUNT { get; set; }
+
         public int? PRINCIPALADDITIONCOUNT { get; set; }
 
         public int? PRINCIPALREDUCTIONCOUNT { get; set; }
@@ -157,6 +174,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
+        public int? USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
+
         [Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
 
@@ -167,6 +186,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
+
+        public virtual TBL_CASA TBL_CASA1 { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
@@ -201,5 +222,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE1 { get; set; }
 
         public virtual TBL_LOAN_SCHEDULE_TYPE TBL_LOAN_SCHEDULE_TYPE { get; set; }
+
+        public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE2 { get; set; }
     }
 }

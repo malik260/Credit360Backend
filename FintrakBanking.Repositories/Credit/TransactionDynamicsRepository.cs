@@ -109,9 +109,9 @@ namespace FintrakBanking.Repositories.Credit
                     });
         }
 
-        public IEnumerable<TransactionDynamicsViewModel> GetTransactionDynamicsByApplicationId(int applicationId)
+        public IEnumerable<TransactionDynamicsViewModel> GetTransactionDynamicsByDetailId(int detailId)
         {
-            return this.GetAllTransactionDynamics().Where(x => x.loanApplicationId == applicationId);
+            return this.GetAllTransactionDynamics().Where(x => x.loanApplicationDetailId == detailId);
         }
 
         #region CP Template
@@ -220,10 +220,10 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByApplicationId(int applicationId)
+        public List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByDetailId(int detailId)
         {
             var ids = context.TBL_LOAN_APPLICATION_DETAIL
-                .Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Where(x => x.LOANAPPLICATIONDETAILID == detailId)
                 .Select(x => x.APPROVEDPRODUCTID)
                 .Distinct();
 
@@ -237,8 +237,6 @@ namespace FintrakBanking.Repositories.Credit
                 dateTimeUpdated = c.DATETIMEUPDATED,
             });
 
-            var testids = ids.ToList();
-            var testcond = dynamics.ToList();
             return dynamics.ToList();
         }
 
@@ -272,7 +270,7 @@ namespace FintrakBanking.Repositories.Credit
             );
             context.SaveChanges();
 
-            return GetTransactionDynamicsByApplicationId(entity.id).ToList();
+            return GetTransactionDynamicsByDetailId(entity.detailId).ToList();
         }
 
         #endregion CP Template

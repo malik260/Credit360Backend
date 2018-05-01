@@ -10,19 +10,15 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_TEMP_COLLATERAL_CASA
     {
         [Key]
-        public int COLLATERALCASAID { get; set; }
+        public int TEMPCOLLATERALCASAID { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
-
-        public short? COLLATERALSUBTYPEID { get; set; }
+        public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
         public bool ISOWNEDBYCUSTOMER { get; set; }
-
-        public short? CASHTYPEID { get; set; }
 
         [Column(TypeName = "money")]
         public decimal AVAILABLEBALANCE { get; set; }
@@ -38,9 +34,5 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(500)]
         public string REMARK { get; set; }
-
-        public virtual TBL_COLLATERAL_TYPE_SUB TBL_COLLATERAL_TYPE_SUB { get; set; }
-
-        public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
     }
 }

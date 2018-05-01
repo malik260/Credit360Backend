@@ -18,9 +18,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
+        IEnumerable<CollateralViewModel> GetTempCustomerCollateral(int companyId,int staffId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId);
         CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId);
-
+        CollateralViewModel GetTempCollateralTypeByCollateralId(int collateralId, int typeId);
         IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId);
         IEnumerable<ActiveCustomerCollateralViewModel> GetActiveCustomerCollateral(int customerId);
         IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId, int productTypeId);
@@ -82,14 +83,20 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<StockCompanyViewModel> getStockPrice();
 
-        string FlagExpiredItemPolicies(DateTime currentDate);
+        bool CheckForExpiredItemPolicies(DateTime currentDate);
 
         List<CollateralViewModel> AddGuaranteeJoinCollateral(CollateralViewModel entity, byte[] bufer);
 
         List<InsurancePolicies> GetCollateralInsurancePolicies(int collateralId);
 
-        void AddItemInsurancePolicy(int collateralId, CollateralViewModel entity);
+        void AddTempItemInsurancePolicy(int collateralId, CollateralViewModel entity);
 
         bool AddNewItemInsurancePolicy(InsurancePolicies entity);
+
+        bool GoForApproval(ApprovalViewModel model);
+
+        List<InsurancePolicies> GetTempCollateralInsurancePoliciesWaitingForApproval(int staffId);
+
+        bool GoForPolicyApproval(ApprovalViewModel model);
     }
 }

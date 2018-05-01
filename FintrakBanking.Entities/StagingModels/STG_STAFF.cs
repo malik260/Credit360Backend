@@ -8,28 +8,23 @@ namespace FintrakBanking.Entities.StagingModels
 
     public partial class STG_STAFF
     {
-        [Key]
-        [Column(Order = 0)]
+        [Required]
         [StringLength(20)]
         public string USERNAME { get; set; }
 
         [Key]
-        [Column(Order = 1)]
         [StringLength(10)]
         public string STAFFCODE { get; set; }
 
-        [Key]
-        [Column(Order = 2)]
+        [Required]
         [StringLength(20)]
         public string STAFFNAME { get; set; }
 
-        [Key]
-        [Column(Order = 3)]
+        [Required]
         [StringLength(50)]
         public string FIRSTNAME { get; set; }
 
-        [Key]
-        [Column(Order = 4)]
+        [Required]
         [StringLength(50)]
         public string LASTNAME { get; set; }
 
@@ -51,13 +46,10 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(10)]
         public string GENDER { get; set; }
 
-        [Key]
-        [Column(Order = 5)]
+        [Required]
         [StringLength(10)]
         public string BRANCHCODE { get; set; }
 
-        [Key]
-        [Column(Order = 6)]
         public double DEPARTMENTCODE { get; set; }
 
         [StringLength(10)]

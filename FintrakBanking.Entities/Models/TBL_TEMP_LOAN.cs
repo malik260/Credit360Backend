@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CASAACCOUNTID { get; set; }
 
+        public int? CASAACCOUNTID2 { get; set; }
+
         public short BRANCHID { get; set; }
 
         public short SUBSECTORID { get; set; }
@@ -165,6 +167,8 @@ namespace FintrakBanking.Entities.Models
         public int? INT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
         public int? EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
+
+        public int? USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }

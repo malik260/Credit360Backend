@@ -148,9 +148,11 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime date { get; set; }
         public int? dayInterval { get; set; }
         public bool InvoiceStatus { get; set; }
+        public int dayCount { get; set; }
     }
     public class ValidateNumberViewModel
     {
+        public string contractNumber { get; set; }
         public int productId { get; set; }
         public int principalId { get; set; }
         public bool invoiceStatus { get; set; }
@@ -269,6 +271,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class SearchViewModel
     {
+        public int productTypeId { get; set; }
         public string searchString { get; set; }
     }
 
@@ -377,6 +380,9 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime timeIn { get; set; }
         public DateTime? timeOut { get; set; }
         public string responsiblePerson { get; set; }
+        public short? productClassId { get; set; }
+        public int? finalApprovalLevelId { get; set; }
+        public short? nextApplicationStatusId { get; set; }
     }
     public class InvoiceDetailViewModel
     {

@@ -10,6 +10,11 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
+        public string senderDepartment;
+
+        public string senderUnit { get; set; }
+        public string jobTypeName { get; set; }
+        public string senderRole { get; set; }
         public int loggedInStaffId { get; set; }
         public string operationName { get; set; }
         public short? jobStatusFeedBackId { get; set; }
@@ -64,15 +69,42 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class JobRequestDetailViewModel : GeneralEntity
     {
+        public string jobRequestCode { get; set; }
+
+        public string operationsName { get; set; }
+
+        public string customerName { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int targetId { get; set; }
+        public int operationsId { get; set; }
+
+        public string accreditedConsultantName { get; set; }
+        public object jobSubTypeName { get; set; }
+        public short jobTypeId { get; set; }
+        public string jobTypeName { get; set; }
+
         public int jobRequestDetailId { get; set; }
-
         public int jobRequestId { get; set; }
-
-        public short JobSubTypeId { get; set; }
-
+        public int accreditedConsultantId { get; set; }
+        public short jobSubTypeId { get; set; }
         public string description { get; set; }
-
         public decimal? amount { get; set; }
+        public string accountNumber { get; set; }
+    }
+
+    public class JobRequestCollateralSearchViewModel : GeneralEntity
+    {
+        public int casaAccountId { get; set; }
+
+        public bool requireCharting { get; set; }
+        public bool requireVerification { get; set; }
+        public bool requireSearch { get; set; }
+        public int jobRequestId { get; set; }
+        public decimal? additionalCharge { get; set; }
+        public string additionalChargeJustification { get; set; }
+        public string accountNumber { get; set; }
+        public short solicitorId { get; set; }
+        public short collateralStateId { get; set; }
     }
 
     public class ApplicationJobRequest : LoanApplicationViewModel

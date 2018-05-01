@@ -40,11 +40,44 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("users")]
-
-        public IHttpActionResult GetAllUsers()
+        public HttpResponseMessage GetAllUsers()
         {
-            var users = repo.GetAllUsers().ToList();
-            return Ok(new { result = users });
+            try
+            {
+                var users = repo.GetAllUsers().ToList();
+
+                if (!users.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = users.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("users-by-staffId/")]
+        public HttpResponseMessage GetUsersByStaffId(int staffId)
+        {
+            try
+            {
+                var users = repo.GetUsersByStaffId(staffId);
+
+                if (users == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = users });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]
@@ -114,13 +147,17 @@ namespace FintrakBanking.APICore.Controllers
                         return Request.CreateResponse(HttpStatusCode.OK,
                            new { suucess = false, message = "A user with this username already exist" });
                     }
-
+                    if (repo.isStaffExist(user.staffId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { suucess = false, message = "Selected staff is already a user." });
+                    }
                     user.createdBy = token.GetStaffId;
                     user.userBranchId = (short)token.GetBranchId;
                     user.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                     user.applicationUrl = HttpContext.Current.Request.Path;
                     user.companyId = token.GetCompanyId;
-                    var result = await repo.CreateUser(user);
+                    var result =  repo.CreateUser(user);
                     if (result)
                     {
                         //repo.CreateUser(user);
@@ -158,7 +195,7 @@ namespace FintrakBanking.APICore.Controllers
                 user.userIPAddress = HttpContext.Current.Request.Url.AbsoluteUri;
                 user.applicationUrl = HttpContext.Current.Request.Path;
                 user.companyId = token.GetCompanyId;
-                var data = await repo.UpdateUser(id, user);
+                var data =  repo.UpdateUser(id, user);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -221,7 +258,7 @@ namespace FintrakBanking.APICore.Controllers
                 group.companyId = token.GetCompanyId;
 
                 var data = repo.AddGroup(group);
-                if (data.IsCompleted)
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = group, message = "Group has been created successfully" });
@@ -257,7 +294,7 @@ namespace FintrakBanking.APICore.Controllers
                 group.companyId = token.GetCompanyId;
 
                 var data = repo.UpdateGroup(id, group);
-                if (data.IsCompleted)
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = group, message = "Group has been updated successfully" });

@@ -81,7 +81,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<CustomerViewModels> SearchForCustomerCollateral(int companyId, string searchQuery);
 
-        List<LoanGuarantorViewModel> GetLoanGuarantors(int loanApplicationId);
+        //List<LoanGuarantorViewModel> GetLoanGuarantors(int loanApplicationId);
 
         List<CasaViewModel> GetLoanCustomerAccounts(int customerId, int loanApplicationDetailId);
 
@@ -103,7 +103,13 @@ namespace FintrakBanking.Interfaces.Credit
 
         void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
 
-        IQueryable<LoanViewModel> SearchForOverdraft(string searchQuery);
+        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int productTypeId, string searchQuery);
+
+        string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId);
+
+        IEnumerable<LoanViewModel> GetLoanReviewApplicationOverDraft();
+
+        LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId);
 
 
     }

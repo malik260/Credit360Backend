@@ -15,6 +15,8 @@ namespace FintrakBanking.Interfaces.Admin
         #region Users
         IEnumerable<UserViewModel> GetAllUsers();
 
+        UserViewModel GetUsersByStaffId(int staffId);
+
         List<string> GetUserActivitiesByUser(int userId);
 
         UserViewModel GetSingleUser(int userId);
@@ -23,14 +25,16 @@ namespace FintrakBanking.Interfaces.Admin
 
         bool isUserExist(string username);
 
+        bool isStaffExist(long staffId);
+
         bool GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId);
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
 
-        Task<bool> CreateUser(AppUserViewModel user);
+       bool CreateUser(AppUserViewModel user);
 
-        Task<bool> UpdateUser(int userId, AppUserViewModel user);
+       bool UpdateUser(int userId, AppUserViewModel user);
 
         Object ManageUserAccount(int userId, int lockStatus);
 
@@ -44,9 +48,12 @@ namespace FintrakBanking.Interfaces.Admin
 
         bool isGroupExist(string groupName);
 
-        Task<bool> AddGroup(AppGroupViewModel group);
+        bool AddGroup(AppGroupViewModel group);
 
-        Task<bool> UpdateGroup(short groupId, AppGroupViewModel groupModel);
+        bool UpdateGroup(short groupId, AppGroupViewModel groupModel);
+        //Task<bool> AddGroup(AppGroupViewModel group);
+
+        // Task<bool> UpdateGroup(short groupId, AppGroupViewModel groupModel);
 
         #endregion
 

@@ -8,7 +8,6 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public bool requireInsurancePolicy;
         public string collateralDetail { get; set; }
-
         public decimal? collateralSearchAmount { get; set; }
         public decimal? chartingAmount { get; set; }
         public decimal? verificationAmount { get; set; }
@@ -36,6 +35,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceType { get; set; }
         public string metalType { get; set; }
         public string machineType { get; set; }
+        public double exchangeRate { get; set; }
 
         // presentation
         public int approvalStatus { get; set; }
@@ -47,7 +47,11 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? startDate { get; set; }
         public DateTime? expiryDate { get; set; }
         public InsurancePolicies insurancePolicies { get; set; }
+        public int policyId { get; set; }
 
+        public List<InsurancePolicies> insurancePolicy { get; set; }
+
+        public List<CollateralDocumentViewModel> collateralVisitation { get; set; }
         // deposit
         public int collateralDepositId { get; set; }
 
@@ -70,6 +74,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string yearOfManufacture { get; set; }
         public string yearOfPurchase { get; set; }
         public int valueBaseTypeId { get; set; }
+        public string valueBaseTypeName { get; set; }
         public string machineCondition { get; set; }
         public string machineryLocation { get; set; }
         public decimal replacementValue { get; set; }
@@ -103,7 +108,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationship { get; set; }
         public string relationshipDuration { get; set; }
         public DateTime cStartDate { get; set; }
-
+        public string taxNumber { get; set; }
 
         // casa
         public int collateralCasaId { get; set; }
@@ -133,8 +138,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? collateralUsableAmount { get; set; }
         public string nearestLandMark { get; set; }
         public string nearestBusStop { get; set; }
-        //public float? longitude { get; set; }
-        //public float? latitude { get; set; }
+        public double? longitude { get; set; }
+        public double? latitude { get; set; }
         public byte? perfectionStatusId { get; set; }
         public string perfectionStatusReason { get; set; }
 
@@ -172,9 +177,10 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string preciousMetalName { get; set; }
         public string weightInGrammes { get; set; }
+        public decimal? metalValuationAmount { get; set; }
+        public double? metalUnitRate { get; set; }
+        public string preciousMetalFrm { get; set; }
         public decimal? valuationAmount { get; set; }
-        public double? unitRate { get; set; }
-        public string preciousMetalForm { get; set; }
 
         // stock
         public int? collateralStockId { get; set; }
@@ -262,6 +268,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime nextVisitationDate { get { return lastVisitationDate.AddDays((double)(visitationCycle)); } set { } }
         public DateTime lastVisitationDate { get; set; }
         public int visitationCycle { get; set; }
+        public bool requireVisitation { get; set; }
     }
 
     public class crossGarantee
@@ -337,7 +344,17 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceType { get; set; }
         public bool hasExpired { get; set; }
         public int collateraalId { get; set; }
+        public string collateralCode { get; set; }
+        public string collateralType { get; set; }
+        public string collateralSubType { get; set; }
+        public decimal collateralValue { get; set; }
+        public int policyId { get; set; }
+        public int collateralTypeId { get; set; }
+        public short collateralSubTypeId { get; set; }
+        public string customerName { get; set; }
     }
+
+   
     public class AllCollateralViewModel : CollateralViewModel
     {
 
@@ -398,8 +415,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralPlantsAndEquipmentViewModel
     {
         public string collateralSubTypeName;
-        public string valueBaseTypeName;
-
+        public string valueBaseTypeName { get; set; }
         public int collateralMachineDetailId { get; set; }
         public int collateralCustomerId { get; set; }
         public short collateralSubTypeId { get; set; }

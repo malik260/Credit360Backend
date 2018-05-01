@@ -10,9 +10,9 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_TEMP_COLLATERAL_MKT_SEC
     {
         [Key]
-        public int COLLATERALMARKETABLESECURITYID { get; set; }
+        public int TEMPCOLLATERALMARKETSECURITYID { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
+        public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
         public short COLLATERALSUBTYPEID { get; set; }
 
@@ -58,6 +58,12 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(500)]
         public string REMARK { get; set; }
+
+        [StringLength(150)]
+        public string FUNDNAME { get; set; }
+
+        [StringLength(100)]
+        public string BANKPURCHASEDFROM { get; set; }
 
         public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
     }

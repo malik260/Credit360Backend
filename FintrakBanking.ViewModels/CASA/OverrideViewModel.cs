@@ -11,7 +11,10 @@ namespace FintrakBanking.ViewModels.CASA
 
         public int itemId { get; set; }
         public string itemName { get; set; }
-
+        public string status { get; set; }
+        public string customerCode { get; set; }
+        public string customerName { get; set; }
+        public string referenceNumber { get; set; }
     }
 
     public class OverrideDetailVeiwModel
@@ -22,9 +25,14 @@ namespace FintrakBanking.ViewModels.CASA
         public int customerId { get; set; }
         public short overrideItemId { get; set; }
         public bool isUsed { get; set; }
+        public string reason { get; set; }
         public int approvedStatusId { get; set; }
         public string sourceReferenceNumber { get; set; }
         public int createdBy { set; get; }
         public DateTime dateTimeCreated { get; set; }
+        public string approvalStatus { get; set; }
+        public string customerName { get; set; }
+        public string itemName { get; set; }
+        public short itemId { get; set; }
     }
 }

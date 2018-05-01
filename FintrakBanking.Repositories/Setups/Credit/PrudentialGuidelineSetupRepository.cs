@@ -43,7 +43,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 var guidelineList = new TBL_LOAN_PRUDENTIALGUIDELINE()
                 {
                     STATUSNAME = guideline.statusName,
-                    CLASSIFICATION=guideline.classification,
+                  //  CLASSIFICATION=guideline.classification,
                     INTERNALMINIMUM=guideline.internalMinimun,
                     INTERNALMAXIMUM=guideline.internalMaximun,
                     EXTERNALMINIMUM=guideline.externalMinimun,
@@ -99,7 +99,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             {
                                prudentialGuidelineId = a.PRUDENTIALGUIDELINESTATUSID,
                                statusName= a.STATUSNAME,
-                               classification= a.CLASSIFICATION,
+                               classification= a.TBL_LOAN_PRUDENT_GUIDE_TYPE.PRUDENTIALGUIDELINETYPENAME,
                                internalMinimun= a.INTERNALMINIMUM,
                                internalMaximun= a.INTERNALMAXIMUM,
                                externalMinimun= a.EXTERNALMINIMUM,
@@ -116,7 +116,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              select new PrudentialGuidelineViewModel
                              {
                                  statusName = a.STATUSNAME,
-                                 classification = a.CLASSIFICATION,
+                                classification = a.TBL_LOAN_PRUDENT_GUIDE_TYPE.PRUDENTIALGUIDELINETYPENAME,
                                  internalMinimun = a.INTERNALMINIMUM,
                                  internalMaximun = a.INTERNALMAXIMUM,
                                  externalMinimun = a.EXTERNALMINIMUM,
@@ -132,7 +132,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
             if (guideline != null)
             {
                 data.STATUSNAME = guideline.statusName;
-                data.CLASSIFICATION= guideline.classification;
+               // data.CLASSIFICATION= guideline.classification;
                 data.INTERNALMINIMUM=guideline.internalMinimun;
                 data.INTERNALMAXIMUM=guideline.internalMaximun;
                 data.EXTERNALMINIMUM=guideline.externalMinimun;

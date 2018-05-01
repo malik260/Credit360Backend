@@ -12,12 +12,12 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/upload")]
-    public class genericDocumentUploadController : ApiController
+    public class GenericDocumentUploadController : ApiController
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         private ILoanDocumentRepository repo;
 
-        public genericDocumentUploadController(ILoanDocumentRepository repo)
+        public GenericDocumentUploadController(ILoanDocumentRepository repo)
         {
             this.repo = repo;
 

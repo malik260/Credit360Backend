@@ -54,12 +54,13 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
+                    if (repo.ValidateRegionName(entity.regionName.Trim()))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = $"Region with name {entity.regionName} already exist." });
+                    }
                 }
-                if (repo.ValidateRegionName(entity.regionName.Trim()))
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                  new { success = false, message = $"Region with name {entity.regionName} already exist." });
-                }
+              
                 entity.companyId = token.GetCompanyId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -184,7 +185,7 @@ namespace FintrakBanking.APICore.Controllers
                 var result = await repo.UpdateBranch(model, id);
                 if (result)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Branch has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Branch has been updated successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
             }

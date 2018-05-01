@@ -10,17 +10,18 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_TEMP_COLLATERAL_POLICY
     {
         [Key]
-        public int COLLATERALINSURANCEPOLICYID { get; set; }
+        public int TEMPCOLLATERALINSURPOLICYID { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
-
-        public short COLLATERALSUBTYPEID { get; set; }
+        public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
         public bool ISOWNEDBYCUSTOMER { get; set; }
 
         [Required]
         [StringLength(50)]
         public string INSURANCEPOLICYNUMBER { get; set; }
+
+        [StringLength(100)]
+        public string INSURANCETYPE { get; set; }
 
         [Column(TypeName = "money")]
         public decimal PREMIUMAMOUNT { get; set; }

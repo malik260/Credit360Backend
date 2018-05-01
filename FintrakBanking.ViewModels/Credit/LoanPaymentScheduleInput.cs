@@ -71,6 +71,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? newMaturityDate { get; set; }
         public int newTenorPrepayment{ get { return ((DateTime)newMaturityDate - newEffectiveDate).Days; } }
         public int customerId { get; set; }
+        public DateTime date { get; set; }
 
 
 
@@ -149,9 +150,6 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int loanApplicationNumberId { get; set; }
         public int checklistId { get; set; }
-
-
-
 
     }
 

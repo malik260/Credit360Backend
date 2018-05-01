@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("temp.TBL_TEMP_STAFF")]
     public partial class TBL_TEMP_STAFF
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_TEMP_STAFF()
+        {
+            TBL_TEMP_PROFILE_USER = new HashSet<TBL_TEMP_PROFILE_USER>();
+        }
+
         [Key]
         public int TEMPSTAFFID { get; set; }
 
@@ -116,5 +122,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_STAFF_ROLE TBL_STAFF_ROLE { get; set; }
 
         public virtual TBL_STATE TBL_STATE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_PROFILE_USER> TBL_TEMP_PROFILE_USER { get; set; }
     }
 }

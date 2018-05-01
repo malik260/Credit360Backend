@@ -124,7 +124,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string middleName { get; set; }
         public string lastName { get; set; }
         public string customerCode { get; set; }
-        public string productAccountNumber { get; set; }
+        public string casaAccountNumber  { get; set; }
         public int currencyId { get; set; }
         public string currency { get; set; }
         public short accurialBasis { get; set; }
@@ -206,6 +206,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int newtenor { get; set; }
         public short scheduleTypeCategoryId { get; set; }
         public DateTime previousEffectiveDate { get; set; }
+        public decimal pastDueTotal { get; set; }
+        public decimal overDraftCheckAmount { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
@@ -299,6 +301,13 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         //......End f Loan Relational Table View Mapping Models......//
+
+        public decimal pastDuePrincipal { get; set; }
+        public decimal pastDueInterest { get; set; }
+        public decimal interestOnPastDuePrincipal { get; set; }
+        public decimal interesrtOnPastDueInterest { get; set; }
+        public decimal penalChargeAmount { get; set; }
+        public int dayCountConventionId { get; set; }
     }
 
     public class ContingentLoanViewModel : GeneralEntity
@@ -511,6 +520,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationId { get; set; }
         public decimal loanAmount { get; set; }
         public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
+        public DateTime date  { get; set; }
 
     }
 
@@ -595,6 +605,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipManagerId { get; set; }
 
         public int notificationDuration { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public bool isPercentage { get; set; }
+        public DateTime? nextCovenantDate { get; set; }
     }
 
     public class LoanMonitoringTriggerViewModel : GeneralEntity
@@ -648,6 +661,10 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int fromLoanId  { get; set; }
         public decimal fromAmount  { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime maturityDate { get; set; }
+
+
     }
 
     public class LoanAvailmentApprovalViewModel: ApprovalViewModel
@@ -699,5 +716,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int approvalTrailId { get; set; } 
     }
-
-}
+    public class PrudGuildlineTypeViewModel
+    {
+        public int prudentialGuildlineTypeId { get; set; }
+        public string prudentialGuildlineTypeName { get; set; }
+    }
+    }

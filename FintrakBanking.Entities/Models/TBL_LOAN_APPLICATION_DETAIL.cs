@@ -13,7 +13,6 @@ namespace FintrakBanking.Entities.Models
         public TBL_LOAN_APPLICATION_DETAIL()
         {
             TBL_LOAN = new HashSet<TBL_LOAN>();
-            TBL_LOAN_APPLICATION_COLLATERL = new HashSet<TBL_LOAN_APPLICATION_COLLATERL>();
             TBL_LOAN_APPLICATION_COLLATRL2 = new HashSet<TBL_LOAN_APPLICATION_COLLATRL2>();
             TBL_LOAN_APPLICATION_COVENANT = new HashSet<TBL_LOAN_APPLICATION_COVENANT>();
             TBL_LOAN_TRANSACTION_DYNAMICS = new HashSet<TBL_LOAN_TRANSACTION_DYNAMICS>();
@@ -92,6 +91,12 @@ namespace FintrakBanking.Entities.Models
         [StringLength(2000)]
         public string REPAYMENTSCHEDULE { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime? EFFECTIVEDATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? EXPIRYDATE { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
@@ -124,9 +129,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
 
         public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_APPLICATION_COLLATERL> TBL_LOAN_APPLICATION_COLLATERL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_APPLICATION_COLLATRL2> TBL_LOAN_APPLICATION_COLLATRL2 { get; set; }

@@ -10,11 +10,9 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_TEMP_COLLATERAL_PLANT_EQUP
     {
         [Key]
-        public int COLLATERALMACHINEDETAILID { get; set; }
+        public int TEMPCOLLATERALMACHINEDETAILID { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
-
-        public short COLLATERALSUBTYPEID { get; set; }
+        public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(200)]
@@ -57,9 +55,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(150)]
         public string INTENDEDUSE { get; set; }
 
-        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+        [StringLength(500)]
+        public string REMARK { get; set; }
 
-        public virtual TBL_COLLATERAL_TYPE_SUB TBL_COLLATERAL_TYPE_SUB { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
 
         public virtual TBL_COLLATERAL_VALUEBASE_TYPE TBL_COLLATERAL_VALUEBASE_TYPE { get; set; }
     }

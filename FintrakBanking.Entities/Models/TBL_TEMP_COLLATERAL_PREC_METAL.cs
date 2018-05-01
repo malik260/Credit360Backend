@@ -10,13 +10,9 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_TEMP_COLLATERAL_PREC_METAL
     {
         [Key]
-        public int COLLATERALPRECIOUSMETALID { get; set; }
+        public int TEMPCOLLATERALPRECIOUSMETALID { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
-
-        public short COLLATERALSUBTYPEID { get; set; }
-
-        public bool ISOWNEDBYCUSTOMER { get; set; }
+        public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(100)]

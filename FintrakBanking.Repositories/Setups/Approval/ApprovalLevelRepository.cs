@@ -429,5 +429,43 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             return GetApprovalTrail(operationId, companyId).Where(c => c.TargetId == targetId);
         }
+
+        #region preset route
+
+        public bool PresetRoute(PresetRouteViewModel entity)
+        {
+            var appl = context.TBL_LOAN_APPLICATION.Find(entity.applicationId);
+            appl.NEXTAPPLICATIONSTATUSID = (short)entity.nextApplicationStatusId;
+            appl.FINALAPPROVAL_LEVELID = entity.finalApprovalLevelId;
+            return context.SaveChanges() > 0;
+        }
+
+        public PresetRouteViewModel GetPresetRouteCollection(int operationId, int? classId)
+        {
+            var preset = new PresetRouteViewModel();
+
+            var process = context.TBL_LOAN_APPLICATION_STATUS.Select(x=> new FintrakDropDownSelectList
+            {
+                    id = x.APPLICATIONSTATUSID,
+                    name = x.APPLICATIONSTATUSNAME,
+                })
+                .ToList();
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == classId)
+                .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL, mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new FintrakDropDownSelectList
+                {
+                    id = l.APPROVALLEVELID,
+                    name = l.LEVELNAME,
+                })
+                .ToList();
+
+            preset.applicationStatus = process;
+            preset.approvalLevels = levels;
+
+            return preset;
+        }
+
+        #endregion preset note
     }
 }

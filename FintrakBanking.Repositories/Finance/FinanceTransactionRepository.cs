@@ -517,8 +517,8 @@ namespace FintrakBanking.Repositories.Finance
                 else
                 {
                     //DateTime date = generalSetup.GetApplicationDate().Date;
-                    var rateInfo = (from x in this.context.TBL_CURRENCY_RATE
-                                    where x.CURRENCYID == currencyId && x.DATE == date.Date
+                    var rateInfo = (from x in this.context.TBL_CURRENCY_EXCHANGERATE
+                                    where x.CURRENCYID == currencyId && x.DATE == date.Date && x.RATECODEID == 1
                                     select x).FirstOrDefault();
 
                     if (rateInfo == null)
@@ -528,8 +528,8 @@ namespace FintrakBanking.Repositories.Finance
                     {
                         baseCurrencyId = rateInfo.BASECURRENCYID,
                         currencyId = rateInfo.CURRENCYID,
-                        buyingRate = rateInfo.BUYINGRATE,
-                        sellingRate = rateInfo.SELLINGRATE,
+                        buyingRate = rateInfo.EXCHANGERATE,
+                        sellingRate = rateInfo.EXCHANGERATE,
                         date = rateInfo.DATE,
                         isBaseCurrency = false
                     };
@@ -548,7 +548,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             debit.operationId = (int)OperationsEnum.DailyInterestAccural;
             debit.description = "Loan Daily Interest Accrual Posting";
-            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.valueDate = model.date; //generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = model.currencyId;
             debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -570,7 +570,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.DailyInterestAccural;
             credit.description = "Loan Daily Interest Accrual Posting";
-            credit.valueDate = generalSetup.GetApplicationDate();
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = model.currencyId;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -602,10 +602,10 @@ namespace FintrakBanking.Repositories.Finance
                 AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
-                DETAIL = $"Loan Daily Interest Accrual Posting: {product.PRODUCTCODE}",
+                DETAIL = $"Loan Daily Interest Accrual Posting: {model.referenceNumber}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
 
@@ -625,7 +625,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             debit.operationId = (int)OperationsEnum.DailyInterestAccural;
             debit.description = "Authorised Overdraft Daily Interest Accrual Posting";
-            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.valueDate = model.date;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = model.currencyId;
             debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -650,7 +650,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.DailyInterestAccural;
             credit.description = "Authorised Overdraft Daily Interest Accrual Posting";
-            credit.valueDate = generalSetup.GetApplicationDate();
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = model.currencyId;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -661,7 +661,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
-            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; ;
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; 
             credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
@@ -683,10 +683,10 @@ namespace FintrakBanking.Repositories.Finance
                 AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
-                DETAIL = $"Authorised Overdraft Daily Interest Accrual Posting: {product.PRODUCTCODE}",
+                DETAIL = $"Authorised Overdraft Daily Interest Accrual Posting: {model.referenceNumber}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
 
@@ -705,7 +705,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             debit.operationId = (int)OperationsEnum.DailyInterestAccural;
             debit.description = "Unauthorised Overdraft Daily Interest Accrual Posting";
-            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.valueDate = model.date;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = model.currencyId;
             debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -730,7 +730,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.DailyInterestAccural;
             credit.description = "Unauthorised Overdraft Daily Interest Accrual Posting";
-            credit.valueDate = generalSetup.GetApplicationDate();
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = model.currencyId;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -766,7 +766,7 @@ namespace FintrakBanking.Repositories.Finance
                 DETAIL = $"Unauthorised Overdraft Daily Interest Accrual Posting: {product.PRODUCTCODE}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
 
@@ -785,7 +785,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             debit.operationId = (int)OperationsEnum.DailyInterestAccural;
             debit.description = "Past Due Daily Interest Accrual Posting";
-            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.valueDate = model.date;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = model.currencyId;
             debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -810,7 +810,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.DailyInterestAccural;
             credit.description = "Past Due Daily Interest Accrual Posting";
-            credit.valueDate = generalSetup.GetApplicationDate();
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = model.currencyId;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -821,7 +821,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
-            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; ;
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value;
             credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
@@ -838,19 +838,19 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
-                STAFFID = model.createdBy,
-                BRANCHID = model.branchId,
-                DETAIL = $"Past Due Daily Interest Accrual Posting: {product.PRODUCTCODE}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = model.branchId,
+            //    DETAIL = $"Past Due Daily Interest Accrual Posting: {model.referenceNumber}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
 
-            this.auditTrail.AddAuditTrail(audit);
+            //this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
             context.SaveChanges();
@@ -865,7 +865,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             debit.operationId = (int)OperationsEnum.DailyInterestAccural;
             debit.description = "Past Due Daily Principal Accrual Posting";
-            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.valueDate = model.date;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = model.currencyId;
             debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -890,7 +890,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.DailyInterestAccural;
             credit.description = "Past Due Daily Principal Accrual Posting";
-            credit.valueDate = generalSetup.GetApplicationDate();
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = model.currencyId;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -901,7 +901,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
-            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; ;
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; 
             credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
@@ -914,22 +914,22 @@ namespace FintrakBanking.Repositories.Finance
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
             PostTransaction(inputTransactions);
-
+            //context.SaveChanges();
             // Audit Section ---------------------------            
 
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyPrincipalAccrual,
-                STAFFID = model.createdBy,
-                BRANCHID = model.branchId,
-                DETAIL = $"Past Due Daily Principal Accrual Posting: {product.PRODUCTCODE}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.LoanDailyPrincipalAccrual,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = model.branchId,
+            //    DETAIL = $"Past Due Daily Principal Accrual Posting: {model.referenceNumber}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
 
-            this.auditTrail.AddAuditTrail(audit);
+            //this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
             context.SaveChanges();
@@ -946,13 +946,13 @@ namespace FintrakBanking.Repositories.Finance
 
             debit.operationId = (int)OperationsEnum.LoanRepayment;
             debit.description = description; // "Loan Disbursment Amount";
-            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.valueDate = model.paymentDate;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = casa.CURRENCYID;
             debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
             debit.isApproved = true;
-            debit.postedBy = (int)SystemStaff.System; ;
-            debit.approvedBy = (int)SystemStaff.System; ;
+            debit.postedBy = (int)SystemStaff.System;
+            debit.approvedBy = (int)SystemStaff.System;
             debit.approvedDate = debit.transactionDate;
             debit.approvedDateTime = DateTime.Now;
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
@@ -969,13 +969,13 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.LoanRepayment;
             credit.description = description; // "Loan Disbursment Amount";
-            credit.valueDate = generalSetup.GetApplicationDate();
+            credit.valueDate = model.paymentDate;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = casa.CURRENCYID;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
             credit.isApproved = true;
-            credit.postedBy = (int)SystemStaff.System; ;
-            credit.approvedBy = (int)SystemStaff.System; ;
+            credit.postedBy = (int)SystemStaff.System; 
+            credit.approvedBy = (int)SystemStaff.System;
             credit.approvedDate = credit.transactionDate;
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
@@ -1004,7 +1004,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             debit.operationId = (int)OperationsEnum.LoanRepayment;
             debit.description = description; // "Loan Disbursment Amount";
-            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.valueDate = model.paymentDate;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = casa.CURRENCYID;
             debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -1028,7 +1028,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.LoanRepayment;
             credit.description = description; // "Loan Disbursment Amount";
-            credit.valueDate = generalSetup.GetApplicationDate();
+            credit.valueDate = model.paymentDate;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = casa.CURRENCYID;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -1226,7 +1226,7 @@ namespace FintrakBanking.Repositories.Finance
                 FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
                 debit.operationId = (int)OperationsEnum.Fee_chargeChange;
                 debit.description = "Charge Reversal";
-                debit.valueDate = generalSetup.GetApplicationDate();
+                debit.valueDate = model.date;//generalSetup.GetApplicationDate();
                 debit.transactionDate = debit.valueDate;
                 debit.currencyId = casa.CURRENCYID;
                 debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -1249,7 +1249,7 @@ namespace FintrakBanking.Repositories.Finance
                 FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
                 credit.operationId = (int)OperationsEnum.Fee_chargeChange;
                 credit.description = "Charge Reversal";
-                credit.valueDate = generalSetup.GetApplicationDate();
+                credit.valueDate = model.date;//generalSetup.GetApplicationDate();
                 credit.transactionDate = credit.valueDate;
                 credit.currencyId = casa.CURRENCYID;
                 credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -1280,7 +1280,7 @@ namespace FintrakBanking.Repositories.Finance
                 FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
                 debit.operationId = (int)OperationsEnum.Fee_chargeChange;
                 debit.description = "Charge Reversal";
-                debit.valueDate = generalSetup.GetApplicationDate();
+                debit.valueDate = model.date;//generalSetup.GetApplicationDate();
                 debit.transactionDate = debit.valueDate;
                 debit.currencyId = casa.CURRENCYID;
                 debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -1303,7 +1303,7 @@ namespace FintrakBanking.Repositories.Finance
                 FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
                 credit.operationId = (int)OperationsEnum.Fee_chargeChange;
                 credit.description = "Charge Reversal";
-                credit.valueDate = generalSetup.GetApplicationDate();
+                credit.valueDate = model.date;//generalSetup.GetApplicationDate();
                 credit.transactionDate = credit.valueDate;
                 credit.currencyId = casa.CURRENCYID;
                 credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -1345,7 +1345,7 @@ namespace FintrakBanking.Repositories.Finance
             var casa = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId && x.COMPANYID == model.companyId);
             debit.operationId = (int)OperationsEnum.LoanRepayment;
             debit.description = description; // "Loan Disbursment Amount";
-            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.valueDate = model.date;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = casa.CURRENCYID;
             debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -1368,7 +1368,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.LoanRepayment;
             credit.description = description; // "Loan Disbursment Amount";
-            credit.valueDate = generalSetup.GetApplicationDate();
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = casa.CURRENCYID;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -1414,7 +1414,7 @@ namespace FintrakBanking.Repositories.Finance
 
             debit.operationId = (int)OperationsEnum.LoanTermination;
             debit.description = description;
-            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.valueDate = model.date;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = casa.CURRENCYID;
             debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -1440,7 +1440,7 @@ namespace FintrakBanking.Repositories.Finance
 
             credit.operationId = (int)OperationsEnum.LoanTermination;
             credit.description = description;
-            credit.valueDate = generalSetup.GetApplicationDate();
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = casa.CURRENCYID;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -1456,7 +1456,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
-            credit.creditAmount = postedAmount; ;
+            credit.creditAmount = postedAmount; 
             credit.sourceBranchId = casa.BRANCHID;
             credit.destinationBranchId = casa.BRANCHID;
 
@@ -1470,125 +1470,6 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        [OperationBehavior(TransactionScopeRequired = true)]
-        public FinanceTransactionViewModel BuildCustomerApplicationChargeOrChargeReversalPosting (string postType, int loanId, GeneralEntity model, decimal postedAmount, int creditGL, string description)
-        {
-            var loanData = this.context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanId).FirstOrDefault();
-
-            //FinanceTransactionViewModel terminateAndRebookTransaction = new FinanceTransactionViewModel();
-
-            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanData.CASAACCOUNTID && x.COMPANYID == model.companyId);
-            if(postType == "Post")
-            {
-                FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-                debit.operationId = (int)OperationsEnum.LoanTermination;
-                debit.description = description;
-                debit.valueDate = generalSetup.GetApplicationDate();
-                debit.transactionDate = debit.valueDate;
-                debit.currencyId = casa.CURRENCYID;
-                debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
-                debit.isApproved = true;
-                debit.postedBy = model.createdBy;
-                debit.approvedBy = model.createdBy;
-                debit.approvedDate = debit.transactionDate;
-                debit.approvedDateTime = DateTime.Now;
-                debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-                debit.companyId = model.companyId;
-                debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
-                debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
-                debit.casaAccountId = casa.CASAACCOUNTID;
-                debit.debitAmount = postedAmount;
-                debit.creditAmount = 0;
-                debit.sourceBranchId = casa.BRANCHID;
-                debit.destinationBranchId = casa.BRANCHID;
-
-                FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-                credit.operationId = (int)OperationsEnum.LoanTermination;
-                credit.description = description;
-                credit.valueDate = generalSetup.GetApplicationDate();
-                credit.transactionDate = credit.valueDate;
-                credit.currencyId = casa.CURRENCYID;
-                credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
-                credit.isApproved = true;
-                credit.postedBy = model.createdBy;
-                credit.approvedBy = model.createdBy;
-                credit.approvedDate = credit.transactionDate;
-                credit.approvedDateTime = DateTime.Now;
-                credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-                credit.companyId = model.companyId;
-                credit.glAccountId = creditGL;
-
-                credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
-                credit.casaAccountId = null;
-                credit.debitAmount = 0;
-                credit.creditAmount = postedAmount; ;
-                credit.sourceBranchId = casa.BRANCHID;
-                credit.destinationBranchId = casa.BRANCHID;
-
-                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-                inputTransactions.Add(debit);
-                inputTransactions.Add(credit);
-                PostTransaction(inputTransactions);
-
-                return null;
-            }
-            else
-            {
-                FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-                debit.operationId = (int)OperationsEnum.LoanTermination;
-                debit.description = description;
-                debit.valueDate = generalSetup.GetApplicationDate();
-                debit.transactionDate = debit.valueDate;
-                debit.currencyId = casa.CURRENCYID;
-                debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
-                debit.isApproved = true;
-                debit.postedBy = model.createdBy;
-                debit.approvedBy = model.createdBy;
-                debit.approvedDate = debit.transactionDate;
-                debit.approvedDateTime = DateTime.Now;
-                debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-                debit.companyId = model.companyId;
-                debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
-                debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
-                debit.casaAccountId = casa.CASAACCOUNTID;
-                debit.debitAmount = postedAmount;
-                debit.creditAmount = 0;
-                debit.sourceBranchId = casa.BRANCHID;
-                debit.destinationBranchId = casa.BRANCHID;
-
-                FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-                credit.operationId = (int)OperationsEnum.LoanTermination;
-                credit.description = description;
-                credit.valueDate = generalSetup.GetApplicationDate();
-                credit.transactionDate = credit.valueDate;
-                credit.currencyId = casa.CURRENCYID;
-                credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
-                credit.isApproved = true;
-                credit.postedBy = model.createdBy;
-                credit.approvedBy = model.createdBy;
-                credit.approvedDate = credit.transactionDate;
-                credit.approvedDateTime = DateTime.Now;
-                credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-                credit.companyId = model.companyId;
-                credit.glAccountId = creditGL;
-
-                credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
-                credit.casaAccountId = null;
-                credit.debitAmount = 0;
-                credit.creditAmount = postedAmount; ;
-                credit.sourceBranchId = casa.BRANCHID;
-                credit.destinationBranchId = casa.BRANCHID;
-
-                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-                inputTransactions.Add(debit);
-                inputTransactions.Add(credit);
-                PostTransaction(inputTransactions);
-
-                return null;
-            }
-
-        }
-
         public FinanceTransactionViewModel PostDailyInterestSuspension(DailyInterestAccrualViewModel model, int loanId, DateTime applicationDate, int staffId)
 
         {
@@ -1596,7 +1477,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             debit.operationId = (int)OperationsEnum.InterestSuspension;
             debit.description = "Interest Suspension";
-            debit.valueDate = generalSetup.GetApplicationDate();
+            debit.valueDate = model.date;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
             debit.currencyId = model.currencyId;
             debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
@@ -1609,7 +1490,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.companyId = model.companyId;
             var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);       
             debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
-            debit.sourceReferenceNumber = product.PRODUCTCODE;
+            debit.sourceReferenceNumber = model.referenceNumber;
             debit.casaAccountId = null;
             debit.debitAmount = (decimal)model.dailyAccuralAmount;
             debit.creditAmount = 0;
@@ -1619,7 +1500,7 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.InterestSuspension;
             credit.description = "Interest Suspension";
-            credit.valueDate = generalSetup.GetApplicationDate();
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
             credit.currencyId = model.currencyId;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
@@ -1633,7 +1514,7 @@ namespace FintrakBanking.Repositories.Finance
             var InterestSuspensionGL = 8;////to be change when interestsuspenses is created
             credit.glAccountId = InterestSuspensionGL; ///product.InterestIncomeExpenseGL.Value;
 
-            credit.sourceReferenceNumber = product.PRODUCTCODE;
+            credit.sourceReferenceNumber = model.referenceNumber;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = (decimal)model.dailyAccuralAmount;
@@ -1653,10 +1534,10 @@ namespace FintrakBanking.Repositories.Finance
                 AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
-                DETAIL = $"Interest Suspension Posting: {product.PRODUCTCODE}",
+                DETAIL = $"Interest Suspension Posting: {model.referenceNumber}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
 

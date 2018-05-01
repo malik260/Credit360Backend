@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_ACCREDITEDCONSULTANT()
         {
             TBL_ACCREDITEDCONSULTANT_STATE = new HashSet<TBL_ACCREDITEDCONSULTANT_STATE>();
+            TBL_JOB_REQUEST_DETAIL = new HashSet<TBL_JOB_REQUEST_DETAIL>();
         }
 
         [Key]
@@ -72,5 +73,8 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
 
         public virtual TBL_ACCREDITEDCONSULTANT_TYPE TBL_ACCREDITEDCONSULTANT_TYPE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_JOB_REQUEST_DETAIL> TBL_JOB_REQUEST_DETAIL { get; set; }
     }
 }

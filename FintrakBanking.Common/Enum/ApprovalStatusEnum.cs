@@ -15,4 +15,6 @@ namespace FintrakBanking.Common.Enum
         Reroute = 6,
         Escalated = 7,
     }
+
+  
 }

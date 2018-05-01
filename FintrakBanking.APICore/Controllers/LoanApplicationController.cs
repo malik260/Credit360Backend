@@ -334,34 +334,23 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("update-loan-application")]
+        [Route("loan-application-for-cam")]
         public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] LoanApplicationUpdateViewModel loan)
         {
             try
             {
                 var responseMessage = string.Empty;
-
-                var data = new LoanApplicationUpdateViewModel
-                {
-                    applicationId = loan.applicationId,
-                    checkListIndex = loan.checkListIndex,
-                    staffId = token.GetStaffId
-                };
-
-                var response = repo.SubmitLoanApplicationForCam(data);
+                var response = repo.SubmitLoanApplicationForCam(loan.applicationId, token.GetStaffId, loan.checkListIndex);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
 
-
         [HttpPut]
-        [Route("loan-application-for-cam")]
+        [Route("update-loan-application")]
         public HttpResponseMessage UpdateLoanApplicationDetails([FromBody]LoanApplicationDatailViewModel entity)
         {
             try
@@ -530,7 +519,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
                 model.branchId = (short)token.GetBranchId;
 
-                if (model.sentForEvaluation)
+                if (model.sendForEvaluation)
                 {
                     model.isCurrent = true;
                 }
@@ -543,9 +532,18 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (response != null)
                 {
-                    responseMessage = $"Preliminary evaluation note ({response.preliminaryEvaluationCode}) created successfully, now awaiting approval";
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = $"{responseMessage}" });
+                    if (response.sendForEvaluation)
+                    {
+                        responseMessage = $"Preliminary evaluation note ({response.preliminaryEvaluationCode}) created successfully, now awaiting approval";
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, message = $"{responseMessage}" });
+                    }
+                    else
+                    {
+                        responseMessage = $"Preliminary evaluation note ({response.preliminaryEvaluationCode}) saved successfully";
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, message = $"{responseMessage}" });
+                    }
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Preliminary evaluation note not created" });
@@ -651,7 +649,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 responseMessage = "Preliminary evaluation note updated successfully";
 
-                if (model.sentForEvaluation)
+                if (model.sendForEvaluation)
                 {
                     model.isCurrent = true;
                     responseMessage = "Preliminary evaluation note updated successfully, now awaiting approval";

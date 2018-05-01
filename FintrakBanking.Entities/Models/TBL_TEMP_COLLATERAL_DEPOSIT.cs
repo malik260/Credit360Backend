@@ -10,18 +10,15 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_TEMP_COLLATERAL_DEPOSIT
     {
         [Key]
-        public int COLLATERALDEPOSITID { get; set; }
+        public int TEMPCOLLATERALDEPOSITID { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
+        public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
-        public short? COLLATERALSUBTYPEID { get; set; }
+        [StringLength(100)]
+        public string BANK { get; set; }
 
         [StringLength(50)]
         public string DEALREFERENCENUMBER { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string ACCOUNTTYPE { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -39,6 +36,10 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal SECURITYVALUE { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime EFFECTIVEDATE { get; set; }
+
+        [Column(TypeName = "date")]
         public DateTime MATURITYDATE { get; set; }
 
         [Column(TypeName = "money")]
@@ -46,9 +47,5 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(500)]
         public string REMARK { get; set; }
-
-        public virtual TBL_COLLATERAL_TYPE_SUB TBL_COLLATERAL_TYPE_SUB { get; set; }
-
-        public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
     }
 }

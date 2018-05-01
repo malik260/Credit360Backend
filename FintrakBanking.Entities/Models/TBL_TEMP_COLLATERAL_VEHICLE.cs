@@ -10,15 +10,13 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_TEMP_COLLATERAL_VEHICLE
     {
         [Key]
-        public int COLLATERALVEHICLEID { get; set; }
+        public int TEMPCOLLATERALVEHICLEID { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
+        public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(100)]
         public string VEHICLETYPE { get; set; }
-
-        public short COLLATERALSUBTYPEID { get; set; }
 
         [StringLength(10)]
         public string VEHICLESTATUS { get; set; }
