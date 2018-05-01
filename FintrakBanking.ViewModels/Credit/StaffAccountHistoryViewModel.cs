@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.WorkFlow;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class StaffAccountHistoryViewModel : GeneralEntity
     {
         public short productTypeId { get; set; }
+
+        public string  productType { get; set; }
 
         public int targetId { get; set; }
 
@@ -34,8 +37,44 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    
- 
+    public class StaffMISHistoryViewModel : LoanViewModel
+    {
+         
 
-    
+        public string productType { get; set; }
+
+        public int targetId { get; set; }
+
+        public int staffAccountHistoryId { get; set; }
+
+        public int currentRMStaffId { get; set; }
+
+        public DateTime startDate { get; set; }
+
+        public DateTime endDate { get; set; }
+
+        public int newRMStaffId { get; set; }
+
+        public string reasonForChange { get; set; } 
+
+        public string newRMStaffName { get; set; }
+
+        public string currentRMStaffName { get; set; }
+
+
+
+    }
+
+    public class ReasignedAccountApprovalViewModel : ApprovalViewModel
+    {
+        public int productTypeId { get; set; }
+        public int loanId { get; set; }
+        public int newRMStaffId { get; set; }
+        public int staffAccountHistoryId { get; set; }
+
+
+    }
+
+  
+
 }
