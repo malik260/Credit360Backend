@@ -68,7 +68,7 @@ namespace FintrakBanking.Common.Enum
         ReassigningOfAccount = 57,
         CollateralApproval = 60,
         ItemPolicyApproval = 61,
-
+        CommercialPaperLoanBooking = 63
 
     }
 }

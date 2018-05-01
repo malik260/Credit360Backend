@@ -65,8 +65,8 @@ namespace FintrakBanking.Repositories.Credit
                         from e in apprTrail.DefaultIfEmpty()
                         where a.COMPANYID == companyId 
                             && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
+                            && b.STATUSID == (short)ApprovalStatusEnum.Approved
                             && !exceptIds.Contains(a.LOANAPPLICATIONID)
-                            && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
                         {
                             loanApplicationId = a.LOANAPPLICATIONID,
@@ -100,33 +100,9 @@ namespace FintrakBanking.Repositories.Credit
                             availmentDate = a.AVAILMENTDATE,
                             approvalDate = a.APPROVEDDATE,
                             isFirstApprover = true,
-                            camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
-                                .Select(camDoc => new CamDocumentViewModel
-                                {
-                                    appraisalMemorandumId = camDoc.APPRAISALMEMORANDUMID,
-                                    approvalLevelId = camDoc.APPROVALLEVELID,
-                                    approvalLevelName = camDoc.TBL_APPROVAL_LEVEL.LEVELNAME,
-                                    camDocumentation = camDoc.CAMDOCUMENTATION
-                                }
-                            ).ToList(),
-                            loanApplicationCollateral = (from e in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
-                                                         select new LoanApplicationCollateralViewModel
-                                                         {
-                                                             collateralValue = e.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                                                             collateralType = e.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                                                             collateralCustomerId = e.COLLATERALCUSTOMERID,
-                                                             collateralSubtype = e.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB
-                                                             .Where(p => p.COLLATERALSUBTYPEID == e.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
-                                                             collateralReferenceNumber = e.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                                                             haircut = e.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                                                             valuationCycle = e.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                                                             allowSharing = e.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                                                             currencyCode = e.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE
-                                                         }).ToList(),
-
-                            operationId = (short)OperationsEnum.LoanAvailment,
+                            operationId = (int?)OperationsEnum.LoanAvailment,
                             currentApprovalStateId = e.APPROVALSTATEID,
-                            approvalStatusId = e.APPROVALSTATUSID,
+                            approvalStatusId = e == null ? 0 : e.APPROVALSTATUSID,
 
                             
                         });
@@ -1299,6 +1275,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.AVAILMENTDATE = DateTime.Now;
 
                 var loanApplication = appl;
+                
                 if (loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
                 {
                     if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
@@ -1306,6 +1283,12 @@ namespace FintrakBanking.Repositories.Credit
                         var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
                         foreach (var record in loanApplicationDetails)
                         {
+                            if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper)
+                            {
+                                record.EFFECTIVEDATE = DateTime.Now;
+                                record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
+                            }
+                                
                             var request = new TBL_LOAN_BOOKING_REQUEST
                             {
                                 AMOUNT_REQUESTED = entity.amount,
@@ -1316,7 +1299,6 @@ namespace FintrakBanking.Repositories.Credit
                             };
                             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
                         };
-
                     }
                 }               
             }

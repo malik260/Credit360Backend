@@ -21,7 +21,7 @@ namespace FintrakBanking.Repositories.Admin
         }
         public bool CanPerformActionOnResource(int userId, int activityId, UserActions action)
         {
-            IList<CanGroupViewModel> activities = this.LoadUserResources(userId);
+            IList<CanGroupViewModel> activities = this.loadUserResources(userId);
 
             switch (action)
             {
@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Admin
         }
 
 
-        private IList<CanGroupViewModel> LoadUserResources(int userId)
+        private IList<CanGroupViewModel> loadUserResources(int userId)
         {
             var userGroups = (from ug in context.TBL_PROFILE_USERGROUP
                               join u in context.TBL_PROFILE_GROUP on ug.GROUPID equals u.GROUPID

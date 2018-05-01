@@ -58,6 +58,7 @@ namespace FintrakBanking.ViewModels.Credit
         //public decimal productPriceIndexRate { get; set; }
         public double productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
+        public int casaAccountId2 { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
        
@@ -176,6 +177,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool feeOverride { get; set; }
         public int loanBookingRequestId { get; set; }
         public int staffId { get; set; }
+        public int staffName { get; set; }
         public bool hasLein { get; set; }
         public int postNoStatusId { get; set; }
         

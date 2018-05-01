@@ -40,7 +40,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         decimal GetAccountLeinAmountForCASA(string accountNumber);
 
-        IEnumerable<CollateralHistory> getCollateralHistory(short collateralID);
+        CollateralHistory getCollateralHistory(int collateralId);
         
 
         #endregion Collateral

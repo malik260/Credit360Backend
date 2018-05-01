@@ -790,16 +790,34 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralCode { get; set; }
     }
 
-    public class CollateralHistory
+    public class CollateralHistoryList
     {
         public string customerName { get; set; }
         public string usedBy { get; set; }
         public string loanRef { get; set; }
-        public string expirationDate { get; set; }
+        public DateTime expirationDate { get; set; }
         public decimal collateralValue { get; set; }
         public decimal amountInUse { get; set; }
         public decimal collateralBalance { get; set; }
         public DateTime dateUsed { get; set; }
+        public double haircut { get; set; }
+        public double exchangeRate { get; set; }
+        public decimal approvedLoanAmount { get; set; }
+        public decimal haircutValue { get; set; }
+        public decimal runningPrincipal { get; set; }
+        public decimal principalAmount { get; set; }
+        public decimal outstandingPrincipal { get; set; }
+    }
+
+    public class CollateralHistory
+    {
+        public IEnumerable<CollateralHistoryList> usage { get; set; }
+
+        public decimal collateralValue { get; set; }
+        public decimal totalAmountUsedByOutstanding { get; set; }
+        public decimal totalAmountUsedByPrincipal { get; set; }
+        public decimal availableValueByOutstanding { get; set; }
+        public decimal availableValueByPrincipal { get; set; }
     }
 
     public class StockCompanyViewModel
