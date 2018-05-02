@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\LocalGovtViewModel.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />

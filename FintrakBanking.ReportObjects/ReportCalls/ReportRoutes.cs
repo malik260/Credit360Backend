@@ -332,10 +332,9 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         {
             string path = string.Empty;
             path = reportPath + "ReportViews/AuditTrailView.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate + "&staffId=" + staffId;
-
-            return path; ;
+            return path;
         }
-       public string GetLoanInterestReceivableAndPayable(ReportSearchEntity searchEntity, int companyId, int staffId)
+        public string GetLoanInterestReceivableAndPayable(ReportSearchEntity searchEntity, int companyId, int staffId)
         {
             string path = string.Empty;
             path = reportPath + "ReportViews/LoanInterestReceivableAndPayable.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&branchId=" + searchEntity.branchId + "&loanRefNo=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&productClassId=" + searchEntity.productClassId;

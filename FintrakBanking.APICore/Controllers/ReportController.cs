@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Admin;
 using Microsoft.Reporting.WebForms;
@@ -49,6 +50,11 @@ namespace FintrakBanking.APICore.Controllers
              reportViewer.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", data));
 
             ViewBag.ReportViewer = reportViewer;
+
+            reportViewer.ProcessingMode = ProcessingMode.Local;
+            reportViewer.SizeToReportContent = true;
+            reportViewer.Width = Unit.Percentage(100);
+            reportViewer.Height = Unit.Percentage(100);
 
             return View();
         }
