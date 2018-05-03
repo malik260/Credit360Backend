@@ -2333,8 +2333,8 @@ namespace FintrakBanking.Repositories.Credit
                     credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                     credit.companyId = loanDetails.companyId;
 
-                    var feeGL = this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == item.chargeFeeId).Select(x => x.GLACCOUNTID).FirstOrDefault();  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
-                    credit.glAccountId = feeGL;
+                    //var feeGL = this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == item.chargeFeeId).Select(x => x.GLACCOUNTID).FirstOrDefault();  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+                    //credit.glAccountId = feeGL;
                     credit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
                     credit.casaAccountId = null;
                     credit.debitAmount = 0;
