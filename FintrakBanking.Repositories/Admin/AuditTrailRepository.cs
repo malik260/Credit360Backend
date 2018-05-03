@@ -16,7 +16,7 @@ namespace FintrakBanking.Repositories.Admin
             this.context = _contex;
         }
 
-        public void AddAllAuditTrail(List<TBL_AUDIT> auditInput)
+        public void AddAuditTrail(List<TBL_AUDIT> auditInput)
         {
             context.TBL_AUDIT.AddRange(auditInput);
         }
@@ -48,6 +48,7 @@ namespace FintrakBanking.Repositories.Admin
                        branchName = b.BRANCHNAME
                    };
         }
-       
+
+      
     }
 }

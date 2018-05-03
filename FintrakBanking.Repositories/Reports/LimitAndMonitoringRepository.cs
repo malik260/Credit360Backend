@@ -196,6 +196,7 @@ namespace FintrakBanking.Repositories.Reports
                 alertMessage.RECIPIENTEMAILS2 = data.escalationLevel2;
                 alertMessage.NOTIFICATION_PERIOD3 = data.notificationPeriod3;
                 alertMessage.RECIPIENTEMAILS3 = data.escalationLevel3;
+                alertMessage.MESSAGE_TEMPLATE = "Alert Message";
 
                 //var audit = new TBL_AUDIT
                 //{

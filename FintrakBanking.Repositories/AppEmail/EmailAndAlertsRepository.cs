@@ -18,36 +18,36 @@ namespace FintrakBanking.Repositories.AppEmail
     {
         private FinTrakBankingContext context = new FinTrakBankingContext();
         private IAuditTrailRepository auditTrail;
-       // private EmailHelpers emailHelpers;
+        // private EmailHelpers emailHelpers;
         private IGeneralSetupRepository genSetup;
         private DateTime applDate;
         private IStaffRepository staffRepo;
         public string response = string.Empty;
-       
+
         private readonly string supportEmail = ConfigurationManager.AppSettings["SupportEmailAddr"];
 
         public EmailAndAlertsRepository(
                 FinTrakBankingContext _context,
                 IAuditTrailRepository _auditTrail,
-             //   EmailHelpers _emailHelpers,
+                //   EmailHelpers _emailHelpers,
                 IGeneralSetupRepository _general,
                 IStaffRepository _staffRepo
             )
         {
             context = _context;
             auditTrail = _auditTrail;
-           // emailHelpers = _emailHelpers;
+            // emailHelpers = _emailHelpers;
             genSetup = _general;
             staffRepo = _staffRepo;
         }
 
         #region Covenant Monitoring
 
-        public void SendAlertsForCovenantsApproachingDueDateToRM(List<LoanCovenantDetailViewModel> loanDetails,string title, string carbonCopy)
+        public void SendAlertsForCovenantsApproachingDueDateToRM(List<LoanCovenantDetailViewModel> loanDetails, string title, string carbonCopy)
         {
             try
             {
-             //   var staffList = staffRepo.GetAllStaff().ToList();
+                //   var staffList = staffRepo.GetAllStaff().ToList();
                 var staffList = context.TBL_STAFF.ToList();
 
                 var dataList = loanDetails.Select(g => g.relationshipManagerId).ToList();
@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.AppEmail
         {
 
         }
-            public void SendAlertsForCovenantsApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public void SendAlertsForCovenantsApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             var alertsetupForCovenantsApproachingDueDate = alertSetups.Where(x => x.MONITORING_ITEMID == (int)AlertMessageEnum.CovenantsApproachingDueDate).FirstOrDefault();
 
@@ -155,18 +155,18 @@ namespace FintrakBanking.Repositories.AppEmail
                                    relationshipOfficerId = d.STAFFID,
                                    relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
                                    officerEmail = d.EMAIL,
-                                   notificationDuration = (int)DbFunctions.DiffDays(a.NEXTCOVENANTDATE,currentDate )    //(int)((TimeSpan)(currentDate.Date - a.NEXTCOVENANTDATE)).TotalDays
-                        }).ToList();
+                                   notificationDuration = (int)DbFunctions.DiffDays(a.NEXTCOVENANTDATE, currentDate)    //(int)((TimeSpan)(currentDate.Date - a.NEXTCOVENANTDATE)).TotalDays
+                               }).ToList();
 
             SendAlertsForCovenantsApproachingDueDateToRM(loanDetails, alertsetupForCovenantsApproachingDueDate.MESSAGE_TITLE, "");
 
-            var escalationLevelOne =   loanDetails.Where(x => x.notificationDuration <= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD1).ToList();
+            var escalationLevelOne = loanDetails.Where(x => x.notificationDuration <= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD1).ToList();
             SendAlertsForCovenantsApproachingDueDateToMonitoringTeam(escalationLevelOne, alertsetupForCovenantsApproachingDueDate);
 
-         var escalationLevelTwo = loanDetails.Where(x => x.notificationDuration <= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD2).ToList();
+            var escalationLevelTwo = loanDetails.Where(x => x.notificationDuration <= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD2).ToList();
             SendAlertsForCovenantsApproachingDueDateToMonitoringTeam(escalationLevelTwo, alertsetupForCovenantsApproachingDueDate);
 
-         var escalationLevelThree = loanDetails.Where(x => x.notificationDuration <= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD3).ToList();
+            var escalationLevelThree = loanDetails.Where(x => x.notificationDuration <= alertsetupForCovenantsApproachingDueDate.NOTIFICATION_PERIOD3).ToList();
             SendAlertsForCovenantsApproachingDueDateToMonitoringTeam(escalationLevelThree, alertsetupForCovenantsApproachingDueDate);
 
         }
@@ -257,7 +257,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    if (SaveMessageDetails(messageModel)!=0)
+                    if (SaveMessageDetails(messageModel) != 0)
                     {
                         response += response = " Covenants Due Date data was logged successfully, ";
                     }
@@ -357,7 +357,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    if (SaveMessageDetails(messageModel)!=0)
+                    if (SaveMessageDetails(messageModel) != 0)
                     {
                         response += response = " Collateral  Property Revaluation was logged successfully, ";
                     }
@@ -444,7 +444,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
                     var templateUrl = "~/EmailTemplates/Monitoring.html";
 
-                   var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                    var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
 
                     var messageModel = new MessageLogViewModel()
                     {
@@ -459,7 +459,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    if (SaveMessageDetails(messageModel)!=0)
+                    if (SaveMessageDetails(messageModel) != 0)
                     {
                         response += response = " Loan Npl Monitoring was logged successfully, ";
                     }
@@ -566,7 +566,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    if (SaveMessageDetails(messageModel)!=0)
+                    if (SaveMessageDetails(messageModel) != 0)
                     {
                         response += response = " Self Liquidating Loan Expiry was logged successfully, ";
                     }
@@ -670,7 +670,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    if (SaveMessageDetails(messageModel)!=0)
+                    if (SaveMessageDetails(messageModel) != 0)
                     {
                         response += response = " Over Draft Loans Almost Due was logged successfully, ";
                     }
@@ -775,7 +775,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    if (SaveMessageDetails(messageModel)!=0)
+                    if (SaveMessageDetails(messageModel) != 0)
                     {
                         response += response = " Expired Insurance was logged successfully, ";
                     }
@@ -798,7 +798,7 @@ namespace FintrakBanking.Repositories.AppEmail
         public void SendAlertsOnLoanCASAwithPND(string title, string messageBody)
         {
             var applDate = genSetup.GetApplicationDate();
-            
+
 
             var data = (from a in context.TBL_LOAN
                         join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
@@ -884,10 +884,11 @@ namespace FintrakBanking.Repositories.AppEmail
                         DateTimeReceived = DateTime.Now,
                         SendOnDateTime = DateTime.Now
                     };
-                    if (SaveMessageDetails(messageModel)!=0)
+                    if (SaveMessageDetails(messageModel) != 0)
                     {
                         response += response = " Loan CASA with PND was logged successfully, ";
-                    }else
+                    }
+                    else
                         response += response = " Loan CASA with PND logging has failed, ";
 
 
@@ -991,10 +992,10 @@ namespace FintrakBanking.Repositories.AppEmail
                         SendOnDateTime = DateTime.Now
                     };
 
-                    if (SaveMessageDetails(messageModel)!=0)
+                    if (SaveMessageDetails(messageModel) != 0)
                     {
                         response += response = " Bond and guarantee about to expire was logged successfully, ";
-                    } 
+                    }
                     else
                         response += response = " Bond and guarantee about to expire logging has failed, ";
 
@@ -1008,7 +1009,7 @@ namespace FintrakBanking.Repositories.AppEmail
         }
 
         #endregion INACTIVE BOND AND GUARANTEE
-        
+
         #region Helper Methods
 
         public int SaveMessageDetails(MessageLogViewModel model)
@@ -1030,7 +1031,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
             try
             {
-               return context.SaveChanges();
+                return context.SaveChanges();
             }
             catch (Exception ex)
             {

@@ -45,6 +45,9 @@ using FintrakBanking.Repositories.media;
 using FintrakBanking.Interfaces.Notification;
 using FintrakBanking.Repositories.Notification;
 using Ninject;
+using FintrakBanking.Interfaces.Reports; 
+using FintrakBanking.Repositories.Reports;
+using FintrakBanking.Repositories.Setups.Credit;
 
 namespace WinApp
 {
@@ -68,6 +71,7 @@ namespace WinApp
             kernel.Bind<IAccountTypeRepository>().To<AccountTypeRepository>();
             kernel.Bind<ICompanyRepository>().To<CompanyRepository>();
             kernel.Bind<IBranchRepository>().To<BranchRepository>();
+            kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
             kernel.Bind<IRiskSetupRepository>().To<RiskSetupRepository>();
             kernel.Bind<IRiskImplementation>().To<RiskImplementation>();
             kernel.Bind<IStaffRepository>().To<StaffRepository>();
@@ -81,6 +85,7 @@ namespace WinApp
             kernel.Bind<IProductCollateralTypeRepository>().To<ProductCollateralTypeRepository>();
             kernel.Bind<IProductFeeRepository>().To<ProductFeeRepository>();
             kernel.Bind<ICustomerRepository>().To<CustomerRepository>();
+            kernel.Bind<ICustomerProductFeeRepository>().To<CustomerProductFeeRepository>();
             kernel.Bind<ICustomerGroupRepository>().To<CustomerGroupRepository>();
             kernel.Bind<IAuditTrailRepository>().To<AuditTrailRepository>();
             kernel.Bind<ICultureHelper>().To<CultureHelper>();
@@ -96,12 +101,9 @@ namespace WinApp
             kernel.Bind<ICustomerFSCaptionDetailRepository>().To<CustomerFSCaptionDetailRepository>();
             kernel.Bind<ICustomFieldsRepository>().To<CustomFieldsRepository>();
             kernel.Bind<ICustomerFSRatioRepository>().To<CustomerFSRatioRepository>();
-            kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
             kernel.Bind<IChecklistRepository>().To<ChecklistRepository>();
             kernel.Bind<ILoanRepository>().To<LoanRepository>();
-            kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
             kernel.Bind<IApprovalGroupMappingRepository>().To<ApprovalGroupMappingRepository>();
-            //kernel.Bind<IWorkFlowRepository>().To<WorkFlowRepository>();
             kernel.Bind<IWorkflow>().To<Workflow>();
             kernel.Bind<IApprovalGroupRepository>().To<ApprovalGroupRepository>();
             kernel.Bind<IApprovalLevelRepository>().To<ApprovalLevelRepository>();
@@ -125,10 +127,33 @@ namespace WinApp
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
             kernel.Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
+           // kernel.Bind<IReportRoutes>().To<ReportRoutes>();
             kernel.Bind<ICallMemoRepository>().To<CallMemoRepository>();
             kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
+            kernel.Bind<ITransactionDynamicsRepository>().To<TransactionDynamicsRepository>();
+            kernel.Bind<IEmailAndAlertsRepository>().To<EmailAndAlertsRepository>();
+            kernel.Bind<IEndOfDayRepository>().To<EndOfDayRepository>();
+            kernel.Bind<IFinanceTransactionsReport>().To<FinanceTransactionsReport>();
+            kernel.Bind<IKYCDocumentUploadRepository>().To<KYCDocumentUploadRepository>();
+            kernel.Bind<IMonitoringSetupRepository>().To<MonitoringSetupRepository>();
+            kernel.Bind<IOfferLetterAndAvailmentRepository>().To<OfferLetterAndAvailmentRepository>();
             kernel.Bind<ICustomerStagingRepository>().To<CustomerStagingRepository>();
-            
+            kernel.Bind<ILoanPrincipalRepository>().To<LoanPrincipalRepository>();
+            kernel.Bind<ILoanMarketRepository>().To<LoanMarketRepository>();
+            kernel.Bind<IPrudentialGuidelineSetupRepository>().To<PrudentialGuidelineSetupRepository>();
+            kernel.Bind<ILoanRecoverySetupRepository>().To<LoanRecoverySetupRepository>();
+            kernel.Bind<IEmployerRepository>().To<EmployerRepository>();
+            kernel.Bind<ILoanReviewApplicationRepository>().To<LoanReviewApplicationRepository>();
+            kernel.Bind<ICustomerCreditBureauRepository>().To<CustomerCreditBureauRepository>();
+            kernel.Bind<IFeeConcessionRepository>().To<FeeConcessionRepository>();
+            kernel.Bind<ILimitAndMonitoringRepository>().To<LimitAndMonitoringRepository>();
+            kernel.Bind<IApprovalReliefRepository>().To<ApprovalReliefRepository>();
+            kernel.Bind<ICasaLienRepository>().To<CasaLienRepository>();
+            kernel.Bind<IContingentLoanUsageRepository>().To<ContingentLoanUsageRepository>();
+            kernel.Bind<IOverRideRepository>().To<OverRideRepository>();
+            kernel.Bind<IStaffAccountHistoryRepository>().To<StaffAccountHistoryRepository>();
+
+
         }
     }
     

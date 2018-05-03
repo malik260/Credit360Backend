@@ -56,15 +56,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //public HttpResponseMessage ApproveStaffAccountHistory(StaffAccountHistoryViewModel entity)
-        //{
-        //    return accountHistory.ApproveStaffAccountHistory(entity);
-        //}
-
-            [HttpGet]
-            [Route("get-reasigned-account-awaiting-approval")]
+        [HttpGet]
+        [Route("get-reasigned-account-awaiting-approval")]
         public HttpResponseMessage GetStaffAccountHistory(StaffAccountHistoryViewModel entity)
-        {           
+        {
 
             try
             {
@@ -82,9 +77,74 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //public HttpResponseMessage UpdateStaffAccountHistory(StaffAccountHistoryViewModel entity)
-        //{
-        //    return accountHistory.UpdateStaffAccountHistory(entity);
-        //}
+
+
+        public bool ApproveStaffAccountHistory(ReasignedAccountApprovalViewModel entity)
+        {
+            return accountHistory.ApproveStaffAccountHistory(entity);
+        }
+
+        [HttpGet]
+        [Route("get-all-reasigned-account")]
+        public HttpResponseMessage   GetAllStaffAccountHistory()
+        {
+            try
+            {
+                var response = accountHistory.GetAllStaffAccountHistory(); ;
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("get-all-reasigned-account/loan/{loanId}/productType/{productTypeId}")]
+        public HttpResponseMessage GetSelectedLoanDetails(int loanId, int productTypeId)
+        {              
+            try
+            {
+                var response = accountHistory.GetSelectedLoanDetails(token.GetCompanyId, loanId, productTypeId);  
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+
+        [HttpPost]
+        [Route("selected-reasigned-account")]
+        public HttpResponseMessage GetSelectedApprovalLoanDetails(ReasignedAccountApprovalViewModel entity)
+        {
+            try
+            {
+                entity.companyId = token.GetCompanyId;
+                var response = accountHistory.GetSelectedApprovalLoanDetails(entity);
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
 }

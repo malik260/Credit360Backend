@@ -20,16 +20,18 @@ namespace FintrakBanking.Repositories.Finance
         private IAuditTrailRepository auditTrail;
         private ILoanOperationsRepository loanOperation;
         private IPublicHolidayRepository publicHoliday;
+        private ICustomerCollateralRepository collateralItemPolicy;
 
         public EndOfDayRepository(FinTrakBankingContext _context, IGeneralSetupRepository _generalSetup,
                                     ILoanOperationsRepository _loanOperation, IPublicHolidayRepository _publicHoliday,
-                                    IAuditTrailRepository _auditTrail)
+                                    IAuditTrailRepository _auditTrail, ICustomerCollateralRepository _collateralItemPolicy)
         {
             this.context = _context;
             this.generalSetup=_generalSetup;
             this.publicHoliday = _publicHoliday;
             this.auditTrail = _auditTrail;
             this.loanOperation = _loanOperation;
+            this.collateralItemPolicy = _collateralItemPolicy;
         }
 
 
@@ -78,6 +80,7 @@ namespace FintrakBanking.Repositories.Finance
                 APPLICATIONDATE = applicationDate,
                 SYSTEMDATETIME = DateTime.Now
             };
+
 
             auditTrail.AddAuditTrail(audit);
 
@@ -133,6 +136,8 @@ namespace FintrakBanking.Repositories.Finance
             //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
             //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
             //loanOperation.ProcessIntervalFeeandCommissionPosting(date);
+
+            collateralItemPolicy.CheckForExpiredItemPolicies(date);
 
             loanOperation.CalLoanClassification(date);
 

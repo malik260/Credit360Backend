@@ -222,12 +222,10 @@ namespace FintrakBanking.Common.Enum
         ContingentLoanUsageAdd=199,
         LoanBookingDisapproved = 200,
 
-
-
         InitiatAccountReassigning = 201,
 
         CollateralSearchJobUpdate = 201,
-        LoanPerformanceChange = 202
+        AddCommercialLoanBooking = 203
     };
 
 
