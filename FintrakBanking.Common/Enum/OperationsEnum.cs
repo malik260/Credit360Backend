@@ -68,10 +68,10 @@ namespace FintrakBanking.Common.Enum
         StaffRoleCreation = 55,
         ContingentLiabilityUsage = 56,
         ReassigningOfAccount = 57,
-        LoanPerformance = 62
-        ReassigningOfAccount = 57,
-        CollateralApproval = 60,
+  
+        //CollateralApproval = 60,
         ItemPolicyApproval = 61,
+        LoanPerformance = 62,
         CommercialPaperLoanBooking = 63
 
     }
