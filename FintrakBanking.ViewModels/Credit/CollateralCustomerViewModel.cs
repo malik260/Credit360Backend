@@ -60,7 +60,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal existingLienAmount { get; set; }
         public decimal lienAmount { get; set; }
         public decimal availableBalance { get; set; }
-        public decimal securityValue { get; set; }
+        public decimal? securityValue { get; set; }
         public DateTime maturityDate { get; set; }
         public decimal maturityAmount { get; set; }
         public string remark { get; set; }
@@ -128,10 +128,10 @@ namespace FintrakBanking.ViewModels.Credit
         public short? valuerId { get; set; }
         public string valuerReferenceNumber { get; set; }
         public short propertyValueBaseTypeId { get; set; }
-        public decimal openMarketValue { get; set; }
+        public decimal? openMarketValue { get; set; }
         public decimal? collateralValue { get; set; }
         public decimal? forcedSaleValue { get; set; }
-        public decimal stampToCoverAmount { get; set; }
+        public string stampToCovers { get; set; }
         public string valuationSource { get; set; }
         public decimal originalValue { get; set; }
         public decimal availableValue { get; set; }
@@ -269,6 +269,12 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime lastVisitationDate { get; set; }
         public int visitationCycle { get; set; }
         public bool requireVisitation { get; set; }
+        public string cityName { get; set; }
+        public string countryName { get; set; }
+        public string collateralValuer { get; set; }
+        public string propertyBaseType { get; set; }
+        public string perfectionStatusName { get; set; }
+        public decimal stampToCoverAmount { get; set; }
     }
 
     public class crossGarantee

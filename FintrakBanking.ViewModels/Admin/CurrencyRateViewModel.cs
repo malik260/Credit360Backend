@@ -19,7 +19,9 @@ namespace FintrakBanking.ViewModels.Admin
         public double sellingRate { get; set; }
         public String currency { get; set; }
         public String baseCurrency { get; set; }
-        
+
+        public double exchangeRate { get; set; }
+        public string rateCode { get; set; }
     }
 
     public class CurrencyViewModel 

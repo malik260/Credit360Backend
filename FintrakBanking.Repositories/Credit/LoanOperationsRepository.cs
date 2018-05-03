@@ -2364,17 +2364,18 @@ namespace FintrakBanking.Repositories.Credit
         {
             var model = (from a in context.TBL_LOAN
                          join b in context.TBL_BRANCH on a.BRANCHID equals b.BRANCHID
-                         join c in context.TBL_LIMIT_DETAIL on b.BRANCHID equals c.TARGETID
-                         join d in context.TBL_LIMIT on c.LIMITID equals d.LIMITID
-                         where b.BRANCHID == c.TARGETID && c.LIMITID == d.LIMITID
-                         && d.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan
-                         && c.LIMITTYPEID == (int)LimitType.Branch
+                         //join c in context.TBL_LIMIT_DETAIL on b.BRANCHID equals c.TARGETID
+                        // join d in context.TBL_LIMIT on c.LIMITID equals d.LIMITID
+                         //where b.BRANCHID == c.TARGETID && c.LIMITID == d.LIMITID
+                         //&& d.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan
+                         //&& c.LIMITTYPEID == (int)LimitType.Branch
                          group a by new
-                         { a.BRANCHID, c.LIMITID, c.MAXIMUMVALUE } into groupedQ
+                         { a.BRANCHID,// c.LIMITID, c.MAXIMUMVALUE
+                         } into groupedQ
                          select new LimitSuspensionViewModel()
                          {
-                             limitId = groupedQ.Key.LIMITID,
-                             limitAmount = groupedQ.Key.MAXIMUMVALUE,
+                             //limitId = groupedQ.Key.LIMITID,
+                             //limitAmount = groupedQ.Key.MAXIMUMVALUE,
                              branchId = groupedQ.Key.BRANCHID,
                              amount = groupedQ.Sum(i => (i.PRINCIPALAMOUNT)),
 
@@ -2405,17 +2406,18 @@ namespace FintrakBanking.Repositories.Credit
         {
             var model = (from a in context.TBL_LOAN
                          join b in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals b.STAFFID
-                         join c in context.TBL_LIMIT_DETAIL on b.STAFFID equals c.TARGETID
-                         join d in context.TBL_LIMIT on c.LIMITID equals d.LIMITID
-                         where b.STAFFID == c.TARGETID && c.LIMITID == d.LIMITID
-                         && d.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan
-                         && c.LIMITTYPEID == (int)LimitType.RelationshipManager
+                         //join c in context.TBL_LIMIT_DETAIL on b.STAFFID equals c.TARGETID
+                         //join d in context.TBL_LIMIT on c.LIMITID equals d.LIMITID
+                         //where b.STAFFID == c.TARGETID && c.LIMITID == d.LIMITID
+                         //&& d.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan
+                         //&& c.LIMITTYPEID == (int)LimitType.RelationshipManager
                          group a by new
-                         { a.RELATIONSHIPMANAGERID, c.LIMITID, c.MAXIMUMVALUE } into groupedQ
+                         { a.RELATIONSHIPMANAGERID, //c.LIMITID, c.MAXIMUMVALUE
+                         } into groupedQ
                          select new LimitSuspensionViewModel()
                          {
-                             limitId = groupedQ.Key.LIMITID,
-                             limitAmount = groupedQ.Key.MAXIMUMVALUE,
+                             //limitId = groupedQ.Key.LIMITID,
+                             //limitAmount = groupedQ.Key.MAXIMUMVALUE,
                              staffId = groupedQ.Key.RELATIONSHIPMANAGERID,
                              amount = groupedQ.Sum(i => (i.PRINCIPALAMOUNT)),
 

@@ -2438,25 +2438,25 @@ namespace FintrakBanking.Repositories.Credit
             }
             else entity.customerTypeId = (short)CustomerTypeEnum.Individual;
 
-            var guarantor = new TBL_LOAN_GUARANTOR
+            var guarantor = new TBL_COLLATERAL_GAURANTEE
             {
-                PRODUCTTYPEID = productTypeId,
-                LOANAPPLICATIONID = loanApplicationId,
+                //PRODUCTTYPEID = productTypeId,
+               // LOANAPPLICATIONID = loanApplicationId,
                 FIRSTNAME = entity.firstname != null ? entity.firstname : " ",
                 LASTNAME = entity.lastname != null ? entity.lastname : " ",
                 MIDDLENAME = entity.middlename != null ? entity.middlename : " ",
-                ADDRESS = entity.address,
+               // ADDRESS = entity.address,
                 PHONENUMBER1 = entity.phoneNumber1,
                 PHONENUMBER2 = entity.phoneNumber2,
                 RELATIONSHIP = entity.relationship,
-                RELATIONSHIPDURATION = (short)entity.relationshipDuration,
+             //   RELATIONSHIPDURATION = (short)entity.relationshipDuration,
                 BVN = entity.bvn,
-                REGISTRATION_NUMBER = entity.rcNumber,
-                TAX_NUMBER = entity.rcNumber,
-                CUSTOMERTYPEID = entity.customerTypeId,
+              //  REGISTRATION_NUMBER = entity.rcNumber,
+             //   TAX_NUMBER = entity.rcNumber,
+              //  CUSTOMERTYPEID = entity.customerTypeId,
                 EMAILADDRESS = entity.emailAddress,
-                CREATEDBY = entity.createdBy,
-                DATETIMECREATED = DateTime.Now
+              //  CREATEDBY = entity.createdBy,
+                //DATETIMECREATED = DateTime.Now
             };
             //context.TBL_LOAN_GUARANTOR.Add(guarantor);
             //return context.SaveChanges() > 0;

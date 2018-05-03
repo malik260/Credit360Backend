@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Admin;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Admin;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +16,9 @@ namespace FintrakBanking.Interfaces.Admin
         List<CurrencyRateViewModel> GetCurrencyRateById(short currencyRateId);
         bool AddCurrencyRate( CurrencyRateViewModel model);
         bool UpdateCurrencyRate(short currencyRateId, CurrencyRateViewModel model);
-        
+
+        IEnumerable<CurrencyRateCodeViewModel> GetAllCurrencyRateCode();
+
         #endregion
     }
 }
