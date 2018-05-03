@@ -162,7 +162,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (_user != null)
             {
-                if (_user.LOGINCODE == null || _user.LOGINCODE == Guid.Empty)
+                if (_user.LOGINCODE == null || _user.LOGINCODE == "")
                     result = new SessionStatusInfo
                     {
                         loginCode = Guid.NewGuid(),
