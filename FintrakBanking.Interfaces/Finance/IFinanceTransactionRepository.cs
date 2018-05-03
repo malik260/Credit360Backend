@@ -31,6 +31,8 @@ namespace FintrakBanking.Interfaces.Finance
 
         FinanceTransactionViewModel PostBuildLoanRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description);
 
+        FinanceTransactionViewModel PostBuildLoanPrepaymentFeePosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int chargeFeeId, string description);
+
         FinanceTransactionViewModel PostBuildAuthorisedOverdraftRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description);
 
         CasaBalanceViewModel GetCASABalanceFromTransactions(int casaAccountId);
@@ -41,7 +43,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
 
-        FinanceTransactionViewModel BuildChargeReversalPosting(LoanChargeFeeViewModel model);
+       // FinanceTransactionViewModel BuildChargeReversalPosting(LoanChargeFeeViewModel model);
 
         FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
 

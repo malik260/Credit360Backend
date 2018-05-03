@@ -13,6 +13,8 @@ namespace FintrakBanking.Common.Enum
         ChartOfAccountCreation = 7,
         CustomerGroupCreation = 8,
         FeeCreation = 10,
+        CollateralApproval = 54,
+
         //loan origination operations
         TermLoanBooking = 1,
         LoanApplication = 2,
@@ -66,8 +68,10 @@ namespace FintrakBanking.Common.Enum
         StaffRoleCreation = 55,
         ContingentLiabilityUsage = 56,
         ReassigningOfAccount = 57,
-        CollateralApproval = 60,
+  
+        //CollateralApproval = 60,
         ItemPolicyApproval = 61,
+        LoanPerformance = 62,
         CommercialPaperLoanBooking = 63
 
     }

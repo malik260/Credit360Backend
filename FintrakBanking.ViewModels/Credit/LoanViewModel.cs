@@ -134,6 +134,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isCamsol { get; set; }
         public int? internalPrudentialGuidelineStatusId { get; set; }
         public int? externalPrudentialGuidelineStatusId { get; set; }
+        public int? userPrudentialGuidelineStatusId { get; set; }
+        public string internalPrudentialGuidelineStatus { get; set; }
+        public string externalPrudentialGuidelineStatus { get; set; }
+        public string userPrudentialGuidelineStatus { get; set; }
         public DateTime? nplDate { get; set; }
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
