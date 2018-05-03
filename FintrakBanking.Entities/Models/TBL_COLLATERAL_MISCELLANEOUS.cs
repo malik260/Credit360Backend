@@ -26,7 +26,7 @@ namespace FintrakBanking.Entities.Models
         public string NAMEOFSECURITY { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? SECURITYVALUE { get; set; }
+        public decimal SECURITYVALUE { get; set; }
 
         [Required]
         [StringLength(100)]

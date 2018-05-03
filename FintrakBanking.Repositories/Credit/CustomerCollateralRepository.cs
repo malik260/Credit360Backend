@@ -368,7 +368,7 @@ namespace FintrakBanking.Repositories.Credit
                 .FirstOrDefault();
 
             collateral.NAMEOFSECURITY = entity.securityName;
-            collateral.SECURITYVALUE = entity.securityValue;
+            collateral.SECURITYVALUE = (decimal)entity.securityValue;
 
             UpdateMiscellaneousNotes(entity, collateral.COLLATERALMISCELLANEOUSID);
         }

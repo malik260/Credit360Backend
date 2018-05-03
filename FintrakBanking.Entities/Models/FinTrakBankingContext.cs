@@ -36,7 +36,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CASA_POSTNOSTATUS> TBL_CASA_POSTNOSTATUS { get; set; }
         public virtual DbSet<TBL_CHARGE_FEE> TBL_CHARGE_FEE { get; set; }
         public virtual DbSet<TBL_CHARGE_FEE_DETAIL> TBL_CHARGE_FEE_DETAIL { get; set; }
-        public virtual DbSet<TBL_CHARGE_FEE_DETAIL_CLASS> TBL_CHARGE_FEE_DETAIL_CLASS { get; set; }
         public virtual DbSet<TBL_CHARGE_FEE_DETAIL_TYPE> TBL_CHARGE_FEE_DETAIL_TYPE { get; set; }
         public virtual DbSet<TBL_CHECKLIST_DEFINITION> TBL_CHECKLIST_DEFINITION { get; set; }
         public virtual DbSet<TBL_CHECKLIST_DETAIL> TBL_CHECKLIST_DETAIL { get; set; }
@@ -308,7 +307,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_OVERDRAFTTOPUP> TBL_CUSTOM_OVERDRAFTTOPUP { get; set; }
         public virtual DbSet<TBL_CUSTOM_TEMPORARYOVERDRAFT> TBL_CUSTOM_TEMPORARYOVERDRAFT { get; set; }
         public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
-        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -369,6 +368,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DEAL_TYPE> TBL_DEAL_TYPE { get; set; }
         public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
         public virtual DbSet<TBL_STOCK_PRICE> TBL_STOCK_PRICE { get; set; }
+        public virtual DbSet<TBL_PROFILE_SETTING> TBL_PROFILE_SETTING { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -787,13 +787,7 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_TEMP_LOAN)
                 .WithRequired(e => e.TBL_CASA)
-                .HasForeignKey(e => e.CASAACCOUNTID)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CASA>()
-                .HasMany(e => e.TBL_TEMP_LOAN1)
-                .WithOptional(e => e.TBL_CASA1)
-                .HasForeignKey(e => e.CASAACCOUNTID2);
 
             modelBuilder.Entity<TBL_CASA_ACCOUNTSTATUS>()
                 .HasMany(e => e.TBL_CASA)
@@ -1076,6 +1070,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_DAILY_ACCRUAL)
+                .WithRequired(e => e.TBL_COMPANY)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_COMPANY>()
+                .HasMany(e => e.TBL_DEPARTMENT)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
 
@@ -3919,26 +3918,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_REVOLVING_ARCHIVE>()
                 .Property(e => e.OVERDRAFTLIMIT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_LOAN_REVOLVING_ARCHIVE>()
-                .Property(e => e.PASTDUEPRINCIPAL)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_LOAN_REVOLVING_ARCHIVE>()
-                .Property(e => e.PASTDUEINTEREST)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_LOAN_REVOLVING_ARCHIVE>()
-                .Property(e => e.INTERESTONPASTDUEPRINCIPAL)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_LOAN_REVOLVING_ARCHIVE>()
-                .Property(e => e.INTERESTONPASTDUEINTEREST)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_LOAN_REVOLVING_ARCHIVE>()
-                .Property(e => e.PENALCHARGEAMOUNT)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_LOAN_SCHEDULE_CATEGORY>()
