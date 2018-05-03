@@ -23,6 +23,87 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("posting-type")]
+        public HttpResponseMessage GetAllPostingType()
+        {
+            try
+            {
+                var data = repo.GetAllPostingType();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("fee-type")]
+        public HttpResponseMessage GetAllFeeType()
+        {
+            try
+            {
+                var data = repo.GetAllFeeType();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("fee-detail-type")]
+        public HttpResponseMessage GetAllChargeFeeDetailType()
+        {
+            try
+            {
+                var data = repo.GetAllChargeFeeDetailType();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("fee-detail-class")]
+        public HttpResponseMessage GetAllChargeFeeDetailClass()
+        {
+            try
+            {
+                var data = repo.GetAllChargeFeeDetailClass();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
         [Route("charge-fee")]
         public HttpResponseMessage GetChargeFee()
         {

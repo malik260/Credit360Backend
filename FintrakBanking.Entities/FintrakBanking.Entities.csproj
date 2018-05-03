@@ -75,7 +75,6 @@
     <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
-    <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -106,6 +105,9 @@
     <Compile Include="Models\TBL_CHARGES.cs" />
     <Compile Include="Models\TBL_CHARGES_VALUESOURCE.cs" />
     <Compile Include="Models\TBL_CHARGE_FEE.cs" />
+    <Compile Include="Models\TBL_CHARGE_FEE_DETAIL.cs" />
+    <Compile Include="Models\TBL_CHARGE_FEE_DETAIL_CLASS.cs" />
+    <Compile Include="Models\TBL_CHARGE_FEE_DETAIL_TYPE.cs" />
     <Compile Include="Models\TBL_CHARGE_RANGE.cs" />
     <Compile Include="Models\TBL_CHART_OF_ACCOUNT.cs" />
     <Compile Include="Models\TBL_CHART_OF_ACCOUNT_CLASS.cs" />
@@ -159,7 +161,6 @@
     <Compile Include="Models\TBL_CREDIT_TEMPLATE.cs" />
     <Compile Include="Models\TBL_CURRENCY.cs" />
     <Compile Include="Models\TBL_CURRENCY_EXCHANGERATE.cs" />
-    <Compile Include="Models\TBL_CURRENCY_RATE.cs" />
     <Compile Include="Models\TBL_CURRENCY_RATECODE.cs" />
     <Compile Include="Models\TBL_CUSTOMER.cs" />
     <Compile Include="Models\TBL_CUSTOMER_ACCOUNT_KYC_ITEM.cs" />
@@ -212,6 +213,10 @@
     <Compile Include="Models\TBL_CUSTOM_FIELD_OPTION.cs" />
     <Compile Include="Models\TBL_CUSTOM_HOSTPAGE.cs" />
     <Compile Include="Models\TBL_CUSTOM_LIEN_PROCESS.cs" />
+    <Compile Include="Models\TBL_CUSTOM_OVERDRAFTEXTEND.cs" />
+    <Compile Include="Models\TBL_CUSTOM_OVERDRAFTNORMAL.cs" />
+    <Compile Include="Models\TBL_CUSTOM_OVERDRAFTTOPUP.cs" />
+    <Compile Include="Models\TBL_CUSTOM_TEMPORARYOVERDRAFT.cs" />
     <Compile Include="Models\TBL_DAILY_ACCRUAL.cs" />
     <Compile Include="Models\TBL_DAILY_ACCRUAL_CATEGORY.cs" />
     <Compile Include="Models\TBL_DAY_COUNT_CONVENTION.cs" />
@@ -286,7 +291,6 @@
     <Compile Include="Models\TBL_LOAN_FEE.cs" />
     <Compile Include="Models\TBL_LOAN_FEE_SCHEDULE.cs" />
     <Compile Include="Models\TBL_LOAN_FORCE_DEBIT.cs" />
-    <Compile Include="Models\TBL_LOAN_GUARANTOR.cs" />
     <Compile Include="Models\TBL_LOAN_MARKET.cs" />
     <Compile Include="Models\TBL_LOAN_MONITORING_TRIGGER.cs" />
     <Compile Include="Models\TBL_LOAN_MONITORING_TRIG_SETUP.cs" />
@@ -336,6 +340,7 @@
     <Compile Include="Models\TBL_OPERATIONS_TYPE.cs" />
     <Compile Include="Models\TBL_OVERRIDE_DETAIL.cs" />
     <Compile Include="Models\TBL_OVERRIDE_ITEM.cs" />
+    <Compile Include="Models\TBL_POSTING_TYPE.cs" />
     <Compile Include="Models\TBL_PRODUCT.cs" />
     <Compile Include="Models\TBL_PRODUCT_BEHAVIOUR.cs" />
     <Compile Include="Models\TBL_PRODUCT_CATEGORY.cs" />
@@ -385,6 +390,7 @@
     <Compile Include="Models\TBL_SUB_SECTOR.cs" />
     <Compile Include="Models\TBL_TAX.cs" />
     <Compile Include="Models\TBL_TEMP_CHARGE_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_CHARGE_FEE_DETAIL.cs" />
     <Compile Include="Models\TBL_TEMP_CHART_OF_ACCOUNT.cs" />
     <Compile Include="Models\TBL_TEMP_CHART_OF_ACCOUNT_CUR.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_CASA.cs" />

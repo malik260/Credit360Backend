@@ -100,6 +100,7 @@ namespace FintrakBanking.Repositories.Credit
                                        branchId = a.BRANCHID,
                                        casaAccountId = a.CASAACCOUNTID
                                    });
+       var bbc =     allFilteredLoan.ToList();
             return allFilteredLoan;
         }
         private IQueryable<LoanViewModel> GetRevolvingLoan()
@@ -123,7 +124,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                      // outstandingInterest = (decimal)a.INTEREST_AMOUNT,
+                                      outstandingInterest = (decimal)0,
                                        outstandingPrincipal = a.OVERDRAFTLIMIT,
                                        internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
                                        externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
@@ -134,8 +135,9 @@ namespace FintrakBanking.Repositories.Credit
                                        currencyId = a.CURRENCYID,
                                        productId = a.PRODUCTID,
                                        branchId = a.BRANCHID,
-                                       casaAccountId = a.CASAACCOUNTID
+                                       casaAccountId = a.CASAACCOUNTID,
                                    });
+       var bbw =     allFilteredLoan.ToList();
             return allFilteredLoan;
         }
 
@@ -279,7 +281,16 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool LoanPerformanceStatusChange(PrudGuidelineStatusChangeViewModel entity)
         {
-            var prudTypeId = context.TBL_LOAN_PRUDENTIALGUIDELINE.FirstOrDefault(f => f.PRUDENTIALGUIDELINESTATUSID == entity.prudentialGuidelineStatusId).PRUDENTIALGUIDELINETYPEID;
+            //var option = new TransactionOptions
+            //{
+            //    IsolationLevel = IsolationLevel.ReadCommitted,
+            //    Timeout = TimeSpan.FromSeconds(60)
+            //};
+            //using (var scopeOuter = new TransactionScope(TransactionScopeOption.Required, option))
+            //{
+
+            //}
+                var prudTypeId = context.TBL_LOAN_PRUDENTIALGUIDELINE.FirstOrDefault(f => f.PRUDENTIALGUIDELINESTATUSID == entity.prudentialGuidelineStatusId).PRUDENTIALGUIDELINETYPEID;
             if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan)
             {
                 var termLoan = GetTermLoan().Where(x => x.loanId == entity.loanId).FirstOrDefault();

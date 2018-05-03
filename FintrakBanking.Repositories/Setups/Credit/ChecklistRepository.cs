@@ -1303,7 +1303,7 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                         join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
-                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                         && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
                         && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null
