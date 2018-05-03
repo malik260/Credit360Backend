@@ -212,6 +212,10 @@
     <Compile Include="Models\TBL_CUSTOM_FIELD_OPTION.cs" />
     <Compile Include="Models\TBL_CUSTOM_HOSTPAGE.cs" />
     <Compile Include="Models\TBL_CUSTOM_LIEN_PROCESS.cs" />
+    <Compile Include="Models\TBL_CUSTOM_OVERDRAFTEXTEND.cs" />
+    <Compile Include="Models\TBL_CUSTOM_OVERDRAFTNORMAL.cs" />
+    <Compile Include="Models\TBL_CUSTOM_OVERDRAFTTOPUP.cs" />
+    <Compile Include="Models\TBL_CUSTOM_TEMPORARYOVERDRAFT.cs" />
     <Compile Include="Models\TBL_DAILY_ACCRUAL.cs" />
     <Compile Include="Models\TBL_DAILY_ACCRUAL_CATEGORY.cs" />
     <Compile Include="Models\TBL_DAY_COUNT_CONVENTION.cs" />

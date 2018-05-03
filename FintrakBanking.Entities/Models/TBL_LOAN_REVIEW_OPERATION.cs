@@ -58,6 +58,12 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal? FEE_CHARGES { get; set; }
 
+        public short? SCHEDULETYPEID { get; set; }
+
+        public short? SCHEDULEDAYCOUNTCONVENTIONID { get; set; }
+
+        public short? SCHEDULEDAYINTERESTTYPEID { get; set; }
+
         public int APPROVALSTATUSID { get; set; }
 
         public bool ISMANAGEMENTINTERESTRATE { get; set; }

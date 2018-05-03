@@ -58,11 +58,13 @@ namespace FintrakBanking.ViewModels.Credit
         //public decimal productPriceIndexRate { get; set; }
         public double productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
+        public int casaAccountId2 { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
        
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
+        public string RelatedloanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
         public short ? principalFrequencyTypeId { get; set; }
@@ -88,6 +90,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatus { get; set; }
         public short scheduleTypeId { get; set; }
         public string scheduleTypeName { get; set; }
+        public bool shouldDisbursed { get; set; }
         public bool isDisbursed { get; set; }
         public int? disbursedBy { get; set; }
         public string disburserComment { get; set; }
@@ -133,6 +136,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isCamsol { get; set; }
         public int? internalPrudentialGuidelineStatusId { get; set; }
         public int? externalPrudentialGuidelineStatusId { get; set; }
+        public int? userPrudentialGuidelineStatusId { get; set; }
         public DateTime? nplDate { get; set; }
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
@@ -208,6 +212,13 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime previousEffectiveDate { get; set; }
         public decimal pastDueTotal { get; set; }
         public decimal overDraftCheckAmount { get; set; }
+
+        public decimal pastDuePrincipal { get; set; }
+        public decimal pastDueInterest { get; set; }
+        public decimal interestOnPastDuePrincipal { get; set; }
+        public decimal interesrtOnPastDueInterest { get; set; }
+        public decimal penalChargeAmount { get; set; }
+        public DateTime lastRestructureDate  { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//

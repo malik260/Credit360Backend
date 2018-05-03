@@ -69,7 +69,7 @@ namespace FintrakBanking.Repositories.Credit
             else if (frequencyType == FrequencyTypeEnum.Quarterly)
                 numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 3.0;
             else if (frequencyType == FrequencyTypeEnum.SixTimesYearly)
-                numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 6.0;
+                numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 2.0;
             else if (frequencyType == FrequencyTypeEnum.ThriceYearly)
                 numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 4.0;
             else if (frequencyType == FrequencyTypeEnum.TwiceMonthly)

@@ -66,6 +66,21 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal OVERDRAFTLIMIT { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal PASTDUEPRINCIPAL { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal PASTDUEINTEREST { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal INTERESTONPASTDUEPRINCIPAL { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal INTERESTONPASTDUEINTEREST { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal PENALCHARGEAMOUNT { get; set; }
+
         public int APPROVALSTATUSID { get; set; }
 
         public int? APPROVEDBY { get; set; }
@@ -96,11 +111,11 @@ namespace FintrakBanking.Entities.Models
 
         public short DAYCOUNTCONVENTIONID { get; set; }
 
-        public int? INT_PRUDENT_GUIDELINE_STATUSID { get; set; }
+        public int INT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
-        public int? EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
+        public int EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
-        public int? USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
+        public int USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
