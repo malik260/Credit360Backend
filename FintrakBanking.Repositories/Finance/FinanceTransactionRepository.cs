@@ -617,6 +617,82 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
+        public FinanceTransactionViewModel PostDailyFeeAccrual(DailyInterestAccrualViewModel model)
+
+        {
+            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
+            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+            debit.operationId = (int)OperationsEnum.DailyInterestAccural;
+            debit.description = "Daily Amortized Fee Posting";
+            debit.valueDate = model.date; //generalSetup.GetApplicationDate();
+            debit.transactionDate = debit.valueDate;
+            debit.currencyId = model.currencyId;
+            debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+            debit.isApproved = true;
+            debit.postedBy = (int)SystemStaff.System;
+            debit.approvedBy = (int)SystemStaff.System;
+            debit.approvedDate = debit.transactionDate;
+            debit.approvedDateTime = DateTime.Now;
+            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            debit.companyId = model.companyId;
+            debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+            debit.sourceReferenceNumber = product.PRODUCTCODE;
+            debit.casaAccountId = null;
+            debit.debitAmount = (decimal)model.dailyAccuralAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = model.branchId;
+
+            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+            credit.operationId = (int)OperationsEnum.DailyInterestAccural;
+            credit.description = "Daily Amortized Fee Posting";
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
+            credit.transactionDate = credit.valueDate;
+            credit.currencyId = model.currencyId;
+            credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+            credit.isApproved = true;
+            credit.postedBy = (int)SystemStaff.System;
+            credit.approvedBy = (int)SystemStaff.System;
+            credit.approvedDate = credit.transactionDate;
+            credit.approvedDateTime = DateTime.Now;
+            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            credit.companyId = model.companyId;
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value;
+
+            credit.sourceReferenceNumber = product.PRODUCTCODE;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = (decimal)model.dailyAccuralAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(debit);
+            inputTransactions.Add(credit);
+            PostTransaction(inputTransactions);
+
+            // Audit Section ---------------------------            
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Daily Amortized Fee Posting: {model.referenceNumber}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            //this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            context.SaveChanges();
+            return null;
+
+        }
+
         public FinanceTransactionViewModel PostDailyAuthorisedOverdraftInterestAccrual(DailyInterestAccrualViewModel model)
 
         {
