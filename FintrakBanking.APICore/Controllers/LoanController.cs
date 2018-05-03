@@ -280,7 +280,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.AddLoanGuarantor(entity, productTypeId, applicationReferenceNumber);
+                var data = false; //repo.AddLoanGuarantor(entity, productTypeId, applicationReferenceNumber);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The Loan Gaurantor successful added " });

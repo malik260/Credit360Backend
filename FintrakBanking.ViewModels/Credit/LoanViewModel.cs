@@ -137,6 +137,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int? internalPrudentialGuidelineStatusId { get; set; }
         public int? externalPrudentialGuidelineStatusId { get; set; }
         public int? userPrudentialGuidelineStatusId { get; set; }
+        public string internalPrudentialGuidelineStatus { get; set; }
+        public string externalPrudentialGuidelineStatus { get; set; }
+        public string userPrudentialGuidelineStatus { get; set; }
         public DateTime? nplDate { get; set; }
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
@@ -180,6 +183,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool feeOverride { get; set; }
         public int loanBookingRequestId { get; set; }
         public int staffId { get; set; }
+        public int staffName { get; set; }
         public bool hasLein { get; set; }
         public int postNoStatusId { get; set; }
         

@@ -2854,7 +2854,7 @@ namespace FintrakBanking.Repositories.Credit
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            inputTransactions.Add(financeTransaction.BuildChargeReversalPosting(feeInput));
+            //inputTransactions.Add(financeTransaction.BuildChargeReversalPosting(feeInput));
 
             //financeTransaction.PostTransaction(inputTransactions);
             AddChargeReversal(feeInput, applicationDate, staffId);
@@ -5180,7 +5180,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, (decimal)loanInput.payAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, (decimal)penalAmount, penalCharge.GLACCOUNTID, "Penal Charge"));///change to charge GL
+                //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, (decimal)penalAmount, penalCharge.GLACCOUNTID, "Penal Charge"));///change to charge GL
 
                 financeTransaction.PostTransaction(inputTransactions);
                 updateloanTableStatus(loanInput.loanId);
@@ -5755,7 +5755,7 @@ namespace FintrakBanking.Repositories.Credit
                         ).Sum(a => (double?)a.PERIODINTERESTAMOUNT ?? 0)
                         select periodicInterest;
 
-            decimal previousPeriodicInterest = (decimal?)data2.FirstOrDefault() ?? 0;
+            decimal previousPeriodicInterest = (decimal?)data3.FirstOrDefault() ?? 0;
             decimal.Round(previousPeriodicInterest, 2, MidpointRounding.AwayFromZero);
 
             var data4 = from d in context.TBL_LOAN_SCHEDULE_PERIODIC_TMP
@@ -5765,12 +5765,34 @@ namespace FintrakBanking.Repositories.Credit
                         ).Sum(a => (double?)a.PERIODINTERESTAMOUNT ?? 0)
                         select periodicInterest;
 
-            decimal currentPeriodicInterest = (decimal?)data2.FirstOrDefault() ?? 0;
+            decimal currentPeriodicInterest = (decimal?)data4.FirstOrDefault() ?? 0;
             decimal.Round(currentPeriodicInterest, 2, MidpointRounding.AwayFromZero);
+
+
+            var data5 = from d in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC
+                        where d.LOANID == loanId
+                        let periodicPrincipal = context.TBL_LOAN_SCHEDULE_PERIODIC_ARC.Where(a => a.LOANID == loanId
+                        && a.PAYMENTDATE >= DbFunctions.TruncateTime(applicationDate) && a.PAYMENTDATE <= DbFunctions.TruncateTime(systemDate)
+                        ).Sum(a => (double?)a.PERIODPRINCIPALAMOUNT ?? 0)
+                        select periodicPrincipal;
+
+            decimal previousPeriodicPrincipal = (decimal?)data5.FirstOrDefault() ?? 0;
+            decimal.Round(previousPeriodicPrincipal, 2, MidpointRounding.AwayFromZero);
+
+            var data6 = from d in context.TBL_LOAN_SCHEDULE_PERIODIC_TMP
+                        where d.LOANID == loanId
+                        let periodicPrincipal = context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.Where(a => a.LOANID == loanId
+                        && a.PAYMENTDATE >= DbFunctions.TruncateTime(applicationDate) && a.PAYMENTDATE <= DbFunctions.TruncateTime(systemDate)
+                        ).Sum(a => (double?)a.PERIODPRINCIPALAMOUNT ?? 0)
+                        select periodicPrincipal;
+
+            decimal currentPeriodicPrincipal = (decimal?)data6.FirstOrDefault() ?? 0;
+            decimal.Round(currentPeriodicPrincipal, 2, MidpointRounding.AwayFromZero);
 
 
             decimal accruedInterestDiff = previousAccruedInterest - currentAccruedInterest;
             decimal periodicInterestDiff = previousPeriodicInterest - currentPeriodicInterest;
+            decimal periodicPrincipalDiff = previousPeriodicPrincipal - currentPeriodicPrincipal;
             if (Count < 1 && applicationDate == systemDate)
             {
             }
@@ -5786,6 +5808,8 @@ namespace FintrakBanking.Repositories.Credit
                 inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal"));
 
                 inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, periodicInterestDiff, product.PRINCIPALBALANCEGL.Value, "Interest Reversal"));
+
+                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, periodicPrincipalDiff, product.PRINCIPALBALANCEGL.Value, "Principal Reversal"));
 
                 financeTransaction.PostTransaction(inputTransactions);
             }

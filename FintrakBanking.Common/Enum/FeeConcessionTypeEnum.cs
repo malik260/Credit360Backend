@@ -11,4 +11,12 @@ namespace FintrakBanking.Common.Enum
         Interest = 1,
         Fee = 2
     }
+    public enum FeeTypeEnum
+    {
+        Rate = 1,
+        Amount = 2,
+        RangeOfAmounts = 3,
+        FixedbyAmount = 4,
+        RatebyAmount = 5
+    }
 }

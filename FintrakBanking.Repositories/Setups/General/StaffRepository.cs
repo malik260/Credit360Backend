@@ -1339,6 +1339,7 @@ namespace FintrakBanking.Repositories.Setups.General
             ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
 
             CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+            var jobTitle = context.TBL_STAFF_JOBTITLE.FirstOrDefault();
             for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
             {
                 var rowSuccess = true;
@@ -1357,7 +1358,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     switch (cellColumn)
                     {
                         case "A":
-                            
                             // staffRowData.user.username = cell.Value.ToString();
                             // staffRowData.user.password = cell.Value.ToString();
                             //if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
@@ -1387,6 +1387,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             else
                             {
                                 rowSuccess = false;
+                                staffRowData.staffRoleCode = cell.Value.ToString();
                                 staffRowData.message = staffRowData.message + $"The ROLECODE @  '{cellColumn}' does not exist in the role log. ";
                                 //throw new Exception("The ROLECODE @" + cellColumn + " does not exist in the role log");
                             }
@@ -1402,6 +1403,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             else
                             {
                                 rowSuccess = false;
+                                staffRowData.branchCode = cell.Value.ToString();
                                 staffRowData.message = staffRowData.message + $"the 'BRANCHCODE' @  '{cellColumn}' does not exist in the branch log";
                                 //throw new Exception($"the 'BRANCHCODE' @" + cellColumn + " does not exist in the branch log");
                             }
@@ -1426,13 +1428,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRowData.MiddleName = cell.Value.ToString();
                             break;
                         case "H":
-                            var unit = context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTUNITNAME.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
-
-                            if (unit != null) staffRowData.departmentUnitId = unit.DEPARTMENTUNITID;
-                            else
-                            {
-                                staffRowData.departmentUnitId = 10;
-                            }
+                            staffRowData.Email = cell.Value.ToString();
                             break;
                         case "I":
                             var supervisor = context.TBL_STAFF.Where(x => x.STAFFCODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
@@ -1447,6 +1443,15 @@ namespace FintrakBanking.Repositories.Setups.General
                                 rowSuccess = false;
                                 staffRowData.message = staffRowData.message + $"Supervisor Code @ '{cellColumn}' does not exist. ";
                                 // throw new Exception($"Supervisor @" + cellColumn + " does not exist.");
+                            }
+                            break;
+                        case "J":
+                            var unit = context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTUNITNAME.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+
+                            if (unit != null) staffRowData.departmentUnitId = unit.DEPARTMENTUNITID;
+                            else
+                            {
+                                staffRowData.departmentUnitId = 10;
                             }
                             break;
                             //case "M":
@@ -1467,7 +1472,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (rowSuccess && excelRowPosition > 1)
                 {
                     staffRowData.customerSensitivityLevelId = (short)CustomerSensitivityLevelENum.Negligible;
-                    staffRowData.JobTitleId = context.TBL_STAFF_JOBTITLE.FirstOrDefault().JOBTITLEID;
+                    staffRowData.JobTitleId = jobTitle.JOBTITLEID;
+                    staffRowData.JobTitleName = jobTitle.JOBTITLENAME;
                     staffRowData.message = "Success";
                     staffInfo.Add(staffRowData);
                 }
@@ -1484,14 +1490,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 staffInfoRow.userIPAddress = model.userIPAddress;
                 staffInfoRow.applicationUrl = model.applicationUrl;
 
-                staffBulkFeedbackViewModel.committiedRows = staffInfo;
+                staffBulkFeedbackViewModel.commitedRows = staffInfo;
                 staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
 
                 var response = AddSimpleTempStaff(staffInfoRow);
                 if (!response)
                 {
                     staffBulkFeedbackViewModel.discardedRows.Add(staffInfoRow);
-                    staffBulkFeedbackViewModel.committiedRows.Remove(staffInfoRow);
+                    staffBulkFeedbackViewModel.commitedRows.Remove(staffInfoRow);
                     staffBulkFeedbackViewModel.failureCount = staffBulkFeedbackViewModel.failureCount + 1;
                     staffBulkFeedbackViewModel.successCount = staffBulkFeedbackViewModel.successCount - 1;
                 }

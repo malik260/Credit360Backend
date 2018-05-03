@@ -98,11 +98,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
             var chargeFee = new TBL_TEMP_CHARGE_FEE()
             {
                 CHARGEFEENAME = chargeFeemodel.chargeName,
-                ACCOUNTCATEGORYID = chargeFeemodel.accountCategoryId,
                 FEEINTERVALID = chargeFeemodel.frequencyTypeId,
                 PRODUCTTYPEID = chargeFeemodel.productTypeId,
                 FEETARGETID = chargeFeemodel.targetId,
-                GLACCOUNTID = chargeFeemodel.ledgerAccountId,
                 FEEAMORTISATIONTYPEID = chargeFeemodel.amortisationTypeId,
                 ISINTEGRALFEE = chargeFeemodel.isIntegral,
                 INCLUDECUTOFFDAY = chargeFeemodel.includeCutOffDay,
@@ -110,19 +108,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 OPERATIONID = chargeFeemodel.operationId,
                 AMOUNT = chargeFeemodel.amount,
                 RATE = chargeFeemodel.rate,
-
-                //ValueSource = chargeFeemodel.feeTypeId,
                 FEETYPEID = chargeFeemodel.feeTypeId,
-
                 RECURRING = chargeFeemodel.recurring,
-                PRIMARYTAXID = chargeFeemodel.primaryTaxId,
-                SECONDARYTAXID = chargeFeemodel.secondaryTaxId,
                 COMPANYID = chargeFeemodel.companyId,
                 CREATEDBY = (int)chargeFeemodel.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
-                //ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-                //IsCurrent = true
-
+              
             };
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -175,68 +166,136 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public bool AddChargeFee(ChargeFeeViewModel model)
         {
-            var data = new TBL_CHARGE_FEE
+            if (model == null)
             {
-                CHARGEFEENAME = model.chargeName,
-                ACCOUNTCATEGORYID = model.accountCategoryId,
-                FEEINTERVALID = model.frequencyTypeId,
-                PRODUCTTYPEID = model.productTypeId,
-                FEETARGETID = model.targetId,
-                GLACCOUNTID = model.ledgerAccountId,
-                FEEAMORTISATIONTYPEID = model.amortisationTypeId,
-                ISINTEGRALFEE = model.isIntegral,
-                INCLUDECUTOFFDAY = model.includeCutOffDay,
-                CUTOFFDAY = model.cutOffDay,
-                OPERATIONID = model.operationId,
-                AMOUNT = model.amount,
-                RATE = model.rate,
-                FEETYPEID = model.feeTypeId,
-                RECURRING = model.recurring,
-                PRIMARYTAXID = model.primaryTaxId,
-                SECONDARYTAXID = model.secondaryTaxId,
-                COMPANYID = model.companyId,
-                CREATEDBY = (int)model.createdBy,
-                DATETIMECREATED = general.GetApplicationDate()
-            };
-
-            context.TBL_CHARGE_FEE.Add(data);
-            context.SaveChanges();
-
-            if (data.CHARGEFEEID != 0)
-            {
-                foreach (var range in model.ranges)
+                try
                 {
-                    context.TBL_CHARGE_RANGE.Add(new TBL_CHARGE_RANGE
+                    bool output = false;
+                    List<TBL_TEMP_CHARGE_FEE_DETAIL> tempFeeDetail = new List<TBL_TEMP_CHARGE_FEE_DETAIL>();
+                    if (model.chargeFeeDetails.Count > 0)
                     {
-                        CHARGEFEEID = data.CHARGEFEEID,
-                        MINIMUM = range.minimum,
-                        MAXIMUM = range.maximum,
-                        RATE = range.rate,
-                        AMOUNT = range.amount,
-                        MINIMUMANDABOVE = range.minimumAndAbove,
-                        MAXIMUMANDBELOW = range.maximumAndBelow,
-                        CREATEDBY = (int)model.createdBy,
-                        DATETIMECREATED = general.GetApplicationDate()
-                    });
+                        foreach (var item in model.chargeFeeDetails)
+                        {
+                            var charFeeDetail = new TBL_TEMP_CHARGE_FEE_DETAIL()
+                            {
+                                DESCRIPTION = item.description,
+                                GLACCOUNTID1 = item.glAccountId1,
+                                GLACCOUNTID2 = item.glAccountId2,
+                                DETAILTYPEID = item.detailTypeId,
+                                POSTINGTYPEID = item.postingTypeId,
+                               VALUE = item.rate,
+                                FEETYPEID = item.feeTypeId,
+                                REQUIREAMORTISATION = item.requireAmortization,
+                                POSTINGGROUP = item.postingGroup,
+                                CREATEDBY = model.createdBy,
+                                DATETIMECREATED = DateTime.Now,
+                                DELETED = false
+                            };
+                            tempFeeDetail.Add(charFeeDetail);
+                        }
+                    }
+                    if (model.ranges.Count > 0)
+                    {
+                        foreach (var range in model.ranges)
+                        {
+                            context.TBL_CHARGE_RANGE.Add(new TBL_CHARGE_RANGE
+                            {
+                                MINIMUM = range.minimum,
+                                MAXIMUM = range.maximum,
+                                RATE = range.rate,
+                                AMOUNT = range.amount,
+                                MINIMUMANDABOVE = range.minimumAndAbove,
+                                MAXIMUMANDBELOW = range.maximumAndBelow,
+                                CREATEDBY = (int)model.createdBy,
+                                DATETIMECREATED = general.GetApplicationDate()
+                            });
+                        }
+                    }
+                    TBL_TEMP_CHARGE_FEE temChargeFee;
+                    if (model.chargeFeeId > 0)
+                    {
+                        temChargeFee = context.TBL_TEMP_CHARGE_FEE.Find(model.chargeFeeId);
+                        if (temChargeFee != null)
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        temChargeFee = new TBL_TEMP_CHARGE_FEE()
+                        {
+                            CHARGEFEENAME = model.chargeName,
+                            FEEINTERVALID = model.frequencyTypeId,
+                            PRODUCTTYPEID = model.productTypeId,
+                            FEETARGETID = model.targetId,
+                            FEEAMORTISATIONTYPEID = model.amortisationTypeId,
+                            ISINTEGRALFEE = model.isIntegral,
+                            INCLUDECUTOFFDAY = model.includeCutOffDay,
+                            CUTOFFDAY = model.cutOffDay,
+                            OPERATIONID = model.operationId,
+                            AMOUNT = model.amount,
+                            RATE = model.rate,
+                            FEETYPEID = model.feeTypeId,
+                            RECURRING = model.recurring,
+                            COMPANYID = model.companyId,
+                            CREATEDBY = (int)model.createdBy,
+                            DATETIMECREATED = general.GetApplicationDate(),
+                            APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                            ISCURRENT = true,
+                            TBL_TEMP_CHARGE_FEE_DETAIL = tempFeeDetail
+                        };
+                    }
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.ChargeFeeAdded,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = $"Added Charge Fee '{temChargeFee.CHARGEFEENAME }' ",
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    using (var trans = context.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            this.auditTrail.AddAuditTrail(audit);
+                            context.TBL_TEMP_CHARGE_FEE.Add(temChargeFee);
+                            output = context.SaveChanges() > 0;
+
+                            var entity = new ApprovalViewModel
+                            {
+                                staffId = model.createdBy,
+                                companyId = model.companyId,
+                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                                targetId = temChargeFee.TEMPCHARGEFEEID,
+                                operationId = (int)OperationsEnum.FeeCreation,
+                                BranchId = model.userBranchId,
+                                externalInitialization = true
+                            };
+                            var response = workFlow.LogForApproval(entity);
+
+                            if (response)
+                            {
+                                trans.Commit();
+                            }
+                            return output;
+                        }
+                        catch (Exception ex)
+                        {
+                            trans.Rollback();
+                            throw new Exception(ex.Message);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
                 }
             }
-
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.ChargeFeeAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added ChargeFee '{ data.CHARGEFEENAME }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.auditTrail.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-
-            return context.SaveChanges() != 0;
+            return false;
         }
 
         public bool UpdateChargeFee(ChargeFeeViewModel model, int chargeFeeId)
@@ -248,11 +307,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
             }
 
             data.CHARGEFEENAME = model.chargeName;
-            data.ACCOUNTCATEGORYID = model.accountCategoryId;
             data.FEEINTERVALID = model.frequencyTypeId;
             data.PRODUCTTYPEID = model.productTypeId;
             data.FEETARGETID = model.targetId;
-            data.GLACCOUNTID = model.ledgerAccountId;
             data.FEEAMORTISATIONTYPEID = model.amortisationTypeId;
             data.ISINTEGRALFEE = model.isIntegral;
             data.INCLUDECUTOFFDAY = model.includeCutOffDay;
@@ -261,11 +318,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             data.AMOUNT = model.amount;
             data.RATE = model.rate;
             data.FEETYPEID = model.feeTypeId;
-
-
             data.RECURRING = model.recurring;
-            data.PRIMARYTAXID = model.primaryTaxId;
-            data.SECONDARYTAXID = model.secondaryTaxId;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMEUPDATED = general.GetApplicationDate();
 
@@ -319,14 +372,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
             {
                 chargeFeeId = x.CHARGEFEEID,
                 chargeName = x.CHARGEFEENAME,
-                accountCategoryId = x.ACCOUNTCATEGORYID,
-                accountCategoryName = x.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
                 frequencyTypeId = x.FEEINTERVALID,
                 frequencyTypeName = x.TBL_FEE_INTERVAL.FEEINTERVALNAME,
-                productTypeId =  x.PRODUCTTYPEID,
+                productTypeId = x.PRODUCTTYPEID,
                 targetId = x.FEETARGETID,
                 targetName = x.TBL_FEE_TARGET.FEETARGETNAME,
-                ledgerAccountId = x.GLACCOUNTID,
                 amortisationTypeId = x.FEEAMORTISATIONTYPEID,
                 amortizationTypeName = x.TBL_FEE_AMORTISATION_TYPE.FEEAMORTISATIONTYPENAME,
                 isIntegral = x.ISINTEGRALFEE,
@@ -337,8 +387,6 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 rate = x.RATE,
                 feeTypeId = x.FEETYPEID,
                 recurring = (bool)x.RECURRING,
-                primaryTaxId = x.PRIMARYTAXID,
-                secondaryTaxId = x.SECONDARYTAXID,
                 ranges = context.TBL_CHARGE_RANGE.Where(r => r.CHARGEFEEID == x.CHARGEFEEID)
                     .Select(r => new ChargeRangeViewModel
                     {
@@ -367,11 +415,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
             {
                 chargeFeeId = data.CHARGEFEEID,
                 chargeName = data.CHARGEFEENAME,
-                accountCategoryId = data.ACCOUNTCATEGORYID,
                 frequencyTypeId = data.FEEINTERVALID,
                 productTypeId = data.PRODUCTTYPEID,
                 targetId = data.FEETARGETID,
-                ledgerAccountId = data.GLACCOUNTID,
                 amortisationTypeId = data.FEEAMORTISATIONTYPEID,
                 isIntegral = data.ISINTEGRALFEE,
                 includeCutOffDay = data.INCLUDECUTOFFDAY,
@@ -380,10 +426,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 amount = data.AMOUNT,
                 rate = data.RATE,
                 feeTypeId = data.FEETYPEID,
-
                 recurring = (bool)data.RECURRING,
-                primaryTaxId = data.PRIMARYTAXID,
-                secondaryTaxId = data.SECONDARYTAXID,
                 ranges = context.TBL_CHARGE_RANGE.Where(r => r.CHARGEFEEID == data.CHARGEFEEID)
                     .Select(r => new ChargeRangeViewModel
                     {
@@ -399,6 +442,38 @@ namespace FintrakBanking.Repositories.Setups.Finance
             };
         }
 
+        public IEnumerable<LookupViewModel> GetAllChargeFeeDetailClass()
+        {
+            return context.TBL_CHARGE_FEE_DETAIL_CLASS.Select(x => new LookupViewModel()
+            {
+                lookupId = x.DETAILCLASSID,
+                lookupName = x.DETAILCLASSNAME
+            });
+        }
+        public IEnumerable<LookupViewModel> GetAllChargeFeeDetailType()
+        {
+            return context.TBL_CHARGE_FEE_DETAIL_TYPE.Select(x => new LookupViewModel()
+            {
+                lookupId = x.DETAILTYPEID,
+                lookupName = x.DETAILTYPENAME
+            });
+        }
+        public IEnumerable<LookupViewModel> GetAllFeeType()
+        {
+            return context.TBL_FEE_TYPE.Select(x => new LookupViewModel()
+            {
+                lookupId = x.FEETYPEID,
+                lookupName = x.FEETYPENAME
+            });
+        }
+        public IEnumerable<LookupViewModel> GetAllPostingType()
+        {
+            return context.TBL_POSTING_TYPE.Select(x => new LookupViewModel()
+            {
+                lookupId = x.POSTINGTYPEID,
+                lookupName = x.POSTINGTYPENAME
+            });
+        }
         public IEnumerable<ChargeFeeViewModel> GetAllChargeFeeByCompanyId(int companyId)
         {
             return this.GetAllChargeFee().Where(x => x.companyId == companyId);

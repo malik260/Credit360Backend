@@ -73,7 +73,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class staffBulkFeedbackViewModel
     {
-        public List<StaffInfoViewModel> committiedRows { get; set; }
+        public List<StaffInfoViewModel> commitedRows { get; set; }
         public List<StaffInfoViewModel> discardedRows { get; set; }
         public int successCount { get; set; }
         public int failureCount { get; set; }

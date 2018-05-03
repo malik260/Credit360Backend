@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<PrudGuildlineTypeViewModel> GetPrudGuildlineType();
         IQueryable<LoanViewModel> GetAllLoan();
+        IEnumerable<PrudentialGuidelineViewModel> GetPrudGuildlineStatus();
+        bool LoanPerformanceStatusChange(PrudGuidelineStatusChangeViewModel entity);
     }
 }
