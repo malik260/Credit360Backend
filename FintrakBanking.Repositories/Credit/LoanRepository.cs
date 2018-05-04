@@ -560,6 +560,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 EFFECTIVEDATE = entity.loanScheduleInput.effectiveDate,
                 MATURITYDATE = entity.loanScheduleInput.maturityDate,
+                LASTRESTRUCTUREDATE = entity.loanScheduleInput.effectiveDate,
                 FIRSTPRINCIPALPAYMENTDATE = entity.loanScheduleInput.principalFirstpaymentDate,
                 FIRSTINTERESTPAYMENTDATE = entity.loanScheduleInput.interestFirstpaymentDate,
                 ALLOWFORCEDEBITREPAYMENT = false,
@@ -3603,6 +3604,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                                 customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
+                                                          || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper
                                                           || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
                                  ? (d.APPROVEDAMOUNT - d.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.PRINCIPALAMOUNT)) :
                                 (
@@ -3674,36 +3676,13 @@ namespace FintrakBanking.Repositories.Credit
                                                                                            isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
                                                                                        }).ToList(),
                                                       }).FirstOrDefault(),
-                                //loanGuarantor = null, (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID && x.PRODUCTTYPEID == d.TBL_PRODUCT.PRODUCTTYPEID)
-                                //                 select (
-                                //                          new LoanGuarantorViewModel
-                                //                          {
-                                //                              loanGuarantorId = g.LOANGUARANTORID,
-                                //                              firstname = g.FIRSTNAME,
-                                //                              lastname = g.LASTNAME,
-                                //                              middlename = g.MIDDLENAME,
-                                //                              fullName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
-                                //                              emailAddress = g.EMAILADDRESS,
-                                //                              phoneNumber1 = g.PHONENUMBER1,
-                                //                              phoneNumber2 = g.PHONENUMBER2,
-                                //                              address = g.ADDRESS,
-                                //                              bvn = g.BVN,
-                                //                              relationship = g.RELATIONSHIP,
-                                //                              rcNumber = g.REGISTRATION_NUMBER,
-                                //                              taxNumber = g.TAX_NUMBER,
-                                //                              customerTypeId = g.CUSTOMERTYPEID,
-                                //                              customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
-                                //                              relationshipDuration = g.RELATIONSHIPDURATION
-                                //                          })).ToList(),
                                 loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANID == m.LOANAPPLICATIONID) // ------------------ REFACTOR TO LOANID!
                                                   select (
                                                            new LoanCollateralMappingViewModel
                                                            {
-                                                               //loanCollateralMappingId = cm.,
                                                                collateralTypeName = cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
                                                                + "(" + cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.FirstOrDefault().COLLATERALSUBTYPENAME + ")",
                                                                collateralCustomerId = cm.COLLATERALCUSTOMERID,
-                                                               //loanApplicationId = cm.LOANAPPLICATIONID, // ------------------ REFACTOR TO LOANID!
                                                                collateralValue = cm.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                                                                hairCut = cm.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                                                                valuationCycle = cm.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
@@ -3792,6 +3771,7 @@ namespace FintrakBanking.Repositories.Credit
                             repaymentTerms = d.REPAYMENTTERMS,
                             repaymentSchedule = d.REPAYMENTSCHEDULE,
                             customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
+                                                      || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper
                                                       || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
                              ? (d.APPROVEDAMOUNT - d.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.PRINCIPALAMOUNT)) :
                             (
@@ -3896,6 +3876,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationTenor = m.APPLICATIONTENOR,
                             effectiveDate = (DateTime)d.EFFECTIVEDATE,
                             expiryDate = (DateTime)d.EXPIRYDATE,
+
                             relationshipOfficerId = m.RELATIONSHIPOFFICERID,
                             relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
                             relationshipManagerId = m.RELATIONSHIPMANAGERID,
@@ -3925,6 +3906,7 @@ namespace FintrakBanking.Repositories.Credit
                             repaymentTerms = d.REPAYMENTTERMS,
                             repaymentSchedule = d.REPAYMENTSCHEDULE,
                             customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
+                                                      || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper
                                                       || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
                              ? (d.APPROVEDAMOUNT - d.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.PRINCIPALAMOUNT)) :
                             (
@@ -4161,6 +4143,7 @@ namespace FintrakBanking.Repositories.Credit
                             groupApprovedAmount = m.APPROVEDAMOUNT,
 
                             customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
+                                                      || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper
                                                       || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
                              ? (d.APPROVEDAMOUNT - d.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.PRINCIPALAMOUNT)) :
                             (

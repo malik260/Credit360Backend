@@ -8115,6 +8115,172 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber)
+        {
+            var data = (from ln in context.TBL_LOAN
+                        where ln.MATURITYDATE > DateTime.Now
+                        && ln.LOANSTATUSID == (short)LoanStatusEnum.Active
+                        && ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                        && ln.COMPANYID == companyId
+                        orderby ln.MATURITYDATE descending
+                        select new LoanReviewOperationApprovalViewModel
+                        {
+                            loanId = ln.TERMLOANID,
+                            customerId = ln.CUSTOMERID,
+                            productId = ln.PRODUCTID,
+                            casaAccountId = ln.CASAACCOUNTID,
+                            branchId = ln.BRANCHID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                            companyId = ln.COMPANYID,
+                            exchangeRate = ln.EXCHANGERATE,
+                            principalAmount = ln.PRINCIPALAMOUNT,
+                            interestRate = ln.INTERESTRATE,
+                            outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                            outstandingInterest = ln.OUTSTANDINGINTEREST,
+                            maturityAmount = ln.OUTSTANDINGPRINCIPAL + ln.OUTSTANDINGINTEREST,
+                            dateTimeCreated = ln.DATETIMECREATED,
+                            createdByName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.LASTNAME,
+                            dischargeLetter = ln.DISCHARGELETTER,
+
+                            relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                            misCode = ln.MISCODE,
+                            teamMiscode = ln.TEAMMISCODE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+
+                            approverComment = ln.APPROVERCOMMENT,
+                            dateApproved = ln.DATEAPPROVED,
+
+                            isDisbursed = ln.ISDISBURSED,
+                            disburserComment = ln.DISBURSERCOMMENT,
+                            disburseDate = ln.DISBURSEDATE,
+                            newTenor = DbFunctions.DiffDays(ln.MATURITYDATE, ln.EFFECTIVEDATE).Value,
+                            customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                            operationId = ln.OPERATIONID,
+                            loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                            subSectorId = ln.SUBSECTORID,
+                            subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                            sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+
+                            customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
+                            productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                            productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            currencyId = ln.CURRENCYID,
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            loanStatusId = ln.LOANSTATUSID,
+                            comment = "",
+                        }).ToList();
+            return data;
+        }
+
+        public List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId)
+        {
+            var data = from a in context.TBL_LOAN_APPLICATION_DETAIL
+                        join ln in context.TBL_LOAN on a.LOANAPPLICATIONDETAILID equals ln.LOANAPPLICATIONDETAILID
+                        where ln.MATURITYDATE < DateTime.Now
+                        && ln.LOANSTATUSID == (short)LoanStatusEnum.Active || ln.LOANSTATUSID == (short)LoanStatusEnum.Completed
+                        && ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                        && ln.COMPANYID == companyId
+                        orderby ln.MATURITYDATE descending
+                        select new LoanReviewOperationParentChildViewModel
+                        {
+                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            loanApplicationDetailId =a.LOANAPPLICATIONDETAILID,
+                            firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                            middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                            lastName = a.TBL_CUSTOMER.LASTNAME,
+                            approvedAmount = a.APPROVEDAMOUNT,
+                            approvedInterestRate = a.APPROVEDINTERESTRATE,
+                            approvedProductName = a.TBL_PRODUCT.PRODUCTNAME,
+                            numberofTranchesBooked = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking).Count(),
+                            numberofrunningTranches = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Count(),
+                           // runningTranches = GetMaturedCommercialLoans(companyId,a.LOANAPPLICATIONDETAILID).ToList()
+                            //effectiveDate = ln.TBL_LOAN_APPLICATION_DETAIL.EFFECTIVEDATE ?? null,
+                            // maturityDate = ln.EFFECTIVEDATE.Value.AddDays((int)ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR),
+                        };
+
+            return data.ToList();
+        }
+
+
+        public List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID)
+        {
+            var data = (from ln in context.TBL_LOAN
+                        where ln.LOANAPPLICATIONDETAILID == loanApplicationDetailID 
+                        ////&& ln.MATURITYDATE < DateTime.Now
+                        ////&& ln.LOANSTATUSID == (short)LoanStatusEnum.Active || ln.LOANSTATUSID == (short)LoanStatusEnum.Completed
+                        ////&& ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                        ////&& ln.COMPANYID == companyId
+                        orderby ln.MATURITYDATE descending
+                        select new LoanReviewOperationApprovalViewModel
+                        {
+                            loanId = ln.TERMLOANID,
+                            customerId = ln.CUSTOMERID,
+                            productId = ln.PRODUCTID,
+                            casaAccountId = ln.CASAACCOUNTID,
+                            branchId = ln.BRANCHID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            relatedReferenceNumber = ln.RELATED_LOAN_REFERENCE_NUMBER,
+                            loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                            companyId = ln.COMPANYID,
+                            exchangeRate = ln.EXCHANGERATE,
+
+                            principalAmount = ln.PRINCIPALAMOUNT,
+                            interestRate = ln.INTERESTRATE,
+                            outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                            outstandingInterest = ln.OUTSTANDINGINTEREST,
+                            maturityAmount = ln.OUTSTANDINGPRINCIPAL + ln.OUTSTANDINGINTEREST,
+                            dateTimeCreated = ln.DATETIMECREATED,
+                            createdByName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.LASTNAME,
+                            dischargeLetter = ln.DISCHARGELETTER,
+
+                            relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                            misCode = ln.MISCODE,
+                            teamMiscode = ln.TEAMMISCODE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+
+                            approverComment = ln.APPROVERCOMMENT,
+                            dateApproved = ln.DATEAPPROVED,
+
+                            isDisbursed = ln.ISDISBURSED,
+                            disburserComment = ln.DISBURSERCOMMENT,
+                            disburseDate = ln.DISBURSEDATE,
+                            customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                            operationId = ln.OPERATIONID,
+                            loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                            subSectorId = ln.SUBSECTORID,
+                            subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                            sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+
+                            customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
+                            productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                            productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            currencyId = ln.CURRENCYID,
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            loanStatusId = ln.LOANSTATUSID,
+                            comment = "",
+                        });
+            return data.ToList();
+        }
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool CommercialPaperCancellation(int aplicationId, DateTime applicationDate, int staffId)
         {

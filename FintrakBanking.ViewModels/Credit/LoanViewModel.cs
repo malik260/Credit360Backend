@@ -415,8 +415,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public string repaymentTerms;
-        public string repaymentSchedule;
+        public string repaymentTerms { get; set; }
+        public string repaymentSchedule { get; set; }
 
         public bool isFirstApprover { get; set; }
         public bool isBidbond { get; set; }
