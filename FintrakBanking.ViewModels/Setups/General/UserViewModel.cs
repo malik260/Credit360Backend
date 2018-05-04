@@ -82,7 +82,7 @@ namespace FintrakBanking.ViewModels.Setups.General
     }
     public class SessionStatusInfo
     {
-        public Guid loginCode { get; set; }
+        public string loginCode { get; set; }
         public int state { get; set; }
         public string errorMessage { get; set; }
     }
