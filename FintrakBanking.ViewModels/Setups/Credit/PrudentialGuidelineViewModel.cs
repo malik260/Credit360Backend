@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Setups.Credit
 {
-  public  class PrudentialGuidelineViewModel : GeneralEntity
+    public class PrudentialGuidelineViewModel : GeneralEntity
     {
         public int prudentialGuidelineId { get; set; }
+
+        public int prudentialGuidelineTypeId { get; set; }
 
         public string statusName { get; set; }
 
@@ -23,5 +25,15 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int? externalMaximun { get; set; }
 
         public string naration { get; set; }
+    }
+    public class PrudGuidelineStatusChangeViewModel : GeneralEntity
+    {
+        public int prudentialGuidelineStatusId { get; set; }
+
+        public int loanId { get; set; }
+
+        public int prudentialGuidelineTypeId { get; set; }
+
+        public int productTypeId { get; set; }
     }
 }

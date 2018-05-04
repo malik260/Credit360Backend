@@ -409,6 +409,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   collateralDetail = i.COLLATERALDETAIL,
                                                   //collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                                                   collateralValue = i.COLLATERALVALUE,
+                                                  
                                                   stampToCoverAmount = i.STAMPEDTOCOVERAMOUNT,
                                                   //collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                                   //collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,

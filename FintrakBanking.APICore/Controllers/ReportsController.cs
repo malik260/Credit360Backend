@@ -3,10 +3,15 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.ViewModels.Reports;
+using RazorEngine;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -363,6 +368,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("audit-trail")]
         public HttpResponseMessage GetAuditTrail(DateRange dateRange)
         {
+
             var token = new TokenDecryptionHelper();
             try
             {

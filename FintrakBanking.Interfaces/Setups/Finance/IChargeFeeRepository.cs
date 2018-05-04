@@ -12,6 +12,11 @@ namespace FintrakBanking.Interfaces.Setups.Finance
 
         IEnumerable<ChargeFeeViewModel> GetAllChargeFeeByCompanyId(int companyId);
 
+        IEnumerable<LookupViewModel> GetAllPostingType();
+        IEnumerable<LookupViewModel> GetAllFeeType();
+        IEnumerable<LookupViewModel> GetAllChargeFeeDetailType();
+        IEnumerable<LookupViewModel> GetAllChargeFeeDetailClass();
+
         bool AddChargeFee(ChargeFeeViewModel model);
 
         bool UpdateChargeFee(ChargeFeeViewModel model, int chargeFeeId);

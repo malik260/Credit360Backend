@@ -43,7 +43,8 @@
     <Reference Include="ExcelDataReader, Version=3.4.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\packages\ExcelDataReader.3.4.0\lib\net45\ExcelDataReader.dll</HintPath>
     </Reference>
-    <Reference Include="GemBox.Spreadsheet">
+    <Reference Include="GemBox.Spreadsheet, Version=37.3.30.1000, Culture=neutral, PublicKeyToken=b1b72c69714d4847, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>E:\GemBox.Spreadsheet.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -107,7 +108,6 @@
     <Compile Include="AppEmail\EmailAndAlertsRepository.cs" />
     <Compile Include="Credit\CustomerCreditBureauRepository.cs" />
     <Compile Include="Credit\FeeConcessionRepository.cs" />
-    <Compile Include="Credit\LimitRepository.cs" />
     <Compile Include="Credit\LoanApplicationRepository.cs" />
     <Compile Include="Credit\LoanCovenantRepository.cs" />
     <Compile Include="Credit\LoanMarketRepository.cs" />

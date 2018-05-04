@@ -31,7 +31,5 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "money")]
         public decimal SHAREVALUEAMOUNTTOUSE { get; set; }
-
-        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

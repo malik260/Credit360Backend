@@ -162,10 +162,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (_user != null)
             {
-                if (_user.LOGINCODE == null || _user.LOGINCODE == Guid.Empty)
+                if (_user.LOGINCODE == null || _user.LOGINCODE == "")
                     result = new SessionStatusInfo
                     {
-                        loginCode = Guid.NewGuid(),
+                        loginCode = Guid.NewGuid().ToString(),
                         state = 0,
                         errorMessage = "",
                          
@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     result = new SessionStatusInfo
                     {
-                        loginCode = Guid.Empty,
+                        loginCode = "",
                         state = 1,
                         errorMessage = "You are already logged in",                        
                     };                   

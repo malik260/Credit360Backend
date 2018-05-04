@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Admin;
 using System;
 using System.Collections.Generic;
@@ -71,9 +72,11 @@ namespace FintrakBanking.Repositories.Admin
                             buyingRate = a.EXCHANGERATE,
                             sellingRate = a.EXCHANGERATE,
                             date = a.DATE,
+                           rateCode =a.TBL_CURRENCY_RATECODE.RATECODE,
                             dateTimeCreated = a.DATETIMECREATED,
-                            createdBy=a.CREATEDBY
-                            
+                            createdBy=a.CREATEDBY,
+                            exchangeRate = a.EXCHANGERATE
+
                         }).ToList();
             return data;
         }
@@ -101,7 +104,9 @@ namespace FintrakBanking.Repositories.Admin
                             rateCodeId = a.RATECODEID,
                             rateCodeName = a.TBL_CURRENCY_RATECODE.RATECODEDESCRIPTION,
                             dateTimeCreated = a.DATETIMECREATED,
-                            createdBy = a.CREATEDBY
+                            createdBy = a.CREATEDBY,
+                            exchangeRate = a.EXCHANGERATE,
+
                         }).OrderByDescending(x=>x.dateTimeCreated).ToList();
             return data;
         }
@@ -116,8 +121,7 @@ namespace FintrakBanking.Repositories.Admin
             {
                  CURRENCYID = model.currencyId,
                  BASECURRENCYID = model.baseCurrencyId,
-                 EXCHANGERATE = model.buyingRate,
-                 //SELLINGRATE = model.sellingRate ,
+                 EXCHANGERATE = model.exchangeRate,
                  RATECODEID = model.rateCodeId,
                  DATE = model.date,
                  CREATEDBY = (int)model.createdBy,
@@ -154,9 +158,8 @@ namespace FintrakBanking.Repositories.Admin
 
             data.CURRENCYID = model.currencyId;
             data.BASECURRENCYID = model.baseCurrencyId;
-           data. EXCHANGERATE = model.buyingRate;
+            data. EXCHANGERATE = model.exchangeRate;
             data.RATECODEID = model.rateCodeId;
-           //data. SELLINGRATE = model.sellingRate;
             data.DATE = model.date;
 
             data.LASTUPDATEDBY = (int)model.createdBy;
@@ -183,7 +186,17 @@ namespace FintrakBanking.Repositories.Admin
             //end of Audit section -----------------------
             return context.SaveChanges() != 0;
         }
+        public IEnumerable<CurrencyRateCodeViewModel> GetAllCurrencyRateCode()
+        {
+            return (from data in context.TBL_CURRENCY_RATECODE
+                    select new CurrencyRateCodeViewModel()
+                    {
+                        rateCode = data.RATECODE,
+                        rateCodeDescription = data.RATECODEDESCRIPTION,
+                        rateCodeId = data.RATECODEID
+                    });
+        }
 
-        
+       
     }
 }

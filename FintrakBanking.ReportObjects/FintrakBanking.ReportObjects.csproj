@@ -62,7 +62,6 @@
     <Compile Include="ReportingObjects\Audit.cs" />
     <Compile Include="ReportingObjects\FinanceRepotObject.cs" />
     <Compile Include="ReportCalls\ReportRoutes.cs" />
-    <Compile Include="ReportingObjects\LimitsMonitoringReportsObjects.cs" />
     <Compile Include="ReportingObjects\LoanReportObjects.cs" />
     <Compile Include="ReportingObjects\ScheduledCollateralObject.cs" />
     <Compile Include="ReportingObjects\ScheduleOfCollateralsObjects.cs" />
