@@ -287,6 +287,8 @@
     <Compile Include="Models\TBL_LOAN_FEE_SCHEDULE.cs" />
     <Compile Include="Models\TBL_LOAN_FORCE_DEBIT.cs" />
     <Compile Include="Models\TBL_LOAN_MARKET.cs" />
+    <Compile Include="Models\TBL_LOAN_MATURITY_INSTRUCTION.cs" />
+    <Compile Include="Models\TBL_LOAN_MATURITY_INSTRU_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_MONITORING_TRIGGER.cs" />
     <Compile Include="Models\TBL_LOAN_MONITORING_TRIG_SETUP.cs" />
     <Compile Include="Models\TBL_LOAN_OPERATION.cs" />
@@ -317,6 +319,7 @@
     <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE_PRODUCT.cs" />
     <Compile Include="Models\TBL_LOAN_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_SYSTEM_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_TYPE.cs" />
     <Compile Include="Models\TBL_LOCALGOVERNMENT.cs" />

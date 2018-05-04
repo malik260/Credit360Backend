@@ -12,4 +12,10 @@
         CommercialPaper = 40,
     };
 
+    public enum LoanSystemTypeEnum
+    {
+        TermDisbursedFacility = 1,
+        OverdraftFacility = 2,
+        ContingentLiability = 3,
+    };
 }

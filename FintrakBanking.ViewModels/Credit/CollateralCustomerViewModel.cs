@@ -747,6 +747,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
+        public short loanSystemTypeId { get; set; }
         public int relationshipManagerId { get; set; }
         public int loanCollateralMappingId { get; set; }
         public int loanId { get; set; }

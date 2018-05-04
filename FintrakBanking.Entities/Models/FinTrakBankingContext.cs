@@ -256,6 +256,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_FEE_SCHEDULE> TBL_LOAN_FEE_SCHEDULE { get; set; }
         public virtual DbSet<TBL_LOAN_FORCE_DEBIT> TBL_LOAN_FORCE_DEBIT { get; set; }
         public virtual DbSet<TBL_LOAN_MARKET> TBL_LOAN_MARKET { get; set; }
+        public virtual DbSet<TBL_LOAN_MATURITY_INSTRU_TYPE> TBL_LOAN_MATURITY_INSTRU_TYPE { get; set; }
+        public virtual DbSet<TBL_LOAN_MATURITY_INSTRUCTION> TBL_LOAN_MATURITY_INSTRUCTION { get; set; }
         public virtual DbSet<TBL_LOAN_MONITORING_TRIG_SETUP> TBL_LOAN_MONITORING_TRIG_SETUP { get; set; }
         public virtual DbSet<TBL_LOAN_MONITORING_TRIGGER> TBL_LOAN_MONITORING_TRIGGER { get; set; }
         public virtual DbSet<TBL_LOAN_OPERATION> TBL_LOAN_OPERATION { get; set; }
@@ -286,6 +288,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_SCHEDULE_TYPE> TBL_LOAN_SCHEDULE_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_SCHEDULE_TYPE_PRODUCT> TBL_LOAN_SCHEDULE_TYPE_PRODUCT { get; set; }
         public virtual DbSet<TBL_LOAN_STATUS> TBL_LOAN_STATUS { get; set; }
+        public virtual DbSet<TBL_LOAN_SYSTEM_TYPE> TBL_LOAN_SYSTEM_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_TRANSACTION_DYNAMICS> TBL_LOAN_TRANSACTION_DYNAMICS { get; set; }
         public virtual DbSet<TBL_LOAN_TRANSACTION_TYPE> TBL_LOAN_TRANSACTION_TYPE { get; set; }
         public virtual DbSet<TBL_LOANAPPLICATION_COLTRL_MAP> TBL_LOANAPPLICATION_COLTRL_MAP { get; set; }
@@ -2330,27 +2333,7 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT_TYPE>()
-                .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
-                .WithRequired(e => e.TBL_PRODUCT_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_TYPE>()
-                .HasMany(e => e.TBL_LOAN_COVENANT_DETAIL)
-                .WithRequired(e => e.TBL_PRODUCT_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_TYPE>()
-                .HasMany(e => e.TBL_LOAN_FEE)
-                .WithRequired(e => e.TBL_PRODUCT_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_TYPE>()
                 .HasMany(e => e.TBL_LOAN_FORCE_DEBIT)
-                .WithRequired(e => e.TBL_PRODUCT_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_TYPE>()
-                .HasMany(e => e.TBL_LOAN_MONITORING_TRIGGER)
                 .WithRequired(e => e.TBL_PRODUCT_TYPE)
                 .WillCascadeOnDelete(false);
 
@@ -3725,6 +3708,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_LOAN_MARKET)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_LOAN_MATURITY_INSTRU_TYPE>()
+                .HasMany(e => e.TBL_LOAN_MATURITY_INSTRUCTION)
+                .WithRequired(e => e.TBL_LOAN_MATURITY_INSTRU_TYPE)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_LOAN_PAST_DUE>()
                 .Property(e => e.DEBITAMOUNT)
                 .HasPrecision(19, 4);
@@ -4367,6 +4355,31 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_LOAN_STATUS>()
                 .HasMany(e => e.TBL_TEMP_LOAN)
                 .WithRequired(e => e.TBL_LOAN_STATUS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
+                .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
+                .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
+                .HasMany(e => e.TBL_LOAN_COVENANT_DETAIL)
+                .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
+                .HasMany(e => e.TBL_LOAN_FEE)
+                .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
+                .HasMany(e => e.TBL_LOAN_MATURITY_INSTRUCTION)
+                .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
+                .HasMany(e => e.TBL_LOAN_MONITORING_TRIGGER)
+                .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_TRANSACTION_TYPE>()

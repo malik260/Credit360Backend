@@ -82,7 +82,6 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? LASTRESTRUCTUREDATE { get; set; }
 
-
         [Column(TypeName = "money")]
         public decimal PRINCIPALAMOUNT { get; set; }
 

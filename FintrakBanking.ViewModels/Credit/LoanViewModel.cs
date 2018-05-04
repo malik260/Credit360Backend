@@ -509,7 +509,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
-        public short productTypeId { get; set; }
+        public short loanSystemTypeId { get; set; }
         public int loanId { get; set; }
         public int productId { get; set; }
         public string chargeFeeName { get; set; }
@@ -543,6 +543,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int loanCollateralMappingId { get; set; }
         public int loanId { get; set; }
+        public short loanSystemTypeId { get; set; }
         public int loanApplicationId { get; set; }
 
         
@@ -627,6 +628,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanMonitoringTriggerViewModel : GeneralEntity
     {
+        public short loanSystemTypeId { get; set; }
         public int loanMonitoringTriggerId { get; set; }
         public int loanId { get; set; }
         public short productTypeId { get; set; }

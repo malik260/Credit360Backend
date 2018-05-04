@@ -2497,12 +2497,12 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanViewModel> ProcessIntervalFeeandCommissionPosting(DateTime applicationDate)
         {
             var model = (from a in context.TBL_LOAN_FEE
-                         join b in context.TBL_PRODUCT_TYPE on a.PRODUCTTYPEID equals b.PRODUCTTYPEID
+                        // join b in context.TBL_PRODUCT_TYPE on a.PRODUCTTYPEID equals b.PRODUCTTYPEID
                          join c in context.TBL_LOAN_FEE_SCHEDULE on a.LOANCHARGEFEEID equals c.LOANCHARGEFEEID
                          join d in context.TBL_LOAN on a.LOANID equals d.TERMLOANID
                          join e in context.TBL_CASA on d.CASAACCOUNTID equals e.CASAACCOUNTID
                          where c.FEEDATE == DbFunctions.TruncateTime(applicationDate) && a.ISRECURRING == true
-                         && b.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
+                         //&& b.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
                          select new LoanViewModel()
                          {
                              productId = d.PRODUCTID,
@@ -2877,7 +2877,7 @@ namespace FintrakBanking.Repositories.Credit
             TBL_LOAN_FEE loanFee = new TBL_LOAN_FEE();
 
             loanFee.LOANID = model.loanId;
-            loanFee.PRODUCTTYPEID = productType;
+           // loanFee.PRODUCTTYPEID = productType;
             loanFee.CHARGEFEEID = model.chargeFeeId;
             loanFee.FEERATEVALUE = model.feeRateValue;
             loanFee.FEEDEPENDENTAMOUNT = model.feeDependentAmount;
