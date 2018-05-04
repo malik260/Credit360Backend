@@ -52,7 +52,5 @@ namespace FintrakBanking.Entities.Models
         public string REMARK { get; set; }
 
         public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }
-
-        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

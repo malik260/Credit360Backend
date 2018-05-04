@@ -2255,26 +2255,26 @@ namespace FintrakBanking.Repositories.Credit
             }
             else entity.customerTypeId = (short)CustomerTypeEnum.Individual;
 
-            var guarantor = new TBL_LOAN_GUARANTOR
-            {
-                PRODUCTTYPEID = productTypeId,
-                LOANAPPLICATIONID = loanApplicationId,
-                FIRSTNAME = entity.firstname != null ? entity.firstname : " ",
-                LASTNAME = entity.lastname != null ? entity.lastname : " ",
-                MIDDLENAME = entity.middlename != null ? entity.middlename : " ",
-                ADDRESS = entity.address,
-                PHONENUMBER1 = entity.phoneNumber1,
-                PHONENUMBER2 = entity.phoneNumber2,
-                RELATIONSHIP = entity.relationship,
-                RELATIONSHIPDURATION = (short)entity.relationshipDuration,
-                BVN = entity.bvn,
-                REGISTRATION_NUMBER = entity.rcNumber,
-                TAX_NUMBER = entity.rcNumber,
-                CUSTOMERTYPEID = entity.customerTypeId,
-                EMAILADDRESS = entity.emailAddress,
-                CREATEDBY = entity.createdBy,
-                DATETIMECREATED = DateTime.Now
-            };
+            //var guarantor = new TBL_LOAN_GUARANTOR
+            //{
+            //    PRODUCTTYPEID = productTypeId,
+            //    LOANAPPLICATIONID = loanApplicationId,
+            //    FIRSTNAME = entity.firstname != null ? entity.firstname : " ",
+            //    LASTNAME = entity.lastname != null ? entity.lastname : " ",
+            //    MIDDLENAME = entity.middlename != null ? entity.middlename : " ",
+            //    ADDRESS = entity.address,
+            //    PHONENUMBER1 = entity.phoneNumber1,
+            //    PHONENUMBER2 = entity.phoneNumber2,
+            //    RELATIONSHIP = entity.relationship,
+            //    RELATIONSHIPDURATION = (short)entity.relationshipDuration,
+            //    BVN = entity.bvn,
+            //    REGISTRATION_NUMBER = entity.rcNumber,
+            //    TAX_NUMBER = entity.rcNumber,
+            //    CUSTOMERTYPEID = entity.customerTypeId,
+            //    EMAILADDRESS = entity.emailAddress,
+            //    CREATEDBY = entity.createdBy,
+            //    DATETIMECREATED = DateTime.Now
+            //};
             //context.TBL_LOAN_GUARANTOR.Add(guarantor);
             //return context.SaveChanges() > 0;
 
@@ -4124,7 +4124,8 @@ namespace FintrakBanking.Repositories.Credit
                                proposedLimit = a.OUTSTANDINGPRINCIPAL,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
-                               reviewDate = DateTime.Now
+                               reviewDate = DateTime.Now,
+                              prudentialGuideline= a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
@@ -4138,7 +4139,8 @@ namespace FintrakBanking.Repositories.Credit
                                proposedLimit = a.OVERDRAFTLIMIT,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
-                               reviewDate = DateTime.Now
+                               reviewDate = DateTime.Now,
+                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);

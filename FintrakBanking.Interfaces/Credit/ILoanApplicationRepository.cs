@@ -78,5 +78,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanApplicationViewModel> SearchForLoan(string searchString);
 
         bool DeleteLoanApplicationDetail(int loanApplicationDetailId);
+
+        IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId, int companyId);
     }
 }

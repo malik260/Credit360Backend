@@ -195,6 +195,12 @@ namespace FintrakBanking.Repositories.Credit
                         });
             return data.FirstOrDefault();
         }
+        public IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId , int companyId)
+        {
+          var data =  GetLoanApplications(companyId).Where(c => c.customerId == customerId 
+          && c.approvalStatusId != (int)ApprovalStatusEnum.Approved && c.approvalStatusId != (int)ApprovalStatusEnum.Disapproved);
+            return data.ToList();
+        }
 
         private IQueryable<LoanApplicationViewModel> GetLoanApplications(int companyId)
         {
@@ -230,7 +236,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationDate = a.APPLICATIONDATE,
                             applicationTenor = a.APPLICATIONTENOR,
                             applicationAmount = a.APPLICATIONAMOUNT,
-                            dateTimeCreated = a.DATETIMECREATED,
+                            dateTimeCreated = a.DATETIMECREATED, 
                             LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
                              .Select(c => new LoanApplicationDetailViewModel()
                              {
@@ -250,6 +256,7 @@ namespace FintrakBanking.Repositories.Credit
                                  proposedAmount = c.PROPOSEDAMOUNT,
                                  proposedInterestRate = c.PROPOSEDINTERESTRATE,
                                  proposedProductId = c.PROPOSEDPRODUCTID,
+                                  proposedProductName = c.TBL_PRODUCT .PRODUCTNAME,
                                  //proposedTenor = Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
                                  statusId = c.STATUSID
                              }).ToList()
