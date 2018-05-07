@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANID { get; set; }
 
-        public short PRODUCTTYPEID { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
 
         public int? MONITORING_TRIGGERID { get; set; }
 
@@ -36,8 +36,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
-
         public virtual TBL_LOAN_MONITORING_TRIG_SETUP TBL_LOAN_MONITORING_TRIG_SETUP { get; set; }
+
+        public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
     }
 }

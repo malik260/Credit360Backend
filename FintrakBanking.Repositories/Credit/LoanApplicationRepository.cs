@@ -416,6 +416,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   collateralDetail = i.COLLATERALDETAIL,
                                                   //collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                                                   collateralValue = i.COLLATERALVALUE,
+                                                  
                                                   stampToCoverAmount = i.STAMPEDTOCOVERAMOUNT,
                                                   //collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                                   //collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
@@ -467,9 +468,15 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId)
         {
             var data = from a in context.TBL_LOAN_APPLICATION
-                       where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress && a.COMPANYID == companyId && a.DELETED == false
+                       where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress 
+                       && a.COMPANYID == companyId && a.DELETED == false
+                          && (a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId )
+                          && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress 
+                          && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+
+                     
                        orderby a.APPLICATIONDATE descending
-                       //&& a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId
+                    
                        select new
                        {
                            requireCollateral = a.REQUIRECOLLATERAL,

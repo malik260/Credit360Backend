@@ -1,11 +1,14 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Repositories.Credit;
+using FintrakBanking.ViewModels.Setups.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
@@ -13,19 +16,19 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/loan-management")]
     public class LoanPerformanceController : ApiControllerBase
     {
-        private ILoanPerformanceRepository repo;
+       private ILoanPerformanceRepository repo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
-        LoanPerformanceController(ILoanPerformanceRepository _repo)
+       public LoanPerformanceController(ILoanPerformanceRepository _repo)
         {
             this.repo = _repo;
         }
         [HttpGet]
-        [Route("loan-prudential-guildline-type")]
+        [Route("loan-prudential-guildline-status")]
         public HttpResponseMessage GetPrudGuildlineType()
-        {
+       {
             try
             {
-                var type = repo.GetPrudGuildlineType();
+                var type = repo.GetPrudGuildlineStatus();
 
                 if (type == null)
                 {
@@ -86,7 +89,32 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
             }
+        }
+        [HttpPost]
+        [Route("loan-performance-status-change")]
+        public HttpResponseMessage LoanPerformanceStatusChange([FromBody] PrudGuidelineStatusChangeViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
 
+                var data = repo.LoanPerformanceStatusChange(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true,  message = "Performance Status Change Successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = false, message = "Performance Status Change Not Successful" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
     }
 }

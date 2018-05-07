@@ -43,7 +43,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public DateTime? dateTimeCreated { get; set; }
         public DateTime? dateTimeUpdated { get; set; }
         public bool approvalStatus { get; set; }
-        public Guid? logincode { get; set; }
+        public string logincode { get; set; }
         public List<UserGroupId> groupId { get; set; }
         public List<UserActivities> activities { get; set; }
 
@@ -82,7 +82,7 @@ namespace FintrakBanking.ViewModels.Setups.General
     }
     public class SessionStatusInfo
     {
-        public Guid loginCode { get; set; }
+        public string loginCode { get; set; }
         public int state { get; set; }
         public string errorMessage { get; set; }
     }
@@ -98,7 +98,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int countryId { get; set; }
         public string branchName { get; set; }
         public string companyName { get; set; }
-        public Guid? logincode { get; set; }
+        public string logincode { get; set; }
         public DateTime? lastLoginDate { get; set; }
         public bool isActive { get; set; }
         public bool isLocked { get; set; }

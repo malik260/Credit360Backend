@@ -30,7 +30,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         string AddLoanBooking(LoanViewModel entity);
 
-        bool AddLoanGuarantor(LoanGuarantorViewModel guarantorModel, short productTypeId, int loanApplicationId);
+      //  bool AddLoanGuarantor(LoanGuarantorViewModel guarantorModel, short productTypeId, int loanApplicationId);
 
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
 
@@ -85,7 +85,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<CasaViewModel> GetLoanCustomerAccounts(int customerId, int loanApplicationDetailId);
 
-        List<loanApplicationColateralViewModel> GetLoanApplicationCollateralsByApplicationId(int loanApplicationId);
+      //  List<loanApplicationColateralViewModel> GetLoanApplicationCollateralsByApplicationId(int loanApplicationId);
 
         List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTriggerByLoanApplicationDetailId(int loanApplicationDetailId);
 

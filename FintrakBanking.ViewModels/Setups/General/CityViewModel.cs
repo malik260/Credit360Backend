@@ -10,5 +10,6 @@
         public short cityClassId { get; set; }
         public string cityClassName { get; set; }
         public bool allowedForCollateral { get; set; }
+        public string localGovt { get; set; }
     }
 }
