@@ -44,24 +44,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         #region Loan
 
-        //[HttpGet][Route("loan-payment-schedule")]
-        //public HttpResponseMessage GenerateLoanPaymentSchedule([FromBody] LoanPaymentScheduleInput entity)
-        //{
-        //    try
-        //    {
-        //        var data = LoanPaymentSchedule.GenerateLoanPaymentSchedule(input);
-        //        if (!data.Any())
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
-
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-        //}
 
         [HttpPost]
         [Route("current-exposure/customer")]
@@ -69,7 +51,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.GetCurrentCustomerExposure(customer, token.GetCompanyId);
                 //if (!data.Any())
                 //{
@@ -199,26 +180,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpGet]
-        [Route("gaurantor/application/{loanApplicationId}")]
-        public HttpResponseMessage GetLoanGuarantors(int loanApplicationId)
-        {
-            try
-            {
-                var data = repo.GetLoanGuarantors(loanApplicationId);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-
         [HttpPost]
         [Route("loan-booking")]
         public  HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
@@ -267,25 +228,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        //[HttpGet]
-        //[Route("loan-customer-company/{customerId}/application-detail/{loanApplicationDetailId}")]
-        //public HttpResponseMessage GetLoanCustomerCompanyInfo(int customerId, int loanApplicationDetailId)
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetLoanCustomerCompanyInfo(customerId, loanApplicationDetailId);
-        //        if (data == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
-
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-        //}
 
         [HttpPost]
         [Route("gaurantor/product-type/{productTypeId}/application/{applicationReferenceNumber}")]
@@ -301,7 +243,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.AddLoanGuarantor(entity, productTypeId, applicationReferenceNumber);
+                var data = false; //repo.AddLoanGuarantor(entity, productTypeId, applicationReferenceNumber);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The Loan Gaurantor successful added " });
@@ -336,25 +278,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        //[HttpGet]
-        //[Route("application-collateral-valuation/details/{loanApplicationId}")]
-        //public HttpResponseMessage GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetAppraisalMemorandumCollateralChanges(loanApplicationId);
-        //        if (!data.Any())
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
-
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-        //}
 
 
         [HttpGet]
@@ -389,26 +312,26 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpGet]
-        [Route("loan-application-collateral/{loanApplicationId}")]
-        public HttpResponseMessage GetLoanBookingAwaitingApproval(int loanApplicationId)
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetLoanApplicationCollateralsByApplicationId(loanApplicationId);
+        //[HttpGet]
+        //[Route("loan-application-collateral/{loanApplicationId}")]
+        //public HttpResponseMessage GetLoanBookingAwaitingApproval(int loanApplicationId)
+        //{
+        //    try
+        //    {
+        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        //        var data = repo.GetLoanApplicationCollateralsByApplicationId(loanApplicationId);
 
-                if (data.Any() == false)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+        //        if (data.Any() == false)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
         [HttpGet]
         [Route("number-of-installments/tenor-mode/{tenorModeId}/frequency-type/{frequencyTypeId}/tenor/{tenor}")]
@@ -1110,28 +1033,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-
-        //[HttpGet]
-        //[Route("loan-booking-request/awaiting-approval")]
-        //public HttpResponseMessage GetRequestedLoanBookingAwaitingApproval()
-
-        //{
-        //    TokenDecryptionHelper token = new TokenDecryptionHelper();
-        //    try
-        //    {
-        //        var response = repo.GetRequestedLoanBookingAwaitingApproval(token.GetCompanyId);
-        //        if (!response.Any())
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
-
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-        //}
 
         [HttpPost]
         [Route("loan-application/request-booking/{applicationId}")]

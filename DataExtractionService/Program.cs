@@ -4,18 +4,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Topshelf;
+using Topshelf.Ninject;
 
 namespace DataExtractionService
 {
     static class Program
     {
-        private static ITreasuaryRateExtraction treasuary;
-       
+
         static void Main(string[] args)
         {
-            treasuary.MigrateExchangeRate();
-            Console.WriteLine("helo world");
-            Console.ReadKey();
+            HostFactory.Run(x =>
+            {
+
+
+                x.Service<TopShelfWindowsService>(s =>
+                {
+                    s.ConstructUsing(name => new TopShelfWindowsService());
+                    s.WhenStarted((service, hostControl) => service.Start(hostControl));
+                    s.WhenStopped((service, hostControl) => service.Stop(hostControl));
+                });
+                x.RunAsLocalSystem();
+                x.SetDescription("Prototype .NET TopShelf Windows Service");
+                x.SetDisplayName("Prototype_TopShelf_and_Ninject");
+                x.SetServiceName("Prototype_TopShelf_and_Ninject");
+            });
         }
+
+
     }
 }
+

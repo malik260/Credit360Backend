@@ -11,6 +11,7 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public ChargeFeeViewModel()
         {
             ranges = new List<ChargeRangeViewModel>();
+            chargeFeeDetails = new List<ChargeFeeDetailsViewModel>();
         }
         public int chargeFeeId { get; set; }
         public string chargeName { get; set; }
@@ -32,7 +33,7 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public short? cutOffDay { get; set; }
         public bool isIntegral { get; set; }
 
-
+        public List<ChargeFeeDetailsViewModel> chargeFeeDetails { get; set; }
         public List<ChargeRangeViewModel> ranges { get; set; }
         public string accountCategoryName { get; set; }
         public string frequencyTypeName { get; set; }
@@ -54,5 +55,22 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public double? rate { get; set; }
         public decimal? amount { get; set; }
         public int chargeFeeId { get; set; }
+    }
+
+    public class ChargeFeeDetailsViewModel
+    {
+        public int chargeFeeDetailId { get; set; }
+        public string description { get; set; }
+        public int chargeFeeId { get; set; }
+        public int glAccountId1 { get; set; }
+        public int glAccountId2 { get; set; }
+        public short detailTypeId { get; set; }
+        public short postingTypeId { get; set; }
+        public decimal amount { get; set; }
+        public double rate { get; set; }
+        public short feeTypeId { get; set; }
+        public short detailClassId { get; set; }
+        public bool requireAmortization { get; set; }
+        public short postingGroup { get; set; }
     }
 }

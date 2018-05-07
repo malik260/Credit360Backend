@@ -675,11 +675,11 @@ namespace FintrakBanking.Repositories.Credit
 
         #region CAM Pending Applications
 
-        public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int companyId, int branchId, int staffId, int? classId)
+        public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId)
         {
             // var declarations
             IQueryable<LoanApplicationViewModel> applications = null;
-            int operationId = (int)OperationsEnum.CAM;
+            //int operationId = (int)OperationsEnum.CAM;
             bool isHeadOffice = (branchId == 1) ? true : false;
 
             // get approval levels 

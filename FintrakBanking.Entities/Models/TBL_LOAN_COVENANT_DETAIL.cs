@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANID { get; set; }
 
-        public short PRODUCTTYPEID { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
 
         public short COVENANTTYPEID { get; set; }
 
@@ -57,8 +57,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }
 
-        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
-
         public virtual TBL_LOAN_COVENANT_TYPE TBL_LOAN_COVENANT_TYPE { get; set; }
+
+        public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
     }
 }

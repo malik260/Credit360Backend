@@ -176,11 +176,11 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "THERE WAS AN ERROR CREATING THIS RECORD, REFERENCE NUMBER EXIST" });
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
             }
         }
 
@@ -235,6 +235,32 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+        [HttpGet, Route("temp-item-policy")]
+        public HttpResponseMessage GetItemPolicyCollateral()
+        {
+            try
+            {
+                var response = repo.GetTempCollateralInsurancePoliciesWaitingForApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+        [HttpGet, Route("temp-item-policy/{collateralId}")]
+        public HttpResponseMessage GetItemPolicyCollateralList(int collateralId)
+        {
+            try
+            {
+                var response = repo.GetTempCollateralInsurancePolicy(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
 
         [HttpPost, Route("temp/customer-collateral-approval")]
         public HttpResponseMessage PostCustomerCollateralApproval([FromBody]ApprovalViewModel model)
@@ -245,6 +271,23 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
 
                 var response = repo.GoForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpPost, Route("temp/policy-approval")]
+        public HttpResponseMessage PostItemPolicyApproval([FromBody]ApprovalViewModel model)
+        {
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var response = repo.GoForPolicyApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
@@ -325,7 +368,12 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-               var respo  =  repo.AddNewItemInsurancePolicy(insurancePolicies);
+                insurancePolicies.userBranchId = (short)token.GetBranchId;
+                insurancePolicies.companyId = token.GetCompanyId;
+                insurancePolicies.createdBy = token.GetStaffId;
+                insurancePolicies.applicationUrl = HttpContext.Current.Request.Path;
+
+                var respo  =  repo.AddNewItemInsurancePolicy(insurancePolicies);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = repo });
             }
             catch (Exception ex)
@@ -339,6 +387,19 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = document.GetCustomerCollateralDocument(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet, Route("temp-collateral-document/{collateralId}")]
+        public HttpResponseMessage GetTempCollateralDocumentByCollateral(int collateralId)
+        {
+            try
+            {
+                var data = document.GetTempAllCollateralDocument(collateralId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)

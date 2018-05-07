@@ -15,9 +15,10 @@ namespace DataExtractionService
         private Timer _syncTimer;
         private static object s_lock = new object();
         private ITreasuaryRateExtraction rate;
-        public TopShelfWindowsService(ITreasuaryRateExtraction rate)
+
+        public TopShelfWindowsService( )
         {
-            this.rate = rate;
+           // this.rate = rate;
         }
 
 

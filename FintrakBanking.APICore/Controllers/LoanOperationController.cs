@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Repositories.Credit;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -47,6 +48,52 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var data = repo.GetRunningLoans(token.GetCompanyId, refNo);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("mature-commercial-loans/parent")]
+        public HttpResponseMessage GetMaturedCommercialLoans()
+        {
+            try
+            {
+                var data = repo.GetMaturedCommercialLoansParent(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("mature-commercial-loans/detail/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetMaturedCommercialLoans(int loanApplicationDetailId)
+        {
+            try
+            {
+                var data = repo.GetMaturedCommercialLoans(token.GetCompanyId, loanApplicationDetailId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("running-commercial-loans/{refNo}")]
+        public HttpResponseMessage GetRunningCommercialLoans(string refNo)
+        {
+            try
+            {
+                var data = repo.GetRunningCommercialLoans(token.GetCompanyId, refNo);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
             catch (Exception ex)
             {

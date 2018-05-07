@@ -6,20 +6,20 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CURRENCY_RATE")]
-    public partial class TBL_CURRENCY_RATE
+    [Table("core.TBL_CURRENCY_EXCHANGERATE")]
+    public partial class TBL_CURRENCY_EXCHANGERATE
     {
         [Key]
         public short CURRENCYRATEID { get; set; }
 
         public short CURRENCYID { get; set; }
 
+        public short RATECODEID { get; set; }
+
         [Column(TypeName = "date")]
         public DateTime DATE { get; set; }
 
-        public double BUYINGRATE { get; set; }
-
-        public double SELLINGRATE { get; set; }
+        public double EXCHANGERATE { get; set; }
 
         public short BASECURRENCYID { get; set; }
 
@@ -36,5 +36,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
         public virtual TBL_CURRENCY TBL_CURRENCY1 { get; set; }
+
+        public virtual TBL_CURRENCY_RATECODE TBL_CURRENCY_RATECODE { get; set; }
     }
 }

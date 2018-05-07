@@ -281,7 +281,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("staff")]
-        public async Task<HttpResponseMessage> AddTempStaff([FromBody] StaffInfoViewModel model)
+        public HttpResponseMessage AddTempStaff([FromBody] StaffInfoViewModel model)
         {
             try
             {
@@ -302,7 +302,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                var staff = await repo.AddTempStaff(model);
+                var staff = repo.AddTempStaff(model);
 
                 if (staff)
                 {
@@ -321,7 +321,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("staff/{staffid}")]
-        public async Task<HttpResponseMessage> UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
+        public HttpResponseMessage UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
         {
             try
             {
@@ -331,7 +331,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
-                var staff = await repo.UpdateStaff(staffid, model);
+                var staff =  repo.UpdateStaff(staffid, model);
 
                 if (staff)
                 {
@@ -655,6 +655,9 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.branchId = (short)token.GetBranchId;
+                entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
                 var file = provider.Contents.FirstOrDefault();

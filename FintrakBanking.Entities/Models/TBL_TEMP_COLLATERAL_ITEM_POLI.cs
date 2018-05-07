@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_TEMP_COLLATERAL_ITEM_POLI")]
+    [Table("temp.TBL_TEMP_COLLATERAL_ITEM_POLI")]
     public partial class TBL_TEMP_COLLATERAL_ITEM_POLI
     {
         [Key]
@@ -39,6 +39,8 @@ namespace FintrakBanking.Entities.Models
         public bool ISCURRENT { get; set; }
 
         public short APPROVALSTATUSID { get; set; }
+
+        public bool ISPOLICYAPPROVAL { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
 

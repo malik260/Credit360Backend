@@ -10,7 +10,10 @@ namespace FintrakBanking.ViewModels.Setups.General
     {
        
         public IQueryable<DepartmentViewModel> departmentUnits;
-        public string supervisorStaffName;
+        public string supervisorStaffName { get; set; }
+        public string message { get; set; }
+        public string staffRoleCode { get; set; }
+        public string branchCode { get; set; }
 
         public int? supervisorStaffId { get; set; }
 
@@ -68,12 +71,20 @@ namespace FintrakBanking.ViewModels.Setups.General
      
     }
 
+    public class staffBulkFeedbackViewModel
+    {
+        public List<StaffInfoViewModel> commitedRows { get; set; }
+        public List<StaffInfoViewModel> discardedRows { get; set; }
+        public int successCount { get; set; }
+        public int failureCount { get; set; }
+        public string generalFeedBackMessage { get; set; }
+    }
+
+
     public class StaffViewModel
     {
         public int StaffId { get; set; }
         public string StaffName { get; set; }
-
-
     }
 
 

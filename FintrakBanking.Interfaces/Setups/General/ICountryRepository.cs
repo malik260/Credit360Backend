@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels; 
+﻿using FintrakBanking.Entities.DocumentModels;
+using FintrakBanking.ViewModels; 
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
@@ -34,5 +35,15 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<StateViewModel> GetStateByCompanyId(int companyId);
 
         bool UpdateState(StateViewModel entity, int stateId);
+
+        bool AddLocalGovt(LocalGovtViewModel entity);
+
+        bool UpdateLocalGovt(LocalGovtViewModel entity, int id);
+
+        IEnumerable<LocalGovtViewModel> GetLocalGovt();
+
+        List<LocalGovtViewModel> GetLocalGovtByStateId(int stateId);
+
+        LocalGovtViewModel GetLocalGovtById(int id);
     }
 }

@@ -76,6 +76,7 @@ namespace FintrakBanking.Repositories.Setups.General
                          lookupTypeName = data.CURRENCYCODE
                     });
         }
+        
 
         public IEnumerable<LookupViewModel> GetSector() {
             return (from   data in context.TBL_SECTOR
@@ -367,14 +368,19 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (staffWorkflow.Count() > 0) scope = staffWorkflow.Max(x => x.PROCESSVIEWSCOPEID);
 
-            if (scope == 3) return allLevels.Select(x => x.APPROVALLEVELID).Distinct();
+            if (scope == 3) return allLevels.Select(x => x.APPROVALLEVELID).Distinct().Union(roleLevelIds).Union(relievedLevelids);
 
             var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
 
             if (scope == 2)
             {
                 var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
-                return context.TBL_APPROVAL_LEVEL.Where(x => groups.Contains(x.GROUPID)).Select(x => x.APPROVALLEVELID).Distinct();
+                return context.TBL_APPROVAL_LEVEL
+                    .Where(x => groups.Contains(x.GROUPID))
+                    .Select(x => x.APPROVALLEVELID)
+                    .Distinct()
+                    .Union(roleLevelIds)
+                    .Union(relievedLevelids);
             }
 
             //return staffLevels.Union(roleLevelIds); // without relief code

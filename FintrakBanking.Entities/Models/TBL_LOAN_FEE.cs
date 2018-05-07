@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANID { get; set; }
 
-        public short PRODUCTTYPEID { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
 
         public int CHARGEFEEID { get; set; }
 
@@ -36,6 +36,15 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "money")]
         public decimal FEEAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal EARNEDFEEAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal TAXAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal EARNEDTAXAMOUNT { get; set; }
 
         public bool ISINTEGRALFEE { get; set; }
 
@@ -61,9 +70,9 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CHARGE_FEE TBL_CHARGE_FEE { get; set; }
 
-        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_FEE_SCHEDULE> TBL_LOAN_FEE_SCHEDULE { get; set; }
+
+        public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
     }
 }

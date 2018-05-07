@@ -6,7 +6,8 @@
         InterestRepayment = 3,
         OverdraftCleanUp = 4,
         APGBooking = 5,
-        APSRequest = 6
+        APSRequest = 6,
+        WriteOff = 7,
     };
 
 }

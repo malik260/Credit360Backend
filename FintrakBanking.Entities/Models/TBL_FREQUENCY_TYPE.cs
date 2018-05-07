@@ -14,7 +14,6 @@ namespace FintrakBanking.Entities.Models
         {
             TBL_CALL_MEMO_LIMIT = new HashSet<TBL_CALL_MEMO_LIMIT>();
             TBL_COLLATERAL_POLICY = new HashSet<TBL_COLLATERAL_POLICY>();
-            TBL_LIMIT_DETAIL = new HashSet<TBL_LIMIT_DETAIL>();
             TBL_LOAN_APPLICATION_COVENANT = new HashSet<TBL_LOAN_APPLICATION_COVENANT>();
             TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
             TBL_LOAN_ARCHIVE1 = new HashSet<TBL_LOAN_ARCHIVE>();
@@ -23,6 +22,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN = new HashSet<TBL_LOAN>();
             TBL_LOAN1 = new HashSet<TBL_LOAN>();
             TBL_LOAN2 = new HashSet<TBL_LOAN>();
+            TBL_TEMP_COLLATERAL_POLICY = new HashSet<TBL_TEMP_COLLATERAL_POLICY>();
             TBL_TEMP_LOAN = new HashSet<TBL_TEMP_LOAN>();
             TBL_TEMP_LOAN1 = new HashSet<TBL_TEMP_LOAN>();
             TBL_TEMP_LOAN2 = new HashSet<TBL_TEMP_LOAN>();
@@ -51,9 +51,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_COLLATERAL_POLICY> TBL_COLLATERAL_POLICY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LIMIT_DETAIL> TBL_LIMIT_DETAIL { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_APPLICATION_COVENANT> TBL_LOAN_APPLICATION_COVENANT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -76,6 +73,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN> TBL_LOAN2 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_COLLATERAL_POLICY> TBL_TEMP_COLLATERAL_POLICY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN { get; set; }
