@@ -32,8 +32,6 @@ namespace FintrakBanking.Entities.Models
 
         public int DAYSINAYEAR { get; set; }
 
-        public bool INUSE { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_DAILY_ACCRUAL> TBL_DAILY_ACCRUAL { get; set; }
 
