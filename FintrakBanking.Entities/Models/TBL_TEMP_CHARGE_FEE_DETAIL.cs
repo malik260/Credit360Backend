@@ -50,6 +50,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
+        public virtual TBL_CHARGE_FEE TBL_CHARGE_FEE { get; set; }
+
         public virtual TBL_FEE_TYPE TBL_FEE_TYPE { get; set; }
 
         public virtual TBL_POSTING_TYPE TBL_POSTING_TYPE { get; set; }

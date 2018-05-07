@@ -242,16 +242,16 @@ namespace FintrakBanking.Repositories.Setups.General
             if (staffModel.user != null)
             {
 
-                
+
 
             }
 
 
             var existingTempStaff = context.TBL_TEMP_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower() && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
-            if(existingTempStaff != null)
+            if (existingTempStaff != null)
             {
                 var existingTempUser = context.TBL_TEMP_PROFILE_USER.FirstOrDefault(u => u.TEMPSTAFFID == existingTempStaff.TEMPSTAFFID);
-                if (existingTempUser!= null)
+                if (existingTempUser != null)
                 {
                     existingTempUser.USERNAME = staffModel.user.username;
                     existingTempUser.ISFIRSTLOGINATTEMPT = false;

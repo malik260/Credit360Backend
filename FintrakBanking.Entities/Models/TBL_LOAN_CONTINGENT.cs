@@ -22,6 +22,8 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCTID { get; set; }
 
+        public short LOANSYSTEMTYPEID { get; set; }
+
         public int COMPANYID { get; set; }
 
         public int CASAACCOUNTID { get; set; }

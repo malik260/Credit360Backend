@@ -37,6 +37,15 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal FEEAMOUNT { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal EARNEDFEEAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal TAXAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal EARNEDTAXAMOUNT { get; set; }
+
         public bool ISINTEGRALFEE { get; set; }
 
         public bool ISRECURRING { get; set; }

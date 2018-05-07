@@ -58,7 +58,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
-    <Compile Include="DocumentModels\LocalGovtViewModel.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
@@ -107,7 +106,6 @@
     <Compile Include="Models\TBL_CHARGES_VALUESOURCE.cs" />
     <Compile Include="Models\TBL_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_CHARGE_FEE_DETAIL.cs" />
-    <Compile Include="Models\TBL_CHARGE_FEE_DETAIL_CLASS.cs" />
     <Compile Include="Models\TBL_CHARGE_FEE_DETAIL_TYPE.cs" />
     <Compile Include="Models\TBL_CHARGE_RANGE.cs" />
     <Compile Include="Models\TBL_CHART_OF_ACCOUNT.cs" />
@@ -250,11 +248,6 @@
     <Compile Include="Models\TBL_KYC_DOCUMENTTYPE.cs" />
     <Compile Include="Models\TBL_KYC_ITEM.cs" />
     <Compile Include="Models\TBL_LANGUAGE.cs" />
-    <Compile Include="Models\TBL_LIMIT.cs" />
-    <Compile Include="Models\TBL_LIMIT_DETAIL.cs" />
-    <Compile Include="Models\TBL_LIMIT_METRIC.cs" />
-    <Compile Include="Models\TBL_LIMIT_TYPE.cs" />
-    <Compile Include="Models\TBL_LIMIT_VALUE_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN.cs" />
     <Compile Include="Models\TBL_LOANAPPLICATION_COLTRL_MAP.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION.cs" />
@@ -365,6 +358,7 @@
     <Compile Include="Models\TBL_PROFILE_GROUP_ACTIVITY.cs" />
     <Compile Include="Models\TBL_PROFILE_PRIVILEDGE.cs" />
     <Compile Include="Models\TBL_PROFILE_PRIVILEDGE_ACTIVIT.cs" />
+    <Compile Include="Models\TBL_PROFILE_SETTING.cs" />
     <Compile Include="Models\TBL_PROFILE_STAFF_ROLE_ADT_ACT.cs" />
     <Compile Include="Models\TBL_PROFILE_STAFF_ROLE_GROUP.cs" />
     <Compile Include="Models\TBL_PROFILE_USER.cs" />
