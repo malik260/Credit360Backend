@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public bool AddChargeFee(ChargeFeeViewModel model)
         {
-            if (model == null)
+            if (model != null)
             {
                 try
                 {

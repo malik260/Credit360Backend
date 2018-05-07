@@ -75,7 +75,7 @@
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\SYSDIAGRAMS.cs" />
+    <Compile Include="Models\SYSDIAGRAM.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -107,6 +107,7 @@
     <Compile Include="Models\TBL_CHARGES_VALUESOURCE.cs" />
     <Compile Include="Models\TBL_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_CHARGE_FEE_DETAIL.cs" />
+    <Compile Include="Models\TBL_CHARGE_FEE_DETAIL_CLASS.cs" />
     <Compile Include="Models\TBL_CHARGE_FEE_DETAIL_TYPE.cs" />
     <Compile Include="Models\TBL_CHARGE_RANGE.cs" />
     <Compile Include="Models\TBL_CHART_OF_ACCOUNT.cs" />
@@ -249,6 +250,11 @@
     <Compile Include="Models\TBL_KYC_DOCUMENTTYPE.cs" />
     <Compile Include="Models\TBL_KYC_ITEM.cs" />
     <Compile Include="Models\TBL_LANGUAGE.cs" />
+    <Compile Include="Models\TBL_LIMIT.cs" />
+    <Compile Include="Models\TBL_LIMIT_DETAIL.cs" />
+    <Compile Include="Models\TBL_LIMIT_METRIC.cs" />
+    <Compile Include="Models\TBL_LIMIT_TYPE.cs" />
+    <Compile Include="Models\TBL_LIMIT_VALUE_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN.cs" />
     <Compile Include="Models\TBL_LOANAPPLICATION_COLTRL_MAP.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION.cs" />
@@ -356,7 +362,6 @@
     <Compile Include="Models\TBL_PROFILE_GROUP_ACTIVITY.cs" />
     <Compile Include="Models\TBL_PROFILE_PRIVILEDGE.cs" />
     <Compile Include="Models\TBL_PROFILE_PRIVILEDGE_ACTIVIT.cs" />
-    <Compile Include="Models\TBL_PROFILE_SETTING.cs" />
     <Compile Include="Models\TBL_PROFILE_STAFF_ROLE_ADT_ACT.cs" />
     <Compile Include="Models\TBL_PROFILE_STAFF_ROLE_GROUP.cs" />
     <Compile Include="Models\TBL_PROFILE_USER.cs" />

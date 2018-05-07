@@ -36,10 +36,10 @@ namespace FintrakBanking.Entities.Models
             TBL_CUSTOMER_RISK_RATING = new HashSet<TBL_CUSTOMER_RISK_RATING>();
             TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
             TBL_DAILY_ACCRUAL = new HashSet<TBL_DAILY_ACCRUAL>();
-            TBL_DEPARTMENT = new HashSet<TBL_DEPARTMENT>();
             TBL_FINANCE_ENDOFDAY = new HashSet<TBL_FINANCE_ENDOFDAY>();
             TBL_FINANCE_TRANSACTION = new HashSet<TBL_FINANCE_TRANSACTION>();
             TBL_FINANCECURRENTDATE = new HashSet<TBL_FINANCECURRENTDATE>();
+            TBL_LIMIT = new HashSet<TBL_LIMIT>();
             TBL_LOAN_APPLICATION_ARCHIVE = new HashSet<TBL_LOAN_APPLICATION_ARCHIVE>();
             TBL_LOAN_APPLICATION = new HashSet<TBL_LOAN_APPLICATION>();
             TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
@@ -267,9 +267,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_DAILY_ACCRUAL> TBL_DAILY_ACCRUAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_DEPARTMENT> TBL_DEPARTMENT { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_FINANCE_ENDOFDAY> TBL_FINANCE_ENDOFDAY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -277,6 +274,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_FINANCECURRENTDATE> TBL_FINANCECURRENTDATE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LIMIT> TBL_LIMIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_APPLICATION_ARCHIVE> TBL_LOAN_APPLICATION_ARCHIVE { get; set; }

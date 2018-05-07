@@ -52,7 +52,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? LASTLOCKOUTDATE { get; set; }
 
-        [StringLength(100)]
         public string LOGINCODE { get; set; }
 
         public int? CREATEDBY { get; set; }
