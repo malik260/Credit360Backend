@@ -4009,7 +4009,7 @@ namespace FintrakBanking.Repositories.Credit
             return customerAccounts;
         }
 
-        public List<loanApplicationColateralViewModel> GetLoanApplicationCollateralsByApplicationId(int loanApplicationId)
+        public List<loanApplicationColateralViewModel> m(int loanApplicationId)
         {
             var loanCollateral = (from cm in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId) // ------------------ REFACTOR TO LOANID!
                                   select (
@@ -4180,22 +4180,23 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach(var item in data)
             {
-                item.loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING // ------------------ REFACTOR TO LOANID!
-                                       select (
-                                                new LoanCollateralMappingViewModel
-                                                {
-                                                    loanCollateralMappingId = cm.LOANCOLLATERALMAPPINGID,
-                                                    collateralTypeName = cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
-                                                    + "(" + cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.FirstOrDefault().COLLATERALSUBTYPENAME + ")",
-                                                    collateralCustomerId = cm.COLLATERALCUSTOMERID,
-                                                                     //loanApplicationId = cm.LOANAPPLICATIONID, // ------------------ REFACTOR TO LOANID!
-                                                    collateralValue = cm.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                                                    hairCut = cm.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                                                    valuationCycle = cm.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                                                    currencyId = cm.TBL_COLLATERAL_CUSTOMER.CURRENCYID,
-                                                    currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
-                                                    currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
-                                                })).ToList();
+
+                //item.loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x=>x.ISRELEASED == false) // ------------------ REFACTOR TO LOANID!
+                //                       select (
+                //                                new LoanCollateralMappingViewModel
+                //                                {
+                //                                    loanCollateralMappingId = cm.LOANCOLLATERALMAPPINGID,
+                //                                    collateralTypeName = cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
+                //                                    + "(" + cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.FirstOrDefault().COLLATERALSUBTYPENAME + ")",
+                //                                    collateralCustomerId = cm.COLLATERALCUSTOMERID,
+                //                                                     //loanApplicationId = cm.LOANAPPLICATIONID, // ------------------ REFACTOR TO LOANID!
+                //                                    collateralValue = cm.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                //                                    hairCut = cm.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                //                                    valuationCycle = cm.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                //                                    currencyId = cm.TBL_COLLATERAL_CUSTOMER.CURRENCYID,
+                //                                    currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                //                                    currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
+                //                                })).ToList();
             };
             return data.ToList();
         }
