@@ -6,21 +6,19 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_MONITORING_TRIGGER")]
-    public partial class TBL_LOAN_MONITORING_TRIGGER
+    [Table("credit.TBL_LOAN_MATURITY_INSTRUCTION")]
+    public partial class TBL_LOAN_MATURITY_INSTRUCTION
     {
         [Key]
-        public int LOAN_MONITORING_TRIGGERID { get; set; }
+        public int MATURITYINSTRUCTIONID { get; set; }
 
         public int LOANID { get; set; }
 
         public short LOANSYSTEMTYPEID { get; set; }
 
-        public int? MONITORING_TRIGGERID { get; set; }
+        public int TENOR { get; set; }
 
-        [Required]
-        [StringLength(800)]
-        public string MONITORING_TRIGGER { get; set; }
+        public short INSTRUCTIONTYPEID { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -36,7 +34,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual TBL_LOAN_MONITORING_TRIG_SETUP TBL_LOAN_MONITORING_TRIG_SETUP { get; set; }
+        public virtual TBL_LOAN_MATURITY_INSTRU_TYPE TBL_LOAN_MATURITY_INSTRU_TYPE { get; set; }
 
         public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
     }
