@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B5B4DB65-F19E-47D7-A281-98482EE522CF}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>FintrakBaking.BranchUpdateService</RootNamespace>
-    <AssemblyName>FintrakBaking.BranchUpdateService</AssemblyName>
+    <ProjectGuid>{8D1B05E1-3422-49C3-A692-0D87E3CD8FC7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>DataExtractionService</RootNamespace>
+    <AssemblyName>DataExtractionService</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,48 +39,36 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
+    <Reference Include="Topshelf, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Topshelf.4.0.4\lib\net452\Topshelf.dll</HintPath>
+    </Reference>
+    <Reference Include="Topshelf.Ninject, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Topshelf.Ninject.0.1.0.0\lib\net45\Topshelf.Ninject.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Audit Log\AuditTrail.cs" />
-    <Compile Include="Stagging Logic\ExchangeRate.cs" />
-    <Compile Include="Stagging Logic\FintrakStaggingInformationUpdate.cs" />
-    <Compile Include="NewBranchService.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="NewBranchService.Designer.cs">
-      <DependentUpon>NewBranchService.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Interface\ITreasuaryRateExtraction.cs" />
+    <Compile Include="ModuleNinject.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ProjectInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ProjectInstaller.Designer.cs">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services Logic\TreasuaryRateExtraction.cs" />
+    <Compile Include="TopShelfWindowsService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ProjectInstaller.resx">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
@@ -87,14 +76,9 @@
       <Name>FintrakBanking.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
-      <Project>{6A7C3564-00B2-45D4-A40C-4B52A06C296A}</Project>
+      <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
       <Name>FintrakBanking.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
-      <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
-      <Name>FintrakBanking.ViewModels</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

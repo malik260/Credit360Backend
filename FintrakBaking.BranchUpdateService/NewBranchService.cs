@@ -1,4 +1,5 @@
-﻿using FinTrakMail;
+﻿using FintrakBaking.BranchUpdateService.Stagging_Logic;
+using FinTrakMail;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,6 +60,8 @@ namespace FintrakBaking.BranchUpdateService
 
                 string UpdateRespose = newBranch.UpdateStaffInformation();
                // string AddRespose = newBranch.AddNewBranches();
+
+                
 
                 AuditTrail.LogFileManager.LogToFile("New Branch Logger Service ends with these responses : " + UpdateRespose + " " + DateTime.Now.ToString());
 

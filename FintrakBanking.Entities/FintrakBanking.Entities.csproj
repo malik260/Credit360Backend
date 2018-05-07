@@ -417,10 +417,13 @@
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StagingModels\CWG_TREASURY_RATE_TBL.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
     <Compile Include="StagingModels\STG_BRANCH.cs" />
+    <Compile Include="StagingModels\STG_CURRENCY_EXCHANGERATE.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />
     <Compile Include="StagingModels\STG_LOAN_MART.cs" />
+    <Compile Include="StagingModels\STG_PRICE_INDEX_RATE.cs" />
     <Compile Include="StagingModels\STG_STAFF.cs" />
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
   </ItemGroup>
@@ -428,7 +431,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

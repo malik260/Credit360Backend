@@ -124,6 +124,7 @@
     <Compile Include="Customer\CustomerPhoneContactViewModels.cs" />
     <Compile Include="Customer\CustomerTypeViewModels.cs" />
     <Compile Include="Customer\CustomerViewModels.cs" />
+    <Compile Include="DataMigration\BranchViewModel.cs" />
     <Compile Include="ErrorLogger\ErrorViewModel.cs" />
     <Compile Include="Finance\CurrencyExchangeRateViewModel.cs" />
     <Compile Include="CASA\CasaLienViewModel.cs" />

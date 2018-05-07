@@ -52,7 +52,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? LASTLOCKOUTDATE { get; set; }
 
-        public Guid? LOGINCODE { get; set; }
+        public string LOGINCODE { get; set; }
 
         public int? CREATEDBY { get; set; }
 
