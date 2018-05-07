@@ -85,7 +85,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<CasaViewModel> GetLoanCustomerAccounts(int customerId, int loanApplicationDetailId);
 
-        List<loanApplicationColateralViewModel> GetLoanApplicationCollateralsByApplicationId(int loanApplicationId);
+      //  List<loanApplicationColateralViewModel> GetLoanApplicationCollateralsByApplicationId(int loanApplicationId);
 
         List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTriggerByLoanApplicationDetailId(int loanApplicationDetailId);
 
