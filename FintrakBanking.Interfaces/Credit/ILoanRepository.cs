@@ -4,6 +4,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
@@ -110,6 +111,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanReviewApplicationOverDraft();
 
         LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId);
+
+        IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param);
 
 
     }

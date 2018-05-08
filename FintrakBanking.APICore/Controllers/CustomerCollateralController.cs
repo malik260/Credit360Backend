@@ -227,7 +227,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetTempCustomerCollateral(token.GetCompanyId,token.GetStaffId);
+                var response = repo.GetTempCustomerCollateralForApproval(token.GetCompanyId,token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)

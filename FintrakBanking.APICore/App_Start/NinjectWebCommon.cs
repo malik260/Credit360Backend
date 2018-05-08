@@ -199,7 +199,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IOverRideRepository>().To<OverRideRepository>();
             kernel.Bind<IStaffAccountHistoryRepository>().To<StaffAccountHistoryRepository>();
             kernel.Bind<IIntegrationWithCWGAPI>().To<IntegrationWithCWGAPI>();
-
+            kernel.Bind<ICompanyInformationRepository>().To<CompanyInformationRepository>();
             kernel.Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>();
             
         }

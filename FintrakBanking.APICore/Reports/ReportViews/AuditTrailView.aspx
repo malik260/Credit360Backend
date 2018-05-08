@@ -21,15 +21,16 @@
                 
                 <datasources>
                           <rsweb:ReportDataSource DataSourceId="ObjectDataSourceAudit" Name="Audit" />
+                            <rsweb:ReportDataSource DataSourceId="odsCompanyImage" Name="ds_company_logo" />
                       </datasources>
             </LocalReport>
         </rsweb:ReportViewer>
      
-        <asp:ObjectDataSource ID="ObjectDataSourceAudit" runat="server" SelectMethod="CollateralPropertyApproachingRevaluation" TypeName="FintrakBanking.ReportObjects.ReportingObjects.LimitsMonitoringReportsObjects">
+                <asp:ObjectDataSource ID="ObjectDataSourceAudit" runat="server" SelectMethod="GetAuditTrailByParam" TypeName="FintrakBanking.ReportObjects.ReportingObjects.Audit">
             <SelectParameters> 
                 <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
-          
+                <asp:ControlParameter ControlID="username" Name="username" PropertyName="Text" Type="String" />          
             </SelectParameters>
         </asp:ObjectDataSource>
         </div>
@@ -38,6 +39,10 @@
         <asp:Label ID="startDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>
         <asp:Label ID="username" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="Id" runat="server"  Visible="false" ></asp:Label>
+     
+        <asp:ObjectDataSource ID="odsCompanyImage" runat="server" SelectMethod="GetCompanyImage" TypeName="FintrakBanking.Repositories.Admin.CompanyInformationRepository">
+        </asp:ObjectDataSource>
     </form>
 </body>
 </html>

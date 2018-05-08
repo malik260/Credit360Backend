@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FintrakBanking.Entities.DocumentModels
+namespace FintrakBanking.ViewModels.Setups.General
 {
     public class LocalGovtViewModel
     {

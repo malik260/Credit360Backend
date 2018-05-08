@@ -26,6 +26,7 @@ using FintrakBanking.ViewModels.Reports;
 using System.Threading.Tasks;
 using FintrakBanking.Repositories.CASA;
 using FintrakBanking.Interfaces.CASA;
+using FintrakBanking.ViewModels.Report;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -4754,7 +4755,73 @@ namespace FintrakBanking.Repositories.Credit
 
             return loans;
         }
+        public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param)
+        {
+            var data = (from l in context.TBL_LOAN
+                        where l.LOANREFERENCENUMBER == param.param
+                        || l.TBL_CUSTOMER.FIRSTNAME.StartsWith(param.param)
+                        || l.TBL_CUSTOMER.LASTNAME.StartsWith(param.param)
+                        || l.TBL_CUSTOMER.MIDDLENAME.StartsWith(param.param)
+                        || l.BRANCHID == param.branchId
+                        select new LoanViewModel {
+                            loanId = l.TERMLOANID,
+                            customerId = l.CUSTOMERID,
+                            customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.LASTNAME,
+                            firstName = l.TBL_CUSTOMER.FIRSTNAME,
+                            lastName = l.TBL_CUSTOMER.LASTNAME,
+                            productId = l.PRODUCTID,
+                            companyId = l.COMPANYID,
+                            casaAccountId = l.CASAACCOUNTID,
+                            branchId = l.BRANCHID,
+                            branchName = l.TBL_BRANCH.BRANCHNAME,
+                            loanReferenceNumber = l.LOANREFERENCENUMBER,
+                            principalFrequencyTypeId = (short)l.PRINCIPALFREQUENCYTYPEID,
+                            pricipalFrequencyTypeName = l.TBL_FREQUENCY_TYPE.DESCRIPTION,
+                            interestFrequencyTypeId = (short)l.INTERESTFREQUENCYTYPEID,
+                            interestFrequencyTypeName = l.TBL_FREQUENCY_TYPE.DESCRIPTION,
 
+                            principalNumberOfInstallment = l.PRINCIPALNUMBEROFINSTALLMENT,
+                            interestNumberOfInstallment = l.INTERESTNUMBEROFINSTALLMENT,
+
+                            interestRate = l.INTERESTRATE,
+                            effectiveDate = l.EFFECTIVEDATE,
+                            maturityDate = l.MATURITYDATE,
+                            bookingDate = l.BOOKINGDATE,
+                            principalAmount = l.PRINCIPALAMOUNT,
+                            principalInstallmentLeft = l.PRINCIPALINSTALLMENTLEFT,
+                            interestInstallmentLeft = l.INTERESTINSTALLMENTLEFT,
+                            approvalStatusId = l.APPROVALSTATUSID,
+                            approvedBy = l.APPROVEDBY,
+                            approverComment = l.APPROVERCOMMENT,
+                            dateApproved = l.DATEAPPROVED,
+                            loanStatusId = l.LOANSTATUSID,
+                            scheduleTypeId = l.SCHEDULETYPEID,
+                            isDisbursed = l.ISDISBURSED,
+                            disbursedBy = l.DISBURSEDBY,
+                            disburserComment = l.DISBURSERCOMMENT,
+                            disburseDate = l.DISBURSEDATE,
+                            approvedAmount = l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                            casaAccountNumber = l.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            productAccountName = l.TBL_PRODUCT.PRODUCTNAME,
+                            loanTypeId = l.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                            loanTypeName = l.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            firstPrincipalPaymentDate = l.FIRSTPRINCIPALPAYMENTDATE ?? DateTime.Now,
+                            firstInterestPaymentDate = l.FIRSTINTERESTPAYMENTDATE ?? DateTime.Now,
+                            outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
+                            principalAdditionCount = l.PRINCIPALADDITIONCOUNT ?? 0,
+                            principalReductionCount = l.PRINCIPALREDUCTIONCOUNT ?? 0,
+                            fixedPrincipal = l.FIXEDPRINCIPAL,
+                            profileLoan = l.PROFILELOAN,
+                            dischargeLetter = l.DISCHARGELETTER,
+                            suspendInterest = l.SUSPENDINTEREST,
+                            dateTimeCreated = l.DATETIMECREATED,
+                            productName = l.TBL_PRODUCT.PRODUCTNAME
+
+                        }).ToList();
+
+            return data;
+            
+        }
         public LoanViewModel GetDisbursedLoanByLoanId(int loanId)//GetDisbursedLoanByLoanId
         {
             LoanViewModel result;

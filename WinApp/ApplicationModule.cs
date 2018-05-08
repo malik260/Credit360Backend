@@ -48,6 +48,7 @@ using Ninject;
 using FintrakBanking.Interfaces.Reports; 
 using FintrakBanking.Repositories.Reports;
 using FintrakBanking.Repositories.Setups.Credit;
+using FintrakBanking.ReportObjects.ReportCalls;
 
 namespace WinApp
 {
@@ -121,13 +122,13 @@ namespace WinApp
             kernel.Bind<ICollateralDocumentRepository>().To<CollateralDocumentRepository>();
             kernel.Bind<IJobRequestRepository>().To<JobRequestRepository>();
             kernel.Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
-            kernel.Bind<ILimitRepository>().To<LimitRepository>();
+            ///kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IFinanceTransactionRepository>().To<FinanceTransactionRepository>();
             kernel.Bind<ILoanOperationsRepository>().To<LoanOperationsRepository>();
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
             kernel.Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
-           // kernel.Bind<IReportRoutes>().To<ReportRoutes>();
+            kernel.Bind<IReportRoutes>().To<ReportRoutes>();
             kernel.Bind<ICallMemoRepository>().To<CallMemoRepository>();
             kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
             kernel.Bind<ITransactionDynamicsRepository>().To<TransactionDynamicsRepository>();

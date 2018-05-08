@@ -245,6 +245,27 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet]
+        [Route("branch-search")]
+        public HttpResponseMessage SearchForBranch(string searchQuery)
+        {
+            try
+            {
+                var data = repo.GetSearchedBranch(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
         #endregion Branch Setup
     }
 }

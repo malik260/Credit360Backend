@@ -27,6 +27,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool ValidateRegionName(string regionName);
 
         bool UpdateBranches(BranchViewModel model, short id);
+
+        IEnumerable<BranchViewModel> GetSearchedBranch(string query);
         // tbl_Branch Limit
         //BranchLimitViewModel GetBranchLimit(short id);
 

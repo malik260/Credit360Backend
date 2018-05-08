@@ -18,6 +18,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                
                 loanId.Text = Request.QueryString["loanId"]; //"252"; 
 
+                imageId.Text = "2019";
+
                 ReportViewer.LocalReport.Refresh();
                
             }

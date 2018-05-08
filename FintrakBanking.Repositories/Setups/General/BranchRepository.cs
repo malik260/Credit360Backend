@@ -165,6 +165,25 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return branches.ToList();
         }
+
+        public IEnumerable<BranchViewModel> GetSearchedBranch(string search)
+        {
+            var branches = from x in context.TBL_BRANCH
+                           where x.DELETED == false
+                           && x.BRANCHCODE.Contains(search)
+                           || x.BRANCHNAME.Contains(search)
+                           select new BranchViewModel
+                           {
+                               branchId = x.BRANCHID,
+                               stateName = x.TBL_STATE.STATENAME,
+                               branchName = x.BRANCHNAME,
+                               branchCode = x.BRANCHCODE,
+                               addressLine1 = x.ADDRESSLINE1,
+                               addressLine2 = x.ADDRESSLINE2,
+                           };
+
+            return branches.ToList();
+        }
         public IEnumerable<BranchViewModel> GetAllBranchByCompanyId(int id)
         {
             var branches = context.TBL_BRANCH.Where(x => x.COMPANYID == id).Select(x => new BranchViewModel
