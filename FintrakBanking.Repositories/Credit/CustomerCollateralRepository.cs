@@ -3821,6 +3821,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 collaterInformation.APPROVALSTATUSID = status;
             }
+
         }
         private void UpdateItemPolicyDetail(int tempCollateralId, string  collateralCode, int newCollaterId)
         {
