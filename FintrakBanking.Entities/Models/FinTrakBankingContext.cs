@@ -310,7 +310,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_OVERDRAFTTOPUP> TBL_CUSTOM_OVERDRAFTTOPUP { get; set; }
         public virtual DbSet<TBL_CUSTOM_TEMPORARYOVERDRAFT> TBL_CUSTOM_TEMPORARYOVERDRAFT { get; set; }
         public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
-        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -790,7 +789,9 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_TEMP_LOAN)
                 .WithRequired(e => e.TBL_CASA)
+                .HasForeignKey(e => e.CASAACCOUNTID)
                 .WillCascadeOnDelete(false);
+
 
             modelBuilder.Entity<TBL_CASA_ACCOUNTSTATUS>()
                 .HasMany(e => e.TBL_CASA)
@@ -1067,11 +1068,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_DAILY_ACCRUAL)
-                .WithRequired(e => e.TBL_COMPANY)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_COMPANY>()
-                .HasMany(e => e.TBL_DEPARTMENT)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
 
@@ -2825,6 +2821,7 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.AMOUNT)
                 .HasPrecision(19, 4);
 
+
             modelBuilder.Entity<TBL_CALL_MEMO_LIMIT>()
                 .Property(e => e.MINIMUMAMOUNT)
                 .HasPrecision(19, 4);
@@ -4352,16 +4349,6 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
-                .HasMany(e => e.TBL_LOAN)
-                .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
-                .HasMany(e => e.TBL_LOAN_ARCHIVE)
-                .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
                 .HasMany(e => e.TBL_LOAN_COLLATERAL_MAPPING)
                 .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
                 .WillCascadeOnDelete(false);
@@ -4388,6 +4375,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
                 .HasMany(e => e.TBL_LOAN_REVOLVING)
+                .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
+                .HasMany(e => e.TBL_LOAN_REVOLVING_ARCHIVE)
                 .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
                 .WillCascadeOnDelete(false);
 
@@ -4449,6 +4441,7 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.COTCREATEDBY)
                 .IsUnicode(false);
 
+
             modelBuilder.Entity<TBL_ACCOUNT_CATEGORY>()
                 .HasMany(e => e.TBL_FEE)
                 .WithRequired(e => e.TBL_ACCOUNT_CATEGORY)
@@ -4458,6 +4451,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_ACCOUNT_TYPE)
                 .WithRequired(e => e.TBL_ACCOUNT_CATEGORY)
                 .WillCascadeOnDelete(false);
+
 
             modelBuilder.Entity<TBL_ACCOUNT_CATEGORY>()
                 .HasMany(e => e.TBL_TEMP_FEE)
@@ -4485,6 +4479,7 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CHARGE_RANGE>()
                 .Property(e => e.AMOUNT)
                 .HasPrecision(19, 4);
+
 
             modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
                 .HasMany(e => e.TBL_CHARGE_FEE_DETAIL)
@@ -4606,6 +4601,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_TEMP_CHARGE_FEE_DETAIL1)
                 .WithOptional(e => e.TBL_CHART_OF_ACCOUNT1)
                 .HasForeignKey(e => e.GLACCOUNTID2);
+
 
             modelBuilder.Entity<TBL_CHART_OF_ACCOUNT>()
                 .HasMany(e => e.TBL_TEMP_FEE)
