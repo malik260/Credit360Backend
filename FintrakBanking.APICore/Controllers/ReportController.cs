@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Admin;
 using Microsoft.Reporting.WebForms;
@@ -12,12 +13,14 @@ namespace FintrakBanking.APICore.Controllers
     public class ReportController : Controller
     {
         // GET: Report
-        public ActionResult FintrakReport(DateTime startDate , DateTime endDate)
+        public ActionResult FintrakReport()
         {
-
+            var data = new List<AuditViewModel>();
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var data = from _audit in context.TBL_AUDIT
+                DateTime startDate = Convert.ToDateTime("03/01/2018");
+                DateTime endDate = Convert.ToDateTime("03/30/2018");
+                data = (from _audit in context.TBL_AUDIT
                            join atype in context.TBL_AUDIT_TYPE on _audit.AUDITTYPEID equals atype.AUDITTYPEID
                            join st in context.TBL_STAFF on _audit.STAFFID equals st.STAFFID
                            join u in context.TBL_PROFILE_USER on st.STAFFID equals u.STAFFID
@@ -36,17 +39,22 @@ namespace FintrakBanking.APICore.Controllers
                                url = _audit.URL,
                                branchName = b.BRANCHNAME,
                                ipAddress = _audit.IPADDRESS
-                           };
+                           }).ToList();
 
             }
 
             ReportViewer reportViewer = new ReportViewer();
             reportViewer.ProcessingMode = ProcessingMode.Local;
 
-            reportViewer.LocalReport.ReportPath = Request.MapPath(Request.ApplicationPath) + @"Reports\Report.rdlc";
-            // reportViewer.LocalReport.DataSources.Add(new ReportDataSource("dsLocalReport", dataSet.Tables["SampleTable"]));
+            reportViewer.LocalReport.ReportPath = Request.MapPath(Request.ApplicationPath) + @"Report File MVC\AuditTrail.rdlc";
+             reportViewer.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", data));
 
             ViewBag.ReportViewer = reportViewer;
+
+            reportViewer.ProcessingMode = ProcessingMode.Local;
+            reportViewer.SizeToReportContent = true;
+            reportViewer.Width = Unit.Percentage(100);
+            reportViewer.Height = Unit.Percentage(100);
 
             return View();
         }

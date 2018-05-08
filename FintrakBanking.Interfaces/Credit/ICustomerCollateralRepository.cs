@@ -79,8 +79,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         int AddPropertyVistation(CollateralDocumentViewModel entity);
 
-        List<CollateralDocumentViewModel> GetPropertyVistation(int collateralVisitationId);
-
         IEnumerable<StockCompanyViewModel> getStockPrice();
 
         bool CheckForExpiredItemPolicies(DateTime currentDate);
@@ -98,5 +96,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<InsurancePolicies> GetTempCollateralInsurancePoliciesWaitingForApproval(int staffId);
 
         bool GoForPolicyApproval(ApprovalViewModel model);
+
+        List<CollateralDocumentViewModel> GetPropertyVistation(int collateralId);
+        List<InsurancePolicies> GetTempCollateralInsurancePolicy(int collateralId);
     }
 }

@@ -176,11 +176,11 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "THERE WAS AN ERROR CREATING THIS RECORD, REFERENCE NUMBER EXIST" });
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
             }
         }
 
@@ -248,7 +248,19 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
-       
+        [HttpGet, Route("temp-item-policy/{collateralId}")]
+        public HttpResponseMessage GetItemPolicyCollateralList(int collateralId)
+        {
+            try
+            {
+                var response = repo.GetTempCollateralInsurancePolicy(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
 
         [HttpPost, Route("temp/customer-collateral-approval")]
         public HttpResponseMessage PostCustomerCollateralApproval([FromBody]ApprovalViewModel model)

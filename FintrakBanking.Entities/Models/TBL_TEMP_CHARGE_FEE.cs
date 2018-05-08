@@ -9,8 +9,14 @@ namespace FintrakBanking.Entities.Models
     [Table("temp.TBL_TEMP_CHARGE_FEE")]
     public partial class TBL_TEMP_CHARGE_FEE
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_TEMP_CHARGE_FEE()
+        {
+            TBL_TEMP_CHARGE_FEE_DETAIL = new HashSet<TBL_TEMP_CHARGE_FEE_DETAIL>();
+        }
+
         [Key]
-        public int TEMP_CHARGEFEEID { get; set; }
+        public int TEMPCHARGEFEEID { get; set; }
 
         [Required]
         [StringLength(150)]
@@ -96,5 +102,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_ACCOUNT_CATEGORY TBL_ACCOUNT_CATEGORY { get; set; }
 
         public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_CHARGE_FEE_DETAIL> TBL_TEMP_CHARGE_FEE_DETAIL { get; set; }
     }
 }

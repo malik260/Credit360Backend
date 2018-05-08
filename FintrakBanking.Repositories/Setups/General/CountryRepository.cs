@@ -9,6 +9,7 @@ using FintrakBanking.ViewModels;
 using System.ComponentModel.Composition;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Entities.DocumentModels;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -48,7 +49,6 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 CITYNAME = entity.cityName,
                 LOCALGOVERNMENTID = entity.localGovernmentId,
-                //STATEID = entity.stateId,
                 CITYCLASSID = entity.cityClassId,
                 ALLOWEDFORCOLLATERAL = entity.allowedForCollateral
 
@@ -64,7 +64,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 cityEntity.TBL_LOCALGOVERNMENT.STATEID = entity.stateId;
                 cityEntity.CITYCLASSID = entity.cityClassId;
                 cityEntity.ALLOWEDFORCOLLATERAL = entity.allowedForCollateral;
-
+                cityEntity.LOCALGOVERNMENTID = entity.localGovernmentId;
             }
           
             return context.SaveChanges() != 0;
@@ -77,16 +77,76 @@ namespace FintrakBanking.Repositories.Setups.General
                               {
                                   cityId = a.CITYID,
                                   cityName = a.CITYNAME,
-                                  stateId = a.TBL_LOCALGOVERNMENT.STATEID,
+                                  localGovt = a.TBL_LOCALGOVERNMENT.NAME,
                                   stateName = a.TBL_LOCALGOVERNMENT.TBL_STATE.STATENAME,
                                   cityClassId = a.CITYCLASSID,
                                   cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
-                                  allowedForCollateral = a.ALLOWEDFORCOLLATERAL                                  
+                                  allowedForCollateral = a.ALLOWEDFORCOLLATERAL,
+                                  stateId = a.TBL_LOCALGOVERNMENT.STATEID,
+                                  localGovernmentId = a.LOCALGOVERNMENTID
+                                 
                               });
             return cityEntity;
         }
 
+        public bool AddLocalGovt(LocalGovtViewModel entity)
+        {
+            var cityEntity = new TBL_LOCALGOVERNMENT
+            {
+                NAME = entity.localGovtName,
+                STATEID = entity.stateId,
+            };
+            context.TBL_LOCALGOVERNMENT.Add(cityEntity);
+            return context.SaveChanges() != 0;
+        }
+        public bool UpdateLocalGovt(LocalGovtViewModel entity, int id)
+        {
+            var cityEntity = context.TBL_LOCALGOVERNMENT.Find(id);
+            {
+                cityEntity.NAME = entity.localGovtName;
+                cityEntity.STATEID = entity.stateId;
+            }
 
+            return context.SaveChanges() != 0;
+        }
+        public IEnumerable<LocalGovtViewModel> GetLocalGovt()
+        {
+            var cityEntity = (from a in context.TBL_LOCALGOVERNMENT
+                              select new LocalGovtViewModel
+                              {
+                                  localGovernmentId = a.LOCALGOVERNMENTID,
+                                  localGovtName = a.NAME,
+                                  stateId = a.STATEID,
+                                  stateName = a.TBL_STATE.STATENAME
+                              });
+            return cityEntity.ToList();
+        }
+        public LocalGovtViewModel GetLocalGovtById(int id)
+        {
+            var cityEntity = (from a in context.TBL_LOCALGOVERNMENT
+                              where a.LOCALGOVERNMENTID==id
+                              select new LocalGovtViewModel
+                              {
+                                  localGovernmentId = a.LOCALGOVERNMENTID,
+                                  localGovtName = a.NAME,
+                                  stateId = a.STATEID,
+                                  stateName = a.TBL_STATE.STATENAME
+                              });
+            return cityEntity.FirstOrDefault();
+        }
+
+        public List<LocalGovtViewModel> GetLocalGovtByStateId(int stateId)
+        {
+            var cityEntity = (from a in context.TBL_LOCALGOVERNMENT
+                              where a.STATEID == stateId
+                              select new LocalGovtViewModel
+                              {
+                                  localGovernmentId = a.LOCALGOVERNMENTID,
+                                  localGovtName = a.NAME,
+                                  stateId = a.STATEID,
+                              });
+            return cityEntity.ToList();
+        }
         public CityViewModel GetCityById(int cityId)
         {
             var cityEntity = (from a in context.TBL_CITY

@@ -1,5 +1,6 @@
 using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
@@ -44,7 +45,90 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        [Route("post-local-govt")]
+        public HttpResponseMessage AddLocalGovt([FromBody] LocalGovtViewModel entity)
+        {
+            try
+            {
+                var data = repo.AddLocalGovt(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Created successfully" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPut]
+        [Route("update-local-govt/{localGovernmentId}")]
+        public HttpResponseMessage UpdateLocalGovt([FromBody] LocalGovtViewModel entity, int localGovernmentId)
+        {
+            try
+            {
+                var data = repo.UpdateLocalGovt(entity, localGovernmentId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("local-govt")]
+        public HttpResponseMessage GetLocalGovt()
+        {
+            try
+            {
+                var data = repo.GetLocalGovt();
+                if (data!=null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("local-govt/{stateId}")]
+        public HttpResponseMessage GetLocalGovtByStateId(int stateId)
+        {
+            try
+            {
+                var data = repo.GetLocalGovtByStateId(stateId);
+                if (data!=null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         [HttpPut]
         [Route("city/{id}")]
         public HttpResponseMessage UpdateCity([FromBody] CityViewModel entity, int id)

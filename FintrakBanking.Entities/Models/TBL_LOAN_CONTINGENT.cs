@@ -22,6 +22,8 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCTID { get; set; }
 
+        public short LOANSYSTEMTYPEID { get; set; }
+
         public int COMPANYID { get; set; }
 
         public int CASAACCOUNTID { get; set; }
@@ -120,6 +122,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
 
         public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
+
+        public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_CONTINGENT_USAGE> TBL_LOAN_CONTINGENT_USAGE { get; set; }

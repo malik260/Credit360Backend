@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANID { get; set; }
 
-        public short PRODUCTTYPEID { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
 
         public bool ISRELEASED { get; set; }
 
@@ -38,8 +38,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
-
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+
+        public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
     }
 }
