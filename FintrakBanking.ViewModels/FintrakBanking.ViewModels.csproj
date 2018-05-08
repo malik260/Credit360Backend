@@ -141,6 +141,7 @@
     <Compile Include="Report\LoanInformation.cs" />
     <Compile Include="Report\LoanScheduleViewModel.cs" />
     <Compile Include="Report\LoanStatementViewModel.cs" />
+    <Compile Include="Report\ReportSearchParamViewModel.cs" />
     <Compile Include="Report\ScheduledCollateralModel.cs" />
     <Compile Include="Report\SectorLimitViewModel.cs" />
     <Compile Include="Report\TransactionViewModel.cs" />

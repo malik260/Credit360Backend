@@ -310,7 +310,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_OVERDRAFTTOPUP> TBL_CUSTOM_OVERDRAFTTOPUP { get; set; }
         public virtual DbSet<TBL_CUSTOM_TEMPORARYOVERDRAFT> TBL_CUSTOM_TEMPORARYOVERDRAFT { get; set; }
         public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }

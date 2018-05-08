@@ -298,6 +298,15 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="ComapnyIformation" msprop:Generator_TableClassName="ComapnyIformationDataTable" msprop:Generator_TableVarName="tableComapnyIformation" msprop:Generator_RowChangedName="ComapnyIformationRowChanged" msprop:Generator_TablePropName="ComapnyIformation" msprop:Generator_RowDeletingName="ComapnyIformationRowDeleting" msprop:Generator_RowChangingName="ComapnyIformationRowChanging" msprop:Generator_RowEvHandlerName="ComapnyIformationRowChangeEventHandler" msprop:Generator_RowDeletedName="ComapnyIformationRowDeleted" msprop:Generator_RowClassName="ComapnyIformationRow" msprop:Generator_UserTableName="ComapnyIformation" msprop:Generator_RowEvArgName="ComapnyIformationRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="companyId" msprop:Generator_ColumnVarNameInTable="columncompanyId" msprop:Generator_ColumnPropNameInRow="companyId" msprop:Generator_ColumnPropNameInTable="companyIdColumn" msprop:Generator_UserColumnName="companyId" type="xs:string" minOccurs="0" />
+              <xs:element name="fileData" msprop:Generator_ColumnVarNameInTable="columnfileData" msprop:Generator_ColumnPropNameInRow="fileData" msprop:Generator_ColumnPropNameInTable="fileDataColumn" msprop:Generator_UserColumnName="fileData" type="xs:base64Binary" minOccurs="0" />
+              <xs:element name="fileExtention" msprop:Generator_ColumnVarNameInTable="columnfileExtention" msprop:Generator_ColumnPropNameInRow="fileExtention" msprop:Generator_ColumnPropNameInTable="fileExtentionColumn" msprop:Generator_UserColumnName="fileExtention" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>

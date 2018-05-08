@@ -239,42 +239,42 @@ namespace WinApp
             //ccc.RunAsync().GetAwaiter().GetResult();
             //ccc.GetAllCustomers().GetAwaiter().GetResult();
             //loan.AddLoanTestFees();
-            TransactionPosting transaction = new TransactionPosting(context);
+           // TransactionPosting transaction = new TransactionPosting(context);
 
            
 
 
-            bool data = false;
+            //bool data = false;
 
-            Task.Run(async () => { data = await transaction.APITransactionPosting(tran); }).GetAwaiter().GetResult();
-            financeTransaction.UpdateCustomTransactions(tran[0].batchCode);
-            MessageBox.Show("Successful", "Fintrak");
+            //Task.Run(async () => { data = await transaction.APITransactionPosting(tran); }).GetAwaiter().GetResult();
+            //financeTransaction.UpdateCustomTransactions(tran[0].batchCode);
+            //MessageBox.Show("Successful", "Fintrak");
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            TransactionPosting tp = new TransactionPosting(context);
-            ResponseMessageViewModel integrationResult = null;
-            var model = new OverDraftExtendViewModel
-            {
-               accountNumber= "2030562192",
-                sanctionReferenceNumber= "1234422",
-                //documentDate ="03-04-2018",
-                //sanctionLevel= "003",
-                //sanctionAuthorizer="999",
-                //reviewedDate = "03-05-2018",
-                sanctionLimit= "50000",
-                //applicationDate= "03-04-2018",
-                expiryDate="20-06-2099",
-                //sanctionDate ="03-04-2018"
-            };
+        //private void button3_Click(object sender, EventArgs e)
+        //{
+        //    TransactionPosting tp = new TransactionPosting(context);
+        //    ResponseMessageViewModel integrationResult = null;
+        //    var model = new OverDraftExtendViewModel
+        //    {
+        //       accountNumber= "2030562192",
+        //        sanctionReferenceNumber= "1234422",
+        //        //documentDate ="03-04-2018",
+        //        //sanctionLevel= "003",
+        //        //sanctionAuthorizer="999",
+        //        //reviewedDate = "03-05-2018",
+        //        sanctionLimit= "50000",
+        //        //applicationDate= "03-04-2018",
+        //        expiryDate="20-06-2099",
+        //        //sanctionDate ="03-04-2018"
+        //    };
 
-            bool result =  false;
+        //    bool result =  false;
 
-            result = cwpAIP.GetExposePersonStatus("1000451874");
+        //    result = cwpAIP.GetExposePersonStatus("1000451874");
 
-         //  integrationResult =  cwpAIP.OverDraftExtend(model);
+        // //  integrationResult =  cwpAIP.OverDraftExtend(model);
 
-        }
+        //}
     }
 }

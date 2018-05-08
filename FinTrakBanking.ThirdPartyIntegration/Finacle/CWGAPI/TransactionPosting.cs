@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 
-namespace FinTrakBanking.ThirdPartyIntegration.Finacle
+namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 {
     public class TransactionPosting
     {

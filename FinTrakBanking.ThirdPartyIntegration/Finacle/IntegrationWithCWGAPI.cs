@@ -1,17 +1,13 @@
 ﻿using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
-using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
-using FintrakBanking.ViewModels.CASA;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 
-namespace FintrakBanking.Repositories.Credit
+namespace FinTrakBanking.ThirdPartyIntegration.Credit
 {
-  public   class IntegrationWithCWGAPI : IIntegrationWithCWGAPI
+    public   class IntegrationWithCWGAPI : IIntegrationWithCWGAPI
     {
         private FinTrakBankingContext context;
         private TransactionPosting transaction;
