@@ -445,6 +445,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public decimal averageMonthlyTurnover { get; set; }
 
+        public string soldItems { get; set; }
+
         public int loanApplicationDetailId { get; set; }
 
         public int traderId { get; set; }

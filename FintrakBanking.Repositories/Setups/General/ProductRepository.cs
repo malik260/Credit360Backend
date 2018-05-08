@@ -564,7 +564,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productLimit = d.PRODUCT_LIMIT,
                                        isInvoiceBased = d.ISINVOICEBASED,
                                        requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
-                                       allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false
+                                       allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false,
+                                       isTemporaryOverDraft = d.ISTEMPORARYOVERDRAFT != null ? (bool)d.ISTEMPORARYOVERDRAFT : false,
 
                                    }).FirstOrDefault(),
                                    currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == data.PRODUCTID && curr.DELETED != false)
@@ -629,7 +630,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     lcyLimit = c.COLLATERAL_LCY_LIMIT,
                     requireCasaAccount = (bool)c.REQUIRECASAACCOUNT,
                     productLimit = c.PRODUCT_LIMIT,
-                    allowFundUsage = c.ALLOWFUNDUSAGE != null ? (bool)c.ALLOWFUNDUSAGE : false
+                    allowFundUsage = c.ALLOWFUNDUSAGE != null ? (bool)c.ALLOWFUNDUSAGE : false,
+                    isTemporaryOverDraft = c.ISTEMPORARYOVERDRAFT != null ? (bool)c.ISTEMPORARYOVERDRAFT : false,
                 }).FirstOrDefault(),
             });
             return null;
@@ -790,7 +792,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                                       productLimit = d.PRODUCT_LIMIT,
                                                       allowFundUsage = (bool)d.ALLOWFUNDUSAGE,
                                                       isInvoiceBased = d.ISINVOICEBASED,
-                                                      //allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false,
+                                                      isTemporaryOverDraft = d.ISTEMPORARYOVERDRAFT != null ? (bool)d.ISTEMPORARYOVERDRAFT : false,
                                                       requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
 
 
@@ -828,6 +830,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         item.invoiceBased = x.ISINVOICEBASED;
                         item.requireCasaAccount = x.REQUIRECASAACCOUNT;
                         item.allowFundUsage = x.ALLOWFUNDUSAGE;
+                       
                     }
                 }
                 var b = pendingProductsChanges.ToList();
@@ -1270,6 +1273,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT,
                             PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT,
                             ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE,
+                            ISTEMPORARYOVERDRAFT = productBehaviourModel.ISTEMPORARYOVERDRAFT,
                             REQUIRECASAACCOUNT = productBehaviourModel.REQUIRECASAACCOUNT
                         };
                         context.TBL_PRODUCT.Add(product);
@@ -1519,6 +1523,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 CUSTOMER_LIMIT = behaviour.customerLimit,
                 PRODUCT_LIMIT = behaviour.productLimit,
                 ISINVOICEBASED = behaviour.isInvoiceBased,
+                ISTEMPORARYOVERDRAFT = behaviour.isTemporaryOverDraft,
                 ALLOWFUNDUSAGE = behaviour.allowFundUsage,
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = productModel.createdBy
@@ -1832,6 +1837,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     TempProductBehaviourToUpdate.PRODUCTCODE = productModel.ProductBehaviour.productCode;
                     TempProductBehaviourToUpdate.PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit;
                     TempProductBehaviourToUpdate.ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage;
+                    TempProductBehaviourToUpdate.ISTEMPORARYOVERDRAFT = productModel.ProductBehaviour.isTemporaryOverDraft;
+
                 }
                 else if (productModel.ProductBehaviour != null)
                 {
@@ -1844,6 +1851,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ISCURRENT = true,
                         ISINVOICEBASED = productModel.ProductBehaviour.isInvoiceBased,
                         PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit,
+                       ISTEMPORARYOVERDRAFT = productModel.ProductBehaviour.isTemporaryOverDraft,
                         ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage,
                         DATETIMECREATED = DateTime.Now,
                         CREATEDBY = productModel.createdBy
@@ -1967,6 +1975,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     ISINVOICEBASED = productModel.ProductBehaviour.isInvoiceBased,
                     PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit,
                     ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage,
+                    ISTEMPORARYOVERDRAFT = productModel.ProductBehaviour.isTemporaryOverDraft,
                     DATETIMECREATED = DateTime.Now,
                     CREATEDBY = productModel.createdBy
                 };

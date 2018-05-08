@@ -64,7 +64,7 @@
     <Compile Include="CASA\ICasaLienRepository.cs" />
     <Compile Include="CASA\ICasaRepository.cs" />
     <Compile Include="CASA\IOverRideRepository.cs" />
-    <Compile Include="CreditLimitValidations\ICreditLimitValidationsRepository.cs" />
+    <Compile Include="Validation\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IIntegrationWithCWGAPI.cs" />
     <Compile Include="Credit\ILoanPerformanceRepository.cs" />
     <Compile Include="Credit\IStaffAccountHistoryRepository.cs" />
@@ -149,6 +149,7 @@
     <Compile Include="Setups\Credit\ICustomerProductFeeRepository.cs" />
     <Compile Include="Setups\Risk\IRiskSetupRepository.cs" />
     <Compile Include="ThridPartyIntegration\IXDSServiceRepository.cs" />
+    <Compile Include="Validation\IOverDraftValidation.cs" />
     <Compile Include="WorkFlow\IJobRequestRepository.cs" />
     <Compile Include="WorkFlow\IWorkflow.cs" />
     <Compile Include="WorkFlow\IWorkFlowRepository.cs" />

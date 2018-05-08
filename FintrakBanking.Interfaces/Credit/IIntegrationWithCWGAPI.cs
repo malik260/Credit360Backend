@@ -12,6 +12,7 @@ namespace FintrakBanking.Interfaces.Credit
         ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model);
         ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model);
         ResponseMessageViewModel OverDraftExtend(OverDraftExtendViewModel model);
+        ResponseMessageViewModel OverDraftRenew(OverDraftTopUpAndRenewViewModel model);
 
         ResponseMessageViewModel TemporaryOverDraftNormal(TemporaryOverDraftViewModel model);
         ResponseMessageViewModel TemporaryOverDraftRunning(TemporaryOverDraftViewModel model);

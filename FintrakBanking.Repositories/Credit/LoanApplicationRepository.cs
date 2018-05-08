@@ -162,6 +162,7 @@ namespace FintrakBanking.Repositories.Credit
                                     tradderId = y.TRADDERID,
                                     marketId = y.MARKETID,
                                     marketName = y.TBL_LOAN_MARKET.MARKETNAME,
+                                    soldItems = y.SOLDITEMS,
                                     averageMonthlyTurnover = y.AVERAGE_MONTHLY_TURNOVER,
                                     loanApplicationDetailId = y.LOANAPPLICATIONDETAILID,
 
@@ -402,6 +403,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   {
                                                       tradderId = i.TRADDERID,
                                                       marketId = i.MARKETID,
+                                                      soldItems = i.SOLDITEMS,
                                                       marketName = i.TBL_LOAN_MARKET.MARKETNAME,
                                                       averageMonthlyTurnover = i.AVERAGE_MONTHLY_TURNOVER,
                                                       loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
@@ -883,6 +885,7 @@ namespace FintrakBanking.Repositories.Credit
                 AVERAGE_MONTHLY_TURNOVER = entity.averageMonthlyTurnover,
                 MARKETID = entity.marketId,
                 CREATEDBY = createdBy,
+                SOLDITEMS = entity.soldItems,
                 LOANAPPLICATIONDETAILID = loanApplicationId,
                 DATETIMECREATED = DateTime.Now
 
@@ -1481,7 +1484,8 @@ namespace FintrakBanking.Repositories.Credit
                                   marketId = tra.MARKETID,
                                   marketName = tra.TBL_LOAN_MARKET.MARKETNAME,
                                   averageMonthlyTurnover = tra.AVERAGE_MONTHLY_TURNOVER,
-                                  productClassId = (int)ProductClassEnum.FirstTrader
+                                  productClassId = (int)ProductClassEnum.FirstTrader,
+                                  soldItems = tra.SOLDITEMS
                               }).ToList();
                 return trader;
             }
