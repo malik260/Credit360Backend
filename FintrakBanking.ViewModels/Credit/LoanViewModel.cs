@@ -235,7 +235,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isOverdraft;
         public bool isBidbond;
         public short accrualBasis;
-
+        public string serialNumber { get; set; }
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }

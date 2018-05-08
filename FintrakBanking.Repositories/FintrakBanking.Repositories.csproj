@@ -88,7 +88,6 @@
     <Compile Include="Admin\AdminRepository.cs" />
     <Compile Include="Admin\AuditTrailRepository.cs" />
     <Compile Include="Admin\CanAuthorizationRepository.cs" />
-    <Compile Include="Admin\CompanyInformationRepository.cs" />
     <Compile Include="Admin\CurrencyRateRepository.cs" />
     <Compile Include="AppEmail\EmailRepository.cs" />
     <Compile Include="CASA\CasaLienRepository.cs" />
@@ -176,6 +175,7 @@
     <Compile Include="Setups\General\StaffRoleRepository.cs" />
     <Compile Include="Setups\General\StaffRepository.cs" />
     <Compile Include="Setups\Risk\RiskRepository.cs" />
+    <Compile Include="Validetion\OverDraftValidation.cs" />
     <Compile Include="WorkFlow\JobRequestRepository.cs" />
     <Compile Include="WorkFlow\Workflow.cs" />
   </ItemGroup>

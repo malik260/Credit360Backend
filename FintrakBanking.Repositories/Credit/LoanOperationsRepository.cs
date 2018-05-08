@@ -7,10 +7,12 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.Validation;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -34,12 +36,14 @@ namespace FintrakBanking.Repositories.Credit
         private IApprovalLevelStaffRepository level;
         private ICasaLienRepository casaLien;
         private ILoanRepository loan;
-
+        private IOverDraftValidation validate;
+        private IIntegrationWithCWGAPI cwgapi;
+        bool USE_THIRD_PARTY_INTEGRATION = false;
         public LoanOperationsRepository(
 
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
             ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien
-            , ILoanRepository _loan )
+            , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithCWGAPI cwgapi)
         {
 
             this.context = _context;
@@ -51,6 +55,11 @@ namespace FintrakBanking.Repositories.Credit
             this.level = _level;
             this.casaLien = _casaLien;
             this.loan = _loan;
+            this.cwgapi = cwgapi;
+
+
+            var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
         }
 
         public decimal GetCollateralSearchChargeAmount(int stateId)
@@ -2925,6 +2934,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public void OverdraftTopUp(int loanId, decimal amount)
         {
+        
             var systemDate = generalSetup.GetApplicationDate();
             DeleteLoanExist(loanId);
             ArchiveOverDraft(loanId);
@@ -2938,7 +2948,7 @@ namespace FintrakBanking.Repositories.Credit
                              productId = a.PRODUCTID,
                              companyId = a.COMPANYID,
                              casaAccountId = a.CASAACCOUNTID,
-                            // casaAccountId2 = a.CASAACCOUNTID2,
+                             // casaAccountId2 = a.CASAACCOUNTID2,
                              branchId = a.BRANCHID,
                              currencyId = a.CURRENCYID,
                              loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
@@ -2980,6 +2990,7 @@ namespace FintrakBanking.Repositories.Credit
                              nplDate = a.NPLDATE,
                              createdBy = a.CREATEDBY,
                              dateTimeCreated = DateTime.Today,
+                             serialNumber = a.SERIALNUMBER
 
                          }).ToList();
 
@@ -2987,9 +2998,27 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                if (validate.ODTopupValidation(loanId, generalSetup.GetApplicationDate(), amount))
+                {
+                    var loan = model.FirstOrDefault();
+                    var data = new OverDraftTopUpAndRenewViewModel
+                    {                         
+                        sanctionLimit = loan.overdraftLimit.ToString(),
+                        sanctionReferenceNumber = loan.serialNumber,
+                        accountNumber = loan.productAccountNumber,
+                        expiryDate = loan.maturityDate.ToString(),
+                        reviewedDate = loan.effectiveDate.ToString()
+                    };
+                    cwgapi.OverDraftTopUp(data);
+                }
+            }
+
+
             foreach (var item in model)
             {
-                item.productTypeId = 6;
+                item.productTypeId = (int) LoanProductTypeEnum.RevolvingLoan; // 6;
                 var loanReferenceNumber = loan.GenerateLoanReferenceNumber(item.customerId, item.productId, item.productTypeId);
                 TBL_LOAN_REVOLVING addOverDraft = new TBL_LOAN_REVOLVING();
 
@@ -3177,6 +3206,19 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             this.context.TBL_LOAN_REVOLVING.AddRange(overDraft);
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                var loan = model.FirstOrDefault();
+                var data = new OverDraftTopUpAndRenewViewModel
+                {
+                    sanctionLimit = loan.overdraftLimit.ToString(),
+                    sanctionReferenceNumber = loan.serialNumber,
+                    accountNumber = loan.productAccountNumber,
+                    expiryDate = loan.maturityDate.ToString(),
+                    reviewedDate = loan.effectiveDate.ToString()
+                };
+                cwgapi.OverDraftRenew(data);
+            }
 
             context.SaveChanges();
 
@@ -3257,7 +3299,7 @@ namespace FintrakBanking.Repositories.Credit
 
             List<TBL_LOAN_REVOLVING> overDraft = new List<TBL_LOAN_REVOLVING>();
 
-
+          
 
             foreach (var item in model)
             {
@@ -3312,6 +3354,19 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             this.context.TBL_LOAN_REVOLVING.AddRange(overDraft);
+
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                var loan = model.FirstOrDefault();
+                var data = new OverDraftExtendViewModel
+                {
+                    sanctionLimit = loan.overdraftLimit.ToString(),
+                    sanctionReferenceNumber = loan.serialNumber,
+                    accountNumber = loan.productAccountNumber,
+                    expiryDate = loan.maturityDate.ToString()                       
+                };
+                cwgapi.OverDraftExtend(data);
+            }
 
             context.SaveChanges();
 
