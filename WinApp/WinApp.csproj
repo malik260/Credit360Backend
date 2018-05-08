@@ -158,6 +158,10 @@
       <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
       <Name>FintrakBanking.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.ReportObjects\FintrakBanking.ReportObjects.csproj">
+      <Project>{335B391E-60C0-47C2-9D7F-10CEF0DE800E}</Project>
+      <Name>FintrakBanking.ReportObjects</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.Repositories\FintrakBanking.Repositories.csproj">
       <Project>{2853b1d8-af5f-4691-a513-9eb63a45dd4d}</Project>
       <Name>FintrakBanking.Repositories</Name>

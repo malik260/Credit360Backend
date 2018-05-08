@@ -18,6 +18,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_APPLICATION_DETL_FEE = new HashSet<TBL_LOAN_APPLICATION_DETL_FEE>();
             TBL_LOAN_FEE = new HashSet<TBL_LOAN_FEE>();
             TBL_PRODUCT_CHARGE_FEE = new HashSet<TBL_PRODUCT_CHARGE_FEE>();
+            TBL_TEMP_CHARGE_FEE_DETAIL = new HashSet<TBL_TEMP_CHARGE_FEE_DETAIL>();
             TBL_TEMP_PRODUCT_CHARGE_FEE = new HashSet<TBL_TEMP_PRODUCT_CHARGE_FEE>();
         }
 
@@ -28,11 +29,15 @@ namespace FintrakBanking.Entities.Models
         [StringLength(150)]
         public string CHARGEFEENAME { get; set; }
 
+        public short ACCOUNTCATEGORYID { get; set; }
+
         public short FEEINTERVALID { get; set; }
 
         public short? PRODUCTTYPEID { get; set; }
 
         public short FEETARGETID { get; set; }
+
+        public int GLACCOUNTID { get; set; }
 
         public short? FEEAMORTISATIONTYPEID { get; set; }
 
@@ -53,6 +58,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool? RECURRING { get; set; }
 
+        public int? PRIMARYTAXID { get; set; }
+
+        public int? SECONDARYTAXID { get; set; }
+
         public int COMPANYID { get; set; }
 
         public int CREATEDBY { get; set; }
@@ -72,6 +81,10 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CHARGE_FEE_DETAIL> TBL_CHARGE_FEE_DETAIL { get; set; }
 
+        public virtual TBL_ACCOUNT_CATEGORY TBL_ACCOUNT_CATEGORY { get; set; }
+
+        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
+
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         public virtual TBL_FEE_AMORTISATION_TYPE TBL_FEE_AMORTISATION_TYPE { get; set; }
@@ -85,6 +98,10 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
         public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
+
+        public virtual TBL_TAX TBL_TAX { get; set; }
+
+        public virtual TBL_TAX TBL_TAX1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CHARGE_RANGE> TBL_CHARGE_RANGE { get; set; }
@@ -100,6 +117,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PRODUCT_CHARGE_FEE> TBL_PRODUCT_CHARGE_FEE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_CHARGE_FEE_DETAIL> TBL_TEMP_CHARGE_FEE_DETAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PRODUCT_CHARGE_FEE> TBL_TEMP_PRODUCT_CHARGE_FEE { get; set; }

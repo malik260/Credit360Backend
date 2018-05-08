@@ -13,9 +13,12 @@ namespace FintrakBanking.Entities.StagingModels
         }
 
         public virtual DbSet<STG_BRANCH> STG_BRANCH { get; set; }
+        public virtual DbSet<STG_CURRENCY_EXCHANGERATE> STG_CURRENCY_EXCHANGERATE { get; set; }
         public virtual DbSet<STG_CUSTOMER> STG_CUSTOMER { get; set; }
         public virtual DbSet<STG_LOAN_MART> STG_LOAN_MART { get; set; }
         public virtual DbSet<STG_STAFF> STG_STAFF { get; set; }
+        public virtual DbSet<CWG_TREASURY_RATE_TBL> CWG_TREASURY_RATE_TBL { get; set; }
+        public virtual DbSet<STG_PRICE_INDEX_RATE> STG_PRICE_INDEX_RATE { get; set; }
         public virtual DbSet<STG_STAFF_RAW2> STG_STAFF_RAW2 { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -35,6 +38,14 @@ namespace FintrakBanking.Entities.StagingModels
             modelBuilder.Entity<STG_LOAN_MART>()
                 .Property(e => e.CASABALANCE)
                 .HasPrecision(19, 4);
+
+            modelBuilder.Entity<CWG_TREASURY_RATE_TBL>()
+                .Property(e => e.PRODUCT)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CWG_TREASURY_RATE_TBL>()
+                .Property(e => e.CURRENCY)
+                .IsUnicode(false);
         }
     }
 }

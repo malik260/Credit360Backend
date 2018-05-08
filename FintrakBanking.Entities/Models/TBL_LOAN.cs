@@ -23,6 +23,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? CUSTOMERRISKRATINGID { get; set; }
 
+        public short? LOANSYSTEMTYPEID { get; set; }
+
         public int CUSTOMERID { get; set; }
 
         public short PRODUCTID { get; set; }
@@ -78,6 +80,9 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "date")]
         public DateTime BOOKINGDATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? LASTRESTRUCTUREDATE { get; set; }
 
         [Column(TypeName = "money")]
         public decimal PRINCIPALAMOUNT { get; set; }
@@ -171,11 +176,11 @@ namespace FintrakBanking.Entities.Models
 
         public short? SCH_PREPAYMENT_FREQUENCY_TYPID { get; set; }
 
-        public int? INT_PRUDENT_GUIDELINE_STATUSID { get; set; }
+        public int INT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
-        public int? EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
+        public int EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
-        public int? USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
+        public int USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }

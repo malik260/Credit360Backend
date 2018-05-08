@@ -155,14 +155,14 @@ namespace FintrakBanking.Repositories.Setups.General
          
         private dynamic CheckSessionState(string username)
         {
-            Guid loginCode = Guid.Empty;
+            string loginCode = Guid.Empty.ToString();
             var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
             dynamic result = null;
           
 
             if (_user != null)
             {
-                if (_user.LOGINCODE == null || _user.LOGINCODE == "")
+                if (_user.LOGINCODE == null || _user.LOGINCODE == Guid.Empty.ToString())
                     result = new SessionStatusInfo
                     {
                         loginCode = Guid.NewGuid().ToString(),
@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     result = new SessionStatusInfo
                     {
-                        loginCode = "",
+                        loginCode = Guid.Empty.ToString(),
                         state = 1,
                         errorMessage = "You are already logged in",                        
                     };                   

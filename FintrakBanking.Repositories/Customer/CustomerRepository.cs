@@ -12,6 +12,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.WorkFlow;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -30,22 +31,26 @@ namespace FintrakBanking.Repositories.Customer
         private IGeneralSetupRepository _genSetup;
         private IWorkflow workflow;
         private IApprovalLevelStaffRepository level;
-        private int customerId;
+        private IIntegrationWithCWGAPI finaco;
+        private int customerId  ;
         int status = 0;
-
+        bool USE_THIRD_PARTY_INTEGRATION;
         public CustomerRepository(IAuditTrailRepository _auditTrail,
                                     IGeneralSetupRepository genSetup,
                                      IWorkflow _workFlow,
                                       IApprovalLevelStaffRepository _level,
                                     FinTrakBankingContext _context, 
-                                    ICustomerCreditBureauRepository bureau)
+                                    ICustomerCreditBureauRepository bureau, IIntegrationWithCWGAPI finaco)
         {
             context = _context;
             workflow = _workFlow;
             auditTrail = _auditTrail;
             _genSetup = genSetup;
             level = _level;
+            this.finaco = finaco;
             this.bureau = bureau;
+        var global =    context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            this.USE_THIRD_PARTY_INTEGRATION = global.USE_THIRD_PARTY_INTEGRATION;
         }
 
 
@@ -65,6 +70,9 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool AddCustomer(CustomerViewModels entity)
         {
+            if(USE_THIRD_PARTY_INTEGRATION)
+                 entity.isPoliticallyExposed = finaco.GetExposePersonStatus(entity.customerCode);
+
             var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete,
@@ -1811,7 +1819,7 @@ namespace FintrakBanking.Repositories.Customer
                        nationality = a.NATIONALITY,
                        occupation = a.OCCUPATION,
                        placeOfBirth = a.PLACEOFBIRTH,
-                       isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                       isPoliticallyExposed =  a.ISPOLITICALLYEXPOSED ,
                        relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                        relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
                       + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
@@ -2002,6 +2010,7 @@ namespace FintrakBanking.Repositories.Customer
                        }).ToList(),
                    };
 
+
         }
 
 
@@ -2038,7 +2047,7 @@ namespace FintrakBanking.Repositories.Customer
                        nationality = a.NATIONALITY,
                        occupation = a.OCCUPATION,
                        placeOfBirth = a.PLACEOFBIRTH,
-                       isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                       isPoliticallyExposed = a.ISPOLITICALLYEXPOSED  == false ? finaco.GetExposePersonStatus(a.CUSTOMERCODE) : a.ISPOLITICALLYEXPOSED,
                        relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                        relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
                       + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
@@ -2096,6 +2105,7 @@ namespace FintrakBanking.Repositories.Customer
                            email = s.EMAILADDRESS
                        }).ToList(),
                    };
+            
         }
 
         IQueryable<CustomerViewModels> GetCustomersLite()
@@ -2128,7 +2138,7 @@ namespace FintrakBanking.Repositories.Customer
                 nationality = a.NATIONALITY,
                 occupation = a.OCCUPATION,
                 placeOfBirth = a.PLACEOFBIRTH,
-                isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                isPoliticallyExposed = a.ISPOLITICALLYEXPOSED ,
                 relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                 relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
                          + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
@@ -2164,6 +2174,9 @@ namespace FintrakBanking.Repositories.Customer
         {
 
             var data = GetCustomers().FirstOrDefault(a => a.customerId == custormerId);
+            if(USE_THIRD_PARTY_INTEGRATION)
+            data.isPoliticallyExposed = finaco.GetExposePersonStatus(data.customerCode);
+
             return data;
         }
 
@@ -2654,6 +2667,8 @@ namespace FintrakBanking.Repositories.Customer
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
+            if(USE_THIRD_PARTY_INTEGRATION)
+                data.isPoliticallyExposed = finaco.GetExposePersonStatus(data.customerCode);
 
             return data;
         }
@@ -2687,10 +2702,10 @@ namespace FintrakBanking.Repositories.Customer
                             misStaff = a.MISSTAFF,
                             nationality = a.NATIONALITY,
                             occupation = a.OCCUPATION,
-                            placeOfBirth = a.PLACEOFBIRTH,
-                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                            placeOfBirth = a.PLACEOFBIRTH,                          
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                             spouse = a.SPOUSE,
+                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                             sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                             sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                             subSectorId = (short)a.SUBSECTORID,
@@ -2701,7 +2716,8 @@ namespace FintrakBanking.Repositories.Customer
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
-
+            if(USE_THIRD_PARTY_INTEGRATION)
+                data.isPoliticallyExposed = finaco.GetExposePersonStatus(data.customerCode);
             return data;
         }
         public CustomerViewModels GetSingleCustomerGeneralInfoByCustomerId(int customerId, int targetId)
@@ -3273,7 +3289,7 @@ namespace FintrakBanking.Repositories.Customer
         public bool ValidateCustomerCode(string customerCode)
         {
             bool itemExist = false;
-            var data = (from a in context.TBL_CUSTOMER where a.CUSTOMERCODE == customerCode select a).ToList();
+            var data = (from a in context.TBL_CUSTOMER where a.CUSTOMERCODE == customerCode select a).ToList();         
             if (data.Count > 0)
             {
                 itemExist = true;

@@ -13,16 +13,21 @@ using System.Linq;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Common.Enum;
 
-namespace FinTrakBanking.ThirdPartyIntegration.Finacle
+namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 {
     public class CustomerDetails
     {
+        
         private FinTrakBankingContext context;
+        string API_KEY, API_URL = string.Empty;
         public CustomerDetails(
 
         FinTrakBankingContext _context)
         {
             this.context = _context;
+           var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
+            API_KEY = configdata.APIKEY;
+            API_URL = configdata.APIURL;
         }
 
         //public class WeatherResponseModel
@@ -34,7 +39,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
         //}
         private HttpClientHandler handler = new HttpClientHandler();
         private static HttpClient httpClientInstance;
-             
+
         public void Run()
         {
             //httpClientInstance = new HttpClient();
@@ -75,7 +80,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
         //        var jsonString = await response.Content.ReadAsStringAsync();
         //        var objData = JsonConvert.DeserializeObject<List<WeatherResponseModel>>(jsonString);
 
-                
+
         //        foreach (var d in objData)
         //        {
         //            //customerViewModels.c = d.accountNumber;
@@ -89,21 +94,21 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
         //    return customers;
         //}
 
-        public async Task <List<CustomerViewModels>> GetCustomerByAccountsNumber(string customerAccount)
+        public async Task<List<CustomerViewModels>> GetCustomerByAccountsNumber(string customerAccount)
         {
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
-
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
             httpClientInstance = new HttpClient();
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(30);
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri(API_URL);
+            client.DefaultRequestHeaders.Authorization = token;
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-            new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            
+
 
             CustomerIntegrationViewModels customerViewModels = new CustomerIntegrationViewModels();
             List<CustomerViewModels> customers = new List<CustomerViewModels>();
@@ -113,7 +118,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             //ServicePointManager.DnsRefreshTimeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
             ServicePointManager.FindServicePoint(client.BaseAddress).ConnectionLeaseTimeout = 60 * 1000;
             HttpResponseMessage response = await client.GetAsync($"api/Customer/GetCustomerByAccountNumber?accountNumber={customerAccount}");
-            
+
             if (response.IsSuccessStatusCode)
             {
                 //var jsonString = await response.Content.ReadAsStringAsync();
@@ -136,7 +141,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
             return customers;
 
-       
+
         }
 
         public bool AddCustomerAccounts(string customerCode)
@@ -145,7 +150,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             bool output = false;
             var data = new List<CasaViewModel>();
             List<TBL_CASA> customerAcct = new List<TBL_CASA>();
+
             Task.Run(async () => { data = await GetCustomerAccountsBalanceByCustomerCode(customerCode); }).GetAwaiter().GetResult();
+
             foreach (var item in data)
             {
                 var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currency).CURRENCYID;
@@ -177,9 +184,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             }
             else
             {
-                foreach(var a in customerAcct)
+                foreach (var a in customerAcct)
                 {
-                    
+
                     TBL_CASA result = (from p in context.TBL_CASA
                                        where p.CUSTOMERID == a.CUSTOMERID && p.PRODUCTACCOUNTNUMBER == a.PRODUCTACCOUNTNUMBER
                                        select p).SingleOrDefault();
@@ -199,7 +206,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
                 }
 
             }
-            
+
             //context.SaveChanges();
             //context.SaveChangesAsync();
 
@@ -207,6 +214,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
             return output;
         }
+
 
         //public async Task<CasaIntegrationViewModel> GetCustomerAccountBalance(string customerAccount)
         //{
@@ -238,15 +246,16 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
         {
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
-
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
             httpClientInstance = new HttpClient();
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(30);
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Authorization = token;
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-
+          
             CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
             CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
@@ -257,6 +266,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             }
             var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountAPI.currencyType).CURRENCYID;
             var accountStatusId = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME == accountAPI.accountStatus).ACCOUNTSTATUSID;
+
             accountOutput.accountName = accountAPI.accountName;
             accountOutput.accountNo = accountAPI.accountNumber;
             accountOutput.availableBalance = accountAPI.balance;
@@ -269,19 +279,20 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
             return accountOutput;
 
-  
+
         }
 
         public async Task<List<CasaViewModel>> GetCustomerAccountsBalanceByCustomerCode(string customerCode)
         {
-
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
             httpClientInstance = new HttpClient();
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(30);
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri(API_URL);
+            client.DefaultRequestHeaders.Authorization = token;
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
@@ -312,8 +323,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
                         accountStatusName = d.accountStatus,
                         effectiveDate = d.lastTransactionDate,
                         availableBalance = d.balance,
-                        ledgerBalance  = d.balance,
-                        
+                        ledgerBalance = d.balance,
+
 
                     });
                 }
@@ -323,7 +334,86 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             handler.Dispose();
             client.Dispose();
 
-            return casa;            
+            return casa;
+        }
+        
+        public async Task<string> CheckExposePerson(string customerCode)
+        {
+            string result = string.Empty;
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+            handler.UseDefaultCredentials = true;
+            HttpClient client = new HttpClient(handler);
+            
+            httpClientInstance = new HttpClient();
+            httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            client.Timeout = TimeSpan.FromSeconds(30);
+            client.DefaultRequestHeaders.Authorization = token;
+            client.BaseAddress = new Uri(API_URL);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+        
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            HttpResponseMessage response = await client.GetAsync($"api/ExposePerson/Get?customerCode={customerCode}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<string>(jsonString);
+            }
+            handler.Dispose();
+            client.Dispose();
+            return result;
+        }
+        
+        public async Task<BVNCustomerDetailsViewModel> BVNCustomerDetails(string customerCode)
+        {
+            string result = string.Empty;
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+            handler.UseDefaultCredentials = true;
+            HttpClient client = new HttpClient(handler);
+             
+            httpClientInstance = new HttpClient();
+            httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            client.Timeout = TimeSpan.FromSeconds(30);
+            client.DefaultRequestHeaders.Authorization = token;
+            client.BaseAddress = new Uri(API_URL);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            HttpResponseMessage response = await client.GetAsync($"api/OfficeAccount/GetGlAccountRecord?customerCode={customerCode}");
+             BVNCustomerDetailsViewModel data = null;
+            if (response.IsSuccessStatusCode)
+            {
+              var jsonString = await response.Content.ReadAsStringAsync();
+              dynamic  dataObj = JsonConvert.DeserializeObject<string>(jsonString);
+
+             foreach(var d in dataObj)
+                {
+                    data = (new BVNCustomerDetailsViewModel
+                    {
+                        accountNumber = d.accountNumber,
+                        contactAddress = d.contactAddress,
+                        dateOfBirth = d.dateOfBirth,
+                        emailAddress = d.emailAddress,
+                        firstName = d.firstName,
+                        lastName = d.lastName,
+                        middleName = d.middleName,
+                        phoneNumber = d.phoneNumber                         
+
+                    });
+                }
+                
+            }
+            handler.Dispose();
+            client.Dispose();
+            return data;
         }
 
     }

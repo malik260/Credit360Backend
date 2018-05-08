@@ -14,6 +14,7 @@ using FintrakBanking.Interfaces.Customer;
 using System.Collections.Generic;
 using FintrakBanking.ViewModels.Reports;
 using System.Threading.Tasks;
+using FintrakBanking.ViewModels.Report;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -791,6 +792,24 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 var data = repo.GetBookedLoanDetailsWithParameters(token.GetCompanyId, param).ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-schedule")]
+        public HttpResponseMessage GetBookedLoanDetailsForReport(ReportSearchParamViewModel param)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var data = repo.GetBookedLoanDetails(token.GetCompanyId, param).ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
