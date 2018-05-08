@@ -19,6 +19,9 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal AVERAGE_MONTHLY_TURNOVER { get; set; }
 
+        [StringLength(300)]
+        public string SOLDITEMS { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

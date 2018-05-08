@@ -24,6 +24,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int STAFFROLEID { get; set; }
 
+        [Required]
         [StringLength(50)]
         public string STAFFROLECODE { get; set; }
 
