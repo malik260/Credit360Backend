@@ -138,7 +138,7 @@ namespace FintrakBanking.ViewModels.Setups.General
     public class ProductBehaviourViewModel
     {
         public bool? allowFundaUsage;
-
+        public bool? isTemporaryOverDraft;
         public double? lcyLimit { get; set; }
         public double? fcyLimit { get; set; }
         public decimal? customerLimit { get; set; }
