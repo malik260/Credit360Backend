@@ -13,7 +13,7 @@ using System.Linq;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Common.Enum;
 
-namespace FinTrakBanking.ThirdPartyIntegration.Finacle
+namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 {
     public class CustomerDetails
     {
@@ -246,15 +246,16 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
         {
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
-
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
             httpClientInstance = new HttpClient();
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(30);
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Authorization = token;
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-
+          
             CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
             CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
@@ -291,6 +292,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(30);
             client.BaseAddress = new Uri(API_URL);
+            client.DefaultRequestHeaders.Authorization = token;
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));

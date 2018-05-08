@@ -26,6 +26,7 @@ using FintrakBanking.ViewModels.Reports;
 using System.Threading.Tasks;
 using FintrakBanking.Repositories.CASA;
 using FintrakBanking.Interfaces.CASA;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -45,12 +46,15 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         //private ICasaRepository casa;
 
+        private IIntegrationWithCWGAPI cwgapi;
+        bool USE_THIRD_PARTY_INTEGRATION = false;
 
         public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
                                         ILoanCovenantRepository _loanCovenant, IAuditTrailRepository _audit,
                                         IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
-                                        ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien)
+                                        ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
+                                        IIntegrationWithCWGAPI cwgapi)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
@@ -64,6 +68,12 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = _workflow;
             this.casaLien = _casaLien;
             //this.casa = _casa;
+            this.cwgapi = cwgapi;
+
+            var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
+
+
         }
 
         /// <summary>
@@ -1763,6 +1773,25 @@ namespace FintrakBanking.Repositories.Credit
                                 var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
                                 loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                             }
+
+                            if (USE_THIRD_PARTY_INTEGRATION)
+                            {
+                                var model = new OverDraftNormalViewModel
+                                {
+                                    accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                    applicationDate = revolvingLoanRecord.BOOKINGDATE.ToShortDateString(),
+                                    documentDate = revolvingLoanRecord.BOOKINGDATE.ToShortDateString(),
+                                    expiryDate = revolvingLoanRecord.MATURITYDATE.ToShortDateString(),
+                                    reviewedDate = revolvingLoanRecord.DISBURSEDATE.ToString(),
+                                    sanctionDate = revolvingLoanRecord.DISBURSEDATE.ToString(),
+                                    sanctionLimit = revolvingLoanRecord.OVERDRAFTLIMIT.ToString(),
+                                    sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
+                                };
+
+                                ResponseMessageViewModel res = cwgapi.OverDraftNormal(model);
+                                revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                            }
+                           
                             revolvingLoanRecord.DATEAPPROVED = DateTime.Now;
                             revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                             revolvingLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
