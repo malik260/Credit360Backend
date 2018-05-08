@@ -48,7 +48,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool ALLOWSHARING { get; set; }
 
-        public bool? ISLOCATIONBASED { get; set; }
+        public bool ISLOCATIONBASED { get; set; }
 
         public int? VALUATIONCYCLE { get; set; }
 

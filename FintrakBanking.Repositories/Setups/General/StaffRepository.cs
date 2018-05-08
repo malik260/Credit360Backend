@@ -242,16 +242,16 @@ namespace FintrakBanking.Repositories.Setups.General
             if (staffModel.user != null)
             {
 
-                
+
 
             }
 
 
             var existingTempStaff = context.TBL_TEMP_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower() && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
-            if(existingTempStaff != null)
+            if (existingTempStaff != null)
             {
                 var existingTempUser = context.TBL_TEMP_PROFILE_USER.FirstOrDefault(u => u.TEMPSTAFFID == existingTempStaff.TEMPSTAFFID);
-                if (existingTempUser!= null)
+                if (existingTempUser != null)
                 {
                     existingTempUser.USERNAME = staffModel.user.username;
                     existingTempUser.ISFIRSTLOGINATTEMPT = false;
@@ -1354,23 +1354,23 @@ namespace FintrakBanking.Repositories.Setups.General
                     string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
                     excelRowPosition = Convert.ToInt32(cellRow);
                     if (Convert.ToInt32(cellRow) == 1) continue;
-                    
+
                     switch (cellColumn)
                     {
                         case "A":
-                            // staffRowData.user.username = cell.Value.ToString();
-                            // staffRowData.user.password = cell.Value.ToString();
-                            //if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
-                            //{
-                            //    rowSuccess = false;
-                            //    staffRowData.errorMessage = staffRowData.errorMessage + "Staff Code Already Exist. ";
-                            //}
-                            //break;
+                        // staffRowData.user.username = cell.Value.ToString();
+                        // staffRowData.user.password = cell.Value.ToString();
+                        //if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
+                        //{
+                        //    rowSuccess = false;
+                        //    staffRowData.errorMessage = staffRowData.errorMessage + "Staff Code Already Exist. ";
+                        //}
+                        //break;
                         case "B":
                             staffRowData.StaffCode = cell.Value.ToString();
                             // staffRowData.user.username = cell.Value.ToString();
                             // staffRowData.user.password = cell.Value.ToString();
-                            if (context.TBL_STAFF.Where(x=>x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x=>x.STAFFCODE == staffRowData.StaffCode).Any())
+                            if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
                             {
                                 rowSuccess = false;
                                 staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
@@ -1501,7 +1501,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     staffBulkFeedbackViewModel.failureCount = staffBulkFeedbackViewModel.failureCount + 1;
                     staffBulkFeedbackViewModel.successCount = staffBulkFeedbackViewModel.successCount - 1;
                 }
-                
+
             };
             return staffBulkFeedbackViewModel;
         }

@@ -98,7 +98,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int countryId { get; set; }
         public string branchName { get; set; }
         public string companyName { get; set; }
-        public string  logincode { get; set; }
+        public string logincode { get; set; }
         public DateTime? lastLoginDate { get; set; }
         public bool isActive { get; set; }
         public bool isLocked { get; set; }

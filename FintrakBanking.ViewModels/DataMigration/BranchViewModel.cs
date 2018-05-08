@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FintrakBaking.BranchUpdateService
+namespace FintrakBaking.DataMigration
 {
   public  class BranchViewModel 
     {

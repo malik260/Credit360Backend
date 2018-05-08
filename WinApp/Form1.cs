@@ -254,22 +254,26 @@ namespace WinApp
         private void button3_Click(object sender, EventArgs e)
         {
             TransactionPosting tp = new TransactionPosting(context);
-            OverdraftResponseViewModel integrationResult = null;
-            var model = new OverDraftNormalViewModel
+            ResponseMessageViewModel integrationResult = null;
+            var model = new OverDraftExtendViewModel
             {
                accountNumber= "2030562192",
                 sanctionReferenceNumber= "1234422",
-                documentDate ="03-04-2018",
-                sanctionLevel= "003",
-                sanctionAuthorizer="999",
-                reviewedDate = "03-05-2018",
+                //documentDate ="03-04-2018",
+                //sanctionLevel= "003",
+                //sanctionAuthorizer="999",
+                //reviewedDate = "03-05-2018",
                 sanctionLimit= "50000",
-                applicationDate= "03-04-2018",
+                //applicationDate= "03-04-2018",
                 expiryDate="20-06-2099",
-                sanctionDate ="03-04-2018"
+                //sanctionDate ="03-04-2018"
             };
 
-           integrationResult =  cwpAIP.OverDraftNormal(model);
+            bool result =  false;
+
+            result = cwpAIP.GetExposePersonStatus("1000451874");
+
+         //  integrationResult =  cwpAIP.OverDraftExtend(model);
 
         }
     }

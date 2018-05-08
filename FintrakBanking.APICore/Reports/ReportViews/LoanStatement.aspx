@@ -39,13 +39,6 @@
         <asp:Label ID="imageId" runat="server"  Visible="false" ></asp:Label>  
         <asp:Label ID="loanId" runat="server"></asp:Label>
      
-        <asp:ObjectDataSource ID="ObjectDataSource2" runat="server" SelectMethod="GetCompanyImage" TypeName="FintrakBanking.Repositories.Admin.CompanyInformationRepository">
-            <SelectParameters> 
-             <%--   <asp:ControlParameter ControlID="customerId" Name="customerId" PropertyName="Text" Type="Int32" />--%>
-                <asp:ControlParameter ControlID="imageId" Name="id" PropertyName="Text" Type="Int32" />
-          
-            </SelectParameters>
-        </asp:ObjectDataSource>
     </form>
 </body>
 </html>

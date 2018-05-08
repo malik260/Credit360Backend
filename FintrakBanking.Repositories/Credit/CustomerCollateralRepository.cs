@@ -1614,7 +1614,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     //customerId = x.LoanCollateral.Customer.CUSTOMERID,
                     collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
-                    loanTypeId = x.Mapping.PRODUCTTYPEID, //
+                    //loanTypeId = x.Mapping.PRODUCTTYPEID, //
+                    loanSystemTypeId  =x.Mapping.LOANSYSTEMTYPEID,
                     loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
                     loanApplicationId = x.Mapping.LOANID,
                     isReleased = x.Mapping.ISRELEASED,
@@ -1797,7 +1798,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 LOANID = entity.loanId,
                 COLLATERALCUSTOMERID = entity.collateralCustomerId,
-                PRODUCTTYPEID = entity.productTypeId,
+                LOANSYSTEMTYPEID = entity.loanSystemTypeId,
                 RELEASEAPPROVALSTATUSID = 0
             };
 
@@ -3392,7 +3393,7 @@ namespace FintrakBanking.Repositories.Credit
         public CollateralHistory getCollateralHistory(int collateralId)
         {
             var termLoanCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.PRODUCTTYPEID == 1),
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility),
                     c => c.COLLATERALCUSTOMERID, lc => lc.COLLATERALCUSTOMERID, (c, lc) => new { c, lc })
                 .Join(context.TBL_LOAN, clc => clc.lc.LOANID, l => l.TERMLOANID, (clc, l) => new { clc, l }) // TBL_LOAN
                 .Select(o => new CollateralHistoryList
@@ -3410,7 +3411,7 @@ namespace FintrakBanking.Repositories.Credit
                 });
 
             var odCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.PRODUCTTYPEID == 2),
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility),
                     c => c.COLLATERALCUSTOMERID, lc => lc.COLLATERALCUSTOMERID, (c, lc) => new { c, lc })
                 .Join(context.TBL_LOAN_REVOLVING, clc => clc.lc.LOANID, l => l.REVOLVINGLOANID, (clc, l) => new { clc, l }) // TBL_LOAN_REVOLVING
                 .Select(o => new CollateralHistoryList

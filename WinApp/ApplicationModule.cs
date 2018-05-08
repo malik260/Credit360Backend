@@ -154,7 +154,9 @@ namespace WinApp
             kernel.Bind<IOverRideRepository>().To<OverRideRepository>();
             kernel.Bind<IStaffAccountHistoryRepository>().To<StaffAccountHistoryRepository>();
 
+            kernel.Bind<IIntegrationWithCWGAPI>().To<IntegrationWithCWGAPI>();
 
+            kernel.Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>();
         }
     }
     

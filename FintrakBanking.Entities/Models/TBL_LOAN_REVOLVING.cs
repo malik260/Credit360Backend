@@ -18,6 +18,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int REVOLVINGLOANID { get; set; }
 
+        public short LOANSYSTEMTYPEID { get; set; }
+
         public int CUSTOMERID { get; set; }
 
         public short PRODUCTID { get; set; }
@@ -120,6 +122,9 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
+
+        [StringLength(50)]
+        public string SERIALNUMBER { get; set; }
 
         public int CREATEDBY { get; set; }
 
