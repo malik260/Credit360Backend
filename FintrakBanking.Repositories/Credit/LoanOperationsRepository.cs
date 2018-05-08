@@ -2995,27 +2995,7 @@ namespace FintrakBanking.Repositories.Credit
                          }).ToList();
 
             List<TBL_LOAN_REVOLVING> overDraft = new List<TBL_LOAN_REVOLVING>();
-
-
-
-            if (USE_THIRD_PARTY_INTEGRATION)
-            {
-                if (validate.ODTopupValidation(loanId, generalSetup.GetApplicationDate(), amount))
-                {
-                    var loan = model.FirstOrDefault();
-                    var data = new OverDraftTopUpAndRenewViewModel
-                    {                         
-                        sanctionLimit = loan.overdraftLimit.ToString(),
-                        sanctionReferenceNumber = loan.serialNumber,
-                        accountNumber = loan.productAccountNumber,
-                        expiryDate = loan.maturityDate.ToString(),
-                        reviewedDate = loan.effectiveDate.ToString()
-                    };
-                    cwgapi.OverDraftTopUp(data);
-                }
-            }
-
-
+                        
             foreach (var item in model)
             {
                 item.productTypeId = (int) LoanProductTypeEnum.RevolvingLoan; // 6;
@@ -3071,6 +3051,23 @@ namespace FintrakBanking.Repositories.Credit
 
             this.context.TBL_LOAN_REVOLVING.AddRange(overDraft);
 
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                if (validate.ODTopupValidation(loanId, generalSetup.GetApplicationDate(), amount))
+                {
+                    var loan = model.FirstOrDefault();
+                    var data = new OverDraftTopUpAndRenewViewModel
+                    {
+                        sanctionLimit = loan.overdraftLimit.ToString(),
+                        sanctionReferenceNumber = loan.serialNumber,
+                        accountNumber = loan.productAccountNumber,
+                        expiryDate = loan.maturityDate.ToString(),
+                        reviewedDate = loan.effectiveDate.ToString()
+                    };
+                    cwgapi.OverDraftTopUp(data);
+                }
+
+            }
             context.SaveChanges();
 
             //var desc = "Overdraft Top";

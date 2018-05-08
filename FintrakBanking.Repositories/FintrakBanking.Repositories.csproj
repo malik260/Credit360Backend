@@ -81,7 +81,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial">
-      <HintPath>..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -93,7 +93,7 @@
     <Compile Include="CASA\CasaLienRepository.cs" />
     <Compile Include="CASA\CasaRepository.cs" />
     <Compile Include="CASA\OverRideRepository.cs" />
-    <Compile Include="CreditLimitValidations\CreditLimitValidationsRepository.cs" />
+    <Compile Include="Validetion\CreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\LoanPerformanceRepository.cs" />
     <Compile Include="Credit\StaffAccountHistoryRepository.cs" />
     <Compile Include="Credit\AppraisalMemorandumRepository.cs" />
