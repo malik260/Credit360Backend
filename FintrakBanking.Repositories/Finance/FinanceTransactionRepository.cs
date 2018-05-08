@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.ViewModels.CASA;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 
 namespace FintrakBanking.Repositories.Finance
 

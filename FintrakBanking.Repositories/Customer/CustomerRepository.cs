@@ -12,6 +12,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.WorkFlow;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;

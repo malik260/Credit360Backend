@@ -49,6 +49,7 @@ using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.Repositories.Reports;
 using FintrakBanking.Repositories.Setups.Credit;
 using FintrakBanking.ReportObjects.ReportCalls;
+using FinTrakBanking.ThirdPartyIntegration.Credit;
 
 namespace WinApp
 {
