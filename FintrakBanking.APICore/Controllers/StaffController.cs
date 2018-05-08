@@ -12,6 +12,7 @@ using System.Web;
 using System.Web.Http;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -418,6 +419,39 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = Request.RequestUri.Host;
 
                 var data = repo.GoForApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Staff record has been approved successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("staff/bulk-approval")]
+        public HttpResponseMessage GoForBulkApproval([FromBody]List<ApprovalViewModel> entity)
+        {
+            try
+            {
+                var info = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host
+                };
+               
+                var data = repo.GoForBulkApproval(entity, info);
 
                 if (data)
                 {
