@@ -271,16 +271,13 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime lastVisitationDate { get; set; }
         public int visitationCycle { get; set; }
         public bool requireVisitation { get; set; }
-<<<<<<< HEAD
         public decimal valueInUse { get; set; }
-=======
         public string cityName { get; set; }
         public string countryName { get; set; }
         public string collateralValuer { get; set; }
         public string propertyBaseType { get; set; }
         public string perfectionStatusName { get; set; }
         public decimal stampToCoverAmount { get; set; }
->>>>>>> 8793289bbb1b85ee62b7bcfd8d43f152cf79cf2c
     }
 
     public class crossGarantee

@@ -506,7 +506,7 @@ namespace FintrakBanking.Repositories.Credit
                     (c, m) => new CollateralViewModel
                     {
                         //loanId = c.m, // m = m == null ? 0 : m.LOANID,
-                        valueInUse = m.PRODUCTTYPEID == 1 ? context.TBL_LOAN.Where(x => x.TERMLOANID == m.LOANID).Sum(l => l.PRINCIPALAMOUNT)
+                        valueInUse = m.LOANSYSTEMTYPEID == 1 ? context.TBL_LOAN.Where(x => x.TERMLOANID == m.LOANID).Sum(l => l.PRINCIPALAMOUNT)
                                                           : context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == m.LOANID).Sum(l => l.OVERDRAFTLIMIT),
                         collateralId = c.c.COLLATERALCUSTOMERID,
                         collateralTypeId = c.c.COLLATERALTYPEID,
