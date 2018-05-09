@@ -343,6 +343,7 @@
     <Compile Include="Controllers\ContingentLoanUsageController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
     <Compile Include="Controllers\CustomerCreditBureauController.cs" />
+    <Compile Include="Controllers\EditorController.cs" />
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
     <Compile Include="Controllers\EndOfDayController.cs" />
@@ -836,6 +837,8 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Report\FintrakReport.cshtml" />
+    <Content Include="Views\Editor\Index.cshtml" />
+    <Content Include="Views\Editor\Upload.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -845,12 +848,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\CustomerCreditBureau\" />
-    <Folder Include="Views\EndOfDay\" />
-    <Folder Include="Views\FeeConcession\" />
-    <Folder Include="Views\LoanOperation\" />
-    <Folder Include="Views\Override\" />
-    <Folder Include="Views\TransactionDynamics\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
