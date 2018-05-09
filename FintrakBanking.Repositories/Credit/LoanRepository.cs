@@ -4639,6 +4639,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                var applicationDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = (from a in context.TBL_LOAN
                                        join b in context.TBL_LOAN_REVIEW_APPLICATION on a.TERMLOANID equals b.LOANID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
@@ -4736,9 +4737,12 @@ namespace FintrakBanking.Repositories.Credit
                                            currencyId = a.CURRENCYID,
                                            currency = a.TBL_CURRENCY.CURRENCYNAME,
                                            loanReviewOperationTypeId = b.OPERATIONID,
-                                           reviewDetails = b.REVIEWDETAILS
-
-                                       }).ToList();
+                                           reviewDetails = b.REVIEWDETAILS, 
+                                           interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                                           interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                                           pastDueInterest = a.PASTDUEINTEREST,
+                                           accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).ACCRUEDINTEREST
+            }).ToList();
 
                 return allFilteredLoan;
             }
