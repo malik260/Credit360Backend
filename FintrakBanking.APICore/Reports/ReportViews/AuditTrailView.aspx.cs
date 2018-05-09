@@ -21,11 +21,11 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             Id.Text = "2019";
 
             FinTrakBankingDocumentsContext context = new FinTrakBankingDocumentsContext();
-            CompanyInformationRepository generalSetup = new CompanyInformationRepository(context);
+           // CompanyInformationRepository generalSetup = new CompanyInformationRepository(context);
           //  ReportParameter date = new ReportParameter("Path", generalSetup.GetCompanyImage());
 
          //   ReportViewer.LocalReport.SetParameters(new ReportParameter[] { date });
-            ReportViewer.LocalReport.Refresh();
+           // ReportViewer.LocalReport.Refresh();
             ReportViewer.LocalReport.Refresh();
         }
     }
