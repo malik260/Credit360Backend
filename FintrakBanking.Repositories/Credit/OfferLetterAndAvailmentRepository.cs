@@ -65,7 +65,7 @@ namespace FintrakBanking.Repositories.Credit
                         from e in apprTrail.DefaultIfEmpty()
                         where a.COMPANYID == companyId 
                             && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
-                            && b.STATUSID == (short)ApprovalStatusEnum.Approved
+                            //&& b.STATUSID == (short)ApprovalStatusEnum.Approved
                             && !exceptIds.Contains(a.LOANAPPLICATIONID)
                         select new CamProcessedLoanViewModel
                         {
@@ -76,7 +76,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = a.TBL_CUSTOMER.CUSTOMERID,
                             customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
                             customerName = a.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
-                            customerGroupId = a.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID,
+                            customerGroupId = a.TBL_CUSTOMER_GROUP == null ? 0 : a.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID,
                             customerGroupName = a.TBL_CUSTOMER_GROUP.GROUPNAME,
                             customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
@@ -95,7 +95,7 @@ namespace FintrakBanking.Repositories.Credit
                             productTypeName = b.TBL_PRODUCT.PRODUCTNAME,
                             productName = b.TBL_PRODUCT.PRODUCTNAME,
                             productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-                            productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
+                            productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                             dateTimeCreated = a.DATETIMECREATED,
                             availmentDate = a.AVAILMENTDATE,
                             approvalDate = a.APPROVEDDATE,
@@ -103,11 +103,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = (int?)OperationsEnum.LoanAvailment,
                             currentApprovalStateId = e.APPROVALSTATEID,
                             approvalStatusId = e == null ? 0 : e.APPROVALSTATUSID,
-
-                            
                         });
-
-            //var forDebugging = data.ToList();
 
             return data;
         }

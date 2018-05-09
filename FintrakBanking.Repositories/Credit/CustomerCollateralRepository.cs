@@ -491,44 +491,54 @@ namespace FintrakBanking.Repositories.Credit
                    .Select(x => x.COLLATERALTYPEID)
                    .Distinct().ToList();
             }
-
-            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false
-                    && x.COMPANYID == companyId
-                    && x.CUSTOMERID == customerId
+            
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId)
+                .GroupJoin(
+                    context.TBL_LOAN_COLLATERAL_MAPPING,
+                    c => c.COLLATERALCUSTOMERID,
+                    lc => lc.COLLATERALCUSTOMERID,
+                    (c, lc) => new { c, m = lc }
                 )
-                .Select(x => new CollateralViewModel
-                {
-                    collateralId = x.COLLATERALCUSTOMERID,
-                    collateralTypeId = x.COLLATERALTYPEID,
-                    collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                    customerId = x.CUSTOMERID,
-                    currencyId = x.CURRENCYID,
-                    currency = x.TBL_CURRENCY.CURRENCYNAME,
-                    collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                    collateralSubTypeName = "not implimented",
-                    collateralCode = x.COLLATERALCODE,
-                    collateralValue = x.COLLATERALVALUE,
-                    camRefNumber = x.CAMREFNUMBER,
-                    allowSharing = x.ALLOWSHARING,
-                    isLocationBased = (bool)x.ISLOCATIONBASED,
-                    valuationCycle = x.VALUATIONCYCLE,
-                    haircut = x.HAIRCUT,
-                    approvalStatus = x.APPROVALSTATUS,
-                    allowApplicationMapping = typeIds.Contains((short)x.COLLATERALTYPEID),
-                    requireInsurancePolicy = x.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
-                    exchangeRate = x.EXCHANGERATE
-
-                })
-                .OrderByDescending(x => x.collateralId)
-                .ToList();
-
+                .SelectMany
+                (
+                    x => x.m.DefaultIfEmpty(),
+                    (c, m) => new CollateralViewModel
+                    {
+                        //loanId = c.m, // m = m == null ? 0 : m.LOANID,
+                        valueInUse = m.PRODUCTTYPEID == 1 ? context.TBL_LOAN.Where(x => x.TERMLOANID == m.LOANID).Sum(l => l.PRINCIPALAMOUNT)
+                                                          : context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == m.LOANID).Sum(l => l.OVERDRAFTLIMIT),
+                        collateralId = c.c.COLLATERALCUSTOMERID,
+                        collateralTypeId = c.c.COLLATERALTYPEID,
+                        collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
+                        customerId = c.c.CUSTOMERID,
+                        currencyId = c.c.CURRENCYID,
+                        currency = c.c.TBL_CURRENCY.CURRENCYNAME,
+                        collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                        collateralSubTypeName = "not implimented",
+                        collateralCode = c.c.COLLATERALCODE,
+                        collateralValue = c.c.COLLATERALVALUE,
+                        camRefNumber = c.c.CAMREFNUMBER,
+                        allowSharing = c.c.ALLOWSHARING,
+                        isLocationBased = (bool)c.c.ISLOCATIONBASED,
+                        valuationCycle = c.c.VALUATIONCYCLE,
+                        haircut = c.c.HAIRCUT,
+                        approvalStatus = c.c.APPROVALSTATUS,
+                        allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
+                        requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
+                        exchangeRate = c.c.EXCHANGERATE
+                    })
+                //.GroupBy(x => x.collateralId)
+                ;
+            
             return collaterals;
         }
+
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)
         {
             return GetCustomerCollateral(companyId).Where(x => x.collateralTypeId == collateralTypeId && (x.customerId == customerId || x.customerId == thirdpartyCustomerId));
 
         }
+
         public IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId)
         {
             var collateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false
