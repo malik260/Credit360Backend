@@ -112,7 +112,7 @@ namespace FintrakBanking.ReportObjects
                                                               join b in context.TBL_FINANCE_TRANSACTION on a.LOANREFERENCENUMBER equals b.SOURCEREFERENCENUMBER
                                                               where a.COMPANYID == companyId && a.LOANSTATUSID == 1
                                                               && a.TERMLOANID == loanId 
-                                                              //&& b.CASAACCOUNTID == a.CASAACCOUNTID
+                                                              && b.TBL_CHART_OF_ACCOUNT.GLCLASSID == (int)ChartOfAccountClassEnum.LoanSchedule
                                                               select new LoanStatementViewModel()
                                                               {
                                                                   balance = a.OUTSTANDINGPRINCIPAL,

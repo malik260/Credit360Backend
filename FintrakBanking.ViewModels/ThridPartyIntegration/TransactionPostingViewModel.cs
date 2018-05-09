@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -45,6 +46,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public DateTime webRequestDate { get; set; }
         public string responseCode { get; set; }
         public string referenceNumber { get; set; }
+        public string message { get; set; }
 
     }
     public class CustomFinanceTransactionViewModel : GeneralEntity
@@ -61,7 +63,99 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public bool webRequestStatus { get; set; }
         public string consumed { get; set; }
         public DateTime datetimeConsumed { get; set; }
-
     }
 
+    public class OverDraftNormalViewModel
+    {
+        public string accountNumber { get; set; }
+        public string sanctionReferenceNumber { get; set; }
+        public string documentDate { get; set; }
+        public string sanctionLevel { get; set; }
+        public string sanctionAuthorizer { get; set; }
+        public string reviewedDate { get; set; }
+        public string sanctionLimit { get; set; }
+        public string applicationDate { get; set; }
+        public string expiryDate { get; set; }
+        public string sanctionDate { get; set; }
+        public int overdraftNormalId { get; set; }
+    }
+
+    public class OverDraftTopUpAndRenewViewModel
+    {
+        public string accountNumber { get; set; }
+        public string sanctionReferenceNumber { get; set; } 
+        public string sanctionLevel { get; set; }
+        public string sanctionAuthorizer { get; set; }
+        public string reviewedDate { get; set; }
+        public string sanctionLimit { get; set; }
+        public string applicationDate { get; set; }
+        public string expiryDate { get; set; }
+        public int overdraftExtendId { get; set; }
+        public string apiUrl { get; set; }
+    }
+    
+
+    public class OverDraftExtendViewModel
+    {
+        public string accountNumber { get; set; }
+        public string sanctionReferenceNumber { get; set; }         
+        public string sanctionLimit { get; set; }
+        public string expiryDate { get; set; }
+        public int overdraftExtendId { get; set; }
+    }
+
+    public class TemporaryOverDraftViewModel
+    {
+        public string AccountNumber { get; set; }
+        public string TemporaryOverDraftFlag { get; set; }
+        public string TemporaryOverDraftAmount { get; set; }
+        public string TemporaryOverDraftDate { get; set; }
+        public string TemporaryOverDraftNaration { get; set; }
+        public string APIUrl { get; set; }
+        public int TemporaryOverDraftId { get; set; }
+    }
+    
+    public class ResponseMessageViewModel
+    {
+        public string webRequestStatus { get; set; }
+        public DateTime webRequestDate { get; set; }
+        public string responseCode { get; set; }
+        public string serialNumber { get; set; }
+        public string message { get; set; }
+        public HttpResponseMessage APIMessage { get; set; }
+    }
+
+    public class BVNCustomerDetailsViewModel
+    {
+        public string phoneNumber { get; set; }
+        public string contactAddress { get; set; }
+        public string emailAddress { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName   { get; set; }
+        public DateTime dateOfBirth { get; set; }
+        public string accountNumber { get; set; }
+    }
+    public class GLAccountDetailsViewModel
+    {
+        public string accountNumber { get; set; }
+        public string accountName { get; set; }
+        public string product { get; set; }
+        public string productType { get; set; }
+        public string productName { get; set; }
+        public string currencyType { get; set; }
+        public decimal balance { get; set; }
+        public string branch { get; set; }
+        public string partitionedType { get; set; }
+        public string partitionedFlag { get; set; }
+        public string glSubHeadCode { get; set; }
+        public string systemAccountFlag { get; set; }
+    }
+
+public class ResponseMessage
+    {
+        public ResponseMessageViewModel APIResponse { get; set; }
+        public bool APIStatus { get; set; }
+        public HttpResponseMessage Message { get; set; }
+    }
 }

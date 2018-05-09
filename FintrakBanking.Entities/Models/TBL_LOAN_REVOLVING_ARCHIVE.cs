@@ -12,6 +12,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int REVOLVINGLOAN_ARCHIVE_ID { get; set; }
 
+        public short LOANSYSTEMTYPEID { get; set; }
+
         [Column(TypeName = "date")]
         public DateTime ARCHIVEDATE { get; set; }
 
@@ -96,14 +98,17 @@ namespace FintrakBanking.Entities.Models
 
         public short DAYCOUNTCONVENTIONID { get; set; }
 
-        public int? INT_PRUDENT_GUIDELINE_STATUSID { get; set; }
+        public int INT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
-        public int? EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
+        public int EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
-        public int? USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
+        public int USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
+
+        [StringLength(50)]
+        public string SERIALNUMBER { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -138,5 +143,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE2 { get; set; }
 
         public virtual TBL_LOAN_REVOLVING TBL_LOAN_REVOLVING { get; set; }
+
+        public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
     }
 }

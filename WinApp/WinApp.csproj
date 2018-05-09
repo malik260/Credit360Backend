@@ -66,8 +66,8 @@
     <Reference Include="Ninject.Extensions.Interception, Version=3.3.3.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.Extensions.Interception.3.3.3\lib\net45\Ninject.Extensions.Interception.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=106.2.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.2.1\lib\net452\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.2.2.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.2.2\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -157,6 +157,10 @@
     <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
       <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
       <Name>FintrakBanking.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.ReportObjects\FintrakBanking.ReportObjects.csproj">
+      <Project>{335B391E-60C0-47C2-9D7F-10CEF0DE800E}</Project>
+      <Name>FintrakBanking.ReportObjects</Name>
     </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.Repositories\FintrakBanking.Repositories.csproj">
       <Project>{2853b1d8-af5f-4691-a513-9eb63a45dd4d}</Project>

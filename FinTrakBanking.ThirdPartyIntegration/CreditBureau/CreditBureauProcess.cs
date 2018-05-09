@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau
+namespace FinTrakBanking.ThirdPartyIntegration.CWGAPI
 {
     public class CreditBureauProcess : ICreditBureauProcess
     {

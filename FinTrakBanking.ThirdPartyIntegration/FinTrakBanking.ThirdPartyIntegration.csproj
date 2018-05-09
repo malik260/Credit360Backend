@@ -70,8 +70,9 @@
     <Compile Include="CreditBureau\CRC\CRCService.cs" />
     <Compile Include="CreditBureau\CreditBureauProcess.cs" />
     <Compile Include="CreditBureau\XDS\XDSService.cs" />
-    <Compile Include="Finacle\CustomerDetails.cs" />
-    <Compile Include="Finacle\TransactionPosting.cs" />
+    <Compile Include="Finacle\CWGAPI\CustomerDetails.cs" />
+    <Compile Include="Finacle\IntegrationWithCWGAPI.cs" />
+    <Compile Include="Finacle\CWGAPI\TransactionPosting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

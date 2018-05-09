@@ -76,6 +76,7 @@ namespace FintrakBanking.Repositories.Setups.General
                          lookupTypeName = data.CURRENCYCODE
                     });
         }
+        
 
         public IEnumerable<LookupViewModel> GetSector() {
             return (from   data in context.TBL_SECTOR

@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Credit
 {
-   public interface IStaffAccountHistoryRepository
+    public interface IStaffAccountHistoryRepository
     {
-       bool AddStaffAccountHistory(StaffAccountHistoryViewModel entity);
+        bool AddStaffAccountHistory(StaffAccountHistoryViewModel entity);
         IEnumerable<StaffAccountHistoryViewModel> GetStaffAccountHistory(int staffId);
-        bool ApproveStaffAccountHistory(ApprovalViewModel entity);
-
-    }
+        bool ApproveStaffAccountHistory(ReasignedAccountApprovalViewModel entity);
+        StaffMISHistoryViewModel GetSelectedLoanDetails(int companyId, int loanId, int productTypeId);
+        IEnumerable<StaffAccountHistoryViewModel> GetAllStaffAccountHistory();
+        StaffMISHistoryViewModel GetSelectedApprovalLoanDetails(ReasignedAccountApprovalViewModel entity);
+     }
 }

@@ -167,7 +167,6 @@ namespace FintrakBanking.Common
         }
 
 
-
         public static bool IsNumeric(string value)
         {
             bool isNum = false;

@@ -12,7 +12,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public decimal PastDueObligationsPrincipal { get; set; }
         public decimal PastDueObligationsInterest { get; set; }
-        public DateTime reviewDate { get; set; }
+        public DateTime reviewDate { get; set; }        
+        public string prudentialGuideline { get; set; }
 
     }
 

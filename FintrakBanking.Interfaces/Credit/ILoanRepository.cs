@@ -4,6 +4,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         string AddLoanBooking(LoanViewModel entity);
 
-        bool AddLoanGuarantor(LoanGuarantorViewModel guarantorModel, short productTypeId, int loanApplicationId);
+        //  bool AddLoanGuarantor(LoanGuarantorViewModel guarantorModel, short productTypeId, int loanApplicationId);
 
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
 
@@ -81,23 +82,23 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<CustomerViewModels> SearchForCustomerCollateral(int companyId, string searchQuery);
 
-        //List<LoanGuarantorViewModel> GetLoanGuarantors(int loanApplicationId);
+        List<loanApplicationColateralViewModel> GetLoanApplicationCollateralsByApplicationId(int loanApplicationId);
 
         List<CasaViewModel> GetLoanCustomerAccounts(int customerId, int loanApplicationDetailId);
 
-        List<loanApplicationColateralViewModel> GetLoanApplicationCollateralsByApplicationId(int loanApplicationId);
+        //  List<loanApplicationColateralViewModel> GetLoanApplicationCollateralsByApplicationId(int loanApplicationId);
 
         List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTriggerByLoanApplicationDetailId(int loanApplicationDetailId);
 
         List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId);
-       // decimal GetCustomerLoanAvailableBalance(int loanAplicationDetailId);
+        // decimal GetCustomerLoanAvailableBalance(int loanAplicationDetailId);
 
         List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId);
 
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
 
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> GetLoanScheduleByLoanId(int loanId);
-         IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, string param);
+        IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, string param);
 
         Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId);
 
@@ -110,6 +111,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanReviewApplicationOverDraft();
 
         LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId);
+
+        IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param);
 
 
     }

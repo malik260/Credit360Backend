@@ -31,6 +31,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ALLOWFUNDUSAGE { get; set; }
 
+        public bool? ISTEMPORARYOVERDRAFT { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

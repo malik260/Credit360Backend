@@ -7,6 +7,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Finance;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.CASA
 {
-    public class CasaLienRepository: ICasaLienRepository
+    public class CasaLienRepository : ICasaLienRepository
     {
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
@@ -39,14 +40,14 @@ namespace FintrakBanking.Repositories.CASA
             model.lienReferenceNumber = referenceNumber;
 
             //call     
-            
+
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             if (setup.USE_THIRD_PARTY_INTEGRATION)
             {
                 TransactionPosting tran = new TransactionPosting(context);
-                bool dataModel  = false;
+                bool dataModel = false;
 
-                Task.Run(async () => { dataModel = await tran.APIProcessLien(model,"PLACE"); }).GetAwaiter().GetResult();
+                Task.Run(async () => { dataModel = await tran.APIProcessLien(model, "PLACE"); }).GetAwaiter().GetResult();
 
                 if (dataModel == true)
                 {
@@ -63,7 +64,7 @@ namespace FintrakBanking.Repositories.CASA
             else
             {
                 PlaceLienSub(model);
-            }            
+            }
 
             return referenceNumber;
         }
@@ -118,7 +119,7 @@ namespace FintrakBanking.Repositories.CASA
 
             var lienSum = context.TBL_CASA_LIEN.Where(x => x.LIENREFERENCENUMBER == model.lienReferenceNumber).Sum(y => y.LIENAMOUNT);
 
-            if(lienSum <= 0)
+            if (lienSum <= 0)
                 throw new Exception($"Cannot release lien because lien with reference number {model.lienReferenceNumber} has already been released");
 
             model.lienAmount = existingLien.LIENAMOUNT;
@@ -150,7 +151,7 @@ namespace FintrakBanking.Repositories.CASA
             else
             {
                 ReleaseLienSub(model, existingLien);
-            }            
+            }
 
             return true;
         }

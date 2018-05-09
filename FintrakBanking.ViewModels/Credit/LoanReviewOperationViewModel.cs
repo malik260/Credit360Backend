@@ -79,6 +79,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int companyId;
         public string createdByName;
         public DateTime dateTimeCreated;
+        public decimal maturityAmount;
+        public string relatedReferenceNumber;
 
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -211,6 +213,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string cancelUndisbursedLoan { get; set; }
     }
 
+
     public class LoanReviewApplicationViewModel : GeneralEntity
     {
         public int loanReviewApplicationId { get; set; }
@@ -263,6 +266,50 @@ namespace FintrakBanking.ViewModels.Credit
         public List<DropDownSelect> operationTypes { get; set; }
         public List<DropDownSelect> interestFrequencyTypes { get; set; }
         public List<DropDownSelect> principalFrequencyTypes { get; set; }
+    }
+
+    public class LoanReviewOperationParentChildViewModel
+    {
+        public double approvedInterestRate { get; set; }
+        public string approvedProductName { get; set; }
+        public int numberofTranchesBooked { get; set; }
+        public int numberofrunningTranches { get; set; }
+        public int customerId { get; set; }
+        public short productId { get; set; }
+        public decimal productPriceIndexRate { get; set; }
+        public int casaAccountId { get; set; }
+        public int casaAccountId2 { get; set; }
+        public int loanApplicationDetailId { get; set; }
+
+        public short branchId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
+        public int principalNumberOfInstallment { get; set; }
+        public int interestNumberOfInstallment { get; set; }
+        public double interestRate { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime maturityDate { get; set; }
+        public decimal principalAmount { get; set; }
+        public int principalInstallmentLeft { get; set; }
+        public int interestInstallmentLeft { get; set; }
+        public decimal? approvedAmount { get; set; }
+        public int? operationId { get; set; }
+        public string operationName { get; set; }
+        public short loanTypeId { get; set; }
+
+        public decimal equityContribution { get; set; }
+        public decimal outstandingPrincipal { get; set; }
+        public decimal outstandingInterest { get; set; }
+
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public int currencyId { get; set; }
+        public string currency { get; set; }
+        public short accurialBasis { get; set; }
+        public List<LoanReviewOperationApprovalViewModel>  runningTranches { get; set; }
     }
 
     public class DropDownSelect

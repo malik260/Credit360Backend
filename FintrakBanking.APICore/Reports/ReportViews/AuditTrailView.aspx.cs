@@ -1,4 +1,6 @@
-﻿using Microsoft.Reporting.WebForms;
+﻿using FintrakBanking.Entities.DocumentModels;
+using FintrakBanking.Repositories.Admin;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +18,14 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             endDate.Text = Request.QueryString["endDate"];
             companyId.Text = Request.QueryString["companyId"];
             username.Text = Request.QueryString["username"];
+            Id.Text = "2019";
 
-            //ReportParameter sDate = new ReportParameter("startDate", startDate.Text);
-            //ReportParameter eDate = new ReportParameter("endDate", endDate.Text);
+            FinTrakBankingDocumentsContext context = new FinTrakBankingDocumentsContext();
+           // CompanyInformationRepository generalSetup = new CompanyInformationRepository(context);
+          //  ReportParameter date = new ReportParameter("Path", generalSetup.GetCompanyImage());
 
-            //ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+         //   ReportViewer.LocalReport.SetParameters(new ReportParameter[] { date });
+           // ReportViewer.LocalReport.Refresh();
             ReportViewer.LocalReport.Refresh();
         }
     }

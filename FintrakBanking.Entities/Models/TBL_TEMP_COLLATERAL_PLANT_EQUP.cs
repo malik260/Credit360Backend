@@ -58,8 +58,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string REMARK { get; set; }
 
-        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
-
         public virtual TBL_COLLATERAL_VALUEBASE_TYPE TBL_COLLATERAL_VALUEBASE_TYPE { get; set; }
     }
 }

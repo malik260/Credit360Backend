@@ -39,6 +39,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
+        [Route("currency-ratecode")]
+        public HttpResponseMessage GetCurrencyRaceCode()
+        {
+            try
+            {
+                var data = repo.GetAllCurrencyRateCode();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
         [Route("base-currency")]
         public HttpResponseMessage GetBaseCurrency()
         {

@@ -55,6 +55,10 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Reports;
     using FintrakBanking.Repositories.Setups.Credit;
     using Ninject.Web.Common.WebHost;
+    using FinTrakBanking.ThirdPartyIntegration.Credit;
+    using FintrakBanking.Repositories.Validetion;
+    using FintrakBanking.Interfaces.Validation;
+
     public static class NinjectWebCommon
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
@@ -167,7 +171,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICollateralDocumentRepository>().To<CollateralDocumentRepository>();
             kernel.Bind<IJobRequestRepository>().To<JobRequestRepository>();
             kernel.Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
-            kernel.Bind<ILimitRepository>().To<LimitRepository>();
+        //    kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IFinanceTransactionRepository>().To<FinanceTransactionRepository>();
             kernel.Bind<ILoanOperationsRepository>().To<LoanOperationsRepository>();
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
@@ -198,7 +202,9 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IContingentLoanUsageRepository>().To<ContingentLoanUsageRepository>();
             kernel.Bind<IOverRideRepository>().To<OverRideRepository>();
             kernel.Bind<IStaffAccountHistoryRepository>().To<StaffAccountHistoryRepository>();
+            kernel.Bind<IIntegrationWithCWGAPI>().To<IntegrationWithCWGAPI>();
             kernel.Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>();
+            kernel.Bind<IOverDraftValidation>().To<OverDraftValidation>();
             
         }
 
