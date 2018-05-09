@@ -3,7 +3,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.ViewModels.Reports;
-using RazorEngine;
+//using RazorEngine;
 using System;
 using System.IO;
 using System.Net;
