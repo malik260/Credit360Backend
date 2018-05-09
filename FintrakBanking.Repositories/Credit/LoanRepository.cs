@@ -2357,7 +2357,6 @@ namespace FintrakBanking.Repositories.Credit
                             credit.approvedDateTime = DateTime.Now;
                             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                             credit.companyId = loanDetails.companyId;
-
                             credit.glAccountId = (int)credits.GLACCOUNTID1;
                             credit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
                             credit.casaAccountId = null;

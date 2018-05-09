@@ -256,9 +256,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public CreditLimitValidationsModel ValidateAmountBySector(int subSectorId)
         {
-
+            //int sectorId = 1;
             int sectorId = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == subSectorId).FirstOrDefault().SECTORID.Value;
-
+            //var sectorDetail = context.TBL_SUB_SECTOR.FirstOrDefault(a => a.SUBSECTORID == subSectorId);
+            //int sectorId = sectorDetail.SECTORID.Value;
             var data = from a in context.TBL_SECTOR
                        where a.SECTORID == sectorId
                        let maximumLimit = a.LOAN_LIMIT
