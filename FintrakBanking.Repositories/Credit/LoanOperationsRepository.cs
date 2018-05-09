@@ -7100,6 +7100,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             return (from data in context.TBL_OPERATIONS
                     where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                    && data.ISDISABLED == false
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
@@ -7249,6 +7250,9 @@ namespace FintrakBanking.Repositories.Credit
                 FEE_CHARGES = model.fee_Charges,
                 APPROVALSTATUSID = model.approvalStatusId,
                 ISMANAGEMENTINTERESTRATE = model.isManagementRate,
+                SCHEDULETYPEID = model.scheduleTypeId,
+                SCHEDULEDAYINTERESTTYPEID = model.interestTypeId,
+                SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountId,
                 OPERATIONCOMPLETED = false,
                 CREATEDBY = model.createdBy,
                 DATECREATED = DateTime.Now,

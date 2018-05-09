@@ -158,39 +158,39 @@ namespace WinApp
             double newRate = 20;
             int customeId = 1;
 
-            List<FinanceTransactionViewModel> tran = new List<FinanceTransactionViewModel>();
+            //List<FinanceTransactionViewModel> tran = new List<FinanceTransactionViewModel>();
 
-            FinanceTransactionViewModel tran1 = new FinanceTransactionViewModel();
+            //FinanceTransactionViewModel tran1 = new FinanceTransactionViewModel();
            
-            {
+            //{
 
-                    tran1.operationId = 7;
-                    tran1.sourceReferenceNumber = "C10000";
-                    tran1.description = "yes";
-                    tran1.batchCode = "22222";
-                    tran1.currencyId = 1;
-                    tran1.casaAccountId = 202236746;
-                    tran1.debitAmount = 200000;
-
-
+            //        tran1.operationId = 7;
+            //        tran1.sourceReferenceNumber = "C10000";
+            //        tran1.description = "yes";
+            //        tran1.batchCode = "22222";
+            //        tran1.currencyId = 1;
+            //        tran1.casaAccountId = 202236746;
+            //        tran1.debitAmount = 200000;
 
 
-            }
-                tran.Add(tran1);
-            FinanceTransactionViewModel tran2 = new FinanceTransactionViewModel();
-            {
-                    tran2.operationId = 3;
-                    tran2.sourceReferenceNumber = "D10000";
-                    tran2.description = "no";
-                    tran2.batchCode = "22222";
-                    tran2.currencyId = 1;
-                    tran2.casaAccountId = 2004169347;
-                tran2.creditAmount = 200000;
 
 
-            }
-                tran.Add(tran2);
-        
+            //}
+            //    tran.Add(tran1);
+            //FinanceTransactionViewModel tran2 = new FinanceTransactionViewModel();
+            //{
+            //        tran2.operationId = 3;
+            //        tran2.sourceReferenceNumber = "D10000";
+            //        tran2.description = "no";
+            //        tran2.batchCode = "22222";
+            //        tran2.currencyId = 1;
+            //        tran2.casaAccountId = 2004169347;
+            //    tran2.creditAmount = 200000;
+
+
+            //}
+            //    tran.Add(tran2);
+
 
             //string vDesc = txtDesc.Text;
 
@@ -239,9 +239,9 @@ namespace WinApp
             //ccc.RunAsync().GetAwaiter().GetResult();
             //ccc.GetAllCustomers().GetAwaiter().GetResult();
             //loan.AddLoanTestFees();
-           // TransactionPosting transaction = new TransactionPosting(context);
+            // TransactionPosting transaction = new TransactionPosting(context);
 
-           
+
 
 
             //bool data = false;
@@ -249,6 +249,7 @@ namespace WinApp
             //Task.Run(async () => { data = await transaction.APITransactionPosting(tran); }).GetAwaiter().GetResult();
             //financeTransaction.UpdateCustomTransactions(tran[0].batchCode);
             //MessageBox.Show("Successful", "Fintrak");
+            credit.ValidateAmountBySector(264);
         }
 
         //private void button3_Click(object sender, EventArgs e)
