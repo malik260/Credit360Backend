@@ -33,12 +33,12 @@ namespace FinTrakMail
                         writer.Flush();
                         writer.Close();
                     }
-                    catch (Exception ex)
+                    catch (Exception )
                     {
                         writer.Close();
                     }
                 }
-                catch (Exception ex)
+                catch (Exception )
                 {
                 }
             }

@@ -9,4 +9,11 @@ namespace FintrakBanking.ViewModels
         public string lookupTypeName { get; set; }
 
     }
+    public class CurrencyRateCodeViewModel
+    {
+        public short rateCodeId { get; set; }
+        public string rateCode { get; set; }
+        public string rateCodeDescription { get; set; }
+
+    }
 }

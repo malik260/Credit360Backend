@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public bool AddChargeFee(ChargeFeeViewModel model)
         {
-            if (model == null)
+            if (model != null)
             {
                 try
                 {
@@ -444,11 +444,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public IEnumerable<LookupViewModel> GetAllChargeFeeDetailClass()
         {
-            return context.TBL_CHARGE_FEE_DETAIL_CLASS.Select(x => new LookupViewModel()
-            {
-                lookupId = x.DETAILCLASSID,
-                lookupName = x.DETAILCLASSNAME
-            });
+            //return context.TBL_CHARGE_FEE_DETAIL_CLASS.Select(x => new LookupViewModel()
+            //{
+            //    lookupId = x.DETAILCLASSID,
+            //    lookupName = x.DETAILCLASSNAME
+            //});
+            return new List<LookupViewModel>();
         }
         public IEnumerable<LookupViewModel> GetAllChargeFeeDetailType()
         {

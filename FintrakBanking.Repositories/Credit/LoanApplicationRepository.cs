@@ -162,6 +162,7 @@ namespace FintrakBanking.Repositories.Credit
                                     tradderId = y.TRADDERID,
                                     marketId = y.MARKETID,
                                     marketName = y.TBL_LOAN_MARKET.MARKETNAME,
+                                    soldItems = y.SOLDITEMS,
                                     averageMonthlyTurnover = y.AVERAGE_MONTHLY_TURNOVER,
                                     loanApplicationDetailId = y.LOANAPPLICATIONDETAILID,
 
@@ -194,6 +195,12 @@ namespace FintrakBanking.Repositories.Credit
                             }).ToList()
                         });
             return data.FirstOrDefault();
+        }
+        public IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId , int companyId)
+        {
+          var data =  GetLoanApplications(companyId).Where(c => c.customerId == customerId 
+          && c.approvalStatusId != (int)ApprovalStatusEnum.Approved && c.approvalStatusId != (int)ApprovalStatusEnum.Disapproved);
+            return data.ToList();
         }
 
         private IQueryable<LoanApplicationViewModel> GetLoanApplications(int companyId)
@@ -230,7 +237,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationDate = a.APPLICATIONDATE,
                             applicationTenor = a.APPLICATIONTENOR,
                             applicationAmount = a.APPLICATIONAMOUNT,
-                            dateTimeCreated = a.DATETIMECREATED,
+                            dateTimeCreated = a.DATETIMECREATED, 
                             LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
                              .Select(c => new LoanApplicationDetailViewModel()
                              {
@@ -250,6 +257,7 @@ namespace FintrakBanking.Repositories.Credit
                                  proposedAmount = c.PROPOSEDAMOUNT,
                                  proposedInterestRate = c.PROPOSEDINTERESTRATE,
                                  proposedProductId = c.PROPOSEDPRODUCTID,
+                                  proposedProductName = c.TBL_PRODUCT .PRODUCTNAME,
                                  //proposedTenor = Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
                                  statusId = c.STATUSID
                              }).ToList()
@@ -395,6 +403,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   {
                                                       tradderId = i.TRADDERID,
                                                       marketId = i.MARKETID,
+                                                      soldItems = i.SOLDITEMS,
                                                       marketName = i.TBL_LOAN_MARKET.MARKETNAME,
                                                       averageMonthlyTurnover = i.AVERAGE_MONTHLY_TURNOVER,
                                                       loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
@@ -409,6 +418,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   collateralDetail = i.COLLATERALDETAIL,
                                                   //collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                                                   collateralValue = i.COLLATERALVALUE,
+                                                  
                                                   stampToCoverAmount = i.STAMPEDTOCOVERAMOUNT,
                                                   //collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                                   //collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
@@ -460,9 +470,15 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId)
         {
             var data = from a in context.TBL_LOAN_APPLICATION
-                       where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress && a.COMPANYID == companyId && a.DELETED == false
+                       where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress 
+                       && a.COMPANYID == companyId && a.DELETED == false
+                          && (a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId )
+                          && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress 
+                          && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+
+                     
                        orderby a.APPLICATIONDATE descending
-                       //&& a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId
+                    
                        select new
                        {
                            requireCollateral = a.REQUIRECOLLATERAL,
@@ -869,6 +885,7 @@ namespace FintrakBanking.Repositories.Credit
                 AVERAGE_MONTHLY_TURNOVER = entity.averageMonthlyTurnover,
                 MARKETID = entity.marketId,
                 CREATEDBY = createdBy,
+                SOLDITEMS = entity.soldItems,
                 LOANAPPLICATIONDETAILID = loanApplicationId,
                 DATETIMECREATED = DateTime.Now
 
@@ -1467,7 +1484,8 @@ namespace FintrakBanking.Repositories.Credit
                                   marketId = tra.MARKETID,
                                   marketName = tra.TBL_LOAN_MARKET.MARKETNAME,
                                   averageMonthlyTurnover = tra.AVERAGE_MONTHLY_TURNOVER,
-                                  productClassId = (int)ProductClassEnum.FirstTrader
+                                  productClassId = (int)ProductClassEnum.FirstTrader,
+                                  soldItems = tra.SOLDITEMS
                               }).ToList();
                 return trader;
             }

@@ -124,6 +124,7 @@
     <Compile Include="Customer\CustomerPhoneContactViewModels.cs" />
     <Compile Include="Customer\CustomerTypeViewModels.cs" />
     <Compile Include="Customer\CustomerViewModels.cs" />
+    <Compile Include="DataMigration\BranchViewModel.cs" />
     <Compile Include="ErrorLogger\ErrorViewModel.cs" />
     <Compile Include="Finance\CurrencyExchangeRateViewModel.cs" />
     <Compile Include="CASA\CasaLienViewModel.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Report\LoanInformation.cs" />
     <Compile Include="Report\LoanScheduleViewModel.cs" />
     <Compile Include="Report\LoanStatementViewModel.cs" />
+    <Compile Include="Report\ReportSearchParamViewModel.cs" />
     <Compile Include="Report\ScheduledCollateralModel.cs" />
     <Compile Include="Report\SectorLimitViewModel.cs" />
     <Compile Include="Report\TransactionViewModel.cs" />
@@ -173,6 +175,7 @@
     <Compile Include="Setups\General\EmployerType.cs" />
     <Compile Include="Setups\General\EmployerViewModel.cs" />
     <Compile Include="Setups\General\LoanRecoverySetupViewModel.cs" />
+    <Compile Include="Setups\General\LocalGovtViewModel.cs" />
     <Compile Include="Setups\General\MonitoringSetupViewModel.cs" />
     <Compile Include="Setups\General\MessageLogViewModel.cs" />
     <Compile Include="Setups\General\ProductChargeFeeViewModel.cs" />

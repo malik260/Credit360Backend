@@ -106,7 +106,6 @@
     <Compile Include="Models\TBL_CHARGES_VALUESOURCE.cs" />
     <Compile Include="Models\TBL_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_CHARGE_FEE_DETAIL.cs" />
-    <Compile Include="Models\TBL_CHARGE_FEE_DETAIL_CLASS.cs" />
     <Compile Include="Models\TBL_CHARGE_FEE_DETAIL_TYPE.cs" />
     <Compile Include="Models\TBL_CHARGE_RANGE.cs" />
     <Compile Include="Models\TBL_CHART_OF_ACCOUNT.cs" />
@@ -249,11 +248,6 @@
     <Compile Include="Models\TBL_KYC_DOCUMENTTYPE.cs" />
     <Compile Include="Models\TBL_KYC_ITEM.cs" />
     <Compile Include="Models\TBL_LANGUAGE.cs" />
-    <Compile Include="Models\TBL_LIMIT.cs" />
-    <Compile Include="Models\TBL_LIMIT_DETAIL.cs" />
-    <Compile Include="Models\TBL_LIMIT_METRIC.cs" />
-    <Compile Include="Models\TBL_LIMIT_TYPE.cs" />
-    <Compile Include="Models\TBL_LIMIT_VALUE_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN.cs" />
     <Compile Include="Models\TBL_LOANAPPLICATION_COLTRL_MAP.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION.cs" />
@@ -292,6 +286,8 @@
     <Compile Include="Models\TBL_LOAN_FEE_SCHEDULE.cs" />
     <Compile Include="Models\TBL_LOAN_FORCE_DEBIT.cs" />
     <Compile Include="Models\TBL_LOAN_MARKET.cs" />
+    <Compile Include="Models\TBL_LOAN_MATURITY_INSTRUCTION.cs" />
+    <Compile Include="Models\TBL_LOAN_MATURITY_INSTRU_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_MONITORING_TRIGGER.cs" />
     <Compile Include="Models\TBL_LOAN_MONITORING_TRIG_SETUP.cs" />
     <Compile Include="Models\TBL_LOAN_OPERATION.cs" />
@@ -322,6 +318,7 @@
     <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE_PRODUCT.cs" />
     <Compile Include="Models\TBL_LOAN_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_SYSTEM_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_TYPE.cs" />
     <Compile Include="Models\TBL_LOCALGOVERNMENT.cs" />
@@ -361,6 +358,7 @@
     <Compile Include="Models\TBL_PROFILE_GROUP_ACTIVITY.cs" />
     <Compile Include="Models\TBL_PROFILE_PRIVILEDGE.cs" />
     <Compile Include="Models\TBL_PROFILE_PRIVILEDGE_ACTIVIT.cs" />
+    <Compile Include="Models\TBL_PROFILE_SETTING.cs" />
     <Compile Include="Models\TBL_PROFILE_STAFF_ROLE_ADT_ACT.cs" />
     <Compile Include="Models\TBL_PROFILE_STAFF_ROLE_GROUP.cs" />
     <Compile Include="Models\TBL_PROFILE_USER.cs" />
@@ -436,10 +434,13 @@
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StagingModels\CWG_TREASURY_RATE_TBL.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
     <Compile Include="StagingModels\STG_BRANCH.cs" />
+    <Compile Include="StagingModels\STG_CURRENCY_EXCHANGERATE.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />
     <Compile Include="StagingModels\STG_LOAN_MART.cs" />
+    <Compile Include="StagingModels\STG_PRICE_INDEX_RATE.cs" />
     <Compile Include="StagingModels\STG_STAFF.cs" />
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
   </ItemGroup>
@@ -447,7 +448,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

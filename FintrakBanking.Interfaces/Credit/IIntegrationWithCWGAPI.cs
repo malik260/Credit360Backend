@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Credit
 {
-   public  interface IIntegrationWithCWGAPI
+    public interface IIntegrationWithCWGAPI
     {
-        OverdraftResponseViewModel OverDraftNormal(OverDraftNormalViewModel model);
-        OverdraftResponseViewModel OverDraftTopUp(OverDraftTopUpViewModel model);
-        OverdraftResponseViewModel OverDraftExtend(OverDraftExtendViewModel model);
-        
-        OverdraftResponseViewModel TemporaryOverDraftNormal(TemporaryOverDraftViewModel model);
-        OverdraftResponseViewModel TemporaryOverDraftRunning(TemporaryOverDraftViewModel model);
-        OverdraftResponseViewModel TemporaryOverDraftSingle(TemporaryOverDraftViewModel model);
+        ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model);
+        ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model);
+        ResponseMessageViewModel OverDraftExtend(OverDraftExtendViewModel model);
+        ResponseMessageViewModel OverDraftRenew(OverDraftTopUpAndRenewViewModel model);
+
+        ResponseMessageViewModel TemporaryOverDraftNormal(TemporaryOverDraftViewModel model);
+        ResponseMessageViewModel TemporaryOverDraftRunning(TemporaryOverDraftViewModel model);
+        ResponseMessageViewModel TemporaryOverDraftSingle(TemporaryOverDraftViewModel model);
+
+        bool GetExposePersonStatus(string customerCode);
+        BVNCustomerDetailsViewModel BVNCustomerDetails(string customerCode);
     }
 }

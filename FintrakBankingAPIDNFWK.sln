@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTrakBanking.MessagingLog
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBaking.StaggingDataUpdateService", "FintrakBaking.BranchUpdateService\FintrakBaking.StaggingDataUpdateService.csproj", "{B5B4DB65-F19E-47D7-A281-98482EE522CF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExtractionService", "ExtractionService", "{98AE0E2D-C8D2-42B7-8170-AA980F6B9551}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

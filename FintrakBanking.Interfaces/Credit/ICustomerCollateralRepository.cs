@@ -18,7 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
-        IEnumerable<CollateralViewModel> GetTempCustomerCollateral(int companyId,int staffId);
+        IEnumerable<CollateralViewModel> GetTempCustomerCollateralForApproval(int companyId,int staffId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId);
         CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId);
         CollateralViewModel GetTempCollateralTypeByCollateralId(int collateralId, int typeId);
@@ -79,8 +79,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         int AddPropertyVistation(CollateralDocumentViewModel entity);
 
-        List<CollateralDocumentViewModel> GetPropertyVistation(int collateralVisitationId);
-
         IEnumerable<StockCompanyViewModel> getStockPrice();
 
         bool CheckForExpiredItemPolicies(DateTime currentDate);
@@ -98,5 +96,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<InsurancePolicies> GetTempCollateralInsurancePoliciesWaitingForApproval(int staffId);
 
         bool GoForPolicyApproval(ApprovalViewModel model);
+
+        List<CollateralDocumentViewModel> GetPropertyVistation(int collateralId);
+        List<InsurancePolicies> GetTempCollateralInsurancePolicy(int collateralId);
     }
 }

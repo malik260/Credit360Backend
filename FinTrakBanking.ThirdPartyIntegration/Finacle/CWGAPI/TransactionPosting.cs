@@ -14,17 +14,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 
-namespace FinTrakBanking.ThirdPartyIntegration.Finacle
+namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 {
     public class TransactionPosting
     {
+         
         private FinTrakBankingContext context;
+        string API_KEY, API_URL = string.Empty;
+
         public TransactionPosting(
 
         FinTrakBankingContext _context)
         {
             this.context = _context;
+            var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();  
+            API_KEY = configdata.APIKEY;
+            API_URL = configdata.APIURL;
         }
+        
 
         private HttpClientHandler handler = new HttpClientHandler();
         private static HttpClient httpClientInstance;
@@ -33,11 +40,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
         {
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
-
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
             httpClientInstance = new HttpClient();
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(30);
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
@@ -123,7 +130,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
         public async Task<bool> APITransactionPosting (List<FinanceTransactionViewModel> model)
         {
 
-            var token = new AuthenticationHeaderValue("Authorization", "9f3b6a2a-e44f-4a0b-89db-e7d79025716e");
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
             bool output = false;
             var dta = context.TBL_SETUP_GLOBAL.ToList();
             TransactionPostingViewModel responseModel = new TransactionPostingViewModel();
@@ -153,7 +160,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(30);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
@@ -205,7 +212,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
                 lienAccountCurrency = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId).TBL_CURRENCY.CURRENCYCODE
             };
 
-            var token = new AuthenticationHeaderValue("Authorization", "9f3b6a2a-e44f-4a0b-89db-e7d79025716e");
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -213,7 +220,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             httpClientInstance = new HttpClient();
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(30);
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
 
            // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -258,9 +265,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             model.sanctionAuthorizer = "999";
 
        
-            OverdraftResponseViewModel responseModel = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
-            var token = new AuthenticationHeaderValue("Authorization", "9f3b6a2a-e44f-4a0b-89db-e7d79025716e");
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -269,7 +276,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri(  API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -280,14 +287,14 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
             ResponseMessage responseMsg = null;
 
-            OverdraftResponseViewModel responseAPI = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
             bool result = false;
             result = response.IsSuccessStatusCode;
             if (result)
             {
 
-                responseAPI = await response.Content.ReadAsAsync<OverdraftResponseViewModel>();
-                var res = new OverdraftResponseViewModel
+                responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+                var res = new ResponseMessageViewModel
                 {
                     responseCode = responseAPI.responseCode,
                     webRequestDate = responseAPI.webRequestDate,
@@ -318,11 +325,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
         }
 
-        public async Task<ResponseMessage> APIOverDraftTopUp(OverDraftTopUpViewModel model)
+        public async Task<ResponseMessage> APIOverDraftTopUp(OverDraftTopUpAndRenewViewModel model)
         {
-            OverdraftResponseViewModel responseModel = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
-            var token = new AuthenticationHeaderValue("Authorization", "9f3b6a2a-e44f-4a0b-89db-e7d79025716e");
+            var token = new AuthenticationHeaderValue("Authorization",API_KEY);
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -331,7 +338,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -343,7 +350,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
 
 
-            OverdraftResponseViewModel responseAPI = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
 
             ResponseMessage responseMsg = null;
             bool result = false;
@@ -351,8 +358,72 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             if (result)
             {
 
-                responseAPI = await response.Content.ReadAsAsync<OverdraftResponseViewModel>();
-                var res = new OverdraftResponseViewModel
+                responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+                var res = new ResponseMessageViewModel
+                {
+                    responseCode = responseAPI.responseCode,
+                    webRequestDate = responseAPI.webRequestDate,
+                    webRequestStatus = responseAPI.webRequestStatus,
+                    serialNumber = responseAPI.serialNumber,
+                    message = responseAPI.message
+                };
+
+                responseMsg = new ResponseMessage
+                {
+                    APIResponse = res,
+                    APIStatus = result,
+                    Message = response
+                };
+            }
+            else
+            {
+                responseMsg = new ResponseMessage
+                {
+                    APIResponse = null,
+                    APIStatus = result,
+                    Message = response
+                };
+            }
+
+            return responseMsg;
+
+        }
+
+        public async Task<ResponseMessage> APIOverDraftRenew(OverDraftTopUpAndRenewViewModel model)
+        {
+            ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
+
+            var token = new AuthenticationHeaderValue("Authorization",  API_KEY);
+
+            handler.UseDefaultCredentials = true;
+            HttpClient client = new HttpClient(handler);
+
+            httpClientInstance = new HttpClient();
+            httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            client.Timeout = TimeSpan.FromSeconds(60);
+            client.DefaultRequestHeaders.Authorization = token;
+            client.BaseAddress = new Uri( API_URL);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            HttpResponseMessage response = client.PostAsync("api/OverDraft/Renew ", new StringContent(
+                                            new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+
+
+
+            ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
+
+            ResponseMessage responseMsg = null;
+            bool result = false;
+            result = response.IsSuccessStatusCode;
+            if (result)
+            {
+
+                responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+                var res = new ResponseMessageViewModel
                 {
                     responseCode = responseAPI.responseCode,
                     webRequestDate = responseAPI.webRequestDate,
@@ -385,9 +456,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
         public async Task<ResponseMessage> APIOverDraftExtend(OverDraftExtendViewModel model)
         {
              
-            OverdraftResponseViewModel responseModel = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
-            var token = new AuthenticationHeaderValue("Authorization", "9f3b6a2a-e44f-4a0b-89db-e7d79025716e");
+            var token = new AuthenticationHeaderValue("Authorization",  API_KEY);
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -396,7 +467,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri( API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -405,18 +476,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             HttpResponseMessage response = client.PostAsync("api/OverDraft/Extend", new StringContent(
                                             new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
-
-
-
-            OverdraftResponseViewModel responseAPI = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
             ResponseMessage responseMsg = null;
             bool result = false;
             result = response.IsSuccessStatusCode;
             if (result)
             {
 
-                responseAPI = await response.Content.ReadAsAsync<OverdraftResponseViewModel>();
-                var res = new OverdraftResponseViewModel
+                responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+                var res = new ResponseMessageViewModel
                 {
                     responseCode = responseAPI.responseCode,
                     webRequestDate = responseAPI.webRequestDate,
@@ -446,8 +514,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
         }
 
-
-
+     
         ////////////////////////////////////////////////////////////////////////////////////////////////
 
         //----------------------------------- TemporaryOverDraft----------------------------------------
@@ -455,9 +522,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
         {
 
             
-            OverdraftResponseViewModel responseModel = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
-            var token = new AuthenticationHeaderValue("Authorization", "9f3b6a2a-e44f-4a0b-89db-e7d79025716e");
+            var token = new AuthenticationHeaderValue("Authorization",  API_KEY);
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -466,7 +533,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri( API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -478,15 +545,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
 
 
-            OverdraftResponseViewModel responseAPI = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
             ResponseMessage responseMsg = null;
             bool result = false;
             result = response.IsSuccessStatusCode;
             if (result)
             {
 
-                responseAPI = await response.Content.ReadAsAsync<OverdraftResponseViewModel>();
-                var res = new OverdraftResponseViewModel
+                responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+                var res = new ResponseMessageViewModel
                 {
                     responseCode = responseAPI.responseCode,
                     webRequestDate = responseAPI.webRequestDate,
@@ -520,9 +587,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
         public async Task<ResponseMessage> APITemporaryOverDraftRunning(TemporaryOverDraftViewModel model)
         {
              
-            OverdraftResponseViewModel responseModel = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
-            var token = new AuthenticationHeaderValue("Authorization", "9f3b6a2a-e44f-4a0b-89db-e7d79025716e");
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -531,7 +598,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -543,15 +610,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
 
 
-            OverdraftResponseViewModel responseAPI = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
             ResponseMessage responseMsg = null;
             bool result = false;
             result = response.IsSuccessStatusCode;
             if (result)
             {
 
-                responseAPI = await response.Content.ReadAsAsync<OverdraftResponseViewModel>();
-                var res = new OverdraftResponseViewModel
+                responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+                var res = new ResponseMessageViewModel
                 {
                     responseCode = responseAPI.responseCode,
                     webRequestDate = responseAPI.webRequestDate,
@@ -584,12 +651,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
 
         public async Task<ResponseMessage> APITemporaryOverDraftSingle(TemporaryOverDraftViewModel model)
         {
-
-            bool output = false;
-            OverdraftResponseViewModel responseModel = new OverdraftResponseViewModel();
-
-            var token = new AuthenticationHeaderValue("Authorization", "9f3b6a2a-e44f-4a0b-89db-e7d79025716e");
-
+ 
+            ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
+            var token = new AuthenticationHeaderValue("Authorization",  API_KEY); ;
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
 
@@ -597,19 +661,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
+            client.BaseAddress = new Uri( API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
 
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
             HttpResponseMessage response = client.PostAsync("api/TemporaryOverDraft/Single", new StringContent(
                                             new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
-
-
-
-            OverdraftResponseViewModel responseAPI = new OverdraftResponseViewModel();
+            ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
 
             ResponseMessage responseMsg = null;
             bool result = false;
@@ -617,8 +677,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
             if (result)
             {
 
-                responseAPI = await response.Content.ReadAsAsync<OverdraftResponseViewModel>();
-                var res = new OverdraftResponseViewModel
+                responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+                var res = new ResponseMessageViewModel
                 {
                     responseCode = responseAPI.responseCode,
                     webRequestDate = responseAPI.webRequestDate,
@@ -643,12 +703,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle
                     Message = response
                 };
             }
-
             return responseMsg;
-
-
         }
 
 
+     
     }
 }

@@ -29,6 +29,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ALLOWFUNDUSAGE { get; set; }
 
+        public bool? ISTEMPORARYOVERDRAFT { get; set; }
+
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
     }
 }

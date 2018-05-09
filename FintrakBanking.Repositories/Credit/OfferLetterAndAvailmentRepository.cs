@@ -65,7 +65,7 @@ namespace FintrakBanking.Repositories.Credit
                         from e in apprTrail.DefaultIfEmpty()
                         where a.COMPANYID == companyId 
                             && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
-                            && b.STATUSID == (short)ApprovalStatusEnum.Approved
+                            //&& b.STATUSID == (short)ApprovalStatusEnum.Approved
                             && !exceptIds.Contains(a.LOANAPPLICATIONID)
                         select new CamProcessedLoanViewModel
                         {
@@ -76,7 +76,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = a.TBL_CUSTOMER.CUSTOMERID,
                             customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
                             customerName = a.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
-                            customerGroupId = a.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID,
+                            customerGroupId = a.TBL_CUSTOMER_GROUP == null ? 0 : a.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID,
                             customerGroupName = a.TBL_CUSTOMER_GROUP.GROUPNAME,
                             customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
@@ -95,7 +95,7 @@ namespace FintrakBanking.Repositories.Credit
                             productTypeName = b.TBL_PRODUCT.PRODUCTNAME,
                             productName = b.TBL_PRODUCT.PRODUCTNAME,
                             productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-                            productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
+                            productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                             dateTimeCreated = a.DATETIMECREATED,
                             availmentDate = a.AVAILMENTDATE,
                             approvalDate = a.APPROVEDDATE,
@@ -103,11 +103,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = (int?)OperationsEnum.LoanAvailment,
                             currentApprovalStateId = e.APPROVALSTATEID,
                             approvalStatusId = e == null ? 0 : e.APPROVALSTATUSID,
-
-                            
                         });
-
-            //var forDebugging = data.ToList();
 
             return data;
         }
@@ -1250,45 +1246,46 @@ namespace FintrakBanking.Repositories.Credit
             //int staffApprovalLevelId = 0;
             //var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, operationId);
             var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == operationId).ToList();
-            var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
+            var loanApplication = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
             //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var initiated = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == appl.LOANAPPLICATIONID).Any();
+            var initiated = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == loanApplication.LOANAPPLICATIONID).Any();
 
             workflow.StaffId = entity.createdBy;
             workflow.OperationId = operationId;
-            workflow.TargetId = appl.LOANAPPLICATIONID;
-            workflow.CompanyId = appl.COMPANYID;
-            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            workflow.TargetId = loanApplication.LOANAPPLICATIONID;
+            workflow.CompanyId = loanApplication.COMPANYID;
+            workflow.ProductClassId = loanApplication.PRODUCTCLASSID;
             workflow.ProductId = null;
             workflow.StatusId = initiated == true ? (int)ApprovalStatusEnum.Approved : (int)ApprovalStatusEnum.Processing;
             workflow.Comment = entity.comment;
             workflow.Amount = entity.amount;
             workflow.DeferredExecution = true;
 
-
             workflow.LogActivity(); // ------------------- LOG ONCE
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
-                appl.AVAILMENTDATE = DateTime.Now;
+                loanApplication.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                loanApplication.AVAILMENTDATE = DateTime.Now;
 
-                var loanApplication = appl;
-                
+                var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
+                //CHECKING FOR COMMERCIAL LOANS IN LOOP
+                foreach (var record in loanApplicationDetails) 
+                {
+                    if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper)
+                    {
+                        record.EFFECTIVEDATE = DateTime.Now;
+                        record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
+                    }
+                }
+                //CHECKING FOR PRODUCT BASED LOANS IN LOOP
                 if (loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
                 {
                     if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                     {
-                        var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
                         foreach (var record in loanApplicationDetails)
                         {
-                            if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper)
-                            {
-                                record.EFFECTIVEDATE = DateTime.Now;
-                                record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
-                            }
-                                
                             var request = new TBL_LOAN_BOOKING_REQUEST
                             {
                                 AMOUNT_REQUESTED = entity.amount,

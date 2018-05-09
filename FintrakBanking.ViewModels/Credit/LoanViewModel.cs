@@ -47,10 +47,12 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanViewModel : GeneralEntity
     {
        
-        public decimal disbursableAmount;
-        public string loanStatusName;
-        public bool isBidbond;
-        public bool isOverdraft;
+        public decimal disbursableAmount { get; set; }
+        public string loanStatusName { get; set; }
+        public bool isBidbond { get; set; }
+        public bool isOverdraft { get; set; }
+        public object commercialPrincipal { get; set; }
+
         public int notificationDuration { get; set; }
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -235,7 +237,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isOverdraft;
         public bool isBidbond;
         public short accrualBasis;
-
+        public string serialNumber { get; set; }
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
@@ -428,8 +430,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public string repaymentTerms;
-        public string repaymentSchedule;
+        public string repaymentTerms { get; set; }
+        public string repaymentSchedule { get; set; }
 
         public bool isFirstApprover { get; set; }
         public bool isBidbond { get; set; }
@@ -509,7 +511,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
-        public short productTypeId { get; set; }
+        public short loanSystemTypeId { get; set; }
         public int loanId { get; set; }
         public int productId { get; set; }
         public string chargeFeeName { get; set; }
@@ -543,6 +545,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int loanCollateralMappingId { get; set; }
         public int loanId { get; set; }
+        public short loanSystemTypeId { get; set; }
         public int loanApplicationId { get; set; }
 
         
@@ -623,10 +626,12 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationDetailId { get; set; }
         public bool isPercentage { get; set; }
         public DateTime? nextCovenantDate { get; set; }
+        public short loanSystemTypeId { get; set; }
     }
 
     public class LoanMonitoringTriggerViewModel : GeneralEntity
     {
+        public short loanSystemTypeId { get; set; }
         public int loanMonitoringTriggerId { get; set; }
         public int loanId { get; set; }
         public short productTypeId { get; set; }

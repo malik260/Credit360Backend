@@ -54,9 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuditTrail.cs" />
-    <Compile Include="BranchViewModel.cs" />
-    <Compile Include="FintrakStaggingInformationUpdate.cs" />
+    <Compile Include="Audit Log\AuditTrail.cs" />
+    <Compile Include="Stagging Logic\ExchangeRate.cs" />
+    <Compile Include="Stagging Logic\FintrakStaggingInformationUpdate.cs" />
     <Compile Include="NewBranchService.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -86,6 +86,15 @@
       <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
       <Name>FintrakBanking.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
+      <Project>{6A7C3564-00B2-45D4-A40C-4B52A06C296A}</Project>
+      <Name>FintrakBanking.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
+      <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
+      <Name>FintrakBanking.ViewModels</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

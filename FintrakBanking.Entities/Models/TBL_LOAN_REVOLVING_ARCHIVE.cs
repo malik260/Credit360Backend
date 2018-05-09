@@ -12,6 +12,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int REVOLVINGLOAN_ARCHIVE_ID { get; set; }
 
+        public short LOANSYSTEMTYPEID { get; set; }
+
         [Column(TypeName = "date")]
         public DateTime ARCHIVEDATE { get; set; }
 
@@ -66,21 +68,6 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal OVERDRAFTLIMIT { get; set; }
 
-        [Column(TypeName = "money")]
-        public decimal PASTDUEPRINCIPAL { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal PASTDUEINTEREST { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal INTERESTONPASTDUEPRINCIPAL { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal INTERESTONPASTDUEINTEREST { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal PENALCHARGEAMOUNT { get; set; }
-
         public int APPROVALSTATUSID { get; set; }
 
         public int? APPROVEDBY { get; set; }
@@ -120,6 +107,9 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
 
+        [StringLength(50)]
+        public string SERIALNUMBER { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
@@ -153,5 +143,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE2 { get; set; }
 
         public virtual TBL_LOAN_REVOLVING TBL_LOAN_REVOLVING { get; set; }
+
+        public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
     }
 }

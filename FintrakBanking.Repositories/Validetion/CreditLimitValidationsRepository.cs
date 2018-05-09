@@ -113,11 +113,12 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                   where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active
                                   select d.OUTSTANDINGPRINCIPAL).Sum();
 
-            var limitAmount = (from a in context.TBL_LIMIT_DETAIL
-                               join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-                               where a.LIMITTYPEID == (int)LimitType.Branch && a.TARGETID == branchId &&
-                               b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount
-                               select a.MAXIMUMVALUE).Sum();
+            var limitAmount = 0;
+                //(from a in context.TBL_LIMIT_DETAIL
+                //               join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
+                //               where a.LIMITTYPEID == (int)LimitType.Branch && a.TARGETID == branchId &&
+                //               b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount
+                //               select a.MAXIMUMVALUE).Sum();
 
             model.outstandingBalance = (double)outstandingbal;
             model.limit = (double)limitAmount;
@@ -167,15 +168,16 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  let sumPrincipalAmount = context.TBL_LOAN.Where(a => a.PRODUCTID == segmentId).Sum(a => a.PRINCIPALAMOUNT)
                                  select sumPrincipalAmount;
 
-            var limitAmount = from a in context.TBL_LIMIT_DETAIL
-                              join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-                              where a.LIMITTYPEID == (int)LimitType.Sector && a.TARGETID == segmentId &&
-                              b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount
-                              select a.MAXIMUMVALUE;
+            var limitAmount = 0;
+            //from a in context.TBL_LIMIT_DETAIL
+            //                  join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
+            //                  where a.LIMITTYPEID == (int)LimitType.Sector && a.TARGETID == segmentId &&
+            //                  b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount
+            //                  select a.MAXIMUMVALUE;
 
             model.outstandingBalance = (double)outstandingbal.FirstOrDefault();
-            model.limit = (double)limitAmount.FirstOrDefault();
-            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount.FirstOrDefault();
+            model.limit = (double)limitAmount;
+            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount;
             return model;
         }
 
@@ -188,15 +190,16 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  let sumPrincipalAmount = context.TBL_LOAN.Where(a => a.PRODUCTID == segmentId).Sum(a => a.PRINCIPALAMOUNT)
                                  select sumPrincipalAmount;
 
-            var limitAmount = from a in context.TBL_LIMIT_DETAIL
-                              join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-                              where a.LIMITTYPEID == (int)LimitType.Sector && a.TARGETID == segmentId &&
-                              b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan
-                              select a.MAXIMUMVALUE;
+            var limitAmount = 0;
+            //from a in context.TBL_LIMIT_DETAIL
+            //                  join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
+            //                  where a.LIMITTYPEID == (int)LimitType.Sector && a.TARGETID == segmentId &&
+            //                  b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan
+            //                  select a.MAXIMUMVALUE;
 
             model.outstandingBalance = (double)outstandingbal.FirstOrDefault();
-            model.limit = (double)limitAmount.FirstOrDefault();
-            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount.FirstOrDefault();
+            model.limit = 0;
+            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount;
             return model;
         }
 
@@ -309,11 +312,12 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                   select a.OUTSTANDINGPRINCIPAL).Sum();
 
 
-            var limitAmount = (from a in context.TBL_LIMIT_DETAIL
-                               join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-                               where a.LIMITTYPEID == (int)LimitType.Sector && a.TARGETID == sectorId &&
-                               b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount
-                               select a.MAXIMUMVALUE).Sum();
+            var limitAmount = 0;
+            //(from a in context.TBL_LIMIT_DETAIL
+            //                   join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
+            //                   where a.LIMITTYPEID == (int)LimitType.Sector && a.TARGETID == sectorId &&
+            //                   b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount
+            //                   select a.MAXIMUMVALUE).Sum();
 
             model.outstandingBalance = (double)outstandingbal;
             model.limit = (double)limitAmount;
@@ -333,18 +337,19 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.TBL_SUB_SECTOR.SECTORID == sectorId).Sum(x => x.OUTSTANDINGPRINCIPAL)
                                  select sumPrincipalAmount;
 
-            var limitAmount = from a in context.TBL_LIMIT_DETAIL
-                              join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-                              where a.LIMITTYPEID == (int)LimitType.Sector && a.TARGETID == sectorId &&
-                              b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan //&&
-                                                                                        //b.LimitValueTypeId == (int)LimitValueTypeEnum.Amount
-                                                                                        //let maximumValue = context.tbl_Limit_Detail.Sum(a => a.MaximumValue)
-                                                                                        //select maximumValue;
-                              select a.MAXIMUMVALUE;
+            var limitAmount = 0;
+            //from a in context.TBL_LIMIT_DETAIL
+            //                  join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
+            //                  where a.LIMITTYPEID == (int)LimitType.Sector && a.TARGETID == sectorId &&
+            //                  b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan //&&
+            //                                                                            //b.LimitValueTypeId == (int)LimitValueTypeEnum.Amount
+            //                                                                            //let maximumValue = context.tbl_Limit_Detail.Sum(a => a.MaximumValue)
+            //                                                                            //select maximumValue;
+            //                  select a.MAXIMUMVALUE;
 
             model.outstandingBalance = (double)outstandingbal.FirstOrDefault();
-            model.limit = (double)limitAmount.FirstOrDefault();
-            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount.FirstOrDefault();
+            model.limit = (double)limitAmount;
+            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount;
             return model;
         }
 
@@ -352,22 +357,24 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         {
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
 
-            var output = (from a in context.TBL_LIMIT_DETAIL
-                          join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-                          join c in context.TBL_SECTOR on a.TARGETID equals c.SECTORID
-                          join d in context.TBL_LOAN on c.SECTORID equals d.TBL_SUB_SECTOR.SECTORID
-                          where a.LIMITTYPEID == (int)LimitType.Sector && d.LOANSTATUSID == (short)LoanStatusEnum.Active
-                          && b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount
-                          group d by new { c.SECTORID, c.CODE, c.NAME, a.MAXIMUMVALUE } into groupedQ
-                          select new SectorLimitViewModel()
-                          {
-                              sectorId = groupedQ.Key.SECTORID,
-                              sectorCode = groupedQ.Key.CODE,
-                              sectorName = groupedQ.Key.NAME,
-                              sectorLimit = groupedQ.Key.MAXIMUMVALUE,
-                              sectorUsage = groupedQ.Sum(i => i.OUTSTANDINGPRINCIPAL),
-                              sectorBalance = groupedQ.Key.MAXIMUMVALUE - groupedQ.Sum(i => i.OUTSTANDINGPRINCIPAL)
-                          });
+            var output = new List<SectorLimitViewModel>();
+
+                //(from a in context.TBL_LIMIT_DETAIL
+                //          join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
+                //          join c in context.TBL_SECTOR on a.TARGETID equals c.SECTORID
+                //          join d in context.TBL_LOAN on c.SECTORID equals d.TBL_SUB_SECTOR.SECTORID
+                //          where a.LIMITTYPEID == (int)LimitType.Sector && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                //          && b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount
+                //          group d by new { c.SECTORID, c.CODE, c.NAME, a.MAXIMUMVALUE } into groupedQ
+                //          select new SectorLimitViewModel()
+                //          {
+                //              sectorId = groupedQ.Key.SECTORID,
+                //              sectorCode = groupedQ.Key.CODE,
+                //              sectorName = groupedQ.Key.NAME,
+                //              sectorLimit = groupedQ.Key.MAXIMUMVALUE,
+                //              sectorUsage = groupedQ.Sum(i => i.OUTSTANDINGPRINCIPAL),
+                //              sectorBalance = groupedQ.Key.MAXIMUMVALUE - groupedQ.Sum(i => i.OUTSTANDINGPRINCIPAL)
+                //          });
 
             return output;
         }
@@ -453,18 +460,19 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  let sumPrincipalAmount = context.TBL_LOAN.Where(a => a.CUSTOMERID == customerId).Sum(a => a.PRINCIPALAMOUNT)
                                  select sumPrincipalAmount;
 
-            var limitAmount = from a in context.TBL_LIMIT_DETAIL
-                              join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-                              where a.LIMITTYPEID == (int)LimitType.Obligor && a.TARGETID == customerId &&
-                              b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan //&&
-                                                                                        //b.LimitValueTypeId == (int)LimitValueTypeEnum.Amount
-                                                                                        //let maximumValue = context.tbl_Limit_Detail.Sum(a => a.MaximumValue)
-                                                                                        //select maximumValue;
-                              select a.MAXIMUMVALUE;
+            var limitAmount = 0;
+            //from a in context.TBL_LIMIT_DETAIL
+            //                  join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
+            //                  where a.LIMITTYPEID == (int)LimitType.Obligor && a.TARGETID == customerId &&
+            //                  b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan //&&
+            //                                                                            //b.LimitValueTypeId == (int)LimitValueTypeEnum.Amount
+            //                                                                            //let maximumValue = context.tbl_Limit_Detail.Sum(a => a.MaximumValue)
+            //                                                                            //select maximumValue;
+            //                  select a.MAXIMUMVALUE;
 
             model.outstandingBalance = (double)outstandingbal.FirstOrDefault();
-            model.limit = (double)limitAmount.FirstOrDefault();
-            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount.FirstOrDefault();
+            model.limit = (double)limitAmount;
+            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount;
             return model;
         }
 
@@ -477,17 +485,18 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  select sumPrincipalAmount;
 
             var customer = this.context.TBL_LOAN.FirstOrDefault(x => x.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID == customergroupId).CUSTOMERID;
-            var limitAmount = from a in context.TBL_LIMIT_DETAIL
-                              join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-                              where a.LIMITTYPEID == (int)LimitType.Obligor && a.TARGETID == customer &&
-                              b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount //&&
-                                                                                 //b.LimitValueTypeId == (int)LimitValueTypeEnum.Amount
-                                                                                 //let maximumValue = context.tbl_Limit_Detail.Sum(a => a.MaximumValue)
-                                                                                 //select maximumValue;
-                              select a.MAXIMUMVALUE;
+            var limitAmount = 0;
+            //from a in context.TBL_LIMIT_DETAIL
+            //                  join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
+            //                  where a.LIMITTYPEID == (int)LimitType.Obligor && a.TARGETID == customer &&
+            //                  b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount //&&
+            //                                                                     //b.LimitValueTypeId == (int)LimitValueTypeEnum.Amount
+            //                                                                     //let maximumValue = context.tbl_Limit_Detail.Sum(a => a.MaximumValue)
+            //                                                                     //select maximumValue;
+            //                  select a.MAXIMUMVALUE;
             model.outstandingBalance = (double)outstandingbal.FirstOrDefault();
-            model.limit = (double)limitAmount.FirstOrDefault();
-            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount.FirstOrDefault();
+            model.limit = (double)limitAmount;
+            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount;
             return model;
         }
 
@@ -500,19 +509,20 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  select sumPrincipalAmount;
 
             var customer = this.context.TBL_LOAN.FirstOrDefault(x => x.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID == customergroupId).CUSTOMERID;
-            var limitAmount = from a in context.TBL_LIMIT_DETAIL
-                              join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-                              where a.LIMITTYPEID == (int)LimitType.Obligor && a.TARGETID == customer &&
-                              b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan //&&
-                                                                                        //b.LimitValueTypeId == (int)LimitValueTypeEnum.Amount
-                                                                                        //let maximumValue = context.tbl_Limit_Detail.Sum(a => a.MaximumValue)
-                                                                                        //select maximumValue;
-                              select a.MAXIMUMVALUE;
+            var limitAmount = 0;
+            //from a in context.TBL_LIMIT_DETAIL
+            //                  join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
+            //                  where a.LIMITTYPEID == (int)LimitType.Obligor && a.TARGETID == customer &&
+            //                  b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan //&&
+            //                                                                            //b.LimitValueTypeId == (int)LimitValueTypeEnum.Amount
+            //                                                                            //let maximumValue = context.tbl_Limit_Detail.Sum(a => a.MaximumValue)
+            //                                                                            //select maximumValue;
+            //                  select a.MAXIMUMVALUE;
 
-            var limitAmountresult = limitAmount.FirstOrDefault();
+            var limitAmountresult = limitAmount;
             model.outstandingBalance = (double)outstandingbal.FirstOrDefault();
-            model.limit = (double)limitAmount.FirstOrDefault();
-            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount.FirstOrDefault();
+            model.limit = (double)limitAmount;
+            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount;
             return model;
         }
 
@@ -524,15 +534,16 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  let sumPrincipalAmount = context.TBL_LOAN.Where(a => a.RELATIONSHIPOFFICERID == relationshipofficerId).Sum(a => a.PRINCIPALAMOUNT)
                                  select sumPrincipalAmount;
 
-            var limitAmount = from a in context.TBL_LIMIT_DETAIL
-                              join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-                              where a.LIMITTYPEID == (int)LimitType.RelationshipManager && a.TARGETID == relationshipofficerId &&
-                              b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan
-                              select a.MAXIMUMVALUE;
+            var limitAmount = 0;
+            //from a in context.TBL_LIMIT_DETAIL
+            //                  join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
+            //                  where a.LIMITTYPEID == (int)LimitType.RelationshipManager && a.TARGETID == relationshipofficerId &&
+            //                  b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan
+            //                  select a.MAXIMUMVALUE;
 
             model.outstandingBalance = (double)outstandingbal.FirstOrDefault();
-            model.limit = (double)limitAmount.FirstOrDefault();
-            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount.FirstOrDefault();
+            model.limit = (double)limitAmount;
+            model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount;
             return model;
         }
 

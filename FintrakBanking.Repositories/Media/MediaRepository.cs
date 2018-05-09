@@ -104,5 +104,11 @@ namespace FintrakBanking.Repositories.media
 
             return myEntities;
         }
+
+        public byte[] GetCompanyImage(int id)
+        {
+            var fileData = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.FirstOrDefault(x => x.COLLATERALCUSTOMERID == id);
+            return fileData.FILEDATA;
+        }
     }
 }

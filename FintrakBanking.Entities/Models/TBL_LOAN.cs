@@ -23,6 +23,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? CUSTOMERRISKRATINGID { get; set; }
 
+        public short LOANSYSTEMTYPEID { get; set; }
+
         public int CUSTOMERID { get; set; }
 
         public short PRODUCTID { get; set; }
@@ -234,5 +236,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_SCHEDULE_TYPE TBL_LOAN_SCHEDULE_TYPE { get; set; }
 
         public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
+
+        public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
     }
 }

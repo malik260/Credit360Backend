@@ -25,6 +25,38 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+
+        [HttpPost]
+        [Route("approve-reasign-account")]
+        public HttpResponseMessage ApproveStaffAccountHistory(ReasignedAccountApprovalViewModel entity)
+        {
+
+            try
+            {
+              
+                entity.userIPAddress = CommonHelpers.GetUserIP();
+                entity.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+
+                var data = accountHistory.ApproveStaffAccountHistory(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [Route("reasign-account")]
         public HttpResponseMessage AddStaffAccountHistory(StaffAccountHistoryViewModel entity)
@@ -79,10 +111,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        public bool ApproveStaffAccountHistory(ReasignedAccountApprovalViewModel entity)
-        {
-            return accountHistory.ApproveStaffAccountHistory(entity);
-        }
+        
 
         [HttpGet]
         [Route("get-all-reasigned-account")]

@@ -22,7 +22,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string REGISTRATIONNUMBER { get; set; }
 
-        [Required]
         [StringLength(100)]
         public string NAME { get; set; }
 
@@ -43,10 +42,10 @@ namespace FintrakBanking.Entities.Models
 
         public short? COUNTRYID { get; set; }
 
-        [StringLength(50)]
+        [StringLength(500)]
         public string EMAILADDRESS { get; set; }
 
-        [StringLength(50)]
+        [StringLength(500)]
         public string PHONENUMBER { get; set; }
 
         [StringLength(500)]
