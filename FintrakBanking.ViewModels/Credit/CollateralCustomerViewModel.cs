@@ -278,6 +278,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string propertyBaseType { get; set; }
         public string perfectionStatusName { get; set; }
         public decimal stampToCoverAmount { get; set; }
+        public short baseCurrency { get; set; }
+        public short baseCurrencyId { get; set; }
+        public bool disAllowCollateral { get; set; }
     }
 
     public class crossGarantee

@@ -480,6 +480,9 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId)
         {
             var typeIds = new List<int>();
+            var company = context.TBL_COMPANY.Find(companyId);
+            bool disAllowCollateral = false;
+            bool isForiegnCurrencyFacility = false;
 
             if (applicationId != null)
             {
@@ -491,6 +494,8 @@ namespace FintrakBanking.Repositories.Credit
                 typeIds = context.TBL_PRODUCT_COLLATERALTYPE.Where(x => productIds.Contains(x.PRODUCTID))
                    .Select(x => x.COLLATERALTYPEID)
                    .Distinct().ToList();
+
+                isForiegnCurrencyFacility = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CURRENCYID != company.CURRENCYID).Any();
             }
             
             var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId)
@@ -513,7 +518,9 @@ namespace FintrakBanking.Repositories.Credit
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
                         customerId = c.c.CUSTOMERID,
                         currencyId = c.c.CURRENCYID,
+                        baseCurrencyId = company.CURRENCYID,
                         currency = c.c.TBL_CURRENCY.CURRENCYNAME,
+                        disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
                         collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                         collateralSubTypeName = "not implimented",
                         collateralCode = c.c.COLLATERALCODE,
