@@ -1153,7 +1153,8 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.GetAccountLeinAmountForFD(accountNumber);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                var lienData = repo.GetAccountLienDetail(accountNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response,data= lienData });
             }
             catch (Exception ex)
             {
@@ -1168,7 +1169,8 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.GetAccountLeinAmountForCASA(accountNumber);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                var lienData = repo.GetAccountLienDetail(accountNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, data = lienData });
             }
             catch (Exception ex)
             {

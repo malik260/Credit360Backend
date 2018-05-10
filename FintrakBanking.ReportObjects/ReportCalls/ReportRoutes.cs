@@ -24,7 +24,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         {
             string path = string.Empty;
             int operationId = (int)OperationsEnum.CAM;
-            path = reportPath + "ReportViews/ApprovalTrailWithSLA.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId +  "&operationId=" + operationId + "&loanApplicationId=" + loanApplicationId.ToString();
+            path = reportPath + "ReportViews/ApprovalTrailWith_SLA.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId +  "&operationId=" + operationId + "&loanApplicationId=" + loanApplicationId.ToString();
             return path;
         }
 

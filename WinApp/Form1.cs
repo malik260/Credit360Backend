@@ -25,6 +25,7 @@ using FintrakBanking.Interfaces.CreditLimitValidations;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 
 namespace WinApp
 {
@@ -258,7 +259,7 @@ namespace WinApp
         private void button3_Click(object sender, EventArgs e)
         {
             TransactionPosting tp = new TransactionPosting(context);
-            OverdraftResponseViewModel integrationResult = null;
+            ResponseMessageViewModel integrationResult = null;
             var model = new OverDraftNormalViewModel
             {
                accountNumber= "2030562192",
@@ -276,5 +277,6 @@ namespace WinApp
            integrationResult =  cwpAIP.OverDraftNormal(model);
 
         }
+
     }
 }

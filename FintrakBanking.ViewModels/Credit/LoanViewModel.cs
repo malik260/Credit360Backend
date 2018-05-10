@@ -46,7 +46,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-        public short loanSystemTypeId;
+        //public short loanSystemTypeId;
 
         public decimal disbursableAmount { get; set; }
         public string loanStatusName { get; set; }
@@ -226,6 +226,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal interesrtOnPastDueInterest { get; set; }
         public decimal penalChargeAmount { get; set; }
         public DateTime lastRestructureDate  { get; set; }
+        public short loanSystemTypeId  { get; set; }
+        
 
 
         //......End f Loan Relational Table View Mapping Models......//
@@ -329,6 +331,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal interesrtOnPastDueInterest { get; set; }
         public decimal penalChargeAmount { get; set; }
         public int dayCountConventionId { get; set; }
+        public short loanSystemTypeId { get; set; }
+        
     }
 
     public class ContingentLoanViewModel : GeneralEntity
