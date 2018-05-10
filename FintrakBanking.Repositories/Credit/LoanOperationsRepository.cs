@@ -3615,7 +3615,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public IEnumerable<LoanViewModel> ArchiveLoan(int loanId, int operationId)
+        public LoanViewModel ArchiveLoan(int loanId, int operationId)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN
@@ -3625,6 +3625,7 @@ namespace FintrakBanking.Repositories.Credit
                              loanId = a.TERMLOANID,
                              productPriceIndexRate = a.PRODUCTPRICEINDEXRATE,
                              customerRiskRatingId = a.CUSTOMERRISKRATINGID,
+                             loanSystemTypeId = (short)a.LOANSYSTEMTYPEID,
                              customerId = a.CUSTOMERID,
                              productId = a.PRODUCTID,
                              companyId = a.COMPANYID,
@@ -3694,14 +3695,14 @@ namespace FintrakBanking.Repositories.Credit
                              createdBy = a.CREATEDBY,
                              dateTimeCreated = a.DATETIMECREATED,
 
-                         }).ToList();
+                         }).FirstOrDefault();
 
             List<TBL_LOAN_ARCHIVE> loanArchive = new List<TBL_LOAN_ARCHIVE>();
 
 
 
-            foreach (var item in model)
-            {
+            //foreach (var item in model)
+            //{
 
                 TBL_LOAN_ARCHIVE addLoanArchive = new TBL_LOAN_ARCHIVE();
 
@@ -3709,83 +3710,84 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.CHANGEEFFECTIVEDATE = DateTime.Today;
                 addLoanArchive.ISAPPLIED = false;
                 addLoanArchive.CHANGEREASON = "Rephasement";
-                addLoanArchive.LOANID = item.loanId;
-                addLoanArchive.PRODUCTPRICEINDEXRATE = item.productPriceIndexRate;
-                addLoanArchive.CUSTOMERRISKRATINGID = item.customerRiskRatingId;
-                addLoanArchive.CUSTOMERID = item.customerId;
-                addLoanArchive.PRODUCTID = item.productId;
-                addLoanArchive.COMPANYID = item.companyId;
-                addLoanArchive.CASAACCOUNTID = item.casaAccountId;
-                addLoanArchive.BRANCHID = item.branchId;
-                addLoanArchive.CURRENCYID = (short)item.currencyId;
-                addLoanArchive.EXCHANGERATE = item.exchangeRate;
-                addLoanArchive.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
-                addLoanArchive.LOANREFERENCENUMBER = item.loanReferenceNumber;
-                addLoanArchive.SUBSECTORID = item.subSectorId;
-                addLoanArchive.PRINCIPALFREQUENCYTYPEID = item.principalFrequencyTypeId;
-                addLoanArchive.INTERESTFREQUENCYTYPEID = item.interestFrequencyTypeId;
-                addLoanArchive.PRINCIPALNUMBEROFINSTALLMENT = item.principalNumberOfInstallment;
-                addLoanArchive.INTERESTNUMBEROFINSTALLMENT = item.interestNumberOfInstallment;
-                addLoanArchive.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
-                addLoanArchive.RELATIONSHIPMANAGERID = item.relationshipManagerId;
-                addLoanArchive.MISCODE = item.misCode;
-                addLoanArchive.TEAMMISCODE = item.teamMiscode;
-                addLoanArchive.INTERESTRATE = item.interestRate;
-                addLoanArchive.EFFECTIVEDATE = item.effectiveDate;
-                addLoanArchive.MATURITYDATE = item.maturityDate;
-                addLoanArchive.BOOKINGDATE = item.bookingDate;
-                addLoanArchive.PRINCIPALAMOUNT = item.principalAmount;
-                addLoanArchive.PRINCIPALINSTALLMENTLEFT = item.principalInstallmentLeft;
-                addLoanArchive.INTERESTINSTALLMENTLEFT = item.interestInstallmentLeft;
-                addLoanArchive.APPROVALSTATUSID = item.approvalStatusId;
-                addLoanArchive.APPROVEDBY = item.approvedBy;
-                addLoanArchive.APPROVERCOMMENT = item.approverComment;
-                addLoanArchive.DATEAPPROVED = item.dateApproved;
-                addLoanArchive.LOANSTATUSID = item.loanStatusId;
-                addLoanArchive.CREATEDBY = item.createdBy;
-                addLoanArchive.DATETIMECREATED = item.dateTimeCreated;
-                addLoanArchive.SCHEDULETYPEID = item.scheduleTypeId;
-                addLoanArchive.SCHEDULEDAYCOUNTCONVENTIONID = item.scheduleDayCountConventionId;
-                addLoanArchive.SCHEDULEDAYINTERESTTYPEID = item.scheduleDayInterestTypeId;
-                addLoanArchive.ISDISBURSED = item.isDisbursed;
-                addLoanArchive.DISBURSEDBY = item.disbursedBy;
-                addLoanArchive.DISBURSERCOMMENT = item.disburserComment;
-                addLoanArchive.DISBURSEDATE = item.disburseDate;
+                addLoanArchive.LOANID = model.loanId;
+                addLoanArchive.PRODUCTPRICEINDEXRATE = model.productPriceIndexRate;
+                addLoanArchive.CUSTOMERRISKRATINGID = model.customerRiskRatingId;
+                addLoanArchive.LOANSYSTEMTYPEID = model.loanSystemTypeId;
+                addLoanArchive.CUSTOMERID = model.customerId;
+                addLoanArchive.PRODUCTID = model.productId;
+                addLoanArchive.COMPANYID = model.companyId;
+                addLoanArchive.CASAACCOUNTID = model.casaAccountId;
+                addLoanArchive.BRANCHID = model.branchId;
+                addLoanArchive.CURRENCYID = (short)model.currencyId;
+                addLoanArchive.EXCHANGERATE = model.exchangeRate;
+                addLoanArchive.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+                addLoanArchive.LOANREFERENCENUMBER = model.loanReferenceNumber;
+                addLoanArchive.SUBSECTORID = model.subSectorId;
+                addLoanArchive.PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId;
+                addLoanArchive.INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId;
+                addLoanArchive.PRINCIPALNUMBEROFINSTALLMENT = model.principalNumberOfInstallment;
+                addLoanArchive.INTERESTNUMBEROFINSTALLMENT = model.interestNumberOfInstallment;
+                addLoanArchive.RELATIONSHIPOFFICERID = model.relationshipOfficerId;
+                addLoanArchive.RELATIONSHIPMANAGERID = model.relationshipManagerId;
+                addLoanArchive.MISCODE = model.misCode;
+                addLoanArchive.TEAMMISCODE = model.teamMiscode;
+                addLoanArchive.INTERESTRATE = model.interestRate;
+                addLoanArchive.EFFECTIVEDATE = model.effectiveDate;
+                addLoanArchive.MATURITYDATE = model.maturityDate;
+                addLoanArchive.BOOKINGDATE = model.bookingDate;
+                addLoanArchive.PRINCIPALAMOUNT = model.principalAmount;
+                addLoanArchive.PRINCIPALINSTALLMENTLEFT = model.principalInstallmentLeft;
+                addLoanArchive.INTERESTINSTALLMENTLEFT = model.interestInstallmentLeft;
+                addLoanArchive.APPROVALSTATUSID = model.approvalStatusId;
+                addLoanArchive.APPROVEDBY = model.approvedBy;
+                addLoanArchive.APPROVERCOMMENT = model.approverComment;
+                addLoanArchive.DATEAPPROVED = model.dateApproved;
+                addLoanArchive.LOANSTATUSID = model.loanStatusId;
+                addLoanArchive.CREATEDBY = model.createdBy;
+                addLoanArchive.DATETIMECREATED = model.dateTimeCreated;
+                addLoanArchive.SCHEDULETYPEID = model.scheduleTypeId;
+                addLoanArchive.SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountConventionId;
+                addLoanArchive.SCHEDULEDAYINTERESTTYPEID = model.scheduleDayInterestTypeId;
+                addLoanArchive.ISDISBURSED = model.isDisbursed;
+                addLoanArchive.DISBURSEDBY = model.disbursedBy;
+                addLoanArchive.DISBURSERCOMMENT = model.disburserComment;
+                addLoanArchive.DISBURSEDATE = model.disburseDate;
                 addLoanArchive.OPERATIONID = operationId;
                 //addLoanArchive.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID = item.customerGroupId;
                 //addLoanArchive.LOANTYPEID = item.loanTypeId;
                 //addLoanArchive.TrancheBatchCode = item.trancheBatchCode;
-                addLoanArchive.EQUITYCONTRIBUTION = item.equityContribution;
-                addLoanArchive.FIRSTPRINCIPALPAYMENTDATE = item.firstPrincipalPaymentDate;
-                addLoanArchive.FIRSTINTERESTPAYMENTDATE = item.firstInterestPaymentDate;
-                addLoanArchive.OUTSTANDINGPRINCIPAL = item.outstandingPrincipal;
-                addLoanArchive.OUTSTANDINGINTEREST = item.outstandingInterest;
+                addLoanArchive.EQUITYCONTRIBUTION = model.equityContribution;
+                addLoanArchive.FIRSTPRINCIPALPAYMENTDATE = model.firstPrincipalPaymentDate;
+                addLoanArchive.FIRSTINTERESTPAYMENTDATE = model.firstInterestPaymentDate;
+                addLoanArchive.OUTSTANDINGPRINCIPAL = model.outstandingPrincipal;
+                addLoanArchive.OUTSTANDINGINTEREST = model.outstandingInterest;
 
-                addLoanArchive.PASTDUEPRINCIPAL = item.pastDuePrincipal;
-                addLoanArchive.PASTDUEINTEREST = item.pastDueInterest;
-                addLoanArchive.INTERESTONPASTDUEPRINCIPAL = item.interestOnPastDuePrincipal;
-                addLoanArchive.INTERESTONPASTDUEINTEREST = item.interesrtOnPastDueInterest;
-                addLoanArchive.PENALCHARGEAMOUNT = item.penalChargeAmount;
-                addLoanArchive.PRINCIPALADDITIONCOUNT = item.principalAdditionCount;
-                addLoanArchive.PRINCIPALREDUCTIONCOUNT = item.principalReductionCount;
-                addLoanArchive.FIXEDPRINCIPAL = item.fixedPrincipal;
-                addLoanArchive.PROFILELOAN = item.profileLoan;
-                addLoanArchive.DISCHARGELETTER = item.dischargeLetter;
-                addLoanArchive.SUSPENDINTEREST = item.suspendInterest;
-                addLoanArchive.ISSCHEDULEDPREPAYMENT = item.isScheduledPrepayment;
-                addLoanArchive.ALLOWFORCEDEBITREPAYMENT = item.allowForceDebitRepayment;
-                addLoanArchive.SCHEDULEDPREPAYMENTAMOUNT = item.scheduledPrepaymentAmount;
-                addLoanArchive.SCHEDULEDPREPAYMENTDATE = item.scheduledPrepaymentDate;
-                addLoanArchive.SCH_PREPAYMENT_FREQUENCY_TYPID = item.principalFrequencyTypeId;//scheduledPrepaymentFrequencyTypeId;
+                addLoanArchive.PASTDUEPRINCIPAL = model.pastDuePrincipal;
+                addLoanArchive.PASTDUEINTEREST = model.pastDueInterest;
+                addLoanArchive.INTERESTONPASTDUEPRINCIPAL = model.interestOnPastDuePrincipal;
+                addLoanArchive.INTERESTONPASTDUEINTEREST = model.interesrtOnPastDueInterest;
+                addLoanArchive.PENALCHARGEAMOUNT = model.penalChargeAmount;
+                addLoanArchive.PRINCIPALADDITIONCOUNT = model.principalAdditionCount;
+                addLoanArchive.PRINCIPALREDUCTIONCOUNT = model.principalReductionCount;
+                addLoanArchive.FIXEDPRINCIPAL = model.fixedPrincipal;
+                addLoanArchive.PROFILELOAN = model.profileLoan;
+                addLoanArchive.DISCHARGELETTER = model.dischargeLetter;
+                addLoanArchive.SUSPENDINTEREST = model.suspendInterest;
+                addLoanArchive.ISSCHEDULEDPREPAYMENT = model.isScheduledPrepayment;
+                addLoanArchive.ALLOWFORCEDEBITREPAYMENT = model.allowForceDebitRepayment;
+                addLoanArchive.SCHEDULEDPREPAYMENTAMOUNT = model.scheduledPrepaymentAmount;
+                addLoanArchive.SCHEDULEDPREPAYMENTDATE = model.scheduledPrepaymentDate;
+                addLoanArchive.SCH_PREPAYMENT_FREQUENCY_TYPID = model.principalFrequencyTypeId;//scheduledPrepaymentFrequencyTypeId;
                 addLoanArchive.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
                 addLoanArchive.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
-                addLoanArchive.USER_PRUDENTIAL_GUIDE_STATUSID = (int)item.userPrudentialGuidelineStatusId;
-                addLoanArchive.NPLDATE = item.nplDate;
-                addLoanArchive.CREATEDBY = item.createdBy;
-                addLoanArchive.DATETIMECREATED = item.dateTimeCreated;
+                addLoanArchive.USER_PRUDENTIAL_GUIDE_STATUSID = (int)model.userPrudentialGuidelineStatusId;
+                addLoanArchive.NPLDATE = model.nplDate;
+                addLoanArchive.CREATEDBY = model.createdBy;
+                addLoanArchive.DATETIMECREATED = model.dateTimeCreated;
 
                 loanArchive.Add(addLoanArchive);
-            }
+            //}
             //tbl_Loan
             this.context.TBL_LOAN_ARCHIVE.AddRange(loanArchive);
 
@@ -3793,7 +3795,7 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        public IEnumerable<RevolvingLoanViewModel> ArchiveOverDraft (int overDraftId)
+        public RevolvingLoanViewModel ArchiveOverDraft (int overDraftId)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN_REVOLVING
@@ -3801,6 +3803,7 @@ namespace FintrakBanking.Repositories.Credit
                          select new RevolvingLoanViewModel()
                          {
                              loanId = a.REVOLVINGLOANID,
+                             loanSystemTypeId = (short)a.LOANSYSTEMTYPEID,
                              customerId = a.CUSTOMERID,
                              productId = a.PRODUCTID,
                              companyId = a.COMPANYID,
