@@ -253,6 +253,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Authorization = token;
+            
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
           

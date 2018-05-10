@@ -50,6 +50,8 @@ using FintrakBanking.Repositories.Reports;
 using FintrakBanking.Repositories.Setups.Credit;
 using FintrakBanking.ReportObjects.ReportCalls;
 using FinTrakBanking.ThirdPartyIntegration.Credit;
+using FintrakBanking.Interfaces.Validation;
+using FintrakBanking.Repositories.Validetion;
 
 namespace WinApp
 {
@@ -154,7 +156,7 @@ namespace WinApp
             kernel.Bind<IContingentLoanUsageRepository>().To<ContingentLoanUsageRepository>();
             kernel.Bind<IOverRideRepository>().To<OverRideRepository>();
             kernel.Bind<IStaffAccountHistoryRepository>().To<StaffAccountHistoryRepository>();
-
+            kernel.Bind<IOverDraftValidation>().To<OverDraftValidation>();
             kernel.Bind<IIntegrationWithCWGAPI>().To<IntegrationWithCWGAPI>();
 
             kernel.Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>();

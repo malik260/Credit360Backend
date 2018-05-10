@@ -405,11 +405,6 @@
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TestController.cs" />
-    <Compile Include="Report File MVC\fintrakDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>fintrakDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportDataset\ComapnyInfoDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -724,17 +719,6 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
-    <Content Include="Report File MVC\fintrakDataSet.xsc">
-      <DependentUpon>fintrakDataSet.xsd</DependentUpon>
-    </Content>
-    <None Include="Report File MVC\fintrakDataSet.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>fintrakDataSet.Designer.cs</LastGenOutput>
-    </None>
-    <Content Include="Report File MVC\fintrakDataSet.xss">
-      <DependentUpon>fintrakDataSet.xsd</DependentUpon>
-    </Content>
     <None Include="Reports\ReportDataset\CollateralDataSet.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>
@@ -900,7 +884,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Report File MVC\AuditTrail.rdlc" />
     <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />

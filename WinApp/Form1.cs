@@ -25,6 +25,7 @@ using FintrakBanking.Interfaces.CreditLimitValidations;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 
 namespace WinApp
 {
@@ -249,6 +250,15 @@ namespace WinApp
             //Task.Run(async () => { data = await transaction.APITransactionPosting(tran); }).GetAwaiter().GetResult();
             //financeTransaction.UpdateCustomTransactions(tran[0].batchCode);
             //MessageBox.Show("Successful", "Fintrak");
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+            // var dsh=  cwpAIP.GetGLAccountDetails("11019900001811");
+          var ddd=  credit.ValidateAmountBySector(264);
+
+
         }
 
         //private void button3_Click(object sender, EventArgs e)
