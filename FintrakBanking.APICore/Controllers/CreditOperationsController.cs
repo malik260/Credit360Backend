@@ -159,6 +159,28 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("running-commercial-loan-search/")]
+        public HttpResponseMessage SearchRunningCommercialForLoans(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchRunningCommercialForLoans(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("term-and-revolving-loan-search/")]
         public HttpResponseMessage SearchForLoanAndRevolvingLoan(int productTypeId, string searchQuery)
         {

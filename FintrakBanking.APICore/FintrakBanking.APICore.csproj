@@ -403,15 +403,24 @@
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TestController.cs" />
-    <Compile Include="Report File MVC\fintrakDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>fintrakDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportDataset\ComapnyInfoDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ComapnyInfoDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.cs">
+      <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.designer.cs">
+      <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\FinancialTransactions.aspx.cs">
+      <DependentUpon>FinancialTransactions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\FinancialTransactions.aspx.designer.cs">
+      <DependentUpon>FinancialTransactions.aspx</DependentUpon>
     </Compile>
     <Compile Include="TransactionDynamicsController.cs" />
     <Compile Include="core\ApiControllerBase.cs" />
@@ -669,8 +678,10 @@
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
+    <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
     <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
+    <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
@@ -722,17 +733,6 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
-    <Content Include="Report File MVC\fintrakDataSet.xsc">
-      <DependentUpon>fintrakDataSet.xsd</DependentUpon>
-    </Content>
-    <None Include="Report File MVC\fintrakDataSet.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>fintrakDataSet.Designer.cs</LastGenOutput>
-    </None>
-    <Content Include="Report File MVC\fintrakDataSet.xss">
-      <DependentUpon>fintrakDataSet.xsd</DependentUpon>
-    </Content>
     <None Include="Reports\ReportDataset\CollateralDataSet.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>
@@ -894,7 +894,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Report File MVC\AuditTrail.rdlc" />
     <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />

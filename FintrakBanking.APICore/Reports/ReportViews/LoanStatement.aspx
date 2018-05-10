@@ -35,10 +35,8 @@
             </SelectParameters>
         </asp:ObjectDataSource>
         </div> 
-        <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>    
-        <asp:Label ID="imageId" runat="server"  Visible="false" ></asp:Label>  
+        <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>       
         <asp:Label ID="loanId" runat="server"></asp:Label>
-     
     </form>
 </body>
 </html>

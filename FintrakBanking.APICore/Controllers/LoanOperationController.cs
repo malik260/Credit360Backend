@@ -69,6 +69,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+        [HttpGet]
+        [Route("maturity-instruction-type")]
+        public HttpResponseMessage GetMaturityInstructionType()
+        {
+            try
+            {
+                var data = repo.GetMaturityInstructionType();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
 
         [HttpGet]
         [Route("mature-commercial-loans/detail/{loanApplicationDetailId}")]

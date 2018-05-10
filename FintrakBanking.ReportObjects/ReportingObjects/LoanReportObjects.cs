@@ -306,8 +306,8 @@ namespace FintrakBanking.ReportObjects
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.TARGETID equals b.LOANAPPLICATIONDETAILID
 
                            where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred
-                            && b.TBL_CUSTOMER.COMPANYID == companyId
-                             && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
+                           // && b.TBL_CUSTOMER.COMPANYID == companyId
+                            && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                             && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                             && b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
                             && b.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
@@ -379,7 +379,7 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
-        public IList<LoanDocumentWaivedViewModel> LoanDeferralMCCCur(DateTime startDate, int companyId, string branchCode)
+        public IList<LoanDocumentWaivedViewModel> LoanDeferralMCCCur(DateTime startDate, int companyId, int branchCode)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -393,7 +393,7 @@ namespace FintrakBanking.ReportObjects
                             d.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
                             && d.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
                              && a.DEFERREDDATE >= startDate
-                            && (c.BRANCHID == context.TBL_BRANCH.Where(x => x.BRANCHCODE == branchCode).Select(x => x.BRANCHID).FirstOrDefault() || branchCode == null)
+                            && (c.BRANCHID == branchCode  || branchCode == 0)
 
                            select new LoanDocumentWaivedViewModel()
                            {
@@ -409,7 +409,7 @@ namespace FintrakBanking.ReportObjects
                 return data.ToList();
             }
         }
-        public IList<LoanDocumentWaivedViewModel> LoanDeferralMCCExp(DateTime startDate, int companyId, string branchCode)
+        public IList<LoanDocumentWaivedViewModel> LoanDeferralMCCExp(DateTime startDate, int companyId, int branchCode)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -423,7 +423,7 @@ namespace FintrakBanking.ReportObjects
                             d.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
                             && d.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
                              && a.DEFERREDDATE <= startDate
-                            && (c.BRANCHID == context.TBL_BRANCH.Where(x => x.BRANCHCODE == branchCode).Select(x => x.BRANCHID).FirstOrDefault() || branchCode == null)
+                            && (c.BRANCHID == branchCode || branchCode == 0)
                            select new LoanDocumentWaivedViewModel()
                            {
                                name = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
@@ -438,7 +438,7 @@ namespace FintrakBanking.ReportObjects
                 return data.ToList();
             }
         }
-        public IList<LoanDocumentWaivedViewModel> LoanDocumentWaivedForMCC(DateTime startDate, int companyId, string branchCode)
+        public IList<LoanDocumentWaivedViewModel> LoanDocumentWaivedForMCC(DateTime startDate, int companyId, int branchCode)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -448,7 +448,7 @@ namespace FintrakBanking.ReportObjects
                            where (a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Waived )
                             && b.TBL_CUSTOMER.COMPANYID == companyId
                             && DbFunctions.TruncateTime(b.DATETIMECREATED) <= DbFunctions.TruncateTime(startDate)
-                            && (b.TBL_CUSTOMER.BRANCHID == context.TBL_BRANCH.Where(x => x.BRANCHCODE == branchCode).Select(x => x.BRANCHID).FirstOrDefault() || branchCode == null)
+                            && (b.TBL_CUSTOMER.BRANCHID == branchCode || branchCode == 0)
 
 
                            select new LoanDocumentWaivedViewModel()
