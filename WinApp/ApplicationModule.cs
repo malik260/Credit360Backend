@@ -49,6 +49,9 @@ using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.Repositories.Reports;
 using FintrakBanking.Repositories.Setups.Credit;
 using FintrakBanking.ReportObjects.ReportCalls;
+using FinTrakBanking.ThirdPartyIntegration.Credit;
+using FintrakBanking.Interfaces.Validation;
+using FintrakBanking.Repositories.Validetion;
 
 namespace WinApp
 {
@@ -221,7 +224,6 @@ namespace WinApp
             kernel.Bind<ICollateralDocumentRepository>().To<CollateralDocumentRepository>();
             kernel.Bind<IJobRequestRepository>().To<JobRequestRepository>();
             kernel.Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
-            //kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IFinanceTransactionRepository>().To<FinanceTransactionRepository>();
             kernel.Bind<ILoanOperationsRepository>().To<LoanOperationsRepository>();
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
@@ -252,9 +254,9 @@ namespace WinApp
             kernel.Bind<IContingentLoanUsageRepository>().To<ContingentLoanUsageRepository>();
             kernel.Bind<IOverRideRepository>().To<OverRideRepository>();
             kernel.Bind<IStaffAccountHistoryRepository>().To<StaffAccountHistoryRepository>();
-            //kernel.Bind<IIntegrationWithCWGAPI>().To<IntegrationWithCWGAPI>();
-
-            kernel.Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>();
+            kernel.Bind<IIntegrationWithCWGAPI>().To<IntegrationWithCWGAPI>();
+            kernel.Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>(); 
+            kernel.Bind<IOverDraftValidation>().To<OverDraftValidation>();
 
         }
     }

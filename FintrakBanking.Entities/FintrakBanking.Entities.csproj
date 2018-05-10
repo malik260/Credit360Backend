@@ -225,7 +225,6 @@
     <Compile Include="Models\TBL_DEPARTMENT.cs" />
     <Compile Include="Models\TBL_DEPARTMENT_UNIT.cs" />
     <Compile Include="Models\TBL_ERRORLOG.cs" />
-    <Compile Include="Models\TBL_FEE.cs" />
     <Compile Include="Models\TBL_FEE_AMORTISATION_TYPE.cs" />
     <Compile Include="Models\TBL_FEE_INTERVAL.cs" />
     <Compile Include="Models\TBL_FEE_TARGET.cs" />
@@ -283,6 +282,7 @@
     <Compile Include="Models\TBL_LOAN_COVENANT_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_FEE.cs" />
+    <Compile Include="Models\TBL_LOAN_FEE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_FEE_SCHEDULE.cs" />
     <Compile Include="Models\TBL_LOAN_FORCE_DEBIT.cs" />
     <Compile Include="Models\TBL_LOAN_MARKET.cs" />
@@ -307,6 +307,7 @@
     <Compile Include="Models\TBL_LOAN_REVIEW_OPRATN_IREG_SC.cs" />
     <Compile Include="Models\TBL_LOAN_REVOLVING.cs" />
     <Compile Include="Models\TBL_LOAN_REVOLVING_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_LOAN_REVOLVING_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_CATEGORY.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_DAILY.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_DAILY_ARCHIV.cs" />
@@ -416,7 +417,6 @@
     <Compile Include="Models\TBL_TEMP_CUSTOMER_NEXTOFKIN.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_PHONCONTACT.cs" />
     <Compile Include="Models\TBL_TEMP_CUST_CLIENT_SUPPLIER.cs" />
-    <Compile Include="Models\TBL_TEMP_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_LOAN.cs" />
     <Compile Include="Models\TBL_TEMP_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT.cs" />
@@ -424,7 +424,6 @@
     <Compile Include="Models\TBL_TEMP_PRODUCT_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_COLLATERALTYP.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_CURRENCY.cs" />
-    <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_PROFILE_ADTN_ACTIVITY.cs" />
     <Compile Include="Models\TBL_TEMP_PROFILE_STAFF_ROLE_AA.cs" />
     <Compile Include="Models\TBL_TEMP_PROFILE_STAFF_ROL_GRP.cs" />

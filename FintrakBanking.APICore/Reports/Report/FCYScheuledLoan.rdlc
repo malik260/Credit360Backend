@@ -47,7 +47,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.25in</Height>
+              <Height>0.47in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -58,13 +58,15 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Loan Account Number</Value>
+                              <Value>Reference Number</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox1</rd:DefaultName>
@@ -73,7 +75,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -91,13 +94,15 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Operative Account Number</Value>
+                              <Value>Operative Account No</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox3</rd:DefaultName>
@@ -106,7 +111,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -130,7 +136,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox5</rd:DefaultName>
@@ -139,7 +147,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -163,7 +172,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox19</rd:DefaultName>
@@ -172,7 +183,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -196,7 +208,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox21</rd:DefaultName>
@@ -205,7 +219,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -229,7 +244,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox27</rd:DefaultName>
@@ -238,7 +255,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -262,7 +280,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox29</rd:DefaultName>
@@ -271,7 +291,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -295,7 +316,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox31</rd:DefaultName>
@@ -304,7 +327,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -328,7 +352,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox34</rd:DefaultName>
@@ -337,7 +363,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -361,7 +388,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox37</rd:DefaultName>
@@ -370,7 +399,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -394,7 +424,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox47</rd:DefaultName>
@@ -403,7 +435,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -427,7 +460,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox42</rd:DefaultName>
@@ -436,7 +471,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -460,7 +496,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox49</rd:DefaultName>
@@ -469,7 +507,8 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>#f50726</BackgroundColor>
+                        <BackgroundColor>Goldenrod</BackgroundColor>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -496,7 +535,9 @@
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>loanRefrenceNumber</rd:DefaultName>
@@ -505,6 +546,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -528,7 +570,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>accountNumber1</rd:DefaultName>
@@ -537,6 +581,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -558,7 +603,9 @@
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>loanTypeName</rd:DefaultName>
@@ -567,6 +614,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -588,7 +636,9 @@
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>customerName</rd:DefaultName>
@@ -597,6 +647,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -618,7 +669,9 @@
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>loanCurrency</rd:DefaultName>
@@ -627,6 +680,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -645,10 +699,14 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!facilityLimit.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>facilityLimit</rd:DefaultName>
@@ -657,6 +715,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -678,7 +737,9 @@
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>facilityRate</rd:DefaultName>
@@ -687,6 +748,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -710,7 +772,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>valueDate</rd:DefaultName>
@@ -719,6 +783,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -742,7 +807,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>maturityDate</rd:DefaultName>
@@ -751,6 +818,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -772,7 +840,9 @@
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>tenorDays</rd:DefaultName>
@@ -781,6 +851,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -802,7 +873,9 @@
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>interestRate</rd:DefaultName>
@@ -811,6 +884,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -832,7 +906,9 @@
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>exchangeRate</rd:DefaultName>
@@ -841,6 +917,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -864,7 +941,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>loanFigure</rd:DefaultName>
@@ -873,6 +952,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -915,7 +995,7 @@
         <DataSetName>FCYScheuledLoan</DataSetName>
         <Top>0.12375in</Top>
         <Left>0.14396in</Left>
-        <Height>0.5in</Height>
+        <Height>0.72in</Height>
         <Width>15.42044in</Width>
         <Style>
           <Border>
@@ -1001,21 +1081,6 @@
             <PaddingBottom>2pt</PaddingBottom>
           </Style>
         </Textbox>
-        <Image Name="Image1">
-          <Source>Embedded</Source>
-          <Value>logo</Value>
-          <Sizing>FitProportional</Sizing>
-          <Top>0.03222in</Top>
-          <Left>13.02148in</Left>
-          <Height>0.65847in</Height>
-          <Width>2.54292in</Width>
-          <ZIndex>2</ZIndex>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </Image>
         <Textbox Name="Textbox32">
           <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
@@ -1039,7 +1104,7 @@
           <Left>0.14395in</Left>
           <Height>0.25in</Height>
           <Width>1.24336in</Width>
-          <ZIndex>3</ZIndex>
+          <ZIndex>2</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1069,7 +1134,7 @@
           <Left>1.44287in</Left>
           <Height>0.25in</Height>
           <Width>2.82324in</Width>
-          <ZIndex>4</ZIndex>
+          <ZIndex>3</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1103,7 +1168,7 @@
           <Left>6.00854in</Left>
           <Height>0.25in</Height>
           <Width>2.18086in</Width>
-          <ZIndex>5</ZIndex>
+          <ZIndex>4</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1135,7 +1200,7 @@
           <Left>8.25885in</Left>
           <Height>0.25in</Height>
           <Width>1.61426in</Width>
-          <ZIndex>6</ZIndex>
+          <ZIndex>5</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1169,7 +1234,7 @@
           <Left>0.14394in</Left>
           <Height>0.25in</Height>
           <Width>1.24337in</Width>
-          <ZIndex>7</ZIndex>
+          <ZIndex>6</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1199,7 +1264,7 @@
           <Left>1.44286in</Left>
           <Height>0.25in</Height>
           <Width>2.82324in</Width>
-          <ZIndex>8</ZIndex>
+          <ZIndex>7</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1210,6 +1275,21 @@
             <PaddingBottom>2pt</PaddingBottom>
           </Style>
         </Textbox>
+        <Image Name="Image1">
+          <Source>Embedded</Source>
+          <Value>firstbank</Value>
+          <Sizing>FitProportional</Sizing>
+          <Top>0.12722in</Top>
+          <Left>13.02148in</Left>
+          <Height>0.65847in</Height>
+          <Width>2.54292in</Width>
+          <ZIndex>8</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </Image>
       </ReportItems>
       <Style>
         <Border>
