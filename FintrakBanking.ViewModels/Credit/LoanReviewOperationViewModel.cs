@@ -54,6 +54,12 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool operationCompleted { get; set; }
 
+        public short? scheduleTypeId { get; set; }
+
+        public short? scheduleDayCountId { get; set; }
+
+        public short? interestTypeId { get; set; }
+
         public List<LoanReviewIrregularScheduleViewModel> reviewIrregularSchedule { get; set; }
     }
 

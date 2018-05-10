@@ -334,13 +334,13 @@ namespace FintrakBanking.Repositories.Setups.General
             var tempGroup = (from a in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP where a.STAFFROLEID == staffRoleId select a).ToList();
             var tempActivities = (from a in context.TBL_TEMP_PROFILE_STAFF_ROLE_AA where a.STAFFROLEID == staffRoleId select a).ToList();
 
-          
-                tempGroup.FirstOrDefault().APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                tempGroup.FirstOrDefault().ISCURRENT = false;
-                tempGroup.FirstOrDefault().DATEAPPROVED = DateTime.Now;
-
-                tempActivities.FirstOrDefault().APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                tempActivities.FirstOrDefault().ISCURRENT = false;
+          foreach(var item in tempGroup)
+            {
+                item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                item.ISCURRENT = false;
+                item.DATEAPPROVED = DateTime.Now;
+            }
+                
            
             List<TBL_PROFILE_STAFF_ROLE_GROUP> userGroups = new List<TBL_PROFILE_STAFF_ROLE_GROUP>();
             List<TBL_PROFILE_STAFF_ROLE_ADT_ACT> userActivities = new List<TBL_PROFILE_STAFF_ROLE_ADT_ACT>();
