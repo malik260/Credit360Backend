@@ -21,6 +21,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_CONDITION_DEFERRAL = new HashSet<TBL_LOAN_CONDITION_DEFERRAL>();
             TBL_LOAN_CONDITION_PRECEDENT = new HashSet<TBL_LOAN_CONDITION_PRECEDENT>();
             TBL_LOAN_CONTINGENT_USAGE = new HashSet<TBL_LOAN_CONTINGENT_USAGE>();
+            TBL_LOAN_FEE_ARCHIVE = new HashSet<TBL_LOAN_FEE_ARCHIVE>();
             TBL_LOAN_FEE = new HashSet<TBL_LOAN_FEE>();
             TBL_LOAN_PRELIMINARY_EVALUATN = new HashSet<TBL_LOAN_PRELIMINARY_EVALUATN>();
             TBL_LOAN_RATE_FEE_CONCESSION = new HashSet<TBL_LOAN_RATE_FEE_CONCESSION>();
@@ -35,7 +36,6 @@ namespace FintrakBanking.Entities.Models
             TBL_TEMP_CUSTOMER_GROUP = new HashSet<TBL_TEMP_CUSTOMER_GROUP>();
             TBL_TEMP_CUSTOMER_PHONCONTACT = new HashSet<TBL_TEMP_CUSTOMER_PHONCONTACT>();
             TBL_TEMP_CUSTOMER = new HashSet<TBL_TEMP_CUSTOMER>();
-            TBL_TEMP_FEE = new HashSet<TBL_TEMP_FEE>();
             TBL_TEMP_PRODUCT = new HashSet<TBL_TEMP_PRODUCT>();
             TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
@@ -78,6 +78,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_CONTINGENT_USAGE> TBL_LOAN_CONTINGENT_USAGE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_FEE_ARCHIVE> TBL_LOAN_FEE_ARCHIVE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_FEE> TBL_LOAN_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -118,9 +121,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_CUSTOMER> TBL_TEMP_CUSTOMER { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_FEE> TBL_TEMP_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT { get; set; }

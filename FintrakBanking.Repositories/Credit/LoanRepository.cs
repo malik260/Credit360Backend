@@ -77,6 +77,16 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public IEnumerable<LookupViewModel> GetRevolvingLoanTypes()
+        {
+            return (from data in context.TBL_LOAN_REVOLVING_TYPE
+                    select new LookupViewModel()
+                    {
+                        lookupId = data.REVOLVINGTYPEID,
+                        lookupName = data.REVOLVINGTYPENAME
+                    });
+        }
+
         /// <summary>
         /// Gets all loan types.
         /// </summary>
@@ -207,7 +217,8 @@ namespace FintrakBanking.Repositories.Credit
                 BOOKINGDATE = DateTime.Now,
                 OVERDRAFTLIMIT = revolvingLoanInput.overdraftLimit,
                 DAYCOUNTCONVENTIONID = revolvingLoanInput.accrualBasis,
-
+                ISTEMPORARYOVERDRAFT = revolvingLoanInput.isTemporaryOverdraft,
+                REVOLVINGTYPEID = revolvingLoanInput.revolvingTypeId,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 LOANSTATUSID = (int)LoanStatusEnum.Inactive,
                 ISDISBURSED = false,
@@ -4593,7 +4604,7 @@ namespace FintrakBanking.Repositories.Credit
                                            currency = a.TBL_CURRENCY.CURRENCYNAME
                                        }).Take(10).AsQueryable();
                 }
-                return allFilteredLoan; //.Where(x => x.operationId == (short)OperationsEnum.CommercialPaperLoanBooking);
+                return allFilteredLoan.Where(x => x.operationId == (short)OperationsEnum.CommercialPaperLoanBooking);
             }
             catch (System.Exception)
             {

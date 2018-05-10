@@ -82,6 +82,22 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [Route("revolving-types")]
+        public HttpResponseMessage GetRevolvingLoanTypes(int id)
+        {
+            try
+            {
+                var data = repo.GetRevolvingLoanTypes();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
+        [HttpGet]
         [Route("loan-application-types")]
         public HttpResponseMessage GetLoanApplicationTypes()
         {

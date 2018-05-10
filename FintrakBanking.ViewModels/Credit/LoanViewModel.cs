@@ -233,11 +233,14 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
-        public decimal disbursableAmount;
-        public string loanStatus;
-        public bool isOverdraft;
-        public bool isBidbond;
-        public short accrualBasis;
+        public decimal disbursableAmount { get; set; }
+        public string loanStatus { get; set; }
+        public bool isOverdraft { get; set; }
+        public bool isBidbond { get; set; }
+        public short accrualBasis { get; set; }
+        public bool isTemporaryOverdraft { get; set; }
+        public short? revolvingTypeId { get; set; }
+
         public string serialNumber { get; set; }
         public int loanId { get; set; }
         public int customerId { get; set; }
