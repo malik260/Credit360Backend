@@ -548,7 +548,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Operation unsuccessful, an error occured while saving changes" });
+                        new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
                 }
             }
             catch (Exception ex)

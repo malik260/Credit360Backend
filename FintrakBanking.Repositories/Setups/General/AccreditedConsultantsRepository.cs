@@ -57,9 +57,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId)
         {
-            return (from m in context.TBL_ACCREDITEDCONSULTANT
+            var data =   (from m in context.TBL_ACCREDITEDCONSULTANT
                     join c in context.TBL_ACCREDITEDCONSULTANT_STATE on m.ACCREDITEDCONSULTANTID equals c.ACCREDITEDCONSULTANTID
-                    where m.COMPANYID == companyId && c.STATEID == stateId && m.ACCREDITEDCONSULTANTTYPEID == (short)AccreditedConsultantTypeEnum.Solicitor
+                    where m.COMPANYID == companyId && c.STATEID == stateId 
                     select new AccreditedConsultantsViewModel
                     {
                         accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
@@ -84,6 +84,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                accreditedConsultantId = k.ACCREDITEDCONSULTANTID
                            }).ToList()
                     });
+            var v = data.ToList();
+
+            return data;
         }
 
         public async Task<bool> AddAccreditedConsultants(AccreditedConsultantsViewModel entity)

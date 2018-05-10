@@ -63,5 +63,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
         List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID);
+        IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType();
     }
 }

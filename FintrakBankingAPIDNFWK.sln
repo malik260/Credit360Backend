@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{FFFC697E-F2BE-4D13-BA78-96985F3549EB}"
 EndProject
@@ -46,6 +46,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTrakBanking.MessagingLoggingService", "EmailMessageLogger\FinTrakBanking.MessagingLoggingService.csproj", "{F81576A9-85EF-4E14-845D-484890A324E0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBaking.StaggingDataUpdateService", "FintrakBaking.BranchUpdateService\FintrakBaking.StaggingDataUpdateService.csproj", "{B5B4DB65-F19E-47D7-A281-98482EE522CF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExtractionService", "ExtractionService", "{98AE0E2D-C8D2-42B7-8170-AA980F6B9551}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

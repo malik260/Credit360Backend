@@ -56,6 +56,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Setups.Credit;
     using Ninject.Web.Common.WebHost;
     using FinTrakBanking.ThirdPartyIntegration.Credit;
+    using FintrakBanking.Repositories.Validetion;
+    using FintrakBanking.Interfaces.Validation;
 
     public static class NinjectWebCommon
     {
@@ -201,8 +203,8 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IOverRideRepository>().To<OverRideRepository>();
             kernel.Bind<IStaffAccountHistoryRepository>().To<StaffAccountHistoryRepository>();
             kernel.Bind<IIntegrationWithCWGAPI>().To<IntegrationWithCWGAPI>();
-            kernel.Bind<ICompanyInformationRepository>().To<CompanyInformationRepository>();
             kernel.Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>();
+            kernel.Bind<IOverDraftValidation>().To<OverDraftValidation>();
             
         }
 

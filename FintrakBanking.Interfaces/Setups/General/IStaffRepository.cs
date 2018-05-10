@@ -62,5 +62,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         StaffDocumentViewModel GetStaffSignatureByStaffCode(string staffCode, int companyId);
 
         bool UpdateSupervisor(SupervisorViewModel entity);
+
+        bool GoForBulkApproval(List<ApprovalViewModel> model, UserInfo userInfo);
     }
 }

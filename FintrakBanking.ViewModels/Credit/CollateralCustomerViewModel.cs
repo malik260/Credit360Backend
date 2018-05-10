@@ -249,6 +249,8 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public decimal availableSecurityValue { get { return (decimal)collateralValue - valueInUse; } }
+
         public bool canMappedToApplication { get; set; }
         public bool allowApplicationMapping { get; set; }
         public string bank { get; set; }
@@ -269,17 +271,20 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime lastVisitationDate { get; set; }
         public int visitationCycle { get; set; }
         public bool requireVisitation { get; set; }
+        public decimal valueInUse { get; set; }
         public string cityName { get; set; }
         public string countryName { get; set; }
         public string collateralValuer { get; set; }
         public string propertyBaseType { get; set; }
         public string perfectionStatusName { get; set; }
         public decimal stampToCoverAmount { get; set; }
+        public short baseCurrency { get; set; }
+        public short baseCurrencyId { get; set; }
+        public bool disAllowCollateral { get; set; }
     }
 
     public class crossGarantee
     {
-
         public string institutionName { get; set; }
         public string guarantorAddress { get; set; }
         //  public string guarantorReferenceNumber { get; set; }
