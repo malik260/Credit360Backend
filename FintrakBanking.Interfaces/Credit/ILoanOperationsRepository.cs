@@ -10,6 +10,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
+        bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId);
         bool DoesOperationExist(int loanId, int operationTypeId);
         bool GoForApproval(ApprovalViewModel entity);
         bool AddCollateralSearchLien(CasaLienViewModel model);
@@ -63,5 +64,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
         List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID);
+        IEnumerable<LoanFeeOperationViewModel> GetLoanChargeFeeByLoanId(int loanId);
+        IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType();
     }
 }

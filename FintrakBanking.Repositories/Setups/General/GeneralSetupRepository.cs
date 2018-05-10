@@ -132,6 +132,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<LookupViewModel> GetAllDayCount()
         {
             return (from data in context.TBL_DAY_COUNT_CONVENTION
+                    where data.INUSE == true
                     select new LookupViewModel()
                     {
                         lookupId = data.DAYCOUNTCONVENTIONID,

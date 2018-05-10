@@ -54,6 +54,12 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool operationCompleted { get; set; }
 
+        public short? scheduleTypeId { get; set; }
+
+        public short? scheduleDayCountId { get; set; }
+
+        public short? interestTypeId { get; set; }
+
         public List<LoanReviewIrregularScheduleViewModel> reviewIrregularSchedule { get; set; }
     }
 
@@ -74,13 +80,14 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
-        public string currencyCode;
-        public bool isBankFormat;
-        public int companyId;
-        public string createdByName;
-        public DateTime dateTimeCreated;
-        public decimal maturityAmount;
-        public string relatedReferenceNumber;
+        public string currencyCode { get; set; }
+        public bool isBankFormat { get; set; }
+        public int companyId { get; set; }
+        public string createdByName { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public decimal maturityAmount { get; set; }
+        public string relatedReferenceNumber { get; set; }
+        public decimal interestAmount { get; set; }
 
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -316,5 +323,11 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int id { get; set; }
         public string name { get; set; }
+    }
+
+    public class MaturityIntructionTypeViewModel
+    {
+        public short instructionTypeId { get; set; }
+        public string instructionTypeName { get; set; }
     }
 }

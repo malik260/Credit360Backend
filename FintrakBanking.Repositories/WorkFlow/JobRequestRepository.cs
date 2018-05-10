@@ -818,13 +818,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 input.sourceApplicationId = (short)baseApplication.LOANAPPLICATIONDETAILID;
                 input.companyId = model.companyId;
                 input.userBranchId = model.userBranchId;
-
-                var suspense = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == (short)OperationsEnum.CollateralSearch);
-
-                if (!suspense.Any())
-                    throw new Exception("Suspense account not defined");
-
-                //DebitCustomer(suspense.FirstOrDefault().GLACCOUNTID, casa, chargeAmount, input);
             }
 
             return context.SaveChanges() > 0;
