@@ -5194,7 +5194,36 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param)
         {
-            throw new NotImplementedException();
+            var data = (from l in context.TBL_LOAN
+                        where l.LOANREFERENCENUMBER == param.param.Trim() && param.branchId == 0
+                        || l.TBL_CUSTOMER.FIRSTNAME.StartsWith(param.param.Trim()) && param.branchId == 0
+                        || l.TBL_CUSTOMER.MAIDENNAME.StartsWith(param.param.Trim()) && param.branchId == 0
+                        || l.TBL_CUSTOMER.LASTNAME.StartsWith(param.param.Trim()) && param.branchId == 0
+                        || l.BRANCHID == param.branchId && l.LOANREFERENCENUMBER == param.param.Trim()
+                        || l.BRANCHID == param.branchId && param.param==null
+                        || param.param == ""
+
+                        select new LoanViewModel
+                        {
+                            loanId = l.TERMLOANID,
+                            customerId = l.CUSTOMERID,
+                            customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.LASTNAME,
+                            productId = l.PRODUCTID,
+                            companyId = l.COMPANYID,
+                            casaAccountId = l.CASAACCOUNTID,
+                            branchId = l.BRANCHID,
+                            branchName = l.TBL_BRANCH.BRANCHNAME,
+                            loanReferenceNumber = l.LOANREFERENCENUMBER,
+                            interestRate = l.INTERESTRATE,
+                            principalAmount = l.PRINCIPALAMOUNT,
+                            approvedAmount = l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                            casaAccountNumber = l.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            productAccountName = l.TBL_PRODUCT.PRODUCTNAME,
+                            subSectorName = l.TBL_SUB_SECTOR.NAME,
+                            sectorName = l.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                            outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
+                        });
+            return data;
         }
     }
 }

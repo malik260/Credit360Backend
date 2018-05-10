@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class LoanStatement {
+    public partial class ApprovalTrailWith_SLA {
         
         /// <summary>
         /// form1 control.
@@ -49,6 +49,24 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSource1;
         
         /// <summary>
+        /// operationId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label operationId;
+        
+        /// <summary>
+        /// targetId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label targetId;
+        
+        /// <summary>
         /// companyId control.
         /// </summary>
         /// <remarks>
@@ -58,12 +76,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.WebControls.Label companyId;
         
         /// <summary>
-        /// loanId control.
+        /// staffId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label loanId;
+        protected global::System.Web.UI.WebControls.Label staffId;
     }
 }
