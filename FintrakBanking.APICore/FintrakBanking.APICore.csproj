@@ -404,11 +404,6 @@
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Filters\AuthorizeActivity.cs" />
-    <Compile Include="Report File MVC\fintrakDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>fintrakDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportDataset\ComapnyInfoDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
