@@ -158,40 +158,42 @@ namespace WinApp
             short priceIndex = 1;
             double newRate = 20;
             int customeId = 1;
-
-            List<FinanceTransactionViewModel> tran = new List<FinanceTransactionViewModel>();
-
-            FinanceTransactionViewModel tran1 = new FinanceTransactionViewModel();
-           
-            {
-
-                    tran1.operationId = 7;
-                    tran1.sourceReferenceNumber = "C10000";
-                    tran1.description = "yes";
-                    tran1.batchCode = "22222";
-                    tran1.currencyId = 1;
-                    tran1.casaAccountId = 202236746;
-                    tran1.debitAmount = 200000;
+            short sectorId = 264;
 
 
+            //List<FinanceTransactionViewModel> tran = new List<FinanceTransactionViewModel>();
+
+            //FinanceTransactionViewModel tran1 = new FinanceTransactionViewModel();
+
+            //{
+
+            //        tran1.operationId = 7;
+            //        tran1.sourceReferenceNumber = "C10000";
+            //        tran1.description = "yes";
+            //        tran1.batchCode = "22222";
+            //        tran1.currencyId = 1;
+            //        tran1.casaAccountId = 202236746;
+            //        tran1.debitAmount = 200000;
 
 
-            }
-                tran.Add(tran1);
-            FinanceTransactionViewModel tran2 = new FinanceTransactionViewModel();
-            {
-                    tran2.operationId = 3;
-                    tran2.sourceReferenceNumber = "D10000";
-                    tran2.description = "no";
-                    tran2.batchCode = "22222";
-                    tran2.currencyId = 1;
-                    tran2.casaAccountId = 2004169347;
-                tran2.creditAmount = 200000;
 
 
-            }
-                tran.Add(tran2);
-        
+            //}
+            //    tran.Add(tran1);
+            //FinanceTransactionViewModel tran2 = new FinanceTransactionViewModel();
+            //{
+            //        tran2.operationId = 3;
+            //        tran2.sourceReferenceNumber = "D10000";
+            //        tran2.description = "no";
+            //        tran2.batchCode = "22222";
+            //        tran2.currencyId = 1;
+            //        tran2.casaAccountId = 2004169347;
+            //    tran2.creditAmount = 200000;
+
+
+            //}
+            //    tran.Add(tran2);
+
 
             //string vDesc = txtDesc.Text;
 
@@ -240,51 +242,41 @@ namespace WinApp
             //ccc.RunAsync().GetAwaiter().GetResult();
             //ccc.GetAllCustomers().GetAwaiter().GetResult();
             //loan.AddLoanTestFees();
-           // TransactionPosting transaction = new TransactionPosting(context);
+            credit.ValidateAmountBySector(sectorId);// GetSectorLoanAmountLimit
 
-           
+            //TransactionPosting transaction = new TransactionPosting(context);
+
+
 
 
             //bool data = false;
 
             //Task.Run(async () => { data = await transaction.APITransactionPosting(tran); }).GetAwaiter().GetResult();
             //financeTransaction.UpdateCustomTransactions(tran[0].batchCode);
-            //MessageBox.Show("Successful", "Fintrak");
+            MessageBox.Show("Successful", "Fintrak");
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            TransactionPosting tp = new TransactionPosting(context);
+            ResponseMessageViewModel integrationResult = null;
+            var model = new OverDraftNormalViewModel
+            {
+               accountNumber= "2030562192",
+                sanctionReferenceNumber= "1234422",
+                documentDate ="03-04-2018",
+                sanctionLevel= "003",
+                sanctionAuthorizer="999",
+                reviewedDate = "03-05-2018",
+                sanctionLimit= "50000",
+                applicationDate= "03-04-2018",
+                expiryDate="20-06-2099",
+                sanctionDate ="03-04-2018"
+            };
 
-            // var dsh=  cwpAIP.GetGLAccountDetails("11019900001811");
-          var ddd=  credit.ValidateAmountBySector(264);
-
+           integrationResult =  cwpAIP.OverDraftNormal(model);
 
         }
 
-        //private void button3_Click(object sender, EventArgs e)
-        //{
-        //    TransactionPosting tp = new TransactionPosting(context);
-        //    ResponseMessageViewModel integrationResult = null;
-        //    var model = new OverDraftExtendViewModel
-        //    {
-        //       accountNumber= "2030562192",
-        //        sanctionReferenceNumber= "1234422",
-        //        //documentDate ="03-04-2018",
-        //        //sanctionLevel= "003",
-        //        //sanctionAuthorizer="999",
-        //        //reviewedDate = "03-05-2018",
-        //        sanctionLimit= "50000",
-        //        //applicationDate= "03-04-2018",
-        //        expiryDate="20-06-2099",
-        //        //sanctionDate ="03-04-2018"
-        //    };
-
-        //    bool result =  false;
-
-        //    result = cwpAIP.GetExposePersonStatus("1000451874");
-
-        // //  integrationResult =  cwpAIP.OverDraftExtend(model);
-
-        //}
     }
 }

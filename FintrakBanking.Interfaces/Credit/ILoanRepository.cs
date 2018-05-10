@@ -114,6 +114,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param);
 
+        IQueryable<LoanViewModel> SearchRunningCommercialForLoans(string searchQuery);
+
+        IEnumerable<LookupViewModel> GetRevolvingLoanTypes();
+
 
     }
 }

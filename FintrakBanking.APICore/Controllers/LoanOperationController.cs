@@ -69,6 +69,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+        [HttpGet]
+        [Route("maturity-instruction-type")]
+        public HttpResponseMessage GetMaturityInstructionType()
+        {
+            try
+            {
+                var data = repo.GetMaturityInstructionType();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
 
         [HttpGet]
         [Route("mature-commercial-loans/detail/{loanApplicationDetailId}")]
@@ -115,6 +129,28 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
+        }
+
+        [HttpGet]
+        [Route("loan-charge-fee-byloanid/")]
+        public HttpResponseMessage GetLoanChargeFeeByLoanId(int loanId)
+        {
+            try
+            {
+                var data = repo.GetLoanChargeFeeByLoanId(loanId);
+                if(data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data,  });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record found."});
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+
         }
 
         [HttpPost]

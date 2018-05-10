@@ -27,7 +27,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         FinTrakBankingContext _context)
         {
             this.context = _context;
-            var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();  
+            var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
             API_KEY = configdata.APIKEY;
             API_URL = configdata.APIURL;
         }

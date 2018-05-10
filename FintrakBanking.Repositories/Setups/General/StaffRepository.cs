@@ -634,7 +634,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     isUpdate = true;
                     targetUser.USERNAME = tempUser.USERNAME;
-                    targetUser.PASSWORD = StaticHelpers.EncryptSha512(tempUser.PASSWORD, StaticHelpers.EncryptionKey);
+                    targetUser.PASSWORD = tempUser.PASSWORD;
                     targetUser.ISFIRSTLOGINATTEMPT = false;
                     targetUser.ISACTIVE = true;
                     targetUser.ISLOCKED = false;
@@ -649,7 +649,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     targetUser = new TBL_PROFILE_USER()
                     {
                         USERNAME = tempUser.USERNAME,
-                        PASSWORD = StaticHelpers.EncryptSha512(tempUser.PASSWORD, StaticHelpers.EncryptionKey),
+                        PASSWORD = tempUser.PASSWORD,
                         ISFIRSTLOGINATTEMPT = false,
                         ISACTIVE = true,
                         ISLOCKED = false,
@@ -834,51 +834,124 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             bool isUpdate = false;
             TBL_TEMP_PROFILE_USER tempUser = null;
-            TBL_STAFF entity = null;
-            TBL_PROFILE_USER targetUser = null;
+            List<TBL_TEMP_PROFILE_USERGROUP> tempGroup = null;
+            List<TBL_TEMP_PROFILE_ADTN_ACTIVITY> tempActivities = null;
+
+            List<TBL_PROFILE_USERGROUP> userGroups = new List<TBL_PROFILE_USERGROUP>();
+            List<TBL_PROFILE_ADDITIONALACTIVITY> userActivities = new List<TBL_PROFILE_ADDITIONALACTIVITY>();
 
             tempUser = (from a in context.TBL_TEMP_PROFILE_USER
                         where a.TEMPSTAFFID == staffid && a.ISCURRENT == true &&
                         a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                         select a).FirstOrDefault();
-
-          
-            var temp = context.TBL_TEMP_STAFF.Find(staffid);
-            if (temp != null)
-            {
-                entity = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == temp.STAFFCODE.ToLower());
-                if (entity != null)
-                {
-                    targetUser = (from a in context.TBL_PROFILE_USER
-                                  where a.STAFFID == entity.STAFFID
-                                  select a).FirstOrDefault();
-                }
-            }
-
             if (tempUser != null)
             {
+                tempGroup = (from a in context.TBL_TEMP_PROFILE_USERGROUP where a.TEMPUSERID == tempUser.TEMPUSERID select a).ToList();
+                tempActivities = (from a in context.TBL_TEMP_PROFILE_ADTN_ACTIVITY where a.TEMPUSERID == tempUser.TEMPUSERID select a).ToList();
+
                 tempUser.ISCURRENT = false;
                 tempUser.APPROVALSTATUS = true;
                 tempUser.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
+                if (tempActivities.Count > 0)
+                {
+                    foreach (var item in tempActivities)
+                    {
+                        var userActivity = new TBL_PROFILE_ADDITIONALACTIVITY()
+                        {
+                            ACTIVITYID = item.ACTIVITYID,
+                            CANADD = false,
+                            CANEDIT = false,
+                            CANAPPROVE = false,
+                            CANDELETE = false,
+                            CANVIEW = false,
+                            CREATEDBY = item.CREATEDBY,
+                            DATETIMECREATED = DateTime.Now,
+                        };
+                        userActivities.Add(userActivity);
+                    }
+                }
+
+                if (tempGroup.Count > 0)
+                {
+                    foreach (var item in tempGroup)
+                    {
+                        var grpItem = new TBL_PROFILE_USERGROUP()
+                        {
+                            GROUPID = item.GROUPID,
+                            APPROVALSTATUS = false,
+                            DATETIMECREATED = DateTime.Now,
+                            CREATEDBY = item.CREATEDBY,
+                        };
+                        userGroups.Add(grpItem);
+                    }
+                    foreach (var item in tempGroup)
+                    {
+                        item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        item.ISCURRENT = false;
+                        item.DATEAPPROVED = DateTime.Now;
+                    }
+                }
+            }
+
+            TBL_STAFF entity = null;
+            TBL_PROFILE_USER targetUser = null;
+            var temp = context.TBL_TEMP_STAFF.Find(staffid);
+            if (temp != null)
+            {
+                entity = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == temp.STAFFCODE.ToLower());
+                // Removing existing groups and activities
+                if (entity != null)
+                {
+
+                    targetUser = (from a in context.TBL_PROFILE_USER
+                                  where a.STAFFID == entity.STAFFID
+                                  select a).FirstOrDefault();
+                    if (targetUser != null)
+                    {
+                        var targetGroups = context.TBL_PROFILE_USERGROUP.Where(x => x.USERID == targetUser.USERID).ToList();
+                        var targetActivities = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == targetUser.USERID).ToList();
+                        if (targetGroups.Any())
+                        {
+                            foreach (var item in targetGroups)
+                            {
+                                context.TBL_PROFILE_USERGROUP.Remove(item);
+                            }
+                        }
+                        if (targetActivities.Any())
+                        {
+                            foreach (var item in targetActivities)
+                            {
+                                context.TBL_PROFILE_ADDITIONALACTIVITY.Remove(item);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if (tempUser != null)
+            {
                 if (targetUser != null)
                 {
                     isUpdate = true;
                     targetUser.USERNAME = tempUser.USERNAME;
-                    targetUser.PASSWORD = StaticHelpers.EncryptSha512(tempUser.PASSWORD, StaticHelpers.EncryptionKey);
+                    targetUser.PASSWORD = tempUser.PASSWORD;
                     targetUser.ISFIRSTLOGINATTEMPT = false;
                     targetUser.ISACTIVE = true;
                     targetUser.ISLOCKED = false;
                     targetUser.FAILEDLOGONATTEMPT = 0;
                     targetUser.SECURITYQUESTION = tempUser.SECURITYQUESTION;
                     targetUser.SECURITYANSWER = tempUser.SECURITYANSWER;
+                    targetUser.TBL_PROFILE_USERGROUP = userGroups;
+                    targetUser.TBL_PROFILE_ADDITIONALACTIVITY = userActivities;
                 }
                 else
                 {
                     targetUser = new TBL_PROFILE_USER()
                     {
                         USERNAME = tempUser.USERNAME,
-                        PASSWORD = StaticHelpers.EncryptSha512(tempUser.PASSWORD, StaticHelpers.EncryptionKey),
+                        PASSWORD = tempUser.PASSWORD,
                         ISFIRSTLOGINATTEMPT = false,
                         ISACTIVE = true,
                         ISLOCKED = false,
@@ -891,9 +964,13 @@ namespace FintrakBanking.Repositories.Setups.General
                         DATETIMECREATED = tempUser.DATETIMECREATED,
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
                         APPROVALSTATUS = false,
+                        TBL_PROFILE_USERGROUP = userGroups,
+                        TBL_PROFILE_ADDITIONALACTIVITY = userActivities,
                     };
+
                 }
             }
+
             if (temp != null)
             {
                 if (entity != null)
@@ -1986,7 +2063,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 CUSTOMERSENSITIVITYLEVELID = staff.CUSTOMERSENSITIVITYLEVELID,
                 DATEOFBIRTH = staff.DATEOFBIRTH,
                 DATETIMECREATED = DateTime.Now,
-                DEPARTMENTUNITID = staff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
+                DEPARTMENTUNITID = staff.DEPARTMENTUNITID,
                 EMAIL = staff.EMAIL,
                 EMAILOFNOK = staff.EMAILOFNOK,
                 GENDER = staff.GENDER,
