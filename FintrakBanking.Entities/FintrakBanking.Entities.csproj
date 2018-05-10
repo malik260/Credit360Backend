@@ -282,6 +282,7 @@
     <Compile Include="Models\TBL_LOAN_COVENANT_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_FEE.cs" />
+    <Compile Include="Models\TBL_LOAN_FEE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_FEE_SCHEDULE.cs" />
     <Compile Include="Models\TBL_LOAN_FORCE_DEBIT.cs" />
     <Compile Include="Models\TBL_LOAN_MARKET.cs" />
@@ -306,6 +307,7 @@
     <Compile Include="Models\TBL_LOAN_REVIEW_OPRATN_IREG_SC.cs" />
     <Compile Include="Models\TBL_LOAN_REVOLVING.cs" />
     <Compile Include="Models\TBL_LOAN_REVOLVING_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_LOAN_REVOLVING_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_CATEGORY.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_DAILY.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_DAILY_ARCHIV.cs" />

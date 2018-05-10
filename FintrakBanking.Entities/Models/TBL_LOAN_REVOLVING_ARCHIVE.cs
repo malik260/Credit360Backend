@@ -33,6 +33,8 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
+        public short REVOLVINGTYPEID { get; set; }
+
         public double EXCHANGERATE { get; set; }
 
         [Required]
@@ -82,6 +84,8 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "money")]
         public decimal PENALCHARGEAMOUNT { get; set; }
+
+        public bool ISTEMPORARYOVERDRAFT { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
 
@@ -158,6 +162,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE2 { get; set; }
 
         public virtual TBL_LOAN_REVOLVING TBL_LOAN_REVOLVING { get; set; }
+
+        public virtual TBL_LOAN_REVOLVING_TYPE TBL_LOAN_REVOLVING_TYPE { get; set; }
 
         public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
     }

@@ -41,7 +41,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue (DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> InterestSuspension(int loanId, DateTime applicationDate, int staffId);
-        IEnumerable<LoanViewModel> ArchiveLoan(int loanId, int operationId);
+        LoanViewModel ArchiveLoan(int loanId, int operationId);
         IEnumerable<LoanViewModel> BulkArchiveLoan();
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId);
         IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId);
