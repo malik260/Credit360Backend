@@ -46,7 +46,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-        public short loanSystemTypeId;
+        //public short loanSystemTypeId;
 
         public decimal disbursableAmount { get; set; }
         public string loanStatusName { get; set; }

@@ -3810,7 +3810,6 @@ namespace FintrakBanking.Repositories.Credit
                              productId = a.PRODUCTID,
                              companyId = a.COMPANYID,
                              casaAccountId = a.CASAACCOUNTID,
-                             // casaAccountId2 = a.CASAACCOUNTID2,
                              branchId = a.BRANCHID,
                              currencyId = a.CURRENCYID,
                              loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
@@ -3827,8 +3826,6 @@ namespace FintrakBanking.Repositories.Credit
                              maturityDate = a.MATURITYDATE,
                              bookingDate = a.BOOKINGDATE,
                              overdraftLimit = a.OVERDRAFTLIMIT,
-                             //disbursedAmount = a.DISBURSED_AMOUNT,
-                             //interestAmount = a.INTEREST_AMOUNT,
                              pastDuePrincipal = a.PASTDUEPRINCIPAL,
                              pastDueInterest = a.PASTDUEINTEREST,
                              interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
@@ -3853,66 +3850,64 @@ namespace FintrakBanking.Repositories.Credit
                              createdBy = a.CREATEDBY,
                              dateTimeCreated = a.DATETIMECREATED,
 
-                         }).ToList();
+                         }).FirstOrDefault();
 
             List<TBL_LOAN_REVOLVING_ARCHIVE> overDraftArchive = new List<TBL_LOAN_REVOLVING_ARCHIVE>();
 
 
 
-            foreach (var item in model)
-            {
+            //foreach (var item in model)
+            //{
 
                 TBL_LOAN_REVOLVING_ARCHIVE addOverDraftArchive = new TBL_LOAN_REVOLVING_ARCHIVE();
 
 
                 addOverDraftArchive.ARCHIVEDATE = DateTime.Today;
-                addOverDraftArchive.REVOLVINGLOANID = item.loanId;
-                addOverDraftArchive.CUSTOMERID = item.customerId;
-                addOverDraftArchive.PRODUCTID = item.productId;
-                addOverDraftArchive.COMPANYID = item.companyId;
-                addOverDraftArchive.CASAACCOUNTID = item.casaAccountId;
-                //addOverDraftArchive.CASAACCOUNTID2 = item.casaAccountId2;
-                addOverDraftArchive.BRANCHID = item.branchId;
-                addOverDraftArchive.CURRENCYID = item.currencyId;
-                addOverDraftArchive.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
-                addOverDraftArchive.EXCHANGERATE = item.exchangeRate;
-                addOverDraftArchive.LOANREFERENCENUMBER = item.loanReferenceNumber;
-                addOverDraftArchive.RELATED_LOAN_REFERENCE_NUMBER = item.relatedLoanReferenceNumber;
-                addOverDraftArchive.SUBSECTORID = item.subSectorId;
-                addOverDraftArchive.RELATIONSHIPOFFICERID = item.relationshipOfficerId;
-                addOverDraftArchive.RELATIONSHIPMANAGERID = item.relationshipManagerId;
-                addOverDraftArchive.MISCODE = item.misCode;
-                addOverDraftArchive.TEAMMISCODE = item.teamMiscode;
-                addOverDraftArchive.INTERESTRATE = item.interestRate;
-                addOverDraftArchive.EFFECTIVEDATE = item.effectiveDate;
-                addOverDraftArchive.MATURITYDATE = item.maturityDate;
-                addOverDraftArchive.BOOKINGDATE = item.bookingDate;
-                addOverDraftArchive.OVERDRAFTLIMIT = item.overdraftLimit;
-                //addOverDraftArchive.DISBURSED_AMOUNT = item.disbursedAmount;
-                //addOverDraftArchive.INTEREST_AMOUNT = item.interestAmount;
-                addOverDraftArchive.APPROVALSTATUSID = item.approvalStatusId;
-                addOverDraftArchive.APPROVEDBY = item.approvedBy;
-                addOverDraftArchive.APPROVERCOMMENT = item.approverComment;
-                addOverDraftArchive.DATEAPPROVED = item.dateApproved;
-                addOverDraftArchive.LOANSTATUSID = item.loanStatusId;
-                addOverDraftArchive.ISDISBURSED = item.isDisbursed;
-                addOverDraftArchive.DISBURSEDBY = item.disbursedBy;
-                addOverDraftArchive.DISBURSERCOMMENT = item.disburserComment;
-                addOverDraftArchive.DISBURSEDATE = item.disburseDate;
-                addOverDraftArchive.OPERATIONID = item.operationId;
-                addOverDraftArchive.CREATEDBY = item.createdBy;
-                addOverDraftArchive.DATETIMECREATED = item.dateTimeCreated;
-                addOverDraftArchive.DISCHARGELETTER = item.dischargeLetter;
-                addOverDraftArchive.SUSPENDINTEREST = item.suspendInterest;
-                addOverDraftArchive.DAYCOUNTCONVENTIONID = (short)item.dayCountConventionId;
+                addOverDraftArchive.REVOLVINGLOANID = model.loanId;
+                addOverDraftArchive.CUSTOMERID = model.customerId;
+                addOverDraftArchive.LOANSYSTEMTYPEID = model.loanSystemTypeId;
+                addOverDraftArchive.PRODUCTID = model.productId;
+                addOverDraftArchive.COMPANYID = model.companyId;
+                addOverDraftArchive.CASAACCOUNTID = model.casaAccountId;
+                addOverDraftArchive.BRANCHID = model.branchId;
+                addOverDraftArchive.CURRENCYID = model.currencyId;
+                addOverDraftArchive.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+                addOverDraftArchive.EXCHANGERATE = model.exchangeRate;
+                addOverDraftArchive.LOANREFERENCENUMBER = model.loanReferenceNumber;
+                addOverDraftArchive.RELATED_LOAN_REFERENCE_NUMBER = model.relatedLoanReferenceNumber;
+                addOverDraftArchive.SUBSECTORID = model.subSectorId;
+                addOverDraftArchive.RELATIONSHIPOFFICERID = model.relationshipOfficerId;
+                addOverDraftArchive.RELATIONSHIPMANAGERID = model.relationshipManagerId;
+                addOverDraftArchive.MISCODE = model.misCode;
+                addOverDraftArchive.TEAMMISCODE = model.teamMiscode;
+                addOverDraftArchive.INTERESTRATE = model.interestRate;
+                addOverDraftArchive.EFFECTIVEDATE = model.effectiveDate;
+                addOverDraftArchive.MATURITYDATE = model.maturityDate;
+                addOverDraftArchive.BOOKINGDATE = model.bookingDate;
+                addOverDraftArchive.OVERDRAFTLIMIT = model.overdraftLimit;
+                addOverDraftArchive.APPROVALSTATUSID = model.approvalStatusId;
+                addOverDraftArchive.APPROVEDBY = model.approvedBy;
+                addOverDraftArchive.APPROVERCOMMENT = model.approverComment;
+                addOverDraftArchive.DATEAPPROVED = model.dateApproved;
+                addOverDraftArchive.LOANSTATUSID = model.loanStatusId;
+                addOverDraftArchive.ISDISBURSED = model.isDisbursed;
+                addOverDraftArchive.DISBURSEDBY = model.disbursedBy;
+                addOverDraftArchive.DISBURSERCOMMENT = model.disburserComment;
+                addOverDraftArchive.DISBURSEDATE = model.disburseDate;
+                addOverDraftArchive.OPERATIONID = model.operationId;
+                addOverDraftArchive.CREATEDBY = model.createdBy;
+                addOverDraftArchive.DATETIMECREATED = model.dateTimeCreated;
+                addOverDraftArchive.DISCHARGELETTER = model.dischargeLetter;
+                addOverDraftArchive.SUSPENDINTEREST = model.suspendInterest;
+                addOverDraftArchive.DAYCOUNTCONVENTIONID = (short)model.dayCountConventionId;
                 addOverDraftArchive.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
                 addOverDraftArchive.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
-                addOverDraftArchive.NPLDATE = item.nplDate;
-                addOverDraftArchive.CREATEDBY = item.createdBy;
-                addOverDraftArchive.DATETIMECREATED = item.dateTimeCreated;
+                addOverDraftArchive.NPLDATE = model.nplDate;
+                addOverDraftArchive.CREATEDBY = model.createdBy;
+                addOverDraftArchive.DATETIMECREATED = model.dateTimeCreated;
 
                 overDraftArchive.Add(addOverDraftArchive);
-            }
+            //}
             //tbl_Loan
             this.context.TBL_LOAN_REVOLVING_ARCHIVE.AddRange(overDraftArchive);
 
