@@ -8915,6 +8915,19 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType()
+        {
+            var data = from a in context.TBL_LOAN_MATURITY_INSTRU_TYPE
+                       select new MaturityIntructionTypeViewModel
+                       {
+                          instructionTypeId = a.INSTRUCTIONTYPEID ,
+                            instructionTypeName = a.INSTRUCTIONTYPENAME,
+                       };
+
+            return data.ToList();
+        }
+
+
         public List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId)
         {
             var data = from a in context.TBL_LOAN_APPLICATION_DETAIL
@@ -8969,6 +8982,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             principalAmount = ln.PRINCIPALAMOUNT,
                             interestRate = ln.INTERESTRATE,
+                            interestAmount = ln.OUTSTANDINGINTEREST,
                             outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
                             outstandingInterest = ln.OUTSTANDINGINTEREST,
                             maturityAmount = ln.OUTSTANDINGPRINCIPAL + ln.OUTSTANDINGINTEREST,

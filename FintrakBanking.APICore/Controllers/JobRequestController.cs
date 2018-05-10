@@ -246,7 +246,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [Route("global-job-request")]
         public HttpResponseMessage AddGlobalJobRequest([FromBody] JobRequestViewModel entity)
-        {
+         {
             try
             {
                 entity.userBranchId = (short)token.GetBranchId;
