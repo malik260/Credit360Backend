@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COMPLIANCE_TIMELINE")]
+    [Table("TBL_COMPLIANCE_TIMELINE")]
     public partial class TBL_COMPLIANCE_TIMELINE
     {
         [Key]

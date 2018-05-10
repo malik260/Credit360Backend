@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_GAURANTEE")]
+    [Table("TBL_COLLATERAL_GAURANTEE")]
     public partial class TBL_COLLATERAL_GAURANTEE
     {
         [Key]
@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string GUARANTORADDRESS { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal GUARANTEEVALUE { get; set; }
 
         public DateTime STARTDATE { get; set; }

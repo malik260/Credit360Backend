@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CHECKLIST_TYPE_APROV_LEVL")]
+    [Table("TBL_CHECKLIST_TYPE_APROV_LEVL")]
     public partial class TBL_CHECKLIST_TYPE_APROV_LEVL
     {
         [Key]

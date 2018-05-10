@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_ERRORLOG")]
+    [Table("TBL_ERRORLOG")]
     public partial class TBL_ERRORLOG
     {
         [Key]

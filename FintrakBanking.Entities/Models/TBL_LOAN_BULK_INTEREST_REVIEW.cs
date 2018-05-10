@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_BULK_INTEREST_REVIEW")]
+    [Table("TBL_LOAN_BULK_INTEREST_REVIEW")]
     public partial class TBL_LOAN_BULK_INTEREST_REVIEW
     {
         [Key]
@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int COMPANYID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime EFFECTIVEDATE { get; set; }
 
         public short PRODUCTPRICEINDEXID { get; set; }
@@ -31,7 +31,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CREATEDBY { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime DATECREATED { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }

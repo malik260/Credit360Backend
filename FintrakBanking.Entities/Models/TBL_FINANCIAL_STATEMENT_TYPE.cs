@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("finance.TBL_FINANCIAL_STATEMENT_TYPE")]
+    [Table("TBL_FINANCIAL_STATEMENT_TYPE")]
     public partial class TBL_FINANCIAL_STATEMENT_TYPE
     {
         [Key]

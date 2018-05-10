@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string ACCOUNTID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? AMOUNT { get; set; }
 
         [StringLength(10)]

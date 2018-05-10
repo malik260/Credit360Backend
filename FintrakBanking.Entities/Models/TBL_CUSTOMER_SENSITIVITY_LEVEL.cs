@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_SENSITIVITY_LEVEL")]
+    [Table("TBL_CUSTOMER_SENSITIVITY_LEVEL")]
     public partial class TBL_CUSTOMER_SENSITIVITY_LEVEL
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

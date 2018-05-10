@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_FINANCE_TRANSACTION")]
+    [Table("TBL_FINANCE_TRANSACTION")]
     public partial class TBL_FINANCE_TRANSACTION
     {
         [Key]
@@ -29,20 +29,20 @@ namespace FintrakBanking.Entities.Models
 
         public int? CASAACCOUNTID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal DEBITAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal CREDITAMOUNT { get; set; }
 
         [Required]
         [StringLength(500)]
         public string DESCRIPTION { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime VALUEDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime POSTEDDATE { get; set; }
 
         public int COMPANYID { get; set; }
@@ -63,7 +63,7 @@ namespace FintrakBanking.Entities.Models
 
         public int APPROVEDBY { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime APPROVEDDATE { get; set; }
 
         public DateTime APPROVEDDATETIME { get; set; }

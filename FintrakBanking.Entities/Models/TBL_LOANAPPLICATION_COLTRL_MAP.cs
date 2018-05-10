@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOANAPPLICATION_COLTRL_MAP")]
+    [Table("TBL_LOANAPPLICATION_COLTRL_MAP")]
     public partial class TBL_LOANAPPLICATION_COLTRL_MAP
     {
         [Key]

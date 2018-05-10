@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_COLLATERAL_PLANT_EQUP")]
+    [Table("TBL_TEMP_COLLATERAL_PLANT_EQUP")]
     public partial class TBL_TEMP_COLLATERAL_PLANT_EQUP
     {
         [Key]
@@ -46,7 +46,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string MACHINERYLOCATION { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal REPLACEMENTVALUE { get; set; }
 
         [StringLength(50)]

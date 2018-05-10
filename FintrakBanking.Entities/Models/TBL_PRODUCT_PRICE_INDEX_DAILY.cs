@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_PRODUCT_PRICE_INDEX_DAILY")]
+    [Table("TBL_PRODUCT_PRICE_INDEX_DAILY")]
     public partial class TBL_PRODUCT_PRICE_INDEX_DAILY
     {
         [Key]
@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCTPRICEINDEXID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime DATE { get; set; }
 
         public double PRICEINDEXRATE { get; set; }

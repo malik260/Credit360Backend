@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_PROFILE_ACTIVITY_PARENT")]
+    [Table("TBL_PROFILE_ACTIVITY_PARENT")]
     public partial class TBL_PROFILE_ACTIVITY_PARENT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

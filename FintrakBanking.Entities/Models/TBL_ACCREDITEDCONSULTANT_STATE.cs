@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_ACCREDITEDCONSULTANT_STATE")]
+    [Table("TBL_ACCREDITEDCONSULTANT_STATE")]
     public partial class TBL_ACCREDITEDCONSULTANT_STATE
     {
         [Key]

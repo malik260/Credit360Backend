@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_CLIENT_SUPPLIER")]
+    [Table("TBL_CUSTOMER_CLIENT_SUPPLIER")]
     public partial class TBL_CUSTOMER_CLIENT_SUPPLIER
     {
         [Key]
@@ -59,12 +59,12 @@ namespace FintrakBanking.Entities.Models
 
         public int CREATEDBY { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime DATECREATED { get; set; }
 
         public int? UPDATEDBY { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }

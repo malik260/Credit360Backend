@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_FINANCE_ENDOFDAY")]
+    [Table("TBL_FINANCE_ENDOFDAY")]
     public partial class TBL_FINANCE_ENDOFDAY
     {
         [Key]
@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int COMPANYID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime DATE { get; set; }
 
         public DateTime STARTDATETIME { get; set; }

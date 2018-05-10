@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_PRODUCT_CURRENCY")]
+    [Table("TBL_TEMP_PRODUCT_CURRENCY")]
     public partial class TBL_TEMP_PRODUCT_CURRENCY
     {
         [Key]

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_APPLICATION_DETL_TRA")]
+    [Table("TBL_LOAN_APPLICATION_DETL_TRA")]
     public partial class TBL_LOAN_APPLICATION_DETL_TRA
     {
         [Key]
@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
 
         public int MARKETID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal AVERAGE_MONTHLY_TURNOVER { get; set; }
 
         [StringLength(300)]

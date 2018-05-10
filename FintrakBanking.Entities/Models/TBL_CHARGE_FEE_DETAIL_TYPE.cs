@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CHARGE_FEE_DETAIL_TYPE")]
+    [Table("TBL_CHARGE_FEE_DETAIL_TYPE")]
     public partial class TBL_CHARGE_FEE_DETAIL_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_VISITATION")]
+    [Table("TBL_COLLATERAL_VISITATION")]
     public partial class TBL_COLLATERAL_VISITATION
     {
         [Key]
@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime VISITATIONDATE { get; set; }
 
         [Required]

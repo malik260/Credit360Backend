@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_RISK_ASSESSMENT_RESULT")]
+    [Table("TBL_RISK_ASSESSMENT_RESULT")]
     public partial class TBL_RISK_ASSESSMENT_RESULT
     {
         [Key]

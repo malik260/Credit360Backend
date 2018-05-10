@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("treasury.TBL_DEAL_CLASSIFICATION")]
+    [Table("TBL_DEAL_CLASSIFICATION")]
     public partial class TBL_DEAL_CLASSIFICATION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
