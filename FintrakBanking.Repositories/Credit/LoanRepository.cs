@@ -4542,7 +4542,7 @@ namespace FintrakBanking.Repositories.Credit
                                            relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
                                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
                                            relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
-                                           loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                           loanSystemTypeId = (short)a.LOANSYSTEMTYPEID,
                                            misCode = a.MISCODE,
                                            teamMiscode = a.TEAMMISCODE,
                                            interestRate = a.INTERESTRATE,
