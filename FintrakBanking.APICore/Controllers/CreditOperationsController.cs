@@ -405,10 +405,12 @@ namespace FintrakBanking.APICore.Controllers
 
                 {
                     model.approvalStatusId = (int)ApprovalStatusEnum.Approved;
+
                     if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
                     }
+
                     var response = repo.AddOperationReview(model);
                     if (response)
                     {
@@ -416,34 +418,47 @@ namespace FintrakBanking.APICore.Controllers
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }
+                else if (model.operationTypeId == (int)OperationsEnum.Fee_chargeChange)
+                {
+                    if (repo.DoesChargeFeeExist(model.loanId, model.operationTypeId, (int)model.interestFrequencyTypeId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested charge fee type already exist and going through approval" });
+                    }
+                    var response = repo.AddOperationReview(model);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                }
                 else
                 {
-                if (model.principalFirstPaymentDate < model.proposedEffectiveDate)    
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Principal First Payment Date cannot be less than Effective date" });
-                }
-                if (model.interestFirstPaymentDate < model.proposedEffectiveDate)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Interest First Payment Date cannot be less than Effective date" });
-                }
+                    if (model.principalFirstPaymentDate < model.proposedEffectiveDate)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Principal First Payment Date cannot be less than Effective date" });
+                    }
+                    if (model.interestFirstPaymentDate < model.proposedEffectiveDate)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Interest First Payment Date cannot be less than Effective date" });
+                    }
                     if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false,  message = "The requested operation already exist and going through approval" });
-                }
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+                    }
                     var response = repo.AddOperationReview(model);
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
             }
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
-        
-    }
+
+        }
         [HttpPost]
         [Route("operation-approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
@@ -477,7 +492,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-       
+
                 if (entity.loanReviewOperationsId == 0 || entity.loanId == 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Please reconfirm your request and try again" });
