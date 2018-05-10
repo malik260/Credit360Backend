@@ -6,27 +6,30 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_FEE_INTERVAL")]
-    public partial class TBL_FEE_INTERVAL
+    [Table("credit.TBL_LOAN_REVOLVING_TYPE")]
+    public partial class TBL_LOAN_REVOLVING_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_FEE_INTERVAL()
+        public TBL_LOAN_REVOLVING_TYPE()
         {
-            TBL_CHARGE_FEE = new HashSet<TBL_CHARGE_FEE>();
-            TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
+            TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
+            TBL_LOAN_REVOLVING_ARCHIVE = new HashSet<TBL_LOAN_REVOLVING_ARCHIVE>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short FEEINTERVALID { get; set; }
+        public short REVOLVINGTYPEID { get; set; }
 
+        [Required]
         [StringLength(50)]
-        public string FEEINTERVALNAME { get; set; }
+        public string REVOLVINGTYPENAME { get; set; }
+
+        public bool ISTEMPORARYOVERDRAFT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CHARGE_FEE> TBL_CHARGE_FEE { get; set; }
+        public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
+        public virtual ICollection<TBL_LOAN_REVOLVING_ARCHIVE> TBL_LOAN_REVOLVING_ARCHIVE { get; set; }
     }
 }

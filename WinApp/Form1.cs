@@ -25,6 +25,7 @@ using FintrakBanking.Interfaces.CreditLimitValidations;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 
 namespace WinApp
 {
@@ -257,8 +258,8 @@ namespace WinApp
 
         private void button3_Click(object sender, EventArgs e)
         {
-           // TransactionPosting tp = new TransactionPosting(context);
-         //   OverdraftResponseViewModel integrationResult = null;
+            TransactionPosting tp = new TransactionPosting(context);
+            ResponseMessageViewModel integrationResult = null;
             var model = new OverDraftNormalViewModel
             {
                accountNumber= "2030562192",
@@ -273,8 +274,9 @@ namespace WinApp
                 sanctionDate ="03-04-2018"
             };
 
-         //  integrationResult =  cwpAIP.OverDraftNormal(model);
+           integrationResult =  cwpAIP.OverDraftNormal(model);
 
         }
+
     }
 }

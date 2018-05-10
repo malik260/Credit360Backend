@@ -40,7 +40,7 @@ namespace FintrakBanking.Repositories.Credit
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
             FinTrakBankingContext _delContext,
-        IGeneralSetupRepository _genSetup,
+            IGeneralSetupRepository _genSetup,
             IAuditTrailRepository _auditTrail, IProductRepository _product,
             IMediaRepository _media,
             ICollateralTypeRepository _collateralType,
@@ -1740,6 +1740,23 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = (int)OperationsEnum.CollateralRelease;
             workflow.DeferredExecution = true;
             workflow.LogActivity();
+
+            // Release Lien
+            var collateralCode = mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE;
+            var casalien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == collateralCode);
+            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+            {
+                lien.ReleaseLien(new CasaLienViewModel
+                {
+                    lienReferenceNumber = casalien.LIENREFERENCENUMBER,
+                    sourceReferenceNumber = collateralCode,
+                    productAccountNumber = casalien.PRODUCTACCOUNTNUMBER,
+                    description = "Collateral Release",
+                    branchId = casalien.BRANCHID,
+                    lienTypeId = casalien.LIENTYPEID,
+                    lienAmount = casalien.LIENAMOUNT,
+                });
+            }
 
             return context.SaveChanges() > 0;
         }
