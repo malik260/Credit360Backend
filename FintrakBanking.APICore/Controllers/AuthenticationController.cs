@@ -193,7 +193,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var currUser = foundUser;
 
-                var userActivities = _adminRepo.GetUserActivitiesByUser(currUser.user_id);
+                var userActivities = repo.GetUserActivitiesByUser(currUser.user_id);
 
                 var audit = new TBL_AUDIT()
                 {

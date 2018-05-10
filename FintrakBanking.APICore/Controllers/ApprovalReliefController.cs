@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Net;
 using FintrakBanking.APICore.core;
 using System.Web;
+using FintrakBanking.APICore.Filters;
 
 namespace FintrakBanking.APICore.Controllers
 {

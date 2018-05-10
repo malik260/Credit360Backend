@@ -25,6 +25,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool IsUserExits(string username);
 
         bool IsUserAccountValid(string username);
+        List<string> GetUserActivitiesByUser(int userId);
 
         // Groups
 

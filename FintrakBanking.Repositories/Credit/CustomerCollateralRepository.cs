@@ -17,6 +17,8 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.Interfaces.CASA;
+using FintrakBanking.ViewModels.CASA;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -33,19 +35,20 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingDocumentsContext documentContext;
         private IFinanceTransactionRepository repo;
         private IApprovalLevelStaffRepository level;
-
+        private ICasaLienRepository lien;
 
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
             FinTrakBankingContext _delContext,
-        IGeneralSetupRepository _genSetup,
+            IGeneralSetupRepository _genSetup,
             IAuditTrailRepository _auditTrail, IProductRepository _product,
             IMediaRepository _media,
             ICollateralTypeRepository _collateralType,
             IWorkflow workflow,
             FinTrakBankingDocumentsContext _documentContext,
             IFinanceTransactionRepository _repo,
-            IApprovalLevelStaffRepository _level
+            IApprovalLevelStaffRepository _level,
+            ICasaLienRepository _lien
             )
         {
             this.context = _context;
@@ -59,6 +62,7 @@ namespace FintrakBanking.Repositories.Credit
             this.delContext = _delContext;
             this.repo = _repo;
             this.level = _level;
+            this.lien = _lien;
         }
 
         #region New 
@@ -1727,6 +1731,23 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = (int)OperationsEnum.CollateralRelease;
             workflow.DeferredExecution = true;
             workflow.LogActivity();
+
+            // Release Lien
+            var collateralCode = mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE;
+            var casalien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == collateralCode);
+            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+            {
+                lien.ReleaseLien(new CasaLienViewModel
+                {
+                    lienReferenceNumber = casalien.LIENREFERENCENUMBER,
+                    sourceReferenceNumber = collateralCode,
+                    productAccountNumber = casalien.PRODUCTACCOUNTNUMBER,
+                    description = "Collateral Release",
+                    branchId = casalien.BRANCHID,
+                    lienTypeId = casalien.LIENTYPEID,
+                    lienAmount = casalien.LIENAMOUNT,
+                });
+            }
 
             return context.SaveChanges() > 0;
         }

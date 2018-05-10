@@ -254,7 +254,7 @@ namespace WinApp
             //financeTransaction.UpdateCustomTransactions(tran[0].batchCode);
             MessageBox.Show("Successful", "Fintrak");
         }
-
+        /*
         private void button3_Click(object sender, EventArgs e)
         {
             TransactionPosting tp = new TransactionPosting(context);
@@ -275,6 +275,6 @@ namespace WinApp
 
            integrationResult =  cwpAIP.OverDraftNormal(model);
 
-        }
+        }*/
     }
 }

@@ -17,7 +17,6 @@ namespace FintrakBanking.Interfaces.Admin
 
         UserViewModel GetUsersByStaffId(int staffId);
 
-        List<string> GetUserActivitiesByUser(int userId);
 
         UserViewModel GetSingleUser(int userId);
 
