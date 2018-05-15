@@ -3305,12 +3305,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_APPLTN_CREDIT_BUREAU)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_LOAN_APPLICATION>()
-                .HasMany(e => e.TBL_RISK_ASSESSMENT)
-                .WithRequired(e => e.TBL_LOAN_APPLICATION)
-                .WillCascadeOnDelete(false);
-
+            
             modelBuilder.Entity<TBL_LOAN_APPLICATION_ARCHIVE>()
                 .Property(e => e.APPLICATIONAMOUNT)
                 .HasPrecision(19, 4);
