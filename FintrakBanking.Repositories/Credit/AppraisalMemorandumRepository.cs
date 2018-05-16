@@ -721,7 +721,7 @@ namespace FintrakBanking.Repositories.Credit
                     lastComment = y.COMMENT,
                     currentApprovalStateId = y.APPROVALSTATEID,
                     currentApprovalLevelId = y.TOAPPROVALLEVELID,
-                   // currentApprovalLevel = y.APVL_LVL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                    currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                     approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
                     toStaffId = y.TOSTAFFID,
                     loanInformation = x.a.LOANINFORMATION,
