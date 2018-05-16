@@ -69,10 +69,11 @@ namespace FintrakBanking.Common.Enum
         ContingentLiabilityUsage = 56,
         ReassigningOfAccount = 57,
         LoanSales = 58,
-        LoanWalkout = 59,
+        LoanWorkOut = 59,
         //CollateralApproval = 60,
         ItemPolicyApproval = 61,
         LoanPerformance = 62,
-        CommercialPaperLoanBooking = 63
+        CommercialPaperLoanBooking = 63,
+        LoanRecovery = 64
     }
 }

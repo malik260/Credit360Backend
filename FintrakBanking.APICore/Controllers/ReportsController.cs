@@ -160,7 +160,48 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
+        [HttpPost]
+        [Route("monitoring/expired-self-liquidating-loans")]
+        public HttpResponseMessage GetSelfLiquidationLoans(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetSelfLiquidatingLoansReport(dateRange, token.GetCompanyId, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("collateral/property-due-for-vistation")]
+        public HttpResponseMessage GetCollateralpropertyDueForVisitation(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetCollateralPropertyDueForVisitationReport(token.GetCompanyId, dateRange, token.GetStaffId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         #region Offer-Letter Generation & Loan Monitoring Reports
 
         [HttpGet]
@@ -229,13 +270,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("monitoring/non-performing-loans")]
-        public HttpResponseMessage GetNonPerformingLoansReport()
+        public HttpResponseMessage GetNonPerformingLoansReport(DateRange dateRange)
         {
             try
             {
-                var data = repo.GetNonPerformingLoansReport(token.GetCompanyId, token.GetStaffId);
+                var data = repo.GetNonPerformingLoansReport(dateRange,token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -251,13 +292,34 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("monitoring/overdraft-loans")]
-        public HttpResponseMessage GetExpiredOverdraftLoansReport()
+        public HttpResponseMessage GetExpiredOverdraftLoansReport(DateRange dateRange)
         {
             try
             {
-                var data = repo.GetExpiredOverdraftLoansReport(token.GetCompanyId, token.GetStaffId);
+                var data = repo.GetExpiredOverdraftLoansReport(dateRange,token.GetCompanyId, token.GetStaffId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("monitoring/bond-and-guarantee")]
+        public HttpResponseMessage GetBondAndGuaranteeReport(DateRange dateRange)
+        {
+            try
+            {
+                var data = repo.GetBondAndGuaranteeReport(dateRange, token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

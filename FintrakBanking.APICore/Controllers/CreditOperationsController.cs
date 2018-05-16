@@ -268,6 +268,28 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("approved-loan-review-remedial")]
+        public HttpResponseMessage GetApprovedLoanReviewRemedial()
+        {
+            try
+            {
+                var data = loanRepo.GetApprovedLoanReviewRemedial();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("disbursed-loan-details/")]
         public HttpResponseMessage SearchForLoan(int loanId)
         {

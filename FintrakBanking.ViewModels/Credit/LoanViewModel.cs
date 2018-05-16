@@ -332,7 +332,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal penalChargeAmount { get; set; }
         public int dayCountConventionId { get; set; }
         public short loanSystemTypeId { get; set; }
-        
+        public int? userPrudentialGuidelineStatusId { get; set; }
+
     }
 
     public class ContingentLoanViewModel : GeneralEntity

@@ -30,9 +30,9 @@ namespace FintrakBanking.Interfaces.Reports
 
         string GetCovenantsApproachingDueDateReport(int companyId, int staffId, DateRange dateRange);
         string GetCollateralPropertyRevaluationReport(int companyId,DateRange dateRange, int staffId);
-        string GetExpiredSelfLiquidatingLoansReport(int companyId, int staffId);
-        string GetNonPerformingLoansReport(int companyId, int staffId);
-        string GetExpiredOverdraftLoansReport(int companyId, int staffId);
+        string GetSelfLiquidatingLoansReport(DateRange dateRange,int companyId, int staffId);
+        string GetNonPerformingLoansReport(DateRange dateRange, int companyId, int staffId);
+        string GetExpiredOverdraftLoansReport(DateRange dateRange, int companyId, int staffId);
 
         #endregion Offer Letter Generation & Loan Monitoring Reports
         string GetLoanCommercialReport(DateRange dateRange, int companyId, int staffId);
@@ -43,6 +43,8 @@ namespace FintrakBanking.Interfaces.Reports
         string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId, int staffId);
         string GetAuditTrail(DateRange dateRange, int companyId, int staffId);
         string GetFacilityApprovedNotUtilized(ReportSearchEntity searchEntity, int companyId, int staffId);
+        string GetCollateralPropertyDueForVisitationReport(int companyId, DateRange dateRange, int staffId);
+        string GetBondAndGuaranteeReport(DateRange dateRange, int companyId, int staffId);
 
     }
 }

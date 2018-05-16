@@ -54,8 +54,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId);
         bool addBulkRateLoanExcemptions(LoanViewModel model);
         bool addInterestRateChange(LoanBulkInterestReviewViewModel model);
-        IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId);
-        IEnumerable<LoanClassificationViewModel> CalLoanClassification(DateTime applicationDate);
+        IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId); 
+         IEnumerable<LoanClassificationViewModel> CalculateLoanClassification(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
         // IEnumerable<LoanViewModel> GetRunningLoans(int companyId, string refNo);
         LoanViewModel GetRunningLoans(int companyId, string refNo);
@@ -68,5 +68,9 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
         bool addMaturityInstruction(MaturityIntructionViewModel model);
         IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
+        IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType();
+        IEnumerable<LoanClassificationViewModel> CalculateOverdraftClassification(DateTime applicationDate);
+        IEnumerable<LoanViewModel> LoanHistory();
+        IEnumerable<RevolvingLoanViewModel> OverDraftHistory();
     }
 }

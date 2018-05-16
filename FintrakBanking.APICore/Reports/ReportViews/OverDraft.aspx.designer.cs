@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
+namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class NonPeformingLoans {
+    public partial class OverDraft {
         
         /// <summary>
         /// form1 control.
@@ -40,12 +40,30 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
         protected global::Microsoft.Reporting.WebForms.ReportViewer nplLoanRv;
         
         /// <summary>
-        /// odsNplLoan control.
+        /// odsOderdraft control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsNplLoan;
+        protected global::System.Web.UI.WebControls.ObjectDataSource odsOderdraft;
+        
+        /// <summary>
+        /// endDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label endDate;
+        
+        /// <summary>
+        /// startDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label startDate;
     }
 }

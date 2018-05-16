@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmailMessageLogger.Enum
+namespace FintrakBanking.Common.AlertMonitoring
 {
     public enum AlertMessageEnum
     {

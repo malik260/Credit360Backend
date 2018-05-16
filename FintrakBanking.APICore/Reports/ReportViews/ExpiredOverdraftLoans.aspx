@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="NonPeformingLoans.aspx.cs" Inherits="FintrakBanking.APICore.Reports.Credit.Monitoring.NonPeformingLoans" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ExpiredOverdraftLoans.aspx.cs" Inherits="FintrakBanking.APICore.Reports.Credit.Monitoring.ExpiredOverdraftLoans" %>
 
  <%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
@@ -16,15 +16,15 @@
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-        <rsweb:ReportViewer ID="nplLoanRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1100px">
-            <LocalReport ReportPath="Reports\Credit\Monitoring\NonPeformingLoans.rdlc">
+        <rsweb:ReportViewer ID="expOverDraftLoansRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1100px">
+            <LocalReport ReportPath="Reports\Report\ExpiredOverdraftLoans.rdlc">
                 <DataSources>
-                    <rsweb:ReportDataSource DataSourceId="odsNplLoan" Name="NplLoanDetails" />
+                    <rsweb:ReportDataSource DataSourceId="odsExpODraftLoans" Name="OverdraftLoanDetails" />
                 </DataSources>
             </LocalReport>
         </rsweb:ReportViewer>
     
-        <asp:ObjectDataSource ID="odsNplLoan" runat="server" SelectMethod="NplLoanMonitoring" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring">
+        <asp:ObjectDataSource ID="odsExpODraftLoans" runat="server" SelectMethod="ExpiredOverDraftLoans" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring">
             <SelectParameters>
                 <asp:QueryStringParameter Name="companyId" QueryStringField="companyId" Type="Int32" />
             </SelectParameters>

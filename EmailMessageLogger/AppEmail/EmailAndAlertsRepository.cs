@@ -1,5 +1,5 @@
 ﻿using EmailMessageLogger;
-using EmailMessageLogger.Enum;
+using FintrakBanking.Common.AlertMonitoring;
 //using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
+
 
 namespace FintrakBanking.Repositories.AppEmail
 {
@@ -1389,7 +1390,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) < (int?)InActiveBondAndGuarantee.NOTIFICATION_PERIOD1 && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) < (int?)InActiveBondAndGuarantee.NOTIFICATION_PERIOD1 && a.LOANSTATUSID == (int)LoanStatusEnum.Inactive
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -1563,7 +1564,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                               where a.ISTENORED == false && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) < (int?)0 && a.LOANSTATUSID == 1 && a.RELATED_LOAN_REFERENCE_NUMBER != string.Empty
+                                               where a.ISTENORED == false && DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now) < (int?)0 && a.LOANSTATUSID == (int)LoanStatusEnum.Active && a.RELATED_LOAN_REFERENCE_NUMBER != string.Empty
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
