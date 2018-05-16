@@ -8,9 +8,9 @@ namespace FintrakBanking.Interfaces.Risk
 {
     public interface IRiskImplementation
     {
-        IEnumerable<AssessmentResultViewModel> GetAllAssessmentResultByApplicationId(int companyId, int applicationId);
+        IEnumerable<AssessmentResultViewModel> GetAllAssessmentResult(int companyId);
 
-        IEnumerable<AssessmentFormViewModel> GetRiskFormElements(int companyId, int titleId, int applicationId);
+        IEnumerable<AssessmentFormViewModel> GetRiskFormElements(int companyId, int titleId, int? targetId);
 
         IEnumerable<AssessmentFormViewModel> SaveFormElements(AssessmentFormSaveViewModel entity);
     }
