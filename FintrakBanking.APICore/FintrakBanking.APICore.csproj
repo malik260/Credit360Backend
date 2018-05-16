@@ -410,11 +410,6 @@
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Filters\AuthorizeActivity.cs" />
-    <Compile Include="Reports\ReportDataset\ComapnyInfoDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ComapnyInfoDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.cs">
       <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -747,17 +742,6 @@
     </None>
     <Content Include="Reports\ReportDataset\CollateralDataSet.xss">
       <DependentUpon>CollateralDataSet.xsd</DependentUpon>
-    </Content>
-    <Content Include="Reports\ReportDataset\ComapnyInfoDataSet.xsc">
-      <DependentUpon>ComapnyInfoDataSet.xsd</DependentUpon>
-    </Content>
-    <None Include="Reports\ReportDataset\ComapnyInfoDataSet.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ComapnyInfoDataSet.Designer.cs</LastGenOutput>
-    </None>
-    <Content Include="Reports\ReportDataset\ComapnyInfoDataSet.xss">
-      <DependentUpon>ComapnyInfoDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\LoanDataSet.xsd">
       <SubType>Designer</SubType>

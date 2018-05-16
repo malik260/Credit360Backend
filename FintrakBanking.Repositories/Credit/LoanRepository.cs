@@ -4604,7 +4604,7 @@ namespace FintrakBanking.Repositories.Credit
                                            currency = a.TBL_CURRENCY.CURRENCYNAME
                                        }).Take(10).AsQueryable();
                 }
-                return allFilteredLoan.Where(x => x.operationId == (short)OperationsEnum.CommercialPaperLoanBooking);
+                return allFilteredLoan; //.Where(x => x.operationId == (short)OperationsEnum.CommercialPaperLoanBooking);
             }
             catch (System.Exception)
             {

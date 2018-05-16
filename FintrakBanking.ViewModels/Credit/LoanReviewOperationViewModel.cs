@@ -325,9 +325,21 @@ namespace FintrakBanking.ViewModels.Credit
         public string name { get; set; }
     }
 
-    public class MaturityIntructionTypeViewModel
+    public class MaturityIntructionViewModel : GeneralEntity
     {
+        public int maturityInstructionId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public string customerName { get; set; }
+        public decimal outstandingPrincipal { get; set; }
+        public decimal outstandingInterest { get; set; }
+        public int oldTenor { get; set; }
+        public int newTenor { get; set; }
+        public double interestRate { get; set; }
+
         public short instructionTypeId { get; set; }
         public string instructionTypeName { get; set; }
+        public int loanId { get; set; }
+        public int tenor { get; set; }
+        public short loanSystemTypeId { get; set; }
     }
 }

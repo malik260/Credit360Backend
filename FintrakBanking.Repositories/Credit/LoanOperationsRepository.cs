@@ -8930,10 +8930,10 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType()
+        public IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType()
         {
             var data = from a in context.TBL_LOAN_MATURITY_INSTRU_TYPE
-                       select new MaturityIntructionTypeViewModel
+                       select new MaturityIntructionViewModel
                        {
                           instructionTypeId = a.INSTRUCTIONTYPEID ,
                             instructionTypeName = a.INSTRUCTIONTYPENAME,
@@ -8942,7 +8942,51 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
         }
 
+        public IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions()
+        {
+            var data = from a in context.TBL_LOAN_MATURITY_INSTRUCTION
+                       select new MaturityIntructionViewModel
+                       {
+                           instructionTypeId = a.INSTRUCTIONTYPEID,
+                           instructionTypeName = a.TBL_LOAN_MATURITY_INSTRU_TYPE.INSTRUCTIONTYPENAME,
+                           newTenor = a.TENOR,
+                           loanId = a.LOANID,
+                           maturityInstructionId = a.MATURITYINSTRUCTIONID,
+                           loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                           dateTimeCreated = a.DATETIMECREATED,
+                           createdBy = a.CREATEDBY
+                       };
+            foreach(var item in data)
+            {
+                var loanRec = context.TBL_LOAN.Find(item.loanId);
+                var customerRec = context.TBL_CUSTOMER.Find(loanRec.CUSTOMERID);
+                item.loanReferenceNumber = loanRec.LOANREFERENCENUMBER;
+                item.customerName = customerRec.FIRSTNAME + " " + customerRec.MIDDLENAME + " " + customerRec.LASTNAME;
+                item.outstandingPrincipal = loanRec.OUTSTANDINGPRINCIPAL;
+                item.outstandingInterest = loanRec.OUTSTANDINGINTEREST;
+                item.interestRate = loanRec.INTERESTRATE;
+                item.oldTenor = loanRec.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR;
+            }
+            
+            return data.ToList();
+        }
 
+        public bool addMaturityInstruction(MaturityIntructionViewModel model)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+
+            TBL_LOAN_MATURITY_INSTRUCTION maturity = new TBL_LOAN_MATURITY_INSTRUCTION();
+
+            maturity.LOANID = model.loanId;
+            maturity.LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility;
+            maturity.INSTRUCTIONTYPEID = model.instructionTypeId;
+            maturity.TENOR = model.tenor;
+            maturity.CREATEDBY = model.createdBy;
+            maturity.DATETIMECREATED = DateTime.Now;
+            this.context.TBL_LOAN_MATURITY_INSTRUCTION.Add(maturity);
+
+            return context.SaveChanges() > 0;
+        }
         public List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId)
         {
             var data = from a in context.TBL_LOAN_APPLICATION_DETAIL
@@ -9118,9 +9162,7 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool CommercialPaperRollOver(string refNo, decimal prepaymentAmount, DateTime applicationDate, int staffId)
         {
-            bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
-
             TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
                                          where p.LOANREFERENCENUMBER == refNo
                                          select p).SingleOrDefault();
@@ -9136,12 +9178,7 @@ namespace FintrakBanking.Repositories.Credit
                 result.LOANSTATUSID = (short)LoanStatusEnum.Active;
             }
 
-            context.SaveChanges();
-
-            output = true;
-
-            return output;
-
+            return context.SaveChanges() > 0;
         }
 
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate)
