@@ -121,6 +121,7 @@ namespace FintrakBanking.Repositories.Credit
                             }).ToList()
 
                         });
+            var definitionList = data.ToList();
             if (isproductBased)
             {
                 if (productId > 0)
@@ -135,7 +136,7 @@ namespace FintrakBanking.Repositories.Credit
             data = data.Where(x => ids.Contains((int)x.approvalLevelId));
 
             //ids.Contains((int)a.APPROVALLEVELID)
-            var definitionList = data.ToList();
+         var definitinList = data.ToList();
             var detailList = detailItem.ToList();
             var detailId = detailItem.Select(a => a.checkListDefinitionId).ToList();
             if (detailItem.Any())
