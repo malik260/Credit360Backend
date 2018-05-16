@@ -400,7 +400,6 @@
     <Compile Include="Controllers\ProductFeeController.cs" />
     <Compile Include="Controllers\PrudentialGuidelineController.cs" />
     <Compile Include="Controllers\PublicHolidayController.cs" />
-    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\StaffAccountHistoryController.cs" />
     <Compile Include="Controllers\StaffRoleController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
@@ -417,12 +416,75 @@
     <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.designer.cs">
       <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\BondAndGuarantee.aspx.cs">
+      <DependentUpon>BondAndGuarantee.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\BondAndGuarantee.aspx.designer.cs">
+      <DependentUpon>BondAndGuarantee.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx.cs">
+      <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx.designer.cs">
+      <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralVisitation.aspx.cs">
+      <DependentUpon>CollateralVisitation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralVisitation.aspx.designer.cs">
+      <DependentUpon>CollateralVisitation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx.cs">
+      <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx.designer.cs">
+      <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx.cs">
+      <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx.designer.cs">
+      <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx.cs">
+      <DependentUpon>ExpiredSelfLiquidatingLoans.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx.designer.cs">
+      <DependentUpon>ExpiredSelfLiquidatingLoans.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\FinancialTransactions.aspx.cs">
       <DependentUpon>FinancialTransactions.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\FinancialTransactions.aspx.designer.cs">
       <DependentUpon>FinancialTransactions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\NonPeformingLoans.aspx.cs">
+      <DependentUpon>NonPeformingLoans.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\NonPeformingLoans.aspx.designer.cs">
+      <DependentUpon>NonPeformingLoans.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OverDraft.aspx.cs">
+      <DependentUpon>OverDraft.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OverDraft.aspx.designer.cs">
+      <DependentUpon>OverDraft.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SeftLiquidatingLoans.aspx.cs">
+      <DependentUpon>SeftLiquidatingLoans.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SeftLiquidatingLoans.aspx.designer.cs">
+      <DependentUpon>SeftLiquidatingLoans.aspx</DependentUpon>
     </Compile>
     <Compile Include="TransactionDynamicsController.cs" />
     <Compile Include="core\ApiControllerBase.cs" />
@@ -448,34 +510,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Credit.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.aspx.cs">
-      <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.aspx.designer.cs">
-      <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\Credit\Monitoring\NonPeformingLoans.aspx.cs">
-      <DependentUpon>NonPeformingLoans.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\Credit\Monitoring\NonPeformingLoans.aspx.designer.cs">
-      <DependentUpon>NonPeformingLoans.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.aspx.cs">
-      <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.aspx.designer.cs">
-      <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.aspx.cs">
-      <DependentUpon>ExpiredSelfLiquidatingLoans.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.aspx.designer.cs">
-      <DependentUpon>ExpiredSelfLiquidatingLoans.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx.cs">
       <DependentUpon>OfferLetterCAMbase.aspx</DependentUpon>
@@ -658,8 +692,11 @@
     <Content Include="Content\first-bank-new-logo.jpg" />
     <Content Include="Content\firstbank.png" />
     <Content Include="Content\Icons\Draft.png" />
+    <Content Include="Content\Icons\firstbank-logo.jpg" />
     <Content Include="Content\Icons\first_bank_logo_kmH_icon.ico" />
     <Content Include="Content\Icons\first_bank_new_logo_2sm_icon.ico" />
+    <Content Include="Content\Images\Editor\Uploads\index.html" />
+    <Content Include="Content\Images\firstbank-logo.jpg" />
     <Content Include="EmailTemplates\ApprovalWorkflow.html" />
     <Content Include="EmailTemplates\FORM-3800B-BG.html" />
     <Content Include="EmailTemplates\FORM-3800B-CashBackedOnly.html" />
@@ -673,18 +710,22 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Reports\Collateral\ScheduledCollateralReport.aspx" />
-    <Content Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.aspx" />
-    <Content Include="Reports\Credit\Monitoring\NonPeformingLoans.aspx" />
-    <Content Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.aspx" />
-    <Content Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
+    <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
     <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
+    <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
+    <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
+    <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
+    <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
+    <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
+    <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
+    <Content Include="Reports\ReportViews\OverDraft.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
     <Content Include="Reports\ReportViews\FacilityApprovedNotUntilized.aspx" />
@@ -699,6 +740,7 @@
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
+    <Content Include="Reports\ReportViews\SeftLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
     <Content Include="ApplicationInsights.config">
@@ -886,13 +928,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
-    <EmbeddedResource Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
-    <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.rdlc" />
-    <EmbeddedResource Include="Reports\Credit\Monitoring\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
-    <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc" />
@@ -909,8 +953,11 @@
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />

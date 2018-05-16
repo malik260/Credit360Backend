@@ -5500,5 +5500,15 @@ namespace FintrakBanking.Repositories.Credit
                         });
             return data;
         }
+
+        public IEnumerable<LoanViewModel> GetLoanStatus(int companyId)
+        {
+            return (from a in context.TBL_LOAN_STATUS
+                    select new LoanViewModel
+                    {
+                        loanStatus = a.ACCOUNTSTATUS,
+                        loanStatusId = a.LOANSTATUSID
+                    });
+        }
     }
 }

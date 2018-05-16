@@ -314,6 +314,22 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [Route("loan-status")]
+        public HttpResponseMessage GetLoanStatus()
+        {
+            try
+            {
+                var data = repo.GetLoanStatus(token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
         [Route("monitoring-trigger/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanMonitoringTriggerByLoanApplicationDetailId(int loanApplicationDetailId)
         {
