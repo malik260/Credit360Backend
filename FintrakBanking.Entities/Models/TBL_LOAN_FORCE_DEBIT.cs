@@ -17,6 +17,7 @@ namespace FintrakBanking.Entities.Models
         public short PRODUCTTYPEID { get; set; }
 
         //[Column(TypeName = "date")]
+        [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
         public byte TRANSACTIONTYPEID { get; set; }

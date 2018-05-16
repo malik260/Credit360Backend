@@ -17,6 +17,7 @@ namespace FintrakBanking.Entities.Models
         public short RATECODEID { get; set; }
 
         //[Column(TypeName = "date")]
+        [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
         public double EXCHANGERATE { get; set; }

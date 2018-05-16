@@ -15,6 +15,8 @@ namespace FintrakBanking.Entities.Models
         public int COMPANYID { get; set; }
 
         //[Column(TypeName = "date")]
+
+
         [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
