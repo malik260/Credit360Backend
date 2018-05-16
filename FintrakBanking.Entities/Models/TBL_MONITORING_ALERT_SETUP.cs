@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_MONITORING_ALERT_SETUP")]
+    [Table("core.TBL_MONITORING_ALERT_SETUP")]
     public partial class TBL_MONITORING_ALERT_SETUP
     {
         [Key]

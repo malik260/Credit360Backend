@@ -6,13 +6,13 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_APPLICATION_DETL_ARCH")]
+    [Table("credit.TBL_LOAN_APPLICATION_DETL_ARCH")]
     public partial class TBL_LOAN_APPLICATION_DETL_ARCH
     {
         [Key]
         public int APPLICATIONDETAIL_ARCHIVE_ID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime ARCHIVEDATE { get; set; }
 
         public int LOANAPPLICATIONDETAILID { get; set; }
@@ -27,7 +27,7 @@ namespace FintrakBanking.Entities.Models
 
         public double PROPOSEDINTERESTRATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PROPOSEDAMOUNT { get; set; }
 
         public short APPROVEDPRODUCTID { get; set; }
@@ -36,7 +36,7 @@ namespace FintrakBanking.Entities.Models
 
         public double APPROVEDINTERESTRATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal APPROVEDAMOUNT { get; set; }
 
         public short CURRENCYID { get; set; }

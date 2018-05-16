@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CUSTOMER")]
+    [Table("core.TBL_CUSTOMER")]
     public partial class TBL_CUSTOMER
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -81,7 +81,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(10)]
         public string GENDER { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? DATEOFBIRTH { get; set; }
 
         [StringLength(200)]
@@ -122,7 +122,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? APPROVALSTATUS { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? DATEACTEDON { get; set; }
 
         [StringLength(150)]
@@ -151,7 +151,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? VALIDATED { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? DATEVALIDATED { get; set; }
 
         public int CREATEDBY { get; set; }

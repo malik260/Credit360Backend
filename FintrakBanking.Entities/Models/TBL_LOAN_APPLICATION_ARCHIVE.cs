@@ -6,13 +6,13 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_APPLICATION_ARCHIVE")]
+    [Table("credit.TBL_LOAN_APPLICATION_ARCHIVE")]
     public partial class TBL_LOAN_APPLICATION_ARCHIVE
     {
         [Key]
         public int APPLICATION_ARCHIVEID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime ARCHIVEDATE { get; set; }
 
         public int LOANAPPLICATIONID { get; set; }
@@ -39,27 +39,27 @@ namespace FintrakBanking.Entities.Models
 
         public int CASAACCOUNTID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime APPLICATIONDATE { get; set; }
 
         public double INTERESTRATE { get; set; }
 
         public int APPLICATIONTENOR { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? EFFECTIVEDATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? EXPIRYDATE { get; set; }
 
         public int OPERATIONID { get; set; }
 
         public short? PRODUCTCLASSID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal APPLICATIONAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal APPROVEDAMOUNT { get; set; }
 
         [Required]

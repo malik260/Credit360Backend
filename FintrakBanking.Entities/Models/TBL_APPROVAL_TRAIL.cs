@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_APPROVAL_TRAIL")]
+    [Table("core.TBL_APPROVAL_TRAIL")]
     public partial class TBL_APPROVAL_TRAIL
     {
         [Key]
@@ -14,12 +14,12 @@ namespace FintrakBanking.Entities.Models
 
         public int TARGETID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime ARRIVALDATE { get; set; }
 
         public DateTime SYSTEMARRIVALDATETIME { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? RESPONSEDATE { get; set; }
 
         public DateTime? SYSTEMRESPONSEDATETIME { get; set; }
@@ -43,8 +43,8 @@ namespace FintrakBanking.Entities.Models
         public short APPROVALSTATUSID { get; set; }
 
         public int OPERATIONID { get; set; }
-        
-        [StringLength(700), Column(name: "COMMENT_")]
+
+        [StringLength(700)]
         public string COMMENT { get; set; }
 
         public short? VOTE { get; set; }

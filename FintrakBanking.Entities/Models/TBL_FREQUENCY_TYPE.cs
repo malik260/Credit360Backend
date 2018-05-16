@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_FREQUENCY_TYPE")]
+    [Table("core.TBL_FREQUENCY_TYPE")]
     public partial class TBL_FREQUENCY_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
         public short FREQUENCYTYPEID { get; set; }
 
         [Required]
-        [StringLength(20), Column(name: "MODE_")]
+        [StringLength(20)]
         public string MODE { get; set; }
 
         public double VALUE { get; set; }

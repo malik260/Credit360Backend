@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Repositories.Credit;
 using System.Collections.Generic;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -69,6 +70,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
         [HttpGet]
         [Route("maturity-instruction-type")]
         public HttpResponseMessage GetMaturityInstructionType()
@@ -91,6 +93,21 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetMaturedCommercialLoans(token.GetCompanyId, loanApplicationDetailId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("running-commercial-loans/detail")]
+        public HttpResponseMessage GetRunningCommercialLoanLines()
+        {
+            try
+            {
+                var data = repo.GetRunningCommercialLoanLines(token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
@@ -122,7 +139,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetLoanMaturityInstructions();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
             {
@@ -154,6 +171,83 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("commercial-loan-interest-rate-change")]
+        public HttpResponseMessage CommercialPaperRateReview([FromBody] InterestReviewViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.CommercialPaperRateReview(entity.aplicationDetailId, entity.newRate, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Interest Rate Change was Successful " });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record" });
+            }
+        }
+
+        [HttpPost]
+        [Route("commercial-loan-roll-over")]
+        public HttpResponseMessage ProcessCommercialPaperRollOver([FromBody] MaturityIntructionViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.ProcessCommercialPaperRollOver(entity, null);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan Rollover process was Successfully." });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an processing rollover for this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("commercial-loan-tenor-extension")]
+        public HttpResponseMessage CommercialPaperTenorReview([FromBody] TenorExtionViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.CommercialPaperTenorReview(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Tenor successfully extended." });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an processing tenor extension for this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
             }
         }
 

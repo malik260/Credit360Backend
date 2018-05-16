@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_COLLATERAL_VEHICLE")]
+    [Table("credit.TBL_COLLATERAL_VEHICLE")]
     public partial class TBL_COLLATERAL_VEHICLE
     {
         [Key]
@@ -56,15 +56,15 @@ namespace FintrakBanking.Entities.Models
         [StringLength(250)]
         public string REGISTRATIONCOMPANY { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? RESALEVALUE { get; set; }
 
         public DateTime? VALUATIONDATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? LASTVALUATIONAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal INVOICEVALUE { get; set; }
 
         [StringLength(500)]

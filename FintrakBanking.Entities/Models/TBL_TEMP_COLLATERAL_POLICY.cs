@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_TEMP_COLLATERAL_POLICY")]
+    [Table("temp.TBL_TEMP_COLLATERAL_POLICY")]
     public partial class TBL_TEMP_COLLATERAL_POLICY
     {
         [Key]
@@ -23,15 +23,17 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string INSURANCETYPE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PREMIUMAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal POLICYAMOUNT { get; set; }
 
         [Required]
         [StringLength(10)]
         public string INSURANCECOMPANYNAME { get; set; }
+
+    
 
         [Required]
         [StringLength(300)]

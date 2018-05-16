@@ -101,6 +101,7 @@
     <Compile Include="Enum\LoanStatusEnum.cs" />
     <Compile Include="Enum\LoanTransactionTypeEnum.cs" />
     <Compile Include="Enum\LoanCovenantTypeEnum.cs" />
+    <Compile Include="Enum\LoanRevolvingTypeEnum.cs" />
     <Compile Include="Enum\LoanTypeEnum.cs" />
     <Compile Include="Enum\LimitMatricEnum.cs" />
     <Compile Include="Enum\LimitType.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Enum\ProcessViewScopeEnum.cs" />
     <Compile Include="Enum\GLClassEnum.cs" />
     <Compile Include="Enum\SystemStaff.cs" />
+    <Compile Include="Enum\MaturityInstructionTypeEnum.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />
     <Compile Include="Extensions\DataExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />

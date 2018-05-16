@@ -6,6 +6,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -438,6 +439,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public bool? isTemporaryOverdraft { get; set; }
+
         public string repaymentTerms { get; set; }
         public string repaymentSchedule { get; set; }
 

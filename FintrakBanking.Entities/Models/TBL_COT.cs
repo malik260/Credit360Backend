@@ -13,10 +13,10 @@ namespace FintrakBanking.Entities.Models
 
         public int? ACCOUNTID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? COTACCOUNTAMOUNT { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? COTDATE { get; set; }
 
         [StringLength(50)]
