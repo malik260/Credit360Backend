@@ -288,7 +288,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 CREATEDBY = entity.createdBy,
                 COMPANYID = entity.companyId,
                 RISKTYPEID = entity.riskTypeId,
-                PRODUCTID = entity.productId,
+                PRODUCTID = (short) entity.productId,
             };
             this.context.TBL_RISK_ASSESSMENT_TITLE.Add(title);
 
@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
             title.RISKTITLE = entity.riskTitle;
             title.DATETIMEUPDATED = genSetup.GetApplicationDate();
             title.RISKTYPEID = entity.riskTypeId;
-            title.PRODUCTID = entity.productId;
+            title.PRODUCTID = (short) entity.productId;
             title.LASTUPDATEDBY = entity.lastUpdatedBy;
 
             // Audit Section ---------------------------

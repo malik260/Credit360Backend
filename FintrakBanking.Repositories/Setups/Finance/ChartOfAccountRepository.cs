@@ -1,12 +1,14 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.Finance;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -27,12 +29,13 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private IGeneralSetupRepository _genSetup;
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
-
+        private IIntegrationWithCWGAPI cwpAIP;
         public ChartOfAccountRepository(FinTrakBankingContext _context,
                                                 IAuditTrailRepository _auditTrail,
                                                 IGeneralSetupRepository genSetup,
                                                 IWorkflow _workFlow,
-                                                IApprovalLevelStaffRepository _level)
+                                                IApprovalLevelStaffRepository _level,
+                                                     IIntegrationWithCWGAPI cwpAIP)
         {
             this.context = _context;
             this._genSetup = genSetup;
@@ -44,6 +47,16 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private bool SaveAll()
         {
             return this.context.SaveChanges() > 0;
+        }
+
+        public GLAccountDetailsViewModel ValidateGLNumber(string glNumber)
+        {
+            var data = cwpAIP.ValidateGLNumber(glNumber);
+
+            if (data  != null)
+                return data;
+            else
+                throw new Exception("Office Account Does Not Exist in Finaco");
         }
 
         public bool GoForApproval(ApprovalViewModel entity)
@@ -285,6 +298,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public async Task<bool> AddTempAccount(ChartOfAccountViewModel accountModel)
         {
+
+             if(cwpAIP.ValidateGLNumber(accountModel.accountCode) == null)
+                throw new Exception("Not Fund");
+
+
             if (accountModel.currencies.Count < 1)
                 throw new Exception("Chart of Account Currency must be specified");
 
@@ -420,7 +438,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                             systemUse = account.SYSTEMUSE,
                             branchSpecific = account.BRANCHSPECIFIC,
-                            fsCaptionId = account.FSCAPTIONID,
+                            fsCaptionId = (short) account.FSCAPTIONID,
 
                             createdBy = account.CREATEDBY,
                             dateTimeCreated = account.DATETIMECREATED,
@@ -464,7 +482,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 branchId = account.BRANCHID,
                 systemUse = account.SYSTEMUSE,
                 branchSpecific = account.BRANCHSPECIFIC,
-                fsCaptionId = account.FSCAPTIONID,
+                fsCaptionId = (short) account.FSCAPTIONID,
                 createdBy = account.CREATEDBY,
                 dateTimeCreated = account.DATETIMECREATED,
                 lastUpdatedBy = account.LASTUPDATEDBY.Value,
@@ -724,7 +742,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             branchName = c.TBL_BRANCH.BRANCHNAME,
                             systemUse = c.SYSTEMUSE,
                             branchSpecific = c.BRANCHSPECIFIC,
-                            fsCaptionId = c.FSCAPTIONID,
+                            fsCaptionId = (short) c.FSCAPTIONID,
                             fsCaptionName = c.TBL_FINANCIAL_STATEMENT_CAPTN.FSCAPTION,
                             operationId = atrail.OPERATIONID,
                             //approvalStatusId = c.ApprovalStatusId,
@@ -765,7 +783,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                         systemUse = c.SYSTEMUSE,
                         branchSpecific = c.BRANCHSPECIFIC,
-                        fsCaptionId = c.FSCAPTIONID,
+                        fsCaptionId = (short)c.FSCAPTIONID,
 
                         createdBy = c.CREATEDBY,
                         dateTimeCreated = c.DATETIMECREATED,
@@ -808,7 +826,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     orderby data.FINTYPE, data.POSITION
                     select new LookupViewModel()
                     {
-                        lookupId = data.FSCAPTIONID,
+                        lookupId = (short) data.FSCAPTIONID,
                         lookupName = data.FSCAPTION + " -- " + data.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME
                     });
             

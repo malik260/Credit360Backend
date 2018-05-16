@@ -45,7 +45,7 @@ namespace FintrakBanking.Repositories.Notification
                                    message = "You have " + d.Count().ToString() + " " +
                                              context.TBL_OPERATIONS.FirstOrDefault(c => c.OPERATIONID == d
                                                                                             .Select(f => f.OPERATIONID).FirstOrDefault()).OPERATIONNAME + " request awaiting your action",
-                                   operationURL = d.Select(h => h.TBL_OPERATIONS.OPERATIONURL).FirstOrDefault()
+                               //    operationURL = d.Select(h => h.TBL_OPERATIONS.OPERATIONURL).FirstOrDefault()
                                }).FirstOrDefault();
                     if (log != null)
                     {

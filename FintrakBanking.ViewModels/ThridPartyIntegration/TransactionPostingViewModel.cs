@@ -150,6 +150,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string partitionedFlag { get; set; }
         public string glSubHeadCode { get; set; }
         public string systemAccountFlag { get; set; }
+        public HttpResponseMessage response { get; set; }
     }
 
 public class ResponseMessage

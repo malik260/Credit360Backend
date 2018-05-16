@@ -4,6 +4,8 @@ using System;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
+using System.Net.Http;
+using System.Linq;
 
 namespace FinTrakBanking.ThirdPartyIntegration.Credit
 {
@@ -238,7 +240,16 @@ namespace FinTrakBanking.ThirdPartyIntegration.Credit
 
         }
 
-
+        public GLAccountDetailsViewModel ValidateGLNumber(string glNumber)
+        {
+            GLAccountDetailsViewModel result = null;
+            Task.Run(async () => result = await transaction.APIOfficeAccount(glNumber)).GetAwaiter().GetResult();
+            if (result.response.ReasonPhrase == "OK")
+            {
+                return result;
+            }
+            return result;
+        }
 
         #region  private
         private bool LogOverDraftExtend(OverDraftExtendViewModel model)

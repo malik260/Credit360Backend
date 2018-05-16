@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_VALUER")]
+    [Table("TBL_COLLATERAL_VALUER")]
     public partial class TBL_COLLATERAL_VALUER
     {
         [Key]
@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? COMPANYID { get; set; }
 
-        public short? CITYID { get; set; }
+        public int? CITYID { get; set; }
 
         public short? COUNTRYID { get; set; }
 

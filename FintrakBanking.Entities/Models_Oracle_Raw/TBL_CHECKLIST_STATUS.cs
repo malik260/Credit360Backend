@@ -1,0 +1,48 @@
+namespace FintrakBanking.Entities.Models
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("FINTRAKBANKING.TBL_CHECKLIST_STATUS")]
+    public partial class TBL_CHECKLIST_STATUS
+    {
+        public TBL_CHECKLIST_STATUS()
+        {
+            TBL_CHECKLIST_DETAIL = new HashSet<TBL_CHECKLIST_DETAIL>();
+            TBL_LOAN_CONDITION_PRECEDENT = new HashSet<TBL_LOAN_CONDITION_PRECEDENT>();
+        }
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int CHECKLISTSTATUSID { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string CHECKLISTSTATUSNAME { get; set; }
+
+        public int RESPONSE_TYPEID { get; set; }
+
+        public int CREATEDBY { get; set; }
+
+        public DateTime DATETIMECREATED { get; set; }
+
+        public int? LASTUPDATEDBY { get; set; }
+
+        public DateTime? DATETIMEUPDATED { get; set; }
+
+        public int DELETED { get; set; }
+
+        public int? DELETEDBY { get; set; }
+
+        public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual ICollection<TBL_CHECKLIST_DETAIL> TBL_CHECKLIST_DETAIL { get; set; }
+
+        public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
+
+        public virtual ICollection<TBL_LOAN_CONDITION_PRECEDENT> TBL_LOAN_CONDITION_PRECEDENT { get; set; }
+    }
+}

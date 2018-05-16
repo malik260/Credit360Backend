@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_PUBLIC_HOLIDAY")]
+    [Table("TBL_PUBLIC_HOLIDAY")]
     public partial class TBL_PUBLIC_HOLIDAY
     {
         [Key]
@@ -14,7 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         public int COUNTRYID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
+        [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
         [Required]

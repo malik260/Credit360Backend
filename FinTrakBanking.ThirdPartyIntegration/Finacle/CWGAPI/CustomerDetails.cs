@@ -168,7 +168,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addCustomerAcct.BRANCHID = (short)(item.branchCode != "" ? 1 : 1);
                 addCustomerAcct.CURRENCYID = currencyId;//(short)(item.currency == "NGN" ? 1 : 0);
                 addCustomerAcct.ISCURRENTACCOUNT = true;
-                addCustomerAcct.ACCOUNTSTATUSID = accountStatusId;//(short)(item.accountStatusName == "Active" ? 1 : 3);
+                addCustomerAcct.ACCOUNTSTATUSID = (short) accountStatusId;//(short)(item.accountStatusName == "Active" ? 1 : 3);
                 addCustomerAcct.LIENAMOUNT = 0;
                 addCustomerAcct.HASLIEN = false;
                 addCustomerAcct.POSTNOSTATUSID = 1;
@@ -253,6 +253,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Authorization = token;
+            
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
           

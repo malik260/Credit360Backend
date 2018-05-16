@@ -3027,7 +3027,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
                 //addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
                 //addOverDraft.INTEREST_AMOUNT = item.interestAmount;
-                addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
+                addOverDraft.APPROVALSTATUSID = (short) item.approvalStatusId;
                 addOverDraft.APPROVEDBY = item.approvedBy;
                 addOverDraft.APPROVERCOMMENT = item.approverComment;
                 addOverDraft.DATEAPPROVED = item.dateApproved;
@@ -3180,7 +3180,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
                 //addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
                 //addOverDraft.INTEREST_AMOUNT = item.interestAmount;
-                addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
+                addOverDraft.APPROVALSTATUSID = (short) item.approvalStatusId;
                 addOverDraft.APPROVEDBY = item.approvedBy;
                 addOverDraft.APPROVERCOMMENT = item.approverComment;
                 addOverDraft.DATEAPPROVED = item.dateApproved;
@@ -3328,7 +3328,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
                 //addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
                 //addOverDraft.INTEREST_AMOUNT = item.interestAmount;
-                addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
+                addOverDraft.APPROVALSTATUSID = (short) item.approvalStatusId;
                 addOverDraft.APPROVEDBY = item.approvedBy;
                 addOverDraft.APPROVERCOMMENT = item.approverComment;
                 addOverDraft.DATEAPPROVED = item.dateApproved;
@@ -3493,7 +3493,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.OVERDRAFTLIMIT = item.overdraftLimit;
                 // addOverDraft.DISBURSED_AMOUNT = item.disbursedAmount;
                 //addOverDraft.INTEREST_AMOUNT = item.interestAmount;
-                addOverDraft.APPROVALSTATUSID = item.approvalStatusId;
+                addOverDraft.APPROVALSTATUSID = (short) item.approvalStatusId;
                 addOverDraft.APPROVEDBY = item.approvedBy;
                 addOverDraft.APPROVERCOMMENT = item.approverComment;
                 addOverDraft.DATEAPPROVED = item.dateApproved;
@@ -3741,7 +3741,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.PRINCIPALAMOUNT = model.principalAmount;
                 addLoanArchive.PRINCIPALINSTALLMENTLEFT = model.principalInstallmentLeft;
                 addLoanArchive.INTERESTINSTALLMENTLEFT = model.interestInstallmentLeft;
-                addLoanArchive.APPROVALSTATUSID = model.approvalStatusId;
+                addLoanArchive.APPROVALSTATUSID = (short) model.approvalStatusId;
                 addLoanArchive.APPROVEDBY = model.approvedBy;
                 addLoanArchive.APPROVERCOMMENT = model.approverComment;
                 addLoanArchive.DATEAPPROVED = model.dateApproved;
@@ -3885,7 +3885,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraftArchive.MATURITYDATE = model.maturityDate;
                 addOverDraftArchive.BOOKINGDATE = model.bookingDate;
                 addOverDraftArchive.OVERDRAFTLIMIT = model.overdraftLimit;
-                addOverDraftArchive.APPROVALSTATUSID = model.approvalStatusId;
+                addOverDraftArchive.APPROVALSTATUSID = (short) model.approvalStatusId;
                 addOverDraftArchive.APPROVEDBY = model.approvedBy;
                 addOverDraftArchive.APPROVERCOMMENT = model.approverComment;
                 addOverDraftArchive.DATEAPPROVED = model.dateApproved;
@@ -5021,7 +5021,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.PRINCIPALAMOUNT = item.principalAmount;
                 addLoanArchive.PRINCIPALINSTALLMENTLEFT = item.principalInstallmentLeft;
                 addLoanArchive.INTERESTINSTALLMENTLEFT = item.interestInstallmentLeft;
-                addLoanArchive.APPROVALSTATUSID = item.approvalStatusId;
+                addLoanArchive.APPROVALSTATUSID = (short) item.approvalStatusId;
                 addLoanArchive.APPROVEDBY = item.approvedBy;
                 addLoanArchive.APPROVERCOMMENT = item.approverComment;
                 addLoanArchive.DATEAPPROVED = item.dateApproved;
@@ -6180,7 +6180,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoan.PRINCIPALAMOUNT = item.principalAmount;
                 addLoan.PRINCIPALINSTALLMENTLEFT = item.principalInstallmentLeft;
                 addLoan.INTERESTINSTALLMENTLEFT = item.interestInstallmentLeft;
-                addLoan.APPROVALSTATUSID = item.approvalStatusId;
+                addLoan.APPROVALSTATUSID = (short) item.approvalStatusId;
                 addLoan.APPROVEDBY = item.approvedBy;
                 addLoan.APPROVERCOMMENT = item.approverComment;
                 addLoan.DATEAPPROVED = item.dateApproved;
@@ -7297,7 +7297,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 LOANID = model.loanId,
                 PRODUCTTYPEID = model.productTypeId,
-                OPERATIONTYPEID = model.operationTypeId,
+                OPERATIONTYPEID = (short)model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
                 INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate,
@@ -7311,7 +7311,7 @@ namespace FintrakBanking.Repositories.Credit
                 CASA_ACCOUNTID = model.cASA_AccountId,
                 OVERDRAFTTOPUP = model.overDraftTopup,
                 FEE_CHARGES = model.fee_Charges,
-                APPROVALSTATUSID = model.approvalStatusId,
+                APPROVALSTATUSID = (short) model.approvalStatusId,
                 ISMANAGEMENTINTERESTRATE = model.isManagementRate,
                 SCHEDULETYPEID = model.scheduleTypeId,
                 SCHEDULEDAYINTERESTTYPEID = model.interestTypeId,
@@ -7821,11 +7821,11 @@ namespace FintrakBanking.Repositories.Credit
                         select new ApprovalTrailDetailsViewModel
                         {
                             comment = det.COMMENT,
-                            approvalStatusName = det.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                            staffName = det.TBL_STAFF.FIRSTNAME + " " + det.TBL_STAFF.FIRSTNAME,
+                         //   approvalStatusName = det.APVL_ST.APPROVALSTATUSNAME,
+                           // staffName = det.TBL_STAFF.FIRSTNAME + " " + det.TBL_STAFF.FIRSTNAME,
                             targetName = context.TBL_LOAN.FirstOrDefault(l => l.TERMLOANID == det.TARGETID).LOANREFERENCENUMBER,
-                            operationName = det.TBL_OPERATIONS.OPERATIONNAME,
-                            approvalLevelName = det.TBL_APPROVAL_LEVEL.LEVELNAME
+                          //  operationName = det.TBL_OPERATIONS.OPERATIONNAME,
+                          //  approvalLevelName = det.TBL_APVL_LVL.LEVELNAME
                         }).ToList();
             return data;
         }
@@ -8586,7 +8586,7 @@ namespace FintrakBanking.Repositories.Credit
                              deleted = a.DELETED,
                              deletedBy = a.DELETEDBY,
                              dateTimeDeleted = a.DATETIMEDELETED,
-                             approvalStatusId = a.APPROVALSTATUSID,
+                             approvalStatusId = (short)a.APPROVALSTATUSID,
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
                              customerInfoValidated = a.CUSTOMERINFOVALIDATED,
@@ -8830,7 +8830,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanRevolvingArchive.OVERDRAFTLIMIT = item.overdraftLimit;
                 //addLoanRevolvingArchive.DISBURSED_AMOUNT = item.disbursedAmount;
                 //addLoanRevolvingArchive.INTEREST_AMOUNT = item.interestAmount;
-                addLoanRevolvingArchive.APPROVALSTATUSID = item.approvalStatusId;
+                addLoanRevolvingArchive.APPROVALSTATUSID = (short)item.approvalStatusId;
                 addLoanRevolvingArchive.APPROVEDBY = item.approvedBy;
                 addLoanRevolvingArchive.APPROVERCOMMENT = item.approverComment;
                 addLoanRevolvingArchive.DATEAPPROVED = item.dateApproved;
@@ -8930,10 +8930,10 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType()
+        public IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType()
         {
             var data = from a in context.TBL_LOAN_MATURITY_INSTRU_TYPE
-                       select new MaturityIntructionTypeViewModel
+                       select new MaturityIntructionViewModel
                        {
                           instructionTypeId = a.INSTRUCTIONTYPEID ,
                             instructionTypeName = a.INSTRUCTIONTYPENAME,
@@ -8942,7 +8942,51 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
         }
 
+        public IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions()
+        {
+            var data = from a in context.TBL_LOAN_MATURITY_INSTRUCTION
+                       select new MaturityIntructionViewModel
+                       {
+                           instructionTypeId = a.INSTRUCTIONTYPEID,
+                           instructionTypeName = a.TBL_LOAN_MATURITY_INSTRU_TYPE.INSTRUCTIONTYPENAME,
+                           newTenor = a.TENOR,
+                           loanId = a.LOANID,
+                           maturityInstructionId = a.MATURITYINSTRUCTIONID,
+                           loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                           dateTimeCreated = a.DATETIMECREATED,
+                           createdBy = a.CREATEDBY
+                       };
+            foreach(var item in data)
+            {
+                var loanRec = context.TBL_LOAN.Find(item.loanId);
+                var customerRec = context.TBL_CUSTOMER.Find(loanRec.CUSTOMERID);
+                item.loanReferenceNumber = loanRec.LOANREFERENCENUMBER;
+                item.customerName = customerRec.FIRSTNAME + " " + customerRec.MIDDLENAME + " " + customerRec.LASTNAME;
+                item.outstandingPrincipal = loanRec.OUTSTANDINGPRINCIPAL;
+                item.outstandingInterest = loanRec.OUTSTANDINGINTEREST;
+                item.interestRate = loanRec.INTERESTRATE;
+                item.oldTenor = loanRec.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR;
+            }
+            
+            return data.ToList();
+        }
 
+        public bool addMaturityInstruction(MaturityIntructionViewModel model)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+
+            TBL_LOAN_MATURITY_INSTRUCTION maturity = new TBL_LOAN_MATURITY_INSTRUCTION();
+
+            maturity.LOANID = model.loanId;
+            maturity.LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility;
+            maturity.INSTRUCTIONTYPEID = model.instructionTypeId;
+            maturity.TENOR = model.tenor;
+            maturity.CREATEDBY = model.createdBy;
+            maturity.DATETIMECREATED = DateTime.Now;
+            this.context.TBL_LOAN_MATURITY_INSTRUCTION.Add(maturity);
+
+            return context.SaveChanges() > 0;
+        }
         public List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId)
         {
             var data = from a in context.TBL_LOAN_APPLICATION_DETAIL
@@ -9118,9 +9162,7 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool CommercialPaperRollOver(string refNo, decimal prepaymentAmount, DateTime applicationDate, int staffId)
         {
-            bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
-
             TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
                                          where p.LOANREFERENCENUMBER == refNo
                                          select p).SingleOrDefault();
@@ -9136,12 +9178,7 @@ namespace FintrakBanking.Repositories.Credit
                 result.LOANSTATUSID = (short)LoanStatusEnum.Active;
             }
 
-            context.SaveChanges();
-
-            output = true;
-
-            return output;
-
+            return context.SaveChanges() > 0;
         }
 
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate)

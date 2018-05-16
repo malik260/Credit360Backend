@@ -102,7 +102,7 @@ namespace FintrakBanking.Repositories.Credit
                             isFirstApprover = true,
                             operationId = (int?)OperationsEnum.LoanAvailment,
                             currentApprovalStateId = e.APPROVALSTATEID,
-                            approvalStatusId = e == null ? 0 : e.APPROVALSTATUSID,
+                            approvalStatusId = (short) (e == null ? 0 : e.APPROVALSTATUSID),
                         });
 
             return data;
