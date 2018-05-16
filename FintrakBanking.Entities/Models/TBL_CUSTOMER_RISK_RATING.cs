@@ -37,5 +37,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
+
+        //public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
+       // TBL_CUSTOMER_RISK_RATING
     }
 }

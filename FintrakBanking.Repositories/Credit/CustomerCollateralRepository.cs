@@ -3025,11 +3025,11 @@ namespace FintrakBanking.Repositories.Credit
                     select new CollateralValuersViewModel
                     {
                         collateralValuerId = m.COLLATERALVALUERID,
-                        cityId = m.CITYID,
+                        cityId =  m.CITYID,
                         name = m.NAME,
                         valuerLicenceNumber = m.VALUERLICENCENUMBER,
                         valuerTypeId = m.VALUERTYPEID,
-                        countryId = m.COUNTRYID,
+                        countryId =  m.COUNTRYID,
                         //accountNumber = m.nu,
                         //valuerBVN = m.,
                         emailAddress = m.EMAILADDRESS,

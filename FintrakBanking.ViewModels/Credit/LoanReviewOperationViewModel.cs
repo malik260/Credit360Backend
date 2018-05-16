@@ -12,7 +12,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int loanId { get; set; }
 
-        public int productTypeId { get; set; }
+        public short productTypeId { get; set; }
 
         public int operationTypeId { get; set; }
 
@@ -24,9 +24,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public decimal? prepayment { get; set; }
 
-        public int? principalFrequencyTypeId { get; set; }
+        public short? principalFrequencyTypeId { get; set; }
 
-        public int? interestFrequencyTypeId { get; set; }
+        public short? interestFrequencyTypeId { get; set; }
 
         public DateTime? principalFirstPaymentDate { get; set; }
 

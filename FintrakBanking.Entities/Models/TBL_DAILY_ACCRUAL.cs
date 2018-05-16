@@ -39,6 +39,7 @@ namespace FintrakBanking.Entities.Models
         public double INTERESTRATE { get; set; }
 
         //[Column(TypeName = "date")]
+        [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
         public short DAYCOUNTCONVENTIONID { get; set; }

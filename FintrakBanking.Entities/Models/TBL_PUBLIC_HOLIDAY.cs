@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int COUNTRYID { get; set; }
 
         //[Column(TypeName = "date")]
+        [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
         [Required]

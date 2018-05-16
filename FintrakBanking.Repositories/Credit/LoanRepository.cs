@@ -503,7 +503,7 @@ namespace FintrakBanking.Repositories.Credit
                                   let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
                                   select sumPrincipalAmount;
 
-            double? priceIndex = (from a in context.TBL_PRODUCT where a.PRODUCTID == entity.productId select a.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE).FirstOrDefault();
+            double priceIndex = (from a in context.TBL_PRODUCT where a.PRODUCTID == entity.productId select a.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE).FirstOrDefault();
 
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)entity.currencyId, entity.companyId).sellingRate;
 
@@ -535,7 +535,7 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTNUMBEROFINSTALLMENT = 0,
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
-                PRODUCTPRICEINDEXRATE = (double)priceIndex,
+                PRODUCTPRICEINDEXRATE = priceIndex,
 
                 SUBSECTORID = entity.subSectorId,
                 CURRENCYID = (short)entity.currencyId,
@@ -3171,8 +3171,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanCovenantDetailId = a.LOANCOVENANTDETAILID,
                             covenantDetail = a.COVENANTDETAIL,
                             loanId = a.LOANID,
-                            covenantTypeId = a.COVENANTTYPEID,
-                            frequencyTypeId = a.FREQUENCYTYPEID,
+                            covenantTypeId =  (short)a.COVENANTTYPEID,
+                            frequencyTypeId = (short)a.FREQUENCYTYPEID,
                             covenantAmount = a.COVENANTAMOUNT,
                             covenantDate = a.COVENANTDATE,
                             casaAccountId = a.CASAACCOUNTID
@@ -3636,7 +3636,7 @@ namespace FintrakBanking.Repositories.Credit
                             orderby m.AVAILMENTDATE descending, m.DATETIMECREATED descending
                             select new CamProcessedLoanViewModel
                             {
-                                approvalStatusId = m.APPROVALSTATUSID,
+                                approvalStatusId = (short)m.APPROVALSTATUSID,
                                 loanApplicationId = m.LOANAPPLICATIONID,
                                 loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                 applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
@@ -3815,7 +3815,7 @@ namespace FintrakBanking.Repositories.Credit
                             requestedBy = "",
                             requestedAmount = s.AMOUNT_REQUESTED,
                             requestOperationId = (short)OperationsEnum.LoanBookingRequest,
-                            approvalStatusId = m.APPROVALSTATUSID,
+                            approvalStatusId = (short)m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
@@ -3939,7 +3939,7 @@ namespace FintrakBanking.Repositories.Credit
                             requestedBy = "",
                             requestedAmount = s.AMOUNT_REQUESTED,
                             requestOperationId = (short)OperationsEnum.LoanBookingRequest,
-                            approvalStatusId = m.APPROVALSTATUSID,
+                            approvalStatusId = (short)m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
@@ -4123,7 +4123,7 @@ namespace FintrakBanking.Repositories.Credit
                         where m.COMPANYID == companyId && d.DELETED == false && d.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                         select new CamProcessedLoanViewModel
                         {
-                            approvalStatusId = m.APPROVALSTATUSID,
+                            approvalStatusId = (short)m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,

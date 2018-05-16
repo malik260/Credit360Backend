@@ -2132,7 +2132,7 @@ namespace FintrakBanking.Repositories.Customer
                 title = a.TITLE,
                 middleName = a.MIDDLENAME,
                 //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                customerTypeName = a.TBL_CUSTOMER_TYPE.NAME, // context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                 misCode = a.MISCODE,
                 misStaff = a.MISSTAFF,
                 nationality = a.NATIONALITY,
@@ -2140,8 +2140,8 @@ namespace FintrakBanking.Repositories.Customer
                 placeOfBirth = a.PLACEOFBIRTH,
                 isPoliticallyExposed = a.ISPOLITICALLYEXPOSED ,
                 relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
-                relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
-                         + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
+                //relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
+                //         + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
                 spouse = a.SPOUSE,
                 sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                 sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
@@ -2149,7 +2149,7 @@ namespace FintrakBanking.Repositories.Customer
                 subSectorName = a.TBL_SUB_SECTOR.NAME,
                 taxNumber = a.TAXNUMBER,
                 riskRatingId = a.RISKRATINGID,
-                riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+               // riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                 customerBVN = a.CUSTOMERBVN,
             });
         }
@@ -2598,16 +2598,19 @@ namespace FintrakBanking.Repositories.Customer
         }
         public IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery)
         {
-            var customers = (from x in GetCustomers()
+            var customers = (from x in GetCustomersLite()
                              where x.firstName.ToLower().Contains(searchQuery.ToLower())
                             || x.lastName.ToLower().Contains(searchQuery.ToLower())
                             || x.middleName.ToLower().Contains(searchQuery.ToLower())
                             || x.customerCode.Contains(searchQuery)
                             || x.branchName.Contains(searchQuery)
-                             select x).ToList();
-            if (customers.Count > 0)
+                             select x);
+
+            var customerInfo = customers.ToList();
+
+            if (customerInfo.Count > 0)
             {
-                return customers;
+                return customerInfo;
             }
             return null;
         }
@@ -3469,7 +3472,7 @@ namespace FintrakBanking.Repositories.Customer
                         customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                         modificationTyepId = a.MODIFICATIONTYPEID,
                         modificationType = a.TBL_CUSTOMER_MODIFICATN_TYPE.MODIFICATIONTYPENAME,
-                        approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                     //   approvalStatus = c.APVL_ST.APPROVALSTATUSNAME,
                         dateUpdated = a.DATETIMECREATED,
                         createdBy = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == a.CREATEDBY).FIRSTNAME + " "
                         + context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == a.CREATEDBY).LASTNAME,

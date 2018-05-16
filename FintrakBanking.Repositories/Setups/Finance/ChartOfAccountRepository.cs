@@ -438,7 +438,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                             systemUse = account.SYSTEMUSE,
                             branchSpecific = account.BRANCHSPECIFIC,
-                            fsCaptionId = account.FSCAPTIONID,
+                            fsCaptionId = (short) account.FSCAPTIONID,
 
                             createdBy = account.CREATEDBY,
                             dateTimeCreated = account.DATETIMECREATED,
@@ -482,7 +482,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 branchId = account.BRANCHID,
                 systemUse = account.SYSTEMUSE,
                 branchSpecific = account.BRANCHSPECIFIC,
-                fsCaptionId = account.FSCAPTIONID,
+                fsCaptionId = (short) account.FSCAPTIONID,
                 createdBy = account.CREATEDBY,
                 dateTimeCreated = account.DATETIMECREATED,
                 lastUpdatedBy = account.LASTUPDATEDBY.Value,
@@ -742,7 +742,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             branchName = c.TBL_BRANCH.BRANCHNAME,
                             systemUse = c.SYSTEMUSE,
                             branchSpecific = c.BRANCHSPECIFIC,
-                            fsCaptionId = c.FSCAPTIONID,
+                            fsCaptionId = (short) c.FSCAPTIONID,
                             fsCaptionName = c.TBL_FINANCIAL_STATEMENT_CAPTN.FSCAPTION,
                             operationId = atrail.OPERATIONID,
                             //approvalStatusId = c.ApprovalStatusId,
@@ -783,7 +783,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                         systemUse = c.SYSTEMUSE,
                         branchSpecific = c.BRANCHSPECIFIC,
-                        fsCaptionId = c.FSCAPTIONID,
+                        fsCaptionId = (short)c.FSCAPTIONID,
 
                         createdBy = c.CREATEDBY,
                         dateTimeCreated = c.DATETIMECREATED,
@@ -826,7 +826,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     orderby data.FINTYPE, data.POSITION
                     select new LookupViewModel()
                     {
-                        lookupId = data.FSCAPTIONID,
+                        lookupId = (short) data.FSCAPTIONID,
                         lookupName = data.FSCAPTION + " -- " + data.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME
                     });
             

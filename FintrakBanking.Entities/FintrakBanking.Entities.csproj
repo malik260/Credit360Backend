@@ -283,6 +283,7 @@
     <Compile Include="Models\TBL_LOAN_COVENANT_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_FEE.cs" />
+    <Compile Include="Models\TBL_LOAN_FEE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_FEE_SCHEDULE.cs" />
     <Compile Include="Models\TBL_LOAN_FORCE_DEBIT.cs" />
     <Compile Include="Models\TBL_LOAN_MARKET.cs" />

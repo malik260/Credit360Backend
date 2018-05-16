@@ -43,7 +43,7 @@ namespace FintrakBanking.Entities.Models
         public short APPROVALSTATUSID { get; set; }
 
         public int OPERATIONID { get; set; }
-        
+
         [StringLength(700), Column(name: "COMMENT_")]
         public string COMMENT { get; set; }
 
