@@ -1,4 +1,4 @@
-﻿using EmailMessageLogger.Enum;
+﻿
 using FintrakBanking.Common;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
