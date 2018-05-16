@@ -331,7 +331,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             // UPDATE APPLICATION
-            appl.APPROVALSTATUSID = workflow.StatusId;
+            appl.APPROVALSTATUSID = (short) workflow.StatusId;
             if (model.vote == 1) { appl.DISPUTED = true; }
             appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
             if (appl.SUBMITTEDFORAPPRAISAL == false) { appl.SUBMITTEDFORAPPRAISAL = true; } // for product programs
@@ -415,12 +415,12 @@ namespace FintrakBanking.Repositories.Credit
                     responseStaffId = x.RESPONSESTAFFID,
                     requestStaffId = x.REQUESTSTAFFID,
                     fromApprovalLevelId = x.FROMAPPROVALLEVELID,
-                    fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : x.TBL_APPROVAL_LEVEL.LEVELNAME,
+                 //   fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : x.TBL_APVL_LVL.LEVELNAME,
                     toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
                     approvalStateId = x.APPROVALSTATEID,
                     approvalStatusId = x.APPROVALSTATUSID,
-                    approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
-                    approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                   // approvalState = x.APVL_LVL_STATE.APPROVALSTATE,
+                   // approvalStatus = x.APVL_ST.APPROVALSTATUSNAME,
                     comment = x.COMMENT,
                     staffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
                 }).OrderByDescending(x => x.approvalTrailId);
@@ -721,7 +721,7 @@ namespace FintrakBanking.Repositories.Credit
                     lastComment = y.COMMENT,
                     currentApprovalStateId = y.APPROVALSTATEID,
                     currentApprovalLevelId = y.TOAPPROVALLEVELID,
-                    currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                   // currentApprovalLevel = y.APVL_LVL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                     approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
                     toStaffId = y.TOSTAFFID,
                     loanInformation = x.a.LOANINFORMATION,
@@ -729,7 +729,7 @@ namespace FintrakBanking.Repositories.Credit
                     customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
                     isRelatedParty = x.a.ISRELATEDPARTY,
                     isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
-                    approvalStatusId = x.a.APPROVALSTATUSID,
+                    approvalStatusId = (short)x.a.APPROVALSTATUSID,
                     applicationStatusId = x.a.APPLICATIONSTATUSID,
                     branchName = x.a.TBL_BRANCH.BRANCHNAME,
                     relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
@@ -813,7 +813,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // LIFTED FROM ABOVE
 
-            appl.APPROVALSTATUSID = workflow.StatusId;
+            appl.APPROVALSTATUSID = (short)workflow.StatusId;
 
             if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) // redundant block
             {
@@ -896,7 +896,7 @@ namespace FintrakBanking.Repositories.Credit
                         toApprovalLevelId = y.TOAPPROVALLEVELID,
                         toStaffId = y.TOSTAFFID,
                         //sla time, timein timeout, timespent, responsible person
-                        currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                      //  currentApprovalLevel = y.APVL_LVL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                         approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
 
                     })

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_RISK_ASSESSMENT")]
+    [Table("TBL_RISK_ASSESSMENT")]
     public partial class TBL_RISK_ASSESSMENT
     {
         [Key]
@@ -19,8 +19,6 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string REFCODE { get; set; }
-
-        public int LOANAPPLICATIONID { get; set; }
 
         public int RISKASSESSMENTTITLEID { get; set; }
 
@@ -44,8 +42,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? DELETEDBY { get; set; }
 
-        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
+        //public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
 
         public virtual TBL_RISK_ASSESSMENT_TITLE TBL_RISK_ASSESSMENT_TITLE { get; set; }
+        public int? TARGETID { get; set; }
     }
 }

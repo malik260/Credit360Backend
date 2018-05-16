@@ -398,7 +398,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                           where a.OPERATIONID == operationId && a.COMPANYID == companyId
                           select new
                           {
-                              RequestStaffName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                             // RequestStaffName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                               RequestApprovalLevel = c == null ? "Initiation" : c.LEVELNAME,
                               ArrivalDate = a.ARRIVALDATE,
                               //ArrivalDate = a.ArrivalDate + a.SystemArrivalDateTime.TimeOfDay  ,
@@ -407,7 +407,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               //ResponseDate = a.ResponseDate + a.SystemResponseDateTime.Value.TimeOfDay,
 
                               ResponseDate = a.RESPONSEDATE.HasValue ? a.RESPONSEDATE : DateTime.Now,
-                              ResponseStaffName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                          //    ResponseStaffName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                               ResponseApprovalLevel = b.LEVELNAME,
                               TargetId = a.TARGETID
                         })
@@ -418,10 +418,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 approvalStatus = c.ApprovalStatus,
                 arrivalDate = c.ArrivalDate,
                 requestApprovalLevel = c.RequestApprovalLevel,
-                requestStaffName = c.RequestStaffName,
+              //  requestStaffName = c.RequestStaffName,
                 responseApprovalLevel = c.RequestApprovalLevel,
                 responseDate = (DateTime)c.ResponseDate,
-                responseStaffName = c.ResponseStaffName
+              //  responseStaffName = c.ResponseStaffName
             }));
         }
 

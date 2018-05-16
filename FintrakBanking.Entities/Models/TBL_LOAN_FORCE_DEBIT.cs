@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_FORCE_DEBIT")]
+    [Table("TBL_LOAN_FORCE_DEBIT")]
     public partial class TBL_LOAN_FORCE_DEBIT
     {
         [Key]
@@ -16,7 +16,8 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCTTYPEID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
+        [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
         public byte TRANSACTIONTYPEID { get; set; }
@@ -32,10 +33,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(800)]
         public string DESCRIPTION { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal DEBITAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal CREDITAMOUNT { get; set; }
 
         public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }

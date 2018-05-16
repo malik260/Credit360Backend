@@ -1,8 +1,5 @@
 ﻿using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.Repositories.Admin;
 using FintrakBanking.Repositories.Setups.General;
-using Ninject.Activation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,12 +26,7 @@ namespace FintrakBanking.APICore.Filters
         {
             bool authorize = false;
             int userId = Int32.Parse(new ClaimsIdentity(HttpContext.Current.User.Identity).Claims.First(x => x.Type == "userId").Value);
-
             var admin = new AuthenticationRepository(context);
-
-
-
-
             List<String> activities = admin.GetUserActivitiesByUser(userId);
             authorize = allowedActivities.Any(x => activities.Contains(x));
             return authorize;
@@ -46,6 +38,5 @@ namespace FintrakBanking.APICore.Filters
             filterContext.Response.StatusCode = HttpStatusCode.Forbidden;
             base.HandleUnauthorizedRequest(filterContext);
         }
-
     }
 }

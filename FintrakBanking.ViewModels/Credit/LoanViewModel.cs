@@ -241,7 +241,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isBidbond { get; set; }
         public short accrualBasis { get; set; }
         public bool isTemporaryOverdraft { get; set; }
-        public short? revolvingTypeId { get; set; }
+        public short revolvingTypeId { get; set; }
 
         public string serialNumber { get; set; }
         public int loanId { get; set; }
@@ -613,7 +613,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short covenantTypeId { get; set; }
         public short? frequencyTypeId { get; set; }
         public decimal? covenantAmount { get; set; }
-        public DateTime covenantDate { get; set; }
+        public DateTime  covenantDate { get; set; }
         public string covenantTypeName { get; set; }
         public string frequencyTypeName { get; set; }
         public string loanRef { get; set; }

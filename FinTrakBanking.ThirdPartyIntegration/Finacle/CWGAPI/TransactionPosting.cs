@@ -61,7 +61,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
             exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
             exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
-            exchangeRateOutput.currencyId = currencyId;
+            exchangeRateOutput.currencyId = (short) currencyId;
             exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
             exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
 

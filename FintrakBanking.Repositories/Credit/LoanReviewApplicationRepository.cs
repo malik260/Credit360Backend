@@ -74,9 +74,9 @@ namespace FintrakBanking.Repositories.Credit
                     lastComment = t.COMMENT,
                     currentStage = t == null ? "N/A" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == t.OPERATIONID).OPERATIONNAME,
                     currentApprovalStateId = t == null ? (short)0 : t.APPROVALSTATEID,
-                    currentApprovalState = t.TBL_APPROVAL_STATE.APPROVALSTATE,
+                  //  currentApprovalState = t.APVL_LVL_STATE.APPROVALSTATE,
                     currentApprovalLevelId = t.TOAPPROVALLEVELID,
-                    currentApprovalLevel = t.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                   // currentApprovalLevel = t.APVL_LVL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                     approvalTrailId = t == null ? 0 : t.APPROVALTRAILID, // for inner sequence ordering
                     toStaffId = t.TOSTAFFID,
 
@@ -125,9 +125,9 @@ namespace FintrakBanking.Repositories.Credit
         lastComment = t.COMMENT,
         currentStage = t == null ? "N/A" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == t.OPERATIONID).OPERATIONNAME,
         currentApprovalStateId = t == null ? (short)0 : t.APPROVALSTATEID,
-        currentApprovalState = t.TBL_APPROVAL_STATE.APPROVALSTATE,
+       // currentApprovalState = t.APVL_LVL_STATE.APPROVALSTATE,
         currentApprovalLevelId = t.TOAPPROVALLEVELID,
-        currentApprovalLevel = t.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+      //  currentApprovalLevel = t.APVL_LVL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                     approvalTrailId = t == null ? 0 : t.APPROVALTRAILID, // for inner sequence ordering
                     toStaffId = t.TOSTAFFID,
 
@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.Credit
             var application = new TBL_LOAN_REVIEW_APPLICATION
             {
                 LOANID = model.loanId,
-                PRODUCTTYPEID = model.productTypeId, // 1. termloan
+                PRODUCTTYPEID = (short) model.productTypeId, // 1. termloan
                 OPERATIONID = model.operationTypeId,
                 REVIEWDETAILS = model.reviewDetails,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,

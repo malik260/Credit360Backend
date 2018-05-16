@@ -52,17 +52,19 @@ namespace FintrakBanking.ReportObjects
                 var staffSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
                 var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
                 var approvalTrail = (from f in context.TBL_APPROVAL_TRAIL
+                                     join l in context.TBL_APPROVAL_LEVEL on f.FROMAPPROVALLEVELID  equals l.APPROVALLEVELID 
+                                     join g in context.TBL_APPROVAL_GROUP on l.GROUPID equals g.GROUPID
                                      where f.TARGETID == targetId && f.OPERATIONID == operationId && f.COMPANYID == companyId
-                                     orderby f.TBL_APPROVAL_LEVEL.TBL_APPROVAL_GROUP.GROUPID, f.TBL_APPROVAL_LEVEL.APPROVALLEVELID
+                                     orderby g.GROUPID, l.APPROVALLEVELID
 
                                      select new WorkflowTrackerViewModel()
                                      {
                                          companyName = company.NAME ,
-                                         groupName = f.TBL_APPROVAL_LEVEL.TBL_APPROVAL_GROUP.GROUPNAME,
-                                         responseApprovalLevel = f.TBL_APPROVAL_LEVEL.LEVELNAME,
-                                         operationName = f.TBL_OPERATIONS.OPERATIONNAME,
+                                         groupName = l.TBL_APPROVAL_GROUP.GROUPNAME,
+                                         responseApprovalLevel = l.LEVELNAME,
+                                      //   operationName = f.TBL_OPERATIONS.OPERATIONNAME,
                                          arrivalDate = f.SYSTEMARRIVALDATETIME,
-                                         sla = f.TBL_APPROVAL_LEVEL.SLAINTERVAL,
+                                         sla = l.SLAINTERVAL,
                                          responseDate = (DateTime)(f.SYSTEMRESPONSEDATETIME == null ? DateTime.Now : f.SYSTEMRESPONSEDATETIME),
                                          comment = f.COMMENT,
                                          TargetId = f.TARGETID,
