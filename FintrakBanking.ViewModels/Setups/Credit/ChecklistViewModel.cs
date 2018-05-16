@@ -111,6 +111,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string itemDescription { get; set; }
         public int checklistStatusId { get; set; }
         public short? productId { get; set; }
+        public int? approvalLevelId { get; set; }
 
         public List<CheckListStatusViewModel> responseTypes { get; set; }
     }

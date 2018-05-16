@@ -34,9 +34,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
-        public double EXCHANGERATE { get; set; }
-
-        public bool ISTEMPORARYOVERDRAFT { get; set; }
+        public double EXCHANGERATE { get; set; } 
 
         [Required]
         [StringLength(50)]

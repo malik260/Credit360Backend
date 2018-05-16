@@ -633,11 +633,14 @@ namespace FintrakBanking.Repositories.Credit
                                      select b;
                         var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
 
-                        var definition = from a in context.TBL_CHECKLIST_DEFINITION
+                        //ids.Contains((int)a.APPROVALLEVELID) &&
+                        var definition = (from a in context.TBL_CHECKLIST_DEFINITION
                                          join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
                                          where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
                                          && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == PRODUCTID
-                                         select a;
+                                         select a).AsQueryable();
+
+                        //var dd  = definition.Where(x=> x.APPROVALLEVELID.  ids.Contains((int)x.APPROVALLEVELID).
                         int i, j;
                         i = definition.Count(); j = detail.Count();
 
