@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("treasury.TBL_STOCK_PRICE")]
+    [Table("TBL_STOCK_PRICE")]
     public partial class TBL_STOCK_PRICE
     {
         [Key]
@@ -14,10 +14,11 @@ namespace FintrakBanking.Entities.Models
 
         public int STOCKID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
+        [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal STOCKPRICE { get; set; }
 
         public int CREATEDBY { get; set; }

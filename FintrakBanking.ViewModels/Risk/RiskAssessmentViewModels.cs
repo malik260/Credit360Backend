@@ -39,7 +39,7 @@ namespace FintrakBanking.ViewModels.Risk
         public string command { get; set; }
         public int titleIndex { get; set; } //?
         public int riskAssessmentTitleId { get; set; }
-        public int loanApplicationId { get; set; }
+        public int? targetId { get; set; }
         public int titleId { get; set; }//?
         public List<AssessmentFormViewModel> indexFields { get; set; }
     }
@@ -47,7 +47,7 @@ namespace FintrakBanking.ViewModels.Risk
     public class AssessmentResultViewModel : GeneralEntity
     {
         public int assessmentResultId { get; set; }
-        public int loanApplicationId { get; set; }
+        public int? targetId { get; set; }
         public int riskAssessmentTitleId { get; set; }
         public string refrenceNumber { get; set; }
         public string customerName { get; set; }

@@ -44,6 +44,7 @@ namespace FintrakBanking.Repositories.Finance
                               where e.COMPANYID == model.companyId && e.DATE == applicationDate
                               select e.DATE).Any();
 
+
             if (financeEod == true)
                 throw new Exception("End of Day for "+ applicationDate+" has already been run.");
 

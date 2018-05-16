@@ -12,7 +12,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int loanId { get; set; }
 
-        public int productTypeId { get; set; }
+        public short productTypeId { get; set; }
 
         public int operationTypeId { get; set; }
 
@@ -24,9 +24,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public decimal? prepayment { get; set; }
 
-        public int? principalFrequencyTypeId { get; set; }
+        public short? principalFrequencyTypeId { get; set; }
 
-        public int? interestFrequencyTypeId { get; set; }
+        public short? interestFrequencyTypeId { get; set; }
 
         public DateTime? principalFirstPaymentDate { get; set; }
 
@@ -325,9 +325,21 @@ namespace FintrakBanking.ViewModels.Credit
         public string name { get; set; }
     }
 
-    public class MaturityIntructionTypeViewModel
+    public class MaturityIntructionViewModel : GeneralEntity
     {
+        public int maturityInstructionId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public string customerName { get; set; }
+        public decimal outstandingPrincipal { get; set; }
+        public decimal outstandingInterest { get; set; }
+        public int oldTenor { get; set; }
+        public int newTenor { get; set; }
+        public double interestRate { get; set; }
+
         public short instructionTypeId { get; set; }
         public string instructionTypeName { get; set; }
+        public int loanId { get; set; }
+        public int tenor { get; set; }
+        public short loanSystemTypeId { get; set; }
     }
 }

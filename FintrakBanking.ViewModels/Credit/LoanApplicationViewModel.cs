@@ -42,7 +42,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal approvedAmount { get; set; }
         public double applicationTenor { get; set; }
         public double interestRate { get; set; }
-        public DateTime? effectiveDate { get; set; }
+        public DateTime ? effectiveDate { get; set; }
         public DateTime? expiryDate { get; set; }
         public string customerAccount { get; set; }
         public short tenorModeId { get; set; }
@@ -52,7 +52,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool submittedForAppraisal { get; set; }
         public bool isRelatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
-        public int approvalStatusId { get; set; }
+        public short approvalStatusId { get; set; }
 
         public decimal proposedAmount { get; set; }
         public int proposedTenor { get; set; }

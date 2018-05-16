@@ -68,7 +68,7 @@ namespace FintrakBanking.Repositories.Customer
                                 orderby a.POSITION
                                 select new CustomerFSCaptionGroupViewModel
                                 {
-                                    fsCaptionGroupId = a.FSCAPTIONGROUPID,
+                                    fsCaptionGroupId = (short) a.FSCAPTIONGROUPID,
                                     fsCaptionGroupName = a.FSCAPTIONGROUPNAME,
                                     position = a.POSITION,     
                                     dateTimeCreated = a.DATETIMECREATED,

@@ -1,0 +1,83 @@
+namespace FintrakBanking.Entities.Models
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("FINTRAKBANKING.TBL_TEMP_COLLATERAL_VEHICLE")]
+    public partial class TBL_TEMP_COLLATERAL_VEHICLE
+    {
+        [Key]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int TEMPCOLLATERALVEHICLEID { get; set; }
+
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int TEMPCOLLATERALCUSTOMERID { get; set; }
+
+        [Key]
+        [Column(Order = 2)]
+        [StringLength(100)]
+        public string VEHICLETYPE { get; set; }
+
+        [StringLength(10)]
+        public string VEHICLESTATUS { get; set; }
+
+        [Key]
+        [Column(Order = 3)]
+        [StringLength(50)]
+        public string VEHICLEMAKE { get; set; }
+
+        [Key]
+        [Column(Order = 4)]
+        [StringLength(50)]
+        public string MODELNAME { get; set; }
+
+        [Key]
+        [Column(Order = 5)]
+        [StringLength(50)]
+        public string REGISTRATIONNUMBER { get; set; }
+
+        [StringLength(50)]
+        public string SERIALNUMBER { get; set; }
+
+        [Key]
+        [Column(Order = 6)]
+        [StringLength(50)]
+        public string CHASISNUMBER { get; set; }
+
+        [Key]
+        [Column(Order = 7)]
+        [StringLength(50)]
+        public string ENGINENUMBER { get; set; }
+
+        [Key]
+        [Column(Order = 8)]
+        [StringLength(250)]
+        public string NAMEOFOWNER { get; set; }
+
+        [Key]
+        [Column(Order = 9)]
+        [StringLength(250)]
+        public string REGISTRATIONCOMPANY { get; set; }
+
+        public decimal? RESALEVALUE { get; set; }
+
+        public DateTime? VALUATIONDATE { get; set; }
+
+        public decimal? LASTVALUATIONAMOUNT { get; set; }
+
+        [Key]
+        [Column(Order = 10)]
+        public decimal INVOICEVALUE { get; set; }
+
+        [StringLength(500)]
+        public string REMARK { get; set; }
+
+        public DateTime? MANUFACTUREDDATE { get; set; }
+    }
+}

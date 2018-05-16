@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using FintrakBanking.APICore.Filters;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -24,6 +25,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("tax")]
+        [AuthorizeActivity("super admin","pen approval")]
         public HttpResponseMessage GetTax()
         {
             try

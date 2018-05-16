@@ -305,6 +305,8 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
+                searchEntity.staffId = token.GetStaffId;
+
                 var data = repo.GetPostedTransactions(searchEntity, token.GetCompanyId);
                 if (data == null)
                 {

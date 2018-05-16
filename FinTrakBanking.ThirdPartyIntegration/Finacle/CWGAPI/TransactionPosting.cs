@@ -61,7 +61,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
             exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
             exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
-            exchangeRateOutput.currencyId = currencyId;
+            exchangeRateOutput.currencyId = (short) currencyId;
             exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
             exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
 
@@ -703,10 +703,58 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     Message = response
                 };
             }
+            handler.Dispose();
+            client.Dispose();
             return responseMsg;
         }
 
+        public async Task<GLAccountDetailsViewModel> APIOfficeAccount(string glNumber)
+        {
+            handler.UseDefaultCredentials = true;
+            HttpClient client = new HttpClient(handler);
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+            httpClientInstance = new HttpClient();
+            httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            client.Timeout = TimeSpan.FromSeconds(30);
+            client.BaseAddress = new Uri(API_URL);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Authorization = token;
+            client.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
 
+            CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
+            CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            HttpResponseMessage response = await client.GetAsync($"api/OfficeAccount/GetGlAccountRecord?accountNumber={glNumber}");
+
+            GLAccountDetailsViewModel result = null;
+            if (response.IsSuccessStatusCode)
+            {
+                GLAccountDetailsViewModel data = await response.Content.ReadAsAsync<GLAccountDetailsViewModel>();
+                result = new GLAccountDetailsViewModel
+                {
+                    accountName = data.accountName,
+                    accountNumber = data.accountNumber,
+                    balance = data.balance,
+                    branch = data.branch,
+                    currencyType = data.currencyType,
+                    glSubHeadCode = data.glSubHeadCode,
+                    partitionedFlag = data.partitionedFlag,
+                    partitionedType = data.partitionedType,
+                    product = data.product,
+                    productName = data.productName,
+                    productType = data.productType,
+                    systemAccountFlag = data.systemAccountFlag,
+                    response = response,
+                };
+                handler.Dispose();
+                client.Dispose();
+                return result;
+            }
+            handler.Dispose();
+            client.Dispose();
+            return result;
+        }
      
     }
 }
