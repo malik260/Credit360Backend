@@ -9399,7 +9399,7 @@ namespace FintrakBanking.Repositories.Credit
                              deleted = a.DELETED,
                              deletedBy = a.DELETEDBY,
                              dateTimeDeleted = a.DATETIMEDELETED,
-                             approvalStatusId = a.APPROVALSTATUSID,
+                             approvalStatusId = (short)a.APPROVALSTATUSID,
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
                              customerInfoValidated = a.CUSTOMERINFOVALIDATED,
@@ -9743,17 +9743,17 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType()
-        {
-            var data = from a in context.TBL_LOAN_MATURITY_INSTRU_TYPE
-                       select new MaturityIntructionTypeViewModel
-                       {
-                          instructionTypeId = a.INSTRUCTIONTYPEID ,
-                            instructionTypeName = a.INSTRUCTIONTYPENAME,
-                       };
+        //public IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType()
+        //{
+        //    var data = from a in context.TBL_LOAN_MATURITY_INSTRU_TYPE
+        //               select new MaturityIntructionTypeViewModel
+        //               {
+        //                  instructionTypeId = a.INSTRUCTIONTYPEID ,
+        //                    instructionTypeName = a.INSTRUCTIONTYPENAME,
+        //               };
 
-            return data.ToList();
-        }
+        //    return data.ToList();
+        //}
 
         public List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId)
         {
