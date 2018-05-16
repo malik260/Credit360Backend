@@ -118,6 +118,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LookupViewModel> GetRevolvingLoanTypes();
 
+        IEnumerable<LoanViewModel> GetLoanStatus(int companyId);
+
 
     }
 }

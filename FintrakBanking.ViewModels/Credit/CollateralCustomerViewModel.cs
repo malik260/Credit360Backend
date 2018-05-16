@@ -281,6 +281,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short baseCurrency { get; set; }
         public short baseCurrencyId { get; set; }
         public bool disAllowCollateral { get; set; }
+       
     }
 
     public class crossGarantee

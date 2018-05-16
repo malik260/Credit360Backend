@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
+namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class CovenantsApproachingDueDate {
+    public partial class CollateralVisitation {
         
         /// <summary>
         /// form1 control.
@@ -31,22 +31,22 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// covDueDateRv control.
+        /// ReportViewer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer covDueDateRv;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer;
         
         /// <summary>
-        /// odsCovDueDate control.
+        /// ObjectDataSourceCollateralVisitation control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsCovDueDate;
+        protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSourceCollateralVisitation;
         
         /// <summary>
         /// endDate control.
@@ -65,50 +65,5 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label startDate;
-        
-        /// <summary>
-        /// companyId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label companyId;
-        
-        /// <summary>
-        /// loanRefNo control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label loanRefNo;
-        
-        /// <summary>
-        /// branchId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label branchId;
-        
-        /// <summary>
-        /// productClassId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label productClassId;
-        
-        /// <summary>
-        /// staffId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label staffId;
     }
 }
