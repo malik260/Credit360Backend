@@ -75,6 +75,10 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal feeRate { get; set; }
         public decimal feeAmount { get; set; }
         public decimal earnedFeeAmount { get; set; }
+        public int chargeFeeId { get; set; }
+        public int chargeFeeTypeId { get; set; }
+        public decimal feeAmountDiff { get; set; }
+        
 
 
 

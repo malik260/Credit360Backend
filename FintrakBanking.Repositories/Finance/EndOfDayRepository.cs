@@ -139,7 +139,7 @@ namespace FintrakBanking.Repositories.Finance
 
             collateralItemPolicy.CheckForExpiredItemPolicies(date);
 
-            loanOperation.CalLoanClassification(date);
+            loanOperation.CalculateLoanClassification(date);
 
 
             endOfDay.ENDDATETIME = DateTime.Now;
