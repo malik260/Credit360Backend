@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? COMPANYID { get; set; }
 
-        public short? CITYID { get; set; }
+        public int? CITYID { get; set; }
 
         public short? COUNTRYID { get; set; }
 

@@ -66,7 +66,7 @@ namespace FintrakBanking.Repositories.Admin
                             currencyId = a.CURRENCYID,
                             baseCurrencyId = a.BASECURRENCYID,
                             currency = a.TBL_CURRENCY .CURRENCYNAME,
-                            baseCurrency = a.TBL_CURRENCY1 .CURRENCYNAME,
+                            baseCurrency = a.TBL_CURRENCY1.CURRENCYNAME,
                             rateCodeId = a.RATECODEID,
                             rateCodeName = a.TBL_CURRENCY_RATECODE.RATECODEDESCRIPTION,
                             buyingRate = a.EXCHANGERATE,

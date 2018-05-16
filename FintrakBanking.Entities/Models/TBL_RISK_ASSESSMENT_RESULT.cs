@@ -12,8 +12,6 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int ASSESSMENTRESULTID { get; set; }
 
-        public int LOANAPPLICATIONID { get; set; }
-
         public int RISKASSESSMENTTITLEID { get; set; }
 
         [StringLength(50)]
@@ -36,5 +34,6 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }
+        public int? TARGETID { get; set; }
     }
 }

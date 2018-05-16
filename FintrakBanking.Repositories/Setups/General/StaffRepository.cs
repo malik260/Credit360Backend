@@ -136,18 +136,27 @@ namespace FintrakBanking.Repositories.Setups.General
                              departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
                              departmentUnitId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
                              departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
-                             departmentUnits = from k in context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTID == c.TBL_DEPARTMENT_UNIT.DEPARTMENTID)
-                                               select new DepartmentViewModel
-                                               {
-                                                   departmentId = (short)k.DEPARTMENTID,
-                                                   unitId = k.DEPARTMENTUNITID,
-                                                   unitName = k.DEPARTMENTUNITNAME
-                                               },
+                        
                              //MisInfoCode = c.MISC,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                              //State = c.State.StateName
                              CityId = c.CITYID,
                          }).ToList();
+
+         var department = (from k in context.TBL_DEPARTMENT_UNIT
+                           select new DepartmentViewModel()
+                           {
+                               departmentId = (short)k.DEPARTMENTID,
+                               unitId = k.DEPARTMENTUNITID,
+                               unitName = k.DEPARTMENTUNITNAME
+                           }).ToList();
+
+            foreach (var s in staff)
+            {
+
+                s.departmentUnits = department.Where(x => x.departmentId == s.DepartmentId);
+                                  
+            }
             return staff;
         }
 

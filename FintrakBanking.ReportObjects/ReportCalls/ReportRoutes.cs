@@ -206,7 +206,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/CovenantsApproachingDueDate.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/CovenantsApproachingDueDate.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
                 return path;
             }
             catch (Exception ex)
@@ -230,12 +230,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        public string GetExpiredSelfLiquidatingLoansReport(int companyId, int staffId)
+        public string GetCollateralPropertyDueForVisitationReport(int companyId, DateRange dateRange, int staffId)
         {
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/ExpiredSelfLiquidatingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId;
+                path = reportPath + "ReportViews/CollateralVisitation.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
                 return path;
             }
             catch (Exception ex)
@@ -245,12 +245,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        public string GetNonPerformingLoansReport(int companyId, int staffId)
+        public string GetSelfLiquidatingLoansReport(DateRange dateRange,int companyId, int staffId)
         {
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/NonPeformingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId;
+                path = reportPath + "Credit/Monitoring/ExpiredSelfLiquidatingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
                 return path;
             }
             catch (Exception ex)
@@ -260,12 +260,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        public string GetExpiredOverdraftLoansReport(int companyId, int staffId)
+        public string GetNonPerformingLoansReport(DateRange dateRange,int companyId, int staffId)
         {
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/ExpiredOverdraftLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId;
+                path = reportPath + "ReportViews/NonPeformingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&classification=" + dateRange.classification + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
                 return path;
             }
             catch (Exception ex)
@@ -275,6 +275,34 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
+        public string GetExpiredOverdraftLoansReport(DateRange dateRange, int companyId, int staffId)
+        {
+            try
+            {
+                string path = string.Empty;
+                path = reportPath + "ReportViews/Overdraft.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                return path;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public string GetBondAndGuaranteeReport(DateRange dateRange, int companyId, int staffId)
+        {
+            try
+            {
+                string path = string.Empty;
+                path = reportPath + "ReportViews/BondAndGuarantee.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                return path;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
         #endregion Loan Monitoring Reports
 
         public string GetLoanCommercialReport(DateRange dateRange, int companyId, int staffId)

@@ -333,7 +333,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal penalChargeAmount { get; set; }
         public int dayCountConventionId { get; set; }
         public short loanSystemTypeId { get; set; }
-        
+        public int? userPrudentialGuidelineStatusId { get; set; }
+
     }
 
     public class ContingentLoanViewModel : GeneralEntity
@@ -616,7 +617,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short covenantTypeId { get; set; }
         public short? frequencyTypeId { get; set; }
         public decimal? covenantAmount { get; set; }
-        public DateTime covenantDate { get; set; }
+        public DateTime  covenantDate { get; set; }
         public string covenantTypeName { get; set; }
         public string frequencyTypeName { get; set; }
         public string loanRef { get; set; }

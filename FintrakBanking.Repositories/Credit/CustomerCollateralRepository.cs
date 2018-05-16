@@ -523,9 +523,12 @@ namespace FintrakBanking.Repositories.Credit
                     x => x.m.DefaultIfEmpty(),
                     (c, m) => new CollateralViewModel
                     {
+                        //NOTE: customerId 61,67 & 60 has data
+
                         //loanId = c.m, // m = m == null ? 0 : m.LOANID,
-                        valueInUse = m.LOANSYSTEMTYPEID == 1 ? context.TBL_LOAN.Where(x => x.TERMLOANID == m.LOANID).Sum(l => l.PRINCIPALAMOUNT)
-                                                          : context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == m.LOANID).Sum(l => l.OVERDRAFTLIMIT),
+                        // valueInUse = m.LOANSYSTEMTYPEID == 1 ? context.TBL_LOAN.Where(x => x.TERMLOANID == m.LOANID).Sum(l => l.PRINCIPALAMOUNT)
+                        //                                   : context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == m.LOANID).Sum(l => l.OVERDRAFTLIMIT), 
+
                         collateralId = c.c.COLLATERALCUSTOMERID,
                         collateralTypeId = c.c.COLLATERALTYPEID,
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
@@ -551,8 +554,9 @@ namespace FintrakBanking.Repositories.Credit
                 //.GroupBy(x => x.collateralId)
                 ;
             
-            return collaterals;
+            return collaterals.ToList();
         }
+
 
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)
         {
@@ -3025,11 +3029,11 @@ namespace FintrakBanking.Repositories.Credit
                     select new CollateralValuersViewModel
                     {
                         collateralValuerId = m.COLLATERALVALUERID,
-                        cityId = m.CITYID,
+                        cityId =  m.CITYID,
                         name = m.NAME,
                         valuerLicenceNumber = m.VALUERLICENCENUMBER,
                         valuerTypeId = m.VALUERTYPEID,
-                        countryId = m.COUNTRYID,
+                        countryId =  m.COUNTRYID,
                         //accountNumber = m.nu,
                         //valuerBVN = m.,
                         emailAddress = m.EMAILADDRESS,

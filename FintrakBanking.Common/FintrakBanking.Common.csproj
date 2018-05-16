@@ -64,12 +64,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlertMonitoring\AlertMessageEnum.cs" />
     <Compile Include="CommonHelpers.cs" />
     <Compile Include="CreditBureauHelp.cs" />
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />
     <Compile Include="Enum\AccreditedConsultantTypeEnum.cs" />
-    <Compile Include="Enum\AlertMessageEnum.cs" />
     <Compile Include="Enum\ApprovalGroupEnum.cs" />
     <Compile Include="Enum\ApprovalState.cs" />
     <Compile Include="Enum\ApprovalStatusEnum.cs" />

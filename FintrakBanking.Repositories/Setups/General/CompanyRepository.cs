@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Entities.DocumentModels;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
@@ -13,10 +14,12 @@ namespace FintrakBanking.Repositories.Setups.General
     public class CompanyRepository : ICompanyRepository
     {
         private FinTrakBankingContext context;
+        private FinTrakBankingDocumentsContext documentContext;
 
-        public CompanyRepository(FinTrakBankingContext _context)
+        public CompanyRepository(FinTrakBankingContext _context, FinTrakBankingDocumentsContext _documentContext)
         {
             this.context = _context;
+            this.documentContext = _documentContext;
         }
 
         private bool SaveAll()
@@ -274,6 +277,11 @@ namespace FintrakBanking.Repositories.Setups.General
                                  natureOfBusiness = data.NAME
                              }).ToList();
             return languages;
+        }
+
+        public byte[] GetCompanyLogoArray(int companyId)
+        {
+            return documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(x => x.DOCUMENTID == 1).FirstOrDefault().FILEDATA;
         }
     }
 }

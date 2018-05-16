@@ -23,6 +23,7 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal AMOUNTAFFECTED { get; set; }
 
+        [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
         [Required]

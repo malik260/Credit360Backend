@@ -24,11 +24,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("risk-assessment/form")]
-        public HttpResponseMessage GetRiskTypeFormElements(int applicationId, int titleId)
+        public HttpResponseMessage GetRiskTypeFormElements(int titleId, int? targetId)
         {
             try
             {
-                var data = repo.GetRiskFormElements(token.GetCompanyId, titleId, applicationId);
+                var data = repo.GetRiskFormElements(token.GetCompanyId, titleId, targetId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
@@ -60,12 +60,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("assessment-result/application")]
-        public HttpResponseMessage GetAllAssessmentResultByApplicationId(int applicationId)
+        [Route("assessment-result")]
+        public HttpResponseMessage GetAllAssessmentResultByApplicationId()
         {
             try
             {
-                var data = repo.GetAllAssessmentResultByApplicationId(token.GetCompanyId, applicationId);
+                var data = repo.GetAllAssessmentResult(token.GetCompanyId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }

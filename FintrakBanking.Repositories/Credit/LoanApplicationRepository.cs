@@ -86,7 +86,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatus = a.TBL_LOAN_APPLICATION_STATUS.APPLICATIONSTATUSNAME,
                             applicationStatusId = (short)a.APPROVALSTATUSID,
                             applicationTenor = a.APPLICATIONTENOR,
-                            approvalStatusId = a.APPROVALSTATUSID,
+                            approvalStatusId = (short)a.APPROVALSTATUSID,
                             branchId = a.BRANCHID,
                             companyId = a.COMPANYID,
                             relatedReferenceNumber = a.APPLICATIONREFERENCENUMBER,
@@ -210,7 +210,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanApplicationViewModel
                         {
                             requireCollateral = a.REQUIRECOLLATERAL,
-                            approvalStatusId = a.APPROVALSTATUSID,
+                            approvalStatusId = (short)a.APPROVALSTATUSID,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = a.CUSTOMERID ?? 0,
@@ -633,11 +633,14 @@ namespace FintrakBanking.Repositories.Credit
                                      select b;
                         var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
 
-                        var definition = from a in context.TBL_CHECKLIST_DEFINITION
+                        //ids.Contains((int)a.APPROVALLEVELID) &&
+                        var definition = (from a in context.TBL_CHECKLIST_DEFINITION
                                          join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
                                          where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
                                          && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == PRODUCTID
-                                         select a;
+                                         select a).AsQueryable();
+
+                        //var dd  = definition.Where(x=> x.APPROVALLEVELID.  ids.Contains((int)x.APPROVALLEVELID).
                         int i, j;
                         i = definition.Count(); j = detail.Count();
 
@@ -1417,7 +1420,7 @@ namespace FintrakBanking.Repositories.Credit
                         customerInfoValidated = x.o.g.a.CUSTOMERINFOVALIDATED,
                         isRelatedParty = x.o.g.a.ISRELATEDPARTY,
                         isPoliticallyExposed = x.o.g.a.ISPOLITICALLYEXPOSED,
-                        approvalStatusId = x.o.g.a.APPROVALSTATUSID,
+                        approvalStatusId = (short)x.o.g.a.APPROVALSTATUSID,
                         applicationStatusId = x.o.g.a.APPLICATIONSTATUSID,
                         branchName = x.o.g.a.TBL_BRANCH.BRANCHNAME,
                         relationshipOfficerName = x.o.g.a.TBL_STAFF.FIRSTNAME + " " + x.o.g.a.TBL_STAFF.MIDDLENAME + " " + x.o.g.a.TBL_STAFF.LASTNAME,
@@ -1614,14 +1617,14 @@ namespace FintrakBanking.Repositories.Credit
                 lastComment = x.b.COMMENT,
                 currentApprovalStateId = x.b.APPROVALSTATEID,
                 currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
-                currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+              //  currentApprovalLevel = x.b.APVL_LVL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                 approvalTrailId = x.b == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
                 loanInformation = x.a.LOANINFORMATION,
                 submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                 customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
                 isRelatedParty = x.a.ISRELATEDPARTY,
                 isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
-                approvalStatusId = x.a.APPROVALSTATUSID,
+                approvalStatusId = (short)x.a.APPROVALSTATUSID,
                 applicationStatusId = x.a.APPLICATIONSTATUSID,
                 branchName = x.a.TBL_BRANCH.BRANCHNAME,
                 relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
@@ -1678,7 +1681,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerInfoValidated = x.CUSTOMERINFOVALIDATED,
                 isRelatedParty = x.ISRELATEDPARTY,
                 isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
-                approvalStatusId = x.APPROVALSTATUSID,
+                approvalStatusId = (short)x.APPROVALSTATUSID,
                 applicationStatusId = x.APPLICATIONSTATUSID,
                 applicationStatus = x.TBL_LOAN_APPLICATION_STATUS.APPLICATIONSTATUSNAME, // <----------------- new 
                 branchName = x.TBL_BRANCH.BRANCHNAME,

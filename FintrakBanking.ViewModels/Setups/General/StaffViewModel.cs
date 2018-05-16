@@ -9,7 +9,7 @@ namespace FintrakBanking.ViewModels.Setups.General
     public class StaffInfoViewModel : GeneralEntity
     {
        
-        public IQueryable<DepartmentViewModel> departmentUnits;
+        public IEnumerable <DepartmentViewModel> departmentUnits;
         public string supervisorStaffName { get; set; }
         public string message { get; set; }
         public string staffRoleCode { get; set; }

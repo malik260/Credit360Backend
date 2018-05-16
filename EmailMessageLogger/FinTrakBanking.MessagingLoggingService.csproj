@@ -54,8 +54,6 @@
     <Compile Include="AppEmail\EmailAndAlertsRepository.cs" />
     <Compile Include="AppEmail\EmailRepository.cs" />
     <Compile Include="EmailHelpers.cs" />
-    <Compile Include="Enum\AlertMessageEnum.cs" />
-    <Compile Include="Enum\AlertSetupEnum.cs" />
     <Compile Include="AuditTrail.cs" />
     <Compile Include="LoggerService.cs">
       <SubType>Component</SubType>
