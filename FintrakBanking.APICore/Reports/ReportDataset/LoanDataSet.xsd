@@ -307,6 +307,13 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="CompanyLogo" msprop:Generator_TableClassName="CompanyLogoDataTable" msprop:Generator_TableVarName="tableCompanyLogo" msprop:Generator_TablePropName="CompanyLogo" msprop:Generator_RowDeletingName="CompanyLogoRowDeleting" msprop:Generator_RowChangingName="CompanyLogoRowChanging" msprop:Generator_RowEvHandlerName="CompanyLogoRowChangeEventHandler" msprop:Generator_RowDeletedName="CompanyLogoRowDeleted" msprop:Generator_UserTableName="CompanyLogo" msprop:Generator_RowChangedName="CompanyLogoRowChanged" msprop:Generator_RowEvArgName="CompanyLogoRowChangeEvent" msprop:Generator_RowClassName="CompanyLogoRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="fileData" msprop:Generator_ColumnVarNameInTable="columnfileData" msprop:Generator_ColumnPropNameInRow="fileData" msprop:Generator_ColumnPropNameInTable="fileDataColumn" msprop:Generator_UserColumnName="fileData" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>

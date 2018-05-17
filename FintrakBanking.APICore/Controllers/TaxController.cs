@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("tax")]
-        [AuthorizeActivity("super admin","dummy")]
+        [AuthorizeActivity("super admin","pen approval")]
         public HttpResponseMessage GetTax()
         {
             try

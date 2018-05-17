@@ -98,7 +98,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
         private WorkflowSetup next;
-        private List<TBL_APPROVAL_TRAIL> trailLog;
+        private List<APPROVALTRAIL> trailLog;
         private bool skipLimitsCheck = false;
         private IEnumerable<WorkflowSetup> approvalGrid;
 
@@ -108,13 +108,31 @@ namespace FintrakBanking.Repositories.WorkFlow
             InitializeOperation();
             if (Authorization() == false) { return false; }
 
-            this.trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
-                                x.COMPANYID == this.companyId
-                                && x.OPERATIONID == this.operationId
-                                && x.TARGETID == this.targetId
-                                && x.RESPONSESTAFFID == null
-                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
-                            ).ToList();
+          this.trailLog =  context.TBL_APPROVAL_TRAIL.Where(x =>
+                            x.COMPANYID == this.companyId
+                            && x.OPERATIONID == this.operationId
+                            && x.TARGETID == this.targetId
+                            && x.RESPONSESTAFFID == null
+                             && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                            ).Select(x => new APPROVALTRAIL
+                            {
+                                APPROVALSTATEID = x.APPROVALSTATEID,
+                                APPROVALSTATUSID = x.APPROVALSTATUSID,
+                                APPROVALTRAILID = x.APPROVALTRAILID,
+                                ARRIVALDATE = x.ARRIVALDATE,
+                                COMMENT = x.COMMENT,
+                                COMPANYID = x.COMPANYID,
+                                FROMAPPROVALLEVELID = x.FROMAPPROVALLEVELID,
+                                OPERATIONID = x.OPERATIONID,
+                                RELIEVEDSTAFFID = x.RELIEVEDSTAFFID,
+                                REQUESTSTAFFID = x.REQUESTSTAFFID,
+                                RESPONSEDATE = x.RESPONSEDATE,
+                                RESPONSESTAFFID = x.RESPONSESTAFFID,
+                                SYSTEMARRIVALDATETIME = x.SYSTEMARRIVALDATETIME,
+                                SYSTEMRESPONSEDATETIME = x.SYSTEMRESPONSEDATETIME,
+                                TARGETID = x.TARGETID,
+                                TOAPPROVALLEVELID = x.TOAPPROVALLEVELID
+                            }).ToList();
 
             var request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
 
@@ -179,13 +197,28 @@ namespace FintrakBanking.Repositories.WorkFlow
                 APPROVALSTATUSID = (short)this.statusId,
                 SYSTEMARRIVALDATETIME = this.systemDate,
                 VOTE = this.vote,
-                TOSTAFFID = this.toStaffId,
+                TOSTAFFID = this.toStaffId
             };
+
+            // System.Diagnostics.Debug.Write(context.Database.Log);
+
+            context.Database.Log = Console.Write;
 
             context.TBL_APPROVAL_TRAIL.Add(trail);
 
             if (this.deferredExecution) { return true; }
-            this.saved = context.SaveChanges() > 0;
+
+            try
+            {
+
+                this.saved = context.SaveChanges() > 0;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
             if (this.saved) return true;
 
             throw new Exception("Unknown Process Flow Error! Unable to save workflow records!");
@@ -854,6 +887,26 @@ namespace FintrakBanking.Repositories.WorkFlow
         public TBL_APPROVAL_GROUP_MAPPING Mapping { get; set; }
 
         public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
+    }
+
+    public class APPROVALTRAIL
+    {
+        public int APPROVALSTATEID { get; set; }
+        public int APPROVALSTATUSID { get; set; }
+        public int APPROVALTRAILID { get; set; }
+        public DateTime? ARRIVALDATE { get; set; }
+        public string COMMENT { get; set; }
+        public int COMPANYID { get; set; }
+        public int? FROMAPPROVALLEVELID { get; set; }
+        public int OPERATIONID { get; set; }
+        public int? RELIEVEDSTAFFID { get; set; }
+        public int REQUESTSTAFFID { get; set; }
+        public DateTime? RESPONSEDATE { get; set; }
+        public int? RESPONSESTAFFID { get; set; }
+        public DateTime? SYSTEMARRIVALDATETIME { get; set; }
+        public DateTime? SYSTEMRESPONSEDATETIME { get; set; }
+        public int TARGETID { get; set; }
+        public int? TOAPPROVALLEVELID { get; set; }
     }
 }
 

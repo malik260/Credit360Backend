@@ -1,5 +1,6 @@
-﻿using EmailMessageLogger.Enum;
+﻿
 using FintrakBanking.Common;
+using FintrakBanking.Common.AlertMonitoring;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
@@ -123,7 +124,7 @@ namespace FintrakBanking.Repositories.AppEmail
         }
         public void SendAlertsForCovenantsApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
-            var alertsetupForCovenantsApproachingDueDate = alertSetups.Where(x => x.MONITORING_ITEMID == (int)AlertMessageEnum.CovenantsApproachingDueDate).FirstOrDefault();
+            var alertsetupForCovenantsApproachingDueDate = alertSetups.Where(x => x.MONITORING_ITEMID == (int)AlertMessageEnum.CovenantsInsuranceApproachingDueDate).FirstOrDefault();
 
             // var currentDate = context.TBL_FINANCECURRENTDATE.Select(x=>x.CURRENTDATE).FirstOrDefault();
             var currentDate = DateTime.Now;

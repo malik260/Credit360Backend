@@ -124,8 +124,8 @@ namespace FintrakBanking.Repositories.Credit
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                      outstandingInterest = (decimal)0,
-                                       outstandingPrincipal = a.OVERDRAFTLIMIT,
+                                       outstandingInterest = 0,
+                                       outstandingPrincipal = (decimal)a.TBL_CASA.OVERDRAFTAMOUNT,
                                        internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
                                        externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
                                        userPrudentialGuidelineStatusId = a.USER_PRUDENTIAL_GUIDE_STATUSID,
@@ -203,7 +203,7 @@ namespace FintrakBanking.Repositories.Credit
             var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId).PRINCIPALBALANCEGL.Value;
             credit.glAccountId = repaymentAccountGL;
             credit.sourceReferenceNumber = model.loanReferenceNumber;
-            credit.casaAccountId = model.casaAccountId;
+            credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = model.outstandingPrincipal;
             credit.sourceBranchId = model.branchId;
@@ -265,7 +265,7 @@ namespace FintrakBanking.Repositories.Credit
             var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId).PRINCIPALBALANCEGL2.Value;
             credit.glAccountId = repaymentAccountGL;
             credit.sourceReferenceNumber = model.loanReferenceNumber;
-            credit.casaAccountId = model.casaAccountId;
+            credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = model.outstandingPrincipal;
             credit.sourceBranchId = model.branchId;
@@ -334,5 +334,114 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() > 0;
         }
+
+
+        private IQueryable<LoanViewModel> GetTermLoanFromNonPerformingToPerforming()
+        {
+            var allFilteredLoan = (from a in context.TBL_LOAN
+                                   where a.ISDISBURSED == true && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                   && a.EXT_PRUDENT_GUIDELINE_STATUSID != a.USER_PRUDENTIAL_GUIDE_STATUSID
+                                   && a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Doubtful
+                                   || a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Substandard
+                                   || a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Lost
+                                   select new LoanViewModel
+                                   {
+                                       loanId = a.TERMLOANID,
+                                       customerId = a.CUSTOMERID,
+                                       customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                                       loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                       applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                                       interestRate = a.INTERESTRATE,
+                                       principalAmount = a.PRINCIPALAMOUNT,
+                                       effectiveDate = a.EFFECTIVEDATE,
+                                       maturityDate = a.MATURITYDATE,
+                                       loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+                                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       outstandingInterest = a.OUTSTANDINGINTEREST,
+                                       outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                                       internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
+                                       externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
+                                       userPrudentialGuidelineStatusId = a.USER_PRUDENTIAL_GUIDE_STATUSID,
+                                       currencyId = a.CURRENCYID,
+                                       productId = a.PRODUCTID,
+                                       branchId = a.BRANCHID,
+                                       casaAccountId = a.CASAACCOUNTID,
+                                       companyId = a.COMPANYID,
+                                       createdBy = (int)SystemStaff.System,
+                                       userBranchId = a.BRANCHID,
+                                   });
+            var bbc = allFilteredLoan.ToList();
+
+            foreach(var item in allFilteredLoan)
+            {
+                BuildNonPerformingToPerformingLoanPosting(item);
+
+                TBL_LOAN result = (from p in context.TBL_LOAN
+                                   where p.TERMLOANID == item.loanId
+                                   select p).SingleOrDefault();
+
+                result.USER_PRUDENTIAL_GUIDE_STATUSID = (int)item.externalPrudentialGuidelineStatusId;
+
+                context.SaveChanges();
+            }
+
+
+            return allFilteredLoan;
+        }
+        private IQueryable<LoanViewModel> GetRevolvingLoanNonPerformingToPerforming()
+        {
+            var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
+                                   where a.ISDISBURSED == true && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                    && a.EXT_PRUDENT_GUIDELINE_STATUSID != a.USER_PRUDENTIAL_GUIDE_STATUSID
+                                    && a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Doubtful
+                                    || a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Substandard
+                                    || a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Lost
+                                   select new LoanViewModel
+                                   {
+                                       loanId = a.REVOLVINGLOANID,
+                                       customerId = a.CUSTOMERID,
+                                       customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                                       loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                       applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                                       interestRate = a.INTERESTRATE,
+                                       principalAmount = a.OVERDRAFTLIMIT,
+                                       effectiveDate = a.EFFECTIVEDATE,
+                                       maturityDate = a.MATURITYDATE,
+                                       loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+                                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       outstandingInterest = 0,
+                                       outstandingPrincipal = (decimal)a.TBL_CASA.OVERDRAFTAMOUNT,
+                                       internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
+                                       externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
+                                       userPrudentialGuidelineStatusId = a.USER_PRUDENTIAL_GUIDE_STATUSID,
+                                       currencyId = a.CURRENCYID,
+                                       productId = a.PRODUCTID,
+                                       branchId = a.BRANCHID,
+                                       casaAccountId = a.CASAACCOUNTID,
+                                       companyId = a.COMPANYID,
+                                       createdBy = (int)SystemStaff.System,
+                                       userBranchId = a.BRANCHID,
+                                   });
+            var bbw = allFilteredLoan.ToList();
+
+            foreach (var item in allFilteredLoan)
+            {
+                BuildNonPerformingToPerformingLoanPosting(item);
+
+                TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
+                                   where p.REVOLVINGLOANID == item.loanId
+                                   select p).SingleOrDefault();
+
+                result.USER_PRUDENTIAL_GUIDE_STATUSID = (int)item.externalPrudentialGuidelineStatusId;
+
+                context.SaveChanges();
+            }
+            return allFilteredLoan;
+        }
+
     }
 }

@@ -22,5 +22,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<NatureOfBusinessViewModel> GetNatureOfBusiness();
         //bool DeleteAccount(short accountId);
+
+        byte[] GetCompanyLogoArray(int conpanyId);
+        
     }
 }

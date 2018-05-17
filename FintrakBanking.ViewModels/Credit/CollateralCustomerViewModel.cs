@@ -281,6 +281,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short baseCurrency { get; set; }
         public short baseCurrencyId { get; set; }
         public bool disAllowCollateral { get; set; }
+       
     }
 
     public class crossGarantee
@@ -664,7 +665,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string valuerLicenceNumber { get; set; }
         public string name { get; set; }
         public short? valuerTypeId { get; set; }
-        public short? cityId { get; set; }
+        public int? cityId { get; set; }
         public string cityName { get; set; }
         public short? countryId { get; set; }
         public string countryName { get; set; }

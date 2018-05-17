@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("running-loan/customer/{id}")]
         public HttpResponseMessage GetAllLoanTypes(int id)
         {
@@ -81,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("revolving-types")]
         public HttpResponseMessage GetRevolvingLoanTypes(int id)
         {
@@ -97,7 +97,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-application-types")]
         public HttpResponseMessage GetLoanApplicationTypes()
         {
@@ -117,7 +117,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-schedule-category")]
         public HttpResponseMessage GetAllLoanScheduleCategory()
         {
@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-schedule-types")]
         public HttpResponseMessage GetAllLoanScheduleType()
         {
@@ -157,7 +157,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-schedule-types/{productTypeId}")]
         public HttpResponseMessage GetAllLoanScheduleType(short? productTypeId)
         {
@@ -177,7 +177,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-schedule-types/category/{categoryId}")]
         public HttpResponseMessage GetLoanScheduleTypeByCategory(short categoryId)
         {
@@ -225,7 +225,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-customer-accounts/{customerId}/application-detail/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanCustomerAccounts(int customerId, int loanApplicationDetailId)
         {
@@ -275,7 +275,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("appraisal-loan-details-updates/{appraisalMemorandumId}")]
         public HttpResponseMessage GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId)
         {
@@ -297,7 +297,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
 
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("monitoring-trigger")]
         public HttpResponseMessage GetLoanMonitoringTrigger()
         {
@@ -313,7 +313,23 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [Route("loan-status")]
+        public HttpResponseMessage GetLoanStatus()
+        {
+            try
+            {
+                var data = repo.GetLoanStatus(token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
         [Route("monitoring-trigger/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanMonitoringTriggerByLoanApplicationDetailId(int loanApplicationDetailId)
         {
@@ -350,7 +366,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //    }
         //}
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("number-of-installments/tenor-mode/{tenorModeId}/frequency-type/{frequencyTypeId}/tenor/{tenor}")]
         public HttpResponseMessage GetNumberOfInstallments(short tenorModeId, short frequencyTypeId, int tenor)
         {
@@ -366,7 +382,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("{loanId}")]
         public HttpResponseMessage GetLoan(int loanId)
         {
@@ -382,7 +398,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-booking/term/awaiting-approval")]
         public HttpResponseMessage GetLoanBookingAwaitingApproval()
         {
@@ -403,7 +419,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-booking/approvers/{operationId}")]
         public HttpResponseMessage GetLoanOperationApprovers(int operationId)
         {
@@ -424,7 +440,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-booking/revolving/awaiting-approval")]
         public HttpResponseMessage GetRevolvingLoanBookingAwaitingApproval()
         {
@@ -445,7 +461,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-booking/contingent/awaiting-approval")]
         public HttpResponseMessage GetContingentLoanBookingAwaitingApproval()
         {
@@ -466,7 +482,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-booking/term/deffered-fees/awaiting-approval")]
         public HttpResponseMessage GetDeferredTermLoanFeeAwaitingApproval()
         {
@@ -487,7 +503,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-booking/revolving/deffered-fees/awaiting-approval")]
         public HttpResponseMessage GetDeferredRevolvingLoanFeeAwaitingApproval()
         {
@@ -508,7 +524,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-booking/contingent/deffered-fees/awaiting-approval")]
         public HttpResponseMessage GetDeferredContingentLoanFeeAwaitingApproval()
         {
@@ -608,7 +624,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("customer/{customerId}")]
         public HttpResponseMessage GetCustomerLoans(int customerId)
         {
@@ -629,7 +645,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("customer-group/{customerGroupId}")]
         public HttpResponseMessage GetCustomerGroupLoans(int customerGroupId)
         {
@@ -664,7 +680,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("find/{searchCriteria}")]
         public HttpResponseMessage FindLoan(string searchCriteria)
         {
@@ -700,7 +716,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("first-pay-date/effective-date/{effectiveDate}/frequency-type/{frequencyTypeId}")]
         public HttpResponseMessage GetFirstPayDate(DateTime effectiveDate, short frequencyTypeId)
         {
@@ -758,7 +774,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("customer-collateral/")]
         public HttpResponseMessage SearchCustomerCollateral(string searchQuery)
         {
@@ -780,7 +796,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("customer-collateral/search")]
         public HttpResponseMessage SearchCustomer(string q)
         {
@@ -799,7 +815,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("detail/{param}")]
         public HttpResponseMessage GetBookedLoanDetails(string param)
         {
@@ -835,7 +851,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("details/customer/{customerCode}")]
         public HttpResponseMessage GetBookedLoanDetail(string customerCode)
         {
@@ -853,7 +869,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("details/reference-number/{loanReferenceNumber}")]
         public HttpResponseMessage GetBookedLoanDetailsByLoanReferenceNumber(string loanReferenceNumber)
         {
@@ -983,7 +999,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         #region (Loan Application Date) Pre - Loan booking
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-application/availment-completed")]
         public HttpResponseMessage GetAvailedLoanApplicationsDueForInitiateBooking()
         {
@@ -1004,7 +1020,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-application-details/{applicationDetailId}")]
         public HttpResponseMessage GetLoanApplicationDetails(int applicationDetailId)
         {
@@ -1025,7 +1041,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("availed-loan-applications/booking-ready")]
         public HttpResponseMessage GetAvailedLoanApplicationsReadyForBooking()
 
@@ -1047,7 +1063,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("availed-loan-application/booking-ready/{applicationDetailId}")]
         public HttpResponseMessage GetAvailedLoanApplicationDetailById(int applicationDetailId)
 
@@ -1097,7 +1113,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-application/collateral/customer/{customerId}")]
         public HttpResponseMessage GetCollateralCustomer(int customerId)
         {
@@ -1118,7 +1134,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-application/charge-fee/{chargeFeeId}/product/{productId}")]
         public HttpResponseMessage GetLoanProductChargeFee(int chargeFeeId, int productId)
         {
@@ -1138,7 +1154,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("loan-product-fees/{productId}")]
         public HttpResponseMessage GetProductFees(int productId)
         {
@@ -1163,7 +1179,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         #region Workflow Tracker
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
         [Route("work-flow-tracker/operation/{operationId}/target/{targetId}")]
         public async Task<HttpResponseMessage> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId)
         {

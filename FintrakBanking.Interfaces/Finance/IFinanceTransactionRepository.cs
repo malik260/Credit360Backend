@@ -43,7 +43,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
 
-       // FinanceTransactionViewModel BuildChargeReversalPosting(LoanChargeFeeViewModel model);
+        FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model);
 
         FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
 

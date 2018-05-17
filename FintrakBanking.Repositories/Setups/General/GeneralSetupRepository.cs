@@ -266,6 +266,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
+
         public IEnumerable<SectorViewModel> GetSectorsBySubSectorId(short ssId)
         {
             var data = (from s in context.TBL_SUB_SECTOR

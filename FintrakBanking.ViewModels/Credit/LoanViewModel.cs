@@ -6,6 +6,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -241,7 +242,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isBidbond { get; set; }
         public short accrualBasis { get; set; }
         public bool isTemporaryOverdraft { get; set; }
-        public short? revolvingTypeId { get; set; }
+        public short revolvingTypeId { get; set; }
 
         public string serialNumber { get; set; }
         public int loanId { get; set; }
@@ -332,7 +333,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal penalChargeAmount { get; set; }
         public int dayCountConventionId { get; set; }
         public short loanSystemTypeId { get; set; }
-        
+        public int? userPrudentialGuidelineStatusId { get; set; }
+
     }
 
     public class ContingentLoanViewModel : GeneralEntity
@@ -438,6 +440,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public bool? isTemporaryOverdraft { get; set; }
+
         public string repaymentTerms { get; set; }
         public string repaymentSchedule { get; set; }
 
@@ -613,7 +617,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short covenantTypeId { get; set; }
         public short? frequencyTypeId { get; set; }
         public decimal? covenantAmount { get; set; }
-        public DateTime covenantDate { get; set; }
+        public DateTime  covenantDate { get; set; }
         public string covenantTypeName { get; set; }
         public string frequencyTypeName { get; set; }
         public string loanRef { get; set; }

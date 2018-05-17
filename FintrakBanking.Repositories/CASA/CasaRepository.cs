@@ -408,6 +408,45 @@ namespace FintrakBanking.Repositories.CASA
             return customerGroupMapping;
         }
 
+        private IQueryable<CasaCustomerSearchViewModel> GetAllAccountLight()
+        {
+            var data = (from casa in context.TBL_CASA
+                        join cust in context.TBL_CUSTOMER on casa.CUSTOMERID equals cust.CUSTOMERID
+                        //join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
+                        join sector in context.TBL_SUB_SECTOR on cust.SUBSECTORID equals sector.SUBSECTORID
+                        join custGroup in context.TBL_CUSTOMER_GROUP_MAPPING on cust.CUSTOMERID equals custGroup.CUSTOMERID into cGroup
+                        from custGroup in cGroup.DefaultIfEmpty()
+                        select new CasaCustomerSearchViewModel()
+                        {
+                            casaAccountId = casa.CASAACCOUNTID,
+                            productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+                            productAccountName = casa.PRODUCTACCOUNTNAME,
+                            customerId = casa.CUSTOMERID,
+                            customerCode = cust.CUSTOMERCODE,
+                            accountHolder = cust.FIRSTNAME + " " + cust.LASTNAME,
+                            productId = casa.TBL_PRODUCT.PRODUCTID,
+                            productCode = casa.TBL_PRODUCT.PRODUCTCODE,
+                            productName = casa.TBL_PRODUCT.PRODUCTNAME,
+                            productClassId = casa.TBL_PRODUCT.PRODUCTCLASSID,
+                            productClassName = casa.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                            companyId = casa.COMPANYID,
+                            branchId = casa.BRANCHID,
+                            branchCode = casa.TBL_BRANCH.BRANCHCODE,
+                            branchName = casa.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerId = casa.RELATIONSHIPOFFICERID ?? 0,
+                            relationshipManagerId = casa.RELATIONSHIPMANAGERID ?? 0,
+                            subSectorId = sector.SUBSECTORID,
+                            subSectorName = sector.NAME,
+                            customerTypeId =cust.CUSTOMERTYPEID,
+                            customerSectorId = sector.TBL_SECTOR.SECTORID,
+                            customerSectorName = sector.TBL_SECTOR.NAME,
+                            customerGroupId = custGroup.CUSTOMERGROUPID,
+                            customerGroupName = custGroup.TBL_CUSTOMER_GROUP.GROUPNAME ?? "None",
+                            taxIdentificationNumber = cust.TAXNUMBER
+                        });
+            return data;
+        }
+
         private IQueryable<CasaCustomerSearchViewModel> GetAllAccounts()
         {
             var data = (from casa in context.TBL_CASA
@@ -547,7 +586,7 @@ namespace FintrakBanking.Repositories.CASA
 
         public CasaCustomerSearchViewModel GetCustomerAccountDetailsById(int customerId)
         {
-            var data = GetAllAccounts().FirstOrDefault(x => x.customerId == customerId);
+            var data = GetAllAccountLight().FirstOrDefault(x => x.customerId == customerId);
 
             if (data != null)
             {
