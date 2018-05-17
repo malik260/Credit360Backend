@@ -3895,18 +3895,22 @@ namespace FintrakBanking.Repositories.Credit
             data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
             foreach (var item in data)
-            {   var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-            //    var overdraft = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-            //    var contingent = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+            {
+                var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                var overdraft = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                var contingent = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
 
-            //    if ((item.productTypeId == (short)LoanProductTypeEnum.TermLoan) || (item.productTypeId == (short)LoanProductTypeEnum.CommercialPaper) || (item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating))
-            //        item.customerAvailableAmount = item.approvedAmount - loans.Sum(s => s.PRINCIPALAMOUNT);
+                var n = loans.SumAsync(s => s.PRINCIPALAMOUNT);
+                var b = item.approvedAmount;
 
-            //    if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
-            //        item.customerAvailableAmount = overdraft.Sum(s => s.OVERDRAFTLIMIT);
+                if ((item.productTypeId == (short)LoanProductTypeEnum.TermLoan) || (item.productTypeId == (short)LoanProductTypeEnum.CommercialPaper) || (item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating))
+                    item.customerAvailableAmount = item.approvedAmount - loans.Sum(s => s.PRINCIPALAMOUNT);
 
-            //    if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
-            //        item.customerAvailableAmount = contingent.Sum(s => s.CONTINGENTAMOUNT);
+                //    if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                //        item.customerAvailableAmount = overdraft.Sum(s => s.OVERDRAFTLIMIT);
+
+                //    if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                //        item.customerAvailableAmount = contingent.Sum(s => s.CONTINGENTAMOUNT);
 
                 if (item.customerAvailableAmount != 0)
                 {
