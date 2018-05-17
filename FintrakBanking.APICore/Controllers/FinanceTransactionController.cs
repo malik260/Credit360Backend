@@ -37,7 +37,7 @@ namespace FintrakBanking.APICore.Controllers
             this.setupRepo = _setupRepo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("getexchangerate/{currencyId}/{date}")]
         public HttpResponseMessage GetExchangeRate(DateTime ? date, short currencyId)
         { 

@@ -106,7 +106,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group")]
         public HttpResponseMessage GetCustomerGroup()
         {
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/awaiting-approval")]
         public HttpResponseMessage GetCustomerGroupAwaitingApproval()
         {
@@ -152,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/{customerGroupId}")]
         public HttpResponseMessage GetCustomerGroupByCustomerId(int customerGroupId)
         {
@@ -230,7 +230,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/search/")]
         public HttpResponseMessage SearchForCustomerGroupRealtime(string searchQuery)
         {
@@ -249,7 +249,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/")]
         public HttpResponseMessage CustomerGroupSearch(string searchQuery)
         {
@@ -268,7 +268,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/{customerGroupId}/mapping-details")]
         public HttpResponseMessage GetCustomerGroupDetailedMapping(int customerGroupId)
         {
@@ -384,7 +384,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-mapping")]
         public HttpResponseMessage GetCustomerGroupMapping()
         {
@@ -406,7 +406,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-members/{groupid}")]
         public HttpResponseMessage GetGroupMembersByGroupId(int groupid)
         {
@@ -421,7 +421,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-mapping/{groupMapId}")]
         public HttpResponseMessage GetCustomerGroupMappingByGroupMapId(int groupMapId)
         {
@@ -439,7 +439,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-mapping/customers/{customerGroupId}")]
         public HttpResponseMessage GetCustomerGroupMappingByGroupId(int customerGroupId)
         {
@@ -456,7 +456,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-mapping/relationship-types")]
         public HttpResponseMessage GetCustomerGroupRelationshipTypes()
         {
@@ -528,7 +528,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
         #region KYC Item Setup
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("Kycitem")]
         public HttpResponseMessage GetKYCItem()
         {

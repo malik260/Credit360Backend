@@ -19,7 +19,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("")]
         public HttpResponseMessage GetAllCompany()
         {

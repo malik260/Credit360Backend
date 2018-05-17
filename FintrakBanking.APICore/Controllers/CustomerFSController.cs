@@ -70,7 +70,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption-group")]
         public HttpResponseMessage GetCustomerFsCaptionGroup()
         {
@@ -94,7 +94,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption-group/{fsCaptionGroupId}")]
         public HttpResponseMessage GetCustomerFsCaptionGroupById(short fsCaptionGroupId)
         {
@@ -176,7 +176,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption/group/{fsCaptionGroupId}")]
         public HttpResponseMessage GetCustomerFsCaption(short fsCaptionGroupId)
         {
@@ -200,7 +200,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption/{fsCaptionId}")]
         public HttpResponseMessage GetCustomerFsCaptionById(short fsCaptionId)
         {
@@ -220,7 +220,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         //[HttpGet("customer-fs-caption/unmapped/{fsCaptionGroupId}/customer/{customerId}/date/{fsDate}")]
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption/customer/unmapped")]
         public HttpResponseMessage GetUnmappedCustomerFsCaption(short fsCaptionGroupId, int customerId, DateTime fsDate)
         {
@@ -245,7 +245,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption/customer-group/unmapped")]
         public HttpResponseMessage GetUnmappedCustomerGroupFsCaption(short fsCaptionGroupId, int customerGroupId, DateTime fsDate)
         {
@@ -443,7 +443,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption-detail/customer/")]
         public HttpResponseMessage GetMappedCustomerFsCaptionDetail(short fsCaptionGroupId, int customerId, DateTime fsDate)
         {
@@ -468,7 +468,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption-detail/customer/{customerId}")]
         public HttpResponseMessage GetMappedCustomerFsCaptions(int customerId)
         {
@@ -493,7 +493,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-fs-caption-detail/customer-group/")]
         public HttpResponseMessage GetMappedCustomerGroupFsCaptionDetail(short fsCaptionGroupId, int customerGroupId, DateTime fsDate)
         {
@@ -519,7 +519,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-fs-caption-detail/customer-group/{customerGroupId}")]
         public HttpResponseMessage GetMappedCustomerGroupFsCaptions(int customerGroupId)
         {
@@ -545,7 +545,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-ratio-values/{customerId}")]
         public HttpResponseMessage GetCustomerFSRatioValues(int customerId)
         {
@@ -570,7 +570,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption-detail/{fsDetailId}")]
         public HttpResponseMessage GetCustomerFsCaptionById(int fsDetailId)
         {
@@ -772,7 +772,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-ratio-caption")]
         public HttpResponseMessage GetFsRatioCaption()
         {
@@ -797,7 +797,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
         public HttpResponseMessage GetFsRatioCaptionById(short ratioCaptionId)
         {
@@ -948,7 +948,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-ratio-detail/ratio-caption/{ratioCaptionId}/caption-group/{fsCaptionGroupId}")]
         public HttpResponseMessage GetFsRatioDetail(short ratioCaptionId, short fsCaptionGroupId)
         {
@@ -971,7 +971,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-ratio-detail/{ratioDetailId}")]
         public HttpResponseMessage GetFsRatioDetailById(int ratioDetailId)
         {
@@ -1078,7 +1078,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-ratio-detail/divisor-type")]
         public HttpResponseMessage GetAllDivisorType()
         {
@@ -1103,7 +1103,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-ratio-detail/value-type")]
         public HttpResponseMessage GetAllValueType()
         {

@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
             repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/credit-assessment-memorandum/approved-loans")]
         public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForOfferLetter()
         {
@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/credit-assessment-memorandum/due-for-review")]
         public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForReview()
         {
@@ -94,7 +94,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/credit-assessment-memorandum/due-for-availment")]
         public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForAvailment()
         {
@@ -115,7 +115,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("availment-due-for-checklist")]
         public  HttpResponseMessage GetApplicationsDueForAvailmentCheckList()
         {
@@ -136,7 +136,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/credit-assessment-memorandum/under-review")]
         public async Task<HttpResponseMessage> GetCamProcessedApplicationsUnderReview()
         {
@@ -205,7 +205,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #region Offer Letter & Availment
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/prepared-offer-letter-template/{applicationRefNumber}")]
         public HttpResponseMessage GenerateOfferLetterTemplate([FromUri] string applicationRefNumber)
         {
@@ -226,7 +226,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/prepared-form38b-template/{applicationRefNumber}")]
         public HttpResponseMessage GenerateForm3800Template([FromUri] string applicationRefNumber)
         {
@@ -293,7 +293,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/prepared-offer-letter/all")]
         public HttpResponseMessage GetAllDraftOfferLetters()
         {
@@ -314,7 +314,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/prepared-offer-letter/{applicationRefNumber}")]
         public HttpResponseMessage GetDraftOfferLetterByApplRefNumber([FromUri] string applicationRefNumber)
         {
@@ -335,7 +335,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/prepared-offer-letter/final/all")]
         public HttpResponseMessage GetAllFinalOfferLetters()
         {
@@ -356,7 +356,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/prepared-offer-letter/final/{applicationRefNumber}")]
         public HttpResponseMessage GetFinalOfferLetterByApplRefNumber([FromUri] string applicationRefNumber)
         {
@@ -542,7 +542,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/comments/{applicationRefNumber}")]
         public HttpResponseMessage GetCommentOnLoanAvailment([FromUri] string applicationRefNumber)
         {

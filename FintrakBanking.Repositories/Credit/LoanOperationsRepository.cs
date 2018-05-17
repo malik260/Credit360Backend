@@ -9232,7 +9232,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var dailyRepricing = (from d in context.TBL_PRODUCT_PRICE_INDEX_DAILY
-                                  where d.DATE >= DbFunctions.TruncateTime(applicationDate.AddDays(-90)) && d.DATE <= DbFunctions.TruncateTime(applicationDate)
+                                  where d.PRICEDATE >= DbFunctions.TruncateTime(applicationDate.AddDays(-90)) && d.PRICEDATE <= DbFunctions.TruncateTime(applicationDate)
                                   select new
                                   {
                                       d.PRICEINDEXRATE

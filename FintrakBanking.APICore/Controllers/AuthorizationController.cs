@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+ 
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -26,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
             this.errorLogger = _errorLogger;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("setup/groups")]
         public HttpResponseMessage GetGroups()
         {
@@ -129,7 +130,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("setup/activities")]
         public HttpResponseMessage GetActivities()
         {
@@ -152,7 +153,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("setup/activities/group/{grpId}")]
         public HttpResponseMessage GetActivitiesByGroupId(int grpId)
         {

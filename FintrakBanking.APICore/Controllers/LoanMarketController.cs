@@ -34,7 +34,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [Route("markets")]
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         public HttpResponseMessage GetAllLoanMarket()
         {
             try
@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [Route("market")]
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         public HttpResponseMessage GetAllLoanMarket(int marketId)
         {
             try

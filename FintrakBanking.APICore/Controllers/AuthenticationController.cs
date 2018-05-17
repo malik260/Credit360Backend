@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
             context = _context;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("user")]
         public HttpResponseMessage GetAllUsers()
         {
@@ -146,7 +146,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //Group
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("group")]
         public HttpResponseMessage GetGroups()
         {
@@ -188,6 +188,24 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (foundUser == null)
                 {
+                    var found = repo.GetSingleUserByUserName(user.username);
+
+                   var audit1 = new TBL_AUDIT()
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.Loggedfailed,
+                        STAFFID = found.staffId,
+                        BRANCHID = (short)found.branchId,
+                        DETAIL = $"{user.username} logged failed",
+                        IPADDRESS = CommonHelpers.GetUserIP(),
+                        URL = Request.RequestUri.AbsoluteUri,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        TARGETID = -1
+                    };
+
+                    auditTrail.AddAuditTrail(audit1);
+
+                    context.SaveChanges();
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Wrong username or password" });
                 }
 

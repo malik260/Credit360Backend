@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product/group")]
         public HttpResponseMessage GetProductByProductGroup()
         {
@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-behaviour-types")]
         public HttpResponseMessage GetAllProductBehaviourTypes()
         {
@@ -70,7 +70,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("currency-by-product/{id}")]
         public HttpResponseMessage GetProductCurrency(int id)
         {
@@ -93,7 +93,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Product Group
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-group")]
         public HttpResponseMessage GetAllProductGroup()
         {
@@ -114,7 +114,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-group/{productGroupId}")]
         public HttpResponseMessage GetProductGroupById(short productGroupId)
         {
@@ -239,7 +239,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-category")]
         public HttpResponseMessage GetAllProductCategory()
         {
@@ -261,7 +261,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-class-by-cusstomertype/{id}")]
         public HttpResponseMessage GetAllProductClassByCustomerTypeId(int id)
         {
@@ -282,7 +282,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-class/customertype/{customertypeid}/process/{processId}")]
         public HttpResponseMessage GetAllProductClass(int customertypeid, int processId)
         {
@@ -305,7 +305,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //1137
         //@B@cus7#12
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-class")]
         public HttpResponseMessage GetAllProductClass()
         {
@@ -326,7 +326,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-class/product-processid/{id}")]
         public HttpResponseMessage GetProductClassByProcessId(int id)
         {
@@ -352,7 +352,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Product Type
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-type")]
         public HttpResponseMessage GetAllProductType()
         {
@@ -374,7 +374,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-type/{productTypeId}")]
         public HttpResponseMessage GetProductTypeById(short productTypeId)
         {
@@ -395,7 +395,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-type-by-group/{productGroupId}")]
         public HttpResponseMessage GetProductTypeByProductGroup(short productGroupId)
         {
@@ -526,7 +526,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Product Region
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-by-productclass/{id}")]
         public HttpResponseMessage GetAllProduct(int id)
         {
@@ -549,7 +549,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product")]
         public HttpResponseMessage GetAllProduct()
         {
@@ -571,7 +571,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-product")]
         public HttpResponseMessage GetAllLoanProduct()
         {
@@ -593,7 +593,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product/group/{productGroupId}/category/{productCategoryId}")]
         public HttpResponseMessage GetProductByGroupAndCategory(short productGroupId, short productCategoryId)
         {
@@ -615,7 +615,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product/type/{productTypeId}/category/{productCategoryId}")]
         public HttpResponseMessage GetProductByTypeAndCategory(short productTypeId, short productCategoryId)
         {
@@ -635,7 +635,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-status")]
         public HttpResponseMessage GetApprovalStatus()
         {
@@ -657,7 +657,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product/approvals/temp")]
         public HttpResponseMessage GetProductAwaitingApproval()
         {
@@ -679,7 +679,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product/approvals/temp/{productId}")]
         public HttpResponseMessage GetTempProductDetailsById(int productId)
         {
@@ -702,7 +702,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product/{productId}")]
         public HttpResponseMessage GetProductById(int productId)
         {
@@ -722,7 +722,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product/approvals/{productCode}")]
         public HttpResponseMessage GetProductDetailsProductCode(string productCode)
         {
@@ -950,7 +950,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Product Price Index
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-price-index")]
         public HttpResponseMessage GetAllProductPriceIndex()
         {
@@ -973,7 +973,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-price-index/{productPriceIndexId}")]
         public HttpResponseMessage GetProductPriceIndexById(int productPriceIndexId)
         {
@@ -1082,7 +1082,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Product Class Process
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-process")]
         public HttpResponseMessage GetAllProductClassProcess()
         {
@@ -1172,7 +1172,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Product Classification
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-class-type")]
         public HttpResponseMessage GetAllProductClassTypes()
         {
@@ -1192,7 +1192,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-classification")]
         public HttpResponseMessage GetAllProductClassification()
         {

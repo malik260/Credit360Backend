@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fee/product/{id}")]
         public HttpResponseMessage GetFee(int id)
         {
@@ -47,7 +47,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-fee/all/{productId}")]
         public HttpResponseMessage GetFeeByProduct(int productId)
         {
@@ -68,7 +68,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-fee/all/mapped/{productId}")]
         public HttpResponseMessage GetAllMappedFeeByProduct(int productId)
         {
@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-fee/unmapped/{productId}")]
         public HttpResponseMessage GetUnmappedFeeToProduct(int productId)
         {
@@ -111,7 +111,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-fee/{productFeeId}")]
         public HttpResponseMessage GetProductFee(int productFeeId)
         {
@@ -131,7 +131,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-fee/temp/{productFeeId}")]
         public HttpResponseMessage GetTempProductFee(int productFeeId)
         {
@@ -151,7 +151,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-fee/approvals/temp{tempProductId}")]
         public HttpResponseMessage GetProductFeeAwaitingApproval(int tempProductId)
         {

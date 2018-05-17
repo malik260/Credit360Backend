@@ -45,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
      
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loanRecoverySetup")]
         public HttpResponseMessage GetAllLoanRecovery()
         {
@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-type")]
         public HttpResponseMessage GetAllProductType()
         {
@@ -87,7 +87,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("casa")]
         public HttpResponseMessage GetAllCasa()
         {
@@ -108,7 +108,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("agent")]
         public HttpResponseMessage GetAllAgent()
         {
@@ -152,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("getloanRecoverySetup/{recoveryPlanId}")]
         public HttpResponseMessage GetLoanRecoverySetup (int recoveryPlanId)
         {
@@ -220,7 +220,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("getDistinctLoanRecoveryPaymentPlan")]
         public HttpResponseMessage GetDistinctLoanRecoveryPaymentPlan()
         {
@@ -241,7 +241,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("getLoanRecoveryPaymentPlan/{recoveryPaymentPlanId}")]
         public HttpResponseMessage GetLoanRecoveryPaymentPlan(int recoveryPaymentPlanId)
         {
@@ -262,7 +262,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("getAllLoanRecoveryPaymentPlan")]
         public HttpResponseMessage GetAllLoanRecoveryPaymentPlan()
         {

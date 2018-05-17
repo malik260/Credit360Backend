@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
             this._uploadService = uploadService;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("document")]
         public HttpResponseMessage GetDocument(int id)
         {

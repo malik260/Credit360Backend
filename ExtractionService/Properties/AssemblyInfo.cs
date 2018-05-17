@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DataExtractionService")]
+[assembly: AssemblyTitle("ExtractionService")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DataExtractionService")]
+[assembly: AssemblyProduct("ExtractionService")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8d1b05e1-3422-49c3-a692-0d87e3cd8fc7")]
+[assembly: Guid("7daacea8-a679-4953-bdaf-5c202b7cee40")]
 
 // Version information for an assembly consists of the following four values:
 //

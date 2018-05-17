@@ -394,7 +394,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-visitation-file/{documentId}")]
         public HttpResponseMessage GetVisitationFile(int documentId)
         {
@@ -414,7 +414,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-guarantee/{targetId}")]
         public HttpResponseMessage GetCollaterGuaranteeFile(int targetId)
         {
@@ -435,7 +435,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-visitation/{collateralVisitationId}")]
         public HttpResponseMessage GetVisitationDocument(int collateralVisitationId)
         {
@@ -790,7 +790,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Collatera Types
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-type")]
         public HttpResponseMessage GetCollateralType()
         {
@@ -805,7 +805,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-type/loan-application/{id}")]
         public HttpResponseMessage GetCollateralTypeByLoanApplicationId(int? id)
         {
@@ -820,7 +820,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-sub-type")]
         public HttpResponseMessage GetCollateralSubTypes()
         {
@@ -834,7 +834,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-sub-type/{id}")]
         public HttpResponseMessage GetCollateralSubTypes(int id)
         {
@@ -849,7 +849,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-sub-type/collateral-type/{collateralTypeId}")]
         public HttpResponseMessage GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
         {
@@ -943,7 +943,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion  End of Collateral Types
 
         #region Seniority Of Claims
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-seniority-of-claims")]
         public HttpResponseMessage GetCollateralSeciorityOfClaims()
         {
@@ -965,7 +965,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion Seniority Of Claims
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-valuer")]
         public HttpResponseMessage GetCollateralValuers()
         {
@@ -980,7 +980,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-perfection-status")]
         public HttpResponseMessage GetCollateralPerfectionStatus()
         {
@@ -995,7 +995,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-valuer-type")]
         public HttpResponseMessage GetCollateralValuerType()
         {
@@ -1010,7 +1010,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-value-base-type/{collateralType}")]
         public HttpResponseMessage GetCollateralValueBaseType(short collateralType)
         {
@@ -1178,7 +1178,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-history/{collateralID}")]
         public HttpResponseMessage GetCollateralHistory(short collateralID)
         {
@@ -1193,7 +1193,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("stock-price")]
         public HttpResponseMessage GetStockPrice()
         {

@@ -56,7 +56,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-relief")]
         public HttpResponseMessage GetAllApprovalRelief(HttpRequestMessage request)
         {

@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
             repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("employers")]
         public HttpResponseMessage getEmployer()
         {
@@ -38,7 +38,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("employer")]
         public HttpResponseMessage getEmployer(int employerId)
         {
@@ -99,7 +99,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("employer-type")]
         public HttpResponseMessage getEmployerType()
         {
@@ -113,7 +113,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("employer-sub-type/{EmployerTypeId}")]
         public HttpResponseMessage getEmployerSubType(int employerTypeId)
         {

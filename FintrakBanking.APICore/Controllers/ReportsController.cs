@@ -30,7 +30,7 @@ namespace FintrakBanking.APICore.Controllers
             errorLogger = _errorLogger;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("workflowsla/loanapplication/{id}")]
         public HttpResponseMessage GetCollateralTypeByProduct(int id)
         {
@@ -52,7 +52,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loans/loanschedule/{loanid}")]
         public HttpResponseMessage GetLoanScheduleReport(int loanid)
         {
@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limitmonitoring/sector")]
         public HttpResponseMessage GetSectorLimitMonitoringReport()
         {
@@ -96,7 +96,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limitmonitoring/branch")]
         public HttpResponseMessage GetBranchLoanAmountLimit()
         {
@@ -118,7 +118,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("workflow-definition/operation/{id}")]
         public HttpResponseMessage GetWorkflowDefinition(int id)
         {
@@ -163,7 +163,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Offer-Letter Generation & Loan Monitoring Reports
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("offer-letter")]
         public HttpResponseMessage GetGeneratedOfferLetter(string applicationRefNumber)
         {
@@ -229,7 +229,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("monitoring/non-performing-loans")]
         public HttpResponseMessage GetNonPerformingLoansReport()
         {
@@ -251,7 +251,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("monitoring/overdraft-loans")]
         public HttpResponseMessage GetExpiredOverdraftLoansReport()
         {
@@ -431,7 +431,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loanstatement/loan/{id}")]
         public HttpResponseMessage GetLoanStatement(int id)
         {
@@ -566,7 +566,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateralestimated/loan/{collateralCode}")]
         public HttpResponseMessage GetCollateralEstimated(string collateralCode)
         {
@@ -588,7 +588,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fcyscheuledloan/loan/{id}")]
         public HttpResponseMessage GetFCYScheuledLoan(int id)
         {
@@ -609,7 +609,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("lein-loan-casa-account/{branchId}/{customerName}")]
         public HttpResponseMessage GetLoanAccountWithLein(short? branchId, string customerName)
         {

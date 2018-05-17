@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("posting-type")]
         public HttpResponseMessage GetAllPostingType()
         {
@@ -42,7 +42,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fee-type")]
         public HttpResponseMessage GetAllFeeType()
         {
@@ -62,7 +62,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fee-detail-type")]
         public HttpResponseMessage GetAllChargeFeeDetailType()
         {
@@ -82,7 +82,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fee-detail-class")]
         public HttpResponseMessage GetAllChargeFeeDetailClass()
         {
@@ -103,7 +103,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("charge-fee")]
         public HttpResponseMessage GetChargeFee()
         {
@@ -118,7 +118,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("charge-fee/{chargeFeeId}")]
         public HttpResponseMessage GetChargeFee(int chargeFeeId)
         {
@@ -138,7 +138,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("charge-fee/company")]
         public HttpResponseMessage GetChargeFeeByCompanyId()
         {

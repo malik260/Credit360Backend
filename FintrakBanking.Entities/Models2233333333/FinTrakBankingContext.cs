@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.Models
         {
         }
 
+        public virtual DbSet<TBL_CUSTOM_CASADAILYBALANCE> TBL_CUSTOM_CASADAILYBALANCE { get; set; }
         public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }

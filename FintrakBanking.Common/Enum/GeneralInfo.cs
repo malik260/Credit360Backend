@@ -225,6 +225,7 @@ namespace FintrakBanking.Common.Enum
         LoanPerformanceChange = 202,
         AddCommercialLoanBooking = 203,
             InitiatAccountReassigning = 204,
+        Loggedfailed = 205,
     };
 
 

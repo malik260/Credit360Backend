@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("bulk-rate-customer-excemptions")]
         public HttpResponseMessage GetLoanRateCustomerExcemptions()
         {
@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("getrunningloan/{refNo}")]
         public HttpResponseMessage GetRunningLoans(string refNo)
         {
@@ -55,7 +55,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("mature-commercial-loans/parent")]
         public HttpResponseMessage GetMaturedCommercialLoans()
         {
@@ -69,7 +69,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("maturity-instruction-type")]
         public HttpResponseMessage GetMaturityInstructionType()
         {
@@ -84,7 +84,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("mature-commercial-loans/detail/{loanApplicationDetailId}")]
         public HttpResponseMessage GetMaturedCommercialLoans(int loanApplicationDetailId)
         {
@@ -100,7 +100,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("running-commercial-loans/{refNo}")]
         public HttpResponseMessage GetRunningCommercialLoans(string refNo)
         {
@@ -116,7 +116,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("new-interest-rate-review")]
         public HttpResponseMessage GetNewInterestRateReviews()
         {
@@ -131,7 +131,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-charge-fee-byloanid/")]
         public HttpResponseMessage GetLoanChargeFeeByLoanId(int loanId)
         {

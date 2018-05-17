@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-collateral-type/all/{productId}")]
         public HttpResponseMessage GetCollateralTypeByProduct(int productId)
         {
@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-collateral-type/all/mapped/{productId}")]
         public HttpResponseMessage GetAllMappedCollateralToProduct(int productId)
         {
@@ -67,7 +67,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-collateral-type/unmapped/{productId}")]
         public HttpResponseMessage GetUnmappedCollateralToProduct(int productId)
         {
@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-collateral-type/{productCollateralTypeId}")]
         public HttpResponseMessage GetProductCollateralTypeViewModel(int productCollateralTypeId)
         {

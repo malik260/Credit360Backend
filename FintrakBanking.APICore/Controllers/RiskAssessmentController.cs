@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment/form")]
         public HttpResponseMessage GetRiskTypeFormElements(int applicationId, int titleId)
         {
@@ -59,7 +59,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("assessment-result/application")]
         public HttpResponseMessage GetAllAssessmentResultByApplicationId(int applicationId)
         {

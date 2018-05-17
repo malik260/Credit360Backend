@@ -20,6 +20,8 @@ namespace FintrakBanking.Entities.StagingModels
         public virtual DbSet<CWG_TREASURY_RATE_TBL> CWG_TREASURY_RATE_TBL { get; set; }
         public virtual DbSet<STG_PRICE_INDEX_RATE> STG_PRICE_INDEX_RATE { get; set; }
         public virtual DbSet<STG_STAFF_RAW2> STG_STAFF_RAW2 { get; set; }
+        public virtual DbSet<STG_CASA_DAILY_BALANCE_INPUT> STG_CASA_DAILY_BALANCE_INPUT { get; set; }
+        public virtual DbSet<STG_CASA_DAILY_BALANCE> STG_CASA_DAILY_BALANCE { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

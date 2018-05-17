@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("tax")]
         [AuthorizeActivity("super admin","dummy")]
         public HttpResponseMessage GetTax()
@@ -39,7 +39,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("tax/{taxId}")]
         public HttpResponseMessage GetTax(int taxId)
         {
@@ -59,7 +59,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("tax/company")]
         public HttpResponseMessage GetTaxByCompanyId()
         {
