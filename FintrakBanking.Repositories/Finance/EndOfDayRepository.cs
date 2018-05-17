@@ -129,6 +129,10 @@ namespace FintrakBanking.Repositories.Finance
 
 
             loanOperation.ProcessLoanRepaymentPostingPastDue(date);
+
+            loanOperation.ProcessDailyCommercialPaperInterestAccrual(date);
+            loanOperation.CommercialPaperRollOver(date);
+
             //loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue (date);
             //loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue  (date);
             //loanOperation.ProcessIDFExpiryAndlocking(date);
@@ -149,6 +153,7 @@ namespace FintrakBanking.Repositories.Finance
 
             context.SaveChanges();
         }
+
 
     }
 }

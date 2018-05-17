@@ -9399,7 +9399,7 @@ namespace FintrakBanking.Repositories.Credit
                              deleted = a.DELETED,
                              deletedBy = a.DELETEDBY,
                              dateTimeDeleted = a.DATETIMEDELETED,
-                             approvalStatusId = a.APPROVALSTATUSID,
+                             //approvalStatusId = a.APPROVALSTATUSID,
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
                              customerInfoValidated = a.CUSTOMERINFOVALIDATED,

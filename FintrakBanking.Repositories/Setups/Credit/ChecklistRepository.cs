@@ -84,6 +84,7 @@ namespace FintrakBanking.Repositories.Credit
                                   checkListItemName = k.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
                                   itemDescription = k.ITEMDESCRIPTION,
                                   checklistStatusId = s.CHECKLISTSTATUSID,
+                                  approvalLevelId = k.APPROVALLEVELID,
                                   responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID).
                             Select(x => new CheckListStatusViewModel()
                             {
@@ -94,6 +95,7 @@ namespace FintrakBanking.Repositories.Credit
             var proposedProductId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == loanTargetId select (short?)id.PROPOSEDPRODUCTID).ToList();
             var isproductBased = context.TBL_CHECKLIST_TYPE.FirstOrDefault(x => x.CHECKLIST_TYPEID == checkListTypeId).ISPRODUCT_BASED;
 
+           
             var data = (from a in context.TBL_CHECKLIST_DEFINITION
                         join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
                         where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checkListTypeId 
@@ -110,6 +112,7 @@ namespace FintrakBanking.Repositories.Credit
                             checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
                             itemDescription = a.ITEMDESCRIPTION,
                             productId = a.PRODUCTID,
+                            approvalLevelId = a.APPROVALLEVELID,
                             responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == d.RESPONSE_TYPEID).
                             Select(x => new CheckListStatusViewModel()
                             {
@@ -118,6 +121,7 @@ namespace FintrakBanking.Repositories.Credit
                             }).ToList()
 
                         });
+           
             if (isproductBased)
             {
                 if (productId > 0)
