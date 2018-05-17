@@ -10140,5 +10140,325 @@ namespace FintrakBanking.Repositories.Credit
                        }).ToList();
             return chargeFee;
         }
+
+        bool ILoanOperationsRepository.DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.DoesOperationExist(int loanId, int operationTypeId)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.GoForApproval(ApprovalViewModel entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.AddCollateralSearchLien(CasaLienViewModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        decimal ILoanOperationsRepository.GetCollateralSearchChargeAmount(int stateId)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.AddOperationReview(LoanReviewOperationViewModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanOperationTypeViewModel> ILoanOperationsRepository.GetOperationType()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<DailyInterestAccrualViewModel> ILoanOperationsRepository.ProcessDailyTeamLoansInterestAccrual(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<DailyInterestAccrualViewModel> ILoanOperationsRepository.ProcessDailyAuthorisedOverdraftInterestAccrual(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<DailyInterestAccrualViewModel> ILoanOperationsRepository.ProcessDailyUnauthorisedOverdraftInterestAccrual(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<DailyInterestAccrualViewModel> ILoanOperationsRepository.ProcessDailyPastDueInterestAccrual(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<DailyInterestAccrualViewModel> ILoanOperationsRepository.ProcessDailyPastDuePrincipalAccrual(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanPastDueViewModel> ILoanOperationsRepository.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanOperationTypeViewModel> ILoanOperationsRepository.GetOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanReviewOperationApprovalViewModel> ILoanOperationsRepository.GetLoanOperationAwaitingApproval(int staffId, int companyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanReviewOperationApprovalViewModel> ILoanOperationsRepository.GetApprovedLoanOperationReview()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<ApprovalTrailDetailsViewModel> ILoanOperationsRepository.GetApprovalDetails(int loanId, int OperationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanCovenantDetailViewModel> ILoanOperationsRepository.ProcessIDFExpiryAndlocking(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanCovenantDetailViewModel> ILoanOperationsRepository.ProcessOverdraftBalanceSuspensionBaseOnCovenant(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanCovenantDetailViewModel> ILoanOperationsRepository.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanViewModel> ILoanOperationsRepository.ProcessIntervalFeeandCommissionPosting(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanCovenantDetailViewModel> ILoanOperationsRepository.ProcessCFFExpiryAndlocking(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanCovenantDetailViewModel> ILoanOperationsRepository.ProcessLPOExpiryAndlocking(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanPastDueViewModel> ILoanOperationsRepository.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.LoanCancellation(int loanId, DateTime applicationDate, int staffId)
+        {
+            throw new NotImplementedException();
+        }
+
+        void ILoanOperationsRepository.OverdraftTopUp(int loanId, decimal amount)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LimitSuspensionViewModel> ILoanOperationsRepository.ProcessNPLByBranchSuspension()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanRepaymentViewModel> ILoanOperationsRepository.ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanRepaymentViewModel> ILoanOperationsRepository.ProcessLoanRepaymentPostingPastDue(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<DailyInterestAccrualViewModel> ILoanOperationsRepository.InterestSuspension(int loanId, DateTime applicationDate, int staffId)
+        {
+            throw new NotImplementedException();
+        }
+
+        LoanViewModel ILoanOperationsRepository.ArchiveLoan(int loanId, int operationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanViewModel> ILoanOperationsRepository.BulkArchiveLoan()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanPaymentSchedulePeriodicViewModel> ILoanOperationsRepository.ArchivePeriodicSchedule(int loanId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanPaymentScheduleDailyViewModel> ILoanOperationsRepository.ArchiveDailySchedule(int loanId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanPaymentSchedulePeriodicViewModel> ILoanOperationsRepository.MergePeriodicSchedule(int loanId, DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.LoanRephasementProcess(short loanReviewOperationsId, int loanId, int staffId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanRepaymentViewModel> ILoanOperationsRepository.ProcessLoanRepaymentPostingPastDueForInterestReview(DateTime applicationDate, int loanId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanRepaymentViewModel> ILoanOperationsRepository.ProcessLoanRepaymentPostingPastDueForBulkInterestReview(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanRepaymentViewModel> ILoanOperationsRepository.ProcessAuthorisedOverdraftRepaymentPostingForceDebit(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.BulkRateReview(short priceindexId, double newRate, DateTime applicationDate, int staffId, int operationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanViewModel> ILoanOperationsRepository.GetLoanRateCustomerExcemptions(int companyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.addBulkRateLoanExcemptions(LoanViewModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.addInterestRateChange(LoanBulkInterestReviewViewModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanBulkInterestReviewViewModel> ILoanOperationsRepository.GetNewInterestRateReviews(int companyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanClassificationViewModel> ILoanOperationsRepository.CalculateLoanClassification(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<DailyInterestAccrualViewModel> ILoanOperationsRepository.ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        LoanViewModel ILoanOperationsRepository.GetRunningLoans(int companyId, string refNo)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanOperationTypeViewModel> ILoanOperationsRepository.GetOperationTypeByOD()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanOperationTypeViewModel> ILoanOperationsRepository.GetRemedialOperationType()
+        {
+            throw new NotImplementedException();
+        }
+
+        List<LoanReviewOperationParentChildViewModel> ILoanOperationsRepository.GetMaturedCommercialLoansParent(int companyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanReviewOperationApprovalViewModel> ILoanOperationsRepository.GetRunningCommercialLoans(int companyId, string loanReferenceNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<LoanReviewOperationApprovalViewModel> ILoanOperationsRepository.GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanFeeOperationViewModel> ILoanOperationsRepository.GetLoanChargeFeeByLoanId(int loanId)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<MaturityIntructionViewModel> ILoanOperationsRepository.GetMaturityInstructionType()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.addMaturityInstruction(MaturityIntructionViewModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<MaturityIntructionViewModel> ILoanOperationsRepository.GetLoanMaturityInstructions()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.ProcessCommercialPaperRollOver(MaturityIntructionViewModel model, string refNo)
+        {
+            throw new NotImplementedException();
+        }
+
+        void ILoanOperationsRepository.CommercialPaperRollOver(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.CommercialPaperTenorReview(TenorExtionViewModel userModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<LoanReviewOperationParentChildViewModel> ILoanOperationsRepository.GetRunningCommercialLoanLines(int companyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ILoanOperationsRepository.CommercialPaperRateReview(int aplicationDetailId, double newRate, InterestReviewViewModel userModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanClassificationViewModel> ILoanOperationsRepository.CalculateOverdraftClassification(DateTime applicationDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<LoanViewModel> ILoanOperationsRepository.LoanHistory()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<RevolvingLoanViewModel> ILoanOperationsRepository.OverDraftHistory()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
