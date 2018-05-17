@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("company")]
         public HttpResponseMessage GetCompanies()
         {
@@ -74,7 +74,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("company/{companyId}")]
         public HttpResponseMessage Get(int companyId)
         {
@@ -96,7 +96,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("languages")]
         public HttpResponseMessage GetLanguages()
         {
@@ -116,7 +116,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("nature-of-business")]
         public HttpResponseMessage GetNatureOfBusiness()
         {

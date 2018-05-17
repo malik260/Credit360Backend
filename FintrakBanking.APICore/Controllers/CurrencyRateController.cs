@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet][Route("currency")]
+      [HttpGet] [ClaimsAuthorization]  [Route("currency")]
         public HttpResponseMessage GetCurrency()
         {
             try
@@ -38,7 +38,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("currency-ratecode")]
         public HttpResponseMessage GetCurrencyRaceCode()
         {
@@ -52,7 +52,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("base-currency")]
         public HttpResponseMessage GetBaseCurrency()
         {
@@ -68,7 +68,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet][Route("currency-rate")]
+      [HttpGet] [ClaimsAuthorization]  [Route("currency-rate")]
         public HttpResponseMessage GetCurrencyRate()
         {
             try
@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("currency-exchange-rate/{currencyId}")]
         public HttpResponseMessage GetCurrentCurrencyExchangeRate(short currencyId)
         {
@@ -98,7 +98,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("currency-rate/{currencyId}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("currency-rate/{currencyId}")]
         public HttpResponseMessage GetCurrencyRateById(short currencyId)
         {
             try

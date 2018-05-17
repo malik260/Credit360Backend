@@ -61,7 +61,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("misinfo")]
+      [HttpGet] [ClaimsAuthorization]  [Route("misinfo")]
         public HttpResponseMessage GetAllMisInfo()
         {
             try
@@ -81,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet][Route("misinfo/company")]
+      [HttpGet] [ClaimsAuthorization]  [Route("misinfo/company")]
         public HttpResponseMessage GetMisInfoByCoyId()
         {
             
@@ -102,7 +102,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("misinfo/{misInfoId}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("misinfo/{misInfoId}")]
         public HttpResponseMessage GetMisInfoById(int misInfoId)
         {
             try
@@ -182,7 +182,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("mistype")]
+      [HttpGet] [ClaimsAuthorization]  [Route("mistype")]
         public HttpResponseMessage GetAllMisType()
         {
             try
@@ -201,7 +201,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("mistype/{mistypeid}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("mistype/{mistypeid}")]
         public HttpResponseMessage GetMisTypeById(int misInfoId)
         {
             try

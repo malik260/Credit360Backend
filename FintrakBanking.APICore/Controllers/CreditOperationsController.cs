@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
             this.loanRepo = _loanRepo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("getcollateralsearchchargeamount{stateId}")]
         public HttpResponseMessage GetCollateralSearchChargeAmount(int stateId)
         {
@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-operationtype")]
         public HttpResponseMessage GetOperationType()
         {
@@ -69,7 +69,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-operationtypebyoverdraft")]
         public HttpResponseMessage GetOperationTypeByOD()
         {
@@ -91,7 +91,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-remedial-operationtype")]
         public HttpResponseMessage GetRemedialOperationType()
         {
@@ -113,7 +113,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-operationtype/")]
         public HttpResponseMessage GetOperationTypeByLoanId(int productTypeId, int scheduleTypeId)
         {
@@ -136,7 +136,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-search/")]
         public HttpResponseMessage SearchForLoan(string searchQuery)
         {
@@ -158,7 +158,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("running-commercial-loan-search/")]
         public HttpResponseMessage SearchRunningCommercialForLoans(string searchQuery)
         {
@@ -180,7 +180,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("term-and-revolving-loan-search/")]
         public HttpResponseMessage SearchForLoanAndRevolvingLoan(int productTypeId, string searchQuery)
         {
@@ -202,7 +202,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approved-overdraft-review-application")]
         public HttpResponseMessage GetLoanReviewApplicationOverDraft()
         {
@@ -224,7 +224,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("overdraft-detail/")]
         public HttpResponseMessage SearchForOverdraft(int revolvingLoanId)
         {
@@ -245,7 +245,7 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approved-loan-review")]
         public HttpResponseMessage GetApprovedLoanReview()
         {
@@ -267,29 +267,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("approved-loan-review-remedial")]
-        public HttpResponseMessage GetApprovedLoanReviewRemedial()
-        {
-            try
-            {
-                var data = loanRepo.GetApprovedLoanReviewRemedial();
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = data });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("disbursed-loan-details/")]
         public HttpResponseMessage SearchForLoan(int loanId)
         {
@@ -311,7 +289,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-convenant/")]
         public HttpResponseMessage GetLoanConvenant(int loanId)
         {
@@ -333,7 +311,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-chargefee/")]
         public HttpResponseMessage GetLoanChargeFee(int loanId)
         {
@@ -356,7 +334,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-schedule-details/")]
         public HttpResponseMessage GetOperationTypeByLoanId(int loanId)
         {
@@ -377,7 +355,7 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-operation/awaiting-approval")]
         public HttpResponseMessage GetLoanBookingAwaitingApproval()
         {
@@ -396,7 +374,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-operation/approved-loan-review")]
         public HttpResponseMessage GetApprovedLoanReviewed()
         {
@@ -415,7 +393,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-operation/approval-detail/")]
         public HttpResponseMessage GetApprovalDetails(int loanId, int operationId)
         {

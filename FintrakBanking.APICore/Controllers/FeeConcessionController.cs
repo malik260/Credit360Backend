@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             repo = _repo;
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fee-concession-type")]
         public HttpResponseMessage GetFeeConcessionType()
         {
@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fee-concession-charges")]
         public HttpResponseMessage GetFeeConcessionCharges(int loanApplicationDetailId)
         {
@@ -70,7 +70,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fee-concession")]
         public HttpResponseMessage GetFeeConcessionByLoanApplicationDetailId(int loanDetailId)
         {
@@ -92,7 +92,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fee-concession-awaiting-approval")]
         public HttpResponseMessage GetAllConcessionFeeAwaitingApproval()
         {

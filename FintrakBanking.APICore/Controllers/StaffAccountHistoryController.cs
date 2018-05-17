@@ -88,7 +88,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-reasigned-account-awaiting-approval")]
         public HttpResponseMessage GetStaffAccountHistory(StaffAccountHistoryViewModel entity)
         {
@@ -113,7 +113,7 @@ namespace FintrakBanking.APICore.Controllers
 
         
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-all-reasigned-account")]
         public HttpResponseMessage   GetAllStaffAccountHistory()
         {
@@ -133,7 +133,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-all-reasigned-account/loan/{loanId}/productType/{productTypeId}")]
         public HttpResponseMessage GetSelectedLoanDetails(int loanId, int productTypeId)
         {              

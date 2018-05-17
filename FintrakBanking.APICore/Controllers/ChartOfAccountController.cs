@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet] [Route("")]
+      [HttpGet] [ClaimsAuthorization]   [Route("")]
         public HttpResponseMessage GetAllAccounts( )
         {
              
@@ -47,7 +47,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpGet] [Route("category/{accountCategoryId}")]
+      [HttpGet] [ClaimsAuthorization]   [Route("category/{accountCategoryId}")]
         public HttpResponseMessage GetAccountsByCategory(   short accountCategoryId)
         { 
                 try
@@ -69,7 +69,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fs-captions")]
         public HttpResponseMessage GetFinancialSatementCaptionLookup()
         { try
@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet] [Route("{accountId}")]
+      [HttpGet] [ClaimsAuthorization]   [Route("{accountId}")]
         public HttpResponseMessage Get(   short accountId)
         {
               
@@ -258,7 +258,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approvals/temp")]
         public HttpResponseMessage GetAccountsAwaitingApproval()
         {
@@ -281,7 +281,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approvals/temp/{accountId}")]
         public HttpResponseMessage GetTempProductDetailsById(int accountId)
         {
@@ -360,7 +360,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("classes")]
         public HttpResponseMessage GetChartOfAccountClasses()
         {

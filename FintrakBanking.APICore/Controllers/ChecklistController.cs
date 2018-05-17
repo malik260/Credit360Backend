@@ -128,7 +128,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-definition")]
         public HttpResponseMessage GetAllChecklistDefinition()
         {
@@ -151,7 +151,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-definition-checklisttype/")]
         public HttpResponseMessage GetChecklistDefinitionByApprovalLevelCheckListType(int operationId, int checklistTypeId, int? productId, int loanTargetId)
         {
@@ -174,7 +174,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-type")]
         public HttpResponseMessage GetAllChecklistType()
         {
@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-type-byapprovallevel")]
         public HttpResponseMessage GetChecklistTypeByApprovalLevel(int operationId)
         {
@@ -220,7 +220,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-detail-valitation/")]
         public HttpResponseMessage GetChecklistByCheckListTypeAndTargetId(int targetId, int checklistTypeId, bool isCamChecklist)
         {
@@ -243,7 +243,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-definition/{CheckListDefinitionId}")]
         public HttpResponseMessage GetAllChecklistDefinitionById(short CheckListDefinitionId)
         {
@@ -270,7 +270,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-definition/mapped/approval-level/{approvalLevelId}/product/{productId}")]
         public HttpResponseMessage GetAllChecklistDefinitionByApprovalLevelId(short approvalLevelId, short productId)
         {
@@ -297,7 +297,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-definition/unmapped/approval-level/{approvalLevelId}/product/{productId}")]
         public HttpResponseMessage GetUnmappedChecklistDefintionToApprovalLevel(short approvalLevelId, short productId)
         {
@@ -397,7 +397,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Checklist Detail
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-details-targetid/")]
         public HttpResponseMessage GetChecklistDetailsById(int targetId)
         {
@@ -494,7 +494,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-detail")]
         public HttpResponseMessage GetAllChecklistDetail()
         {
@@ -517,7 +517,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-detail/")]
         public HttpResponseMessage GetAllChecklistDetailByProductId(int targetId)
         {
@@ -541,7 +541,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-detail/target-type/{targetTypeId}/product/{productId}")]
         public HttpResponseMessage GetAllChecklistDetailByProductAndTargetType(int targetTypeId, int productId)
         {
@@ -564,7 +564,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-detail/checklist-definition/{checklistDefinitionId}")]
         public HttpResponseMessage GetAllChecklistDetailByChecklistDefinition(int checklistDefinitionId)
         {
@@ -587,7 +587,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-detail/{ChecklistId}")]
         public HttpResponseMessage GetAllChecklistById(int ChecklistId)
         {
@@ -720,7 +720,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-item")]
         public HttpResponseMessage GetAllChecklistItem()
         {
@@ -744,7 +744,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-item/{ChecklistId}")]
         public HttpResponseMessage GetAllChecklistItemById(int CheckListItemId)
         {
@@ -827,7 +827,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region CheckList Select List
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-status")]
         public HttpResponseMessage GetAllChecklistStatus()
         {
@@ -849,7 +849,7 @@ namespace FintrakBanking.APICore.Controllers
                 new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-response-type")]
         public HttpResponseMessage GetAllChecklistResponseType()
         {
@@ -871,7 +871,7 @@ namespace FintrakBanking.APICore.Controllers
                 new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-target-type")]
         public HttpResponseMessage GetAllChecklistTargetType()
         {
@@ -896,7 +896,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Loan Application CheckList
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application-checklist")]
         public HttpResponseMessage GetLoanApplicationsAwaitingCheckList()
         {
@@ -972,7 +972,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Condition Precedence Checklist
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("condition-prededence-checklist")]
         public HttpResponseMessage GetConditionPrecedenceChecklist(int loanApplicationId, bool isAvailment)
         {
@@ -991,7 +991,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("condition-prededence-checklist-status")]
         public HttpResponseMessage GetConditionPrecedenceChecklistStatus(int loanApplicationId, bool isAvailment)
         {
@@ -1010,7 +1010,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("deferred-checklist-awaiting-approval")]
         public HttpResponseMessage GetChecklistAwaitingApproval()
         {
@@ -1029,7 +1029,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("deferred-checklist")]
         public HttpResponseMessage GetAllDeferralChecklist()
         {
@@ -1048,7 +1048,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("deferred-checklist-byContionId/")]
         public HttpResponseMessage GetAllDeferralChecklist(int conditionId)
         {
@@ -1211,7 +1211,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Checklist Type Mapping
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("mapped-checklist-type")]
         public HttpResponseMessage GetAllChecklistTypeMapping()
         {

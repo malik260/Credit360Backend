@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
             repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-prudential-guidelines")]
         public HttpResponseMessage getAllPrudentialGuidelines()
         {
@@ -38,7 +38,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-prudential-guideline/{Id}")]
         public HttpResponseMessage getprudentialGuideline(int prudentialGuidelineId)
         {

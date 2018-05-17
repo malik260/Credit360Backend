@@ -110,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-index/{id}")]
         public HttpResponseMessage GetRiskAssessmentIndexById(int id)
         {
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-index/risktitle/{id}")]
         public HttpResponseMessage GetRiskAssessmentIndexByRiskTitle(int id)
         {
@@ -148,7 +148,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-index/parent/{id}")]
         public HttpResponseMessage GetRiskAssessmentIndexByParent(int id)
         {
@@ -169,7 +169,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-index/itemlevel/{id}")]
         public HttpResponseMessage GetRiskAssessmentIndexByItemLevel(int id)
         {
@@ -232,7 +232,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-rating")]
         public HttpResponseMessage GetRiskRating()
         {
@@ -252,7 +252,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-rating-by-product/{productId}")]
         public HttpResponseMessage GetRiskRatingByProductId(int productId)
         {
@@ -377,7 +377,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-title/{id}")]
         public HttpResponseMessage GetRiskAssessmentTitleById(int id)
         {
@@ -396,7 +396,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-title/product/{id}")]
         public HttpResponseMessage GetRiskAssessmentTitleByProductId(int id)
         {
@@ -416,7 +416,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-title/risktype/{id}")]
         public HttpResponseMessage GetRiskAssessmentTitleByRiskType(int id)
         {
@@ -437,7 +437,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-title")]
         public HttpResponseMessage GetRiskAssessmentTitle()
         {

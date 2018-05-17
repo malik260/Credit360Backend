@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             repo = _repo;
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-search/")]
         public HttpResponseMessage SearchForCallMemoLoan(string searchQuery)
         {
@@ -45,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         #region "Call Limit"
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("call-limit-type")]
         public HttpResponseMessage GetCallLimitType()
         {
@@ -65,7 +65,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("call-limit")]
         public HttpResponseMessage GetAllCallLimit()
         {
@@ -85,7 +85,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("call-limit-type/{limitId}")]
         public HttpResponseMessage GetCallLimitByTypeId(int limitId)
         {
@@ -179,7 +179,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
         #region "Call Memo"
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("call-getMemo")]
         public HttpResponseMessage GetAllCallMemo()
         {

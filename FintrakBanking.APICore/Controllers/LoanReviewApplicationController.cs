@@ -141,7 +141,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-review-application/get-cam")]
         public HttpResponseMessage GetCamDocument(int applicationId, int levelId)
         {
@@ -156,7 +156,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-review-application/get-cams/{applicationId}")]
         public HttpResponseMessage GetCamDocuments(int applicationId)
         {

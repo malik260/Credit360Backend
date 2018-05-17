@@ -34,7 +34,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region CREDIT BUREAU REPORT
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("credit-bureau-customer-details/{customerId}")]
         public HttpResponseMessage GetCreditBureauCustomerDetailsByCustomerId(int customerId)
         {
@@ -58,7 +58,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("credit-bureau-information")]
         public HttpResponseMessage GetCreditBureauInformation()
         {
@@ -81,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("crc-products")]
         public HttpResponseMessage GetCRCBureauFacilities()
         {
@@ -105,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("credit-bureau-report-log/{customerId}/director/{companyDirectorId}")]
         public HttpResponseMessage GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {

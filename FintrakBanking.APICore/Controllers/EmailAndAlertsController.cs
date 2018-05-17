@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Controllers
             errorLog = _errorLog;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("send-alerts/covenants-close-to-due-date")]
         public HttpResponseMessage SendAlertsForCovenantsApproachingDueDate()
         {
@@ -39,7 +39,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("send-alerts/covenants-overdue")]
         public HttpResponseMessage SendAlertsForCovenantsOverDue()
         {
@@ -56,7 +56,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("send-alerts/collateral-property-revaluation")]
         public HttpResponseMessage SendAlertsForCollateralPropertyRevaluation()
         {
@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("send-alerts/npl-loans")]
         public HttpResponseMessage SendAlertsForLoanNplMonitoring()
         {
@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("send-alerts/self-liquidating-loans-expiry")]
         public HttpResponseMessage SendAlertsOnSelfLiquidatingLoanExpiry()
         {
@@ -107,7 +107,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("send-alerts/overdraft-loans-expiry")]
         public HttpResponseMessage SendAlertsOnOverdraftLoansExpiry()
         {

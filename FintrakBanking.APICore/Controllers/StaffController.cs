@@ -30,7 +30,7 @@ namespace FintrakBanking.APICore.Controllers
             this.errorLogger = _errorLogger;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff")]
         public HttpResponseMessage GetstaffInfo()
         {
@@ -52,7 +52,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/approvals/temp")]
         public HttpResponseMessage GetStaffAwaitingApproval()
         {
@@ -74,7 +74,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/approvals/temp/{staffId}")]
         public HttpResponseMessage GetTempStaffDetailsById(int staffId)
         {
@@ -97,7 +97,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/approvals/{staffCode}")]
         public HttpResponseMessage GetStaffDetailsById(string staffCode)
         {
@@ -122,7 +122,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/approvals")]
         public HttpResponseMessage GetStaffDetails()
         {
@@ -144,7 +144,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/names")]
         public HttpResponseMessage GetStaff()
         {
@@ -167,7 +167,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-relationship-Manager/{staffId}")]
         public HttpResponseMessage GetStaffRelationshipManagerByStaffId(int staffId)
         {
@@ -190,7 +190,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-business-Manager/{staffId}")]
         public HttpResponseMessage GetStaffBusinessManagerByStaffId(int staffId)
         {
@@ -213,7 +213,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/unit/{departmentUnitId}")]
         public HttpResponseMessage GetStaff(short departmentUnitId)
         {
@@ -236,7 +236,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-status")]
         public HttpResponseMessage GetApprovalStatus()
         {
@@ -262,7 +262,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/{staffId}")]
         public HttpResponseMessage GetStaffInfoById(int staffId)
         {
@@ -381,7 +381,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staffbybranch/{branchId}")]
         public HttpResponseMessage GetstaffInfoByBranchId(int branchId)
         {
@@ -469,7 +469,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/search/")]
         public HttpResponseMessage SearchStaff(string queryString)
         {
@@ -493,7 +493,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/{departmentId}/search/")]
         public HttpResponseMessage SearchStaffbyDepartmentId(string queryString, int departmentId)
         {
@@ -517,7 +517,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/signature/all")]
         public HttpResponseMessage GetAllStaffSignatures()
         {
@@ -632,7 +632,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff/signature")]
         public HttpResponseMessage GetStaffSignatureByStaffCode(string staffCode)
         {

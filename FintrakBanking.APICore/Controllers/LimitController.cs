@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Limits
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit")]
         public HttpResponseMessage GetAllLimit()
         {
@@ -47,7 +47,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit/{limitId}")]
         public HttpResponseMessage GetLimitById(int limitId)
         {
@@ -145,7 +145,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Limits Details
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-detailObligor")]
         public HttpResponseMessage GetLimitDetailObligor()
         {
@@ -162,7 +162,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-detailCustomerGroup")]
         public HttpResponseMessage GetLimitDetailCustomerGroup()
         {
@@ -179,7 +179,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-detailSector")]
         public HttpResponseMessage GetLimitDetailSector()
         {
@@ -196,7 +196,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-detailBranch")]
         public HttpResponseMessage GetLimitDetailBranch()
         {
@@ -213,7 +213,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-detailRelationshipManager")]
         public HttpResponseMessage GetLimitDetailRelationshipManager()
         {
@@ -230,7 +230,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-detailPrelimemaryEvaluationNote")]
         public HttpResponseMessage GetLimitDetailPrelimemaryEvaluationNote()
         {
@@ -248,7 +248,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-detail/{limitDetailId}")]
         public HttpResponseMessage GetLimitDetailById(int limitDetailId)
         {
@@ -376,7 +376,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Limits Metric
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-metric")]
         public HttpResponseMessage GetAllLimitMetric()
         {
@@ -394,7 +394,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Limits Type
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-type")]
         public HttpResponseMessage GetAllLimitType()
         {
@@ -412,7 +412,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Limits Value Type
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-value-type")]
         public HttpResponseMessage GetAllLimitValueType()
         {
@@ -430,7 +430,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Frequency Type
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-frequency-type")]
         public HttpResponseMessage GetAllFrequencyType()
         {
@@ -448,7 +448,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Obligor Limit 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("obligor-limit")]
         public HttpResponseMessage GetAllObligorLimit()
         {
