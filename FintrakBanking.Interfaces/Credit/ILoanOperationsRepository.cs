@@ -68,7 +68,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
         bool addMaturityInstruction(MaturityIntructionViewModel model);
         IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
-        IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType();
+        //IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType();
         IEnumerable<LoanClassificationViewModel> CalculateOverdraftClassification(DateTime applicationDate);
         IEnumerable<LoanViewModel> LoanHistory();
         IEnumerable<RevolvingLoanViewModel> OverDraftHistory();
