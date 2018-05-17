@@ -9485,7 +9485,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions()
         {
-            var data = (from a in context.TBL_LOAN_MATURITY_INSTRUCTION where a.INUSE == true
+            var data = (from a in context.TBL_LOAN_MATURITY_INSTRUCTION //where a.INUSE == true
                        select new MaturityIntructionViewModel
                        {
                            instructionTypeId = a.INSTRUCTIONTYPEID,
@@ -9512,7 +9512,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
 
-            if (context.TBL_LOAN_MATURITY_INSTRUCTION.Where(x => x.LOANID == model.loanId && x.INUSE == true).Any())
+            if (context.TBL_LOAN_MATURITY_INSTRUCTION.Where(x => x.LOANID == model.loanId ).Any()) //&& x.INUSE == true
                 throw new Exception("There is already an an active maturity instruction on this loan");
 
             TBL_LOAN_MATURITY_INSTRUCTION maturity = new TBL_LOAN_MATURITY_INSTRUCTION();
@@ -9523,7 +9523,7 @@ namespace FintrakBanking.Repositories.Credit
             maturity.TENOR = model.tenor;
             maturity.CREATEDBY = model.createdBy;
             maturity.DATETIMECREATED = DateTime.Now;
-            maturity.INUSE = true;
+           // maturity.INUSE = true;
             this.context.TBL_LOAN_MATURITY_INSTRUCTION.Add(maturity);
 
             return context.SaveChanges() > 0;
@@ -10159,7 +10159,7 @@ namespace FintrakBanking.Repositories.Credit
             var instruction = context.TBL_LOAN_MATURITY_INSTRUCTION.Where(x => x.LOANID == model.loanId);
             if (instruction.Any())
             {
-                instruction.FirstOrDefault().INUSE = false;
+               // instruction.FirstOrDefault().INUSE = false;
             }
 
             return context.SaveChanges() > 0;
