@@ -23,6 +23,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("{accountId}")]
         public HttpResponseMessage GetAccount(int accountId)
         {
@@ -39,6 +40,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer-accounts/balance/{accountNumber}")]
         public HttpResponseMessage GetCASABalance(string accountNumber)
         {
@@ -58,12 +60,13 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer-accounts/{customerId}/loantype/{loantypeid}")]
         public HttpResponseMessage GetAllCustomerAccount(int customerId, int loanTypeId)
         {
             try
             {
-                var data = repo.GetAllCustomerAccount(customerId,loanTypeId , token.GetCompanyId);
+                var data = repo.GetAllCustomerAccount(customerId, loanTypeId, token.GetCompanyId);
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
@@ -80,11 +83,12 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = ex.Message });
             }
         }
-        
+
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer-accounts/customer/{id}")]
-        public HttpResponseMessage GetAllCustomerAccountByCustomerId(int id )
+        public HttpResponseMessage GetAllCustomerAccountByCustomerId(int id)
         {
             try
             {
@@ -130,6 +134,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("all-customer-accounts/{customerId}")]
         public HttpResponseMessage GetAllCASAAccount(string casaAccountNumber)
         {
@@ -154,6 +159,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer/{customerId}")]
         public HttpResponseMessage GetAccountByCustomerId(int customerId)
         {
@@ -178,6 +184,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("account-number-name/")]
         public HttpResponseMessage FindAccount(string accountNumberOrName)
         {
@@ -200,6 +207,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer-account/")]
         public HttpResponseMessage SearchForCustomerAccount(string searchQuery, int loanTypeId)
         {
@@ -222,6 +230,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer/search")]
         public HttpResponseMessage SearchCustomer(string q, string t)
         {
@@ -241,6 +250,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer/{customerId}/account-details")]
         public HttpResponseMessage SearchCustomerAccountDetails(int customerId)
         {

@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("public-holiday")]
         public HttpResponseMessage GetAllPublicHoliday()
         {
@@ -59,7 +59,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
        
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("public-holiday")]
         public HttpResponseMessage AddPublicHoliday([FromBody] PublicHolidayViewModel entity)
         {
@@ -94,7 +94,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("public-holiday/weekends-in-a-year")]
         public HttpResponseMessage AddWeekendsInTheYear([FromBody] PublicHolidayViewModel entity)
         {
@@ -125,7 +125,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("public-holiday/{id}")]
         public HttpResponseMessage UpdatePublicHoliday([FromBody] PublicHolidayViewModel enitity, int id)
         {
@@ -153,7 +153,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
             }
         }
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("public-holiday-delete/{id}")]
         public HttpResponseMessage DeletePublicHoliday( int id)
         {

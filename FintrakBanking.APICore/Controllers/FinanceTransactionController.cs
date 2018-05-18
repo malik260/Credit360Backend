@@ -37,7 +37,7 @@ namespace FintrakBanking.APICore.Controllers
             this.setupRepo = _setupRepo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("getexchangerate/{currencyId}/{date}")]
         public HttpResponseMessage GetExchangeRate(DateTime ? date, short currencyId)
         { 
@@ -61,7 +61,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("Posttransaction")]
         public HttpResponseMessage PostTransaction( [FromBody] List<FinanceTransactionViewModel> transaction)
         {
@@ -82,7 +82,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("addcollateralsearchlien")]
         public HttpResponseMessage AddCollateralSearchLien([FromBody] CasaLienViewModel model)
         {
@@ -113,7 +113,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        //[HttpPost]
+        // [HttpPost] [ClaimsAuthorization]
         //[Route("Posttransaction")]
         //public HttpResponseMessage PostCollateralSearch( [FromBody] CasaLienViewModel model)
         //{

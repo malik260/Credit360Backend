@@ -1194,7 +1194,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveFinalOfferLetter(OfferLetterTemplateViewModel model)
         {
+            bool result = false;
             try
+                 
             {
                 var exisitingDocument = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
 
@@ -1224,20 +1226,36 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.TBL_OFFERLETTER.Add(document);
                 }
-
+                
                 if (model.isAccepted == false && model.saveOnly != true)
                 {
                     var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
-                    if (appl == null) throw new Exception("Loan application with the given reference number not found!");
+                    if (appl == null)
+                    {
+                        result = false;
+                        throw new Exception("Loan application with the given reference number not found!");
+                    }
+                    else
+                    {
+                        result = true;
+                    }
+                        
                    // appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
                 }
 
-                return context.SaveChanges() > 0;
+                context.SaveChanges();
+                //if (result == true) return true;
+ 
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+
+            if (result == true)
+                return true;
+            else
+                return false;
         }
 
         public bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
@@ -1247,6 +1265,16 @@ namespace FintrakBanking.Repositories.Credit
             //var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, operationId);
             var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == operationId).ToList();
             var loanApplication = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
+
+            foreach(var item in loanApplicationDetails)
+            {
+                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
+                    throw new Exception("There are unapproved middle office request.");
+                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                    throw new Exception("There are unattended middle office request which must be attended to.");
+            }
+            
             //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             var initiated = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == loanApplication.LOANAPPLICATIONID).Any();
@@ -1269,7 +1297,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplication.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
                 loanApplication.AVAILMENTDATE = DateTime.Now;
 
-                var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
+               
                 //CHECKING FOR COMMERCIAL LOANS IN LOOP
                 foreach (var record in loanApplicationDetails) 
                 {

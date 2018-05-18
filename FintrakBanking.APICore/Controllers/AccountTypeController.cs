@@ -12,7 +12,7 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    
+
     [RoutePrefix("api/v1/setups")]
     public class AccountTypeController : ApiControllerBase
     {
@@ -25,37 +25,42 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Account Type Actions
 
-        [HttpGet][Route("account-type", Name = "GetAccountType")]
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("account-type", Name = "GetAccountType")]
         public HttpResponseMessage GetAllAccountType(HttpRequestMessage request)
-        { 
-                try
-                {
-                    var data = repo.GetAllAccountType();
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
-                }
-                catch (Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
-                }
-             
+        {
+            try
+            {
+                var data = repo.GetAllAccountType();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
-        [HttpGet][Route("account-type/{accountTypId}", Name = "GetAccountTypeById")]
-        public HttpResponseMessage GetAllAccountTypeById(HttpRequestMessage request,int accountTypId)
-        { 
-                try
-                {
-                    var data = repo.GetAllAccountTypeById(accountTypId);
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data });
-                }
-                catch (Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
-                }
-                  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("account-type/{accountTypId}", Name = "GetAccountTypeById")]
+        public HttpResponseMessage GetAllAccountTypeById(HttpRequestMessage request, int accountTypId)
+        {
+            try
+            {
+                var data = repo.GetAllAccountTypeById(accountTypId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
         [HttpPost]
+        [ClaimsAuthorization]
         [Route("account-type")]
         public HttpResponseMessage AddAccountType([FromBody] AddAccountTypeViewModel model)
         {
@@ -85,27 +90,29 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPut][Route("account-type/{accountTypeId}")]
-        public HttpResponseMessage UpdateAccountType(  int accountTypeId, [FromBody]AccountTypeViewModel model)
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("account-type/{accountTypeId}")]
+        public HttpResponseMessage UpdateAccountType(int accountTypeId, [FromBody]AccountTypeViewModel model)
         {
             HttpResponseMessage result = null;
-                try
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                if (repo.UpdateAccountType(accountTypeId, model))
                 {
-                    var token =   new TokenDecryptionHelper( );
-                    model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                     model.applicationUrl = HttpContext.Current. Request.Path;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-                    if (repo.UpdateAccountType(accountTypeId, model))
-                    {
-                    result= Request.CreateResponse(HttpStatusCode.OK, Ok(model));
-                    }
+                    result = Request.CreateResponse(HttpStatusCode.OK, Ok(model));
                 }
-                catch (Exception ex)
-                {
-                result= Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
-                }
+            }
+            catch (Exception ex)
+            {
+                result = Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
             return result;
         }
 

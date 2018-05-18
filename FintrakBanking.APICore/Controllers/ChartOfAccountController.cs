@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet] [Route("")]
+      [HttpGet] [ClaimsAuthorization]   [Route("")]
         public HttpResponseMessage GetAllAccounts( )
         {
              
@@ -91,7 +91,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fs-captions")]
         public HttpResponseMessage GetFinancialSatementCaptionLookup()
         { try
@@ -112,7 +112,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet] [Route("{accountId}")]
+      [HttpGet] [ClaimsAuthorization]   [Route("{accountId}")]
         public HttpResponseMessage Get(   short accountId)
         {
               
@@ -138,7 +138,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         // POST api/values
-        //[HttpPost]
+        // [HttpPost] [ClaimsAuthorization]
         //public HttpResponseMessage AddChartOfAccount([FromBody]ChartOfAccountViewModel model)
         //{   try
         //        {
@@ -171,7 +171,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //}
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("")]
         public async Task<HttpResponseMessage> AddTempAccount([FromBody] ChartOfAccountViewModel model)
         {
@@ -214,7 +214,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("{accountId}")]
         public HttpResponseMessage UpdateAccount(short accountId, [FromBody] ChartOfAccountViewModel model)
         {
@@ -250,7 +250,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approval")]
         public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
@@ -280,7 +280,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approvals/temp")]
         public HttpResponseMessage GetAccountsAwaitingApproval()
         {
@@ -303,7 +303,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approvals/temp/{accountId}")]
         public HttpResponseMessage GetTempProductDetailsById(int accountId)
         {
@@ -355,7 +355,7 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
         // DELETE api/values/5
-        [HttpDelete] [Route("{accountId}")]
+        [HttpDelete] [ClaimsAuthorization] [Route("{accountId}")]
         public HttpResponseMessage DeleteAccount(   int accountId)
         { 
                 try
@@ -382,7 +382,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("classes")]
         public HttpResponseMessage GetChartOfAccountClasses()
         {

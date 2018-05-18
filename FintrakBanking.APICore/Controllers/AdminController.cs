@@ -12,7 +12,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Http; 
+using System.Web.Http;
+using FintrakBanking.APICore.App_Start;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -25,6 +26,7 @@ namespace FintrakBanking.APICore.Controllers
         private readonly ICanAuthorizationRepository I;
         private readonly IAuditTrailRepository audit;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
+        
         public AdminController(IAdminRepository _repo,
                                 IErrorLogRepository _errorLogger,
                                 ICanAuthorizationRepository _I,
@@ -34,11 +36,24 @@ namespace FintrakBanking.APICore.Controllers
             this.errorLogger = _errorLogger;
             this.audit = _audit;
             this.I = _I;
+          
         }
+
+        public AdminController()
+        {
+        }
+
+        private string username { get { return token.GetUsername; } }
+
+
 
         #region Users
 
-        [HttpGet]
+        // AdminController cont = new AdminController();
+
+
+         
+       [HttpGet] [ClaimsAuthorization]
         [Route("users")]
         public HttpResponseMessage GetAllUsers()
         {
@@ -59,7 +74,9 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+     
+      //  [ClaimsAuthorizationAttribute(ClaimType = "logincode", ClaimValue =   username )]
+      [HttpGet]   [ClaimsAuthorization]
         [Route("users-by-staffId/")]
         public HttpResponseMessage GetUsersByStaffId(int staffId)
         {
@@ -80,7 +97,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("user/approval")]
         public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
@@ -112,7 +129,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
+      [HttpGet]  
+        [ClaimsAuthorization]
         [Route("user/approvals/temp")]
         public HttpResponseMessage GetUsersAwaitingApproval()
         {
@@ -134,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("user")]
         public async Task<HttpResponseMessage> AddUserAsync([FromBody]AppUserViewModel user)
         {
@@ -183,7 +201,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("user/{id}")]
         public async Task<HttpResponseMessage> UpdateUser(int id, [FromBody]AppUserViewModel user)
         {
@@ -215,7 +233,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("manage-account-status/user/{userId}/lock-status/{lockStatus}")]
         public HttpResponseMessage ManageUserAccountStatus(int userId, int lockStatus)
         {
@@ -237,7 +255,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Group
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("group/add")]
         public HttpResponseMessage AddGroup([FromBody] AppGroupViewModel group)
         {
@@ -279,7 +297,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("group/{id}")]
         public HttpResponseMessage UpdateGroup([FromBody] AppGroupViewModel group, short id)
         {
@@ -316,7 +334,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
+      [HttpGet]   [ClaimsAuthorization]
         [Route("groups")]
         public HttpResponseMessage GetAllGroups()
         {
@@ -335,7 +353,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet]   [ClaimsAuthorization]
         [Route("group/{id}")]
         public HttpResponseMessage GetGroupById(int id)
         {
@@ -356,7 +374,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Activities
-        [HttpGet]
+      [HttpGet]   [ClaimsAuthorization]
         [Route("activities/parents")]
         public HttpResponseMessage GetAllActivities()
         {
@@ -377,7 +395,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet]   [ClaimsAuthorization]
         [Route("group/activities/mapped")]
         public HttpResponseMessage GetGroupActivities()
         {
@@ -398,7 +416,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("group/activity/access/{id}")]
         public HttpResponseMessage AddAccessToActivity(int id, [FromBody] ActivitiesUpdateVm model)
         {
@@ -430,7 +448,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Audit Trail
-        [HttpGet]
+      [HttpGet]   [ClaimsAuthorization]
         [Route("audit/log")]
         public HttpResponseMessage GetAuditLog([FromUri] int page, [FromUri] int itemsPerPage)
         {
@@ -453,7 +471,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet]   [ClaimsAuthorization]
         [Route("audit/log/search")]
         public HttpResponseMessage FilterAuditLog([FromUri] int page, string searchQuery)
         {
@@ -482,7 +500,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Administration
-        [HttpGet]
+      [HttpGet]   [ClaimsAuthorization]
         [Route("accountmanagement")]
         public IHttpActionResult GetAllApplicationUsers([FromUri] int page, [FromUri] int itemsPerPage)
         {
@@ -494,7 +512,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("accountmanagement")]
         public IHttpActionResult UpdateApplicationUsers([FromBody] ActiveUserDetails entity)
         {

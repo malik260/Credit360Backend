@@ -243,13 +243,25 @@ namespace FinTrakBanking.ThirdPartyIntegration.Credit
         public GLAccountDetailsViewModel ValidateGLNumber(string glNumber)
         {
             GLAccountDetailsViewModel result = null;
-            Task.Run(async () => result = await transaction.APIOfficeAccount(glNumber)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await transaction.APIOfficeAccountGetGeneralLedgerAccountRecord(glNumber)).GetAwaiter().GetResult();
             if (result.response.ReasonPhrase == "OK")
             {
                 return result;
             }
             return result;
         }
+        
+        public TDAccountRecordViewModel ValidateTDAccountNumber(string teamDepositAccountNumber)
+        {
+            TDAccountRecordViewModel result = null;
+            Task.Run(async () => result = await transaction.APIOfficeAccountGetTermDepositAccountRecord(teamDepositAccountNumber)).GetAwaiter().GetResult();
+            if (result.response.ReasonPhrase == "OK")
+            {
+                return result;
+            }
+            return result;
+        }
+
 
         #region  private
         private bool LogOverDraftExtend(OverDraftExtendViewModel model)

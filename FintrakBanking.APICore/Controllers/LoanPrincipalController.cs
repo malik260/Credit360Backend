@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [Route("loan-principals")]
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         public HttpResponseMessage GetAllLoanPrincipal()
         {
             try
@@ -38,7 +38,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [Route("getprincipal")]
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         public HttpResponseMessage GetAllLoanPrincipal(int id)
         {
             try
@@ -53,7 +53,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [Route("update-principal")]
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         public HttpResponseMessage UpdateLoanPrincipal(LoanPrincipalViewModel loanPrincipal)
         {
             try
@@ -71,7 +71,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [Route("delete-principal")]
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         public HttpResponseMessage DeleteLoanPrincipal(LoanPrincipalViewModel loanPrincipal)
         {
             try
@@ -85,7 +85,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [Route("add-principal")]
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         public HttpResponseMessage AddLoanPrincipal(LoanPrincipalViewModel loanPrincipal)
         {
             try

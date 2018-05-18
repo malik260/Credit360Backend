@@ -241,15 +241,15 @@ namespace FintrakBanking.ViewModels.Credit
 
 
         //collateral value calculation ERROR PRONE
-        public double securityCollateralValue
-        {
-            get
-            {
-                return (collateralValue != null) ? (double)collateralValue - ((double)collateralValue * (float)(haircut * 0.01)) : 0;
-            }
-        }
+        //public double securityCollateralValue
+        //{
+        //    get
+        //    {
+        //      //  return (collateralValue != null) ? (double)collateralValue - ((double)collateralValue * (float)(haircut * 0.01)) : 0;
+        //    }
+        //}
 
-        public decimal availableSecurityValue { get { return (decimal)collateralValue - valueInUse; } }
+       // public decimal availableSecurityValue { get { return (decimal)collateralValue - valueInUse; } }
 
         public bool canMappedToApplication { get; set; }
         public bool allowApplicationMapping { get; set; }

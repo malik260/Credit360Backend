@@ -866,7 +866,7 @@ namespace FintrakBanking.Repositories.Admin
 
             if (data != null)
             {
-                data.ISACTIVE = entity.isActive;
+                data.ISLOCKED = entity.isLocked;
 
                 data.DATETIMEUPDATED = DateTime.Now;
                 data.LASTUPDATEDBY = entity.lastUpdatedBy;

@@ -5,7 +5,6 @@ using System.Text;
 namespace FintrakBanking.Common.Enum
 {
     public enum DailyAccrualCategory
-
     {
         TermLoan = 1,
         AuthorisedOverdraft = 2,
@@ -14,6 +13,5 @@ namespace FintrakBanking.Common.Enum
         CreditCards = 5,
         PastDueInterest  = 6,
         Fee = 7,
-
     }
 }

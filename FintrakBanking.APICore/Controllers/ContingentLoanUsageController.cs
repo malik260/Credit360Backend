@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("getcontingentloan")]
         public HttpResponseMessage GetAllContingentLoans()
         {
@@ -41,7 +41,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loanusage")]
         public HttpResponseMessage SaveContigentLoans(ContingentLoanUsageViewModel entity)
         {              
@@ -68,7 +68,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approvals/loanusage")]
         public HttpResponseMessage GetPendingRequest()
         {

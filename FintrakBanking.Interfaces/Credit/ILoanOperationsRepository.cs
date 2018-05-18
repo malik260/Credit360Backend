@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -65,6 +66,14 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
         List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID);
         IEnumerable<LoanFeeOperationViewModel> GetLoanChargeFeeByLoanId(int loanId);
+        IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
+        bool addMaturityInstruction(MaturityIntructionViewModel model);
+        IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
+        bool ProcessCommercialPaperRollOver(MaturityIntructionViewModel model, string refNo);
+        void CommercialPaperRollOver(DateTime applicationDate);
+        bool CommercialPaperTenorReview(TenorExtionViewModel userModel);
+        List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
+        bool CommercialPaperRateReview(int aplicationDetailId, double newRate, InterestReviewViewModel userModel);
         //IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
         //bool addMaturityInstruction(MaturityIntructionViewModel model);
        // IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();

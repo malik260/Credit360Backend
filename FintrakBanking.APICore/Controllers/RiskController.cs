@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Risk Assessment Index
 
-        [HttpPost][Route("risk-assessment-index")]
+         [HttpPost] [ClaimsAuthorization][Route("risk-assessment-index")]
         public async Task<HttpResponseMessage> AddRiskAssessmentIndex([FromBody]  RiskAssessmentIndexViewModels entity)
         {
             try
@@ -56,7 +56,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("risk-assessment-index/{id}")]
         public async Task<HttpResponseMessage> DeleteForeHeader(int id)
         {
@@ -84,7 +84,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("risk-assessment-index/{id}")]
         public async Task<HttpResponseMessage> UpdateRiskAssessmentIndex(int id, [FromBody]  RiskAssessmentIndexViewModels entity)
         {
@@ -110,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-index/{id}")]
         public HttpResponseMessage GetRiskAssessmentIndexById(int id)
         {
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-index/risktitle/{id}")]
         public HttpResponseMessage GetRiskAssessmentIndexByRiskTitle(int id)
         {
@@ -148,7 +148,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-index/parent/{id}")]
         public HttpResponseMessage GetRiskAssessmentIndexByParent(int id)
         {
@@ -169,7 +169,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-index/itemlevel/{id}")]
         public HttpResponseMessage GetRiskAssessmentIndexByItemLevel(int id)
         {
@@ -192,7 +192,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region RiskRating
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("risk-rating")]
         public async Task<HttpResponseMessage> AddRiskRating([FromBody] RiskRatingViewModel entity)
         {
@@ -212,7 +212,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("risk-rating/{ratingId}")]
         public async Task<HttpResponseMessage> DeleteRiskRating(int ratingId, [FromBody] RiskRatingViewModel entity)
         {
@@ -232,7 +232,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-rating")]
         public HttpResponseMessage GetRiskRating()
         {
@@ -252,7 +252,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-rating-by-product/{productId}")]
         public HttpResponseMessage GetRiskRatingByProductId(int productId)
         {
@@ -272,7 +272,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("risk-rating/{ratingId}")]
         public async Task<HttpResponseMessage> UpdateRiskRating(int ratingId, [FromBody]  RiskRatingViewModel entity)
         {
@@ -296,7 +296,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #region Risk Assessment title
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("risk-assessment-title")]
         public async Task<HttpResponseMessage> AddRiskAssessmentTitleAsync([FromBody]RiskAssessmentTitleViewModels entity)
         {
@@ -323,7 +323,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("risk-assessment-title/{id}")]
         public async Task<HttpResponseMessage> UpdateRiskAssessmentTitle(int id, [FromBody] RiskAssessmentTitleViewModels entity)
         {
@@ -349,7 +349,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("risk-assessment-title/{id}")]
         public async Task<HttpResponseMessage> DeleteRiskAssessmentTitle(int id)
         {
@@ -377,7 +377,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-title/{id}")]
         public HttpResponseMessage GetRiskAssessmentTitleById(int id)
         {
@@ -396,7 +396,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-title/product/{id}")]
         public HttpResponseMessage GetRiskAssessmentTitleByProductId(int id)
         {
@@ -416,7 +416,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-title/risktype/{id}")]
         public HttpResponseMessage GetRiskAssessmentTitleByRiskType(int id)
         {
@@ -437,7 +437,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("risk-assessment-title")]
         public HttpResponseMessage GetRiskAssessmentTitle()
         {

@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
             this._uploadService = uploadService;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("document")]
         public HttpResponseMessage GetDocument(int id)
         {
@@ -109,7 +109,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The was an error while uploading document" });
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("document-excel")]
         public async Task<HttpResponseMessage> ExcelDocumentUpload()
         {
@@ -195,7 +195,7 @@ namespace FintrakBanking.APICore.Controllers
             return result;
         }
         
-           [HttpPost]
+            [HttpPost] [ClaimsAuthorization]
         [Route("upload")] // mark
         public async Task<HttpResponseMessage> Upload(string title)
         {
