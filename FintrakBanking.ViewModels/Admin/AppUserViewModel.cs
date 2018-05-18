@@ -25,6 +25,7 @@ namespace FintrakBanking.ViewModels.Admin
 
     public class UserGroup
     {
+        public int staffRoleId { get; set; }
         public string groupKey { get; set; }
         public short groupId { get; set; }
     }

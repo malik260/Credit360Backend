@@ -47,6 +47,15 @@ namespace FintrakBanking.Repositories.CASA
             return CasaAccount.CASAACCOUNTID;
         }
 
+        public string GetAccountOwnerByAccountNumber(string accountNumber, int companyId)
+        {
+            var custName = (from data in context.TBL_CASA
+                            join cust in context.TBL_CUSTOMER on data.CUSTOMERID equals cust.CUSTOMERID
+                            where data.COMPANYID == companyId && data.PRODUCTACCOUNTNUMBER.Trim() == accountNumber.Trim()
+                            select cust).FirstOrDefault();
+            return custName.FIRSTNAME + " " + custName.LASTNAME;
+        }
+
         public string GetAllCASAAccount(string casaAccountNumber, int companyId)
         {
             string accno = "";

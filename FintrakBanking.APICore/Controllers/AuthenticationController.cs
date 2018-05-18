@@ -210,7 +210,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 auditTrail.AddAuditTrail(audit);
 
-                context.SaveChanges();
+               context.SaveChanges();
 
                 // build the json response
                 return Request.CreateResponse(HttpStatusCode.OK, new
