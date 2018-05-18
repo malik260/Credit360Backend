@@ -114,7 +114,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("fee-concession")]
         public HttpResponseMessage AddUpdateFeeConcession([FromBody]FeeConcessionViewModel entity)
         {
@@ -161,7 +161,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("fee-concession-approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {

@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         // POST api/values
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("company")]
         public HttpResponseMessage AddCompany([FromBody] CompanyViewModel model)
         {
@@ -159,7 +159,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("company/{companyId}")]
         public HttpResponseMessage UpdateCompany(int companyId, [FromBody] CompanyViewModel model)
         {
@@ -183,7 +183,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("companys/{companyId}")]
         public HttpResponseMessage UpdateCompanies(int companyId, [FromBody] CompanyViewModel model)
         {

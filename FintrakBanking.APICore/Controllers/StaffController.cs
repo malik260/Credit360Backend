@@ -280,7 +280,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("staff")]
         public HttpResponseMessage AddTempStaff([FromBody] StaffInfoViewModel model)
         {
@@ -320,7 +320,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("staff/{staffid}")]
         public HttpResponseMessage UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
         {
@@ -349,7 +349,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("staff/{staffId}")]
         public HttpResponseMessage DeletestaffInfo(int staffId)
         {
@@ -406,7 +406,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("staff/approval")]
         public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
@@ -436,7 +436,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("staff/bulk-approval")]
         public HttpResponseMessage GoForBulkApproval([FromBody]List<ApprovalViewModel> entity)
         {
@@ -548,7 +548,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("staff/upload-signature")]
         public async Task<HttpResponseMessage> UploadStaffSignature()
         {
@@ -605,7 +605,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("staff/signature/{documentId}")]
         public HttpResponseMessage UpdateStaffSignature([FromBody] StaffDocumentViewModel entity, int documentId)
         {
@@ -653,7 +653,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("staff/multiple-staff-data")]
         public async Task<HttpResponseMessage> UploadStaffData()
         {
@@ -714,7 +714,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("staff/update-supervisor")]
         public HttpResponseMessage UpdateSupervisor([FromBody]SupervisorViewModel entity)
         {

@@ -56,7 +56,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("condition-precedent")]
         public HttpResponseMessage AddConditionPrecedent([FromBody] ConditionPrecedentViewModel entity)
         {
@@ -81,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("condition-precedent/selected")]
         public HttpResponseMessage AddSelectedConditionPrecedent([FromBody] SelectedIdsViewModel entity)
         {
@@ -135,7 +135,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("condition-precedent-template")]
         public HttpResponseMessage AddConditionPrecedentTemplate([FromBody] ConditionPrecedentViewModel entity)
         {
@@ -160,7 +160,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("condition-precedent-template/{conditionId}")]
         public HttpResponseMessage UpdateConditionPrecedentTemplate([FromBody] ConditionPrecedentViewModel entity, int conditionId)
         {
@@ -187,7 +187,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion CP template
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("condition-precedent-edit/{id}")]
         public HttpResponseMessage EditLoanCditionPrecedent([FromBody] ConditionPrecedentViewModel entity, int id)
         {
@@ -213,7 +213,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("condition-precedent-remove/{id}")]
         public HttpResponseMessage RemoveLoanConditionPrecedent(int id)
         {
@@ -252,7 +252,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("compliance-timeline-template")]
         public HttpResponseMessage AddComplianceTimelineTemplate([FromBody] ComplianceTimelineViewModel entity)
         {
@@ -277,7 +277,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("compliance-timeline-template/{conditionId}")]
         public HttpResponseMessage UpdateComplianceTimelineTemplate([FromBody] ComplianceTimelineViewModel entity, int conditionId)
         {

@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("end-of-day")]
         public HttpResponseMessage RunEndOfDay([FromBody] EndOfDayViewModel model)
         {

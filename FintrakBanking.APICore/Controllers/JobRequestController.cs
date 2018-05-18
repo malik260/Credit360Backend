@@ -192,7 +192,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("job-request/legal-collateral-job")]
         public HttpResponseMessage EffectLegaCollateralJobs([FromBody] JobRequestCollateralSearchViewModel entity)
         {
@@ -217,7 +217,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("job-request/collateral-customer/job/{actionName}/charge/{actionType}/{loanApplicationDetailId}")]
         public HttpResponseMessage ChargeCustomerJob([FromBody] CollateralViewModel entity, string actionName, string actionType, int loanApplicationDetailId)
         { 
@@ -243,7 +243,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("global-job-request")]
         public HttpResponseMessage AddGlobalJobRequest([FromBody] JobRequestViewModel entity)
          {
@@ -268,7 +268,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("job-request/comment")]
         public HttpResponseMessage AddJobComment([FromBody] JobRequestMessageViewModel entity)
         {
@@ -294,7 +294,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("job-request/reply/{jobRequestId}")]
         public HttpResponseMessage ReplyJobRequest([FromBody] JobRequestViewModel entity, int jobRequestId)
         {
@@ -375,7 +375,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("job-document")]
         public async Task<HttpResponseMessage> AddJobDocument()
         {
@@ -461,7 +461,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("job-reply-and-job-document")]
         public async Task<HttpResponseMessage> AddJobReplyAndDocument()
         {
@@ -557,7 +557,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost][Route("job-type")]
+         [HttpPost] [ClaimsAuthorization][Route("job-type")]
         public HttpResponseMessage AddJobType([FromBody] JobTypeViewModel entity)
         {
             try
@@ -581,7 +581,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut][Route("job-type/{jobTypeId}")]
+       [HttpPut] [ClaimsAuthorization][Route("job-type/{jobTypeId}")]
         public HttpResponseMessage UpdateJobType([FromBody] JobTypeViewModel entity, short jobTypeId)
         {
             try

@@ -112,7 +112,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("credit-template")]
         public HttpResponseMessage AddCreditTemplate([FromBody] CreditTemplateViewModel entity)
         {
@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("credit-template/{creditTemplateId}")]
         public HttpResponseMessage UpdateCreditTemplate([FromBody] CreditTemplateViewModel entity, int creditTemplateId)
         {

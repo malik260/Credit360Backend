@@ -28,7 +28,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approval-relief")]
         public HttpResponseMessage AddApprovalRelief([FromBody] ApprovalReliefViewModel model)
         {
@@ -80,7 +80,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("approval-relief/{reliefId}")]
         public HttpResponseMessage UpdateApprovalRelief(int ReliefId, [FromBody] ApprovalReliefViewModel model)
         {

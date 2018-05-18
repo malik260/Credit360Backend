@@ -392,7 +392,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("sectors/{id}")]
         public HttpResponseMessage UpdateCompany([FromBody] SectorViewModel model ,short id)
         {

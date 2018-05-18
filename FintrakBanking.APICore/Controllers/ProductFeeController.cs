@@ -173,7 +173,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         // POST api/values
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("product-fee")]
         public HttpResponseMessage AddTempProductFee([FromBody] ProductFeeViewModel model)
         {
@@ -206,7 +206,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("product-fee/multiple")]
         public HttpResponseMessage AddMultipleProductFee([FromBody] List<ProductFeeViewModel> model)
         {
@@ -227,7 +227,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("product-fee/{productFeeId}")]
         public HttpResponseMessage UpdateProductFee(int productFeeId, [FromBody] ProductFeeViewModel model)
         {
@@ -264,7 +264,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("product-fee/{productFeeId}")]
         public HttpResponseMessage DeleteProductFee(int productFeeId)
         {
@@ -309,7 +309,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("product-fee/multiple/{productFeeIds}")]
         public HttpResponseMessage DeleteMultipleProductFee(List<int> productFeeIds)
         {

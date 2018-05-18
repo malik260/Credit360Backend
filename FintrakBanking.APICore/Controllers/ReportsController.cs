@@ -139,7 +139,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-disbursedloans")]            
         public HttpResponseMessage GetDisburstLoans(DateRange dateRange) 
         {
@@ -160,7 +160,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("monitoring/expired-self-liquidating-loans")]
         public HttpResponseMessage GetSelfLiquidationLoans(DateRange dateRange)
         {
@@ -181,7 +181,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("collateral/property-due-for-vistation")]
         public HttpResponseMessage GetCollateralpropertyDueForVisitation(DateRange dateRange)
         {
@@ -226,7 +226,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("monitoring/collateral-property-revaluation")]
         public HttpResponseMessage GetCollateralPropertyRevaluationReport(DateRange dateRange)
         {
@@ -248,7 +248,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("monitoring/almost-due-covenants")]
         public HttpResponseMessage GetCovenantsApproachingDueDateReport(DateRange dateRange)
         {
@@ -313,7 +313,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("monitoring/bond-and-guarantee")]
         public HttpResponseMessage GetBondAndGuaranteeReport(DateRange dateRange)
         {
@@ -337,7 +337,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion Offer-Letter Generation & Loan Monitoring Reports
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-commercial")]
         public HttpResponseMessage GetLoanCommercialReport(DateRange dateRange)
         {
@@ -360,7 +360,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("posted-finance-transactions")]
         public HttpResponseMessage GetPostedTransactions(ReportSearchEntity searchEntity)
         {
@@ -385,7 +385,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-team-revolving")]
         public HttpResponseMessage GetTeamAndRevolving(DateRange dateRange)
         {
@@ -407,7 +407,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-earned-unearned-interest")]
         public HttpResponseMessage GetEarnedUnearnedInterest(DateRange dateRange)
         {
@@ -428,7 +428,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("audit-trail")]
         public HttpResponseMessage GetAuditTrail(DateRange dateRange)
         {
@@ -451,7 +451,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("posted-transactions-staff/date")]
         public HttpResponseMessage PostTransactionsByStaffByDate(DateRange dateRange)
         {
@@ -473,7 +473,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("posted-transactions-branch/date")]
         public HttpResponseMessage PostTransactionsByBranchByDate(DateRange dateRange)
         {
@@ -517,7 +517,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-LoanAnniversery")]
         public HttpResponseMessage GetLoanAnniversery(DateRange dateRange)
         {
@@ -539,7 +539,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/document-waived")]
         public HttpResponseMessage GetLoanDocumentWaived(DateRange dateRange)
         {
@@ -561,7 +561,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/document-deferrals")]
         public HttpResponseMessage GetLoanDocumentDeferrals(DateRange dateRange)
         {
@@ -584,7 +584,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/document-deferrals-mcc")]
         public HttpResponseMessage GetLoanDocumentDeferralsForMCC(DateRange dateRange)
         {
@@ -607,7 +607,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpPost]
+        // [HttpPost] [ClaimsAuthorization]
         //[Route("loan/collateral-estimated")]
         //public HttpResponseMessage GetCollateralEstimated(string acctNumber, string collateralCode)
         //{
@@ -694,7 +694,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("stakeholders-on-experation-ftp")]
         public HttpResponseMessage GetStakeHolderOnExperationOfFfp(ReportSearchEntity reportSearchEntity)
         {
@@ -715,7 +715,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/facility-approved-not-utilized")]
         public HttpResponseMessage FacilityApprovedNotUtilized(ReportSearchEntity reportSearchEntity)
         {
@@ -736,7 +736,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/runing-loans-by-loantype")]
         public HttpResponseMessage RuningLoansByLoanType(ReportSearchEntity reportSearchEntity)
         {
@@ -757,7 +757,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/loan-interest-receivable-and-payable")]
         public HttpResponseMessage LoansInterestReceivabelAndPayable(ReportSearchEntity reportSearchEntity)
         {
@@ -778,7 +778,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/loan-repayment")]
         public HttpResponseMessage LoansRepaymentSchedule(ReportSearchEntity reportSearchEntity)
         {

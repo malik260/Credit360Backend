@@ -43,7 +43,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("document-upload")]
         public async Task<HttpResponseMessage> KYCDocumentUpload()
         {
@@ -122,7 +122,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("checklist-document-upload")]
         public async Task<HttpResponseMessage> CheckListDocumentUpload()
         {
@@ -181,7 +181,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
             }
         }
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("checklist-upload-delete/definitionId/{definitionId}/statusId/{statusId}/detailId/{detailId}/isProductBased/{isProductBased}")]
         public HttpResponseMessage RemoveChecklistDocument(int definitionId, int statusId, int detailId, bool isProductBased)
         {
@@ -259,7 +259,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-conditions-precedent-upload")]
         public async Task<HttpResponseMessage> ConditionsPrecedentDocumentUpload()
         {

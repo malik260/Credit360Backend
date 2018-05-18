@@ -157,7 +157,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("loan-application/applicationRef/{applicationRefNumber}/statusId/{applicationStatusId}")]
         public HttpResponseMessage UpdateApplicationStatus([FromUri] string applicationRefNumber, [FromUri] short applicationStatusId)
         {
@@ -179,7 +179,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("updateFinalOfferLetter/{applicationRef}")]
         public HttpResponseMessage UpdateFinalOfferLetter(string applicationRef, OfferLetterTemplateViewModel model)
         {
@@ -247,7 +247,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter")]
         public HttpResponseMessage SaveDraftOfferLetter([FromBody] OfferLetterTemplateViewModel model)
         {
@@ -267,7 +267,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter/{documentId}")]
         public HttpResponseMessage UpdateDraftOfferLetter(int documentId, [FromBody] OfferLetterTemplateViewModel model)
         {
@@ -377,7 +377,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter/final")]
         public HttpResponseMessage SaveFinalOfferLetter([FromBody] OfferLetterTemplateViewModel model)
         {
@@ -397,7 +397,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/availment/approval-decision")]
         public HttpResponseMessage ApproveLoanAvailmentDecision([FromBody] LoanAvailmentApprovalViewModel entity)
         {
@@ -428,7 +428,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/availment/approval")]
         public HttpResponseMessage LogApplicationForApprovalDuringAvailment([FromBody] LoanAvailmentApprovalViewModel entity)
         {
@@ -458,7 +458,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/offer-letter/approval")]
         public HttpResponseMessage LogApplicationForApprovalDuringOfferLetterGeneration([FromBody] LoanAvailmentApprovalViewModel entity)
         {
@@ -490,7 +490,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion Offer Letter & Availment
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("offer-letter/forward-bonds-and-guarantee")]
         public HttpResponseMessage ForwardBondsAndGuarantee([FromBody] ForwardViewModel entity)
         {
@@ -516,7 +516,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("offer-letter/rejection")]
         public HttpResponseMessage OfferLetterRejection([FromBody] ForwardViewModel entity)
         {
