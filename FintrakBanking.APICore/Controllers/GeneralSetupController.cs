@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region General Setups
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("calculate-maturity-date/effective-date/{effectiveDate}/tenor-mode/{tenorModeId}/tenor/{tenor}")]
         public HttpResponseMessage GetMaturityDate(DateTime effectiveDate, short tenorModeId, int tenor)
         {
@@ -43,7 +43,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("tenor-mode")]
         public HttpResponseMessage GetAllTenorMode()
         {
@@ -62,7 +62,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("currency")]
         public HttpResponseMessage GetAllCurrency()
         {
@@ -81,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loanApplicationReferance")]
         public HttpResponseMessage GetLoanApplicationRef()
         {
@@ -102,7 +102,7 @@ namespace FintrakBanking.APICore.Controllers
 
        
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-type")]
         public HttpResponseMessage GetAllCustomerType()
         {
@@ -122,7 +122,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("deal-classification-type")]
         public HttpResponseMessage GetAllDealClassificationType()
         {
@@ -141,7 +141,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("application-date")]
         public HttpResponseMessage GetApplicaionDate()
         {
@@ -159,7 +159,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("sector")]
         public HttpResponseMessage GetSector()
         {
@@ -178,7 +178,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("subsector")]
         public HttpResponseMessage GetSubsector()
         {
@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("day-count")]
         public HttpResponseMessage GetAllDayCount()
         {
@@ -216,7 +216,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fee-amortisation-type")]
         public HttpResponseMessage GetAllFeeAmortisationType()
         {
@@ -235,7 +235,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("deal-types")]
         public HttpResponseMessage GetAllDealTypes()
         {
@@ -255,7 +255,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("fs-types")]
         public HttpResponseMessage GetAllFSTypes()
         {
@@ -275,7 +275,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("frequency-types")]
         public HttpResponseMessage GetAllFrequencyTypes()
         {
@@ -294,7 +294,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("operation-types")]
         public HttpResponseMessage GetAllOperationTypes()
         {
@@ -313,7 +313,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("operation")]
         public HttpResponseMessage GetAllOperations()
         {
@@ -332,7 +332,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("operation/{operationTypeId}")]
         public HttpResponseMessage GetOperations(short operationTypeId)
         {
@@ -351,7 +351,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-types")]
         public HttpResponseMessage GetAllCollateralTypes()
         {
@@ -370,7 +370,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("sectors")]
         public HttpResponseMessage GetAllSectors()
         {
@@ -392,7 +392,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("sectors/{id}")]
         public HttpResponseMessage UpdateCompany([FromBody] SectorViewModel model ,short id)
         {
@@ -415,7 +415,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("subsector/{subSectorId}/sectors")]
         public HttpResponseMessage GetAllSectorsBySubSectorId(short subSectorId)
         {
@@ -437,7 +437,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("subsectors")]
         public HttpResponseMessage GetAllSubSectors()
         {

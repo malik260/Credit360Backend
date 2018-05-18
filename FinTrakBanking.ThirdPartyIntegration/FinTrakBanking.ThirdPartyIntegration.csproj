@@ -62,6 +62,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\FbnAlertWS\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\XDSWebService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -73,6 +78,7 @@
     <Compile Include="Finacle\CWGAPI\CustomerDetails.cs" />
     <Compile Include="Finacle\IntegrationWithCWGAPI.cs" />
     <Compile Include="Finacle\CWGAPI\TransactionPosting.cs" />
+    <Compile Include="Notification\SMS\SMSIntegration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +107,19 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\CRCWebService\liverequestinvoker.wsdl" />
+    <None Include="Connected Services\FbnAlertWS\FinTrakBanking.ThirdPartyIntegration.FbnAlertWS.Output.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FbnAlertWS\Service.wsdl" />
+    <None Include="Connected Services\FbnAlertWS\Service.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FbnAlertWS\Service1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FbnAlertWS\Service2.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\XDSWebService\FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -157,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\CRCWebService\" />
+    <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
     <WCFMetadataStorage Include="Connected Services\XDSWebService\" />
   </ItemGroup>
   <ItemGroup>
@@ -189,5 +209,18 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\FbnAlertWS\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\FbnAlertWS\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\FbnAlertWS\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

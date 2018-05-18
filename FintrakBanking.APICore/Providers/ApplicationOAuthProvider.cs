@@ -10,8 +10,11 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.DirectoryServices.AccountManagement;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace FintrakBanking.APICore.Providers
 {
@@ -20,6 +23,9 @@ namespace FintrakBanking.APICore.Providers
         private readonly string _publicClientId;
         private FinTrakBankingContext _bankingContext;
         private TBL_SETUP_GLOBAL appSetup;
+        private const string HttpContext = "MS_HttpContext";
+
+
 
         public ApplicationOAuthProvider(string publicClientId)
         {
@@ -27,13 +33,39 @@ namespace FintrakBanking.APICore.Providers
             this._bankingContext = new FinTrakBankingContext();
         }
 
+
+
+        public string GetIpAddress(HttpRequestMessage request)
+        {
+            if (!request.Properties.ContainsKey(HttpContext)) return null;
+            dynamic context = request.Properties[HttpContext];
+            return context != null ? (string)context.Request.UserHostAddress : null;
+        }
+
+       // string IPAddress = 
+        public string GetIpAddress()
+        {
+            string ipAddress = string.Empty;
+            IPHostEntry Host = default(IPHostEntry);
+            string hostname = null;
+            hostname = System.Environment.MachineName;
+            Host = Dns.GetHostEntry(hostname);
+            foreach (IPAddress ip in Host.AddressList)
+            {
+                if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                {
+                    ipAddress = Convert.ToString(ip);
+                }
+            }
+            return ipAddress;
+        }
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             //var origin = context.OwinContext.Request.Headers["Origin"];
             try
             {
 
-          
+              string ipAddress = GetIpAddress(); 
             UserViewModel user = null;
 
             var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
@@ -46,16 +78,15 @@ namespace FintrakBanking.APICore.Providers
                 username = context.UserName
             };
 
-            ClaimsIdentity identity;
-            var _authRepo = new AuthenticationRepository(_bankingContext);
+                var authRepo = new AuthenticationRepository(_bankingContext);
 
             appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
-            if (appSetup.USE_ACTIVE_DIRECTORY)
+            if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
             {
-                if (Task.FromResult(ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
+                if (Task.FromResult(ValidateActiveDirectoryCredentials(context.UserName, context.Password, out _)).Result)
                 {
-                    user = Task.FromResult(_authRepo.FindUserByUserName(userVM.username)).Result;                   
+                    user = Task.FromResult(authRepo.FindUserByUserName(userVM.username)).Result;                   
                 }
                 else
                 {
@@ -65,7 +96,7 @@ namespace FintrakBanking.APICore.Providers
             }
             else
             {
-                user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
+                user = Task.FromResult(authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
                    .Result;
                 if (user == null)
                 {
@@ -76,7 +107,7 @@ namespace FintrakBanking.APICore.Providers
 
             bool isUserAccountValid;
 
-            if (Task.FromResult(_authRepo.IsUserAccountValid(userVM.username)).Result)
+            if (Task.FromResult(authRepo.IsUserAccountValid(userVM.username)).Result)
             {
                 isUserAccountValid = true;
             }
@@ -85,51 +116,60 @@ namespace FintrakBanking.APICore.Providers
                 isUserAccountValid = false;
             }
 
-            if (isUserAccountValid)
-            {
-                var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
-                var currUser = user;
+                if (isUserAccountValid)
+                {
+                    var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
 
-                currIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
-                currIdentity.AddClaim(new Claim("username", currUser.username));
-                currIdentity.AddClaim(new Claim("companyId", currUser.companyId.ToString()));
-                currIdentity.AddClaim(new Claim("staffId", currUser.staffId.ToString()));
-                currIdentity.AddClaim(new Claim("branchId", currUser.branchId.ToString()));
-                currIdentity.AddClaim(new Claim("countryId", currUser.countryId.ToString()));
-                currIdentity.AddClaim(new Claim("userId", currUser.user_id.ToString()));
-                currIdentity.AddClaim(new Claim("logincode", currUser.sessionStatusInfo.loginCode.ToString()));
-                var today = DateTime.Now;
-                TimeSpan duration = new TimeSpan(exipredHr, exipredMin, exipredSec);//(exipredHr, 0, 0);
+                    currIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+                    currIdentity.AddClaim(new Claim("username", user.username));
+                    currIdentity.AddClaim(new Claim("companyId", user.companyId.ToString()));
+                    currIdentity.AddClaim(new Claim("staffId", user.staffId.ToString()));
+                    currIdentity.AddClaim(new Claim("branchId", user.branchId.ToString()));
+                    currIdentity.AddClaim(new Claim("countryId", user.countryId.ToString()));
+                    currIdentity.AddClaim(new Claim("userId", user.user_id.ToString()));
+                    currIdentity.AddClaim(new Claim("logincode", user.logincode.ToString()));
+                    var today = DateTime.Now;
+                    TimeSpan duration = new TimeSpan(exipredHr, exipredMin, exipredSec);//(exipredHr, 0, 0);
 
-                var props = new AuthenticationProperties(new Dictionary<string, string>
+                    var props = new AuthenticationProperties(new Dictionary<string, string>
                 {
                     {
                         "expiry_date", today.Add(duration).ToString("ddd MMM dd yyyy HH':'mm':'ss 'GMT'K")
                     }
                 });
 
-                var ticket = new AuthenticationTicket(currIdentity, props);
+                    var ticket = new AuthenticationTicket(currIdentity, props);
 
-                context.Validated(ticket);
+                    context.Validated(ticket);
 
-                context.Request.Context.Authentication.SignIn(currIdentity);
-            }
-            else
-            {
-                context.SetError("unauthorized_access", "The user name or password is incorrect");
-                return;
-            }
+                    context.Request.Context.Authentication.SignIn(currIdentity);
+                }
+                else
+                {
+                    context.SetError("unauthorized_access", "The user name or password is incorrect");
+                    return;
+                }
 
 
             await Task.CompletedTask;
 
             }
             catch (Exception ex)
-            {                  
-                context.SetError("invalid_grant", "The user name or password is incorrect.");
+            {
+
+              
+              //  context.SetError("invalid_grant", "The user name or password is incorrect.");
                 if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
                 {
                     context.SetError("invalid_grant", ex.Message.Replace("1001", ""));
+                }
+
+                if (ex.Message.Contains("network-related"))
+                {
+                    context.SetError("invalid_grant", "Server error: Contact System Administrator");
+                }else
+                {
+                    context.SetError("invalid_grant", "Server error: Contact System Administrator");
                 }
             }
         }

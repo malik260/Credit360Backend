@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-document/application/{applicationNumber}")]
         public HttpResponseMessage GetLoanDocumentByApplication(string applicationNumber)
         {
@@ -41,7 +41,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-document-appNo-refNo/")]
         public HttpResponseMessage GetLoanDocumentByApplicationNumberRefno(string refNo, string applicationNumber)
         {
@@ -60,7 +60,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-document/{loanDocumentId}")]
         public HttpResponseMessage GetLoanDocument(int loanDocumentId)
         {
@@ -100,7 +100,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-document")]
         public async Task<HttpResponseMessage> AddLoanDocument()
         {
@@ -161,7 +161,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("loan-document/{loanDocumentId}")]
         public HttpResponseMessage UpdateLoanDocument([FromBody] LoanDocumentViewModel entity, int loanDocumentId)
         {
@@ -186,7 +186,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-document/applicationRefNum/{referenceNumber}")]
         public HttpResponseMessage GetLoanDocumentByApplicationReferenceNum(string referenceNumber)
         {
@@ -205,7 +205,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("loan-document-delete/")]
         public HttpResponseMessage DeleteLoanDocument(string invoiceNo, string applicationNumber)
         {
@@ -226,7 +226,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region CREDIT BUREAU REPORT
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("credit-bureau-report/{customerCreditBureauId}")]
         public HttpResponseMessage GetCreditBureauReportDocument(int customerCreditBureauId)
         {
@@ -246,7 +246,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("credit-bureau-report/{customerCreditBureauId}/{documentId}")]
         public HttpResponseMessage GetCreditBureauReportDocumentByDocumentID(int customerCreditBureauId, int documentId)
         {
@@ -266,7 +266,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("credit-bureau-report")]
         public async Task<HttpResponseMessage> AddCreditBureauReportDocument()
         {
@@ -323,7 +323,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("credit-bureau-report/{documentId}")]
         public HttpResponseMessage UpdateCreditBureauReportDocument([FromBody] LoanDocumentViewModel entity, int documentId)
         {
@@ -352,7 +352,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region COMMITTEE MINUTES
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("committee-minutes")]
         public async Task<HttpResponseMessage> AddCommitteDocument()
         {
@@ -413,7 +413,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("committee-minutes/application/{applicationNumber}")]
         public HttpResponseMessage GetCommitteeDocumentByApplication(string applicationNumber)
         {
@@ -428,7 +428,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("committee-minutes/{loanDocumentId}")]
         public HttpResponseMessage GetCommitteeDocument(int loanDocumentId)
         {

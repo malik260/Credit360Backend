@@ -28,7 +28,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Approval Level
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approval-level")]
         public HttpResponseMessage AddApprovalLevel([FromBody] ApprovalLevelViewModel model)
         {
@@ -55,7 +55,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level/all")]
         public HttpResponseMessage GetAllApprovalLevel()
         {
@@ -75,7 +75,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level-detailed/all")]
         public HttpResponseMessage GetAllDetailedApprovalLevel()
         {
@@ -95,7 +95,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level/approval-level/{id}")]
         public HttpResponseMessage GetApprovalLevelById(int id)
         {
@@ -111,7 +111,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level/group/{groupId}")]
         public HttpResponseMessage GetApprovalLevelByGroupId(int groupId)
         {
@@ -133,7 +133,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level/operation/{operationId}")]
         public HttpResponseMessage GetApprovalLevelByOperationId(int operationId)
         {
@@ -148,7 +148,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("approval-level/{id}")]
         public HttpResponseMessage UpdateApprovalLevel(int id, [FromBody] ApprovalLevelViewModel model)
         {
@@ -180,7 +180,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("approval-level/{id}")]
         public async Task<HttpResponseMessage> DeleteApprovalLevelAsync(int id)
         {
@@ -212,7 +212,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region preset route
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("preset-route-collection/operation/{operationId}/product-class/{classId}")]
         public HttpResponseMessage GetPresetRouteCollection(int operationId, int? classId)
         {
@@ -227,7 +227,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("preset-route")]
         public HttpResponseMessage PresetRoute([FromBody] PresetRouteViewModel entity)
         {
@@ -246,7 +246,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion preset route
 
         #region trail
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("workflowtracker/operation/{oId}/target/{tId}")]
         public HttpResponseMessage GetApprovalTrailByOperationIdAndTargetId(int oId, int tId)
         {
@@ -275,7 +275,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("workflowtracker/operation/{id}")]
         public HttpResponseMessage GetApprovalTrail(int id)
         {

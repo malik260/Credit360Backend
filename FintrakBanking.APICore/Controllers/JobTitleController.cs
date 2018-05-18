@@ -21,7 +21,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("jobtitle/{jobtitleid}")]
         public HttpResponseMessage GetJobTitle(int jobTitleId)
         { 
@@ -43,7 +43,7 @@ namespace FintrakBanking.APICore.Controllers
                 } 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("jobtitle/company")]
         public HttpResponseMessage GetJobTitleByCompanyId(HttpRequestMessage request)
         { 
@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("jobtitle")]
         public HttpResponseMessage JobTitle(HttpRequestMessage request)
         { 
@@ -86,7 +86,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("job-title")]
         public HttpResponseMessage AddUpdateJobTitle([FromBody] JobTitleViewModel entity)
         {

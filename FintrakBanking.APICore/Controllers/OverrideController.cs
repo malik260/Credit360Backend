@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("add-override-request")]
         public HttpResponseMessage AddOverRideRequest([FromBody] IEnumerable<OverrideDetailVeiwModel> entity)
         {
@@ -54,7 +54,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approve-override-request")]
         public HttpResponseMessage ApproveOverRideRequest(OverrideDetailVeiwModel entity)
         {
@@ -81,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("delete-override-request")]
         public HttpResponseMessage DeleteOverRideRequest(OverrideDetailVeiwModel entity)
         {
@@ -105,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-all-override-items")]
         public HttpResponseMessage GetAllOverRideItems()
         {
@@ -125,7 +125,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-all-override-request")]
         public HttpResponseMessage GetAllOverRideRequest()
         { 
@@ -145,7 +145,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-override-request/request/{id}")]
         public HttpResponseMessage GetOverRideRequestById(int id)
         {
@@ -166,7 +166,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-override-request/overrideitems/{id}")]
         public HttpResponseMessage GetOverRideRequestByOverRideItemsId(int id)
         {
@@ -186,7 +186,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-override-request/referencenumber/{refno}")]
         public HttpResponseMessage GetOverRideRequestByReferenceNumber(string refNo)
         {
@@ -206,7 +206,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("update-override-request")]
         public HttpResponseMessage UpdateOverRideRequest(OverrideDetailVeiwModel entity)
         {

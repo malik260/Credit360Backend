@@ -21,5 +21,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool GetExposePersonStatus(string customerCode);
         BVNCustomerDetailsViewModel BVNCustomerDetails(string customerCode);
         GLAccountDetailsViewModel ValidateGLNumber(string glNumber);
+        TDAccountRecordViewModel ValidateTDAccountNumber(string teamDepositAccountNumber);
     }
 }

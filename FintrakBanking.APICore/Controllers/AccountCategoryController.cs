@@ -1,4 +1,5 @@
-﻿using FintrakBanking.APICore.core;
+﻿using FintrakBanking.APICore.App_Start;
+using FintrakBanking.APICore.core;
 using FintrakBanking.Interfaces.Setups.Finance; 
 using System.Linq;
 using System.Net;
@@ -22,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Account Category Actions
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("", Name = "Category")]
         public HttpResponseMessage GetAllAccountType( )
         {
@@ -38,7 +39,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpGet][Route("{categoryId}", Name = "categoryById")]
+      [HttpGet] [ClaimsAuthorization]  [Route("{categoryId}", Name = "categoryById")]
         public HttpResponseMessage GetAccountTypeById( int categoryId)
         { 
                 try

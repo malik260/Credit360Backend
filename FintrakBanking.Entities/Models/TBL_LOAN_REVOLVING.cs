@@ -34,7 +34,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
-        public double EXCHANGERATE { get; set; }
+        public double EXCHANGERATE { get; set; } 
 
          //public bool ISTEMPORARYOVERDRAFT { get; set; }
 
@@ -133,6 +133,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATETIMECREATED { get; set; }
 
         public short REVOLVINGTYPEID { get; set; }
+
+        public DateTime LASTRESTRUCTUREDATE { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

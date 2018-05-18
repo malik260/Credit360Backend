@@ -556,26 +556,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                    approvedBy = data.APPROVEDBY,
                                    completed = data.COMPLETED,
                                    approved = data.APPROVED,
-                                   ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == data.PRODUCTID).Select(d => new ProductBehaviourViewModel()
-                                   {
-                                       customerLimit = d.CUSTOMER_LIMIT,
-                                       collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
-                                       collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
-                                       productLimit = d.PRODUCT_LIMIT,
-                                       isInvoiceBased = d.ISINVOICEBASED,
-                                       requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
-                                       allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false,
-                                       isTemporaryOverDraft = d.ISTEMPORARYOVERDRAFT != null ? (bool)d.ISTEMPORARYOVERDRAFT : false,
-
-                                   }).FirstOrDefault(),
-                                   currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == data.PRODUCTID && curr.DELETED != false)
-                                   .Select(c => new ProductCurrencyViewModel()
-                                   {
-                                       productId = c.PRODUCTID,
-                                       productCurrencyId = c.PRODUCTCURRENCYID,
-                                       currencyId = c.CURRENCYID,
-                                       currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
-                                   }).ToList(),
+                                 
+                               
 
                                    dateTimeUpdated = data.DATETIMEUPDATED,
                                    deleted = data.DELETED,
@@ -598,7 +580,43 @@ namespace FintrakBanking.Repositories.Setups.General
 
                                });
 
-            return productData;
+            // from p in productData
+            //join c in context.TBL_PRODUCT_CURRENCY on p.productId equals c.PRODUCTID
+            //where p.deleted != false
+            //select new ProductCurrencyViewModel
+            //{
+            //    productCurrencyId = c.PRODUCTCURRENCYID,
+            //    currencyId = c.CURRENCYID,
+            //    currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
+            //};
+
+            
+            foreach (var item in productData)
+            {
+                item.currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
+                              .Select(c => new ProductCurrencyViewModel()
+                              {
+                                  productCurrencyId = c.PRODUCTCURRENCYID,
+                                  currencyId = c.CURRENCYID,
+                                  currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
+                              }).ToList();
+
+                item.ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
+                {
+                    customerLimit = d.CUSTOMER_LIMIT,
+                    collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                    collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+                    productLimit = d.PRODUCT_LIMIT,
+                    isInvoiceBased = d.ISINVOICEBASED,
+                    requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
+                    allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false,
+                    isTemporaryOverDraft = d.ISTEMPORARYOVERDRAFT != null ? (bool)d.ISTEMPORARYOVERDRAFT : false,
+
+                }).FirstOrDefault();
+
+            }
+
+            return productData.AsEnumerable().AsQueryable();
         }
 
         private IEnumerable<ProductSearchViewModel> ProductSearch(int companyId)

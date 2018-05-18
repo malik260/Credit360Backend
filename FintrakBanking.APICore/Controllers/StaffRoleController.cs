@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff-role")]
         public HttpResponseMessage GetStaffRole()
         {
@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff-role/{staffRoleId}")]
         public HttpResponseMessage GetStaffRole(int rankId)
         {
@@ -60,7 +60,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff-role/company")]
         public HttpResponseMessage GetStaffRoleByCompanyId()
         {
@@ -80,7 +80,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("default-staff-role")]
         public HttpResponseMessage GetStaffRoles()
         {
@@ -100,7 +100,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("staff-role")]
         public HttpResponseMessage AddUpdateStaffRole([FromBody] StaffRoleViewModel entity)
         {
@@ -149,7 +149,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("staff-role-approval")]
         public HttpResponseMessage GetStaffRoleAwaitingApproval()
         {
@@ -170,7 +170,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("staff-role/approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {

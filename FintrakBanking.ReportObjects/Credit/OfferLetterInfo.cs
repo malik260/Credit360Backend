@@ -23,6 +23,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                       from b in cc.DefaultIfEmpty()
                                       join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
                                       from c in cg.DefaultIfEmpty()
+                                      join e in context.TBL_CUSTOMER_ADDRESS on a.CUSTOMERID equals e.CUSTOMERID into dg
+                                      from e in dg.DefaultIfEmpty()
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
                                       a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       select new OfferLetterViewModel
@@ -31,7 +33,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                           //customerId = b.CustomerId,
                                           customerName = a.LOANAPPLICATIONTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
                                           customerGroupName = c.GROUPNAME + " - " + c.GROUPCODE,
-                                          customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
+                                          //customerAddress = e.ADDRESS ?? string.Empty, //a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                                           applicationDate = a.APPLICATIONDATE
                                       }).FirstOrDefault();
 
@@ -153,7 +155,11 @@ namespace FintrakBanking.ReportObjects.Credit
                                    from c in cc.DefaultIfEmpty()
                                    join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
                                    from d in cg.DefaultIfEmpty()
-                                   where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower() &&
+                                   join e in context.TBL_CUSTOMER_ADDRESS on a.CUSTOMERID equals e.CUSTOMERID into dg
+                                   from e in dg.DefaultIfEmpty()
+                                   join g in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals g.CUSTOMERID into gg
+                                   from g in gg.DefaultIfEmpty()
+                                   where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
                                          b.STATUSID == (int)ApprovalStatusEnum.Approved
                                    select new OfferLetterDetailViewModel()
                                    {
@@ -167,11 +173,11 @@ namespace FintrakBanking.ReportObjects.Credit
                                        exchangeRate = b.EXCHANGERATE,
                                        companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
                                        customerName = a.LOANAPPLICATIONTYPEID != 3 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
-                                       customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
+                                       customerAddress = e.ADDRESS ?? " ", //a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                                        applicationDate = a.APPLICATIONDATE,
                                        customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                        customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
-                                       customerPhoneNumber = a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
+                                       customerPhoneNumber = g.PHONENUMBER,//a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
                                        loanApplicationId = applicationRefNumber,
                                        repaymentSchedule = b.REPAYMENTSCHEDULE ?? "Not applicable",
                                        repaymentTerms = b.REPAYMENTTERMS ?? "Not applicable",

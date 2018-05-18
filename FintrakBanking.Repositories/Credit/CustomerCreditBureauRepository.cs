@@ -64,11 +64,11 @@ namespace FintrakBanking.Repositories.Credit
                                createdBy = a.CREATEDBY,
                                customerCode = a.CUSTOMERCODE,
                                customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
-                               customerTypeId = (short)a.CUSTOMERTYPEID,
+                               //customerTypeId = (short)a.CUSTOMERTYPEID,
                                dateOfBirth = (DateTime)a.DATEOFBIRTH,
                                customerId = a.CUSTOMERID,
                                emailAddress = a.EMAILADDRESS,
-                               phoneNumber = a.TBL_CUSTOMER_PHONECONTACT.Any() ? a.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONE : null,
+                               //phoneNumber = a.TBL_CUSTOMER_PHONECONTACT.Any() ? a.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONE : null,
                                firstName = a.FIRSTNAME,
                                gender = a.GENDER,
                                lastName = a.LASTNAME,
@@ -76,25 +76,26 @@ namespace FintrakBanking.Repositories.Credit
                                maritalStatus = a.MARITALSTATUS.Value,
                                title = a.TITLE,
                                middleName = a.MIDDLENAME,
-                               customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                               customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                               //customerAccountNo = a.TBL_CASA.FirstOrDefault().PRODUCTACCOUNTNUMBER,
+                              customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
                                nationality = a.NATIONALITY,
                                occupation = a.OCCUPATION,
                                placeOfBirth = a.PLACEOFBIRTH,
                                isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                                sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                                sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                               subSectorId = (short)a.SUBSECTORID,
+                              // subSectorId = (short)a.SUBSECTORID,
                                subSectorName = a.TBL_SUB_SECTOR.NAME,
                                taxNumber = a.TAXNUMBER,
                                riskRatingId = a.RISKRATINGID,
                                riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                                customerBVN = a.CUSTOMERBVN,
-                               rcNumber = customerInfo.Any() ? customerInfo.FirstOrDefault().REGISTRATIONNUMBER : null,
-                               isCreditBureauUploadCompleted = false,
+                               //rcNumber = customerInfo.Any() ? customerInfo.FirstOrDefault().REGISTRATIONNUMBER : null,
+                               //isCreditBureauUploadCompleted = false,
                                companyDirectorId = null,
                                creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false
                                                                                             && x.COMPANYDIRECTORID == null).Count(),
+                               // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)).Count(),
                            };
 
             foreach (var item in customer)
@@ -125,7 +126,8 @@ namespace FintrakBanking.Repositories.Credit
                         lastName = director.SURNAME,
                         middleName = director.MIDDLENAME,
                         creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
-                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID).Count()
+                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID).Count(),
+                                                                                  //  && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)).Count()
                     };
                     allCorporate.Add(shareholdersData);
                 }
@@ -311,8 +313,8 @@ namespace FintrakBanking.Repositories.Credit
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                               //&& (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30 ) 
-                                               select new LoanCreditBereauViewModel
+                                                 //&& (DbFunctions.DiffDays(DbFunctions.TruncateTime(a.DATETIMECREATED), DbFunctions.TruncateTime(DateTime.Now)).Value <= 30 ) 
+                                                select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,
                                                    companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
@@ -710,7 +712,7 @@ namespace FintrakBanking.Repositories.Credit
                     CUSTOMERCREDITBUREAUID = customerCreditBureauId,
                     DOCUMENT_TITLE = creditBureau.CREDITBUREAUNAME + " Report Document Upload",
                     FILEEXTENSION = "pdf",
-                    FILENAME = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault().CUSTOMERCODE + creditBureau.CREDITBUREAUNAME,
+                   // FILENAME = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault().CUSTOMERCODE + creditBureau.CREDITBUREAUNAME,
                     FILEDATA = file,
                     SYSTEMDATETIME = genSetup.GetApplicationDate(),
                     DATETIMECREATED = DateTime.Now,

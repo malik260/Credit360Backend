@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("credit-template")]
         public HttpResponseMessage GetCreditTemplate()
         {
@@ -37,7 +37,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("credit-template/{creditTemplateId}")]
         public HttpResponseMessage GetCreditTemplate(int creditTemplateId)
         {
@@ -57,7 +57,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("credit-template/by-level-product")]
         public HttpResponseMessage GetCreditTemplateLevelProduct(int approvalLevelId, int productClassId)
         {
@@ -77,7 +77,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("credit-template/level/{approvalLevelId}")]
         public HttpResponseMessage GetCreditTemplateLevelId(int approvalLevelId)
         {
@@ -97,7 +97,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("credit-template/product-class")]
         public HttpResponseMessage GetCreditTemplateProductClass(int productClassId)
         {
@@ -112,7 +112,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("credit-template")]
         public HttpResponseMessage AddCreditTemplate([FromBody] CreditTemplateViewModel entity)
         {
@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("credit-template/{creditTemplateId}")]
         public HttpResponseMessage UpdateCreditTemplate([FromBody] CreditTemplateViewModel entity, int creditTemplateId)
         {

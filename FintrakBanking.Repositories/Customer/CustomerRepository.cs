@@ -2651,7 +2651,7 @@ namespace FintrakBanking.Repositories.Customer
                             maritalStatus = a.MARITALSTATUS.Value,
                             title = a.TITLE,
                             middleName = a.MIDDLENAME,
-                            customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                            customerTypeName = a.TBL_CUSTOMER_TYPE.NAME, // context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                             misCode = a.MISCODE,
                             misStaff = a.MISSTAFF,
                             nationality = a.NATIONALITY,
@@ -2665,8 +2665,8 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
-                            relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
-                      + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
+                        //    relationshipOfficerName =context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
+                      //+ context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
@@ -2700,7 +2700,7 @@ namespace FintrakBanking.Repositories.Customer
                             maritalStatus = a.MARITALSTATUS.Value,
                             title = a.TITLE,
                             middleName = a.MIDDLENAME,
-                            customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                            customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
                             misCode = a.MISCODE,
                             misStaff = a.MISSTAFF,
                             nationality = a.NATIONALITY,
@@ -2714,8 +2714,8 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
-                            relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
-                      + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
+                            relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID).Select(f=>f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
+                     // + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
@@ -3007,7 +3007,7 @@ namespace FintrakBanking.Repositories.Customer
                                         rcNumber = s.REGISTRATION_NUMBER,
                                         taxNumber = s.TAX_NUMBER,
 
-                                        companyDirectorTypeName = context.TBL_CUSTOMER_COMPANY_DIREC_TYP.FirstOrDefault(x => x.COMPANYDIRECTORYTYPEID == s.COMPANYDIRECTORTYPEID).COMPANYDIRECTORYTYPENAME,
+                                        //companyDirectorTypeName = context.TBL_CUSTOMER_COMPANY_DIREC_TYP.FirstOrDefault(x => x.COMPANYDIRECTORYTYPEID == s.COMPANYDIRECTORTYPEID).COMPANYDIRECTORYTYPENAME,
                                         customerId = s.CUSTOMERID,
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
                                         address = s.ADDRESS,
@@ -3075,7 +3075,7 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
                                         taxNumber = s.TAX_NUMBER,
-                                        companyDirectorTypeName = context.TBL_CUSTOMER_COMPANY_DIREC_TYP.FirstOrDefault(x => x.COMPANYDIRECTORYTYPEID == s.COMPANYDIRECTORTYPEID).COMPANYDIRECTORYTYPENAME,
+                                       // companyDirectorTypeName = context.TBL_CUSTOMER_COMPANY_DIREC_TYP.FirstOrDefault(x => x.COMPANYDIRECTORYTYPEID == s.COMPANYDIRECTORTYPEID).COMPANYDIRECTORYTYPENAME,
                                         customerId = s.CUSTOMERID,
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
                                         address = s.ADDRESS,
@@ -3091,7 +3091,7 @@ namespace FintrakBanking.Repositories.Customer
                                     select new CustomerClientOrSupplierViewModels()
                                     {
                                         customerTypeId = cs.CUSTOMERTYPEID,
-                                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
+                                       // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
                                         client_SupplierId = cs.CLIENT_SUPPLIERID,
                                         clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
                                         firstName = cs.FIRSTNAME,
@@ -3120,7 +3120,7 @@ namespace FintrakBanking.Repositories.Customer
                                     select new CustomerClientOrSupplierViewModels()
                                     {
                                         customerTypeId = cs.CUSTOMERTYPEID,
-                                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
+                                       // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
                                         client_SupplierId = cs.TEMPCLIENT_SUPPLIERID,
                                         clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
                                         firstName = cs.FIRSTNAME,
@@ -3137,7 +3137,7 @@ namespace FintrakBanking.Repositories.Customer
                                         client_SupplierPhoneNumber = cs.PHONENUMBER,
                                         client_SupplierEmail = cs.EMAILADDRESS,
                                         client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                        client_SupplierTypeName = context.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.FirstOrDefault(x => x.CLIENT_SUPPLIERTYPEID == cs.CLIENT_SUPPLIERTYPEID).CLIENT_SUPPLIERTYPENAME
+                                      //  client_SupplierTypeName = context.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.FirstOrDefault(x => x.CLIENT_SUPPLIERTYPEID == cs.CLIENT_SUPPLIERTYPEID).CLIENT_SUPPLIERTYPENAME
                                     }).ToList();
             return clientOrSupplier;
         }

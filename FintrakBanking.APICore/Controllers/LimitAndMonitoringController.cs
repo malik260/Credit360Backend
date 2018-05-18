@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("monitoring-alert-messages")]
         public HttpResponseMessage GetAllEmailAlertMessages()
         {
@@ -45,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-and-monitoring")]
         public HttpResponseMessage GetAllSetEmailAlertMessages()
         {
@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-and-monitoring/{alertId}")]
         public HttpResponseMessage GetAllSetEmailAlertMessages(int alertId)
         {
@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("add-limit-and-monitoring")]
         public HttpResponseMessage AddLimit([FromBody] LimitAndMonitoringViewModel model)
         {
@@ -109,7 +109,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("update-email-lert-message")]
         public HttpResponseMessage UpdateEmailMessageSeeting( [FromBody] LimitAndMonitoringViewModel model)
         {
@@ -135,7 +135,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("delete-limit-and-monitoring")]
         public HttpResponseMessage RemoveEmailMessageSeeting([FromBody] LimitAndMonitoringViewModel LimitId)
         {

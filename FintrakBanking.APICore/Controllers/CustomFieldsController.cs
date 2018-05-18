@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
 
         // ossy
 
-        [HttpPost] [Route("custom-field")]
+         [HttpPost] [ClaimsAuthorization] [Route("custom-field")]
         public HttpResponseMessage AddCustomField([FromBody] AddCustomFieldViewModel model)
         {
 
@@ -59,7 +59,7 @@ namespace FintrakBanking.APICore.Controllers
                
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("custom-field")]
         public HttpResponseMessage UpdateCustomField([FromBody] AddCustomFieldViewModel model, int id)
         {
@@ -93,7 +93,7 @@ namespace FintrakBanking.APICore.Controllers
             //ossy
 
 
-        [HttpPost][Route("custom-field-multiple")]
+         [HttpPost] [ClaimsAuthorization][Route("custom-field-multiple")]
         public HttpResponseMessage AddCustomFields([FromBody] List<CustomFieldViewModel> listEntity)
         {
             
@@ -124,7 +124,7 @@ namespace FintrakBanking.APICore.Controllers
               
         }
 
-        [HttpDelete][Route("custom-field")]
+        [HttpDelete] [ClaimsAuthorization][Route("custom-field")]
         public HttpResponseMessage DeleteCustomFields([FromBody] List<CustomFieldViewModel> customFields)
         {
              
@@ -157,7 +157,7 @@ namespace FintrakBanking.APICore.Controllers
                 
         }
 
-        [HttpPut] [Route("custom-field-multiple")]
+       [HttpPut] [ClaimsAuthorization] [Route("custom-field-multiple")]
         public HttpResponseMessage UpdateCustomFields([FromBody] List<CustomFieldViewModel> listEntity)
         {
            
@@ -190,7 +190,7 @@ namespace FintrakBanking.APICore.Controllers
               
         }
 
-        [HttpGet] [Route("custom-field/hostPage/{id}")]
+      [HttpGet] [ClaimsAuthorization]   [Route("custom-field/hostPage/{id}")]
         public HttpResponseMessage GetCustomFieldsByHostPageId(int id)
         {            
                 try
@@ -214,7 +214,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion   Custom Fields
         #region   Custom Fields Data
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("custom-field-data")]
         public HttpResponseMessage AddCustomFieldsData([FromBody] List<CustomFieldsDataViewModel> listEntity)
         {
@@ -248,7 +248,7 @@ namespace FintrakBanking.APICore.Controllers
           
         }
 
-        [HttpDelete] [Route("custom-field-data")]
+        [HttpDelete] [ClaimsAuthorization] [Route("custom-field-data")]
         public HttpResponseMessage DeleteCustomFieldsData([FromBody] List<CustomFieldsDataViewModel> listEntity)
         {
            
@@ -282,7 +282,7 @@ namespace FintrakBanking.APICore.Controllers
            
             }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("custom-field-data/hostpage/{id}/{customerId}")]
         public HttpResponseMessage GetCustomFieldsDataByCustomField(int id, int customerId)
         {
@@ -307,7 +307,7 @@ namespace FintrakBanking.APICore.Controllers
              
         }
 
-        [HttpPut] [Route("custom-field-data")]
+       [HttpPut] [ClaimsAuthorization] [Route("custom-field-data")]
         public HttpResponseMessage UpdateCustomFieldsData([FromBody] List<CustomFieldsDataViewModel> listEntity)
         {
            
@@ -341,7 +341,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region   host page 
 
-        [HttpGet] [Route("hostPage/hostpage/{id}")]
+      [HttpGet] [ClaimsAuthorization]   [Route("hostPage/hostpage/{id}")]
         public HttpResponseMessage GetHostPagesChildrenOnly(int id)
         {
            
@@ -366,7 +366,7 @@ namespace FintrakBanking.APICore.Controllers
 
             }
 
-        [HttpGet][Route("hostPage")]
+      [HttpGet] [ClaimsAuthorization]  [Route("hostPage")]
         public HttpResponseMessage GetHostPagesParentOnly( )
         {
             

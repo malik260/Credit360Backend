@@ -20,7 +20,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("end-of-day")]
         public HttpResponseMessage GetFinanceEndofday()
         {
@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("end-of-day")]
         public HttpResponseMessage RunEndOfDay([FromBody] EndOfDayViewModel model)
         {

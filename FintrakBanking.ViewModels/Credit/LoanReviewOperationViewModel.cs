@@ -277,6 +277,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationParentChildViewModel
     {
+        public short loanStatusId;
+        public string customerName;
+
         public double approvedInterestRate { get; set; }
         public string approvedProductName { get; set; }
         public int numberofTranchesBooked { get; set; }
@@ -341,5 +344,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public int tenor { get; set; }
         public short loanSystemTypeId { get; set; }
+        public short approvalStatusId { get; set; }
     }
 }

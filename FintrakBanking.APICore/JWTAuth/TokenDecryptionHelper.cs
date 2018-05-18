@@ -14,7 +14,7 @@ namespace FintrakBanking.APICore.JWTAuth
         public int GetBranchId { get { return int.Parse(this.GetInfoFromToken(3).ToString()); } }
         public string GetUsername { get { return this.GetInfoFromToken(4).ToString(); } }
         public int GetUserId { get { return int.Parse(this.GetInfoFromToken(6).ToString()); } }
-        public int LoginCode { get { return int.Parse(this.GetInfoFromToken(8).ToString()); } }
+        public string LoginCode { get { return  this.GetInfoFromToken(8).ToString(); } }
 
         private object GetInfoFromToken(int tokenType)
         {
