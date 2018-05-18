@@ -56,7 +56,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("transaction-dynamics")]
         public HttpResponseMessage AddTransactionDynamics([FromBody] TransactionDynamicsViewModel entity)
         {
@@ -98,7 +98,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("transaction-dynamics-template")]
         public HttpResponseMessage AddTransactionDynamicsTemplate([FromBody] TransactionDynamicsViewModel entity)
         {
@@ -123,7 +123,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("transaction-dynamics-template/{conditionId}")]
         public HttpResponseMessage UpdateTransactionDynamicsTemplate([FromBody] TransactionDynamicsViewModel entity, int conditionId)
         {
@@ -150,7 +150,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion CP template
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("transaction-dynamics-edit/{id}")]
         public HttpResponseMessage EditLoanCditionPrecedent([FromBody] TransactionDynamicsViewModel entity, int id)
         {
@@ -176,7 +176,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("transaction-dynamics-remove/{id}")]
         public HttpResponseMessage RemoveLoanTransactionDynamics(int id)
         {
@@ -215,7 +215,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("transaction-dynamics/selected")]
         public HttpResponseMessage AddSelectedTransactionDynamics([FromBody] SelectedIdsViewModel entity)
         {

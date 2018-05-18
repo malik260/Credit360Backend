@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("user")]
         public async Task<HttpResponseMessage> AddUser([FromBody] UserViewModel user)
         {
@@ -103,7 +103,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("user/{userId}")]
         public async Task<HttpResponseMessage> DeleteUser(int userId)
         {
@@ -123,7 +123,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("user/{userId}")]
         public async Task<HttpResponseMessage> UpdateUser(int userId, [FromBody] UserViewModel user)
         {
@@ -177,7 +177,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("token")]
         public HttpResponseMessage GetToken([FromBody] TokenVM user)
         {
@@ -259,7 +259,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("endpendingsession")]
         public IHttpActionResult SignOutUser([FromBody] TokenVM user)
         {
@@ -293,7 +293,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("logOut")]
         public IHttpActionResult LogOut()
         {

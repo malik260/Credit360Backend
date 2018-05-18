@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("region")]
         public HttpResponseMessage AddBranchRegion([FromBody]BranchRegionViewModel entity)
         {
@@ -146,7 +146,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("branch")]
         public async Task<HttpResponseMessage> AddBranchAsync([FromBody]AddBranchViewModel model)
         {
@@ -171,7 +171,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("branch/{id}")]
         public async Task<HttpResponseMessage> UpdateBranchAsync([FromBody] BranchViewModel model, short id)
         {
@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("branches/{id}")]
         public HttpResponseMessage UpdateBranch([FromBody] BranchViewModel model, short id)
         {
@@ -222,7 +222,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("branch/{id}")]
         public async Task<HttpResponseMessage> DeleteBranchAsync([FromBody] short id)
         {

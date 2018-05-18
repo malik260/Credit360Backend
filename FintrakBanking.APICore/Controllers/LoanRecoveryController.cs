@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Controllers
             repo = _repo;
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("addloanRecoverySetup")]
         public HttpResponseMessage AddLoanRecovery( [FromBody]LoanRecoverySetupViewModel entity)
         {
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("updateloanRecoverySetup/{recoveryPlanId}")]
         public HttpResponseMessage UpdateLoanRecovery(int recoveryPlanId, LoanRecoverySetupViewModel entity)
         {
@@ -174,7 +174,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("addloanRecoveryPaymentPlan")]
         public HttpResponseMessage AddLoanRecoveryPaymentPlan ([FromBody]LoanRecoverySetupViewModel entity)
         {
@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("updateloanRecoveryPaymentPlan/{recoveryPaymentPlanId}")]
         public HttpResponseMessage UpdateLoanRecoveryPaymentPlan(int recoveryPaymentPlanId, LoanRecoverySetupViewModel entity)
         {

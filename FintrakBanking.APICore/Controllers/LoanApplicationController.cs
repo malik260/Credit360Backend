@@ -307,7 +307,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
         {
@@ -333,7 +333,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("loan-application-for-cam")]
         public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] LoanApplicationUpdateViewModel loan)
         {
@@ -349,7 +349,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("update-loan-application")]
         public HttpResponseMessage UpdateLoanApplicationDetails([FromBody]LoanApplicationDatailViewModel entity)
         {
@@ -415,7 +415,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/application")]
         public HttpResponseMessage AddLoanApplication([FromBody] LoanApplicationViewModel entity)
         {
@@ -504,7 +504,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Loan Preliminary Evaluation
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/preliminary-evaluation")]
         public async Task<HttpResponseMessage> AddPreliminaryEvaluation(LoanPreliminaryEvaluationViewModel model)
         {
@@ -555,7 +555,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/preliminary-evaluation/approval")]
         public HttpResponseMessage ApprovePreliminaryEvaluation(ApprovalViewModel model)
         {
@@ -632,7 +632,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("loan/preliminary-evaluation/{loanPenId}")]
         public async Task<HttpResponseMessage> UpdateLoanPreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
         {
@@ -676,7 +676,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("loan/preliminary-evaluation/{loanPenId}/loan-application")]
         public HttpResponseMessage SendPreliminaryEvaluationForLoanApplication(int loanPenId, LoanPreliminaryEvaluationViewModel model)
         {
@@ -715,7 +715,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion Loan Preliminary Evaluation
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/search")]
         public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
         {
@@ -733,7 +733,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Loan Collateral
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/collateral")]
         public HttpResponseMessage SaveLoanApplicationCollateral([FromBody] List<LoanApplicationCollateralViewModel> entity)
         {
@@ -831,7 +831,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-validate-document-date")]
         public HttpResponseMessage ValidateDocumentDate([FromBody] ValidateDataViewModel data)
         {
@@ -848,7 +848,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-validate-document-number")]
         public HttpResponseMessage ValidateDocumentNumber([FromBody] ValidateNumberViewModel data)
         {
@@ -910,7 +910,7 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/review-request")]
         public HttpResponseMessage ReviewRequest([FromBody] ForwardViewModel model)
         {
@@ -953,7 +953,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("fee-concession-request")]
         public HttpResponseMessage ProductFeesConcession([FromBody]ProductFeesViewModel entity)
         {
@@ -1000,7 +1000,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("loanApplicationDetail/{id}")]
         public HttpResponseMessage DeleteLoanApplicationDetail(int id)
         {

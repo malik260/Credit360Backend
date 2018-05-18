@@ -79,7 +79,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("tax")]
         public HttpResponseMessage AddTax([FromBody] TaxViewModel entity)
         {
@@ -104,7 +104,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("tax/{taxId}")]
         public HttpResponseMessage UpdateTax([FromBody] TaxViewModel entity, int taxId)
         {
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("tax/{taxId}")]
         public HttpResponseMessage DeleteTax(int taxId)
         {

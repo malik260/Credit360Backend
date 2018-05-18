@@ -53,7 +53,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("add-prudential-guideline")]
         public HttpResponseMessage addPrudentialGuideline([FromBody]PrudentialGuidelineViewModel guideline)
         {
@@ -69,7 +69,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("update-prudential-guideline/{prudentialGuidelineId}")]
         public HttpResponseMessage updatePrudentialGuideline(int prudentialGuidelineId, PrudentialGuidelineViewModel guideline)
         {
@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("delete-prudential-guideline/{prudentialGuidelineId}")]
         public HttpResponseMessage deletePrudentialGuideline(int prudentialGuidelineId, PrudentialGuidelineViewModel guideline)
         {

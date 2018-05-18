@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("upload-document")]
         public async Task<HttpResponseMessage> UploadDocument()
         {
@@ -80,7 +80,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("get-uploaded-document")]
         public async Task<HttpResponseMessage> GetUploadedDocument(LoanDocumentViewModel model)
         {
@@ -96,7 +96,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("get-all-document-uploads")]
         public async Task<HttpResponseMessage> GetAllUploadedDocument(LoanDocumentViewModel model)
         {
@@ -111,7 +111,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("delete-uploaded-document")]
         public async Task<HttpResponseMessage> DeleteUploadedDocument(LoanDocumentViewModel model)
         {

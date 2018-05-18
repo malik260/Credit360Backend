@@ -112,7 +112,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost][Route("currency-rate")]
+         [HttpPost] [ClaimsAuthorization][Route("currency-rate")]
         public HttpResponseMessage AddFSRatioCaption( [FromBody] CurrencyRateViewModel model)
         {
             try
@@ -138,7 +138,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPut][Route("currency-rate/{currencyId}")]
+       [HttpPut] [ClaimsAuthorization][Route("currency-rate/{currencyId}")]
         public HttpResponseMessage UpdateFSRatioCaption(short currencyId, [FromBody] CurrencyRateViewModel model)
         {
             try

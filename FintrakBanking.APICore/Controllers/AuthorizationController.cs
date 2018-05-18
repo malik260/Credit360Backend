@@ -53,7 +53,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("setup/group/add")]
         public HttpResponseMessage AddGroup([FromBody] GroupModel model)
         {
@@ -106,7 +106,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("setup/group/{groupId}")]
         public HttpResponseMessage AddGroup(short groupId, [FromBody] GroupViewModel grpModel)
         {
@@ -177,7 +177,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("setup/group/activities")]
         public async Task<HttpResponseMessage> AddActivitiesGroup([FromBody]GroupViewModel grpModel)
         {

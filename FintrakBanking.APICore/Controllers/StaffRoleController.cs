@@ -100,7 +100,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("staff-role")]
         public HttpResponseMessage AddUpdateStaffRole([FromBody] StaffRoleViewModel entity)
         {
@@ -170,7 +170,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("staff-role/approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {

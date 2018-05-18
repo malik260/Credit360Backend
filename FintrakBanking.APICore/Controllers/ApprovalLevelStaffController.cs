@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Approval Level Staff
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approval-level-staff")]
         public HttpResponseMessage AddApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model)
         {
@@ -85,7 +85,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("approval-level-staff/{id}")]
         public HttpResponseMessage UpdateApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model, int id)
         {
@@ -110,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("approval-level-staff/{StaffLevelId}")]
         public async Task<HttpResponseMessage> DeleteApprovalLevelStaffAsync(int StaffLevelId)
         {

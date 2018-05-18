@@ -38,7 +38,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("risk-assessment/save")]
         public HttpResponseMessage SaveFormElements([FromBody]AssessmentFormSaveViewModel entity)
         {

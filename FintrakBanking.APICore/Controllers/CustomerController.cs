@@ -36,7 +36,7 @@ namespace FintrakBanking.APICore.Controllers
             this.proRepo = _proRepo;
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("")]
         public HttpResponseMessage AddCustomer([FromBody]CustomerViewModels entity)
         {
@@ -82,7 +82,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("{customerId}")]
         public HttpResponseMessage DeleteCustomer(int customerId)
         {
@@ -393,7 +393,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-search")]
         public HttpResponseMessage SearchCustomer([FromBody] CustomerSearchItemViewModels search)
         {
@@ -476,7 +476,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("{customerId}")]
         public HttpResponseMessage UpdateCustomer(int customerId, CustomerViewModels entity)
         {
@@ -642,7 +642,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-company-information")]
         public HttpResponseMessage AddCustomerCompanyInformation([FromBody]CustomerCompanyInfomationViewModels entity)
         {
@@ -684,7 +684,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-phonecontact")]
         public HttpResponseMessage AddCustomerPhoneContact([FromBody]CustomerPhoneContactViewModels entity)
         {
@@ -727,7 +727,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-address")]
         public HttpResponseMessage AddCustomerAddresses([FromBody]CustomerAddressViewModels entity)
         {
@@ -772,7 +772,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-bvn")]
         public HttpResponseMessage AddCustomerBvn([FromBody]CustomerBvnViewModels entity)
         {
@@ -800,7 +800,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-children")]
         public HttpResponseMessage AddCustomerChildren([FromBody] List<CustomerChildrenViewModel> entity)
         {
@@ -829,7 +829,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-employmentHistory")]
         public HttpResponseMessage AddCustomerEmploymentHistory([FromBody]CustomerEmploymentHistoryViewModels entity)
         {
@@ -865,7 +865,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-companydirectors")]
         public HttpResponseMessage AddCustomerCompanyDirector([FromBody]CustomerCompanyDirectorsViewModels entity)
         {
@@ -928,7 +928,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-clientsupplier")]
         public HttpResponseMessage AddCustomerClientSupplier([FromBody]CustomerClientOrSupplierViewModels entity)
         {
@@ -986,7 +986,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-identification")]
         public HttpResponseMessage AddCustomerIdentification([FromBody]CustomerIdentificationViewModels entity)
         {
@@ -1022,7 +1022,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-nextofkin")]
         public HttpResponseMessage AddCustomerNextOfKin([FromBody]CustomerNextOfKinViewModels entity)
         {
@@ -1057,7 +1057,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("customer-children/{childId}")]
         public HttpResponseMessage DeleteCustomerChild(int childId)
         {
@@ -1666,7 +1666,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("customer-product-fee/{customerProductFeeId}")]
         public HttpResponseMessage UpdateCustomerProductFee(int customerProductFeeId, CustomerProductFeeViewModel entity)
         {
@@ -1695,7 +1695,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-product-fee")]
         public HttpResponseMessage AddCustomerProductFee([FromBody]CustomerProductFeeViewModel entity)
         {
@@ -1797,7 +1797,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
         }
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("customer-product-fee/{customerProductFeeId}")]
         public HttpResponseMessage DeleteCustomerProductFee(int customerProductFeeId)
         {
@@ -1851,7 +1851,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {

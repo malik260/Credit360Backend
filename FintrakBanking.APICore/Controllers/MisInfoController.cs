@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region MisInfo
 
-        [HttpPost][Route("misInfo")]
+         [HttpPost] [ClaimsAuthorization][Route("misInfo")]
         public async Task<HttpResponseMessage> AddMisInfo(MisInfoViewModel entity)
         {
             try
@@ -42,7 +42,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete][Route("misinfo/{misInfoId}")]
+        [HttpDelete] [ClaimsAuthorization][Route("misinfo/{misInfoId}")]
         public async Task<HttpResponseMessage> DeleteMisInfo(int misInfoId)
         {
             try
@@ -121,7 +121,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut][Route("misinfo/{misinfoid}")]
+       [HttpPut] [ClaimsAuthorization][Route("misinfo/{misinfoid}")]
         public async Task<HttpResponseMessage> UpdateMisInfo(int misinfoid, [FromBody] MisInfoViewModel entity)
         {
             try
@@ -144,7 +144,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region MisType
 
-        [HttpPost][Route("mistype")]
+         [HttpPost] [ClaimsAuthorization][Route("mistype")]
         public async Task<HttpResponseMessage> AddMisTypeAsync(MisTypeViewModel entity)
         {
             try
@@ -163,7 +163,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete][Route("mistype/{mistypeid}")]
+        [HttpDelete] [ClaimsAuthorization][Route("mistype/{mistypeid}")]
         public async Task<HttpResponseMessage> DeleteMisTypeAsync(int misInfoId)
         {
             try
@@ -220,7 +220,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut][Route("mistype/{mistypeid}")]
+       [HttpPut] [ClaimsAuthorization][Route("mistype/{mistypeid}")]
         public async Task<HttpResponseMessage> UpdateMisType(int mistypeid, [FromBody] MisTypeViewModel entity)
         {
             if (entity == null)

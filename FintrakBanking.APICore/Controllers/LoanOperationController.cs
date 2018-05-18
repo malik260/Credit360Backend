@@ -145,7 +145,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         
-        //[HttpPost]
+        // [HttpPost] [ClaimsAuthorization]
         //[Route("commercial-loan-maturity-instruction")]
         //public HttpResponseMessage addMaturityInstruction([FromBody] MaturityIntructionViewModel entity)
         //{
@@ -172,7 +172,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("commercial-loan-interest-rate-change")]
         public HttpResponseMessage CommercialPaperRateReview([FromBody] InterestReviewViewModel entity)
         {
@@ -199,7 +199,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("commercial-loan-roll-over")]
         public HttpResponseMessage ProcessCommercialPaperRollOver([FromBody] MaturityIntructionViewModel entity)
         {
@@ -224,7 +224,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("commercial-loan-tenor-extension")]
         public HttpResponseMessage CommercialPaperTenorReview([FromBody] TenorExtionViewModel entity)
         {
@@ -287,7 +287,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("add-bulk-rate-excemption")]
         public HttpResponseMessage addBulkLoanRateExcemptions([FromBody] LoanViewModel entity)
         {
@@ -315,7 +315,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("interest-rate-change")]
         public HttpResponseMessage addBulkInterestRateChange([FromBody] LoanBulkInterestReviewViewModel entity)
         {
@@ -344,7 +344,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         //
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("bulk-interest-rate-change/application")]
         public HttpResponseMessage AddLoanScheduleByBulkRate([FromBody] LoanBulkInterestReviewViewModel entity)
         {

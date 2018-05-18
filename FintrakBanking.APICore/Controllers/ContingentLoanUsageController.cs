@@ -41,7 +41,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loanusage")]
         public HttpResponseMessage SaveContigentLoans(ContingentLoanUsageViewModel entity)
         {              

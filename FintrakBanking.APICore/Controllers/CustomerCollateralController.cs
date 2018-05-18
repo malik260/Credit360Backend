@@ -455,7 +455,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("visitation-document")]
         public async Task<HttpResponseMessage> AddVisitationDocument()
         {
@@ -732,7 +732,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Collateral 
 
-        //[HttpPost]
+        // [HttpPost] [ClaimsAuthorization]
         //[Route("customer-collateral")]
         //public async Task<HttpResponseMessage> AddCollateral([FromBody] CollateralCustomerViewModel entity)
         //{
@@ -869,7 +869,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("collateral-sub-type")]
         public async Task<HttpResponseMessage> AddCollateralSubType([FromBody] CollateralSubTypeViewModel entity)
         {
@@ -894,7 +894,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("collateral-type/{collateralTypeId}")]
         public async Task<HttpResponseMessage> UpdateCollateralType(short collateralTypeId, [FromBody] CollateralTypeViewModel entity)
         {
@@ -917,7 +917,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("collateral-sub-type/{collateralSubTypeId}")]
         public async Task<HttpResponseMessage> UpdateCollateralSubType(short collateralSubTypeId, [FromBody] CollateralSubTypeViewModel entity)
         {
@@ -1146,7 +1146,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("get-fixeddeposit-lien-amount")]
         public HttpResponseMessage GetLienAmountForFD([FromBody]string accountNumber)
         {
@@ -1162,7 +1162,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("get-casa-lien-amount")]
         public HttpResponseMessage GetLienAmountForCASA([FromBody]string accountNumber)
         {
