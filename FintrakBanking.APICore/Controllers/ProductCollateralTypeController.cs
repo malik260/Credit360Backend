@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-collateral-type/all/{productId}")]
         public HttpResponseMessage GetCollateralTypeByProduct(int productId)
         {
@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-collateral-type/all/mapped/{productId}")]
         public HttpResponseMessage GetAllMappedCollateralToProduct(int productId)
         {
@@ -67,7 +67,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-collateral-type/unmapped/{productId}")]
         public HttpResponseMessage GetUnmappedCollateralToProduct(int productId)
         {
@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-collateral-type/{productCollateralTypeId}")]
         public HttpResponseMessage GetProductCollateralTypeViewModel(int productCollateralTypeId)
         {
@@ -111,7 +111,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         // POST api/values
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("product-collateral-type")]
         public HttpResponseMessage AddProductCollateralType([FromBody] ProductCollateralTypeViewModel model)
         {
@@ -145,7 +145,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("product-collateral-type/multiple")]
         public HttpResponseMessage AddMultipleProductCollateralType([FromBody] List<ProductCollateralTypeViewModel> model)
         {
@@ -174,7 +174,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("product-collateral-type/{productCollateralTypeId}")]
         public HttpResponseMessage DeleteProductCollateralType(int productCollateralTypeId)
         { //if (!repo.DoesProductCollateralExist(productCollateralTypeId))            
@@ -220,7 +220,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("product-collateral-type/multiple/{productCollateralTypeIds}")]
         public HttpResponseMessage DeleteMultipleProductCollateralType(List<int> productCollateralTypeIds)
         {

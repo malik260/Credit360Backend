@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("city")]
         public HttpResponseMessage AddCity([FromBody] CityViewModel entity)
         {
@@ -45,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("post-local-govt")]
         public HttpResponseMessage AddLocalGovt([FromBody] LocalGovtViewModel entity)
         {
@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("update-local-govt/{localGovernmentId}")]
         public HttpResponseMessage UpdateLocalGovt([FromBody] LocalGovtViewModel entity, int localGovernmentId)
         {
@@ -87,7 +87,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("local-govt")]
         public HttpResponseMessage GetLocalGovt()
         {
@@ -108,7 +108,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("local-govt/{stateId}")]
         public HttpResponseMessage GetLocalGovtByStateId(int stateId)
         {
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("city/{id}")]
         public HttpResponseMessage UpdateCity([FromBody] CityViewModel entity, int id)
         {
@@ -150,7 +150,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("city-class")]
         public HttpResponseMessage GetAllCityClass()
         {
@@ -172,7 +172,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("city")]
         public HttpResponseMessage GetCity()
         {
@@ -196,7 +196,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("city/state/{Id}")]
         public HttpResponseMessage GetCityByStateId(int Id)
         {
@@ -218,7 +218,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("country")]
         public HttpResponseMessage GetCountry()
         {
@@ -238,7 +238,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("state")]
         public HttpResponseMessage GetState()
         {
@@ -258,7 +258,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("state/{id}")]
         public HttpResponseMessage UpdateStates([FromBody] StateViewModel entity, int id)
         {
@@ -283,7 +283,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("state-by-company")]
         public HttpResponseMessage GetStateByCompanyId()
         {
@@ -304,7 +304,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("state/country")]
         public HttpResponseMessage GetStateByCountryId()
         {
@@ -325,7 +325,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("city/country")]
         public HttpResponseMessage GetAllCityByCountryId()
         {

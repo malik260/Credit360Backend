@@ -13,7 +13,7 @@ namespace FintrakBanking.APICore.Controllers
             return View();
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         public ActionResult Upload(HttpPostedFileBase upload, string CKEditorFuncNum, string CKEditor, string langCode)
         {
             //string message;

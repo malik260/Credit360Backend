@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Approval Level Staff
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approval-level-staff")]
         public HttpResponseMessage AddApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model)
         {
@@ -50,7 +50,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level-staff/operations/{operationMappingId}")]
         public HttpResponseMessage GetAllApprovalLevelStaff(int operationMappingId)
         {
@@ -70,7 +70,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level-staff/staff-level/{id}")]
         public HttpResponseMessage GetApprovalLevelStaffById(int id)
         {
@@ -85,7 +85,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("approval-level-staff/{id}")]
         public HttpResponseMessage UpdateApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model, int id)
         {
@@ -110,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("approval-level-staff/{StaffLevelId}")]
         public async Task<HttpResponseMessage> DeleteApprovalLevelStaffAsync(int StaffLevelId)
         {
@@ -140,7 +140,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Workflow Tracker
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("work-flow-tracker/operation/{operationId}/target/{targetId}")]
         public async Task<HttpResponseMessage> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId)
         {
@@ -162,7 +162,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("work-flow-tracker/approval-trail/all")]
         public async Task<HttpResponseMessage> GetAllRecordsOnApprovalTrail([FromUri] int page, [FromUri] int itemsPerPage)
         {

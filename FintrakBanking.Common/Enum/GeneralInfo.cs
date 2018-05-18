@@ -227,6 +227,7 @@ namespace FintrakBanking.Common.Enum
         InitiatAccountReassigning = 204,
         LoanTenorExtended = 205,
         LoanInterestRateChange = 206,
+        Loggedfailed = 207,
     };
 
 

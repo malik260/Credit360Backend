@@ -34,7 +34,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [Route("markets")]
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         public HttpResponseMessage GetAllLoanMarket()
         {
             try
@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [Route("market")]
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         public HttpResponseMessage GetAllLoanMarket(int marketId)
         {
             try
@@ -63,7 +63,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [Route("update-market/{marketId}")]
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         public HttpResponseMessage UpdateLoanMarket(int marketId,LoanMarketViewModel loanMarket)
         {
             try
@@ -81,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [Route("delete-market/{marketId}")]
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         public HttpResponseMessage DeleteLoanMarket(int marketId,LoanMarketViewModel loanMarket)
         {
             try
@@ -95,7 +95,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [Route("add-market")]
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         public HttpResponseMessage AddLoanMarket(LoanMarketViewModel loanMarket)
         {
             try

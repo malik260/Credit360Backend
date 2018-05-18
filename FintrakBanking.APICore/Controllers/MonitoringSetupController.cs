@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Controllers
             repo = _repo;
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("addmonitoringSetup")]
         public HttpResponseMessage AddMonitoringSetup( [FromBody]MonitoringSetupViewModel entity)
         {
@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
        
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("monitoringSetup")]
         public HttpResponseMessage GetAllMonitoringSetup()
         {
@@ -67,7 +67,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("message-type")]
         public HttpResponseMessage GetAllMessageType ()
         {
@@ -89,7 +89,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product")]
         public HttpResponseMessage GetAllProduct()
         {
@@ -113,7 +113,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("updatemonitoringSetup/{monitoringSetupId}")]
         public HttpResponseMessage UpdateMonitoringSetup(int MonitoringSetupId, MonitoringSetupViewModel entity)
         {
@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("getmonitoringSetup/{monitoringSetupId}")]
         public HttpResponseMessage GetMonitoringSetup(int monitoringSetupId )
         {

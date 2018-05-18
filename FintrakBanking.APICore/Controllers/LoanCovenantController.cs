@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
             errorLogger = _errorLogger;
         }
 
-        [HttpPost][Route("covenant-detail")]
+         [HttpPost] [ClaimsAuthorization][Route("covenant-detail")]
         public async Task<HttpResponseMessage> AddLoanCovenantDetail([FromBody] LoanCovenantDetailViewModel entity)
         {
 
@@ -54,7 +54,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete][Route("covenant-detail")]
+        [HttpDelete] [ClaimsAuthorization][Route("covenant-detail")]
         public async Task<HttpResponseMessage> DeleteLoanCovenantDetail(int loanCovenantDetailId)
         {
 
@@ -84,7 +84,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut][Route("covenant-detail/{id}")]
+       [HttpPut] [ClaimsAuthorization][Route("covenant-detail/{id}")]
         public async Task<HttpResponseMessage> UpdateLoanCovenantDetail([FromBody] LoanCovenantDetailViewModel entity, int id)
         {
             try
@@ -110,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("covenant-detail/covenant-type/{id}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("covenant-detail/covenant-type/{id}")]
         public HttpResponseMessage GetLoanCovenantDetailByCovenantType(int id)
         {
             try
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("covenant-detail/{id}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("covenant-detail/{id}")]
         public HttpResponseMessage GetLoanCovenantDetailById(int id)
         {
             try
@@ -148,7 +148,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("covenant-detail/loan/{id}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("covenant-detail/loan/{id}")]
         public HttpResponseMessage GetLoanCovenantDetailByloanId(int id)
         {
             try
@@ -168,7 +168,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost][Route("covenant-type")]
+         [HttpPost] [ClaimsAuthorization][Route("covenant-type")]
         public async Task<HttpResponseMessage> AddLoanCovenantType([FromBody] LoanCovenantTypeViewModel entity)
         {
             try
@@ -195,7 +195,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("covenant-type")]
+      [HttpGet] [ClaimsAuthorization]  [Route("covenant-type")]
         public HttpResponseMessage GetLoanCovenantType()
         {
             try
@@ -216,7 +216,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut][Route("covenant-type/{id}")]
+       [HttpPut] [ClaimsAuthorization][Route("covenant-type/{id}")]
         public async Task<HttpResponseMessage> UpdateLoanCovenantType([FromBody] LoanCovenantTypeViewModel entity, short id)
         {
             try
@@ -246,7 +246,7 @@ namespace FintrakBanking.APICore.Controllers
         // application
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("covenant/loan-application/{id}")]
         public HttpResponseMessage GetLoanApplicationCovenant(int id)
         {
@@ -261,7 +261,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application-covenant")]
         public HttpResponseMessage AddLoanApplicationCovenant([FromBody] LoanCovenantDetailViewModel entity)
         {
@@ -284,7 +284,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("loan-application-covenant/{id}")]
         public HttpResponseMessage DeleteLoanApplicationCovenant(int id)
         {

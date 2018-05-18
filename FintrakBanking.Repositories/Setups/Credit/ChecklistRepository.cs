@@ -64,7 +64,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId)
         {
-            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
 
             
             List <CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
@@ -249,7 +249,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId)
         {
-            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
            
             var checkType = (from a in context.TBL_CHECKLIST_TYPE
                              join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID

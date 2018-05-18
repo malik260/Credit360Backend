@@ -32,7 +32,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Customer Group
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-group")]
         public HttpResponseMessage AddCustomerGroup([FromBody] CustomerGroupViewModel entity)
         {
@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("customer-group/{groupId}")]
         public HttpResponseMessage DeleteCustomerGroup(short groupId)
 
@@ -106,7 +106,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group")]
         public HttpResponseMessage GetCustomerGroup()
         {
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/awaiting-approval")]
         public HttpResponseMessage GetCustomerGroupAwaitingApproval()
         {
@@ -152,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/{customerGroupId}")]
         public HttpResponseMessage GetCustomerGroupByCustomerId(int customerGroupId)
         {
@@ -170,7 +170,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("customer-group/{customerGroupId}")]
         public HttpResponseMessage UpdateCustomerGroup(int customerGroupId, CustomerGroupViewModel entity)
         {
@@ -200,7 +200,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-group/approval")]
         public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
@@ -230,7 +230,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/search/")]
         public HttpResponseMessage SearchForCustomerGroupRealtime(string searchQuery)
         {
@@ -249,7 +249,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/")]
         public HttpResponseMessage CustomerGroupSearch(string searchQuery)
         {
@@ -268,7 +268,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/{customerGroupId}/mapping-details")]
         public HttpResponseMessage GetCustomerGroupDetailedMapping(int customerGroupId)
         {
@@ -296,7 +296,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Customer Group Mapping
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-group-mapping")]
         public HttpResponseMessage AddCustomerGroupMapping([FromBody] CustomerGroupMappingViewModel entity)
         {
@@ -326,7 +326,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-group-mapping/multiple")]
         public HttpResponseMessage AddMultipleCustomerGroupMapping([FromBody] List<CustomerGroupMappingViewModel> customerGroups)
         {
@@ -350,7 +350,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("customer-group-mapping/{groupMapId}")]
         public HttpResponseMessage DeleteCustomerGroupMapping(int groupMapId)
 
@@ -384,7 +384,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-mapping")]
         public HttpResponseMessage GetCustomerGroupMapping()
         {
@@ -406,7 +406,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-members/{groupid}")]
         public HttpResponseMessage GetGroupMembersByGroupId(int groupid)
         {
@@ -421,7 +421,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-mapping/{groupMapId}")]
         public HttpResponseMessage GetCustomerGroupMappingByGroupMapId(int groupMapId)
         {
@@ -439,7 +439,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-mapping/customers/{customerGroupId}")]
         public HttpResponseMessage GetCustomerGroupMappingByGroupId(int customerGroupId)
         {
@@ -456,7 +456,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-mapping/relationship-types")]
         public HttpResponseMessage GetCustomerGroupRelationshipTypes()
         {
@@ -472,7 +472,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-relationship-type")]
         public HttpResponseMessage AddCustomerGroupRelationshipTypes([FromBody] LookupViewModel entity)
         {
@@ -497,7 +497,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("customer-group-mapping/{groupMapId}")]
         public HttpResponseMessage UpdateCustomerGroupMaping(int groupMapId, [FromBody] CustomerGroupMappingViewModel entity)
         {
@@ -528,7 +528,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
         #region KYC Item Setup
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("Kycitem")]
         public HttpResponseMessage GetKYCItem()
         {
@@ -545,7 +545,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("Kycitem")]
         public HttpResponseMessage AddKYCItem([FromBody] KYCItemViewModel entity)
         {
@@ -574,7 +574,7 @@ namespace FintrakBanking.APICore.Controllers
                     new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("Kycitem/{kYCItemId}")]
         public HttpResponseMessage UpdateKYCItem(int kYCItemId, [FromBody] KYCItemViewModel entity)
         {

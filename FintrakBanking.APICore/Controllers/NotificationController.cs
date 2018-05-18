@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
             errorLogger = _errorLogger;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("workflow/all")]
         public HttpResponseMessage GetNotification()
         {
@@ -45,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("pending-action/all")]
         public HttpResponseMessage GetAllNotifications()
         {
@@ -65,7 +65,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("pending-action/{notificationId}")]
         public HttpResponseMessage UpdateNotificationState(int notificationId)
         {
@@ -87,7 +87,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("pending-action")]
         public HttpResponseMessage AddNotificationState(NotificationViewModel model)
         {

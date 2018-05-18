@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("tax")]
         [AuthorizeActivity("super admin","pen approval")]
         public HttpResponseMessage GetTax()
@@ -39,7 +39,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("tax/{taxId}")]
         public HttpResponseMessage GetTax(int taxId)
         {
@@ -59,7 +59,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("tax/company")]
         public HttpResponseMessage GetTaxByCompanyId()
         {
@@ -79,7 +79,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("tax")]
         public HttpResponseMessage AddTax([FromBody] TaxViewModel entity)
         {
@@ -104,7 +104,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("tax/{taxId}")]
         public HttpResponseMessage UpdateTax([FromBody] TaxViewModel entity, int taxId)
         {
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("tax/{taxId}")]
         public HttpResponseMessage DeleteTax(int taxId)
         {
