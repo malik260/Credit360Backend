@@ -299,13 +299,13 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var response = repo.FindLoanApplication(searchCriteria, token.GetCompanyId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
          [HttpPost] [ClaimsAuthorization]
         [Route("loan-application")]

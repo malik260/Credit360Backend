@@ -1389,6 +1389,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
         {
+            searchString = searchString.ToLower();
+
             var applications = context.TBL_LOAN_APPLICATION
                     .Join(context.TBL_LOAN_APPLICATION_DETAIL,
                         a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
@@ -1402,8 +1404,9 @@ namespace FintrakBanking.Repositories.Credit
                         middleName = x.o.c.MIDDLENAME,
                         lastName = x.o.c.LASTNAME,
                         customerCode = x.o.c.CUSTOMERCODE,
-                        loanApplicationId = x.o.g.a.LOANAPPLICATIONID,
                         applicationReferenceNumber = x.o.g.a.APPLICATIONREFERENCENUMBER,
+
+                        loanApplicationId = x.o.g.a.LOANAPPLICATIONID,
                         customerId = x.o.g.a.CUSTOMERID,
                         branchId = x.o.g.a.BRANCHID,
                         customerGroupId = x.o.g.a.CUSTOMERGROUPID,
@@ -1415,7 +1418,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvedAmount = x.o.g.a.APPROVEDAMOUNT,
                         interestRate = x.o.g.a.INTERESTRATE,
                         applicationTenor = x.o.g.a.APPLICATIONTENOR,
-                        loanInformation = x.o.g.a.LOANINFORMATION,
+                        //loanInformation = x.o.g.a.LOANINFORMATION, // THROWS EXCEPTION
                         submittedForAppraisal = x.o.g.a.SUBMITTEDFORAPPRAISAL,
                         customerInfoValidated = x.o.g.a.CUSTOMERINFOVALIDATED,
                         isRelatedParty = x.o.g.a.ISRELATEDPARTY,
@@ -1434,11 +1437,10 @@ namespace FintrakBanking.Repositories.Credit
                         accountNumber = x.s.PRODUCTACCOUNTNUMBER,
                     })
                     .Where(x => x.applicationReferenceNumber == searchString
-                        || x.accountNumber.ToLower().Contains(searchString.ToLower())
-                        || x.firstName.ToLower().Contains(searchString.ToLower())
-                        || x.lastName.ToLower().Contains(searchString.ToLower())
-                        || x.middleName.ToLower().Contains(searchString.ToLower())
-                        || x.customerCode == searchString)
+                        || x.firstName.ToLower().Contains(searchString)
+                        || x.lastName.ToLower().Contains(searchString)
+                        || x.middleName.ToLower().Contains(searchString)
+                        || x.customerCode.ToLower() == searchString)
                     ;
 
             return applications.Distinct().ToList();
