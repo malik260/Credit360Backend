@@ -26,6 +26,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
 
         public string naration { get; set; }
     }
+
     public class PrudGuidelineStatusChangeViewModel : GeneralEntity
     {
         public int prudentialGuidelineStatusId { get; set; }
