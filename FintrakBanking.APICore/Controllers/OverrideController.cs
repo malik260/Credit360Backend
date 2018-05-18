@@ -105,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-all-override-items")]
         public HttpResponseMessage GetAllOverRideItems()
         {
@@ -125,7 +125,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-all-override-request")]
         public HttpResponseMessage GetAllOverRideRequest()
         { 
@@ -145,7 +145,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-override-request/request/{id}")]
         public HttpResponseMessage GetOverRideRequestById(int id)
         {
@@ -166,7 +166,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-override-request/overrideitems/{id}")]
         public HttpResponseMessage GetOverRideRequestByOverRideItemsId(int id)
         {
@@ -186,7 +186,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-override-request/referencenumber/{refno}")]
         public HttpResponseMessage GetOverRideRequestByReferenceNumber(string refNo)
         {

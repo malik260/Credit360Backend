@@ -190,7 +190,7 @@ namespace FintrakBanking.APICore.Controllers
               
         }
 
-        [HttpGet] [Route("custom-field/hostPage/{id}")]
+      [HttpGet] [ClaimsAuthorization]   [Route("custom-field/hostPage/{id}")]
         public HttpResponseMessage GetCustomFieldsByHostPageId(int id)
         {            
                 try
@@ -282,7 +282,7 @@ namespace FintrakBanking.APICore.Controllers
            
             }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("custom-field-data/hostpage/{id}/{customerId}")]
         public HttpResponseMessage GetCustomFieldsDataByCustomField(int id, int customerId)
         {
@@ -341,7 +341,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region   host page 
 
-        [HttpGet] [Route("hostPage/hostpage/{id}")]
+      [HttpGet] [ClaimsAuthorization]   [Route("hostPage/hostpage/{id}")]
         public HttpResponseMessage GetHostPagesChildrenOnly(int id)
         {
            
@@ -366,7 +366,7 @@ namespace FintrakBanking.APICore.Controllers
 
             }
 
-        [HttpGet][Route("hostPage")]
+      [HttpGet] [ClaimsAuthorization]  [Route("hostPage")]
         public HttpResponseMessage GetHostPagesParentOnly( )
         {
             

@@ -73,8 +73,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCollateral(CollateralViewModel entity, byte[] file) //, 
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                
                     int collateralId = AddTempCollateralMainForm(entity);
 
@@ -99,7 +99,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (entity.hasInsurance) { AddTempItemInsurancePolicy(collateralId, entity); }
 
-                        if (file != null) { SaveCollateralMainDocument(entity, collateralId, file); }
+                      //  if (file != null) { SaveCollateralMainDocument(entity, collateralId, file); }
 
                         bool saved;
                         try
@@ -108,7 +108,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         catch (Exception ex)
                         {
-                             trans.Rollback();
+                             //trans.Rollback();
 
                             throw new Exception("Error has occured while creating this collateral");
                         }
@@ -120,7 +120,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 
-            }
+            //}
             
             return false;
         }
@@ -3651,7 +3651,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = x.CURRENCYID,
                                    currency = x.TBL_CURRENCY.CURRENCYNAME,
                                    collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                                   collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.FirstOrDefault(m => m.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID).COLLATERALSUBTYPENAME,
+                                 //  collateralSubTypeName = x.TBL_COLLATERAL_TYPE_SUB.COLLATERALSUBTYPENAME,
                                    collateralCode = x.COLLATERALCODE,
                                    collateralValue = x.COLLATERALVALUE,
                                    camRefNumber = x.CAMREFNUMBER,
@@ -3709,8 +3709,8 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool GoForApproval(ApprovalViewModel model)
         {
-            using (var transaction = context.Database.BeginTransaction())
-            {
+            //using (var transaction = context.Database.BeginTransaction())
+            //{
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (short)model.approvalStatusId;
@@ -3731,18 +3731,18 @@ namespace FintrakBanking.Repositories.Credit
 
                 } catch (Exception ex) {
 
-                    transaction.Rollback();
+                    //transaction.Rollback();
 
                     throw new Exception("Error has occured while approving this collateral, kindly try again");
                 }
                 //return false;
-            }
+            //}
         }
 
         public bool GoForPolicyApproval(ApprovalViewModel model)
         {
-            using (var transaction = context.Database.BeginTransaction())
-            {
+            //using (var transaction = context.Database.BeginTransaction())
+            //{
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (short)model.approvalStatusId;
@@ -3765,11 +3765,11 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
 
-                    transaction.Rollback();
+                    //transaction.Rollback();
 
                     throw new Exception("Error has occured while approving this insurance policy, kindly try again");
                 }
-            }
+            //}
         }
 
         private void UpdateCutomerCollateralApprovalStatus(ApprovalViewModel ApprovalModel, short status)
@@ -4810,7 +4810,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         private CollateralViewModel GetTempCollateralMarketableSecurities(int collateralId)
         {
-            var specifics = context.TBL_TEMP_COLLATERAL_MKT_SEC.FirstOrDefault(x => x.TEMPCOLLATERALCUSTOMERID == collateralId);
+            var specifics = context.TBL_TEMP_COLLATERAL_MKT_SEC.Where(x => x.TEMPCOLLATERALCUSTOMERID == collateralId).FirstOrDefault();
             var details = new CollateralViewModel
             {
                 collateralId = specifics.TEMPCOLLATERALCUSTOMERID,

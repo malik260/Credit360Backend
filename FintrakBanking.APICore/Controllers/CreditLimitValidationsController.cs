@@ -39,7 +39,7 @@ namespace FintrakBanking.APICore.Controllers
         //        }
 
         //}
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("blacklist/{customerCode}")]
         public HttpResponseMessage ValidateBlackList(string customerCode)
         {
@@ -55,7 +55,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-eligibility/{customerCode}")]
         public HttpResponseMessage ValidateCustomerEligibility(string customerCode)
         {
@@ -75,7 +75,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("watchlist/{customerId}")]
         public HttpResponseMessage ValidateWatchList(int customerId)
         {
@@ -92,7 +92,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("camsol/{customerId}")]
         public HttpResponseMessage ValidateCamsol(int customerId)
         {
@@ -109,7 +109,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validateamount/branch")]
         public HttpResponseMessage  ValidateAmountByBranch( )
         { 
@@ -135,7 +135,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validatenpl/branch")]
         public HttpResponseMessage ValidateNPLByBranch()
         {
@@ -163,7 +163,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validateamount/segment/{segmentId}")]
         public HttpResponseMessage ValidateAmountBySegment(short segmentId)
         {
@@ -189,7 +189,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validatenpl/segment/{segmentId}")]
         public HttpResponseMessage ValidateNPLBySegment(short segmentId)
         {
@@ -216,7 +216,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validateamount/sector/{subSectorId}")]
         public HttpResponseMessage ValidateAmountBySector(int subSectorId)
         {
@@ -243,7 +243,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validatenpl/sector/{subSectorId}")]
         public HttpResponseMessage ValidateNPLBySector(int subSectorId)
         {
@@ -270,7 +270,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validateamount/customer/{customerId}")]
         public HttpResponseMessage ValidateAmountByCustomer(int customerId)
         {
@@ -296,7 +296,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validatenpl/customer/{customerId}")]
         public HttpResponseMessage ValidateNPLByCustomer(int customerId)
         {
@@ -323,7 +323,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validateamount/customergroup/{customerId}")]
         public HttpResponseMessage ValidateAmountByCustomerGroup(int customergroupId)
         {
@@ -349,7 +349,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validatenpl/customergroup/{customerId}")]
         public HttpResponseMessage ValidateNPLByCustomerGroup(int customergroupId)
         {
@@ -376,7 +376,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validatecreditlimitnpl/RMBM/{relationshipofficerId}")]
         public HttpResponseMessage ValidateCreditLimitNPLByRMBM(short relationshipofficerId)
         {

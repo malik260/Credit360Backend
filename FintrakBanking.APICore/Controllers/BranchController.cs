@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Region Setup
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("region")]
         public HttpResponseMessage GetRegion()
         {
@@ -85,7 +85,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Branch Setup
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("branch")]
         public HttpResponseMessage GetBranch()
         {
@@ -100,7 +100,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("branch/{id}")]
         public HttpResponseMessage GetBranch(short id)
         {
@@ -115,7 +115,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("branch-by-company/{companyid}")]
         public HttpResponseMessage GetAllBranchByCompany(int companyid)
         {
@@ -130,7 +130,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("branch/company")]
         public HttpResponseMessage GetBranchByCompany()
         {
@@ -245,7 +245,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("branch-search")]
         public HttpResponseMessage SearchForBranch(string searchQuery)
         {

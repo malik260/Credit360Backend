@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [Route("loan-principals")]
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         public HttpResponseMessage GetAllLoanPrincipal()
         {
             try
@@ -38,7 +38,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [Route("getprincipal")]
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         public HttpResponseMessage GetAllLoanPrincipal(int id)
         {
             try

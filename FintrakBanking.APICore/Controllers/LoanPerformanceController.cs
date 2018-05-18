@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             this.repo = _repo;
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-prudential-guildline-status")]
         public HttpResponseMessage GetPrudGuildlineType()
        {
@@ -42,7 +42,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("get-all-loans")]
         public HttpResponseMessage GetAllLoanPerformance([FromUri] int page, [FromUri] int itemsPerPage)
         {
@@ -65,7 +65,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("loan-performance/search")]
         public HttpResponseMessage FilteredLoanPerformance([FromUri] int page, string searchQuery)
         {

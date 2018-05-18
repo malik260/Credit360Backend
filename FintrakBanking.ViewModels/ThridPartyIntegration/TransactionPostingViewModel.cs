@@ -153,6 +153,21 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public HttpResponseMessage response { get; set; }
     }
 
+    public class TDAccountRecordViewModel
+    {
+        public string accountNumber { get; set; }
+        public string accountName { get; set; }
+        public string customerCode { get; set; }
+        public string productCode { get; set; }
+        public string productName { get; set; }
+        public string productType { get; set; }
+        public string currencyType { get; set; }
+        public decimal balance { get; set; }
+        public string branch { get; set; }
+        public decimal lienAmount { get; set; }
+        public HttpResponseMessage response { get; set; }
+    }
+
 public class ResponseMessage
     {
         public ResponseMessageViewModel APIResponse { get; set; }

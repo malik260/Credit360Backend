@@ -22,6 +22,8 @@ namespace FintrakBanking.Repositories.Setups.General
             this.context = _context;
         }
 
+      
+
         public async Task<bool> CreateUser(UserViewModel user)
         {
             //if (user.createdBy != null)
@@ -138,7 +140,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     else
                     {
                         _user.LASTLOGINDATE = DateTime.Now;
-                        _user.LOGINCODE = result.loginCode;
+                        _user.LOGINCODE = result.loginCode.ToString();
                     }
                     context.SaveChanges();
 
@@ -153,9 +155,9 @@ namespace FintrakBanking.Repositories.Setups.General
             return null;
         }
          
-        private dynamic CheckSessionState(string username)
+        private SessionStatusInfo CheckSessionState(string username)
         {
-            string loginCode = Guid.Empty.ToString();
+            Guid loginCode = Guid.Empty;
             var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
             dynamic result = null;
           
@@ -165,7 +167,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (_user.LOGINCODE == null || _user.LOGINCODE == Guid.Empty.ToString())
                     result = new SessionStatusInfo
                     {
-                        loginCode = Guid.NewGuid().ToString(),
+                        loginCode = Guid.NewGuid(),
                         state = 0,
                         errorMessage = "",
                          
@@ -175,7 +177,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     result = new SessionStatusInfo
                     {
-                        loginCode = Guid.Empty.ToString(),
+                        loginCode = Guid.Empty,
                         state = 1,
                         errorMessage = "You are already logged in",                        
                     };                   
@@ -233,9 +235,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     else
                     {
                         _user.LASTLOGINDATE = DateTime.Now;
-                        _user.LOGINCODE = result.loginCode;
+                        _user.LOGINCODE = result.loginCode.ToString();
+                       
                     }
-              
+                    context.SaveChanges();
                     return data;
                 }
                 catch (Exception ex)

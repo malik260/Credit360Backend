@@ -54,7 +54,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
         }
 
-        [HttpGet][Route("approval-group-mapping/{operationMappingId}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("approval-group-mapping/{operationMappingId}")]
         public HttpResponseMessage GetApprovalGroupMappingById(  int operationMappingId)
         {    try
                 {
@@ -184,7 +184,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpGet][Route("approval-group")]
+      [HttpGet] [ClaimsAuthorization]  [Route("approval-group")]
         public HttpResponseMessage GetAllApprovalGroup(HttpRequestMessage request)
         { 
                 try
@@ -210,7 +210,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpGet][Route("approval-group/{GroupId}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("approval-group/{GroupId}")]
         public HttpResponseMessage GetApprovalGroup( int GroupId)
         { 
                 try

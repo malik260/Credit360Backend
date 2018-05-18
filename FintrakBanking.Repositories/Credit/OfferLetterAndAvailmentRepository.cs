@@ -1194,7 +1194,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveFinalOfferLetter(OfferLetterTemplateViewModel model)
         {
+            bool result = false;
             try
+                 
             {
                 var exisitingDocument = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
 
@@ -1224,20 +1226,36 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.TBL_OFFERLETTER.Add(document);
                 }
-
+                
                 if (model.isAccepted == false && model.saveOnly != true)
                 {
                     var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
-                    if (appl == null) throw new Exception("Loan application with the given reference number not found!");
+                    if (appl == null)
+                    {
+                        result = false;
+                        throw new Exception("Loan application with the given reference number not found!");
+                    }
+                    else
+                    {
+                        result = true;
+                    }
+                        
                    // appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
                 }
 
-                return context.SaveChanges() > 0;
+                context.SaveChanges();
+                //if (result == true) return true;
+ 
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+
+            if (result == true)
+                return true;
+            else
+                return false;
         }
 
         public bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)

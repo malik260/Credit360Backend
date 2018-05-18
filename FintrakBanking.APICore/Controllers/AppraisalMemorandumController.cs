@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("appraisal-memorandum/loan-application/{loanApplicationId}")]
         public HttpResponseMessage GetAppraisalMemorandumByLoanApplicationId(int loanApplicationId)
         {
@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("appraisal-memorandum/loan-application/{loanApplicationId}/documentation")]
         public HttpResponseMessage GetAppraisalMemorandumDocumentation(int loanApplicationId)
         {
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("appraisal-memorandum/trail/{loanApplicationId}/operation/{operationId}")]
         public HttpResponseMessage GetAppraisalMemorandumTrail(int loanApplicationId, int operationId)
         {
@@ -189,7 +189,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("appraisal-memorandum/loan-detail/{loanApplicationId}")]
         public HttpResponseMessage GetApprovedLoanDetail(int loanApplicationId)
         {
@@ -204,7 +204,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("appraisal-memorandum/loan-detail-fees/{loanApplicationId}")]
         public HttpResponseMessage GetLoanDetailsFee(int loanApplicationId)
         {
@@ -219,7 +219,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("appraisal-memorandum/loan-detail-change-log/{loanApplicationId}")]
         public HttpResponseMessage GetLoanDetailChangeLog(int loanApplicationId)
         {
@@ -281,7 +281,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("current-committee/application/{loanApplicationId}")]
         public HttpResponseMessage GetCurrentCommitteeByLoanApplicationId(int loanApplicationId)
         {
@@ -369,7 +369,7 @@ namespace FintrakBanking.APICore.Controllers
                 };*/
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("appraisal-memorandum/pending-product-program")]
         public HttpResponseMessage GetPendingProductProgram()
         {
@@ -393,7 +393,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("untenored-status/application/{applicationId}")]
         public HttpResponseMessage GetUntenoredStatus(int applicationId)
         {
@@ -410,7 +410,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region MONITORING TRIGGERS
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("application-monitoring-triggers/{applicationId}")]
         public HttpResponseMessage GetApplicationMonitoringTriggers(int applicationId)
         {
@@ -474,7 +474,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("product-limit-validation/{applicationId}/class/{classId}")]
         public HttpResponseMessage GetProductLimitValidation(int applicationId, int classId)
         {
@@ -490,7 +490,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("appraisal-memorandum/workflow-test")]
         public HttpResponseMessage WorkflowTest()
         {
@@ -507,7 +507,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region recommended collateral
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("recommended-collateral/{applicationId}")]
         public HttpResponseMessage GetRecommendedCollateral(int applicationId)
         {

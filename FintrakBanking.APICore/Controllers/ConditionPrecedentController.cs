@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("condition-precedent")]
         public HttpResponseMessage GetConditionPrecedent()
         {
@@ -41,7 +41,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("condition-precedent/application-detail/{detailId}")]
         public HttpResponseMessage GetConditionPrecedentByApplicationId(int detailid)
         {
@@ -105,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
         
         #region CP template
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("condition-precedent-template/application-detail/{detailId}")]
         public HttpResponseMessage GetConditionPrecedentDefaultByApplicationId(int detailId)
         {
@@ -120,7 +120,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("condition-precedent-template")]
         public HttpResponseMessage GetConditionPrecedentTemplate()
         {
@@ -237,7 +237,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Compliance Timeline template
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("compliance-timeline-template")]
         public HttpResponseMessage GetComplianceTimelineTemplate()
         {

@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
        
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("department")]
         public HttpResponseMessage GetAllDepartment()
         {
@@ -67,7 +67,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("job-department/{jobTypeId}")]
         public HttpResponseMessage GetJobDepartmentByJobTypeId(short jobTypeId)
         {
@@ -82,7 +82,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("units/department/{departmentId}")]
         public HttpResponseMessage GetAllDepartmentUnits(short departmentId)
         {
@@ -103,7 +103,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("units")]
         public HttpResponseMessage GetAllUnits()
         {
@@ -172,7 +172,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("department-staff/")]
         public HttpResponseMessage SearchForDepartmentStaff(string searchQuery, int departmentId)
         {
@@ -195,7 +195,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("department-staff/{departmentId}/")]
         public HttpResponseMessage SearchForDepartmentbyStaffId(string searchQuery, int departmentId)
         {
@@ -218,7 +218,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("department/search")]
         public HttpResponseMessage SearchDepartment(string q, string t)
         {

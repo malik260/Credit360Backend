@@ -110,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("covenant-detail/covenant-type/{id}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("covenant-detail/covenant-type/{id}")]
         public HttpResponseMessage GetLoanCovenantDetailByCovenantType(int id)
         {
             try
@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("covenant-detail/{id}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("covenant-detail/{id}")]
         public HttpResponseMessage GetLoanCovenantDetailById(int id)
         {
             try
@@ -148,7 +148,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("covenant-detail/loan/{id}")]
+      [HttpGet] [ClaimsAuthorization]  [Route("covenant-detail/loan/{id}")]
         public HttpResponseMessage GetLoanCovenantDetailByloanId(int id)
         {
             try
@@ -195,7 +195,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("covenant-type")]
+      [HttpGet] [ClaimsAuthorization]  [Route("covenant-type")]
         public HttpResponseMessage GetLoanCovenantType()
         {
             try
@@ -246,7 +246,7 @@ namespace FintrakBanking.APICore.Controllers
         // application
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("covenant/loan-application/{id}")]
         public HttpResponseMessage GetLoanApplicationCovenant(int id)
         {

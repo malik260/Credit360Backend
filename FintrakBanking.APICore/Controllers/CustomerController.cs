@@ -116,7 +116,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("{customerId}")]
         public HttpResponseMessage GetCustomer(int custormerId)
         {
@@ -140,7 +140,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-staging/")]
         public HttpResponseMessage GetStagedCustomer(string searchTerm)
         {
@@ -164,7 +164,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customerbyid/{id}")]
         public HttpResponseMessage GetCustomerById(int id)
         {
@@ -190,7 +190,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customerRating/{id}")]
         public HttpResponseMessage GetCustomerRating(int id)
         {
@@ -214,7 +214,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-casa-information/")]
         public HttpResponseMessage GetCustomerCASAInformation(int customerId)
         {
@@ -236,7 +236,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-by-loanapplication/")]
         public HttpResponseMessage GetCustomerByLoanapplicationId(int loanApplicationId)
         {
@@ -260,7 +260,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customerbyid/")]
         public HttpResponseMessage GetCustomerByCustomerId(int custormerId)
         {
@@ -284,7 +284,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-information/")]
         public HttpResponseMessage SearchRandomCustomerBySearchQuery(string searchQuery)
 
@@ -307,7 +307,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customers-in-group/{groupId}")]
         public HttpResponseMessage GetCustomerInGroupByGroupId(int groupId)
         {
@@ -331,7 +331,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-by-branch")]
         public HttpResponseMessage GetCustomerByBranchId()
         {
@@ -353,7 +353,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer")]
         public HttpResponseMessage SearchCustomer(string search)
         {
@@ -376,7 +376,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-search/realtime/")]
         public HttpResponseMessage SearchCustomerRealTime(string searchQuery)
         {
@@ -408,7 +408,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-by-company/{companyId}")]
         public HttpResponseMessage GetCustomerByCompanyId(int companyId)
         {
@@ -430,7 +430,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-by-customer-type/{customertypeId}")]
         public HttpResponseMessage GetCustomerByType(int customertypeId)
         {
@@ -454,7 +454,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customertype")]
         public HttpResponseMessage GetCustomerType()
         {
@@ -510,7 +510,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("kyc-document-type")]
         public HttpResponseMessage GetKYCDocumentTypes()
         {
@@ -532,7 +532,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("directorsType")]
         public HttpResponseMessage GetDirectorsTypes()
         {
@@ -554,7 +554,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("suppliertype")]
         public HttpResponseMessage GetClientSupplierType()
         {
@@ -576,7 +576,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("identificationMode")]
         public HttpResponseMessage GetIdentificationMode()
         {
@@ -598,7 +598,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-address-type")]
         public HttpResponseMessage GetCustomerAddressType()
         {
@@ -620,7 +620,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-risk-rating")]
         public HttpResponseMessage GetCustomerRiskRating()
         {
@@ -1082,7 +1082,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #region Single Customer Information By CustomerID
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-general-info/")]
         public HttpResponseMessage GetSingleCustomerGeneralInfo(string customerCode)
         {
@@ -1101,7 +1101,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-general-info-by-customerid/")]
         public HttpResponseMessage GetSingleCustomerGeneralInfo(int customerId)
         {
@@ -1119,7 +1119,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-general-info-by-customerid/")]
         public HttpResponseMessage GetSingleCustomerGeneralInfo(int customerId, int targetId)
         {
@@ -1137,7 +1137,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-company-info/")]
         public HttpResponseMessage GetSingleCustomerCompanyInfo(int customerId)
         {
@@ -1155,7 +1155,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-company-info/")]
         public HttpResponseMessage GetSingleCustomerCompanyInfo(int customerId, int targetId)
         {
@@ -1173,7 +1173,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-address-info/")]
         public HttpResponseMessage GetSingleCustomerAddressInfo(int customerId)
         {
@@ -1191,7 +1191,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-address-info/")]
         public HttpResponseMessage GetSingleCustomerAddressInfo(int customerId, int targetId)
         {
@@ -1209,7 +1209,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-phonecontact-info/")]
         public HttpResponseMessage GetSingleCustomerPhoneContactInfo(int customerId)
         {
@@ -1227,7 +1227,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-phonecontact-info/")]
         public HttpResponseMessage GetSingleCustomerPhoneContactInfo(int customerId, int targetId)
         {
@@ -1245,7 +1245,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-bvn-info/")]
         public HttpResponseMessage GetSingleCustomerBVNInfo(int customerId)
         {
@@ -1263,7 +1263,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-identification-info/")]
         public HttpResponseMessage GetSingleCustomerIdentificationInfo(int customerId)
         {
@@ -1281,7 +1281,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-employment-info/")]
         public HttpResponseMessage GetSingleCustomerEmploymentHistoryInfo(int customerId)
         {
@@ -1299,7 +1299,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-employment-info/")]
         public HttpResponseMessage GetSingleCustomerEmploymentHistoryInfo(int customerId, int targetId)
         {
@@ -1317,7 +1317,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-board-info/")]
         public HttpResponseMessage GetSingleCustomerBoardInfo(int customerId)
         {
@@ -1336,7 +1336,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-board-info/")]
         public HttpResponseMessage GetSingleCustomerBoardInfo(int customerId, int targetId)
         {
@@ -1355,7 +1355,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-shareholder-individual/")]
         public HttpResponseMessage GetSingleCustomerShareholderIndividual(int customerId)
         {
@@ -1374,7 +1374,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-shareholder-individual/")]
         public HttpResponseMessage GetSingleCustomerShareholderIndividual(int customerId, int targetId)
         {
@@ -1393,7 +1393,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-shareholder-corporate/")]
         public HttpResponseMessage GetSingleCustomerShareholderCorporate(int customerId)
         {
@@ -1412,7 +1412,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-shareholder-corporate/")]
         public HttpResponseMessage GetSingleCustomerShareholderCorporate(int customerId, int targetId)
         {
@@ -1431,7 +1431,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-shareholder-beneficial/")]
         public HttpResponseMessage GetCustomerShareholderUltimateBeneficial(int companyDirectorId)
         {
@@ -1449,7 +1449,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-accountsignatory-info/")]
         public HttpResponseMessage GetSingleCustomerAccountSignatoryInfo(int customerId)
         {
@@ -1468,7 +1468,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-accountsignatory-info/")]
         public HttpResponseMessage GetSingleCustomerAccountSignatoryInfo(int customerId, int targetId)
         {
@@ -1487,7 +1487,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-client-info/")]
         public HttpResponseMessage GetSingleCustomerClientInfo(int customerId)
         {
@@ -1506,7 +1506,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-client-info/")]
         public HttpResponseMessage GetSingleTempCustomerClientInfo(int customerId, int targetId)
         {
@@ -1525,7 +1525,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-supplier-info/")]
         public HttpResponseMessage GetSingleCustomerSupplierInfo(int customerId)
         {
@@ -1544,7 +1544,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-supplier-info/")]
         public HttpResponseMessage GetSingleCustomerSupplierInfo(int customerId, int targetId)
         {
@@ -1563,7 +1563,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-nextofkin-info/")]
         public HttpResponseMessage GetSingleCustomerNextOfKinInfo(int customerId)
         {
@@ -1581,7 +1581,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-nextofkin-info/")]
         public HttpResponseMessage GetSingleCustomerNextOfKinInfo(int customerId, int targetId)
         {
@@ -1599,7 +1599,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("single-customer-children-info/")]
         public HttpResponseMessage GetSingleCustomerChildrenInfo(int customerId)
         {
@@ -1622,7 +1622,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Customer Product Fee ( aka Fee Concession)
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-product-fee/customer/{customerId}")]
         public HttpResponseMessage GetCustomerProductFeeByCustomerId(int customerId)
         {
@@ -1644,7 +1644,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-product-fee/product/{productId}")]
         public HttpResponseMessage GetCustomerProductFeeByProductId(int productId)
         {
@@ -1723,7 +1723,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validate-new-customer/{customerCode}")]
         public HttpResponseMessage ValidateNewCustomerCode(string customerCode)
         {
@@ -1746,7 +1746,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("validate-customer-modification/{customerId}")]
         public HttpResponseMessage ValidateCustomerModification(int customerId)
         {
@@ -1768,7 +1768,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "" });
             }
         }
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer-information-completed/{customerId}")]
         public HttpResponseMessage CustomerInformationCompleted(int customerId)
         {
@@ -1832,7 +1832,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("customer/approvals/temp")]
         public HttpResponseMessage GetAllCustomerInformationAwaitingApproval()
         {

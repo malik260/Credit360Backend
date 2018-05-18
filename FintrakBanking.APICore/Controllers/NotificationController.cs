@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
             errorLogger = _errorLogger;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("workflow/all")]
         public HttpResponseMessage GetNotification()
         {
@@ -45,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("pending-action/all")]
         public HttpResponseMessage GetAllNotifications()
         {

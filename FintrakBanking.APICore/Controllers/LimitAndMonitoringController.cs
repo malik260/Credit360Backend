@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("monitoring-alert-messages")]
         public HttpResponseMessage GetAllEmailAlertMessages()
         {
@@ -45,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-and-monitoring")]
         public HttpResponseMessage GetAllSetEmailAlertMessages()
         {
@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("limit-and-monitoring/{alertId}")]
         public HttpResponseMessage GetAllSetEmailAlertMessages(int alertId)
         {

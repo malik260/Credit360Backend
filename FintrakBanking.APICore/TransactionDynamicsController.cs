@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("transaction-dynamics")]
         public HttpResponseMessage GetTransactionDynamics()
         {
@@ -41,7 +41,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("transaction-dynamics/application-detail/{detailId}")]
         public HttpResponseMessage GetTransactionDynamicsByDetailId(int detailId)
         {
@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region CP template
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("transaction-dynamics-template")]
         public HttpResponseMessage GetTransactionDynamicsTemplate()
         {
@@ -200,7 +200,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet]
+      [HttpGet] [ClaimsAuthorization]  
         [Route("transaction-dynamics-template/application-detail/{detailId}")]
         public HttpResponseMessage GetTransactionDynamicsDefaultByDetailId(int detailId)
         {

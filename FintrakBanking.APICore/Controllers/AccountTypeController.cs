@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Account Type Actions
 
-        [HttpGet][Route("account-type", Name = "GetAccountType")]
+      [HttpGet] [ClaimsAuthorization]  [Route("account-type", Name = "GetAccountType")]
         public HttpResponseMessage GetAllAccountType(HttpRequestMessage request)
         { 
                 try
@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
              
         }
 
-        [HttpGet][Route("account-type/{accountTypId}", Name = "GetAccountTypeById")]
+      [HttpGet] [ClaimsAuthorization]  [Route("account-type/{accountTypId}", Name = "GetAccountTypeById")]
         public HttpResponseMessage GetAllAccountTypeById(HttpRequestMessage request,int accountTypId)
         { 
                 try

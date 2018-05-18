@@ -708,7 +708,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             return responseMsg;
         }
 
-        public async Task<GLAccountDetailsViewModel> APIOfficeAccount(string glNumber)
+        public async Task<GLAccountDetailsViewModel> APIOfficeAccountGetGeneralLedgerAccountRecord(string glNumber)
         {
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -725,7 +725,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
             CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-            HttpResponseMessage response = await client.GetAsync($"api/OfficeAccount/GetGlAccountRecord?accountNumber={glNumber}");
+            HttpResponseMessage response = await client.GetAsync($"api/OfficeAccount/GetGeneralLedgerAccountRecord?accountNumber={glNumber}");
 
             GLAccountDetailsViewModel result = null;
             if (response.IsSuccessStatusCode)
@@ -755,6 +755,52 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             client.Dispose();
             return result;
         }
-     
+
+        public async Task<TDAccountRecordViewModel> APIOfficeAccountGetTermDepositAccountRecord(string teamDepositAccountNumber)
+        {
+            handler.UseDefaultCredentials = true;
+            HttpClient client = new HttpClient(handler);
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+            httpClientInstance = new HttpClient();
+            httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            client.Timeout = TimeSpan.FromSeconds(30);
+            client.BaseAddress = new Uri(API_URL);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Authorization = token;
+            client.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
+
+            CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
+            CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            HttpResponseMessage response = await client.GetAsync($"api/OfficeAccount/GetTermDepositAccountRecord?accountNumber={teamDepositAccountNumber}");
+
+            TDAccountRecordViewModel result = null;
+            if (response.IsSuccessStatusCode)
+            {
+                TDAccountRecordViewModel data = await response.Content.ReadAsAsync<TDAccountRecordViewModel>();
+                result = new TDAccountRecordViewModel
+                {
+                    accountName = data.accountName,
+                    accountNumber = data.accountNumber,
+                    balance = data.balance,
+                    branch = data.branch,
+                    currencyType = data.currencyType,
+                    customerCode  =data.customerCode,
+                    productName = data.productName,
+                    productType = data.productType,
+                    lienAmount = data.lienAmount,
+                     productCode = data.productCode,
+                    response = response,
+                };
+                handler.Dispose();
+                client.Dispose();
+                return result;
+            }
+            handler.Dispose();
+            client.Dispose();
+            return result;
+        }
+
     }
 }
