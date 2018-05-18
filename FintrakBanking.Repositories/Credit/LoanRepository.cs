@@ -4069,7 +4069,7 @@ namespace FintrakBanking.Repositories.Credit
                             //                            : (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
                             //                            ? (d.APPROVEDAMOUNT - d.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.CONTINGENTAMOUNT))
                             //                            : 0)),
-                            //companyInformation = getLoanCustomerCompanyInformation(d.CUSTOMERID),
+                            //companyInformation = (CustomerCompanyInfomationViewModels) getLoanCustomerCompanyInformation(d.CUSTOMERID),
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
                             applicationDate = m.APPLICATIONDATE,
@@ -4080,7 +4080,7 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
         }
 
-        private CustomerCompanyInfomationViewModels getLoanCustomerCompanyInformation(int customerId)
+        public IEnumerable<CustomerCompanyInfomationViewModels> getLoanCustomerCompanyInformation(int customerId)
         {
             var companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION
                                       where a.CUSTOMERID == customerId
@@ -4091,9 +4091,9 @@ namespace FintrakBanking.Repositories.Credit
                                           companyName = a.COMPANYNAME,
                                           companyEmail = a.COMPANYEMAIL,
                                           companyWebsite = a.COMPANYWEBSITE,
-                                          corporateBusinessCategory = a.CORPORATEBUSINESSCATEGORY,
+                                         // corporateBusinessCategory = a.CORPORATEBUSINESSCATEGORY,
                                           paidUpCapital = a.PAIDUPCAPITAL,
-                                          creditRating = a.TBL_CUSTOMER.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                                          //creditRating = a.TBL_CUSTOMER.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                                           previousCreditRating = "",
                                           //companyDirectors = (from b in context.TBL_CUSTOMER_COMPANY_DIRECTOR
                                           //                    where b.CUSTOMERID == a.CUSTOMERID
@@ -4126,7 +4126,7 @@ namespace FintrakBanking.Repositories.Credit
                                           //                                 fullname = e.FIRSTNAME + " " + e.SURNAME,
                                           //                                 isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
                                           //                             }).ToList(),
-                                      }).FirstOrDefault();
+                                      });
 
             return companyInformation;
         }
