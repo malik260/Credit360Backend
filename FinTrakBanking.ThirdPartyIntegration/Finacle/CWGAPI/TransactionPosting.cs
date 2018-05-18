@@ -253,7 +253,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             return output;
 
-
         }
 
        
