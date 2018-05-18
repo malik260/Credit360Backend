@@ -120,7 +120,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<CompanyViewModel> GetCompanies()
         {
-            var companies = (from data in context.TBL_COMPANY
+            var companies = (from data in context.TBL_COMPANY join cont in context.TBL_COUNTRY on data.COUNTRYID equals cont.COUNTRYID
                              select new CompanyViewModel()
                              {
                                  companyId = data.COMPANYID,
@@ -148,7 +148,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                  investmentObjective = data.INVESTMENTOBJECTIVE,
                                  website = data.WEBSITE,
                                  countryId = data.COUNTRYID,
-                                 country = context.TBL_COUNTRY.FirstOrDefault(c => c.COUNTRYID == data.COUNTRYID).NAME ?? string.Empty,
+                                 country =cont.NAME ?? string.Empty,
                                  companyClassId = data.COMPANYCLASSID ?? 1,
                                  companyTypeId = data.COMPANYTYPEID ?? 1,
                                  accountingStandardId = data.ACCOUNTINGSTANDARDID ?? 1,
