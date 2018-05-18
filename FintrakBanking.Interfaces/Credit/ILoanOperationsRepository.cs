@@ -65,10 +65,9 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
         List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID);
         IEnumerable<LoanFeeOperationViewModel> GetLoanChargeFeeByLoanId(int loanId);
-        IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
-        bool addMaturityInstruction(MaturityIntructionViewModel model);
-        IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
-        IEnumerable<MaturityIntructionTypeViewModel> GetMaturityInstructionType();
+        //IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
+        //bool addMaturityInstruction(MaturityIntructionViewModel model);
+        //IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
         IEnumerable<LoanClassificationViewModel> CalculateOverdraftClassification(DateTime applicationDate);
         IEnumerable<LoanViewModel> LoanHistory();
         IEnumerable<RevolvingLoanViewModel> OverDraftHistory();

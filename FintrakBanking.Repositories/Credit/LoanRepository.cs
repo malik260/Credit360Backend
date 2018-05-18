@@ -217,7 +217,7 @@ namespace FintrakBanking.Repositories.Credit
                 BOOKINGDATE = DateTime.Now,
                 OVERDRAFTLIMIT = revolvingLoanInput.overdraftLimit,
                 DAYCOUNTCONVENTIONID = revolvingLoanInput.accrualBasis,
-                ISTEMPORARYOVERDRAFT = revolvingLoanInput.isTemporaryOverdraft,
+                //ISTEMPORARYOVERDRAFT = revolvingLoanInput.isTemporaryOverdraft,
                 REVOLVINGTYPEID = revolvingLoanInput.revolvingTypeId,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 LOANSTATUSID = (int)LoanStatusEnum.Inactive,
