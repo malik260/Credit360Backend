@@ -122,6 +122,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetLoanStatus(int companyId);
 
+        IEnumerable<CustomerCompanyInfomationViewModels> getLoanCustomerCompanyInformation(int customerId);
+
 
     }
 }

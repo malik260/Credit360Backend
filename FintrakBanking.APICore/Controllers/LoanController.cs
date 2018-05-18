@@ -1085,6 +1085,28 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+        [HttpGet]
+        [Route("loan-customer-company-information/{customerId}")]
+        public HttpResponseMessage getLoanCustomerCompanyInformation(int customerId)
+
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.getLoanCustomerCompanyInformation(customerId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
          [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/request-booking/{applicationId}")]
         public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] LoanBookingRequestViewModel entity)
