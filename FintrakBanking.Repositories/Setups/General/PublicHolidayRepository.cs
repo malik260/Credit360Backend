@@ -32,36 +32,38 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public PublicHolidayViewModel GetPublicHoliday(int id)
         {
-            var holiday = context.TBL_PUBLIC_HOLIDAY.Find(id);
 
-            if (holiday != null)
-            {
-                return new PublicHolidayViewModel()
-                {
-                    publicHolidayId = holiday.PUBLICHOLIDAYID,
-                    countryId = holiday.COUNTRYID,
-                    date = holiday.DATE,
-                    countryName = context.TBL_COUNTRY.FirstOrDefault(x => x.COUNTRYID == holiday.COUNTRYID).NAME ?? string.Empty,
-                    description = holiday.DESCRIPTION,
-                    isActive = holiday.ISACTIVE
-                };
-            }
+            var holidays = (from x in context.TBL_PUBLIC_HOLIDAY
+                            join k in context.TBL_COUNTRY on x.COUNTRYID equals k.COUNTRYID
+                            where x.PUBLICHOLIDAYID == id
+                            select new PublicHolidayViewModel
+                            {
+                                publicHolidayId = x.PUBLICHOLIDAYID,
+                                countryId = x.COUNTRYID,
+                                date = x.DATE,
+                                countryName = k.NAME ?? string.Empty,
+                                description = x.DESCRIPTION,
+                                isActive = x.ISACTIVE
+                            });
+           
 
-            return new PublicHolidayViewModel();
+            return holidays.FirstOrDefault();
         }
 
 
         public IEnumerable<PublicHolidayViewModel> GetAllPublicHoliday()
         {
-            var holidays = context.TBL_PUBLIC_HOLIDAY.Select(x => new PublicHolidayViewModel
-            {
-                publicHolidayId = x.PUBLICHOLIDAYID,
-                countryId = x.COUNTRYID,
-                date = x.DATE,
-                countryName = context.TBL_COUNTRY.FirstOrDefault(k => k.COUNTRYID == x.COUNTRYID).NAME ?? string.Empty,
-                description = x.DESCRIPTION,
-                isActive = x.ISACTIVE
-            }).ToList();
+            var holidays = (from x in context.TBL_PUBLIC_HOLIDAY
+                            join k in context.TBL_COUNTRY on x.COUNTRYID equals k.COUNTRYID
+                            select new PublicHolidayViewModel
+                            {
+                                publicHolidayId = x.PUBLICHOLIDAYID,
+                                countryId = x.COUNTRYID,
+                                date = x.DATE,
+                                countryName = k.NAME ?? string.Empty,
+                                description = x.DESCRIPTION,
+                                isActive = x.ISACTIVE
+                            }).ToList();
 
             return holidays;
         }
