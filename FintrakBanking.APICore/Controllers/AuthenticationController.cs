@@ -177,7 +177,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost]// [ClaimsAuthorization]
         [Route("token")]
         public HttpResponseMessage GetToken([FromBody] TokenVM user)
         {
@@ -259,7 +259,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] //[ClaimsAuthorization]
         [Route("endpendingsession")]
         public IHttpActionResult SignOutUser([FromBody] TokenVM user)
         {
@@ -293,7 +293,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] //[ClaimsAuthorization]
         [Route("logOut")]
         public IHttpActionResult LogOut()
         {
