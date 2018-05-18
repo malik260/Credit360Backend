@@ -43,21 +43,21 @@ namespace FintrakBanking.APICore.Providers
         }
 
        // string IPAddress = 
-        public string GetIPAddress()
+        public string GetIpAddress()
         {
-            string IPAddress = string.Empty;
+            string ipAddress = string.Empty;
             IPHostEntry Host = default(IPHostEntry);
-            string Hostname = null;
-            Hostname = System.Environment.MachineName;
-            Host = Dns.GetHostEntry(Hostname);
-            foreach (IPAddress IP in Host.AddressList)
+            string hostname = null;
+            hostname = System.Environment.MachineName;
+            Host = Dns.GetHostEntry(hostname);
+            foreach (IPAddress ip in Host.AddressList)
             {
-                if (IP.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 {
-                    IPAddress = Convert.ToString(IP);
+                    ipAddress = Convert.ToString(ip);
                 }
             }
-            return IPAddress;
+            return ipAddress;
         }
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
@@ -65,7 +65,7 @@ namespace FintrakBanking.APICore.Providers
             try
             {
 
-              string ipAddress = GetIPAddress(); 
+              string ipAddress = GetIpAddress(); 
             UserViewModel user = null;
 
             var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
@@ -78,16 +78,15 @@ namespace FintrakBanking.APICore.Providers
                 username = context.UserName
             };
 
-            ClaimsIdentity identity;
-            var _authRepo = new AuthenticationRepository(_bankingContext);
+                var authRepo = new AuthenticationRepository(_bankingContext);
 
             appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
-            if (appSetup.USE_ACTIVE_DIRECTORY)
+            if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
             {
-                if (Task.FromResult(ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
+                if (Task.FromResult(ValidateActiveDirectoryCredentials(context.UserName, context.Password, out _)).Result)
                 {
-                    user = Task.FromResult(_authRepo.FindUserByUserName(userVM.username)).Result;                   
+                    user = Task.FromResult(authRepo.FindUserByUserName(userVM.username)).Result;                   
                 }
                 else
                 {
@@ -97,7 +96,7 @@ namespace FintrakBanking.APICore.Providers
             }
             else
             {
-                user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
+                user = Task.FromResult(authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
                    .Result;
                 if (user == null)
                 {
@@ -108,7 +107,7 @@ namespace FintrakBanking.APICore.Providers
 
             bool isUserAccountValid;
 
-            if (Task.FromResult(_authRepo.IsUserAccountValid(userVM.username)).Result)
+            if (Task.FromResult(authRepo.IsUserAccountValid(userVM.username)).Result)
             {
                 isUserAccountValid = true;
             }

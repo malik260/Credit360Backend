@@ -127,7 +127,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan/customer/credit-bureau-charge")]
         public HttpResponseMessage AddCustomerCreditBureauCharge(LoanCreditBereauViewModel model)
         {
@@ -159,7 +159,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("credit-bureau-customer-report-status/{status}")]
         public HttpResponseMessage UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel entity)
         {
@@ -191,7 +191,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("multiple-credit-bureau-customer-report-status/{status}")]
         public HttpResponseMessage UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model)
         {
@@ -225,7 +225,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-credit-bureau-report-file-upload")]
         public async Task<HttpResponseMessage> AddCreditBureauReportDocument()
         {
@@ -298,7 +298,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Integration
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("download-credit-bureau-search-result-in-pdf")]
         public HttpResponseMessage GetFullSearchResultInPDF([FromBody] SearchInput searchInput)
         {
@@ -332,7 +332,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("xds-credit-bureau-search")]
         public HttpResponseMessage GetCustomerXDSCreditMatch([FromBody] CreditBureauSearchViewModel searchInfoList)
         {
@@ -366,7 +366,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("crc-credit-bureau-search")]
         public HttpResponseMessage GetCustomerCRCCreditMatch([FromBody] CRCRequestViewModel searchInfo)
         {

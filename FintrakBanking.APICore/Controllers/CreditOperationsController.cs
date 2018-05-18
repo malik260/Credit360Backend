@@ -412,7 +412,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("add-loan-review")]
         public HttpResponseMessage AddOperationReview([FromBody] LoanReviewOperationViewModel model)
         {
@@ -481,7 +481,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("operation-approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {
@@ -508,7 +508,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("operation-loan-rephrasement")]
         public HttpResponseMessage LoanRephrasementOperation([FromBody]LoanReviewOperationViewModel entity)
         {

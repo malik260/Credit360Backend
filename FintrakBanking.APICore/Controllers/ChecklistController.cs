@@ -34,7 +34,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Checklist Definition
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("checklist-definition")]
         public HttpResponseMessage AddChecklistDefinition([FromBody] ChecklistDefinitionViewModel model)
         {
@@ -64,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("checklist-definition/multiple")]
         public HttpResponseMessage AddMultipleChecklistDefinition([FromBody] List<ChecklistDefinitionViewModel> model)
         {
@@ -97,7 +97,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("checklist-definition/multiple-items")]
         public HttpResponseMessage AddMultipleChecklistDefinitionWithMultipleItems([FromBody] ChecklistDefinitionViewModel model)
         {
@@ -334,7 +334,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("checklist-definition/{CheckListDefinitionId}")]
         public HttpResponseMessage UpdateChecklistDefinition(short CheckListDefinitionId, [FromBody] ChecklistDefinitionViewModel model)
         {
@@ -366,7 +366,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("checklist-definition/{CheckListDefinitionId}")]
         public HttpResponseMessage DeleteChecklistDefinition(short CheckListDefinitionId)
         {
@@ -423,7 +423,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("checklist-detail")]
         public HttpResponseMessage AddChecklistDetail([FromBody] ChecklistDetailViewModel model)
         {
@@ -466,7 +466,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("checklist-detail-multiple")]
         public HttpResponseMessage AddChecklistDetailMultiple([FromBody] List<ChecklistDetailViewModel> model)
         {
@@ -605,7 +605,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("checklist-detail/{ChecklistId}")]
         public HttpResponseMessage UpdateChecklistDetail(int ChecklistId, [FromBody] ChecklistDetailViewModel model)
         {
@@ -636,7 +636,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("checklist-detail/{ChecklistId}")]
         public HttpResponseMessage DeleteLoanChecklist(int ChecklistId)
         {
@@ -666,7 +666,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region CheckList Items
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("checklist-item")]
         public HttpResponseMessage AddChecklistItem([FromBody] ChecklistItemViewModel model)
         {
@@ -697,7 +697,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("checklist-item/multiple")]
         public HttpResponseMessage AddMultipleChecklistItem([FromBody] List<ChecklistItemViewModel> model)
         {
@@ -763,7 +763,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("checklist-item/{CheckListItemId}")]
         public HttpResponseMessage UpdateChecklistItem(int CheckListItemId, [FromBody] ChecklistItemViewModel model)
         {
@@ -795,7 +795,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("checklist-item/{CheckListItemId}")]
         public HttpResponseMessage DeleteChecklistItem(int CheckListItemId)
         {
@@ -916,7 +916,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("validate-checklist-details")]
         public HttpResponseMessage ValidateChecklistDetail([FromBody] ValidateChecklistDetailViewModel model)
         {
@@ -937,7 +937,7 @@ namespace FintrakBanking.APICore.Controllers
                  new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
         }
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("validate-condition-precedence")]
         public HttpResponseMessage ValidateConditionPrecedentDetail([FromBody] ConditionPrecedentViewModel model)
         {
@@ -1068,7 +1068,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("update-loan-condition-precedence-status")]
         public HttpResponseMessage UpdateLoanConditionPrecedenceStatus([FromBody] ConditionPrecedentViewModel model)
         {
@@ -1107,7 +1107,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("extend-checklist-deferral-date")]
         public HttpResponseMessage ExtendChecklistDeferralDate([FromBody] ConditionPrecedentViewModel model)
         {
@@ -1146,7 +1146,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("update-provided-checklist")]
         public HttpResponseMessage UpdateProvidedChecklist([FromBody] ConditionPrecedentViewModel model)
         {
@@ -1180,7 +1180,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("checklist-approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {
@@ -1231,7 +1231,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("checklist-type-mapping")]
         public HttpResponseMessage AddChecklistTypeMapping([FromBody] CheckListTypeMappingViewModel model)
         {

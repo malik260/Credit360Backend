@@ -36,6 +36,8 @@ namespace FintrakBanking.Entities.Models
 
         public double EXCHANGERATE { get; set; } 
 
+         //public bool ISTEMPORARYOVERDRAFT { get; set; }
+
         [Required]
         [StringLength(50)]
         public string LOANREFERENCENUMBER { get; set; }

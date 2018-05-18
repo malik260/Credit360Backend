@@ -100,7 +100,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-document")]
         public async Task<HttpResponseMessage> AddLoanDocument()
         {
@@ -161,7 +161,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("loan-document/{loanDocumentId}")]
         public HttpResponseMessage UpdateLoanDocument([FromBody] LoanDocumentViewModel entity, int loanDocumentId)
         {
@@ -205,7 +205,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("loan-document-delete/")]
         public HttpResponseMessage DeleteLoanDocument(string invoiceNo, string applicationNumber)
         {
@@ -266,7 +266,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("credit-bureau-report")]
         public async Task<HttpResponseMessage> AddCreditBureauReportDocument()
         {
@@ -323,7 +323,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("credit-bureau-report/{documentId}")]
         public HttpResponseMessage UpdateCreditBureauReportDocument([FromBody] LoanDocumentViewModel entity, int documentId)
         {
@@ -352,7 +352,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region COMMITTEE MINUTES
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("committee-minutes")]
         public async Task<HttpResponseMessage> AddCommitteDocument()
         {

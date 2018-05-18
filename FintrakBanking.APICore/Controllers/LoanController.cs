@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         #region Loan
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("current-exposure/customer")]
         public HttpResponseMessage GetCurrentCustomerExposure([FromBody] List<CustomerExposure> customer)
         {
@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-booking")]
         public  HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
         {
@@ -246,7 +246,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("gaurantor/product-type/{productTypeId}/application/{applicationReferenceNumber}")]
         public HttpResponseMessage AddLoanGuarantor( [FromBody] LoanGuarantorViewModel entity, short productTypeId, int applicationReferenceNumber)
         {
@@ -547,7 +547,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-booking/approval/{loanBookingRequestId}")]
         public HttpResponseMessage ApproveLoanBooking(ApprovalViewModel model, int loanBookingRequestId)
         {
@@ -590,7 +590,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-booking/fee-override/approval")]
         public HttpResponseMessage ApproveLoaFeeOverride(ApprovalViewModel model)
         {
@@ -696,7 +696,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-search")]
         public HttpResponseMessage SearchLoan([FromBody] LoanSearchViewModel searchModel)
         {
@@ -732,7 +732,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("periodic-schedule")]
         public HttpResponseMessage GeneratePeriodicLoanSchedule([FromBody] LoanPaymentScheduleInputViewModel loanInput)
         {
@@ -753,7 +753,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("daily-schedule")]
         public HttpResponseMessage GenerateDailyLoanSchedule([FromBody] LoanPaymentScheduleInputViewModel loanInput)
         {
@@ -833,7 +833,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-schedule")]
         public HttpResponseMessage GetBookedLoanDetailsForReport(ReportSearchParamViewModel param)
         {
@@ -887,7 +887,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        //[HttpPost][Route("schedule/export")]
+        // [HttpPost] [ClaimsAuthorization][Route("schedule/export")]
         //public HttpResponseMessage ExportScheduleToExcel([FromBody] PaymentScheduleExcelViewModel model)
         //{
         //    try
@@ -1107,7 +1107,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/request-booking/{applicationId}")]
         public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] LoanBookingRequestViewModel entity)
         {

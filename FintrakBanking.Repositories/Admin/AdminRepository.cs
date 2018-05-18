@@ -359,35 +359,44 @@ namespace FintrakBanking.Repositories.Admin
 
         public UserViewModel GetUsersByStaffId(int staffId)
         {
-            return (from u in context.TBL_PROFILE_USER
-                    join st in context.TBL_STAFF
-                    on u.STAFFID equals st.STAFFID
-                    where u.STAFFID == staffId && u.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                    select new UserViewModel()
-                    {
-                        user_id = u.USERID,
-                        staffId = u.STAFFID,
-                        username = u.USERNAME,
-                        isActive = u.ISACTIVE,
-                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                        email = st.EMAIL,
-                        securityQuestion = u.SECURITYQUESTION,
-                        securityAnswer = u.SECURITYANSWER,
-                        password = null,
-                        groupId = u.TBL_PROFILE_USERGROUP.Where(x => x.USERID == u.USERID)
-                                    .Select(x => new UserGroupId
-                                    {
-                                        groupId = x.GROUPID,
-                                        groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
-                                    }).ToList(),
-                        activities = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == u.USERID)
-                                     .Select(a => new UserActivities
-                                     {
-                                         activityId = a.ACTIVITYID,
-                                         userId = a.USERID
-                                     }).ToList(),
-                        isLocked = u.ISLOCKED
-                    }).FirstOrDefault();
+            var data = (from u in context.TBL_PROFILE_USER
+                        join st in context.TBL_STAFF
+                        on u.STAFFID equals st.STAFFID
+                        where u.STAFFID == staffId && u.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        select new UserViewModel()
+                        {
+                            user_id = u.USERID,
+                            staffId = u.STAFFID,
+                            username = u.USERNAME,
+                            isActive = u.ISACTIVE,
+                            staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                            email = st.EMAIL,
+                            securityQuestion = u.SECURITYQUESTION,
+                            securityAnswer = u.SECURITYANSWER,
+                            password = null,
+                            isLocked = u.ISLOCKED
+                        }).FirstOrDefault();
+            if (data != null)
+            {
+                var groupId = (from x in context.TBL_PROFILE_USERGROUP
+                               join g in context.TBL_PROFILE_GROUP on x.GROUPID equals g.GROUPID
+                               where x.USERID == data.user_id
+                               select new UserGroupId
+                               {
+                                   groupId = x.GROUPID,
+                                   groupKey = g.GROUPNAME
+                               }).ToList();
+                data.groupId = groupId;
+                var activities = (from a in context.TBL_PROFILE_ADDITIONALACTIVITY
+                                  where a.USERID == data.user_id
+                                  select new UserActivities
+                                  {
+                                      activityId = a.ACTIVITYID,
+                                      userId = a.USERID
+                                  }).ToList();
+                data.activities = activities;
+            }
+            return data;
         }
 
         public UserViewModel GetSingleUser(int userId)
@@ -776,10 +785,10 @@ namespace FintrakBanking.Repositories.Admin
                                        select act.ACTIVITYNAME.ToLower()).ToList();
 
             var staffRoleAdditionalActivities = (from addAct in context.TBL_PROFILE_STAFF_ROLE_ADT_ACT
-                                        join act in context.TBL_PROFILE_ACTIVITY
-                                        on addAct.ACTIVITYID equals act.ACTIVITYID
-                                        where addAct.STAFFROLEID == staffRoleId
-                                        select act.ACTIVITYNAME.ToLower()).ToList();
+                                                 join act in context.TBL_PROFILE_ACTIVITY
+                                                 on addAct.ACTIVITYID equals act.ACTIVITYID
+                                                 where addAct.STAFFROLEID == staffRoleId
+                                                 select act.ACTIVITYNAME.ToLower()).ToList();
 
             var activities = (from grpAct in context.TBL_PROFILE_GROUP_ACTIVITY
                               join act in context.TBL_PROFILE_ACTIVITY on grpAct.ACTIVITYID
@@ -806,9 +815,9 @@ namespace FintrakBanking.Repositories.Admin
             }
             if (staffRoleAdditionalActivities.Any())
             {
-                listOfActivities = listOfActivities.Concat(staffRoleAdditionalActivities).Distinct().ToList();              
+                listOfActivities = listOfActivities.Concat(staffRoleAdditionalActivities).Distinct().ToList();
             }
-            
+
             return listOfActivities.Distinct().ToList();
         }
 

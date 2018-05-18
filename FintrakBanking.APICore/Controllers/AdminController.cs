@@ -97,7 +97,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("user/approval")]
         public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
@@ -152,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("user")]
         public async Task<HttpResponseMessage> AddUserAsync([FromBody]AppUserViewModel user)
         {
@@ -201,7 +201,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("user/{id}")]
         public async Task<HttpResponseMessage> UpdateUser(int id, [FromBody]AppUserViewModel user)
         {
@@ -233,7 +233,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("manage-account-status/user/{userId}/lock-status/{lockStatus}")]
         public HttpResponseMessage ManageUserAccountStatus(int userId, int lockStatus)
         {
@@ -255,7 +255,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Group
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("group/add")]
         public HttpResponseMessage AddGroup([FromBody] AppGroupViewModel group)
         {
@@ -297,7 +297,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("group/{id}")]
         public HttpResponseMessage UpdateGroup([FromBody] AppGroupViewModel group, short id)
         {
@@ -416,7 +416,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("group/activity/access/{id}")]
         public HttpResponseMessage AddAccessToActivity(int id, [FromBody] ActivitiesUpdateVm model)
         {
@@ -512,7 +512,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("accountmanagement")]
         public IHttpActionResult UpdateApplicationUsers([FromBody] ActiveUserDetails entity)
         {

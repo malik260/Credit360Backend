@@ -102,7 +102,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("call-limit")]
         public HttpResponseMessage AddCallLimit([FromBody] CallLimitViewModel model)
         {
@@ -131,7 +131,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("call-limit/{limitId}")]
         public HttpResponseMessage UpdateCallLimit(int LimitId, [FromBody] CallLimitViewModel model)
         {
@@ -156,7 +156,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("call-limit/{limitId}")]
         public HttpResponseMessage DeleteCallLimit(int LimitId)
         {
@@ -199,7 +199,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("call-memo")]
         public HttpResponseMessage AddCallMemo([FromBody] CallMemoViewModel model)
         {
@@ -225,7 +225,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("call-memo/{memoId}")]
         public HttpResponseMessage UpdateCallMemo(int memoId, [FromBody] CallMemoViewModel model)
         {

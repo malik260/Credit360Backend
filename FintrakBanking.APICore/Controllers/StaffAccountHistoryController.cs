@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approve-reasign-account")]
         public HttpResponseMessage ApproveStaffAccountHistory(ReasignedAccountApprovalViewModel entity)
         {
@@ -57,7 +57,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("reasign-account")]
         public HttpResponseMessage AddStaffAccountHistory(StaffAccountHistoryViewModel entity)
         {
@@ -155,7 +155,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("selected-reasigned-account")]
         public HttpResponseMessage GetSelectedApprovalLoanDetails(ReasignedAccountApprovalViewModel entity)
         {

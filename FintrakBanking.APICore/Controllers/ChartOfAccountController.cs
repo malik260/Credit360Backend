@@ -47,7 +47,29 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-      [HttpGet] [ClaimsAuthorization]   [Route("category/{accountCategoryId}")]
+        [HttpGet]
+        [Route("account-name-by-account-code/")]
+        public HttpResponseMessage GetAccountNameByAccountCode(string accountCode)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var accountInfo = repo.GetAccountNameByAccountCode(accountCode);
+
+                if (accountInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = accountInfo });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [Route("category/{accountCategoryId}")]
         public HttpResponseMessage GetAccountsByCategory(   short accountCategoryId)
         { 
                 try
@@ -116,7 +138,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         // POST api/values
-        //[HttpPost]
+        // [HttpPost] [ClaimsAuthorization]
         //public HttpResponseMessage AddChartOfAccount([FromBody]ChartOfAccountViewModel model)
         //{   try
         //        {
@@ -149,7 +171,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //}
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("")]
         public async Task<HttpResponseMessage> AddTempAccount([FromBody] ChartOfAccountViewModel model)
         {
@@ -192,7 +214,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("{accountId}")]
         public HttpResponseMessage UpdateAccount(short accountId, [FromBody] ChartOfAccountViewModel model)
         {
@@ -228,7 +250,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approval")]
         public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
@@ -333,7 +355,7 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
         // DELETE api/values/5
-        [HttpDelete] [Route("{accountId}")]
+        [HttpDelete] [ClaimsAuthorization] [Route("{accountId}")]
         public HttpResponseMessage DeleteAccount(   int accountId)
         { 
                 try

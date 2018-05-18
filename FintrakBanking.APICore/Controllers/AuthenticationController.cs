@@ -24,28 +24,28 @@ namespace FintrakBanking.APICore.Controllers
     {
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        private IAuthenticationRepository repo;
-        private IAuditTrailRepository auditTrail;
-        private IErrorLogRepository errorLogger;
+        private readonly IAuthenticationRepository _repo;
+        private readonly IAuditTrailRepository _auditTrail;
+        private readonly IErrorLogRepository _errorLogger;
         private IAdminRepository _adminRepo;
-        private IGeneralSetupRepository _genSetup;
-        private FinTrakBankingContext context;
+        private readonly IGeneralSetupRepository _genSetup;
+        private readonly FinTrakBankingContext _context;
 
         public AuthenticationController(
-                IAuthenticationRepository _repo,
-                IErrorLogRepository _errorLogger,
+                IAuthenticationRepository repo,
+                IErrorLogRepository errorLogger,
                 IAdminRepository adminRepo,
-                IAuditTrailRepository _auditTrail,
+                IAuditTrailRepository auditTrail,
                 IGeneralSetupRepository genSetup, 
-                FinTrakBankingContext _context
+                FinTrakBankingContext context
             )
         {
-            repo = _repo;
+            this._repo = repo;
             _adminRepo = adminRepo;
-            errorLogger = _errorLogger;
-            auditTrail = _auditTrail;
+            this._errorLogger = errorLogger;
+            this._auditTrail = auditTrail;
             _genSetup = genSetup;
-            context = _context;
+            this._context = context;
         }
 
       [HttpGet] [ClaimsAuthorization]  
@@ -54,9 +54,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                if (repo != null)
+                if (_repo != null)
                 {
-                    var users = repo.GetAllUsers();
+                    var users = _repo.GetAllUsers();
                     if (users == null)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No user found" });
@@ -68,18 +68,18 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an internal error : { ex.Message}" });
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("user")]
         public async Task<HttpResponseMessage> AddUser([FromBody] UserViewModel user)
         {
             try
             {
-                if (repo.IsUserExits(user.username.ToLower()))
+                if (_repo.IsUserExits(user.username.ToLower()))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "A user with this username already exit" });
                 }
@@ -87,7 +87,7 @@ namespace FintrakBanking.APICore.Controllers
                 user.createdBy = token.GetStaffId;
                 user.lastUpdatedBy = token.GetStaffId;
 
-                var response = await repo.CreateUser(user);
+                var response = await _repo.CreateUser(user);
 
                 if (response)
                 {
@@ -97,19 +97,19 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("user/{userId}")]
         public async Task<HttpResponseMessage> DeleteUser(int userId)
         {
             try
             {
-                var response = await repo.DeleteUser(userId);
+                var response = await _repo.DeleteUser(userId);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation was successful" });
@@ -118,18 +118,18 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("user/{userId}")]
         public async Task<HttpResponseMessage> UpdateUser(int userId, [FromBody] UserViewModel user)
         {
             try
             {
-                var response = await repo.UpdateUser(userId, user);
+                var response = await _repo.UpdateUser(userId, user);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "User has been successfully updated" });
@@ -138,7 +138,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -152,9 +152,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                if (repo != null)
+                if (_repo != null)
                 {
-                    var groups = repo.GetAllGroups().Select(x => new
+                    var groups = _repo.GetAllGroups().Select(x => new
                     {
                         groupId = x.GROUPID,
                         groupName = x.GROUPNAME
@@ -171,31 +171,59 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
-        [HttpPost]
+         [HttpPost]// [ClaimsAuthorization]
         [Route("token")]
         public HttpResponseMessage GetToken([FromBody] TokenVM user)
         {
             try
             {
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
-                var foundUser = repo.FindUserByUserNameAndPassword(user.username, user.password);
+                var foundUser = _repo.FindUserByUserNameAndPassword(user.username, user.password);
 
                 if (foundUser == null)
                 {
-                    var found = repo.GetSingleUserByUserName(user.username);
+                    var found = _repo.GetSingleUserByUserName(user.username);
 
-                   var audit1 = new TBL_AUDIT()
+                    if (found.branchId != null)
                     {
-                        AUDITTYPEID = (short)AuditTypeEnum.Loggedfailed,
-                        STAFFID = found.staffId,
-                        BRANCHID = (short)found.branchId,
-                        DETAIL = $"{user.username} logged failed",
+                        var audit1 = new TBL_AUDIT()
+                        {
+                            AUDITTYPEID = (short)AuditTypeEnum.Loggedfailed,
+                            STAFFID = found.staffId,
+                            BRANCHID = (short)found.branchId,
+                            DETAIL = $"{user.username} logged failed",
+                            IPADDRESS = CommonHelpers.GetUserIP(),
+                            URL = Request.RequestUri.AbsoluteUri,
+                            APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                            SYSTEMDATETIME = DateTime.Now,
+                            TARGETID = -1
+                        };
+
+                        _auditTrail.AddAuditTrail(audit1);
+                    }
+
+                    _context.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Wrong username or password" });
+                }
+
+                var currUser = foundUser;
+
+                var userActivities = _repo.GetUserActivitiesByUser(currUser.user_id);
+
+                if (currUser.branchId != null)
+                {
+                    var audit = new TBL_AUDIT()
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoggedIn,
+                        STAFFID = currUser.staffId,
+                        BRANCHID =(short) currUser.branchId,
+                        DETAIL = $"{currUser.username} logged in",
                         IPADDRESS = CommonHelpers.GetUserIP(),
                         URL = Request.RequestUri.AbsoluteUri,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -203,32 +231,10 @@ namespace FintrakBanking.APICore.Controllers
                         TARGETID = -1
                     };
 
-                    auditTrail.AddAuditTrail(audit1);
-
-                    context.SaveChanges();
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Wrong username or password" });
+                    _auditTrail.AddAuditTrail(audit);
                 }
 
-                var currUser = foundUser;
-
-                var userActivities = repo.GetUserActivitiesByUser(currUser.user_id);
-
-                var audit = new TBL_AUDIT()
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.LoggedIn,
-                    STAFFID = currUser.staffId,
-                    BRANCHID =(short) currUser.branchId,
-                    DETAIL = $"{currUser.username} logged in",
-                    IPADDRESS = CommonHelpers.GetUserIP(),
-                    URL = Request.RequestUri.AbsoluteUri,
-                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = -1
-                };
-
-                auditTrail.AddAuditTrail(audit);
-
-                context.SaveChanges();
+                _context.SaveChanges();
 
                 // build the json response
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -253,13 +259,13 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
             }
         }
 
-        [HttpPost]
+         [HttpPost] //[ClaimsAuthorization]
         [Route("endpendingsession")]
         public IHttpActionResult SignOutUser([FromBody] TokenVM user)
         {
@@ -280,27 +286,27 @@ namespace FintrakBanking.APICore.Controllers
 
                 //auditTrail.AddAuditTrail(audit);
 
-                var res = repo.ClearLoginToken(user.username);
+                var res = _repo.ClearLoginToken(user.username);
                 Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
                 return this.Ok(new { success = true, message = "Session Ended. Login To Continue" });
 
             }
             catch (Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
                 return this.Ok(new   { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
             }
         }
 
-        [HttpPost]
+         [HttpPost] //[ClaimsAuthorization]
         [Route("logOut")]
         public IHttpActionResult LogOut()
         {
             try
             {
-                repo.ClearLoginToken(token.GetUsername);
-                var staffDetails = repo.GetSingleUserByUserName(token.GetUsername);
+                _repo.ClearLoginToken(token.GetUsername);
+                var staffDetails = _repo.GetSingleUserByUserName(token.GetUsername);
 
                 if (staffDetails == null)
                 {
@@ -324,16 +330,16 @@ namespace FintrakBanking.APICore.Controllers
                     TARGETID = -1
                 };
 
-                auditTrail.AddAuditTrail(audit);
+                _auditTrail.AddAuditTrail(audit);
 
-                context.SaveChanges();
+                _context.SaveChanges();
 
                 return this.Ok(new    { success = true, message = "User Logged Off" });
 
             }
             catch (Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return this.Ok(new { success = false, message = $"An unknown error occured {ex.Message}" });
             }
 

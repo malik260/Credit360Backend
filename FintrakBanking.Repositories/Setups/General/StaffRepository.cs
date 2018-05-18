@@ -776,7 +776,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 context.TBL_AUDIT.Add(audit);
                 var output = context.SaveChanges() > 0;
 
-                if (isUpdate == false)
+                if (isUpdate == false && targetUser != null)
                 {
                     targetUser.STAFFID = entity.STAFFID;
                     context.TBL_PROFILE_USER.Add(targetUser);
@@ -1351,7 +1351,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                              OperationId = t.OPERATIONID,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION
-                         }).GroupBy(x => x.StaffId).Select(g => g.FirstOrDefault());
+                         }).ToList();
 
             return staff;
         }

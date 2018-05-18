@@ -44,7 +44,7 @@
       <HintPath>..\packages\ExcelDataReader.3.4.0\lib\net45\ExcelDataReader.dll</HintPath>
     </Reference>
     <Reference Include="GemBox.Spreadsheet">
-      <HintPath>..\..\GemBox.Spreadsheet.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\GemBox.Spreadsheet.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>

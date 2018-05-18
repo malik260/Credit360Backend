@@ -53,13 +53,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("add-employer")]
         public HttpResponseMessage addEmployer(EmployerViewModel employer)
         {
             try
             {
                 employer.companyId = token.GetCompanyId;
+                employer.staffId = token.GetStaffId;
+                employer.userBranchId = (short)token.GetBranchId;
 
                 var data = repo.addEmployer(employer);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
@@ -69,12 +71,16 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("update-employer/{employerId}")]
         public HttpResponseMessage updateEmployer(int employerId,EmployerViewModel employer)
         {
             try
             {
+                employer.companyId = token.GetCompanyId;
+                employer.staffId = token.GetStaffId;
+                employer.userBranchId = (short)token.GetBranchId;
+
                 var data = repo.updateEmployer(employerId,employer);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
@@ -83,7 +89,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             } 
         }
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("delete-employer/{employerId}")]
         public HttpResponseMessage deleteEmployer(int employerId, EmployerViewModel employer)
         {

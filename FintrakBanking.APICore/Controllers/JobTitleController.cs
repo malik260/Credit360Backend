@@ -86,7 +86,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("job-title")]
         public HttpResponseMessage AddUpdateJobTitle([FromBody] JobTitleViewModel entity)
         {

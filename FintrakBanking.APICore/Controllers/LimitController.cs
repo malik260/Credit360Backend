@@ -64,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("limit")]
         public HttpResponseMessage AddLimit([FromBody] LimitViewModel model)
         {
@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("limit/{limitId}")]
         public HttpResponseMessage UpdateLimit(int LimitId, [FromBody] LimitViewModel model)
         {
@@ -116,7 +116,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("limit/{limitId}")]
         public HttpResponseMessage DeleteLimit(int LimitId)
         {
@@ -265,7 +265,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("limit-detail")]
         public HttpResponseMessage AddLimitDetail([FromBody] LimitDetailViewModel model)
         {
@@ -294,7 +294,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("limit-detail-multiple")]
         public HttpResponseMessage AddMultipleLimitDetail([FromBody] List<LimitDetailViewModel> model)
         {
@@ -322,7 +322,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("limit-detail/{limitDetailId}")]
         public HttpResponseMessage UpdateLimitDetail(int limitDetailId, [FromBody] LimitDetailViewModel model)
         {
@@ -348,7 +348,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("limit-detail/{limitDetailId}")]
         public HttpResponseMessage DeleteLimitDetail(int limitDetailId)
         {
@@ -463,7 +463,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("obligor-limit")]
         public HttpResponseMessage AddUpdateObligorLimit([FromBody] ObligorLimitViewModel entity)
         {

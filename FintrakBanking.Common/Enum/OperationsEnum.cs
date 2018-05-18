@@ -73,6 +73,7 @@ namespace FintrakBanking.Common.Enum
         ItemPolicyApproval = 61,
         LoanPerformance = 62,
         CommercialPaperLoanBooking = 63,
-        LoanRecovery = 64
+        LoanRecovery = 64,
+        ChecklistOperation = 65
     }
 }

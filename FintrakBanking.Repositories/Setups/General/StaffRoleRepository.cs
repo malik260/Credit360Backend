@@ -245,7 +245,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 throw;
             }
-           
+
         }
         public bool ValidateStaffRole(string staffRoleCode, string staffRoleName)
         {
@@ -272,35 +272,49 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleCode = c.STAFFROLECODE,
                             staffRoleId = c.STAFFROLEID,
                             operationId = (int)OperationsEnum.StaffRoleCreation,
-                           approvalStatusId = c.TBL_TEMP_PROFILE_STAFF_ROL_GRP.FirstOrDefault().APPROVALSTATUSID,
-                            userGroup = c.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == c.STAFFROLEID).Select(x => new UserGroup
-                            {
-                                groupId = x.GROUPID,
-                                groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
-                               
-                            }).ToList(),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-                            activities = c.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Where(x => x.STAFFROLEID == c.STAFFROLEID).Select(a => new UserActivities
-                            {
-                                activityId = a.ACTIVITYID,
-                                userId = a.STAFFROLEID,
-                                activityName = a.TBL_PROFILE_ACTIVITY.ACTIVITYNAME
-                            }).ToList()
-                        }).GroupBy(x => x.staffRoleId).Select(g => g.FirstOrDefault());
+                        }).ToList();
 
-            return data.ToList();
+            var userGroup = (from x in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP
+                             select new UserGroup
+                             {
+                                 staffRoleId = x.STAFFROLEID,
+                                 groupId = x.GROUPID,
+                                 groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
+                             }).ToList();
+
+            var activities = (from a in context.TBL_TEMP_PROFILE_STAFF_ROLE_AA 
+                              join b in context.TBL_PROFILE_ACTIVITY on a.ACTIVITYID equals b.ACTIVITYID
+                              select new UserActivities
+                              {
+                                  activityId = a.ACTIVITYID,
+                                  userId = a.STAFFROLEID,
+                                  activityName = b.ACTIVITYNAME
+                              }).ToList();
+           
+            foreach (var s in data)
+            {
+                s.userGroup = userGroup.Where(l => l.staffRoleId == s.staffRoleId).ToList();
+                s.activities = activities.Where(u=> u.userId == s.staffRoleId).ToList();
+            }
+
+            return data;
         }
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)OperationsEnum.StaffRoleCreation;
-
-            entity.externalInitialization = false;
-
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    workFlow.LogForApproval(entity);
+                    workFlow.StaffId = entity.staffId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId; 
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.OperationId = (int)OperationsEnum.StaffRoleCreation;
+
+                    workFlow.LogActivity();
+
                     var b = workFlow.NextLevelId ?? 0;
                     if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
@@ -343,14 +357,14 @@ namespace FintrakBanking.Repositories.Setups.General
             var tempGroup = (from a in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP where a.STAFFROLEID == staffRoleId select a).ToList();
             var tempActivities = (from a in context.TBL_TEMP_PROFILE_STAFF_ROLE_AA where a.STAFFROLEID == staffRoleId select a).ToList();
 
-          foreach(var item in tempGroup)
+            foreach (var item in tempGroup)
             {
                 item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                 item.ISCURRENT = false;
                 item.DATEAPPROVED = DateTime.Now;
             }
-                
-           
+
+
             List<TBL_PROFILE_STAFF_ROLE_GROUP> userGroups = new List<TBL_PROFILE_STAFF_ROLE_GROUP>();
             List<TBL_PROFILE_STAFF_ROLE_ADT_ACT> userActivities = new List<TBL_PROFILE_STAFF_ROLE_ADT_ACT>();
 

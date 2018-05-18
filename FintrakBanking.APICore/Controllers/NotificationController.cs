@@ -65,7 +65,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("pending-action/{notificationId}")]
         public HttpResponseMessage UpdateNotificationState(int notificationId)
         {
@@ -87,7 +87,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("pending-action")]
         public HttpResponseMessage AddNotificationState(NotificationViewModel model)
         {

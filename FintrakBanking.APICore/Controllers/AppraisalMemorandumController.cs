@@ -55,7 +55,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("appraisal-memorandum")]
         public HttpResponseMessage AddAppraisalMemorandum([FromBody] AppraisalMemorandumViewModel entity)
         {
@@ -80,7 +80,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("appraisal-memorandum/{appraisalMemorandumId}")]
         public HttpResponseMessage UpdateAppraisalMemorandum([FromBody] AppraisalMemorandumViewModel entity, int appraisalMemorandumId)
         {
@@ -105,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("appraisal-memorandum/forward")]
         public HttpResponseMessage ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
         {
@@ -159,7 +159,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
         /*
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("appraisal-memorandum/forward")]
         public HttpResponseMessage ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
         {
@@ -170,7 +170,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;*/
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("appraisal-memorandum/privilege")]
         public HttpResponseMessage GetUserPrivilege([FromBody] AuthoritySignatureViewModel entity)
         {
@@ -296,7 +296,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("appraisal-memorandum/forward-secretariat")]
         public HttpResponseMessage SecretariatForwardAppraisalMemorandum([FromBody] ForwardCommitteeCamViewModel entity)
         {
@@ -425,7 +425,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("application-monitoring-triggers/{applicationId}")]
         public HttpResponseMessage SaveApplicationMonitoringTriggers(int applicationId, [FromBody] List<MonitoringTriggersViewModel> entity)
         {
@@ -444,7 +444,7 @@ namespace FintrakBanking.APICore.Controllers
 
         
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("repayment-schedule-terms")]
         public HttpResponseMessage SaveRepaymentScheduleAndTerms([FromBody] RepaymentScheduleTermsViewModel entity)
         {
@@ -459,7 +459,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("product-limit-validation")]
         public HttpResponseMessage SaveProductLimitValidation([FromBody] ProductLimitValidationViewModel entity)
         {
@@ -522,7 +522,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+         [HttpPost] [ClaimsAuthorization]
         [Route("recommended-collateral")]
         public HttpResponseMessage AddRecommendedCollateral([FromBody] RecommendedCollateralViewModel entity)
         {
@@ -538,7 +538,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+       [HttpPut] [ClaimsAuthorization]
         [Route("recommended-collateral")]
         public HttpResponseMessage UpdateRecommendedCollateral([FromBody] RecommendedCollateralViewModel entity)
         {
