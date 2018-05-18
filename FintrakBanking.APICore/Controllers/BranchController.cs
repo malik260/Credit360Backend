@@ -17,12 +17,12 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/setups")]
     public class BranchController : ApiControllerBase
     {
-        private IBranchRepository repo;
-        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        private readonly IBranchRepository _repo;
+        readonly TokenDecryptionHelper _token = new TokenDecryptionHelper();
 
         public BranchController(IBranchRepository repo)
         {
-            this.repo = repo;
+            this._repo = repo;
         }
 
         #region Region Setup
@@ -32,8 +32,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllRegion();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+                var branchRegionViewModels = _repo.GetAllRegion();
+                var data = branchRegionViewModels;
+                var regionViewModels = data as BranchRegionViewModel[] ?? data.ToArray();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = regionViewModels, count = regionViewModels.Count() });
             }
             catch (Exception ex)
             {
@@ -54,19 +56,19 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
-                    if (repo.ValidateRegionName(entity.regionName.Trim()))
+                    if (_repo.ValidateRegionName(entity.regionName.Trim()))
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = $"Region with name {entity.regionName} already exist." });
                     }
                 }
               
-                entity.companyId = token.GetCompanyId;
-                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = _token.GetCompanyId;
+                entity.userBranchId = (short)_token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
+                entity.createdBy = _token.GetStaffId;
 
-                var data = repo.AddUpdateBranchRegion(entity);
+                var data = _repo.AddUpdateBranchRegion(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -91,8 +93,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllBranch();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+                var data = _repo.GetAllBranch();
+                var branchViewModels = data as BranchViewModel[] ?? data.ToArray();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = branchViewModels, count = branchViewModels.Count() });
             }
             catch (Exception ex)
             {
@@ -106,10 +109,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var branch = repo.GetBranch(id);
+                var branch = _repo.GetBranch(id);
                 return Request.CreateResponse<BranchViewModel>(HttpStatusCode.OK, branch);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -121,10 +124,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var branch = repo.GetAllBranchByCompanyId(companyid);
+                var branch = _repo.GetAllBranchByCompanyId(companyid);
                 return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -136,11 +139,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var branch = repo.GetAllBranchByCompanyId(token.GetCompanyId);
+                var branch = _repo.GetAllBranchByCompanyId(_token.GetCompanyId);
                 return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
 
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -152,11 +155,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                model.createdBy = token.GetStaffId;
-                model.userBranchId = (short)token.GetBranchId;
+                model.createdBy = _token.GetStaffId;
+                model.userBranchId = (short)_token.GetBranchId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
-                model.companyId = token.GetCompanyId;
-                var result = await repo.AddBranch(model);
+                model.companyId = _token.GetCompanyId;
+                var result = await _repo.AddBranch(model);
                 if (result)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Branch has been created successfully" });
@@ -165,7 +168,7 @@ namespace FintrakBanking.APICore.Controllers
               new { success = false, message = "There was an error saving this record, Branch Name Exist" });
 
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -178,11 +181,11 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                model.createdBy = token.GetStaffId;
-                model.userBranchId = (short)token.GetBranchId;
+                model.createdBy = _token.GetStaffId;
+                model.userBranchId = (short)_token.GetBranchId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
-                model.companyId = token.GetCompanyId;
-                var result = await repo.UpdateBranch(model, id);
+                model.companyId = _token.GetCompanyId;
+                var result = await _repo.UpdateBranch(model, id);
                 if (result)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Branch has been updated successfully" });
@@ -204,11 +207,11 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                model.createdBy = token.GetStaffId;
-                model.userBranchId = (short)token.GetBranchId;
+                model.createdBy = _token.GetStaffId;
+                model.userBranchId = (short)_token.GetBranchId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
-                model.companyId = token.GetCompanyId;
-                var result =  repo.UpdateBranches(model, id);
+                model.companyId = _token.GetCompanyId;
+                var result =  _repo.UpdateBranches(model, id);
                 if (result)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Changes saved successfully" });
@@ -230,12 +233,12 @@ namespace FintrakBanking.APICore.Controllers
             {
                 UserInfo user = new UserInfo()
                 {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
+                    BranchId = _token.GetBranchId,
+                    companyId = _token.GetCompanyId,
+                    staffId = _token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
                 };
-                var branch = await repo.DeleteBranch(id, user);
+                var branch = await _repo.DeleteBranch(id, user);
                 return Request.CreateResponse(HttpStatusCode.OK, Ok(branch));
             }
             catch (System.Exception ex)
@@ -251,7 +254,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetSearchedBranch(searchQuery);
+                var data = _repo.GetSearchedBranch(searchQuery);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

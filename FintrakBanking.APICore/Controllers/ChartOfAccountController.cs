@@ -47,7 +47,29 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-      [HttpGet] [ClaimsAuthorization]   [Route("category/{accountCategoryId}")]
+        [HttpGet]
+        [Route("account-name-by-account-code/")]
+        public HttpResponseMessage GetAccountNameByAccountCode(string accountCode)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var accountInfo = repo.GetAccountNameByAccountCode(accountCode);
+
+                if (accountInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = accountInfo });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [Route("category/{accountCategoryId}")]
         public HttpResponseMessage GetAccountsByCategory(   short accountCategoryId)
         { 
                 try

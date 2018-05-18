@@ -458,6 +458,13 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return data;
         }
 
+        public string GetAccountNameByAccountCode(string accountCode)
+        {
+            return (from c in context.TBL_CHART_OF_ACCOUNT
+                    where c.ACCOUNTCODE.Trim() == accountCode.Trim()
+                    select c.ACCOUNTNAME).FirstOrDefault();
+        }
+
         public IEnumerable<ChartOfAccountViewModel> GetAccountsByCategory(short accountCategoryId)
         {
             var data = GetAllAccountsDetails().Where(x => x.accountCategoryId == accountCategoryId).ToList();
