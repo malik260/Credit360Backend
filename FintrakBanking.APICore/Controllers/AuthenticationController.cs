@@ -184,7 +184,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
-                var foundUser = _repo.FindUserByUserNameAndPassword(user.username, user.password);
+                var foundUser = _repo.FindUserByUserNameAndPassword(user.username, user.password, false);
 
                 if (foundUser == null)
                 {
