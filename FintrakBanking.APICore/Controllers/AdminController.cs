@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
         private readonly ICanAuthorizationRepository I;
         private readonly IAuditTrailRepository audit;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
-        
+
         public AdminController(IAdminRepository _repo,
                                 IErrorLogRepository _errorLogger,
                                 ICanAuthorizationRepository _I,
@@ -36,7 +36,7 @@ namespace FintrakBanking.APICore.Controllers
             this.errorLogger = _errorLogger;
             this.audit = _audit;
             this.I = _I;
-          
+
         }
 
         public AdminController()
@@ -45,15 +45,37 @@ namespace FintrakBanking.APICore.Controllers
 
         private string username { get { return token.GetUsername; } }
 
+        #region DashBoard
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("dashboard")]
+        public HttpResponseMessage GetDashBoardUserRole()
+        {
+            try
+            {
+                var dash = repo.GetDashboardStaffRole(token.GetStaffId);
 
+                if (dash == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = dash });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
 
         #region Users
 
         // AdminController cont = new AdminController();
 
 
-         
-       [HttpGet] [ClaimsAuthorization]
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("users")]
         public HttpResponseMessage GetAllUsers()
         {
@@ -74,9 +96,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-     
-      //  [ClaimsAuthorizationAttribute(ClaimType = "logincode", ClaimValue =   username )]
-      [HttpGet]   [ClaimsAuthorization]
+
+        //  [ClaimsAuthorizationAttribute(ClaimType = "logincode", ClaimValue =   username )]
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("users-by-staffId/")]
         public HttpResponseMessage GetUsersByStaffId(int staffId)
         {
@@ -97,7 +120,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("user/approval")]
         public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
@@ -107,8 +131,8 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.staffId = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.userIPAddress = Request.RequestUri.Host;              
-                
+                entity.userIPAddress = Request.RequestUri.Host;
+
                 var data = repo.GoForApproval(entity);
 
                 if (data)
@@ -129,7 +153,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-      [HttpGet]  
+        [HttpGet]
         [ClaimsAuthorization]
         [Route("user/approvals/temp")]
         public HttpResponseMessage GetUsersAwaitingApproval()
@@ -152,7 +176,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("user")]
         public async Task<HttpResponseMessage> AddUserAsync([FromBody]AppUserViewModel user)
         {
@@ -175,7 +200,7 @@ namespace FintrakBanking.APICore.Controllers
                     user.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                     user.applicationUrl = HttpContext.Current.Request.Path;
                     user.companyId = token.GetCompanyId;
-                    var result =  repo.CreateUser(user);
+                    var result = repo.CreateUser(user);
                     if (result)
                     {
                         //repo.CreateUser(user);
@@ -201,7 +226,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("user/{id}")]
         public async Task<HttpResponseMessage> UpdateUser(int id, [FromBody]AppUserViewModel user)
         {
@@ -213,7 +239,7 @@ namespace FintrakBanking.APICore.Controllers
                 user.userIPAddress = HttpContext.Current.Request.Url.AbsoluteUri;
                 user.applicationUrl = HttpContext.Current.Request.Path;
                 user.companyId = token.GetCompanyId;
-                var data =  repo.UpdateUser(id, user);
+                var data = repo.UpdateUser(id, user);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -233,7 +259,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("manage-account-status/user/{userId}/lock-status/{lockStatus}")]
         public HttpResponseMessage ManageUserAccountStatus(int userId, int lockStatus)
         {
@@ -255,7 +282,8 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Group
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("group/add")]
         public HttpResponseMessage AddGroup([FromBody] AppGroupViewModel group)
         {
@@ -297,7 +325,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("group/{id}")]
         public HttpResponseMessage UpdateGroup([FromBody] AppGroupViewModel group, short id)
         {
@@ -334,7 +363,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-      [HttpGet]   [ClaimsAuthorization]
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("groups")]
         public HttpResponseMessage GetAllGroups()
         {
@@ -353,7 +383,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet]   [ClaimsAuthorization]
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("group/{id}")]
         public HttpResponseMessage GetGroupById(int id)
         {
@@ -374,7 +405,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Activities
-      [HttpGet]   [ClaimsAuthorization]
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("activities/parents")]
         public HttpResponseMessage GetAllActivities()
         {
@@ -395,7 +427,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-      [HttpGet]   [ClaimsAuthorization]
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("group/activities/mapped")]
         public HttpResponseMessage GetGroupActivities()
         {
@@ -416,7 +449,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("group/activity/access/{id}")]
         public HttpResponseMessage AddAccessToActivity(int id, [FromBody] ActivitiesUpdateVm model)
         {
@@ -448,7 +482,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Audit Trail
-      [HttpGet]   [ClaimsAuthorization]
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("audit/log")]
         public HttpResponseMessage GetAuditLog([FromUri] int page, [FromUri] int itemsPerPage)
         {
@@ -471,7 +506,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet]   [ClaimsAuthorization]
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("audit/log/search")]
         public HttpResponseMessage FilterAuditLog([FromUri] int page, string searchQuery)
         {
@@ -500,35 +536,37 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Administration
-      [HttpGet]   [ClaimsAuthorization]
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("accountmanagement")]
         public IHttpActionResult GetAllApplicationUsers([FromUri] int page, [FromUri] int itemsPerPage)
         {
             var data = repo.GetActiveUsers(token.GetCompanyId);
             int totalItems = data.Count();
             data = data.OrderBy(x => x.staffName);//.Skip(page).Take(itemsPerPage);               
-            return Ok( new { success = true, result = data.ToList(), count = data.Count() });
-             
+            return Ok(new { success = true, result = data.ToList(), count = data.Count() });
+
         }
 
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("accountmanagement")]
         public IHttpActionResult UpdateApplicationUsers([FromBody] ActiveUserDetails entity)
         {
             try
             {
                 if (entity != null)
-            {
+                {
                     string message = string.Empty;
                     entity.lastUpdatedBy = token.GetUserId;
-                var data = repo.UpdateUserStatus(entity, out message);
-                if(data)
-                return Ok(new { success = data, result = data, message = message == string.Empty ?  $"Account is cleared" : message });                 
-            }
+                    var data = repo.UpdateUserStatus(entity, out message);
+                    if (data)
+                        return Ok(new { success = data, result = data, message = message == string.Empty ? $"Account is cleared" : message });
+                }
 
-            return Ok(new { success = false,  message = $"Account not fund" });
-        }
+                return Ok(new { success = false, message = $"Account not fund" });
+            }
             catch (Exception ex)
             {
                 return Ok(new { success = false, message = $"Action Failed" });
