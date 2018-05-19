@@ -4080,7 +4080,7 @@ namespace FintrakBanking.Repositories.Credit
                             //                            : (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
                             //                            ? (d.APPROVEDAMOUNT - d.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.CONTINGENTAMOUNT))
                             //                            : 0)),
-                            //companyInformation = (CustomerCompanyInfomationViewModels) getLoanCustomerCompanyInformation(d.CUSTOMERID),
+                            
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
                             applicationDate = m.APPLICATIONDATE,
@@ -4090,7 +4090,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return data.ToList();
         }
-
+         
         public IEnumerable<CustomerCompanyInfomationViewModels> getLoanCustomerCompanyInformation(int customerId)
         {
             var companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION
