@@ -10,6 +10,7 @@ namespace FintrakBanking.Interfaces.Setups.General
     public interface IProductRepository
     {
         IEnumerable<ProductCategoryViewModel> GetAllProductCategory();
+        IEnumerable<RevolvingTypeViewModel> GetRevolvingTypes();
         IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId);
         IEnumerable<LookupViewModel> GetAllProductClass();
         IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId);
