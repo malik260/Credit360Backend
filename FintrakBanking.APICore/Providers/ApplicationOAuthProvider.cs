@@ -77,25 +77,37 @@ namespace FintrakBanking.APICore.Providers
                 username = context.UserName
             };
 
-                var authRepo = new AuthenticationRepository(_bankingContext);
+            var authRepo = new AuthenticationRepository(_bankingContext);
 
             appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
+            ClaimsIdentity identity;
+
             if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
             {
-                if (Task.FromResult(ValidateActiveDirectoryCredentials(context.UserName, context.Password, out _)).Result)
+                    var _user = _bankingContext.TBL_PROFILE_USER.Where(x => x.USERNAME.ToLower() == context.UserName.ToLower());
+
+                    if(!_user .Any())
+                    {
+                        context.SetError("invalid_grant", "This user is not profiled on this application. Contact the system administrator");
+                        return;
+                    }
+
+
+                    if (Task.FromResult(ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
                 {
                     user = Task.FromResult(authRepo.FindUserByUserName(userVM.username)).Result;                   
                 }
                 else
                 {
-                    context.SetError("invalid_grant", "The user name is not registered in the application. Contact the system administrator.");
+
+                    context.SetError("invalid_grant", "The user name or password is incorrect");
                     return;
                 }
             }
             else
             {
-                user = Task.FromResult(authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
+                user = Task.FromResult(authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password, true ))
                    .Result;
                 if (user == null)
                 {
@@ -235,6 +247,7 @@ namespace FintrakBanking.APICore.Providers
             {
                 using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, appSetup.ACTIVE_DIRECTORY_USERNAME, appSetup.ACTIVE_DIRECTORY_PASSWORD))
                 {
+                  
                     bool isValid = pc.ValidateCredentials(userName, password);
                     if (isValid)
                     {
