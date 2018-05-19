@@ -126,7 +126,7 @@ namespace FintrakBanking.APICore.Providers
                     currIdentity.AddClaim(new Claim("branchId", user.branchId.ToString()));
                     currIdentity.AddClaim(new Claim("countryId", user.countryId.ToString()));
                     currIdentity.AddClaim(new Claim("userId", user.user_id.ToString()));
-                    currIdentity.AddClaim(new Claim("logincode", user.logincode.ToString()));
+                    currIdentity.AddClaim(new Claim("logincode", user.logincode == null ? Guid.NewGuid().ToString() : user.logincode));
                     var today = DateTime.Now;
                     TimeSpan duration = new TimeSpan(exipredHr, exipredMin, exipredSec);//(exipredHr, 0, 0);
 
