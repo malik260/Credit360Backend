@@ -77,13 +77,13 @@
     <Compile Include="DocumentModels\TBL_MEDIA_JOB_REQUEST_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_KYC_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_LOAN_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_LOAN_MATURITY_INSTR.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_PICTURE.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_SIGNATURE.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_MEDIA_COLLATERAL_DOCS.cs" />
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\OracleDatabaseConfiguration.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
@@ -442,16 +442,26 @@
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
+    <Compile Include="OracleDatabaseConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StagingModels\CWG_TREASURY_RATE_TBL.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
     <Compile Include="StagingModels\STG_BRANCH.cs" />
+    <Compile Include="StagingModels\STG_CASA_BALANCE.cs" />
+    <Compile Include="StagingModels\STG_CASA_DAILY_BALANCE.cs" />
     <Compile Include="StagingModels\STG_CURRENCY_EXCHANGERATE.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />
+    <Compile Include="StagingModels\STG_CUSTOMER_CLIENT.cs" />
+    <Compile Include="StagingModels\STG_CUSTOMER_DIRECTOR.cs" />
+    <Compile Include="StagingModels\STG_CUSTOMER_SHAREHOLDER.cs" />
+    <Compile Include="StagingModels\STG_CUSTOMER_SUPPLIER.cs" />
+    <Compile Include="StagingModels\STG_FINSCAN.cs" />
     <Compile Include="StagingModels\STG_LOAN_MART.cs" />
+    <Compile Include="StagingModels\STG_LOAN_WATCHLIST.cs" />
     <Compile Include="StagingModels\STG_PRICE_INDEX_RATE.cs" />
     <Compile Include="StagingModels\STG_STAFF.cs" />
+    <Compile Include="StagingModels\STG_STAFFMIS.cs" />
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
+    <Compile Include="StagingModels\TBL_CUSTOMER_SIGNATORY.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

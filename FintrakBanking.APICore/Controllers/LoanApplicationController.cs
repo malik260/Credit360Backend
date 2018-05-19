@@ -307,7 +307,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
         {

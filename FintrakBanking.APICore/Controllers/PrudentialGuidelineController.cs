@@ -60,6 +60,8 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 guideline.companyId = token.GetCompanyId;
+                guideline.staffId = token.GetStaffId;
+                guideline.userBranchId = (short)token.GetBranchId;
 
                 var data = repo.AddGuideline(guideline);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
@@ -75,6 +77,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                guideline.companyId = token.GetCompanyId;
+                guideline.staffId = token.GetStaffId;
+                guideline.userBranchId = (short)token.GetBranchId;
+
+
                 var data = repo.UpdateGuideline(guideline, prudentialGuidelineId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }

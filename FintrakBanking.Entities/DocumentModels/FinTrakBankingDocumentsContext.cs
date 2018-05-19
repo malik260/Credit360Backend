@@ -32,7 +32,9 @@ namespace FintrakBanking.Entities.DocumentModels
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 
-            //modelBuilder.HasDefaultSchema("FINTRAKBANKINGDOCUMENTS");
+            var databaseUsername = System.Configuration.ConfigurationManager.AppSettings["DocumentOracleDatabaseUsername"];
+
+            modelBuilder.HasDefaultSchema(databaseUsername); 
 
 
             modelBuilder.Entity<TBL_CUSTOMER_CREDIT_BUREAU>()

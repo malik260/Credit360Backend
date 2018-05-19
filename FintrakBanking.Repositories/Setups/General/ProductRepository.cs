@@ -769,52 +769,52 @@ namespace FintrakBanking.Repositories.Setups.General
 
                                                   //approvalStatusId = c.APPROVALSTATUSID,
                                                   operationId = atrail.OPERATIONID,
-                                                  currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == c.PRODUCTID && curr.DELETED == false).Select(pc => new ProductCurrencyViewModel()
-                                                  {
-                                                      productId = c.PRODUCTID,
-                                                      productCurrencyId = pc.PRODUCTCURRENCYID,
-                                                      currencyId = pc.CURRENCYID,
-                                                      currencyName = pc.TBL_CURRENCY.CURRENCYCODE + " -- " + pc.TBL_CURRENCY.CURRENCYNAME
-                                                  }).ToList(),
-                                                  fees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(curr => curr.PRODUCTID == c.PRODUCTID && c.DELETED == false).Select(pf => new ProductFeeViewModel()
-                                                  {
-                                                      productFeeId = pf.PRODUCTFEEID,
-                                                      productId = pf.PRODUCTID,
-                                                      feeId = pf.CHARGEFEEID,
-                                                      feeName = pf.TBL_CHARGE_FEE.CHARGEFEENAME,
-                                                      feeIntervalName = pf.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
-                                                      feeTargetName = pf.TBL_CHARGE_FEE.TBL_FEE_TARGET.FEETARGETNAME,
-                                                      feeTypeName = pf.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,
-                                                  //    glAccountCode = pf.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
-                                                   //   glAccountName = pf.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
-                                                      companyId = pf.COMPANYID,
+                                                  //currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == c.PRODUCTID && curr.DELETED == false).Select(pc => new ProductCurrencyViewModel()
+                                                  //{
+                                                  //    productId = c.PRODUCTID,
+                                                  //    productCurrencyId = pc.PRODUCTCURRENCYID,
+                                                  //    currencyId = pc.CURRENCYID,
+                                                  //    currencyName = pc.TBL_CURRENCY.CURRENCYCODE + " -- " + pc.TBL_CURRENCY.CURRENCYNAME
+                                                  //}).ToList(),
+                                                  //fees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(curr => curr.PRODUCTID == c.PRODUCTID && c.DELETED == false).Select(pf => new ProductFeeViewModel()
+                                                  //{
+                                                  //    productFeeId = pf.PRODUCTFEEID,
+                                                  //    productId = pf.PRODUCTID,
+                                                  //    feeId = pf.CHARGEFEEID,
+                                                  //    feeName = pf.TBL_CHARGE_FEE.CHARGEFEENAME,
+                                                  //    feeIntervalName = pf.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                                                  //    feeTargetName = pf.TBL_CHARGE_FEE.TBL_FEE_TARGET.FEETARGETNAME,
+                                                  //    feeTypeName = pf.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,
+                                                  //    //    glAccountCode = pf.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                                                  //    //   glAccountName = pf.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                                                  //    companyId = pf.COMPANYID,
 
-                                                      rateValue = pf.RATEVALUE,
-                                                      dependentAmount = pf.DEPENDENTAMOUNT,
+                                                  //    rateValue = pf.RATEVALUE,
+                                                  //    dependentAmount = pf.DEPENDENTAMOUNT,
 
-                                                      createdBy = pf.CREATEDBY,
-                                                      dateTimeCreated = pf.DATETIMECREATED,
+                                                  //    createdBy = pf.CREATEDBY,
+                                                  //    dateTimeCreated = pf.DATETIMECREATED,
 
-                                                  }).ToList(),
+                                                  //}).ToList(),
                                                   collaterals = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(coll => coll.PRODUCTID == c.PRODUCTID && coll.DELETED == false).Select(prodColl => new ProductCollateralTypeViewModel()
                                                   {
                                                       productId = prodColl.PRODUCTID,
                                                       productCollateralId = prodColl.PRODUCTCOLLATERALTYPEID,
                                                       collateralTypeName = prodColl.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
                                                   }).ToList(),
-                                                  ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == c.PRODUCTID).Select(d => new ProductBehaviourViewModel()
-                                                  {
-                                                      customerLimit = d.CUSTOMER_LIMIT,
-                                                      collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
-                                                      collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
-                                                      productLimit = d.PRODUCT_LIMIT,
-                                                      allowFundUsage = (bool)d.ALLOWFUNDUSAGE,
-                                                      isInvoiceBased = d.ISINVOICEBASED,
-                                                      isTemporaryOverDraft = d.ISTEMPORARYOVERDRAFT != null ? (bool)d.ISTEMPORARYOVERDRAFT : false,
-                                                      requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
+                                                  //ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == c.PRODUCTID).Select(d => new ProductBehaviourViewModel()
+                                                  //{
+                                                  //    customerLimit = d.CUSTOMER_LIMIT,
+                                                  //    collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                                                  //    collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+                                                  //    productLimit = d.PRODUCT_LIMIT,
+                                                  //    allowFundUsage = (bool)d.ALLOWFUNDUSAGE,
+                                                  //    isInvoiceBased = d.ISINVOICEBASED,
+                                                  //    isTemporaryOverDraft = d.ISTEMPORARYOVERDRAFT != null ? (bool)d.ISTEMPORARYOVERDRAFT : false,
+                                                  //    requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
 
 
-                                                  }).FirstOrDefault(),
+                                                  //}).FirstOrDefault(),
                                                   dateTimeUpdated = c.DATETIMEUPDATED,
                                                   deleted = c.DELETED,
                                                   deletedBy = c.DELETEDBY,

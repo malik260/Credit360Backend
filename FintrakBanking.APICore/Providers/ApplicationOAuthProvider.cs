@@ -33,8 +33,7 @@ namespace FintrakBanking.APICore.Providers
             this._bankingContext = new FinTrakBankingContext();
         }
 
-
-
+       
         public string GetIpAddress(HttpRequestMessage request)
         {
             if (!request.Properties.ContainsKey(HttpContext)) return null;
@@ -127,7 +126,7 @@ namespace FintrakBanking.APICore.Providers
                     currIdentity.AddClaim(new Claim("branchId", user.branchId.ToString()));
                     currIdentity.AddClaim(new Claim("countryId", user.countryId.ToString()));
                     currIdentity.AddClaim(new Claim("userId", user.user_id.ToString()));
-                    currIdentity.AddClaim(new Claim("logincode", user.logincode.ToString()));
+                    currIdentity.AddClaim(new Claim("logincode", user.logincode == null ? Guid.NewGuid().ToString() : user.logincode));
                     var today = DateTime.Now;
                     TimeSpan duration = new TimeSpan(exipredHr, exipredMin, exipredSec);//(exipredHr, 0, 0);
 
@@ -156,21 +155,27 @@ namespace FintrakBanking.APICore.Providers
             }
             catch (Exception ex)
             {
+                string innerMessage = "";
 
-              
-              //  context.SetError("invalid_grant", "The user name or password is incorrect.");
-                if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
-                {
-                    context.SetError("invalid_grant", ex.Message.Replace("1001", ""));
-                }
+                if (ex.InnerException != null)
+                    innerMessage = ex.InnerException.Message;
 
-                if (ex.Message.Contains("network-related"))
-                {
-                    context.SetError("invalid_grant", "Server error: Contact System Administrator");
-                }else
-                {
-                    context.SetError("invalid_grant", "Server error: Contact System Administrator");
-                }
+                context.SetError("invalid_grant", ex.Message + " - inner exception - " + innerMessage );
+
+                //  context.SetError("invalid_grant", "The user name or password is incorrect.");
+                //if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
+                //{
+                //    context.SetError("invalid_grant", ex.Message.Replace("1001", ""));
+                //}
+
+                //if (ex.Message.Contains("network-related"))
+                //{
+                //    context.SetError("invalid_grant", "Server error: Contact System Administrator");
+                //}else
+                //{
+                //    context.SetError("invalid_grant", ex.Message);
+                //    //  context.SetError("invalid_grant", "Server error: Contact System Administrator");
+                //}
             }
         }
 

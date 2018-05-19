@@ -193,9 +193,10 @@ namespace FintrakBanking.Repositories.Setups.General
             UserViewModel data;
 
             var appSetup = context.TBL_SETUP_GLOBAL.Single();
-            var  result =    CheckSessionState(username);
+            var  result =    CheckSessionState(username) ;
+            if (result == null) return null;
 
-            if (result.state > 0)
+            if (    result.state > 0 )
             {
                 data = UserLoginDetails(username, password);
              
