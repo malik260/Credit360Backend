@@ -12,6 +12,10 @@ namespace FintrakBanking.Interfaces.Admin
 {
     public interface IAdminRepository
     {
+        #region 
+        LookupViewModel GetDashboardStaffRole(int staffId);
+#endregion
+
         #region Users
         IEnumerable<UserViewModel> GetAllUsers();
 
