@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("STG_BRANCH")]
+    [Table("FINTRAKSTAGING.STG_BRANCH")]
     public partial class STG_BRANCH
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -5,7 +5,6 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
 
-    [DbConfigurationType(typeof(OracleDatabaseConfiguration))]
     public partial class FinTrakBankingStagingContext : DbContext
     {
         public FinTrakBankingStagingContext()
@@ -27,16 +26,9 @@ namespace FintrakBanking.Entities.StagingModels
         public virtual DbSet<STG_LOAN_WATCHLIST> STG_LOAN_WATCHLIST { get; set; }
         public virtual DbSet<STG_PRICE_INDEX_RATE> STG_PRICE_INDEX_RATE { get; set; }
         public virtual DbSet<TBL_CUSTOMER_SIGNATORY> TBL_CUSTOMER_SIGNATORY { get; set; }
-        public virtual DbSet<STG_STAFF> STG_STAFF { get; set; }
 
-        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-
-            var databaseUsername = System.Configuration.ConfigurationManager.AppSettings["StagingOracleDatabaseUsername"];
-
-            modelBuilder.HasDefaultSchema(databaseUsername);
-
             modelBuilder.Entity<STG_BRANCH>()
                 .Property(e => e.ID)
                 .HasPrecision(38, 0);

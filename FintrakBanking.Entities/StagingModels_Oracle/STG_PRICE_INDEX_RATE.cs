@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("STG_PRICE_INDEX_RATE")]
+    [Table("FINTRAKSTAGING.STG_PRICE_INDEX_RATE")]
     public partial class STG_PRICE_INDEX_RATE
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
