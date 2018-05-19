@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("STG_CUSTOMER")]
+    [Table("FINTRAKSTAGING.STG_CUSTOMER")]
     public partial class STG_CUSTOMER
     {
         [Key]

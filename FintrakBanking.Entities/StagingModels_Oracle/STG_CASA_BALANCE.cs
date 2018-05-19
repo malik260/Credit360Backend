@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("STG_CASA_DAILY_BALANCE")]
-    public partial class STG_CASA_DAILY_BALANCE
+    [Table("FINTRAKSTAGING.STG_CASA_BALANCE")]
+    public partial class STG_CASA_BALANCE
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal ID { get; set; }
@@ -28,8 +28,5 @@ namespace FintrakBanking.Entities.StagingModels
         public decimal? TOTALOUTFLOW { get; set; }
 
         public DateTime? BALANCEDATE { get; set; }
-
-        [StringLength(3)]
-        public string CURRENCY { get; set; }
     }
 }

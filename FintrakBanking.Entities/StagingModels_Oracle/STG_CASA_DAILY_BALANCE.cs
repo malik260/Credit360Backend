@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("STG_CASA_DAILY_BALANCE")]
+    [Table("FINTRAKSTAGING.STG_CASA_DAILY_BALANCE")]
     public partial class STG_CASA_DAILY_BALANCE
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

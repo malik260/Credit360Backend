@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("STG_LOAN_MART")]
-    public partial class STG_LOAN_MART
+    [Table("FINTRAKSTAGING.STG_LOAN_WATCHLIST")]
+    public partial class STG_LOAN_WATCHLIST
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal ID { get; set; }
@@ -24,10 +24,6 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(255)]
         public string BRANCHCODE { get; set; }
 
-        public DateTime? MATURITYDATE { get; set; }
-
-        [Key]
-        [Column(Order = 0)]
         [StringLength(255)]
         public string LOANREFERENCENUMBER { get; set; }
 
@@ -61,28 +57,5 @@ namespace FintrakBanking.Entities.StagingModels
 
         [StringLength(255)]
         public string SUBCLASSIFICATION { get; set; }
-
-        public decimal CASABALANCE { get; set; }
-
-        [Key]
-        [Column(Order = 1)]
-        public DateTime REPORTDATE { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string STAFFCODE { get; set; }
-
-        [Required]
-        [StringLength(20)]
-        public string SECTOR { get; set; }
-
-        [StringLength(20)]
-        public string SUBSECTOR { get; set; }
-
-        [StringLength(20)]
-        public string CURRENCY { get; set; }
-
-        [Column(TypeName = "float")]
-        public decimal? EXCHANGERATE { get; set; }
     }
 }

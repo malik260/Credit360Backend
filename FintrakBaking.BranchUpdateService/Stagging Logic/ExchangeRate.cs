@@ -16,19 +16,19 @@ namespace FintrakBaking.BranchUpdateService.Stagging_Logic
         private IGeneralSetupRepository genSetup;
         public bool MigrateExchangeRate()
         {
-            var data = stagingContext.CWG_TREASURY_RATE_TBL.Where(d => d.DATE == genSetup.GetApplicationDate())
-                .Select(d => new STG_PRICE_INDEX_RATE
-                {
-                    BID_RATE = d.BID_RATE,
-                    CURRENCY = d.CURRENCY,
-                    OFFER_RATE = d.OFFER_RATE,
-                    PRICEDATE = d.DATE,
-                    PRICEINDEX = d.PRODUCT
-                });
+            //var data = stagingContext.CWG_TREASURY_RATE_TBL.Where(d => d.DATE == genSetup.GetApplicationDate())
+            //    .Select(d => new STG_PRICE_INDEX_RATE
+            //    {
+            //        BID_RATE = d.BID_RATE,
+            //        CURRENCY = d.CURRENCY,
+            //        OFFER_RATE = d.OFFER_RATE,
+            //        PRICEDATE = d.DATE,
+            //        PRICEINDEX = d.PRODUCT
+            //    });
 
-            stagingContext.STG_PRICE_INDEX_RATE.AddRange(data);
+            //stagingContext.STG_PRICE_INDEX_RATE.AddRange(data);
 
-            return stagingContext.SaveChanges() > 0;
+            return true;// stagingContext.SaveChanges() > 0;
 
         }
 
