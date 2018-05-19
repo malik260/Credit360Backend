@@ -199,6 +199,13 @@ namespace FintrakBanking.Repositories.Credit
 
             var loanReferenceNumber = GenerateLoanReferenceNumber(model.customerId, model.productId, model.productTypeId);
 
+            var product_Behaviour = context.TBL_PRODUCT_BEHAVIOUR.Find(model.productId);
+            revolvingLoanInput.revolvingTypeId = (short)LoanRevolvingTypeEnum.NormalOverdraft;
+
+            if (revolvingLoanInput.revolvingTypeId == 0)
+                revolvingLoanInput.revolvingTypeId = (short)LoanRevolvingTypeEnum.NormalOverdraft; 
+
+
             var data = new TBL_LOAN_REVOLVING
             {
                 CUSTOMERID = model.customerId,
@@ -3643,6 +3650,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                             join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                            join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                             join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                             where m.COMPANYID == companyId && d.DELETED == false && m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted
                             orderby m.AVAILMENTDATE descending, m.DATETIMECREATED descending
@@ -3707,7 +3715,7 @@ namespace FintrakBanking.Repositories.Credit
                                 newApplicationDate = m.APPLICATIONDATE,
                                 dateTimeCreated = d.DATETIMECREATED,
                                 availmentDate = m.AVAILMENTDATE,
-                                //isTemporaryOverdraft = (from pb in context.TBL_PRODUCT_BEHAVIOUR where pb.PRODUCTID == d.APPROVEDPRODUCTID select pb).FirstOrDefault().ISTEMPORARYOVERDRAFT,
+                                isTemporaryOverdraft = p.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault() != null ? p.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault().ISTEMPORARYOVERDRAFT : false,
 
                                 loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                                 //customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
@@ -3990,6 +3998,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                        join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         where d.LOANAPPLICATIONDETAILID == applicationDetailId && d.DELETED == false && s.DELETED == false
                         orderby s.LOAN_BOOKING_REQUESTID descending
@@ -4034,6 +4043,8 @@ namespace FintrakBanking.Repositories.Credit
                             effectiveDate = (DateTime)d.EFFECTIVEDATE,
                             expiryDate = (DateTime)d.EXPIRYDATE,
 
+                            isTemporaryOverdraft = p.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault() != null ? p.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault().ISTEMPORARYOVERDRAFT : false,
+
                             relationshipOfficerId = m.RELATIONSHIPOFFICERID,
                             relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
                             relationshipManagerId = m.RELATIONSHIPMANAGERID,
@@ -4069,7 +4080,7 @@ namespace FintrakBanking.Repositories.Credit
                             //                            : (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
                             //                            ? (d.APPROVEDAMOUNT - d.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.CONTINGENTAMOUNT))
                             //                            : 0)),
-                            //companyInformation = (CustomerCompanyInfomationViewModels) getLoanCustomerCompanyInformation(d.CUSTOMERID),
+                            
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
                             applicationDate = m.APPLICATIONDATE,
@@ -4079,7 +4090,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return data.ToList();
         }
-
+         
         public IEnumerable<CustomerCompanyInfomationViewModels> getLoanCustomerCompanyInformation(int customerId)
         {
             var companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION

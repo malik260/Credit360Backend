@@ -81,6 +81,15 @@ namespace FintrakBanking.Repositories.Setups.General
             });
         }
 
+        public IEnumerable<RevolvingTypeViewModel> GetRevolvingTypes()
+        {
+            return this.context.TBL_LOAN_REVOLVING_TYPE.Select(r => new RevolvingTypeViewModel()
+            {
+                revolvingTypeId = r.REVOLVINGTYPEID,
+                revolvingTypeName = r.REVOLVINGTYPENAME
+            });
+        }
+
         public IEnumerable<LookupViewModel> GetAllProductClass()
         {
             return (from data in context.TBL_PRODUCT_CLASS
@@ -703,6 +712,7 @@ namespace FintrakBanking.Repositories.Setups.General
             try
             {
                 var pendingProductsChanges = (from c in context.TBL_TEMP_PRODUCT
+                                              //join r in context.TBL_TEMP_PRODUCT_CURRENCY on c.PRODUCTID equals r.PRODUCTID
                                               join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
                                               join atrail in context.TBL_APPROVAL_TRAIL on c.PRODUCTID equals atrail.TARGETID
                                               where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
@@ -769,13 +779,13 @@ namespace FintrakBanking.Repositories.Setups.General
 
                                                   //approvalStatusId = c.APPROVALSTATUSID,
                                                   operationId = atrail.OPERATIONID,
-                                                  //currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == c.PRODUCTID && curr.DELETED == false).Select(pc => new ProductCurrencyViewModel()
+                                                  //currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == c.PRODUCTID && curr.DELETED == false).Any() ? context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == c.PRODUCTID && curr.DELETED == false).Select(pc => new ProductCurrencyViewModel()
                                                   //{
                                                   //    productId = c.PRODUCTID,
                                                   //    productCurrencyId = pc.PRODUCTCURRENCYID,
                                                   //    currencyId = pc.CURRENCYID,
                                                   //    currencyName = pc.TBL_CURRENCY.CURRENCYCODE + " -- " + pc.TBL_CURRENCY.CURRENCYNAME
-                                                  //}).ToList(),
+                                                  //}).ToList() : null,
                                                   //fees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(curr => curr.PRODUCTID == c.PRODUCTID && c.DELETED == false).Select(pf => new ProductFeeViewModel()
                                                   //{
                                                   //    productFeeId = pf.PRODUCTFEEID,

@@ -106,9 +106,14 @@ namespace FintrakBanking.Repositories.Setups.General
             var result = CheckSessionState(username);
 
             if (result.state > 0)
-                throw new CustomException(result.errorMessage);
+                 result = new SessionStatusInfo
+                {
+                    loginCode = Guid.NewGuid(),
+                    state = 0,
+                    errorMessage = "",
+                };
 
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username);
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username.ToLower());
 
             if (_user != null)
             {
@@ -118,7 +123,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
                                 join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
                                 join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                                where p.USERNAME == username
+                                where p.USERNAME.ToLower() == username.ToLower()
                                 select new UserViewModel
                                 {
                                     companyId = coy.COMPANYID,
@@ -158,7 +163,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private SessionStatusInfo CheckSessionState(string username)
         {
             Guid loginCode = Guid.Empty;
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username.ToLower()); // && x.PASSWORD == password);
             dynamic result = null;
           
 
@@ -177,9 +182,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     result = new SessionStatusInfo
                     {
-                        loginCode = Guid.Empty,
-                        state = 1,
-                        errorMessage = "You are already logged in",                        
+                        loginCode = Guid.Parse ( _user.LOGINCODE) ,//  Guid.Empty,
+                        state = 0,
+                        errorMessage = "",                        
                     };                   
 
                 }
@@ -188,24 +193,26 @@ namespace FintrakBanking.Repositories.Setups.General
          return   result;
         }
 
-        public UserViewModel FindUserByUserNameAndPassword(string username, string password)
+        public UserViewModel FindUserByUserNameAndPassword(string username, string password, bool state)
         {
             UserViewModel data;
 
             var appSetup = context.TBL_SETUP_GLOBAL.Single();
-            var  result =    CheckSessionState(username) ;
+            SessionStatusInfo result =    CheckSessionState(username) ;
+
+            
             if (result == null) return null;
 
-            if (    result.state > 0 )
-            {
-                data = UserLoginDetails(username, password);
+            //if (    result.state > 0 )
+            //{
+            //    data = UserLoginDetails(username, password);
              
-                data.sessionStatusInfo = result;
+            //    data.sessionStatusInfo = result;
 
-                return data;
-            }
+            //    return data;
+            //}
 
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username.ToLower()); // && x.PASSWORD == password);
             if (result.state == 0 && _user != null)
             {
                 try
@@ -213,6 +220,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     if (appSetup.USE_ACTIVE_DIRECTORY)
                     {
                         data = FindUserByUserName(username);
+                        data.sessionStatusInfo = result;
                         _user.LASTLOGINDATE = DateTime.Now;
                     }
                     else
@@ -400,7 +408,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return (from u in context.TBL_PROFILE_USER
                     join st in context.TBL_STAFF
                     on u.STAFFID equals st.STAFFID
-                    where u.USERNAME == userName && u.ISACTIVE && !u.ISLOCKED
+                    where u.USERNAME.ToLower() == userName.ToLower() && u.ISACTIVE && !u.ISLOCKED
                     select new UserViewModel()
                     {
                         user_id = u.USERID,

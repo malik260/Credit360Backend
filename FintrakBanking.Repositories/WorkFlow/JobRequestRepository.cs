@@ -438,11 +438,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobTypeId = x.JOBTYPEID,
                     jobTypeName = x.TBL_JOB_TYPE.JOBTYPENAME,
                     senderStaffId = x.SENDERSTAFFID,
-                    senderRole = context.TBL_STAFF.Where(c => c.STAFFID == x.SENDERSTAFFID).FirstOrDefault().TBL_STAFF_ROLE.STAFFROLENAME, //x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
-                         //senderRole = (from s in context.TBL_STAFF where s.STAFFID == x.SENDERSTAFFID select s.TBL_STAFF_ROLE.STAFFROLENAME.Single()).ToString(), //x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
-                         // senderUnit = context.TBL_DEPARTMENT_UNIT.Where(c=>c.DEPARTMENTUNITID == context.TBL_STAFF.Where(z=>z.STAFFID == x.SENDERSTAFFID).FirstOrDefault().DEPARTMENTUNITID).FirstOrDefault().DEPARTMENTUNITNAME, // +"(" + x.TBL_DEPARTMENT.DEPARTMENTNAME +")",
-                         // senderDepartment =  x.TBL_DEPARTMENT.DEPARTMENTNAME,
-                         receiverStaffId = (int)x.RECEIVERSTAFFID,
+                    senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                    //senderUnit = context.TBL_DEPARTMENT_UNIT.Where(c=>c.DEPARTMENTUNITID == context.TBL_STAFF.Where(z=>z.STAFFID == x.SENDERSTAFFID).FirstOrDefault().DEPARTMENTUNITID).FirstOrDefault().DEPARTMENTUNITNAME, // +"(" + x.TBL_DEPARTMENT.DEPARTMENTNAME +")",
+                    //senderDepartment =  x.TBL_DEPARTMENT.DEPARTMENTNAME,
+                    receiverStaffId = (int)x.RECEIVERSTAFFID,
                     reassignedTo = x.REASSIGNEDTO,
                     isReassigned = x.ISREASSIGNED,
                     isAcknowledged = x.ISACKNOWLEDGED,
@@ -460,19 +459,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                     acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
                     systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
                     loggedInStaffId = staffId,
-                    //from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
-                   // fromBranchName = context.TBL_BRANCH.Where(c=>c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
-                    //to = allstaff.FirstOrDefault(s => s.id == x.RECEIVERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.RECEIVERSTAFFID).name,
-                   // assignee = allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO).name,
-                  //  toBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.RECEIVERSTAFFID).FirstOrDefault().BRANCHNAME,
+                    from  = x.TBL_STAFF.FIRSTNAME == null ? "n/a" :  x.TBL_STAFF.FIRSTNAME + " "+ x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
+                    fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME: "n/a": "n/a",
+                         //from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
+                         // fromBranchName = context.TBL_BRANCH.Where(c=>c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
+                    to = x.TBL_STAFF1.FIRSTNAME == null ? "n/a" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
+                    assignee = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.MIDDLENAME + " " + x.TBL_STAFF2.LASTNAME,
+                         // assignee = allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO).name,
+                         //  toBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.RECEIVERSTAFFID).FirstOrDefault().BRANCHNAME,
                          //from = allstaff.GetStaffName(s => s.id == x.SenderStaffId),
                          //to = allstaff.GetStaffName(s => s.id == x.ReceiverStaffId),
                          //assignee = allstaff.GetStaffName(s => s.id == x.ReassignedTo),
                      }).OrderByDescending(x=>x.arrivalDate).Take(500);
-            //foreach(var job in data)
-            //{
-            //   job.senderRole = context.TBL_STAFF.Find(job.senderStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
-            //}
+
            
             return data;
         }
