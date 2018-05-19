@@ -6,41 +6,37 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("STG_BRANCH")]
     public partial class STG_BRANCH
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public decimal ID { get; set; }
-
         [Key]
-        [StringLength(255)]
+        [StringLength(10)]
         public string BRANCHCODE { get; set; }
 
-        [StringLength(255)]
+        [Required]
+        [StringLength(100)]
         public string BRANCHNAME { get; set; }
 
-        [StringLength(255)]
-        public string COMPANYCODE { get; set; }
-
-        [StringLength(255)]
+        [StringLength(500)]
         public string ADDRESSLINE1 { get; set; }
 
-        [StringLength(255)]
+        [StringLength(500)]
         public string ADDRESSLINE2 { get; set; }
 
-        [StringLength(255)]
-        public string COMMENTS { get; set; }
-
-        [StringLength(255)]
+        [Required]
+        [StringLength(10)]
         public string STATECODE { get; set; }
 
-        [StringLength(255)]
+        [StringLength(10)]
+        public string SHORTNAME { get; set; }
+
+        [Required]
+        [StringLength(10)]
         public string CITYCODE { get; set; }
 
-        [StringLength(255)]
+        [StringLength(50)]
         public string STATENAME { get; set; }
 
-        [StringLength(255)]
+        [StringLength(100)]
         public string CITYNAME { get; set; }
     }
 }

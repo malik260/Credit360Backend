@@ -6,9 +6,11 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
+    [Table("FINTRAKBANKINGDOCUMENTS.TBL_MEDIA_LOAN_DOCUMENTS")]
     public partial class TBL_MEDIA_LOAN_DOCUMENTS
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int DOCUMENTID { get; set; }
 
         [Required]

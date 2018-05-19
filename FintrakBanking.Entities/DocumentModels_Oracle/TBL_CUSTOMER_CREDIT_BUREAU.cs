@@ -6,25 +6,18 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class TBL_MEDIA_LOAN_DOCUMENTS
+    [Table("FINTRAKBANKINGDOCUMENTS.TBL_CUSTOMER_CREDIT_BUREAU")]
+    public partial class TBL_CUSTOMER_CREDIT_BUREAU
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int DOCUMENTID { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string LOANAPPLICATIONNUMBER { get; set; }
-
-        [StringLength(50)]
-        public string LOANREFERENCENUMBER { get; set; }
-
-        public int? LOAN_BOOKING_REQUESTID { get; set; }
+        public int CUSTOMERCREDITBUREAUID { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string DOCUMENTTITLE { get; set; }
-
-        public short DOCUMENTTYPEID { get; set; }
+        public string DOCUMENT_TITLE { get; set; }
 
         [Required]
         [StringLength(400)]
@@ -39,12 +32,12 @@ namespace FintrakBanking.Entities.DocumentModels
 
         public DateTime SYSTEMDATETIME { get; set; }
 
-        [StringLength(50)]
-        public string PHYSICALFILENUMBER { get; set; }
-
-        [StringLength(250)]
-        public string PHYSICALLOCATION { get; set; }
-
         public int CREATEDBY { get; set; }
+
+        public DateTime DATETIMECREATED { get; set; }
+
+        public int? LASTUPDATEDBY { get; set; }
+
+        public DateTime? DATETIMEUPDATED { get; set; }
     }
 }

@@ -5,12 +5,10 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
 
-    [DbConfigurationType(typeof(OracleDatabaseConfiguration))]
     public partial class FinTrakBankingDocumentsContext : DbContext
     {
-        
         public FinTrakBankingDocumentsContext()
-            : base("name=FinTrakBankingDocumentsContext")
+            : base("name=FinTrakBankingDocumentsContext1")
         {
         }
 
@@ -31,25 +29,21 @@ namespace FintrakBanking.Entities.DocumentModels
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-
-            //modelBuilder.HasDefaultSchema("FINTRAKBANKINGDOCUMENTS");
-
-
             modelBuilder.Entity<TBL_CUSTOMER_CREDIT_BUREAU>()
                 .Property(e => e.DOCUMENT_TITLE)
                 .IsUnicode(false);
 
-            //modelBuilder.Entity<TBL_MEDIA_COLLATERAL_DOCUMENTS>()
-            //    .Property(e => e.ISPRIMARYDOCUMENT)
-            //    .HasPrecision(38, 0);
+            modelBuilder.Entity<TBL_MEDIA_COLLATERAL_DOCUMENTS>()
+                .Property(e => e.ISPRIMARYDOCUMENT)
+                .HasPrecision(38, 0);
 
             modelBuilder.Entity<TBL_MEDIA_STAFF_PICTURE>()
                 .Property(e => e.DOCUMENT_TITLE)
                 .IsUnicode(false);
 
-            //modelBuilder.Entity<TBL_TEMP_MEDIA_COLLATERAL_DOCS>()
-            //    .Property(e => e.ISPRIMARYDOCUMENT)
-            //    .HasPrecision(38, 0);
+            modelBuilder.Entity<TBL_TEMP_MEDIA_COLLATERAL_DOCS>()
+                .Property(e => e.ISPRIMARYDOCUMENT)
+                .HasPrecision(38, 0);
 
             modelBuilder.Entity<TBL_MEDIA_LOAN_MATURITY_INSTR>()
                 .Property(e => e.DOCUMENT_TITLE)

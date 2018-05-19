@@ -5,7 +5,6 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
 
-    [DbConfigurationType(typeof(OracleDatabaseConfiguration))]
     public partial class FinTrakBankingStagingContext : DbContext
     {
         public FinTrakBankingStagingContext()
@@ -30,9 +29,6 @@ namespace FintrakBanking.Entities.StagingModels
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-
-            //modelBuilder.HasDefaultSchema("FINTRAKSTAGING");
-
             modelBuilder.Entity<STG_BRANCH>()
                 .Property(e => e.ID)
                 .HasPrecision(38, 0);

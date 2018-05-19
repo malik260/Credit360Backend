@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class TBL_MEDIA_LOAN_DOCUMENTS
+    public partial class TBL_LOAN_COMMITTEE_MINUTES
     {
         [Key]
         public int DOCUMENTID { get; set; }

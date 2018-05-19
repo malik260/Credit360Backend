@@ -376,7 +376,8 @@ namespace FintrakBanking.Entities.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            var databaseUsername = System.Configuration.ConfigurationSettings.AppSettings["BankingOracleDatabaseUsername"];
+          
+            var databaseUsername = System.Configuration.ConfigurationManager.AppSettings["BankingOracleDatabaseUsername"];
             modelBuilder.HasDefaultSchema(databaseUsername); //"FINTRAKBANKING"
 
             //modelBuilder.Entity<ELMAH_ERROR>()

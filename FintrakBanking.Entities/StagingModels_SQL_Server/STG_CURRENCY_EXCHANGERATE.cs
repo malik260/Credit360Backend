@@ -19,8 +19,7 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(50)]
         public string RATECODE { get; set; }
 
-
-        [Column(name: "DATE_")]
+        [Column(TypeName = "date")]
         public DateTime DATE { get; set; }
 
         public double EXCHANGERATE { get; set; }
