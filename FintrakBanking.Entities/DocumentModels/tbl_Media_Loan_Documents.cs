@@ -46,7 +46,6 @@ namespace FintrakBanking.Entities.DocumentModels
         public string PHYSICALLOCATION { get; set; }
 
         public int CREATEDBY { get; set; }
-
         public bool ISPRIMARYDOCUMENT { get; set; }
     }
 }
