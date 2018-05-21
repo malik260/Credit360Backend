@@ -903,6 +903,8 @@ namespace FintrakBanking.APICore.Controllers
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userBranchId = (short)token.GetBranchId;
+                entity.createdBy = token.GetStaffId;
+
 
                 var response = await type.UpdateCollateralTypes(collateralTypeId, entity);
                 if (!response)
