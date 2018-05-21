@@ -667,6 +667,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
 
                 var data = repo.AddCustomerCompanyInfomation(entity);
                 if (data)
@@ -705,6 +706,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = (short)token.GetCompanyId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
 
                 if (repo.ValidateModifiedPhoneRecord(entity.customerId))
                 {
@@ -755,6 +757,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = (short)token.GetCompanyId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
 
                 var data = repo.AddCustomerAddresses(entity);
                 if (data)
@@ -848,6 +851,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = (short)token.GetCompanyId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
 
                 var data = repo.AddCustomerEmploymentHistory(entity);
                 if (data)
@@ -911,6 +915,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
 
                 var data = repo.AddCustomerCompanyDirector(entity);
                 if (data)
@@ -969,6 +974,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = (short)token.GetCompanyId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
 
                 var data = repo.AddCustomerClientSupplier(entity);
                 if (data)
@@ -1005,6 +1011,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
 
                 var data = repo.AddCustomerIdentification(entity);
                 if (data)
@@ -1041,6 +1048,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = (short)token.GetCompanyId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
 
                 var data = repo.AddCustomerNextOfKin(entity);
                 if (data)
@@ -1862,7 +1870,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.staffId = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
-
+              
                 var data = repo.GoForApproval(entity);
 
                 if (data)
