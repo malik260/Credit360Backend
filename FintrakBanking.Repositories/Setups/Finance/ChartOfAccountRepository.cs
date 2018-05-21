@@ -30,6 +30,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
         private IIntegrationWithCWGAPI cwpAIP;
+
+        public bool USE_THIRD_PARTY_INTEGRATION { get; private set; }
+
         public ChartOfAccountRepository(FinTrakBankingContext _context,
                                                 IAuditTrailRepository _auditTrail,
                                                 IGeneralSetupRepository genSetup,
@@ -42,6 +45,10 @@ namespace FintrakBanking.Repositories.Setups.Finance
             auditTrail = _auditTrail;
             this.workFlow = _workFlow;
             level = _level;
+
+            var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
+
         }
 
         private bool SaveAll()
@@ -298,9 +305,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public async Task<bool> AddTempAccount(ChartOfAccountViewModel accountModel)
         {
-
-             if(cwpAIP.ValidateGLNumber(accountModel.accountCode) == null)
-                throw new Exception("Not Fund");
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                if (cwpAIP.ValidateGLNumber(accountModel.accountCode) == null)
+                    throw new Exception($"Account Number {accountModel.accountCode} does not exist on the core banking application");
+            }
 
 
             if (accountModel.currencies.Count < 1)

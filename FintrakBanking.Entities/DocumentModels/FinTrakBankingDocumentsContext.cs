@@ -5,8 +5,10 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
 
+    [DbConfigurationType(typeof(OracleDatabaseConfiguration))]
     public partial class FinTrakBankingDocumentsContext : DbContext
     {
+        
         public FinTrakBankingDocumentsContext()
             : base("name=FinTrakBankingDocumentsContext")
         {
@@ -25,15 +27,42 @@ namespace FintrakBanking.Entities.DocumentModels
         public virtual DbSet<TBL_MEDIA_STAFF_PICTURE> TBL_MEDIA_STAFF_PICTURE { get; set; }
         public virtual DbSet<TBL_MEDIA_STAFF_SIGNATURE> TBL_MEDIA_STAFF_SIGNATURE { get; set; }
         public virtual DbSet<TBL_TEMP_MEDIA_COLLATERAL_DOCS> TBL_TEMP_MEDIA_COLLATERAL_DOCS { get; set; }
+        public virtual DbSet<TBL_MEDIA_LOAN_MATURITY_INSTR> TBL_MEDIA_LOAN_MATURITY_INSTR { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+
+            var databaseUsername = System.Configuration.ConfigurationManager.AppSettings["DocumentOracleDatabaseUsername"];
+
+            modelBuilder.HasDefaultSchema(databaseUsername); 
+
+
             modelBuilder.Entity<TBL_CUSTOMER_CREDIT_BUREAU>()
                 .Property(e => e.DOCUMENT_TITLE)
                 .IsUnicode(false);
 
+            //modelBuilder.Entity<TBL_MEDIA_COLLATERAL_DOCUMENTS>()
+            //    .Property(e => e.ISPRIMARYDOCUMENT)
+            //    .HasPrecision(38, 0);
+
             modelBuilder.Entity<TBL_MEDIA_STAFF_PICTURE>()
                 .Property(e => e.DOCUMENT_TITLE)
+                .IsUnicode(false);
+
+            //modelBuilder.Entity<TBL_TEMP_MEDIA_COLLATERAL_DOCS>()
+            //    .Property(e => e.ISPRIMARYDOCUMENT)
+            //    .HasPrecision(38, 0);
+
+            modelBuilder.Entity<TBL_MEDIA_LOAN_MATURITY_INSTR>()
+                .Property(e => e.DOCUMENT_TITLE)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<TBL_MEDIA_LOAN_MATURITY_INSTR>()
+                .Property(e => e.FILENAME)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<TBL_MEDIA_LOAN_MATURITY_INSTR>()
+                .Property(e => e.FILEEXTENSION)
                 .IsUnicode(false);
         }
     }

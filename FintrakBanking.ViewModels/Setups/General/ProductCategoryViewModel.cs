@@ -8,6 +8,12 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string productCategoryName { get; set; }
     }
 
+    public class RevolvingTypeViewModel
+    {
+        public short revolvingTypeId { get; set; }
+        public string revolvingTypeName { get; set; }
+    }
+
 
     public class productClassProcess
     {

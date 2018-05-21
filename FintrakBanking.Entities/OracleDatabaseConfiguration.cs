@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FintrakBanking.Entities.Models
+namespace FintrakBanking.Entities
 {
     public class OracleDatabaseConfiguration : DbConfiguration
     {

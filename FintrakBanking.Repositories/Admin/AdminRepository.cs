@@ -37,6 +37,21 @@ namespace FintrakBanking.Repositories.Admin
             workFlow = _workFlow;
             level = _level;
         }
+        #region DashBoard
+        public LookupViewModel GetDashboardStaffRole(int staffId)
+        {
+            var dash = (from st in context.TBL_STAFF 
+                        join sr in context.TBL_STAFF_ROLE on st.STAFFROLEID equals sr.STAFFROLEID
+                        where st.STAFFID == staffId
+                        select new LookupViewModel
+                       {
+                          lookupId = (short)sr.STAFFROLEID,
+                          lookupName = sr.STAFFROLENAME
+                       }).FirstOrDefault();
+            return dash;
+        }
+        #endregion
+
 
         #region Users
 
