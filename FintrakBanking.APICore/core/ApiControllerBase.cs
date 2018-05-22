@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.core
     {
         public override void OnException(HttpActionExecutedContext context)
         {
-          //  var logConfig = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(;
+          
            // Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Elmah.Error(context.Exception));
         }
     }
