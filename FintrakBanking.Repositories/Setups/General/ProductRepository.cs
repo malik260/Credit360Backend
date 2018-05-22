@@ -845,6 +845,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                                   //productBehaviourId = c.PRODUCT_BEHAVIOURID,
                                                   //productBehaviourName = c.TBL_PRODUCT_BEHAVIOUR.PRODUCT_BEHAVIOUR_NAME
                                               }).GroupBy(x => x.productId).Select(g => g.FirstOrDefault());
+
                 foreach(var item in pendingProductsChanges)
                 {
                     var behaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == item.productId);
@@ -861,6 +862,35 @@ namespace FintrakBanking.Repositories.Setups.General
                        
                     }
                 }
+                foreach(var productData in pendingProductsChanges)
+                {
+                    var currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == productData.productId && curr.DELETED != false).Select(pc => new ProductCurrencyViewModel()
+                    {
+                        productId = pc.PRODUCTID,
+                        productCurrencyId = pc.PRODUCTCURRENCYID,
+                        currencyId = pc.CURRENCYID,
+                        currencyName = pc.TBL_CURRENCY.CURRENCYCODE + " -- " + pc.TBL_CURRENCY.CURRENCYNAME
+                    }).ToList();
+
+                    var fees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(curr => curr.PRODUCTID == productData.productId && curr.DELETED != false).Select(pf => new ProductFeeViewModel()
+                    {
+                        productId = pf.PRODUCTID,
+                        productFeeId = pf.PRODUCTFEEID,
+                        feeId = pf.CHARGEFEEID,
+                        rateValue = pf.RATEVALUE,
+                        dependentAmount = pf.DEPENDENTAMOUNT,
+                        feeName = pf.TBL_CHARGE_FEE.CHARGEFEENAME,
+                        feeIntervalName = pf.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                        feeTargetName = pf.TBL_CHARGE_FEE.TBL_FEE_TARGET.FEETARGETNAME,
+                        feeTypeName = pf.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,
+                        //glAccountCode = pf.TBL_CHARGE_FEE..AccountCode,
+                        // glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
+
+                    }).ToList();
+                    if (currencies != null) productData.currencies = currencies;
+                    if (fees != null) productData.fees = fees;
+                }
+               
                 var b = pendingProductsChanges.ToList();
 
                 return pendingProductsChanges;
@@ -878,7 +908,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             //return GetTempStaffDetails().Where(x => x.StaffId == staffId).Single();
 
-            return (from tp in context.TBL_TEMP_PRODUCT
+            var productData = (from tp in context.TBL_TEMP_PRODUCT
                     join coy in context.TBL_COMPANY on tp.COMPANYID equals coy.COMPANYID
                     where tp.PRODUCTID == productId
                     select new ProductViewModel()
@@ -933,29 +963,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         approved = tp.APPROVED,
                         approvalStatusId = tp.APPROVALSTATUSID,
 
-                        currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == tp.PRODUCTID && curr.DELETED != false).Select(pc => new ProductCurrencyViewModel()
-                        {
-                            productId = pc.PRODUCTID,
-                            productCurrencyId = pc.PRODUCTCURRENCYID,
-                            currencyId = pc.CURRENCYID,
-                            currencyName = pc.TBL_CURRENCY.CURRENCYCODE + " -- " + pc.TBL_CURRENCY.CURRENCYNAME
-                        }).ToList(),
-
-                        //fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == tp.ProductId && curr.Deleted != false).Select(pf => new ProductFeeViewModel()
-                        //{
-                        //    productId = pf.ProductId,
-                        //    productFeeId = pf.ProductFeeId,
-                        //    feeId = pf.ProductFeeId,
-                        //    rateValue = pf.RateValue,
-                        //    dependentAmount = pf.DependentAmount,
-                        //    feeName = pf.tbl_Fee.FeeName,
-                        //    feeIntervalName = pf.tbl_Fee.tbl_Fee_Interval.FeeIntervalName,
-                        //    feeTargetName = pf.tbl_Fee.tbl_Fee_Target.FeeTargetName,
-                        //    feeTypeName = pf.tbl_Fee.tbl_Fee_Type.FeeTypeName,
-                        //    glAccountCode = pf.tbl_Fee.tbl_Chart_Of_Account.AccountCode,
-                        //    glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
-
-                        //}).ToList(),
                         collaterals = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(curr => curr.PRODUCTID == tp.PRODUCTID && curr.DELETED != false).Select(pcc => new ProductCollateralTypeViewModel()
                         {
                             productId = pcc.PRODUCTID,
@@ -980,6 +987,35 @@ namespace FintrakBanking.Repositories.Setups.General
                         deletedBy = tp.DELETEDBY,
                         dateTimeDeleted = tp.DATETIMEDELETED
                     }).FirstOrDefault();
+
+            
+                var currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == productData.productId && curr.DELETED != false).Select(pc => new ProductCurrencyViewModel()
+                {
+                    productId = pc.PRODUCTID,
+                    productCurrencyId = pc.PRODUCTCURRENCYID,
+                    currencyId = pc.CURRENCYID,
+                    currencyName = pc.TBL_CURRENCY.CURRENCYCODE + " -- " + pc.TBL_CURRENCY.CURRENCYNAME
+                }).ToList();
+
+                var fees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(curr => curr.PRODUCTID == productData.productId && curr.DELETED != false).Select(pf => new ProductFeeViewModel()
+                {
+                    productId = pf.PRODUCTID,
+                    productFeeId = pf.PRODUCTFEEID,
+                    feeId = pf.CHARGEFEEID,
+                    rateValue = pf.RATEVALUE,
+                    dependentAmount = pf.DEPENDENTAMOUNT,
+                    feeName = pf.TBL_CHARGE_FEE.CHARGEFEENAME,
+                    feeIntervalName = pf.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                    feeTargetName = pf.TBL_CHARGE_FEE.TBL_FEE_TARGET.FEETARGETNAME,
+                    feeTypeName = pf.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,
+                    //glAccountCode = pf.TBL_CHARGE_FEE..AccountCode,
+                   // glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
+
+                }).ToList();
+            if(currencies != null)productData.currencies = currencies;
+            if (fees != null) productData.fees = fees;
+
+            return productData;
         }
 
         public ProductViewModel GetProductDetail(string productCode, int companyId)

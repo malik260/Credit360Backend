@@ -4088,6 +4088,68 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                         }).ToList();
 
+
+            foreach (var item in data)
+            {
+                var companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION
+                                          where a.CUSTOMERID == item.customerId
+                                          select new CustomerCompanyInfomationViewModels
+                                          {
+                                              annualTurnOver = a.ANNUALTURNOVER,
+                                              authorizedCapital = a.AUTHORISEDCAPITAL,
+                                              companyName = a.COMPANYNAME,
+                                              companyEmail = a.COMPANYEMAIL,
+                                              companyWebsite = a.COMPANYWEBSITE,
+                                              corporateBusinessCategory = a.CORPORATEBUSINESSCATEGORY,
+                                              paidUpCapital = a.PAIDUPCAPITAL,
+                                              creditRating = a.TBL_CUSTOMER.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                                              previousCreditRating = "",
+                                          }).FirstOrDefault();
+                if(companyInformation != null)
+                {
+                    item.companyInformation = companyInformation;
+
+                    var companyDirectors = (from b in context.TBL_CUSTOMER_COMPANY_DIRECTOR where b.CUSTOMERID == item.customerId && ((b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember) || (b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember_Shareholder))
+                                             select new CustomerCompanyDirectorsViewModels
+                                             {
+                                                 numberOfShares = b.SHAREHOLDINGPERCENTAGE,
+                                                 companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                                                 fullname = b.FIRSTNAME + " " + b.SURNAME,
+                                                 isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
+                                             }).ToList();
+
+                    var companyShareholders = (from e in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                               where e.CUSTOMERID == item.customerId && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder
+                                               select new CustomerCompanyShareholdersViewModels
+                                               {
+                                                   numberOfShares = e.SHAREHOLDINGPERCENTAGE,
+                                                   companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                                                   fullname = e.FIRSTNAME + " " + e.SURNAME,
+                                                   isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
+                                               }).ToList();
+
+                    var companyAccountSignatories = (from e in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                                     where e.CUSTOMERID == item.customerId && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory
+                                                     select new CustomerCompanyAccountSignatoryViewModels
+                                                     {
+                                                         numberOfShares = e.SHAREHOLDINGPERCENTAGE,
+                                                         companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                                                         fullname = e.FIRSTNAME + " " + e.SURNAME,
+                                                         isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
+                                                     }).ToList();
+
+                    if (item.companyInformation != null)
+                    {
+                        item.companyInformation.companyDirectors = companyDirectors;
+                        item.companyInformation.companyShareholders = companyShareholders;
+                        item.companyInformation.companyAccountSignatories = companyAccountSignatories;
+                    }
+                         
+
+                }
+                
+            }
+
             return data.ToList();
         }
          
@@ -5552,12 +5614,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from l in context.TBL_LOAN
                         where l.LOANREFERENCENUMBER == param.param.Trim() && param.branchId == 0
-                        || l.TBL_CUSTOMER.FIRSTNAME.StartsWith(param.param.Trim()) && param.branchId == 0
-                        || l.TBL_CUSTOMER.MAIDENNAME.StartsWith(param.param.Trim()) && param.branchId == 0
-                        || l.TBL_CUSTOMER.LASTNAME.StartsWith(param.param.Trim()) && param.branchId == 0
+                        || l.TBL_CUSTOMER.FIRSTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
+                        || l.TBL_CUSTOMER.MAIDENNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
+                        || l.TBL_CUSTOMER.LASTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
+                        || l.TBL_CUSTOMER.FIRSTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
+                        || l.TBL_CUSTOMER.MAIDENNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
+                        || l.TBL_CUSTOMER.LASTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
                         || l.BRANCHID == param.branchId && l.LOANREFERENCENUMBER == param.param.Trim()
                         || l.BRANCHID == param.branchId && param.param == null
-                        || param.param == ""
+                        || param.param == null && param.branchId == 0
 
                         select new LoanViewModel
                         {

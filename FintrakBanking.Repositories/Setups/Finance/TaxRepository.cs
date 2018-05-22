@@ -67,7 +67,6 @@ namespace FintrakBanking.Repositories.Finance
                 return false;
             }
 
-            data.TAXID = model.taxId;
             data.TAXNAME = model.taxName;
             data.AMOUNT = model.amount;
             data.RATE = model.rate;
@@ -81,7 +80,7 @@ namespace FintrakBanking.Repositories.Finance
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.TaxUpdated,
-                STAFFID = model.lastUpdatedBy,
+                STAFFID = model.staffId,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated Tax '{ data.TAXNAME }' ",
                 IPADDRESS = model.userIPAddress,
