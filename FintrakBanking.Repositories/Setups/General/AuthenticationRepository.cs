@@ -101,9 +101,42 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return result;
         }
+
+        public bool IsUserActive(string username)
+        {
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username.ToLower());
+
+            if(_user != null)
+            {
+                return _user.ISACTIVE;
+            }
+            else
+            {
+                throw new Exception("User dose not exist");
+            }
+
+           
+        }
+
+        public bool IsUserLogged(string username)
+        {
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username.ToLower());
+
+            if (_user != null)
+            {
+                return _user.ISLOCKED;
+            }
+            else
+            {
+                throw new Exception("User dose not exist");
+            }
+
+
+        }
+
         public UserViewModel FindUserByUserName(string username)
         {
-            var result = CheckSessionState(username);
+            var result = _sessionInfo;
 
             if (result.state > 0)
                  result = new SessionStatusInfo
@@ -159,13 +192,13 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return null;
         }
-         
-        private SessionStatusInfo CheckSessionState(string username)
+
+        public SessionStatusInfo CheckSessionState(string username)
         {
             Guid loginCode = Guid.Empty;
             var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username.ToLower()); // && x.PASSWORD == password);
-            dynamic result = null;
-          
+
+            SessionStatusInfo result = null;
 
             if (_user != null)
             {
@@ -175,30 +208,56 @@ namespace FintrakBanking.Repositories.Setups.General
                         loginCode = Guid.NewGuid(),
                         state = 0,
                         errorMessage = "",
-                         
+
                     };
 
+                int timeStamp =( _user.LASTLOCKOUTDATE.Value.Date - DateTime.Now).Minutes;
+
+                if (timeStamp < 2 && _user.LOGINCODE != Guid.Empty.ToString())
+                {
+                    result = new SessionStatusInfo
+                    {
+                        loginCode = Guid.Parse(_user.LOGINCODE),//  Guid.Empty,
+                        state = 0,
+                        errorMessage = "",
+                    };
+                }
                 else
                 {
                     result = new SessionStatusInfo
                     {
-                        loginCode = Guid.Parse ( _user.LOGINCODE) ,//  Guid.Empty,
-                        state = 0,
-                        errorMessage = "",                        
-                    };                   
+                        loginCode = Guid.Parse(_user.LOGINCODE),//  Guid.Empty,
+                        state = 1,
+                        errorMessage = "You are already logged.",
+                    };
 
                 }
-
             }
-         return   result;
+           
+
+
+            return result;
         }
+
+
+
+        private SessionStatusInfo _sessionInfo;
+
+        public SessionStatusInfo SessionInfo
+        {
+            get => _sessionInfo;
+            set => _sessionInfo = value;
+        }
+
+
 
         public UserViewModel FindUserByUserNameAndPassword(string username, string password, bool state)
         {
             UserViewModel data;
 
             var appSetup = context.TBL_SETUP_GLOBAL.Single();
-            SessionStatusInfo result =    CheckSessionState(username) ;
+
+            SessionStatusInfo result = _sessionInfo;
 
             
             if (result == null) return null;

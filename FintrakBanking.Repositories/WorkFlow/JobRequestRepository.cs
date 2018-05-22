@@ -423,10 +423,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             //});
 
             var thisStaff = this.context.TBL_STAFF.Find(staffId);
+            var unitId = thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID;
 
-
-              var data =   context.TBL_JOB_REQUEST
-               .Where(t => ((t.DEPARTMENTUNITID == context.TBL_STAFF.Where(l=>l.STAFFID == staffId).FirstOrDefault().TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID) || (t.SENDERSTAFFID == staffId) || (t.REASSIGNEDTO == staffId)) && t.TBL_STAFF.BRANCHID == branchId)
+            var data =   context.TBL_JOB_REQUEST
+               .Where(t => (t.DEPARTMENTUNITID == unitId || t.SENDERSTAFFID == staffId || t.REASSIGNEDTO == staffId) )
                .Select(
                   x =>
                      new JobRequestViewModel
