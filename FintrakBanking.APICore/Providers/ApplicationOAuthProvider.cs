@@ -83,40 +83,65 @@ namespace FintrakBanking.APICore.Providers
 
             ClaimsIdentity identity;
 
-            if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
-            {
+               
                     var _user = _bankingContext.TBL_PROFILE_USER.Where(x => x.USERNAME.ToLower() == context.UserName.ToLower());
 
-                    if(!_user .Any())
+                    if (!_user.Any())
                     {
                         context.SetError("invalid_grant", "This user is not profiled on this application. Contact the system administrator");
                         return;
                     }
 
+                    if (!authRepo.IsUserActive(userVM.username))
+                    {
+                        context.SetError("invalid_grant", "User Account is INACTIVE");
+                        return;
+                    }
+
+                    if (authRepo.IsUserLogged(userVM.username))
+                    {
+                        context.SetError("invalid_grant", "User Account is LOCKED");
+                        return;
+                    }
+
+                    var sessionState = authRepo.CheckSessionState(context.UserName);
+
+                    if (sessionState != null)
+                    {
+                        if(sessionState.state > 0)
+                        {
+                            context.SetError("invalid_grant", sessionState.errorMessage);
+                            return;
+                        }
+
+                        authRepo.SessionInfo = sessionState;
+                    }
+
+                if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
+                {
+
 
                     if (Task.FromResult(ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
-                {
-                    user = Task.FromResult(authRepo.FindUserByUserName(userVM.username)).Result;                   
+                    {
+                        user = Task.FromResult(authRepo.FindUserByUserName(userVM.username)).Result;
+                    }
+                    else
+                    {
+                        context.SetError("invalid_grant", "The user name or password is incorrect");
+                        return;
+                    }
                 }
                 else
                 {
-
-                    context.SetError("invalid_grant", "The user name or password is incorrect");
-                    return;
+                    user = Task.FromResult(authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password, true)).Result;
+                    if (user == null)
+                    {
+                        context.SetError("invalid_grant", "The user name or password is incorrect.");
+                        return;
+                    }
                 }
-            }
-            else
-            {
-                user = Task.FromResult(authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password, true ))
-                   .Result;
-                if (user == null)
-                {
-                    context.SetError("invalid_grant", "The user name or password is incorrect.");
-                    return;
-                }
-            }
 
-            bool isUserAccountValid;
+                bool isUserAccountValid;
 
             if (Task.FromResult(authRepo.IsUserAccountValid(userVM.username)).Result)
             {
