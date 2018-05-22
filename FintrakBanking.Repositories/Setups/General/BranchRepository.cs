@@ -168,10 +168,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<BranchViewModel> GetSearchedBranch(string search)
         {
+            var aa = context.TBL_BRANCH.ToList();
+
             var branches = from x in context.TBL_BRANCH
                            where x.DELETED == false
-                           && x.BRANCHCODE.Contains(search)
-                           || x.BRANCHNAME.Contains(search)
+                           && x.BRANCHCODE.Contains(search.ToUpper())
+                           || x.BRANCHNAME.Contains(search.ToUpper())
                            select new BranchViewModel
                            {
                                branchId = x.BRANCHID,

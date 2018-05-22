@@ -739,12 +739,13 @@
             </Style>
           </Textbox>
           <Image Name="HeaderLlogo">
-            <Source>External</Source>
-            <Value>=Parameters!logoPath.Value</Value>
+            <Source>Embedded</Source>
+            <Value>firstbank</Value>
             <Sizing>FitProportional</Sizing>
-            <Left>10.87235in</Left>
-            <Height>0.73294in</Height>
-            <Width>2.20708in</Width>
+            <Top>0.06598in</Top>
+            <Left>10.5911in</Left>
+            <Height>0.70708in</Height>
+            <Width>2.48833in</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -766,23 +767,10 @@
       </Page>
     </ReportSection>
   </ReportSections>
-  <ReportParameters>
-    <ReportParameter Name="logoPath">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-    </ReportParameter>
-  </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>4</NumberOfColumns>
       <NumberOfRows>2</NumberOfRows>
-      <CellDefinitions>
-        <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>logoPath</ParameterName>
-        </CellDefinition>
-      </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
   <EmbeddedImages>

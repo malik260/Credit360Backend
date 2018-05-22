@@ -113,7 +113,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 COMPANYID = chargeFeemodel.companyId,
                 CREATEDBY = (int)chargeFeemodel.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
-              
+
             };
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -183,13 +183,14 @@ namespace FintrakBanking.Repositories.Setups.Finance
                                 GLACCOUNTID2 = item.glAccountId2,
                                 DETAILTYPEID = item.detailTypeId,
                                 POSTINGTYPEID = item.postingTypeId,
-                               VALUE = item.rate,
+                                VALUE = item.rate,
                                 FEETYPEID = item.feeTypeId,
                                 REQUIREAMORTISATION = item.requireAmortization,
                                 POSTINGGROUP = item.postingGroup,
                                 CREATEDBY = model.createdBy,
                                 DATETIMECREATED = DateTime.Now,
-                                DELETED = false
+                                DELETED = false,
+                                TEMPCHARGEFEEID = item.chargeFeeId
                             };
                             tempFeeDetail.Add(charFeeDetail);
                         }
@@ -207,7 +208,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
                                 MINIMUMANDABOVE = range.minimumAndAbove,
                                 MAXIMUMANDBELOW = range.maximumAndBelow,
                                 CREATEDBY = (int)model.createdBy,
-                                DATETIMECREATED = general.GetApplicationDate()
+                                DATETIMECREATED = general.GetApplicationDate(),
+                                CHARGEFEEID = range.chargeFeeId,
+                                DELETED = false
                             });
                         }
                     }
@@ -242,8 +245,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             DATETIMECREATED = general.GetApplicationDate(),
                             APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                             ISCURRENT = true,
-                            TBL_TEMP_CHARGE_FEE_DETAIL = tempFeeDetail
+                            // TBL_TEMP_CHARGE_FEE_DETAIL = tempFeeDetail,
+                            DELETED = false,
+                            ISUPDATESTATUS = false
                         };
+                        context.TBL_TEMP_CHARGE_FEE.Add(temChargeFee);
                     }
                     // Audit Section ---------------------------
                     var audit = new TBL_AUDIT
@@ -255,27 +261,36 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         IPADDRESS = model.userIPAddress,
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        TARGETID = model.targetId
                     };
                     using (var trans = context.Database.BeginTransaction())
                     {
                         try
                         {
+
                             this.auditTrail.AddAuditTrail(audit);
-                            context.TBL_TEMP_CHARGE_FEE.Add(temChargeFee);
                             output = context.SaveChanges() > 0;
 
-                            var entity = new ApprovalViewModel
+                            if (output == true)
                             {
-                                staffId = model.createdBy,
-                                companyId = model.companyId,
-                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                targetId = temChargeFee.TEMPCHARGEFEEID,
-                                operationId = (int)OperationsEnum.FeeCreation,
-                                BranchId = model.userBranchId,
-                                externalInitialization = true
-                            };
-                            var response = workFlow.LogForApproval(entity);
+                                foreach (var item in tempFeeDetail)
+                                {
+                                    item.TEMPCHARGEFEEID = temChargeFee.TEMPCHARGEFEEID;
+                                }
+                                context.TBL_TEMP_CHARGE_FEE_DETAIL.AddRange(tempFeeDetail);
+                                output = context.SaveChanges() > 0;
+                            }
+
+                            workFlow.StaffId = model.createdBy;
+                            workFlow.CompanyId = model.companyId;
+                            workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                            workFlow.TargetId = temChargeFee.TEMPCHARGEFEEID;
+                            workFlow.Comment = "Charge Fee Creation";
+                            workFlow.OperationId = (int)OperationsEnum.FeeCreation;
+                            workFlow.ExternalInitialization = true;
+
+                            var response = workFlow.LogActivity();
 
                             if (response)
                             {
