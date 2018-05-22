@@ -208,18 +208,15 @@ namespace FintrakBanking.Repositories.Setups.General
                                 auditTrail.AddAuditTrail(audit);
                                 output = context.SaveChanges() > 0;
 
-                                var model = new ApprovalViewModel
-                                {
-                                    staffId = entity.createdBy,
-                                    companyId = entity.companyId,
-                                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                    targetId = staffRole.STAFFROLEID,
-                                    operationId = (int)OperationsEnum.StaffRoleCreation,
-                                    BranchId = entity.userBranchId,
-                                    externalInitialization = true
-                                };
-                                var response = workFlow.LogForApproval(model);
+                                workFlow.StaffId = entity.createdBy;
+                                workFlow.CompanyId = entity.companyId;
+                                workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                                workFlow.TargetId = staffRole.STAFFROLEID;
+                                workFlow.Comment = "Create/Update Staff Role";
+                                workFlow.OperationId = (int)OperationsEnum.StaffRoleCreation;
+                                workFlow.ExternalInitialization = true;
 
+                                var response = workFlow.LogActivity();
                                 if (response)
                                 {
                                     trans.Commit();
@@ -261,9 +258,10 @@ namespace FintrakBanking.Repositories.Setups.General
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.StaffRoleCreation).ToList();
 
             var data = (from c in context.TBL_STAFF_ROLE
+                      join gr in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP on c.STAFFROLEID equals gr.STAFFROLEID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.STAFFROLEID equals atrail.TARGETID
-                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                           && c.TBL_TEMP_PROFILE_STAFF_ROL_GRP.FirstOrDefault().APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                          && gr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && gr.ISCURRENT == true
                               && atrail.RESPONSESTAFFID == null
                               && atrail.OPERATIONID == (int)OperationsEnum.StaffRoleCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new StaffRoleViewModel()
@@ -272,7 +270,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleCode = c.STAFFROLECODE,
                             staffRoleId = c.STAFFROLEID,
                             operationId = (int)OperationsEnum.StaffRoleCreation,
-                        }).ToList();
+                        }).GroupBy(c=> c.staffRoleId).Select(g=>g.FirstOrDefault());
 
             var userGroup = (from x in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP
                              select new UserGroup
@@ -335,10 +333,15 @@ namespace FintrakBanking.Repositories.Setups.General
                     else
                     {
                         var tempGroup = (from a in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP where a.STAFFROLEID == entity.targetId select a).ToList();
-                        tempGroup.FirstOrDefault().APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                        tempGroup.FirstOrDefault().ISCURRENT = true;
-                        tempGroup.FirstOrDefault().DATEAPPROVED = DateTime.Now;
-
+                        if (tempGroup != null)
+                        {
+                            foreach (var item in tempGroup)
+                            {
+                                item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                                item.ISCURRENT = true;
+                                item.DATEAPPROVED = DateTime.Now;
+                            }
+                        }
                         context.SaveChanges();
                         trans.Commit();
                     }
