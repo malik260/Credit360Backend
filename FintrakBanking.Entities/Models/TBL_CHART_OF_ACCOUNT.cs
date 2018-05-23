@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CHART_OF_ACCOUNT")]
+    [Table("finance.TBL_CHART_OF_ACCOUNT")]
     public partial class TBL_CHART_OF_ACCOUNT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -14,7 +14,6 @@ namespace FintrakBanking.Entities.Models
         {
             TBL_CHARGE_FEE_DETAIL = new HashSet<TBL_CHARGE_FEE_DETAIL>();
             TBL_CHARGE_FEE_DETAIL1 = new HashSet<TBL_CHARGE_FEE_DETAIL>();
-            
             TBL_FINANCE_TRANSACTION = new HashSet<TBL_FINANCE_TRANSACTION>();
             TBL_PRODUCT = new HashSet<TBL_PRODUCT>();
             TBL_PRODUCT1 = new HashSet<TBL_PRODUCT>();
@@ -37,7 +36,7 @@ namespace FintrakBanking.Entities.Models
             TBL_TEMP_PRODUCT5 = new HashSet<TBL_TEMP_PRODUCT>();
             TBL_TEMP_CHARGE_FEE_DETAIL = new HashSet<TBL_TEMP_CHARGE_FEE_DETAIL>();
             TBL_TEMP_CHARGE_FEE_DETAIL1 = new HashSet<TBL_TEMP_CHARGE_FEE_DETAIL>();
-            
+            TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
             TBL_TEMP_PRODUCT6 = new HashSet<TBL_TEMP_PRODUCT>();
         }
 
@@ -94,8 +93,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_CHARGE_FEE_DETAIL> TBL_CHARGE_FEE_DETAIL1 { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
-
- 
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_FINANCE_TRANSACTION> TBL_FINANCE_TRANSACTION { get; set; }
@@ -167,11 +164,12 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_TEMP_CHARGE_FEE_DETAIL> TBL_TEMP_CHARGE_FEE_DETAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_CHARGE_FEE_DETAIL> TBL_TEMP_CHARGE_FEE_DETAIL1 { get; set; }        
+        public virtual ICollection<TBL_TEMP_CHARGE_FEE_DETAIL> TBL_TEMP_CHARGE_FEE_DETAIL1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT6 { get; set; }
-
-        //public virtual ICollection<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
     }
 }

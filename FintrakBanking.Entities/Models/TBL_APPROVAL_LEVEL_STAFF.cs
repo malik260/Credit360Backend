@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_APPROVAL_LEVEL_STAFF")]
+    [Table("core.TBL_APPROVAL_LEVEL_STAFF")]
     public partial class TBL_APPROVAL_LEVEL_STAFF
     {
         [Key]
@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
 
         public int APPROVALLEVELID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal MAXIMUMAMOUNT { get; set; }
 
         public short PROCESSVIEWSCOPEID { get; set; }

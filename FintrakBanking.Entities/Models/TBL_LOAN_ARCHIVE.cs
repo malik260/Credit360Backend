@@ -6,13 +6,13 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_ARCHIVE")]
+    [Table("credit.TBL_LOAN_ARCHIVE")]
     public partial class TBL_LOAN_ARCHIVE
     {
         [Key]
         public int LOANARCHIVEID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime CHANGEEFFECTIVEDATE { get; set; }
 
         public bool ISAPPLIED { get; set; }
@@ -75,19 +75,19 @@ namespace FintrakBanking.Entities.Models
 
         public double INTERESTRATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime EFFECTIVEDATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime MATURITYDATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime BOOKINGDATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? LASTRESTRUCTUREDATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PRINCIPALAMOUNT { get; set; }
 
         public int PRINCIPALINSTALLMENTLEFT { get; set; }
@@ -118,37 +118,37 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string DISBURSERCOMMENT { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? DISBURSEDATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal EQUITYCONTRIBUTION { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? FIRSTPRINCIPALPAYMENTDATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? FIRSTINTERESTPAYMENTDATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal OUTSTANDINGPRINCIPAL { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal OUTSTANDINGINTEREST { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PASTDUEPRINCIPAL { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PASTDUEINTEREST { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal INTERESTONPASTDUEPRINCIPAL { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal INTERESTONPASTDUEINTEREST { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PENALCHARGEAMOUNT { get; set; }
 
         public int? PRINCIPALADDITIONCOUNT { get; set; }
@@ -167,10 +167,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool ALLOWFORCEDEBITREPAYMENT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? SCHEDULEDPREPAYMENTAMOUNT { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? SCHEDULEDPREPAYMENTDATE { get; set; }
 
         public short? SCH_PREPAYMENT_FREQUENCY_TYPID { get; set; }
@@ -181,7 +181,7 @@ namespace FintrakBanking.Entities.Models
 
         public int USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
 
         public int CREATEDBY { get; set; }

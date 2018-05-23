@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_TEMP_CUST_CLIENT_SUPPLIER")]
+    [Table("temp.TBL_TEMP_CUST_CLIENT_SUPPLIER")]
     public partial class TBL_TEMP_CUST_CLIENT_SUPPLIER
     {
         [Key]
@@ -61,7 +61,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CREATEDBY { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime DATECREATED { get; set; }
 
         public bool ISCURRENT { get; set; }

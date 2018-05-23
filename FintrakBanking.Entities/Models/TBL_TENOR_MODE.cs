@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_TENOR_MODE")]
+    [Table("core.TBL_TENOR_MODE")]
     public partial class TBL_TENOR_MODE
     {
         [Key]

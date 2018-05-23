@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_MESSAGE_LOG")]
+    [Table("core.TBL_MESSAGE_LOG")]
     public partial class TBL_MESSAGE_LOG
     {
         [Key]

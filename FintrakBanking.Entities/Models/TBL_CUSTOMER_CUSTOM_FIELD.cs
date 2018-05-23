@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CUSTOMER_CUSTOM_FIELD")]
+    [Table("core.TBL_CUSTOMER_CUSTOM_FIELD")]
     public partial class TBL_CUSTOMER_CUSTOM_FIELD
     {
         [Key]

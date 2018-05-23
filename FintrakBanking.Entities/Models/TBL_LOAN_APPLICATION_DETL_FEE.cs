@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_APPLICATION_DETL_FEE")]
+    [Table("credit.TBL_LOAN_APPLICATION_DETL_FEE")]
     public partial class TBL_LOAN_APPLICATION_DETL_FEE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -29,10 +29,10 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal DEFAULT_FEERATEVALUE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal RECOMMENDED_FEERATEVALUE { get; set; }
 
         public int CREATEDBY { get; set; }

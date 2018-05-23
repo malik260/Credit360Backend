@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_STAFF_RELIEF")]
+    [Table("core.TBL_STAFF_RELIEF")]
     public partial class TBL_STAFF_RELIEF
     {
         [Key]
@@ -20,10 +20,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(2000)]
         public string RELIEFREASON { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime STARTDATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime ENDDATE { get; set; }
 
         public bool ISACTIVE { get; set; }

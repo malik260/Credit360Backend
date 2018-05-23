@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CUSTOMER_FS_CAPTION_DETAIL")]
+    [Table("core.TBL_CUSTOMER_FS_CAPTION_DETAIL")]
     public partial class TBL_CUSTOMER_FS_CAPTION_DETAIL
     {
         [Key]
@@ -16,10 +16,10 @@ namespace FintrakBanking.Entities.Models
 
         public int FSCAPTIONID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime FSDATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal AMOUNT { get; set; }
 
         public int CREATEDBY { get; set; }

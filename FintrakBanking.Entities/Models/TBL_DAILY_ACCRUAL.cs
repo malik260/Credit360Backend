@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_DAILY_ACCRUAL")]
+    [Table("core.TBL_DAILY_ACCRUAL")]
     public partial class TBL_DAILY_ACCRUAL
     {
         [Key]
@@ -33,24 +33,22 @@ namespace FintrakBanking.Entities.Models
 
         public double EXCHANGERATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal MAINAMOUNT { get; set; }
 
         public double INTERESTRATE { get; set; }
 
-        //[Column(TypeName = "date")]
-
-        [Column(name: "DATE_")]
+        [Column(TypeName = "date")]
         public DateTime DATE { get; set; }
 
         public short DAYCOUNTCONVENTIONID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal DAILYACCURALAMOUNT { get; set; }
 
         public bool REPAYMENTPOSTEDSTATUS { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal SYSTEMDATETIME { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }

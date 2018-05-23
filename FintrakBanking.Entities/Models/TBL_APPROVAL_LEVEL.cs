@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_APPROVAL_LEVEL")]
+    [Table("core.TBL_APPROVAL_LEVEL")]
     public partial class TBL_APPROVAL_LEVEL
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -38,10 +38,10 @@ namespace FintrakBanking.Entities.Models
 
         public int? TENOR { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal MAXIMUMAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? INVESTMENTGRADEAMOUNT { get; set; }
 
         public int NUMBEROFUSERS { get; set; }

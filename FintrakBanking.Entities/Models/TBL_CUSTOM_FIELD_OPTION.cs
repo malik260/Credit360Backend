@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CUSTOM_FIELD_OPTION")]
+    [Table("core.TBL_CUSTOM_FIELD_OPTION")]
     public partial class TBL_CUSTOM_FIELD_OPTION
     {
         [Key]

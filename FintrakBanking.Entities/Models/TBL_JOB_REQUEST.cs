@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_JOB_REQUEST")]
+    [Table("core.TBL_JOB_REQUEST")]
     public partial class TBL_JOB_REQUEST
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -57,22 +57,22 @@ namespace FintrakBanking.Entities.Models
         [StringLength(2000)]
         public string RESPONSECOMMENT { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime ARRIVALDATE { get; set; }
 
         public DateTime SYSTEMARRIVALDATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? REASSIGNEDDATE { get; set; }
 
         public DateTime? SYSTEMREASSIGNEDDATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? RESPONSEDATE { get; set; }
 
         public DateTime? SYSTEMRESPONSEDATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? ACKNOWLEDGEMENTDATE { get; set; }
 
         public DateTime? SYSTEMACKNOWLEDGEMENTDATE { get; set; }

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_PRICEINDEX_EXCEPTION")]
+    [Table("credit.TBL_LOAN_PRICEINDEX_EXCEPTION")]
     public partial class TBL_LOAN_PRICEINDEX_EXCEPTION
     {
         [Key]

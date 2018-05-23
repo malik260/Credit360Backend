@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CALL_MEMO")]
+    [Table("credit.TBL_CALL_MEMO")]
     public partial class TBL_CALL_MEMO
     {
         [Key]
@@ -18,10 +18,10 @@ namespace FintrakBanking.Entities.Models
 
         public short CALLLIMITTYPEID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime MEMODATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? NEXTCALLDATE { get; set; }
 
         [Required]
@@ -40,7 +40,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CREATEDBY { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime DATECREATED { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF { get; set; }

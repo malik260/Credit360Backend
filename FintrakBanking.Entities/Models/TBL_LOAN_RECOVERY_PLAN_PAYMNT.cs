@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_RECOVERY_PLAN_PAYMNT")]
+    [Table("credit.TBL_LOAN_RECOVERY_PLAN_PAYMNT")]
     public partial class TBL_LOAN_RECOVERY_PLAN_PAYMNT
     {
         [Key]
@@ -14,10 +14,10 @@ namespace FintrakBanking.Entities.Models
 
         public int RECOVERYPLANID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime PAYMENTDATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PAYMENTAMOUNT { get; set; }
 
         public int CREATEDBY { get; set; }

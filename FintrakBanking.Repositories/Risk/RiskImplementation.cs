@@ -28,7 +28,7 @@ namespace FintrakBanking.Repositories.Risk
             bool assessmentExist = context.TBL_RISK_ASSESSMENT_TITLE
                             .Where(x => x.RISKASSESSMENTTITLEID == titleId)
                             .SelectMany(x => x.TBL_RISK_ASSESSMENT)
-                            .Where(x => x.TARGETID == targetId || (targetId == null))
+                           // .Where(x => x.TARGETID == targetId || (targetId == null))
                             .Any();
 
             IEnumerable<AssessmentFormViewModel> results;
@@ -62,46 +62,46 @@ namespace FintrakBanking.Repositories.Risk
                     });
                 }
 
-                assessments = indexes.Join(context.TBL_RISK_ASSESSMENT
-                        .Where(x => x.RISKASSESSMENTTITLEID == titleId && x.TARGETID == targetId),
-                        a => a.RISKID, b => b.RISKINDEXID, (a, b) => new { a, b })
-                    .ToList()
-                    .Select((x, index) => new AssessmentFormViewModel
-                    {
-                        id = index + n + 1,
-                        riskId = x.a.RISKID,
-                        name = x.a.NAME,
-                        description = x.a.DESCRIPTION,
-                        weight = x.a.WEIGHT,
-                        parentId = x.a.PARENTID,
-                        level = x.a.ITEMLEVEL,
-                        indexTypeId = x.a.INDEXTYPEID,
-                        titleName = x.a.TBL_RISK_ASSESSMENT_TITLE.RISKTITLE,
-                        titleId = x.a.RISKASSESSMENTTITLEID,
-                        assessmentId = x.b.RISKASSESSMENTID,
-                        score = Math.Round(x.b.INDEXSCORE, 2),
-                        selected = x.b.SELECTED
-                    });
+                //assessments = indexes.Join(context.TBL_RISK_ASSESSMENT
+                //        .Where(x => x.RISKASSESSMENTTITLEID == titleId && x.TARGETID == targetId),
+                //        a => a.RISKID, b => b.RISKINDEXID, (a, b) => new { a, b })
+                //    .ToList()
+                //    .Select((x, index) => new AssessmentFormViewModel
+                //    {
+                //        id = index + n + 1,
+                //        riskId = x.a.RISKID,
+                //        name = x.a.NAME,
+                //        description = x.a.DESCRIPTION,
+                //        weight = x.a.WEIGHT,
+                //        parentId = x.a.PARENTID,
+                //        level = x.a.ITEMLEVEL,
+                //        indexTypeId = x.a.INDEXTYPEID,
+                //        titleName = x.a.TBL_RISK_ASSESSMENT_TITLE.RISKTITLE,
+                //        titleId = x.a.RISKASSESSMENTTITLEID,
+                //        assessmentId = x.b.RISKASSESSMENTID,
+                //        score = Math.Round(x.b.INDEXSCORE, 2),
+                //        selected = x.b.SELECTED
+                //    });
 
-                foreach (var x in assessments)
-                {
-                    merge.Add(new AssessmentFormViewModel
-                    {
-                        id = n + 1,
-                        riskId = x.riskId,
-                        name = x.name,
-                        description = x.description,
-                        weight = x.weight,
-                        parentId = x.parentId,
-                        level = x.level,
-                        indexTypeId = x.indexTypeId,
-                        titleName = x.titleName,
-                        titleId = x.titleId,
-                        assessmentId = x.assessmentId,
-                        score = x.score,
-                        selected = x.selected
-                    });
-                }
+                //foreach (var x in assessments)
+                //{
+                //    merge.Add(new AssessmentFormViewModel
+                //    {
+                //        id = n + 1,
+                //        riskId = x.riskId,
+                //        name = x.name,
+                //        description = x.description,
+                //        weight = x.weight,
+                //        parentId = x.parentId,
+                //        level = x.level,
+                //        indexTypeId = x.indexTypeId,
+                //        titleName = x.titleName,
+                //        titleId = x.titleId,
+                //        assessmentId = x.assessmentId,
+                //        score = x.score,
+                //        selected = x.selected
+                //    });
+                //}
 
                 return merge.AsEnumerable();
             }
@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.Risk
                         RISKINDEXID = item.riskId,
                         PARENTID = item.parentId,
                         REFCODE = "n/a",
-                        TARGETID = entity.targetId,
+                       // TARGETID = entity.targetId,
                         RISKASSESSMENTTITLEID = entity.riskAssessmentTitleId,
                         SELECTED = item.selected,
                         INDEXSCORE = ComputeScore(entity.indexFields, item.riskId, item.weight),
@@ -210,7 +210,7 @@ namespace FintrakBanking.Repositories.Risk
         {
             var result = context.TBL_RISK_ASSESSMENT_RESULT.Where(o =>
                 o.DELETED == false
-                && o.TARGETID == entity.targetId
+               // && o.TARGETID == entity.targetId
                 && o.RISKASSESSMENTTITLEID == entity.riskAssessmentTitleId
             );
 
@@ -228,7 +228,7 @@ namespace FintrakBanking.Repositories.Risk
             {
                 context.TBL_RISK_ASSESSMENT_RESULT.Add(new TBL_RISK_ASSESSMENT_RESULT
                 {
-                    TARGETID = entity.targetId,
+                  //  TARGETID = entity.targetId,
                     TOTALSCORE = totalScore,
                     CREDITRATING = GetCreditRating(totalScore),
                     COMPANYID = (short)entity.companyId,
@@ -293,7 +293,7 @@ namespace FintrakBanking.Repositories.Risk
                 .Select(x => new AssessmentResultViewModel
                 {
                     assessmentResultId = x.ASSESSMENTRESULTID,
-                    targetId = x.TARGETID,
+                    //targetId = x.TARGETID,
                     riskAssessmentTitleId = x.RISKASSESSMENTTITLEID,
                     assessmentTitle = titles.FirstOrDefault(t => t.RISKASSESSMENTTITLEID == x.RISKASSESSMENTTITLEID) == null ? string.Empty : titles.FirstOrDefault(t => t.RISKASSESSMENTTITLEID == x.RISKASSESSMENTTITLEID).RISKTITLE,
                     creditRating = x.CREDITRATING,

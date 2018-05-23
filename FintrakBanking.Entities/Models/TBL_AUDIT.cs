@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_AUDIT")]
+    [Table("core.TBL_AUDIT")]
     public partial class TBL_AUDIT
     {
         [Key]
@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime SYSTEMDATETIME { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime APPLICATIONDATE { get; set; }
 
         [Required]
