@@ -23,63 +23,15 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public ChargeFeeRepository(
             FinTrakBankingContext context,
-            IGeneralSetupRepository general,
+            IGeneralSetupRepository _general,
             IAuditTrailRepository _auditTrail,
             IWorkflow _workflow
             )
         {
             this.context = context;
-            this.general = general;
+            this.general = _general;
             this.auditTrail = _auditTrail;
             workFlow = _workflow;
-        }
-
-        public bool GoForApproval(ApprovalViewModel entity)
-        {
-            entity.operationId = (int)OperationsEnum.UserCreation;
-            entity.externalInitialization = false;
-
-            using (var trans = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    workFlow.LogForApproval(entity);
-                    var b = workFlow.NextLevelId ?? 0;
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
-
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
-                    {
-                        var response = ApproveChargeFee(entity.targetId, (short)workFlow.StatusId, entity);
-
-                        if (response)
-                        {
-                            trans.Commit();
-                        }
-                        return true;
-                    }
-                    else
-                    {
-                        trans.Commit();
-                    }
-
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
-                }
-            }
-
-        }
-
-        private bool ApproveChargeFee(int userid, short approvalStatusId, UserInfo user)
-        {
-            return true;
         }
 
         public bool AddTempChargeFee(ChargeFeeViewModel chargeFeemodel)
@@ -380,6 +332,237 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             return context.SaveChanges() != 0;
         }
+        public IEnumerable<ChargeFeeViewModel> GetChargeFeeAwaitingApprovals(int staffId, int companyId)
+        {
+            var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.FeeCreation).ToList();
+
+            var charge = (from a in context.TBL_TEMP_CHARGE_FEE
+                          join b in context.TBL_TEMP_CHARGE_FEE_DETAIL on a.TEMPCHARGEFEEID equals b.TEMPCHARGEFEEID
+                          join t in context.TBL_APPROVAL_TRAIL on a.TEMPCHARGEFEEID equals t.TARGETID
+                          where (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
+                              && a.ISCURRENT == true
+                              && t.RESPONSESTAFFID == null
+                              && t.OPERATIONID == (int)OperationsEnum.FeeCreation
+                          && ids.Contains((int)t.TOAPPROVALLEVELID)
+                          select new ChargeFeeViewModel
+                          {
+                              chargeFeeId = a.TEMPCHARGEFEEID,
+                              chargeName = a.CHARGEFEENAME,
+                              frequencyTypeId = a.FEEINTERVALID,
+                              frequencyTypeName = a.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                              productTypeId = a.PRODUCTTYPEID,
+                              targetId = a.FEETARGETID,
+                              targetName = a.TBL_FEE_TARGET.FEETARGETNAME,
+                              amortisationTypeId = a.FEEAMORTISATIONTYPEID,
+                              amortizationTypeName = a.TBL_FEE_AMORTISATION_TYPE.FEEAMORTISATIONTYPENAME,
+                              isIntegral = a.ISINTEGRALFEE,
+                              includeCutOffDay = a.INCLUDECUTOFFDAY,
+                              cutOffDay = a.CUTOFFDAY,
+                              operationId = a.OPERATIONID,
+                              amount = a.AMOUNT,
+                              rate = a.RATE,
+                              feeTypeId = a.FEETYPEID,
+                              recurring = (bool)a.RECURRING,
+                              chargeFeeDetails = context.TBL_TEMP_CHARGE_FEE_DETAIL.Where(q => q.TEMPCHARGEFEEID == a.TEMPCHARGEFEEID).
+                Select(q => new ChargeFeeDetailsViewModel
+                {
+                    chargeFeeDetailId = q.TEMPCHARGEFEEDETAILID,
+                    description = q.DESCRIPTION,
+                    chargeFeeId = q.TEMPCHARGEFEEID,
+                    glAccountId1 = q.GLACCOUNTID1,
+                    glAccountId2 = q.GLACCOUNTID2,
+                    detailTypeId = q.DETAILTYPEID,
+                    postingTypeId = q.POSTINGTYPEID,
+                    amount = q.VALUE,
+                    rate = q.VALUE,
+                    feeTypeId = q.FEETYPEID,
+                    requireAmortization = q.REQUIREAMORTISATION,
+                    postingGroup = q.POSTINGGROUP
+                }).ToList(),
+                          }).ToList();
+
+            return charge;
+        }
+
+        private bool ApproveChargeFee(int targetId, short approvalStatusId, UserInfo user)
+        {
+            var tempCharge = (from a in context.TBL_TEMP_CHARGE_FEE where a.TEMPCHARGEFEEID == targetId select a).FirstOrDefault();
+            var tempChargeDetails = (from a in context.TBL_TEMP_CHARGE_FEE_DETAIL where a.TEMPCHARGEFEEID == targetId select a).ToList();
+
+            List<TBL_CHARGE_FEE_DETAIL> details = new List<TBL_CHARGE_FEE_DETAIL>();
+            if (tempChargeDetails != null)
+            {
+                foreach (var item in tempChargeDetails)
+                {
+                    var newDetails = new TBL_CHARGE_FEE_DETAIL()
+                    {
+                        DESCRIPTION = item.DESCRIPTION,
+                        GLACCOUNTID1 = item.GLACCOUNTID1,
+                        GLACCOUNTID2 = item.GLACCOUNTID2,
+                        DETAILTYPEID = item.DETAILTYPEID,
+                        POSTINGTYPEID = item.POSTINGTYPEID,
+                        VALUE = item.VALUE,
+                        FEETYPEID = item.FEETYPEID,
+                        REQUIREAMORTISATION = item.REQUIREAMORTISATION,
+                        POSTINGGROUP = item.POSTINGGROUP,
+                        CREATEDBY = item.CREATEDBY,
+                        DATETIMECREATED = item.DATETIMECREATED,
+                        DELETED = false
+                    };
+                    details.Add(newDetails);
+                }
+            }
+
+            List<TBL_CHARGE_FEE_DETAIL> targetDetails = null;
+            // Removing existing details
+            if (tempCharge.CHARGEFEEID > 0)
+            {
+                targetDetails = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == tempCharge.CHARGEFEEID).ToList();
+                if (targetDetails.Any())
+                {
+                    foreach (var item in targetDetails)
+                    {
+                        context.TBL_CHARGE_FEE_DETAIL.Remove(item);
+                    }
+                }
+            }
+
+            TBL_CHARGE_FEE targetCharge;
+            if (tempCharge.CHARGEFEEID > 0)
+            {
+                targetCharge = context.TBL_CHARGE_FEE.Find(tempCharge.CHARGEFEEID);
+                if (targetCharge != null)
+                {
+                    targetCharge.CHARGEFEENAME = tempCharge.CHARGEFEENAME;
+                    targetCharge.FEEINTERVALID = tempCharge.FEEINTERVALID;
+                    targetCharge.PRODUCTTYPEID = tempCharge.PRODUCTTYPEID;
+                    targetCharge.FEETARGETID = tempCharge.FEETARGETID;
+                    targetCharge.FEEAMORTISATIONTYPEID = tempCharge.FEEAMORTISATIONTYPEID;
+                    targetCharge.ISINTEGRALFEE = tempCharge.ISINTEGRALFEE;
+                    targetCharge.INCLUDECUTOFFDAY = tempCharge.INCLUDECUTOFFDAY;
+                    targetCharge.CUTOFFDAY = tempCharge.CUTOFFDAY;
+                    targetCharge.OPERATIONID = tempCharge.OPERATIONID;
+                    targetCharge.AMOUNT = tempCharge.AMOUNT;
+                    targetCharge.RATE = tempCharge.RATE;
+                    targetCharge.FEETYPEID = tempCharge.FEETYPEID;
+                    targetCharge.RECURRING = tempCharge.RECURRING;
+                    targetCharge.TBL_CHARGE_FEE_DETAIL = details;
+                };
+            }
+            else
+            {
+                targetCharge = new TBL_CHARGE_FEE()
+                {
+                    CHARGEFEENAME = tempCharge.CHARGEFEENAME,
+                    FEEINTERVALID = tempCharge.FEEINTERVALID,
+                    PRODUCTTYPEID = tempCharge.PRODUCTTYPEID,
+                    FEETARGETID = tempCharge.FEETARGETID,
+                    FEEAMORTISATIONTYPEID = tempCharge.FEEAMORTISATIONTYPEID,
+                    ISINTEGRALFEE = tempCharge.ISINTEGRALFEE,
+                    INCLUDECUTOFFDAY = tempCharge.INCLUDECUTOFFDAY,
+                    CUTOFFDAY = tempCharge.CUTOFFDAY,
+                    OPERATIONID = tempCharge.OPERATIONID,
+                    AMOUNT = tempCharge.AMOUNT,
+                    RATE = tempCharge.RATE,
+                    FEETYPEID = tempCharge.FEETYPEID,
+                    RECURRING = tempCharge.RECURRING,
+                    COMPANYID = tempCharge.COMPANYID,
+                    CREATEDBY = (int)tempCharge.CREATEDBY,
+                    DATETIMECREATED = general.GetApplicationDate(),
+                    TBL_CHARGE_FEE_DETAIL = details
+                };
+                context.TBL_CHARGE_FEE.Add(targetCharge);
+            }
+
+           
+           
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.FeeApproved,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = "Approved Charge Fee",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            try
+            {
+               
+               
+                auditTrail.AddAuditTrail(audit);
+                // Audit Section ---------------------------
+                var response = context.SaveChanges() > 0;
+
+                if (response)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public bool GoForApproval(ApprovalViewModel entity)
+        {
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    workFlow.StaffId = entity.staffId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.OperationId = (int)OperationsEnum.FeeCreation;
+
+                    workFlow.LogActivity();
+
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
+
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApproveChargeFee(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        var tempCharge = (from a in context.TBL_TEMP_CHARGE_FEE where a.TEMPCHARGEFEEID == entity.targetId select a).FirstOrDefault();
+                        if (tempCharge != null)
+                        {
+                            tempCharge.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                            tempCharge.ISCURRENT = true;
+                            tempCharge.DATETIMEUPDATED = DateTime.Now;
+                        }
+                        context.SaveChanges();
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
 
         public IEnumerable<ChargeFeeViewModel> GetAllChargeFee()
         {
@@ -414,9 +597,24 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         maximumAndBelow = r.MAXIMUMANDBELOW,
                         chargeFeeId = r.CHARGEFEEID
                     }).ToList(),
+                chargeFeeDetails = context.TBL_CHARGE_FEE_DETAIL.Where(q => q.CHARGEFEEID == x.CHARGEFEEID).
+                Select(q => new ChargeFeeDetailsViewModel
+                {
+                    chargeFeeDetailId = q.CHARGEFEEDETAILID,
+                    description = q.DESCRIPTION,
+                    chargeFeeId = q.CHARGEFEEID,
+                    glAccountId1 = q.GLACCOUNTID1,
+                    glAccountId2 = q.GLACCOUNTID2,
+                    detailTypeId = q.DETAILTYPEID,
+                    postingTypeId = q.POSTINGTYPEID,
+                    amount = q.VALUE,
+                    rate = q.VALUE,
+                    feeTypeId = q.FEETYPEID,
+                    requireAmortization = q.REQUIREAMORTISATION,
+                    postingGroup = q.POSTINGGROUP
+                }).ToList(),
             });
         }
-
         public ChargeFeeViewModel GetChargeFee(int chargeProductFeeId)
         {
             var data = this.context.TBL_CHARGE_FEE.Find(chargeProductFeeId);

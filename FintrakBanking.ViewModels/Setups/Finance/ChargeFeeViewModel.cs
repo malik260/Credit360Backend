@@ -66,7 +66,7 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public int? glAccountId2 { get; set; }
         public short detailTypeId { get; set; }
         public short postingTypeId { get; set; }
-        public decimal amount { get; set; }
+        public double amount { get; set; }
         public double rate { get; set; }
         public short feeTypeId { get; set; }
         public short detailClassId { get; set; }
