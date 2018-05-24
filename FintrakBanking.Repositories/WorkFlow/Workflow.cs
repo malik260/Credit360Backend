@@ -161,7 +161,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.RESPONSESTAFFID = this.staffId;
             }
 
-            // this.SendNotifications();
+            SendNotifications();
 
             if (this.comment == "flow_test") { throw new Exception("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", CURRL:" + this.fromLevelId + ", NEXTL:" + this.nextLevelId + ", TOSTAFFID:" + this.toStaffId); }
 
@@ -562,27 +562,31 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void SetState()
         {
-            if (this.nextLevelId == null && ActionIsApprovalDecision())
-            {
-                this.EndProcess(this.statusId); return;
-            }
-
-            if (this.nextLevelId == null && this.amount == 0)
-            {
-                this.EndProcess(this.statusId); return;
-            }
-
             if (this.nextLevelId == null)
             {
-                throw new Exception("Workflow is missing an approval authority!");
+                if (ActionIsApprovalDecision() || this.amount == 0)
+                {
+                    this.EndProcess(this.statusId);
+                }
+                else
+                {
+                    throw new Exception("Workflow is missing an approval authority!");
+                }
+            }
+            else
+            {
+                if (this.statusId == (int)ApprovalStatusEnum.Escalated)
+                {
+                    this.ContinueProcess((int)ApprovalStatusEnum.Processing);
+                }
             }
 
             if (this.fromLevelId != null && this.fromLevelId == this.finalLevel)
             {
-                this.EndProcess(this.statusId); return;
+                this.EndProcess(this.statusId);
             }
 
-            if (this.keepPending == true)
+            if (this.keepPending == true) // DEPRECATED!!!
             {
                 this.statusId = (int)ApprovalStatusEnum.Pending;
                 this.newStateId = (int)ApprovalState.Processing;
@@ -594,9 +598,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.EndProcess(this.statusId);
             }
 
-            if (this.nextLevelId != null && this.statusId == (int)ApprovalStatusEnum.Escalated)
+            if (ActionIsApprovalDecision()) // if its still approval decision end process
             {
-                this.ContinueProcess((int)ApprovalStatusEnum.Processing);
+                this.EndProcess(this.statusId);
             }
         }
 
@@ -753,7 +757,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     };
                     context.TBL_MESSAGE_LOG.Add(message);
 
-                    if (this.nextLevelId != null)
+                    if (this.toStaffId != null || emails.Length > 0)
                     {
                         message = new TBL_MESSAGE_LOG // RECIEVERS
                         {
