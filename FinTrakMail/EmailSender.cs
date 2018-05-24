@@ -32,7 +32,7 @@ namespace FinTrakMail
 
                 client.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["Username"], ConfigurationManager.AppSettings["Password"]);
 
-                var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending || o.MESSAGESTATUSID== (int)MessageStatusEnum.Attempted).ToList();
+                var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending || o.MESSAGESTATUSID == (int)MessageStatusEnum.Attempted).ToList() ;
 
                 foreach (var newMail in listOfMails)
                 {
@@ -43,8 +43,8 @@ namespace FinTrakMail
                     if (newMail.TOADDRESS != null && newMail.TOADDRESS != string.Empty)
                     {
                         char[] seperators = { ',', ';' };
-                        string[] Addy = newMail.TOADDRESS.Split(seperators);
-                     // string[] Addy = "isah.yarima@yahoo.com,anu.omotayo @fintraksoftware.com".Split(seperators);
+                        //string[] Addy = newMail.TOADDRESS.Split(seperators);
+                      string[] Addy = "isah.yarima@yahoo.com,anu.omotayo @fintraksoftware.com".Split(seperators);
                         foreach (var emailAddy in Addy)
                         {
                             if (emailAddy != null && emailAddy != string.Empty)
@@ -60,9 +60,8 @@ namespace FinTrakMail
                     mailId = newMail.MESSAGEID;
 
                     client.Send(mail);
-
-                   //UPDATE MESSAGE SENT
-                    UpdateMessageLogForEmailSent.UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");
+                        UpdateMessageLogForEmailSent.UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");
+                        AuditTrail.LogFileManager.LogToFile("Email has been sent to : " + " " + newMail.TOADDRESS + " - " + DateTime.Now.ToString());
 
                 }
 
@@ -70,9 +69,10 @@ namespace FinTrakMail
             }
             catch (Exception ex)
             {
-                UpdateMessageLogForEmailSent.UpdateMailDeliveryStatus(mailId, (int)MessageStatusEnum.Attempted,"Email sending failed. Error Response : " + ex.Message);
+                UpdateMessageLogForEmailSent.UpdateMailDeliveryStatus(mailId, (int)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
 
-                AuditTrail.LogFileManager.LogToFile("Error Occurred - " + ex.Message + " - " + ex.StackTrace.ToString() + DateTime.Now.ToString());
+                AuditTrail.LogFileManager.LogToFile("Error Occurred - " + ex.Message + " - " + ex.StackTrace.ToString() + " DATE : " + DateTime.Now.ToString());
+
                 return false;
             }
         }
@@ -100,29 +100,7 @@ namespace FinTrakMail
             }
         }
 
-        //public EmailSetup GetEmailSetup()
-        //{
-        //    try
-        //    {
-
-        //            var setup = dbContext.EmailSetups.FirstOrDefault();
-        //            if (setup != null)
-        //            {
-        //                return setup;
-        //            }
-        //            else
-        //            {
-        //                return new EmailSetup();
-        //            }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //       AuditTrail.LogFileManager.LogToFile("Error Occurred - " + ex.Message + " - " + ex.InnerException.ToString() + DateTime.Now.ToString());
-        //        return new EmailSetup();
-        //    }
-        //}
-
+       
         public bool UpdateMailStatus(int ID)
         {
             try

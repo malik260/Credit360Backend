@@ -99,7 +99,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (entity.hasInsurance) { AddTempItemInsurancePolicy(collateralId, entity); }
 
-                      //  if (file != null) { SaveCollateralMainDocument(entity, collateralId, file); }
+                        if (file != null) { SaveCollateralMainDocument(entity, collateralId, file); }
 
                         bool saved;
                         try

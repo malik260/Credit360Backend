@@ -1730,7 +1730,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                     notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
                                                 }).ToList();
             
-            if (loanDetails !=null)
+            if (loanDetails.Count !=0)
             {
                 SendAlertsOnAccountWithExeptionRM(loanDetails.ToList(), AccountWithExeption.MESSAGE_TITLE);
                 if (AccountWithExeption.RECIPIENTEMAILS1.Trim() != string.Empty)
@@ -1801,7 +1801,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                     notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
                                                 }).ToList();
             
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsOnAccountWithExeptionRM(loanDetails, AccountWithExeption.MESSAGE_TITLE);
                 SendAlertsOnAccountWithExeptionMonitoringTeam(loanDetails, AccountWithExeption);
@@ -1821,7 +1821,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                 join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                 join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                 join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                                where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0m
+                                                where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0
                                                 select new LoanViewModel
                                                 {
                                                     applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -1843,7 +1843,7 @@ namespace FintrakBanking.Repositories.AppEmail
                                                     customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
                                                     notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
                                                 }).ToList();
-            if (loanDetails != null)
+            if (loanDetails.Count != 0)
             {
                 SendAlertsOnAccountWithExeptionRM(loanDetails.ToList(), AccountWithExeption.MESSAGE_TITLE);
                 if (AccountWithExeption.RECIPIENTEMAILS1.Trim() != string.Empty)
