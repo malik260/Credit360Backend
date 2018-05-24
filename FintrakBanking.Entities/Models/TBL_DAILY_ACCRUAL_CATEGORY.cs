@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_DAILY_ACCRUAL_CATEGORY")]
+    [Table("TBL_DAILY_ACCRUAL_CATEGORY")]
     public partial class TBL_DAILY_ACCRUAL_CATEGORY
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_DEPOSIT")]
+    [Table("TBL_COLLATERAL_DEPOSIT")]
     public partial class TBL_COLLATERAL_DEPOSIT
     {
         [Key]
@@ -24,25 +24,25 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal EXISTINGLIENAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal LIENAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal AVAILABLEBALANCE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal SECURITYVALUE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime EFFECTIVEDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime MATURITYDATE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal MATURITYAMOUNT { get; set; }
 
         [StringLength(500)]

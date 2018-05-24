@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_COLLATERAL_CUSTOMER")]
+    [Table("TBL_TEMP_COLLATERAL_CUSTOMER")]
     public partial class TBL_TEMP_COLLATERAL_CUSTOMER
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -40,7 +40,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? VALUATIONCYCLE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal COLLATERALVALUE { get; set; }
 
         public double HAIRCUT { get; set; }

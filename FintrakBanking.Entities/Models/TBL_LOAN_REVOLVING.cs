@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_REVOLVING")]
+    [Table("TBL_LOAN_REVOLVING")]
     public partial class TBL_LOAN_REVOLVING
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -34,11 +34,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
-        public short? REVOLVINGTYPEID { get; set; }
-
-        public double EXCHANGERATE { get; set; }
-
-         //public bool ISTEMPORARYOVERDRAFT { get; set; }
+        public double EXCHANGERATE { get; set; } 
 
         [Required]
         [StringLength(50)]
@@ -58,37 +54,35 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(50)]
         public string TEAMMISCODE { get; set; }
-
+        
         public double INTERESTRATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime EFFECTIVEDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime MATURITYDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime BOOKINGDATE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal OVERDRAFTLIMIT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal PASTDUEPRINCIPAL { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal PASTDUEINTEREST { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal INTERESTONPASTDUEPRINCIPAL { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal INTERESTONPASTDUEINTEREST { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal PENALCHARGEAMOUNT { get; set; }
-
-        public bool ISTEMPORARYOVERDRAFT { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
 
@@ -109,7 +103,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string DISBURSERCOMMENT { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DISBURSEDATE { get; set; }
 
         public int? OPERATIONID { get; set; }
@@ -126,7 +120,7 @@ namespace FintrakBanking.Entities.Models
 
         public int USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
 
         [StringLength(50)]
@@ -135,6 +129,10 @@ namespace FintrakBanking.Entities.Models
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
+
+        public short REVOLVINGTYPEID { get; set; }
+
+        public DateTime LASTRESTRUCTUREDATE { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

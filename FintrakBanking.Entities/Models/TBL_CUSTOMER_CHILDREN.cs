@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_CHILDREN")]
+    [Table("TBL_CUSTOMER_CHILDREN")]
     public partial class TBL_CUSTOMER_CHILDREN
     {
         [Key]
@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string CHILDNAME { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime CHILDDATEOFBIRTH { get; set; }
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }

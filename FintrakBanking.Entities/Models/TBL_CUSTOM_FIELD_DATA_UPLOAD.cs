@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOM_FIELD_DATA_UPLOAD")]
+    [Table("TBL_CUSTOM_FIELD_DATA_UPLOAD")]
     public partial class TBL_CUSTOM_FIELD_DATA_UPLOAD
     {
         [Key]

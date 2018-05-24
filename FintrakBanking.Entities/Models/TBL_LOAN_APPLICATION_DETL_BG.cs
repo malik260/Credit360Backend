@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_APPLICATION_DETL_BG")]
+    [Table("TBL_LOAN_APPLICATION_DETL_BG")]
     public partial class TBL_LOAN_APPLICATION_DETL_BG
     {
         [Key]
@@ -16,15 +16,15 @@ namespace FintrakBanking.Entities.Models
 
         public int PRINCIPALID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal AMOUNT { get; set; }
 
         public short CURRENCYID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime CONTRACT_STARTDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime CONTRACT_ENDDATE { get; set; }
 
         public bool ISTENORED { get; set; }

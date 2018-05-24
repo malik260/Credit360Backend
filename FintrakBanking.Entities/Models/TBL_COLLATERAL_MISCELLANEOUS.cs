@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_MISCELLANEOUS")]
+    [Table("TBL_COLLATERAL_MISCELLANEOUS")]
     public partial class TBL_COLLATERAL_MISCELLANEOUS
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string NAMEOFSECURITY { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal SECURITYVALUE { get; set; }
 
         [Required]

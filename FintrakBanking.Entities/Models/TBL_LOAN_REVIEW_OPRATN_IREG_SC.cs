@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_REVIEW_OPRATN_IREG_SC")]
+    [Table("TBL_LOAN_REVIEW_OPRATN_IREG_SC")]
     public partial class TBL_LOAN_REVIEW_OPRATN_IREG_SC
     {
         [Key]
@@ -14,10 +14,10 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANREVIEWOPERATIONID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime PAYMENTDATE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal PAYMENTAMOUNT { get; set; }
 
         public int CREATEDBY { get; set; }

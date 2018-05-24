@@ -42,7 +42,7 @@ namespace FintrakBanking.Entities.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Sequence { get; set; }
 
-        [Column(TypeName = "ntext")]
+        //[Column(TypeName = "ntext")]
         [Required]
         public string AllXml { get; set; }
     }

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_CONTINGENT_USAGE")]
+    [Table("TBL_LOAN_CONTINGENT_USAGE")]
     public partial class TBL_LOAN_CONTINGENT_USAGE
     {
         [Key]
@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CONTINGENTLOANID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal AMOUNTREQUESTED { get; set; }
 
         public short APPROVALSTATUSID { get; set; }

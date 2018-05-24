@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_APPLICATION_DETL_INV")]
+    [Table("TBL_LOAN_APPLICATION_DETL_INV")]
     public partial class TBL_LOAN_APPLICATION_DETL_INV
     {
         [Key]
@@ -20,10 +20,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string INVOICENO { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime INVOICE_DATE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal INVOICE_AMOUNT { get; set; }
 
         public short INVOICE_CURRENCYID { get; set; }
@@ -32,10 +32,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string CONTRACTNO { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime CONTRACT_STARTDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime CONTRACT_ENDDATE { get; set; }
 
         [StringLength(50)]
