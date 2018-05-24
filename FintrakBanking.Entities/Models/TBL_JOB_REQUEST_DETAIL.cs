@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_JOB_REQUEST_DETAIL")]
+    [Table("TBL_JOB_REQUEST_DETAIL")]
     public partial class TBL_JOB_REQUEST_DETAIL
     {
         [Key]
@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(2000)]
         public string DESCRIPTION { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? AMOUNT { get; set; }
 
         [StringLength(50)]

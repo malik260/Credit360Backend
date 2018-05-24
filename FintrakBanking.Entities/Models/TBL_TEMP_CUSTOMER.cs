@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_CUSTOMER")]
+    [Table("TBL_TEMP_CUSTOMER")]
     public partial class TBL_TEMP_CUSTOMER
     {
         [Key]
@@ -38,7 +38,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(10)]
         public string GENDER { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DATEOFBIRTH { get; set; }
 
         [StringLength(200)]
@@ -77,7 +77,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string MISSTAFF { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DATEACTEDON { get; set; }
 
         [StringLength(150)]
@@ -106,7 +106,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? VALIDATED { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DATEVALIDATED { get; set; }
 
         public int CREATEDBY { get; set; }

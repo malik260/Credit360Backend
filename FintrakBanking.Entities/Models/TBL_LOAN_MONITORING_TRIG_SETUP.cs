@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_MONITORING_TRIG_SETUP")]
+    [Table("TBL_LOAN_MONITORING_TRIG_SETUP")]
     public partial class TBL_LOAN_MONITORING_TRIG_SETUP
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

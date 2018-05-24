@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_PROFILE_STAFF_ROLE_GROUP")]
+    [Table("TBL_PROFILE_STAFF_ROLE_GROUP")]
     public partial class TBL_PROFILE_STAFF_ROLE_GROUP
     {
         [Key]

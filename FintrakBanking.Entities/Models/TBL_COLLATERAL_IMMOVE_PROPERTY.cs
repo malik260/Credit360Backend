@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_IMMOVE_PROPERTY")]
+    [Table("TBL_COLLATERAL_IMMOVE_PROPERTY")]
     public partial class TBL_COLLATERAL_IMMOVE_PROPERTY
     {
         [Key]
@@ -39,22 +39,22 @@ namespace FintrakBanking.Entities.Models
 
         public short PROPERTYVALUEBASETYPEID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? OPENMARKETVALUE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? FORCEDSALEVALUE { get; set; }
 
         [StringLength(10)]
         public string STAMPTOCOVER { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? SECURITYVALUE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? COLLATERALUSABLEAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? VALUATIONAMOUNT { get; set; }
 
         [StringLength(500)]

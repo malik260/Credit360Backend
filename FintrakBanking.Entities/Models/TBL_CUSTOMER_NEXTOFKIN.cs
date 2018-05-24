@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_NEXTOFKIN")]
+    [Table("TBL_CUSTOMER_NEXTOFKIN")]
     public partial class TBL_CUSTOMER_NEXTOFKIN
     {
         [Key]
@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string PHONENUMBER { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DATEOFBIRTH { get; set; }
 
         [StringLength(10)]

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_EDIT_HISTORY")]
+    [Table("TBL_CUSTOMER_EDIT_HISTORY")]
     public partial class TBL_CUSTOMER_EDIT_HISTORY
     {
         [Key]

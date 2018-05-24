@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_CUSTOMER_DIRECTOR")]
+    [Table("TBL_TEMP_CUSTOMER_DIRECTOR")]
     public partial class TBL_TEMP_CUSTOMER_DIRECTOR
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

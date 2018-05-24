@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("finance.TBL_FINANCIAL_STATEMENT_CAPTN")]
+    [Table("TBL_FINANCIAL_STATEMENT_CAPTN")]
     public partial class TBL_FINANCIAL_STATEMENT_CAPTN
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

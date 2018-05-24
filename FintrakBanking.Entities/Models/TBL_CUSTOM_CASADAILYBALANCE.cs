@@ -4,7 +4,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("custom.TBL_CUSTOM_CASADAILYBALANCE")]
+    [Table("TBL_CUSTOM_CASADAILYBALANCE")]
     public partial class TBL_CUSTOM_CASADAILYBALANCE
     {
         [Key]

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_MONITORING_TRIGGER")]
+    [Table("TBL_LOAN_MONITORING_TRIGGER")]
     public partial class TBL_LOAN_MONITORING_TRIGGER
     {
         [Key]
