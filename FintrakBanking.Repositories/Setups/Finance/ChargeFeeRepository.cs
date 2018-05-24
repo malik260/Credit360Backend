@@ -337,7 +337,6 @@ namespace FintrakBanking.Repositories.Setups.Finance
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.FeeCreation).ToList();
 
             var charge = (from a in context.TBL_TEMP_CHARGE_FEE
-                          join b in context.TBL_TEMP_CHARGE_FEE_DETAIL on a.TEMPCHARGEFEEID equals b.TEMPCHARGEFEEID
                           join t in context.TBL_APPROVAL_TRAIL on a.TEMPCHARGEFEEID equals t.TARGETID
                           where (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                               && a.ISCURRENT == true
