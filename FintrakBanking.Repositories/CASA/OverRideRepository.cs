@@ -16,20 +16,20 @@ namespace FintrakBanking.Repositories.CASA
 
    public  class OverRideRepository : IOverRideRepository 
     {
-        private FinTrakBankingContext context;
-        private IAuditTrailRepository auditTrail;
-        private IGeneralSetupRepository genSetup;
-        private IWorkflow workFlow;
+        private readonly FinTrakBankingContext _context;
+        private IAuditTrailRepository _auditTrail;
+        private readonly IGeneralSetupRepository _genSetup;
+        private IWorkflow _workFlow;
 
         public OverRideRepository(
-            IAuditTrailRepository _auditTrail,
-            IWorkflow _workFlow, IGeneralSetupRepository _genSetup,
-            FinTrakBankingContext _context)
+            IAuditTrailRepository auditTrail,
+            IWorkflow workFlow, IGeneralSetupRepository genSetup,
+            FinTrakBankingContext context)
         {
-            this.context = _context;
-            this.auditTrail = _auditTrail;
-            this.genSetup = _genSetup;          
-            this.workFlow = _workFlow;
+            this._context = context;
+            this._auditTrail = auditTrail;
+            this._genSetup = genSetup;          
+            this._workFlow = workFlow;
         }
 
         public bool AddOverRideRequest(IEnumerable<OverrideDetailVeiwModel> entity)
@@ -40,54 +40,56 @@ namespace FintrakBanking.Repositories.CASA
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 CREATEDBY = c.createdBy,
                 REASON  = c.reason,
-                DATETIMECREATED = genSetup.GetApplicationDate(),
+                DATETIMECREATED = _genSetup.GetApplicationDate(),
                 ISUSED = false,
                 OVERRIDE_ITEMID = c.overrideItemId,
                 SOURCE_REFERENCE_NUMBER = c.sourceReferenceNumber
             });
-            context.TBL_OVERRIDE_DETAIL.AddRange(data);
+            _context.TBL_OVERRIDE_DETAIL.AddRange(data);
 
-            return context.SaveChanges() > 0;
+            return _context.SaveChanges() > 0;
 
         }
 
-        public int EffectOverride(string customerCode, int overrideItemId,string sourceRef )
+        public int EffectOverride(string customerCode, int overrideItemId, string sourceRef)
         {
-            bool result = false;
-            var data =  context.TBL_OVERRIDE_DETAIL.Where(e => e.ISUSED == false 
-              && e.CUSTOMERCODE== customerCode 
-              && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-              && e.OVERRIDE_ITEMID == overrideItemId);
+            var data = _context.TBL_OVERRIDE_DETAIL.Where(e => e.ISUSED == false
+                                                               && e.CUSTOMERCODE == customerCode
+                                                               && e.APPROVALSTATUSID ==
+                                                               (int) ApprovalStatusEnum.Approved
+                                                               && e.OVERRIDE_ITEMID == overrideItemId);
 
             if (data.Any())
             {
                 var detail = data.FirstOrDefault();
-
-                detail.ISUSED = true;
-                detail.SOURCE_REFERENCE_NUMBER = sourceRef;
-                result = true;
+                if (detail != null)
+                {
+                    detail.ISUSED = true;
+                    detail.SOURCE_REFERENCE_NUMBER = sourceRef;
+                }
             }
+
             return data.Count();
         }
 
         public bool ApproveOverRideRequest(OverrideDetailVeiwModel entity)
         {
-            var data = context.TBL_OVERRIDE_DETAIL.Where(c => c.OVERRIDE_DETAILID == entity.overrideDetailId).FirstOrDefault();
-            data.OVERRIDE_DETAILID = entity.overrideDetailId;
-            return  context.SaveChanges() > 0;
+            var data = _context.TBL_OVERRIDE_DETAIL.FirstOrDefault(c => c.OVERRIDE_DETAILID == entity.overrideDetailId);
+            if (data != null) data.OVERRIDE_DETAILID = entity.overrideDetailId;
+            return  _context.SaveChanges() > 0;
         }
 
         public bool DeleteOverRideRequest(OverrideDetailVeiwModel entity)
         {
-            var data = context.TBL_OVERRIDE_DETAIL.Where(c => c.OVERRIDE_DETAILID == entity.overrideDetailId);
+            var data = _context.TBL_OVERRIDE_DETAIL.Where(c => c.OVERRIDE_DETAILID == entity.overrideDetailId);
              
-             context.TBL_OVERRIDE_DETAIL .RemoveRange(data);
-          return   context.SaveChanges() > 0;
+             _context.TBL_OVERRIDE_DETAIL .RemoveRange(data);
+          return   _context.SaveChanges() > 0;
         }
 
         public IEnumerable<OverrideItemVeiwModel> GetAllOverRideItems()
         {
-            var data = context.TBL_OVERRIDE_ITEM.Select(c => new OverrideItemVeiwModel
+            var data = _context.TBL_OVERRIDE_ITEM.Select(c => new OverrideItemVeiwModel
             {
                itemId = c.OVERRIDE_ITEMID ,
                 itemName = c.OVERIDE_ITEMNAME 
@@ -97,8 +99,8 @@ namespace FintrakBanking.Repositories.CASA
 
         private IQueryable<OverrideDetailVeiwModel> AllOverRideRequest()
         {
-            var data = context.TBL_OVERRIDE_DETAIL;
-            var cust = context.TBL_CUSTOMER.Select(d => new { customer = d.LASTNAME + " " + d.FIRSTNAME + " " + d.MIDDLENAME, d.CUSTOMERCODE, d.CUSTOMERID });
+            var data = _context.TBL_OVERRIDE_DETAIL;
+            var cust = _context.TBL_CUSTOMER.Select(d => new { customer = d.LASTNAME + " " + d.FIRSTNAME + " " + d.MIDDLENAME, d.CUSTOMERCODE, d.CUSTOMERID });
 
             var over = from a in cust
                        join d in data on a.CUSTOMERCODE equals d.CUSTOMERCODE
@@ -129,7 +131,7 @@ namespace FintrakBanking.Repositories.CASA
 
         public OverrideDetailVeiwModel GetOverRideRequestById(int id)
         {
-           return AllOverRideRequest().Where(e=> e.overrideDetailId == id).FirstOrDefault();
+           return AllOverRideRequest().FirstOrDefault(e => e.overrideDetailId == id);
         }
 
         public IEnumerable<OverrideDetailVeiwModel> GetOverRideRequestByOverRideItemsId(int id)
@@ -144,16 +146,19 @@ namespace FintrakBanking.Repositories.CASA
 
         public bool UpdateOverRideRequest(OverrideDetailVeiwModel entity)
         {
-            var data = context.TBL_OVERRIDE_DETAIL.Where(c => c.OVERRIDE_DETAILID == entity.overrideDetailId).FirstOrDefault();
-            data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
-            data.CREATEDBY = entity.createdBy;
-            //data.CUSTOMERID = entity.customerId;
-            data.DATETIMECREATED = genSetup.GetApplicationDate();
-            data.ISUSED = entity.isUsed;
-            data.OVERRIDE_ITEMID = entity.overrideItemId;
-            data.SOURCE_REFERENCE_NUMBER = entity.sourceReferenceNumber;             
+            var data = _context.TBL_OVERRIDE_DETAIL.FirstOrDefault(c => c.OVERRIDE_DETAILID == entity.overrideDetailId);
+            if (data != null)
+            {
+                data.APPROVALSTATUSID = (short) ApprovalStatusEnum.Pending;
+                data.CREATEDBY = entity.createdBy;
+                //data.CUSTOMERID = entity.customerId;
+                data.DATETIMECREATED = _genSetup.GetApplicationDate();
+                data.ISUSED = entity.isUsed;
+                data.OVERRIDE_ITEMID = entity.overrideItemId;
+                data.SOURCE_REFERENCE_NUMBER = entity.sourceReferenceNumber;
+            }
 
-            return context.SaveChanges() > 0;
+            return _context.SaveChanges() > 0;
         }
     }
 }

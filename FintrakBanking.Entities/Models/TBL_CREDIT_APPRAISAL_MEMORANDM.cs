@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CREDIT_APPRAISAL_MEMORANDM")]
+    [Table("credit.TBL_CREDIT_APPRAISAL_MEMORANDM")]
     public partial class TBL_CREDIT_APPRAISAL_MEMORANDM
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_TEMP_PRODUCT_BEHAVIOUR")]
+    [Table("temp.TBL_TEMP_PRODUCT_BEHAVIOUR")]
     public partial class TBL_TEMP_PRODUCT_BEHAVIOUR
     {
         [Key]
@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
 
         public double? COLLATERAL_FCY_LIMIT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? CUSTOMER_LIMIT { get; set; }
 
         public double? PRODUCT_LIMIT { get; set; }

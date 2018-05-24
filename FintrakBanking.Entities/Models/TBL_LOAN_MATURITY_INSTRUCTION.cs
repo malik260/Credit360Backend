@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_MATURITY_INSTRUCTION")]
+    [Table("credit.TBL_LOAN_MATURITY_INSTRUCTION")]
     public partial class TBL_LOAN_MATURITY_INSTRUCTION
     {
         [Key]

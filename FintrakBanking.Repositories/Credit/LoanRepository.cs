@@ -240,7 +240,7 @@ namespace FintrakBanking.Repositories.Credit
                 COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = DateTime.Now,
-                LASTRESTRUCTUREDATE = revolvingLoanInput.effectiveDate,
+               // LASTRESTRUCTUREDATE = revolvingLoanInput.effectiveDate,
                 USER_PRUDENTIAL_GUIDE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 EXT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 INT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
@@ -5664,12 +5664,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from l in context.TBL_LOAN
                         where l.LOANREFERENCENUMBER == param.param.Trim() && param.branchId == 0
-                        || l.TBL_CUSTOMER.FIRSTNAME.StartsWith(param.param.Trim()) && param.branchId == 0
-                        || l.TBL_CUSTOMER.MAIDENNAME.StartsWith(param.param.Trim()) && param.branchId == 0
-                        || l.TBL_CUSTOMER.LASTNAME.StartsWith(param.param.Trim()) && param.branchId == 0
+                        || l.TBL_CUSTOMER.FIRSTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
+                        || l.TBL_CUSTOMER.MAIDENNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
+                        || l.TBL_CUSTOMER.LASTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
+                        || l.TBL_CUSTOMER.FIRSTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
+                        || l.TBL_CUSTOMER.MAIDENNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
+                        || l.TBL_CUSTOMER.LASTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
                         || l.BRANCHID == param.branchId && l.LOANREFERENCENUMBER == param.param.Trim()
                         || l.BRANCHID == param.branchId && param.param == null
-                        || param.param == ""
+                        || param.param == null && param.branchId == 0
 
                         select new LoanViewModel
                         {

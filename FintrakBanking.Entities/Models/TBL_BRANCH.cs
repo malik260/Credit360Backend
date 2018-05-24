@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_BRANCH")]
+    [Table("core.TBL_BRANCH")]
     public partial class TBL_BRANCH
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -55,7 +55,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(255)]
         public string ADDRESSLINE2 { get; set; }
 
-        [StringLength(2000), Column(name: "COMMENT_")]
+        [StringLength(2000)]
         public string COMMENT { get; set; }
 
         public int? STATEID { get; set; }
@@ -64,7 +64,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool NPL_LIMITEXCEEDED { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal NPL_LIMIT { get; set; }
 
         public bool DELETED { get; set; }

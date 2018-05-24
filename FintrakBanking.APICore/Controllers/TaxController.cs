@@ -114,6 +114,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.staffId = token.GetStaffId;
 
                 var data = repo.UpdateTax(entity, taxId);
                 if (data)

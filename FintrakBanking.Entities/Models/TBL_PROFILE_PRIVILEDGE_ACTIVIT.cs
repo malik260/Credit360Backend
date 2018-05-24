@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_PROFILE_PRIVILEDGE_ACTIVIT")]
+    [Table("core.TBL_PROFILE_PRIVILEDGE_ACTIVIT")]
     public partial class TBL_PROFILE_PRIVILEDGE_ACTIVIT
     {
         [Key]

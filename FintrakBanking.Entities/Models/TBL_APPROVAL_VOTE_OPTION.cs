@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_APPROVAL_VOTE_OPTION")]
+    [Table("core.TBL_APPROVAL_VOTE_OPTION")]
     public partial class TBL_APPROVAL_VOTE_OPTION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

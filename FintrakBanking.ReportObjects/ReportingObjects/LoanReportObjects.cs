@@ -260,7 +260,7 @@ namespace FintrakBanking.ReportObjects
                 var data = from a in context.TBL_LOAN
                            join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
                            join c in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals c.CUSTOMERID
-                           where a.COMPANYID == companyId && a.LOANSTATUSID == 1
+                           where a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                            && DbFunctions.TruncateTime(b.PAYMENTDATE) >= DbFunctions.TruncateTime(startDate)
                             && DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
                            //&& DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(b.PAYMENTDATE)
@@ -305,12 +305,13 @@ namespace FintrakBanking.ReportObjects
                 var data = from a in context.TBL_CHECKLIST_DETAIL
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.TARGETID equals b.LOANAPPLICATIONDETAILID
 
-                           where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred
+                           where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Waived
                            // && b.TBL_CUSTOMER.COMPANYID == companyId
                             && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                             && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                             && b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
                             && b.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+
                             && (b.TBL_CUSTOMER.BRANCHID == branchId || branchId == null)
 
 
@@ -347,7 +348,6 @@ namespace FintrakBanking.ReportObjects
                            join e in context.TBL_LOAN_APPLICATION_DETAIL on b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
 
                            where
-                           // c.COMPANYID == companyId
                               DbFunctions.TruncateTime(a.DEFERREDDATE) >= DbFunctions.TruncateTime(startDate)
                             && DbFunctions.TruncateTime(a.DEFERREDDATE) <= DbFunctions.TruncateTime(endDate)
                            && d.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
@@ -499,7 +499,7 @@ namespace FintrakBanking.ReportObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var currdata = from a in context.TBL_LOAN
-                               where a.COMPANYID == companyId && a.LOANSTATUSID == 1
+                               where a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                                && a.TERMLOANID == loanId
                                //&& a.CURRENCYID != 1
                                select new FCYScheuledLoanViewModel()

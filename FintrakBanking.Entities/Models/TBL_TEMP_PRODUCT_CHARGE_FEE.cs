@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_TEMP_PRODUCT_CHARGE_FEE")]
+    [Table("temp.TBL_TEMP_PRODUCT_CHARGE_FEE")]
     public partial class TBL_TEMP_PRODUCT_CHARGE_FEE
     {
         [Key]
@@ -18,10 +18,10 @@ namespace FintrakBanking.Entities.Models
 
         public int CHARGEFEEID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal RATEVALUE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? DEPENDENTAMOUNT { get; set; }
 
         public int CREATEDBY { get; set; }

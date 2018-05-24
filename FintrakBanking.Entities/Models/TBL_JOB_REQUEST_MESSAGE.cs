@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_JOB_REQUEST_MESSAGE")]
+    [Table("core.TBL_JOB_REQUEST_MESSAGE")]
     public partial class TBL_JOB_REQUEST_MESSAGE
     {
         [Key]
