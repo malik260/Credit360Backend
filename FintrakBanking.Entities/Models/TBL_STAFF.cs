@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_STAFF")]
+    [Table("core.TBL_STAFF")]
     public partial class TBL_STAFF
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -95,7 +95,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string ADDRESS { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? DATEOFBIRTH { get; set; }
 
         [StringLength(1)]
@@ -119,7 +119,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string NOKRELATIONSHIP { get; set; }
 
-        [StringLength(100), Column(name: "COMMENT_")]
+        [StringLength(100)]
         public string COMMENT { get; set; }
 
         public short? BRANCHID { get; set; }
@@ -136,10 +136,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool NPL_LIMITEXCEEDED { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? NPL_LIMIT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? LOAN_LIMIT { get; set; }
 
         public int? CREATEDBY { get; set; }

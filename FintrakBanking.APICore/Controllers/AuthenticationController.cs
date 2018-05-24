@@ -36,7 +36,7 @@ namespace FintrakBanking.APICore.Controllers
                 IErrorLogRepository errorLogger,
                 IAdminRepository adminRepo,
                 IAuditTrailRepository auditTrail,
-                IGeneralSetupRepository genSetup, 
+                IGeneralSetupRepository genSetup,
                 FinTrakBankingContext context
             )
         {
@@ -48,7 +48,8 @@ namespace FintrakBanking.APICore.Controllers
             this._context = context;
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("user")]
         public HttpResponseMessage GetAllUsers()
         {
@@ -73,7 +74,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("user")]
         public async Task<HttpResponseMessage> AddUser([FromBody] UserViewModel user)
         {
@@ -103,7 +105,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete]
+        [ClaimsAuthorization]
         [Route("user/{userId}")]
         public async Task<HttpResponseMessage> DeleteUser(int userId)
         {
@@ -123,7 +126,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("user/{userId}")]
         public async Task<HttpResponseMessage> UpdateUser(int userId, [FromBody] UserViewModel user)
         {
@@ -146,7 +150,8 @@ namespace FintrakBanking.APICore.Controllers
 
         //Group
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("group")]
         public HttpResponseMessage GetGroups()
         {
@@ -177,14 +182,14 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost]// [ClaimsAuthorization]
+        [HttpPost]// [ClaimsAuthorization]
         [Route("token")]
-        public HttpResponseMessage GetToken([FromBody] TokenVM user)
+        public async Task<HttpResponseMessage> GetTokenAsync([FromBody] TokenVM user)
         {
             try
             {
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
-                var foundUser = _repo.FindUserByUserNameAndPassword(user.username, user.password, false);
+                var foundUser = await _repo.FindUserByUserNameAndPassword(user.username, user.password);
 
                 if (foundUser == null)
                 {
@@ -222,7 +227,7 @@ namespace FintrakBanking.APICore.Controllers
                     {
                         AUDITTYPEID = (short)AuditTypeEnum.LoggedIn,
                         STAFFID = currUser.staffId,
-                        BRANCHID =(short) currUser.branchId,
+                        BRANCHID = (short)currUser.branchId,
                         DETAIL = $"{currUser.username} logged in",
                         IPADDRESS = CommonHelpers.GetUserIP(),
                         URL = Request.RequestUri.AbsoluteUri,
@@ -234,7 +239,7 @@ namespace FintrakBanking.APICore.Controllers
                     _auditTrail.AddAuditTrail(audit);
                 }
 
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
                 // build the json response
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -250,7 +255,7 @@ namespace FintrakBanking.APICore.Controllers
                         activities = userActivities,
                         staffId = currUser.staffId,
                         staffName = currUser.staffName,
-                          sessionStatusInfo = currUser.sessionStatusInfo,
+                        sessionStatusInfo = currUser.sessionStatusInfo,
                         applicationDate = _genSetup.GetApplicationDate(),
                         lastLoginDate = currUser.lastLoginDate,
                     }
@@ -265,12 +270,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] //[ClaimsAuthorization]
+        [HttpPost] //[ClaimsAuthorization]
         [Route("endpendingsession")]
         public IHttpActionResult SignOutUser([FromBody] TokenVM user)
         {
-            try {
-              
+            try
+            {
+
                 //var audit = new TBL_AUDIT()
                 //{
                 //    AUDITTYPEID = (short)AuditTypeEnum.LoggedOut,
@@ -295,11 +301,11 @@ namespace FintrakBanking.APICore.Controllers
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
-                return this.Ok(new   { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
+                return this.Ok(new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
             }
         }
 
-         [HttpPost] //[ClaimsAuthorization]
+        [HttpPost] //[ClaimsAuthorization]
         [Route("logOut")]
         public IHttpActionResult LogOut()
         {
@@ -310,12 +316,12 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (staffDetails == null)
                 {
-                    return this.Ok( new { success = false, message = "User Not Found" });
+                    return this.Ok(new { success = false, message = "User Not Found" });
                 }
-               
+
 
                 Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
-                
+
 
                 var audit = new TBL_AUDIT()
                 {
@@ -334,7 +340,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 _context.SaveChanges();
 
-                return this.Ok(new    { success = true, message = "User Logged Off" });
+                return this.Ok(new { success = true, message = "User Logged Off" });
 
             }
             catch (Exception ex)

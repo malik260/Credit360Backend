@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_CONDITION_PRECEDENT")]
+    [Table("credit.TBL_LOAN_CONDITION_PRECEDENT")]
     public partial class TBL_LOAN_CONDITION_PRECEDENT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -38,7 +38,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? CHECKLISTVALIDATED { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? DEFEREDDATE { get; set; }
 
         public short APPROVALSTATUSID { get; set; }

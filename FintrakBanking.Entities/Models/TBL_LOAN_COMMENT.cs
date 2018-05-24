@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_COMMENT")]
+    [Table("credit.TBL_LOAN_COMMENT")]
     public partial class TBL_LOAN_COMMENT
     {
         [Key]
@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(20)]
         public string COMMENTTYPE { get; set; }
 
-        [StringLength(250), Column(name: "COMMENT_")]
+        [StringLength(250)]
         public string COMMENT { get; set; }
 
         [StringLength(100)]

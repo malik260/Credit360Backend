@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CUSTOMER_CREDIT_BUREAU")]
+    [Table("credit.TBL_CUSTOMER_CREDIT_BUREAU")]
     public partial class TBL_CUSTOMER_CREDIT_BUREAU
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -24,14 +24,14 @@ namespace FintrakBanking.Entities.Models
 
         public int? COMPANYDIRECTORID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal CHARGEAMOUNT { get; set; }
 
         public bool ISREPORTOKAY { get; set; }
 
         public bool USEDINTEGRATION { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime? DATECOMPLETED { get; set; }
 
         public int CREATEDBY { get; set; }

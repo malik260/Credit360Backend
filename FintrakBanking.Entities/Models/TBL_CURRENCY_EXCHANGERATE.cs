@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CURRENCY_EXCHANGERATE")]
+    [Table("core.TBL_CURRENCY_EXCHANGERATE")]
     public partial class TBL_CURRENCY_EXCHANGERATE
     {
         [Key]
@@ -16,8 +16,7 @@ namespace FintrakBanking.Entities.Models
 
         public short RATECODEID { get; set; }
 
-        //[Column(TypeName = "date")]
-        [Column(name: "DATE_")]
+        [Column(TypeName = "date")]
         public DateTime DATE { get; set; }
 
         public double EXCHANGERATE { get; set; }

@@ -217,7 +217,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "customer group has been approved successfully" });
+                        new { success = true, message = "Customer Group has been approved successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });

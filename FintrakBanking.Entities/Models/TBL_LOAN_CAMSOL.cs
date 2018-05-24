@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_CAMSOL")]
+    [Table("credit.TBL_LOAN_CAMSOL")]
     public partial class TBL_LOAN_CAMSOL
     {
         [Key]
@@ -20,10 +20,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOANID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal AMOUNTAFFECTED { get; set; }
 
-        [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
         [Required]

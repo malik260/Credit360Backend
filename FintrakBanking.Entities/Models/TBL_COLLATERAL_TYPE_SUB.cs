@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_COLLATERAL_TYPE_SUB")]
+    [Table("credit.TBL_COLLATERAL_TYPE_SUB")]
     public partial class TBL_COLLATERAL_TYPE_SUB
     {
         [Key]

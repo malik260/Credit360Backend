@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_COLLATERAL_PRECIOUSMETAL")]
+    [Table("credit.TBL_COLLATERAL_PRECIOUSMETAL")]
     public partial class TBL_COLLATERAL_PRECIOUSMETAL
     {
         [Key]
@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(10)]
         public string WEIGHTINGRAMMES { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? VALUATIONAMOUNT { get; set; }
 
         public double? UNITRATE { get; set; }

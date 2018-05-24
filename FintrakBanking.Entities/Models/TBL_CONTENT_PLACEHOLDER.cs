@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CONTENT_PLACEHOLDER")]
+    [Table("core.TBL_CONTENT_PLACEHOLDER")]
     public partial class TBL_CONTENT_PLACEHOLDER
     {
         [Key]
