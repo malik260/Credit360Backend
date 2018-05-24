@@ -279,91 +279,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             productClassName = a.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             relationshipOfficerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPOFFICERID,
                             relationshipManagerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPMANAGERID,
-                            
-                            //invoiceDiscountDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
-                            //                         select new LoanApplicationDetailInvoiceViewModel
-                            //                         {
-                            //                             approvalComment = i.APPROVAL_COMMENT,
-                            //                             invoiceAmount = i.INVOICE_AMOUNT,
-                            //                             invoiceNo = i.INVOICENO,
-                            //                             approvaStatusId = i.APPROVALSTATUSID,
-                            //                             contractEndDate = i.CONTRACT_ENDDATE,
-                            //                             contractStartDate = i.CONTRACT_STARTDATE,
-                            //                             invoiceDate = i.INVOICE_DATE,
-                            //                             invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
-                            //                             principalName = i.TBL_LOAN_PRINCIPAL.NAME,
-                            //                             principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
-                            //                             principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
-                            //                             principalId = i.PRINCIPALID,
-                            //                         }).ToList(),
-                            //firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
-                            //                         select new EducationLoanViewModel
-                            //                         {
-                            //                             educationId = i.EDUCATIONID,
-                            //                             loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
-                            //                             numberOfStudent = i.NUMBER_OF_STUDENTS,
-                            //                             averageSchoolFees = i.AVERAGE_SCHOOL_FEES,
-                            //                             totalPreviousTermSchoolFees = i.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
-                            //                             productClassId = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == i.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSID,
-                            //                             productClassName = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == i.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSNAME,
-                            //                         }).ToList(),
-                            //firstTradderDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_TRA.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
-                            //                      select new TraderLoanViewModel
-                            //                      {
-                            //                          tradderId = i.TRADDERID,
-                            //                          marketId = i.MARKETID,
-                            //                          marketName = i.TBL_LOAN_MARKET.MARKETNAME,
-                            //                          averageMonthlyTurnover = i.AVERAGE_MONTHLY_TURNOVER,
-                            //                          loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
-                            //                          //productClassId = i.
-                            //                      }).ToList(),
-                            //loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
-                            //                  select new CollateralViewModel
-                            //                  {
-                            //                      allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                            //                      collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                            //                      collateralValue = i.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                            //                      collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                            //                      collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
-                            //                      //collateralSubTypeId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.
-                            //                      currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
-                            //                      valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                            //                      haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                            //                      customerName = i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
-                            //                     + " " + i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
-
-                            //                  }).ToList(),
-                            //allJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID 
-                            //                && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                            //                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
-                            //                ).Count(),
-
-                            //allPendingJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID
-                            //               && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                            //                                                                           ||( x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
-                            //               && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Count(),
-
-                            //allApprovedJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID
-                            //              && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                            //                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
-                            //              && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved).Count(),
-
-                            //allDisapproveJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID
-                            //                && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                            //                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
-                            //                && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Count(),
-
-                            //allProcessingJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID
-                            //               && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                            //                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
-                            //               && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.processing).Count(),
-
-                            //allCancelledJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID
-                            //               && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                            //                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
-                            //               && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.cancel).Count(),
-
-
+       
                         }).ToList();
             foreach (var i in data)
             {
@@ -371,6 +287,96 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var relationshipManager = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipManagerId).FirstOrDefault();
                 i.relationshipOfficerName = relationshipOfficer.FIRSTNAME + " " + relationshipOfficer.MIDDLENAME + " " + relationshipOfficer.LASTNAME;
                 i.relationshipManagerName = relationshipManager.FIRSTNAME + " " + relationshipManager.MIDDLENAME + " " + relationshipManager.LASTNAME;
+                var invoiceDiscountDetail = (from ap in context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == i.loanApplicationDetailId)
+                                             select new LoanApplicationDetailInvoiceViewModel
+                                             {
+                                                 approvalComment = ap.APPROVAL_COMMENT,
+                                                 invoiceAmount = ap.INVOICE_AMOUNT,
+                                                 invoiceNo = ap.INVOICENO,
+                                                 approvaStatusId = ap.APPROVALSTATUSID,
+                                                 contractEndDate = ap.CONTRACT_ENDDATE,
+                                                 contractStartDate = ap.CONTRACT_STARTDATE,
+                                                 invoiceDate = ap.INVOICE_DATE,
+                                                 invoiceCurrencyCode = ap.TBL_CURRENCY.CURRENCYCODE,
+                                                 principalName = ap.TBL_LOAN_PRINCIPAL.NAME,
+                                                 principalAccount = ap.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
+                                                 principalRegNo = ap.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
+                                                 principalId = ap.PRINCIPALID,
+                                             }).ToList();
+                var firstEducationtDetail = (from ed in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == i.loanApplicationDetailId)
+                                             select new EducationLoanViewModel
+                                             {
+                                                 educationId = ed.EDUCATIONID,
+                                                 loanApplicationDetailId = ed.LOANAPPLICATIONDETAILID,
+                                                 numberOfStudent = ed.NUMBER_OF_STUDENTS,
+                                                 averageSchoolFees = ed.AVERAGE_SCHOOL_FEES,
+                                                 totalPreviousTermSchoolFees = ed.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
+                                                 productClassId = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == ed.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSID,
+                                                 productClassName = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == ed.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSNAME,
+                                             }).ToList();
+                var firstTradderDetail = (from tr in context.TBL_LOAN_APPLICATION_DETL_TRA.Where(x => x.LOANAPPLICATIONDETAILID == i.loanApplicationDetailId)
+                                          select new TraderLoanViewModel
+                                          {
+                                              tradderId = tr.TRADDERID,
+                                              marketId = tr.MARKETID,
+                                              marketName = tr.TBL_LOAN_MARKET.MARKETNAME,
+                                              averageMonthlyTurnover = tr.AVERAGE_MONTHLY_TURNOVER,
+                                              loanApplicationDetailId = tr.LOANAPPLICATIONDETAILID,
+                                          }).ToList();
+                //var loanCollateral = (from cl in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == i.loanApplicationId)
+                //                      select new CollateralViewModel
+                //                      {
+                //                          allowSharing = cl.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                //                          collateralCode = cl.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                //                          collateralValue = cl.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                //                          collateralTypeName = cl.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                //                          collateralTypeId = cl.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
+                //                          currencyCode = cl.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                //                          valuationCycle = cl.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                //                          haircut = cl.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                //                          customerName = cl.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + cl.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
+                //                         + " " + cl.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
+
+                //                      }).ToList();
+                var allJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
+                                && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
+                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
+                                ).Count();
+
+                var allPendingJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
+                               && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
+                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
+                               && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Count();
+
+                var allApprovedJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
+                              && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
+                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
+                              && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved).Count();
+
+                var allDisapproveJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
+                              && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
+                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
+                              && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Count();
+
+                var allProcessingJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
+                               && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
+                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
+                               && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.processing).Count();
+
+                var allCancelledJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
+                               && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
+                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
+                               && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.cancel).Count();
+
+                i.invoiceDiscountDetail = invoiceDiscountDetail;
+                i.firstEducationtDetail = firstEducationtDetail;
+                //i.loanCollateral = loanCollateral;
+                i.allJobsCount = allJobsCount;
+                i.allPendingJobsCount = allPendingJobsCount;
+                i.allApprovedJobsCount = allApprovedJobsCount;
+                i.allDisapproveJobsCount = allDisapproveJobsCount;
+                i.allProcessingJobsCount = allProcessingJobsCount;
+                i.allCancelledJobsCount = allCancelledJobsCount;
             }
             return data;
         }
@@ -423,10 +429,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             //});
 
             var thisStaff = this.context.TBL_STAFF.Find(staffId);
+            var unitId = thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID;
 
-
-              var data =   context.TBL_JOB_REQUEST
-               .Where(t => ((t.DEPARTMENTUNITID == context.TBL_STAFF.Where(l=>l.STAFFID == staffId).FirstOrDefault().TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID) || (t.SENDERSTAFFID == staffId) || (t.REASSIGNEDTO == staffId)) && t.TBL_STAFF.BRANCHID == branchId)
+            var data =   context.TBL_JOB_REQUEST
+               .Where(t => (t.DEPARTMENTUNITID == unitId || t.SENDERSTAFFID == staffId || t.REASSIGNEDTO == staffId) )
                .Select(
                   x =>
                      new JobRequestViewModel
@@ -438,11 +444,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobTypeId = x.JOBTYPEID,
                     jobTypeName = x.TBL_JOB_TYPE.JOBTYPENAME,
                     senderStaffId = x.SENDERSTAFFID,
-                    senderRole = context.TBL_STAFF.Where(c => c.STAFFID == x.SENDERSTAFFID).FirstOrDefault().TBL_STAFF_ROLE.STAFFROLENAME, //x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
-                         //senderRole = (from s in context.TBL_STAFF where s.STAFFID == x.SENDERSTAFFID select s.TBL_STAFF_ROLE.STAFFROLENAME.Single()).ToString(), //x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
-                         // senderUnit = context.TBL_DEPARTMENT_UNIT.Where(c=>c.DEPARTMENTUNITID == context.TBL_STAFF.Where(z=>z.STAFFID == x.SENDERSTAFFID).FirstOrDefault().DEPARTMENTUNITID).FirstOrDefault().DEPARTMENTUNITNAME, // +"(" + x.TBL_DEPARTMENT.DEPARTMENTNAME +")",
-                         // senderDepartment =  x.TBL_DEPARTMENT.DEPARTMENTNAME,
-                         receiverStaffId = (int)x.RECEIVERSTAFFID,
+                    senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                    //senderUnit = context.TBL_DEPARTMENT_UNIT.Where(c=>c.DEPARTMENTUNITID == context.TBL_STAFF.Where(z=>z.STAFFID == x.SENDERSTAFFID).FirstOrDefault().DEPARTMENTUNITID).FirstOrDefault().DEPARTMENTUNITNAME, // +"(" + x.TBL_DEPARTMENT.DEPARTMENTNAME +")",
+                    //senderDepartment =  x.TBL_DEPARTMENT.DEPARTMENTNAME,
+                    receiverStaffId = (int)x.RECEIVERSTAFFID,
                     reassignedTo = x.REASSIGNEDTO,
                     isReassigned = x.ISREASSIGNED,
                     isAcknowledged = x.ISACKNOWLEDGED,
@@ -460,19 +465,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                     acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
                     systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
                     loggedInStaffId = staffId,
-                    //from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
-                   // fromBranchName = context.TBL_BRANCH.Where(c=>c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
-                    //to = allstaff.FirstOrDefault(s => s.id == x.RECEIVERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.RECEIVERSTAFFID).name,
-                   // assignee = allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO).name,
-                  //  toBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.RECEIVERSTAFFID).FirstOrDefault().BRANCHNAME,
+                    from  = x.TBL_STAFF.FIRSTNAME == null ? "n/a" :  x.TBL_STAFF.FIRSTNAME + " "+ x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
+                    fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME: "n/a": "n/a",
+                         //from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
+                         // fromBranchName = context.TBL_BRANCH.Where(c=>c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
+                    to = x.TBL_STAFF1.FIRSTNAME == null ? "n/a" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
+                    assignee = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.MIDDLENAME + " " + x.TBL_STAFF2.LASTNAME,
+                         // assignee = allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO).name,
+                         //  toBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.RECEIVERSTAFFID).FirstOrDefault().BRANCHNAME,
                          //from = allstaff.GetStaffName(s => s.id == x.SenderStaffId),
                          //to = allstaff.GetStaffName(s => s.id == x.ReceiverStaffId),
                          //assignee = allstaff.GetStaffName(s => s.id == x.ReassignedTo),
                      }).OrderByDescending(x=>x.arrivalDate).Take(500);
-            //foreach(var job in data)
-            //{
-            //   job.senderRole = context.TBL_STAFF.Find(job.senderStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
-            //}
+
            
             return data;
         }

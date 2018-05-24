@@ -33,7 +33,7 @@ namespace FintrakBanking.APICore.Providers
             this._bankingContext = new FinTrakBankingContext();
         }
 
-       
+
         public string GetIpAddress(HttpRequestMessage request)
         {
             if (!request.Properties.ContainsKey(HttpContext)) return null;
@@ -41,7 +41,7 @@ namespace FintrakBanking.APICore.Providers
             return context != null ? (string)context.Request.UserHostAddress : null;
         }
 
-       // string IPAddress = 
+        // string IPAddress = 
         public string GetIpAddress()
         {
             string ipAddress = string.Empty;
@@ -58,62 +58,77 @@ namespace FintrakBanking.APICore.Providers
             }
             return ipAddress;
         }
+
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             //var origin = context.OwinContext.Request.Headers["Origin"];
             try
             {
 
-              string ipAddress = GetIpAddress(); 
-            UserViewModel user = null;
+                string ipAddress = GetIpAddress();
+                UserViewModel user = null;
 
-            var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
-            var exipredMin = int.Parse(ConfigurationManager.AppSettings["tokenExpiryMinute"]);
-            var exipredSec  = int.Parse(ConfigurationManager.AppSettings["tokenExpirySecond"]);
+                var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
+                var exipredMin = int.Parse(ConfigurationManager.AppSettings["tokenExpiryMinute"]);
+                var exipredSec = int.Parse(ConfigurationManager.AppSettings["tokenExpirySecond"]);
 
-            var userVM = new UserViewModel
-            {
-                password = context.Password.EncryptSha512(StaticHelpers.EncryptionKey),
-                username = context.UserName
-            };
+                var userVm = new UserViewModel
+                {
+                    password = context.Password.EncryptSha512(StaticHelpers.EncryptionKey),
+                    username = context.UserName
+                };
+                ClaimsIdentity identity;
 
                 var authRepo = new AuthenticationRepository(_bankingContext);
 
-            appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
+                appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
-            if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
-            {
-                if (Task.FromResult(ValidateActiveDirectoryCredentials(context.UserName, context.Password, out _)).Result)
+                if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {
-                    user = Task.FromResult(authRepo.FindUserByUserName(userVM.username)).Result;                   
+                    if (Task.FromResult(
+                        ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
+                    {
+                        user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username)).Result;
+                    }
+                    else
+                    {
+                        context.SetError("invalid_grant",
+                            "The user name is not registered in the application. Contact the system administrator.");
+                        return;
+                    }
                 }
                 else
                 {
-                    context.SetError("invalid_grant", "The user name is not registered in the application. Contact the system administrator.");
-                    return;
+                    if (!await authRepo.IsAccountActive(userVm.username))
+                    {
+                        context.SetError("invalid_grant", "This account is INACTIVE");
+                        return;
+                    }
+                    if (await authRepo.IsAccountLocked(userVm.username))
+                    {
+                        context.SetError("invalid_grant", "This account is LOCKED");
+                        return;
+                    }
+                    user = await Task
+                        .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username, userVm.password))
+                        .Result;
+                    if (user == null)
+                    {
+                        context.SetError("invalid_grant", "The user name or password is incorrect.");
+                        return;
+                    }
                 }
-            }
-            else
-            {
-                user = Task.FromResult(authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
-                   .Result;
-                if (user == null)
+
+                bool isUserAccountValid;
+
+                if (Task.FromResult(authRepo.IsUserAccountValid(userVm.username)).Result)
                 {
-                    context.SetError("invalid_grant", "The user name or password is incorrect.");
-                    return;
+                    isUserAccountValid = true;
                 }
-            }
-
-            bool isUserAccountValid;
-
-            if (Task.FromResult(authRepo.IsUserAccountValid(userVM.username)).Result)
-            {
-                isUserAccountValid = true;
-            }
-            else
-            {
-                isUserAccountValid = false;
-            }
+                else
+                {
+                    isUserAccountValid = false;
+                }
 
                 if (isUserAccountValid)
                 {
@@ -128,14 +143,14 @@ namespace FintrakBanking.APICore.Providers
                     currIdentity.AddClaim(new Claim("userId", user.user_id.ToString()));
                     currIdentity.AddClaim(new Claim("logincode", user.logincode == null ? Guid.NewGuid().ToString() : user.logincode));
                     var today = DateTime.Now;
-                    TimeSpan duration = new TimeSpan(exipredHr, exipredMin, exipredSec);//(exipredHr, 0, 0);
+                    TimeSpan duration = new TimeSpan(exipredHr, exipredMin, exipredSec); //(exipredHr, 0, 0);
 
                     var props = new AuthenticationProperties(new Dictionary<string, string>
-                {
                     {
-                        "expiry_date", today.Add(duration).ToString("ddd MMM dd yyyy HH':'mm':'ss 'GMT'K")
-                    }
-                });
+                        {
+                            "expiry_date", today.Add(duration).ToString("ddd MMM dd yyyy HH':'mm':'ss 'GMT'K")
+                        }
+                    });
 
                     var ticket = new AuthenticationTicket(currIdentity, props);
 
@@ -150,32 +165,27 @@ namespace FintrakBanking.APICore.Providers
                 }
 
 
-            await Task.CompletedTask;
+                await Task.CompletedTask;
 
             }
             catch (Exception ex)
             {
-                string innerMessage = "";
 
-                if (ex.InnerException != null)
-                    innerMessage = ex.InnerException.Message;
-
-                context.SetError("invalid_grant", ex.Message + " - inner exception - " + innerMessage );
 
                 //  context.SetError("invalid_grant", "The user name or password is incorrect.");
-                //if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
-                //{
-                //    context.SetError("invalid_grant", ex.Message.Replace("1001", ""));
-                //}
+                if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
+                {
+                    context.SetError("invalid_grant", ex.Message.Replace("1001", ""));
+                }
 
-                //if (ex.Message.Contains("network-related"))
-                //{
-                //    context.SetError("invalid_grant", "Server error: Contact System Administrator");
-                //}else
-                //{
-                //    context.SetError("invalid_grant", ex.Message);
-                //    //  context.SetError("invalid_grant", "Server error: Contact System Administrator");
-                //}
+                if (ex.Message.Contains("network-related"))
+                {
+                    context.SetError("invalid_grant", "Server error: Contact System Administrator");
+                }
+                else
+                {
+                    context.SetError("invalid_grant", "Server error: Contact System Administrator");
+                }
             }
         }
 
@@ -229,12 +239,11 @@ namespace FintrakBanking.APICore.Providers
         {
             appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
 
-            
-
-            if (appSetup.REQUIRE_ADUSER == true)
+            if (appSetup != null && appSetup.REQUIRE_ADUSER)
             {
                 using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, appSetup.ACTIVE_DIRECTORY_USERNAME, appSetup.ACTIVE_DIRECTORY_PASSWORD))
                 {
+
                     bool isValid = pc.ValidateCredentials(userName, password);
                     if (isValid)
                     {
@@ -252,25 +261,51 @@ namespace FintrakBanking.APICore.Providers
             }
             else
             {
-                using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME))
-                {
-                    bool isValid = pc.ValidateCredentials(userName, password);
-                    if (isValid)
+                if (appSetup != null)
+                    using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME))
                     {
-                        identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
-                        identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+                        bool isValid = pc.ValidateCredentials(userName, password);
+                        if (isValid)
+                        {
+                            identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
+                            identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+                        }
+                        else
+                        {
+                            identity = null;
+                        }
 
+                        return isValid;
                     }
-                    else
-                    {
-                        identity = null;
-                    }
-
-                    return isValid;
-                }
             }
+            identity = null;
+            return false;
         }
 
-         
+
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -19,6 +19,7 @@ using System.Text;
 using GemBox.Spreadsheet;
 using System.IO;
 using FintrakBanking.ViewModels.Admin;
+using System.Web;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -136,26 +137,26 @@ namespace FintrakBanking.Repositories.Setups.General
                              departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
                              departmentUnitId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
                              departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
-                        
+
                              //MisInfoCode = c.MISC,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                              //State = c.State.StateName
                              CityId = c.CITYID,
                          }).ToList();
 
-         var department = (from k in context.TBL_DEPARTMENT_UNIT
-                           select new DepartmentViewModel()
-                           {
-                               departmentId = (short)k.DEPARTMENTID,
-                               unitId = k.DEPARTMENTUNITID,
-                               unitName = k.DEPARTMENTUNITNAME
-                           }).ToList();
+            var department = (from k in context.TBL_DEPARTMENT_UNIT
+                              select new DepartmentViewModel()
+                              {
+                                  departmentId = (short)k.DEPARTMENTID,
+                                  unitId = k.DEPARTMENTUNITID,
+                                  unitName = k.DEPARTMENTUNITNAME
+                              }).ToList();
 
             foreach (var s in staff)
             {
 
                 s.departmentUnits = department.Where(x => x.departmentId == s.DepartmentId);
-                                  
+
             }
             return staff;
         }
@@ -681,7 +682,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (entity != null) //Update existing staff with tempStaff record
             {
-              
+
                 entity.FIRSTNAME = temp.FIRSTNAME;
                 entity.COMPANYID = temp.COMPANYID;
                 entity.MIDDLENAME = temp.MIDDLENAME;
@@ -1076,11 +1077,11 @@ namespace FintrakBanking.Repositories.Setups.General
                 context.TBL_AUDIT.Add(audit);
                 var output = context.SaveChanges() > 0;
 
-                if (tempUser!= null && isUpdate == false)
+                if (tempUser != null && isUpdate == false)
                 {
-                        targetUser.STAFFID = entity.STAFFID;
-                        context.TBL_PROFILE_USER.Add(targetUser);
-                        return context.SaveChanges() > 0;
+                    targetUser.STAFFID = entity.STAFFID;
+                    context.TBL_PROFILE_USER.Add(targetUser);
+                    return context.SaveChanges() > 0;
                 }
                 return output;
             }
@@ -2101,6 +2102,24 @@ namespace FintrakBanking.Repositories.Setups.General
             workflow.LogActivity();
 
             return context.SaveChanges() > 0;
+        }
+        public byte[] GetStaffSampleDocument()
+        {
+            // HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data")
+            var pathString = HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data/StaffSampleDocument.xlsx");
+            byte[] readBuffer = System.IO.File.ReadAllBytes(pathString);
+
+            return readBuffer;
+
+            //string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            //string filePath = Path.Combine(appDataFolder, "test.txt");
+            //var reader = new StreamReader(filePath);
+
+            //string path = Server.MapPath(String.Format("~/App_Data/uploads/{0}", fileName));
+            //if (File.Exists(path))
+            //{
+            //    return File(path, "application/pdf");
+            //}
         }
     }
 }

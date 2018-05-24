@@ -361,11 +361,11 @@ namespace FintrakBanking.Repositories.Customer
             }
             else
             {
-                var targetGroup = this.context.TBL_CUSTOMER_GROUP.Find(customerGroupId);
+          //      var targetGroup = this.context.TBL_CUSTOMER_GROUP.Find(customerGroupId);
 
                 tempCustomerGroup = new TBL_TEMP_CUSTOMER_GROUP()
                 {
-                    GROUPCODE = targetGroup?.GROUPCODE,
+                    GROUPCODE = entity.groupCode, // targetGroup?.GROUPCODE,
                     GROUPNAME = entity.groupName,
                     GROUPDESCRIPTION = entity.groupDescription,
                     CREATEDBY = entity.createdBy,
@@ -495,6 +495,7 @@ namespace FintrakBanking.Repositories.Customer
                     join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPID equals atrail.TARGETID
                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
                           && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                          && atrail.RESPONSESTAFFID == null
                     select new CustomerGroupViewModel()
                     {
                         companyId = c.COMPANYID,

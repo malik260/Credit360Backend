@@ -112,8 +112,6 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             type.LASTUPDATEDBY = entity.lastUpdatedBy;
             type.REQUIREVISITATION = entity.requireVisitation;
 
-            var respose = await context.SaveChangesAsync() != 0;
-
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -129,6 +127,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
             this.auditTrail.AddAuditTrail(audit);
 
+            var respose = await context.SaveChangesAsync() != 0;
             //end of Audit section -------------------------------
             return respose;
         }

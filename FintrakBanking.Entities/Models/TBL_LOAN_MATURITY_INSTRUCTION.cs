@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? LASTUPDATEDBY { get; set; }
 
+        public bool ISUSED { get; set; }
+
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public bool DELETED { get; set; }

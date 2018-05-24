@@ -15,7 +15,7 @@ namespace FintrakBanking.APICore.Controllers
         public IHttpActionResult NotFound(string path)
         {
             // log error to ELMAH
-            Elmah.ErrorSignal.FromCurrentContext().Raise(new HttpException(404, "404 Not Found: /" + path));
+        //    Elmah.ErrorSignal.FromCurrentContext().Raise(new HttpException(404, "404 Not Found: /" + path));
 
             // return 404
             return NotFound();

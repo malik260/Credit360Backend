@@ -1,11 +1,16 @@
 ﻿using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.Finance;
+using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 
 namespace FintrakBanking.Interfaces.Setups.Finance
 {
     public interface IChargeFeeRepository
     {
+        bool GoForApproval(ApprovalViewModel entity);
+
+        IEnumerable<ChargeFeeViewModel> GetChargeFeeAwaitingApprovals(int staffId, int companyId); 
+
         ChargeFeeViewModel GetChargeFee(int chargeFeeId);
 
         IEnumerable<ChargeFeeViewModel> GetAllChargeFee();

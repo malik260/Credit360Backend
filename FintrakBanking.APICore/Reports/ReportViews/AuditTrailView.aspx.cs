@@ -21,10 +21,10 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 companyId.Text = Request.QueryString["companyId"];
                 username.Text = Request.QueryString["username"];
 
-                this.ReportViewer.LocalReport.EnableExternalImages = true;
-                ReportParameter logo = new ReportParameter("logoPath", @"file:///C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Content\Icons\firstbank-logo.jpg");
-                ReportViewer.LocalReport.SetParameters(logo);
-                ReportViewer.LocalReport.Refresh();
+                //this.ReportViewer.LocalReport.EnableExternalImages = true;
+                //ReportParameter logo = new ReportParameter("logoPath", @"file:///C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Content\Icons\firstbank-logo.jpg");
+                //ReportViewer.LocalReport.SetParameters(logo);
+                //ReportViewer.LocalReport.Refresh();
             }
             
         }

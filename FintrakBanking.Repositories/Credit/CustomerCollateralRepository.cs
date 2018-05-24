@@ -99,7 +99,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (entity.hasInsurance) { AddTempItemInsurancePolicy(collateralId, entity); }
 
-                      //  if (file != null) { SaveCollateralMainDocument(entity, collateralId, file); }
+                        if (file != null) { SaveCollateralMainDocument(entity, collateralId, file); }
 
                         bool saved;
                         try
@@ -2911,7 +2911,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var valuer = new TBL_COLLATERAL_VALUER
             {
-                CITYID = entity.cityId,
+                CITYID =(short) entity.cityId,
                 NAME = entity.name,
                 VALUERLICENCENUMBER = entity.valuerLicenceNumber,
                 VALUERTYPEID = entity.valuerTypeId,
@@ -2950,7 +2950,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (valuer != null)
             {
-                valuer.CITYID = entity.cityId;
+                valuer.CITYID = (short)entity.cityId;
                 valuer.NAME = entity.name;
                 valuer.VALUERLICENCENUMBER = entity.valuerLicenceNumber;
                 valuer.VALUERTYPEID = entity.valuerTypeId;
