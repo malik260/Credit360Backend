@@ -6382,7 +6382,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal previousAccruedInterest = (decimal?)data1.FirstOrDefault() ?? 0;
             decimal.Round(previousAccruedInterest, 2, MidpointRounding.AwayFromZero);
 
-            var data2 = from d in context.TBL_LOAN_SCHEDULE_DAILY_TEMP
+            var data2 = from d in context.TBL_LOAN_SCHEDULE_DAILY_TEMP // <--- to be updated if pastDueExist
                         where d.LOANID == loanId
                         let dailyAccruedInterest = context.TBL_LOAN_SCHEDULE_DAILY_TEMP.Where(a => a.LOANID == loanId
                         && a.DATE >= DbFunctions.TruncateTime(applicationDate) && a.DATE <= DbFunctions.TruncateTime(systemDate)
@@ -6433,10 +6433,21 @@ namespace FintrakBanking.Repositories.Credit
             decimal currentPeriodicPrincipal = (decimal?)data6.FirstOrDefault() ?? 0;
             decimal.Round(currentPeriodicPrincipal, 2, MidpointRounding.AwayFromZero);
 
+            //----------------------------pastdue---------------------------
+            var currentPastdue = from d in context.TBL_LOAN_PAST_DUE.Where(a => a.LOANID == loanId
+                            && a.DATE >= DbFunctions.TruncateTime(applicationDate) && a.DATE <= DbFunctions.TruncateTime(systemDate))
+                                 select d;
+            PastdueInterest pastdueInterest = new PastdueInterest { onPrincipal = 0, onInterest = 0 };
+            if (currentPastdue.Any())
+            {
+                pastdueInterest = GetPastdueInterests(loanId, applicationDate, systemDate,previousPeriodicPrincipal, previousPeriodicInterest);
+            }
+            //--------------------------------------------------------------
 
             decimal accruedInterestDiff = previousAccruedInterest - currentAccruedInterest;
-            decimal periodicInterestDiff = previousPeriodicInterest - currentPeriodicInterest;
-            decimal periodicPrincipalDiff = previousPeriodicPrincipal - currentPeriodicPrincipal;
+            decimal periodicInterestDiff = previousPeriodicInterest - (currentPeriodicInterest + pastdueInterest.onInterest);
+            decimal periodicPrincipalDiff = previousPeriodicPrincipal - (currentPeriodicPrincipal + pastdueInterest.onPrincipal);
+
             if (Count < 1 && applicationDate == systemDate)
             {
             }
@@ -6461,6 +6472,63 @@ namespace FintrakBanking.Repositories.Credit
             output = true;
 
             return output;
+        }
+
+        private PastdueInterest GetPastdueInterests(
+            int loanId, 
+            DateTime applicationDate, 
+            DateTime systemDate, 
+            decimal principal, 
+            decimal interest,
+            double? penalRate = null
+            ) 
+        {
+            var accruals = from d in context.TBL_LOAN_SCHEDULE_DAILY_TEMP.Where(a => a.LOANID == loanId
+                        && a.DATE >= DbFunctions.TruncateTime(applicationDate) && a.DATE <= DbFunctions.TruncateTime(systemDate))
+                        select d;
+
+            var pastdues = from d in context.TBL_LOAN_PAST_DUE.Where(a => a.LOANID == loanId
+                        && a.DATE >= DbFunctions.TruncateTime(applicationDate) && a.DATE <= DbFunctions.TruncateTime(systemDate))
+                        select d;
+
+            if (penalRate == null) { penalRate = 13.0; } // ------------------------------ hardcoding!!!
+
+            decimal compoundInterest = interest;
+            decimal compoundPrincipal = principal;
+            PastdueInterest interests = new PastdueInterest { onPrincipal = 0, onInterest = 0 };
+
+            bool accruing = false; 
+            bool compound = false;
+            foreach (var accrual in accruals)
+            {
+                compound = false;
+                if (pastdues.Where(x => x.DATE == accrual.PAYMENTDATE && x.DEBITAMOUNT > 0).Any())
+                {
+                    if (accruing) compound = true;
+                    accruing = true;
+                }
+
+                if (accruing)
+                {
+                    interests.onInterest = interests.onInterest + ((decimal)penalRate * compoundInterest);
+                    interests.onPrincipal = interests.onPrincipal + ((decimal)penalRate * compoundPrincipal);
+                }
+
+                if (compound)
+                {
+                    compoundInterest = compoundInterest + interests.onInterest + interest;
+                    compoundPrincipal = compoundPrincipal + interests.onPrincipal + principal;
+                }
+
+                if (pastdues.Where(x => x.DATE == accrual.PAYMENTDATE && x.CREDITAMOUNT > 0).Any())
+                {
+                    accruing = false;
+                    compoundInterest = interest;
+                    compoundPrincipal = principal;
+                }
+            }
+
+            return interests;
         }
 
         public bool RegenerateSchedule(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
@@ -10722,5 +10790,12 @@ namespace FintrakBanking.Repositories.Credit
     //    {
     //        throw new NotImplementedException();
     //    }
+    }
+
+    internal class PastdueInterest
+    {
+        public decimal onInterest { get; set; }
+
+        public decimal onPrincipal { get; set; }
     }
 }

@@ -1656,8 +1656,7 @@ namespace FintrakBanking.Repositories.Credit
             bool isHeadOffice = (user.BranchId == 1) ? true : false;
 
             var applications = context.TBL_LOAN_APPLICATION
-                .Where(x => (isHeadOffice || x.BRANCHID == user.BranchId)
-                && (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected)
+                .Where(x => (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected)
                 //&& x.REVIEW_TYPE == null // <------------------- INT of APPLICATIONSTATUSID to filter
                 )
             .Select(x => new LoanApplicationViewModel
@@ -1667,6 +1666,7 @@ namespace FintrakBanking.Repositories.Credit
                 relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
                 customerId = x.CUSTOMERID,
                 branchId = x.BRANCHID,
+                branchName = x.TBL_BRANCH.BRANCHNAME,
                 productClassId = x.PRODUCTCLASSID,
                 productClassName = x.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                 customerGroupId = x.CUSTOMERGROUPID,
@@ -1685,17 +1685,17 @@ namespace FintrakBanking.Repositories.Credit
                 isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
                 approvalStatusId = (short)x.APPROVALSTATUSID,
                 applicationStatusId = x.APPLICATIONSTATUSID,
+                createdBy = x.CREATEDBY,
+                misCode = x.MISCODE,
+
                 applicationStatus = x.TBL_LOAN_APPLICATION_STATUS.APPLICATIONSTATUSNAME, // <----------------- new 
-                branchName = x.TBL_BRANCH.BRANCHNAME,
                 relationshipOfficerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
                 relationshipManagerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
-                misCode = x.MISCODE,
                 customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                 loanTypeName = x.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                createdBy = x.CREATEDBY,
                 loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
                 customerName = x.CUSTOMERID.HasValue ? x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME : "N/A",
-                operationId = x.OPERATIONID, // <---------------------- purpose unknown!!!
+
                 details = x.TBL_LOAN_APPLICATION_DETAIL.Select(o => new ApprovedLoanDetailViewModel
                 {
                     loanApplicationDetailId = o.LOANAPPLICATIONDETAILID,
@@ -1703,7 +1703,7 @@ namespace FintrakBanking.Repositories.Credit
                     customerId = o.TBL_CUSTOMER.CUSTOMERID,
                     obligorName = o.TBL_CUSTOMER.FIRSTNAME + " " + o.TBL_CUSTOMER.MIDDLENAME + " " + o.TBL_CUSTOMER.LASTNAME,
                     currencyCode = o.TBL_CURRENCY.CURRENCYCODE,
-                    proposedProductName = o.TBL_PRODUCT.PRODUCTNAME,
+                    //proposedProductName = o.TBL_PRODUCT.PRODUCTNAME,
                     proposedTenor = o.PROPOSEDTENOR,
                     proposedRate = o.PROPOSEDINTERESTRATE,
                     proposedAmount = o.PROPOSEDAMOUNT,
@@ -1718,7 +1718,6 @@ namespace FintrakBanking.Repositories.Credit
                     statusId = o.STATUSID,
                     exchangeRate = o.EXCHANGERATE,
                 })
-                .ToList()
             })
             .OrderByDescending(x => x.applicationDate)
             .ThenByDescending(x => x.loanApplicationId)
@@ -1730,11 +1729,15 @@ namespace FintrakBanking.Repositories.Credit
 
         public string ReviewRequest(ForwardViewModel model)
         {
-            var referenceNumber = GenerateLoanReferenceNumber();
-            var applicationDate = genSetup.GetApplicationDate();
-
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
 
+            if (context.TBL_LOAN_APPLICATION.Where(x => x.RELATEDREFERENCENUMBER == appl.APPLICATIONREFERENCENUMBER).Any())
+            {
+                return "This application is already re-initiated!";
+            }
+
+            var referenceNumber = GenerateLoanReferenceNumber();
+            var applicationDate = genSetup.GetApplicationDate();
             bool wasApproved = appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved ? true : false;
 
             var request = context.TBL_LOAN_APPLICATION.Add(new TBL_LOAN_APPLICATION
@@ -1879,6 +1882,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Tenor = appl.APPLICATIONTENOR;
                 workflow.PoliticallyExposed = appl.ISPOLITICALLYEXPOSED;
                 workflow.DeferredExecution = true;
+                workflow.ExternalInitialization = true;
                 workflow.LogActivity();
 
                 // Audit Section ---------------------------
@@ -1897,7 +1901,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.auditTrail.AddAuditTrail(audit);
                 // End of Audit section ---------------------
 
-                return context.SaveChanges() > 0 ? referenceNumber : string.Empty;
+                return context.SaveChanges() > 0 ? "New Loan Application Reference Number " + referenceNumber : string.Empty;
             }
 
             context.TBL_LOAN_APPLICATION_DETAIL.RemoveRange(details);
@@ -1982,8 +1986,6 @@ namespace FintrakBanking.Repositories.Credit
                 loanDetails.PROPOSEDAMOUNT = entity.proposedAmount;
                 loanDetails.APPROVEDAMOUNT = entity.proposedAmount;
                 loanDetails.LOANPURPOSE = loanDetails.LOANPURPOSE;
-
-
             }
             // Audit Section ---------------------------
             //var audit = new TBL_AUDIT
