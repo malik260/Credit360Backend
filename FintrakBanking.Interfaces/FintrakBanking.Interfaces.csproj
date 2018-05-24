@@ -60,6 +60,7 @@
     <Compile Include="Admin\ICanAuthorizationRepository.cs" />
     <Compile Include="Admin\ICompanyInformationRepository.cs" />
     <Compile Include="Admin\ICurrencyRateRepository.cs" />
+    <Compile Include="AlertMonitoring\IEmailSender.cs" />
     <Compile Include="AppEmail\IEmailRepository.cs" />
     <Compile Include="CASA\ICasaLienRepository.cs" />
     <Compile Include="CASA\ICasaRepository.cs" />
