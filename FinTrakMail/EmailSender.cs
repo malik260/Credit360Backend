@@ -61,7 +61,7 @@ namespace FinTrakMail
 
                     client.Send(mail);
                         UpdateMessageLogForEmailSent.UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");
-                        AuditTrail.LogFileManager.LogToFile("Email has been sent to : " + " " + newMail.TOADDRESS + " - " + DateTime.Now.ToString());
+                      //  AuditTrail.LogFileManager.LogToFile("Email has been sent to : " + " " + newMail.TOADDRESS + " - " + DateTime.Now.ToString());
 
                 }
 
@@ -71,7 +71,7 @@ namespace FinTrakMail
             {
                 UpdateMessageLogForEmailSent.UpdateMailDeliveryStatus(mailId, (int)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
 
-                AuditTrail.LogFileManager.LogToFile("Error Occurred - " + ex.Message + " - " + ex.StackTrace.ToString() + " DATE : " + DateTime.Now.ToString());
+               // AuditTrail.LogFileManager.LogToFile("Error Occurred - " + ex.Message + " - " + ex.StackTrace.ToString() + " DATE : " + DateTime.Now.ToString());
 
                 return false;
             }
@@ -95,7 +95,7 @@ namespace FinTrakMail
             }
             catch (Exception ex)
             {
-                AuditTrail.LogFileManager.LogToFile("Error Occurred - " + ex.Message + " - " + ex.InnerException.ToString() + DateTime.Now.ToString());
+              //  AuditTrail.LogFileManager.LogToFile("Error Occurred - " + ex.Message + " - " + ex.InnerException.ToString() + DateTime.Now.ToString());
                 return new List<TBL_MESSAGE_LOG>();
             }
         }
@@ -121,7 +121,7 @@ namespace FinTrakMail
             }
             catch (Exception ex)
             {
-                AuditTrail.LogFileManager.LogToFile("Error Occurred - " + ex.Message + " - " + ex.InnerException.ToString() + DateTime.Now.ToString());
+             //   AuditTrail.LogFileManager.LogToFile("Error Occurred - " + ex.Message + " - " + ex.InnerException.ToString() + DateTime.Now.ToString());
                 return false;
             }
         }
