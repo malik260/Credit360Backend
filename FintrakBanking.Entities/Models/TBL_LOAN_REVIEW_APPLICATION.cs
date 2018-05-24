@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_REVIEW_APPLICATION")]
+    [Table("TBL_LOAN_REVIEW_APPLICATION")]
     public partial class TBL_LOAN_REVIEW_APPLICATION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -33,7 +33,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CREATEDBY { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime DATECREATED { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }

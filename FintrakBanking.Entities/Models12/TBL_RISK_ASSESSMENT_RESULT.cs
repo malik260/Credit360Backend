@@ -6,11 +6,13 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_RISK_ASSESSMENT_RESULT")]
+    [Table("credit.TBL_RISK_ASSESSMENT_RESULT")]
     public partial class TBL_RISK_ASSESSMENT_RESULT
     {
         [Key]
         public int ASSESSMENTRESULTID { get; set; }
+
+        public int LOANAPPLICATIONID { get; set; }
 
         public int RISKASSESSMENTTITLEID { get; set; }
 
@@ -34,6 +36,5 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }
-        public int? TARGETID { get; set; }
     }
 }

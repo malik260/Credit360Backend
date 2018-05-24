@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CHARGES")]
+    [Table("finance.TBL_CHARGES")]
     public partial class TBL_CHARGES
     {
         [Key]

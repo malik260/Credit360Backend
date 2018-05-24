@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_CHART_OF_ACCOUNT_CUR")]
+    [Table("TBL_TEMP_CHART_OF_ACCOUNT_CUR")]
     public partial class TBL_TEMP_CHART_OF_ACCOUNT_CUR
     {
         [Key]

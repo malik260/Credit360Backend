@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_FS_RATIO_VALUETYP")]
+    [Table("TBL_CUSTOMER_FS_RATIO_VALUETYP")]
     public partial class TBL_CUSTOMER_FS_RATIO_VALUETYP
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

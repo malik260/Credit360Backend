@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CHECKLIST_DETAIL")]
+    [Table("TBL_CHECKLIST_DETAIL")]
     public partial class TBL_CHECKLIST_DETAIL
     {
         [Key]
@@ -29,10 +29,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool? CHECKLISTSTATUSID3 { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DEFEREDDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? INITIAL_DEFEREDDATE { get; set; }
 
         public int? CREATEDBY { get; set; }

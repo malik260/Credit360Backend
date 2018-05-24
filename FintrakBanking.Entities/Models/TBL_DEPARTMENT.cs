@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_DEPARTMENT")]
+    [Table("TBL_DEPARTMENT")]
     public partial class TBL_DEPARTMENT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -41,6 +41,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public bool? DELETED { get; set; }
+
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_DEPARTMENT_UNIT> TBL_DEPARTMENT_UNIT { get; set; }

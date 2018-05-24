@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_BOOKING_REQUEST")]
+    [Table("credit.TBL_LOAN_BOOKING_REQUEST")]
     public partial class TBL_LOAN_BOOKING_REQUEST
     {
         [Key]
@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal AMOUNT_REQUESTED { get; set; }
 
         public short APPROVALSTATUSID { get; set; }

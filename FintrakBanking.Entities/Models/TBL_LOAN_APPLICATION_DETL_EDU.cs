@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_APPLICATION_DETL_EDU")]
+    [Table("TBL_LOAN_APPLICATION_DETL_EDU")]
     public partial class TBL_LOAN_APPLICATION_DETL_EDU
     {
         [Key]
@@ -16,10 +16,10 @@ namespace FintrakBanking.Entities.Models
 
         public int NUMBER_OF_STUDENTS { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal AVERAGE_SCHOOL_FEES { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal TOTAL_PREVIOUS_TERM_SCHOL_FEES { get; set; }
 
         public int CREATEDBY { get; set; }

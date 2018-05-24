@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_OVERRIDE_DETAIL")]
+    [Table("core.TBL_OVERRIDE_DETAIL")]
     public partial class TBL_OVERRIDE_DETAIL
     {
         [Key]

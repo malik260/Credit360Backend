@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_PRODUCT_CLASS_PROCESS")]
+    [Table("core.TBL_PRODUCT_CLASS_PROCESS")]
     public partial class TBL_PRODUCT_CLASS_PROCESS
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -26,7 +26,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool USE_AMOUNT_LIMIT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? MAXIMUM_AMOUNT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_APPLICATION_DETAIL")]
+    [Table("TBL_LOAN_APPLICATION_DETAIL")]
     public partial class TBL_LOAN_APPLICATION_DETAIL
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -47,7 +47,7 @@ namespace FintrakBanking.Entities.Models
 
         public double PROPOSEDINTERESTRATE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal PROPOSEDAMOUNT { get; set; }
 
         public short APPROVEDPRODUCTID { get; set; }
@@ -56,7 +56,7 @@ namespace FintrakBanking.Entities.Models
 
         public double APPROVEDINTERESTRATE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal APPROVEDAMOUNT { get; set; }
 
         public short CURRENCYID { get; set; }
@@ -71,7 +71,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string LOANPURPOSE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? EQUITYAMOUNT { get; set; }
 
         public int? EQUITYCASAACCOUNTID { get; set; }
@@ -91,10 +91,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(2000)]
         public string REPAYMENTSCHEDULE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? EFFECTIVEDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? EXPIRYDATE { get; set; }
 
         public int CREATEDBY { get; set; }

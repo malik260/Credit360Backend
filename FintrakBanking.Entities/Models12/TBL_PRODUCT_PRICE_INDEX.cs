@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_PRODUCT_PRICE_INDEX")]
+    [Table("core.TBL_PRODUCT_PRICE_INDEX")]
     public partial class TBL_PRODUCT_PRICE_INDEX
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

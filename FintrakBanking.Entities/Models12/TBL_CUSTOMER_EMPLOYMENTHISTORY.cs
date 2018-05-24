@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CUSTOMER_EMPLOYMENTHISTORY")]
+    [Table("core.TBL_CUSTOMER_EMPLOYMENTHISTORY")]
     public partial class TBL_CUSTOMER_EMPLOYMENTHISTORY
     {
         [Key]
@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string OFFICEPHONE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime EMPLOYDATE { get; set; }
 
         [StringLength(200)]

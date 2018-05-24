@@ -6,13 +6,13 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CHECKLIST_DEFERRAL")]
+    [Table("credit.TBL_CHECKLIST_DEFERRAL")]
     public partial class TBL_CHECKLIST_DEFERRAL
     {
         [Key]
         public int CHECKLISTDEFERRALID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime DEFEREDDATE { get; set; }
 
         public int CONDITIONID { get; set; }

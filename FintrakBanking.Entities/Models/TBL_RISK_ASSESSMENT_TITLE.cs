@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_RISK_ASSESSMENT_TITLE")]
+    [Table("TBL_RISK_ASSESSMENT_TITLE")]
     public partial class TBL_RISK_ASSESSMENT_TITLE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

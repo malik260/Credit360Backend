@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_CONTINGENT")]
+    [Table("TBL_LOAN_CONTINGENT")]
     public partial class TBL_LOAN_CONTINGENT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -18,11 +18,11 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CONTINGENTLOANID { get; set; }
 
+        public short LOANSYSTEMTYPEID { get; set; }
+
         public int CUSTOMERID { get; set; }
 
         public short PRODUCTID { get; set; }
-
-        public short LOANSYSTEMTYPEID { get; set; }
 
         public int COMPANYID { get; set; }
 
@@ -59,16 +59,16 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string TEAMMISCODE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime EFFECTIVEDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime MATURITYDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime BOOKINGDATE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal CONTINGENTAMOUNT { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
@@ -90,7 +90,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string DISBURSERCOMMENT { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DISBURSEDATE { get; set; }
 
         public int? OPERATIONID { get; set; }

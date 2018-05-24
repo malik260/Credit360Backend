@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_TEMP_CUSTOMER_PHONCONTACT")]
+    [Table("temp.TBL_TEMP_CUSTOMER_PHONCONTACT")]
     public partial class TBL_TEMP_CUSTOMER_PHONCONTACT
     {
         [Key]

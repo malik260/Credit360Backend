@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_CASA")]
+    [Table("TBL_COLLATERAL_CASA")]
     public partial class TBL_COLLATERAL_CASA
     {
         [Key]
@@ -20,16 +20,16 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISOWNEDBYCUSTOMER { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal AVAILABLEBALANCE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal EXISTINGLIENAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal LIENAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal SECURITYVALUE { get; set; }
 
         [StringLength(500)]

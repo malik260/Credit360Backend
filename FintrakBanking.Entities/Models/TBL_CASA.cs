@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CASA")]
+    [Table("TBL_CASA")]
     public partial class TBL_CASA
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -29,7 +29,6 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN = new HashSet<TBL_LOAN>();
             TBL_LOAN1 = new HashSet<TBL_LOAN>();
             TBL_TEMP_LOAN = new HashSet<TBL_TEMP_LOAN>();
-            TBL_TEMP_LOAN1 = new HashSet<TBL_TEMP_LOAN>();
         }
 
         [Key]
@@ -59,10 +58,10 @@ namespace FintrakBanking.Entities.Models
 
         public decimal? INTERESTRATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? EFFECTIVEDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? TERMINALDATE { get; set; }
 
         public int? ACTIONBY { get; set; }
@@ -73,10 +72,10 @@ namespace FintrakBanking.Entities.Models
 
         public int? OPERATIONID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal AVAILABLEBALANCE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal LEDGERBALANCE { get; set; }
 
         public int? RELATIONSHIPOFFICERID { get; set; }
@@ -89,18 +88,18 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string TEAMMISCODE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? OVERDRAFTAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? OVERDRAFTINTERESTRATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? OVERDRAFTEXPIRYDATE { get; set; }
 
         public bool? HASOVERDRAFT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal LIENAMOUNT { get; set; }
 
         public bool HASLIEN { get; set; }
@@ -205,8 +204,5 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN1 { get; set; }
     }
 }

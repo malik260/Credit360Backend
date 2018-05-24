@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_FINANCECURRENTDATE")]
+    [Table("TBL_FINANCECURRENTDATE")]
     public partial class TBL_FINANCECURRENTDATE
     {
         [Key]

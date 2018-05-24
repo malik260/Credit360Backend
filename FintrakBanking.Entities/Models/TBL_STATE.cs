@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_STATE")]
+    [Table("TBL_STATE")]
     public partial class TBL_STATE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -31,13 +31,13 @@ namespace FintrakBanking.Entities.Models
 
         public int? REGIONID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal COLLATERALSEARCHCHARGEAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? CHARTINGAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? VERIFICATIONAMOUNT { get; set; }
 
         public int? CREATEDBY { get; set; }

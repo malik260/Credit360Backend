@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_FEE")]
+    [Table("credit.TBL_LOAN_FEE")]
     public partial class TBL_LOAN_FEE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -28,22 +28,22 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal FEERATEVALUE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal FEEDEPENDENTAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal FEEAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal EARNEDFEEAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal TAXAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal EARNEDTAXAMOUNT { get; set; }
 
         public bool ISINTEGRALFEE { get; set; }

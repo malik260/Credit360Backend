@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_STAFF")]
+    [Table("TBL_TEMP_STAFF")]
     public partial class TBL_TEMP_STAFF
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -50,7 +50,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string ADDRESS { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DATEOFBIRTH { get; set; }
 
         [StringLength(1)]
@@ -74,7 +74,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string NOKRELATIONSHIP { get; set; }
 
-        [StringLength(100)]
+        [StringLength(100), Column(name: "COMMENT_")]
         public string COMMENT { get; set; }
 
         public byte[] STAFFSIGNATURE { get; set; }

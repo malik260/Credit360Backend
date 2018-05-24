@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_ACCREDITEDCONSULTANT")]
+    [Table("TBL_ACCREDITEDCONSULTANT")]
     public partial class TBL_ACCREDITEDCONSULTANT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

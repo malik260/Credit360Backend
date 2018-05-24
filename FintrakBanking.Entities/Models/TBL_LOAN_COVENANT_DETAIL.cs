@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_COVENANT_DETAIL")]
+    [Table("TBL_LOAN_COVENANT_DETAIL")]
     public partial class TBL_LOAN_COVENANT_DETAIL
     {
         [Key]
@@ -24,15 +24,15 @@ namespace FintrakBanking.Entities.Models
 
         public short? FREQUENCYTYPEID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? COVENANTAMOUNT { get; set; }
 
         public bool ISPERCENTAGE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime COVENANTDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? NEXTCOVENANTDATE { get; set; }
 
         public int? CASAACCOUNTID { get; set; }
