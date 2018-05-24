@@ -17,7 +17,6 @@ namespace FintrakBanking.APICore.Filters
                 actionContext.Response = new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
             }
         }
-       
     }
 
     public class TokenValidation : AuthorizeAttribute

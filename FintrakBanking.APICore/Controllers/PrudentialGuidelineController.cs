@@ -24,6 +24,21 @@ namespace FintrakBanking.APICore.Controllers
         }
 
       [HttpGet] [ClaimsAuthorization]  
+        [Route("get-prudential-guidelines-type")]
+        public HttpResponseMessage getAllPrudentialGuidelinesTypes()
+        {
+            try
+            {
+                var data = repo.GetAllGuidelineTypes(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-prudential-guidelines")]
         public HttpResponseMessage getAllPrudentialGuidelines()
         {
@@ -38,7 +53,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("get-prudential-guideline/{Id}")]
         public HttpResponseMessage getprudentialGuideline(int prudentialGuidelineId)
         {
@@ -55,7 +70,7 @@ namespace FintrakBanking.APICore.Controllers
 
          [HttpPost] [ClaimsAuthorization]
         [Route("add-prudential-guideline")]
-        public HttpResponseMessage addPrudentialGuideline([FromBody]PrudentialGuidelineViewModel guideline)
+        public HttpResponseMessage addPrudentialGuideline(PrudentialGuidelineViewModel guideline)
         {
             try
             {

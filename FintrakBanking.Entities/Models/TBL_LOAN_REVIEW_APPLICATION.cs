@@ -38,11 +38,13 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
+        //[ForeignKey("BRANCHID")]
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_REVIEW_APPLICATN_CAM> TBL_LOAN_REVIEW_APPLICATN_CAM { get; set; }
+        
     }
 }
