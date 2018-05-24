@@ -167,6 +167,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (user != null)
             {
                 if (user.LOGINCODE == null || user.LOGINCODE == Guid.Empty.ToString())
+                {
                     result = new SessionStatusInfo
                     {
                         loginCode = Guid.NewGuid(),
@@ -174,31 +175,29 @@ namespace FintrakBanking.Repositories.Setups.General
                         errorMessage = "",
 
                     };
-
-                int timeStamp = (user.LASTLOCKOUTDATE.Value.Date - DateTime.Now).Minutes;
-
-                if (timeStamp < 2 && user.LOGINCODE != Guid.Empty.ToString())
-                {
-                    result = new SessionStatusInfo
-                    {
-                        loginCode = Guid.Parse(user.LOGINCODE),//  Guid.Empty,
-                        state = 0,
-                        errorMessage = "",
-                    };
                 }
-                else
+
+                else if (user.LOGINCODE != null)
                 {
                     result = new SessionStatusInfo
                     {
                         loginCode = Guid.Parse(user.LOGINCODE),
-                        state = 1,
-                        errorMessage = "You are already logged.",
+                        state = 0,
+                        errorMessage = "",
                     };
 
                 }
+
             }
-
-
+            else
+            {
+                result = new SessionStatusInfo
+                {
+                    loginCode = Guid.Parse(user.LOGINCODE),
+                    state = 1,
+                    errorMessage = "You are already logged.",
+                };
+            }
 
             return result;
         }
