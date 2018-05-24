@@ -11,6 +11,9 @@ namespace FinTrakMail
     [RunInstaller(true)]
     public partial class ProjectInstaller : System.Configuration.Install.Installer
     {
+        private ServiceInstaller serviceInstaller;
+        private ServiceProcessInstaller serviceProcessInstaller;
+
         public ProjectInstaller()
         {
             InitializeComponent();
@@ -21,6 +24,21 @@ namespace FinTrakMail
         private void MailserviceInstaller_AfterInstall(object sender, InstallEventArgs e)
         {
             new ServiceController(FintrakEmailSenderService.ServiceName).Start();
+        }
+
+        private void MailProcessInstaller_AfterInstall(object sender, InstallEventArgs e)
+        {
+            serviceInstaller = new ServiceInstaller();
+            serviceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
+            serviceInstaller.ServiceName = "FintrakMail";
+            serviceInstaller.DisplayName = "Fintrak Credit 360 E-Mail Sender";
+            serviceInstaller.Description = "Escalte Transaction Emails";
+            serviceInstaller.StartType = ServiceStartMode.Automatic;
+            Installers.Add(serviceInstaller);
+
+            serviceProcessInstaller = new ServiceProcessInstaller();
+            serviceProcessInstaller.Account = ServiceAccount.User;
+            Installers.Add(serviceProcessInstaller);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Admin;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,12 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         public IEnumerable<AuditViewModel> GetAuditTrailByParam(DateTime startDate, DateTime endDate, string username)
         {
 
+
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-              var data =  from _audit in context.TBL_AUDIT
+                var listOfMailsSub = context.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending || o.MESSAGESTATUSID == (int)MessageStatusEnum.Attempted);
+
+                var data =  from _audit in context.TBL_AUDIT
                 join atype in context.TBL_AUDIT_TYPE on _audit.AUDITTYPEID equals atype.AUDITTYPEID
                 join st in context.TBL_STAFF on _audit.STAFFID equals st.STAFFID
                 join u in context.TBL_PROFILE_USER on st.STAFFID equals u.STAFFID
