@@ -36,6 +36,7 @@
             this.MailProcessInstaller.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
             this.MailProcessInstaller.Password = null;
             this.MailProcessInstaller.Username = null;
+            this.MailProcessInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.MailProcessInstaller_AfterInstall);
             // 
             // FintrakEmailSenderService
             // 
