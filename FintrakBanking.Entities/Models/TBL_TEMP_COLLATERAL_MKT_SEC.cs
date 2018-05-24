@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_TEMP_COLLATERAL_MKT_SEC")]
+    [Table("temp.TBL_TEMP_COLLATERAL_MKT_SEC")]
     public partial class TBL_TEMP_COLLATERAL_MKT_SEC
     {
         [Key]
@@ -28,13 +28,13 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime MATURITYDATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal DEALAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal SECURITYVALUE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal LIENUSABLEAMOUNT { get; set; }
 
         [Required]
@@ -45,7 +45,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string ISSUERREFERENCENUMBER { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal UNITVALUE { get; set; }
 
         public int NUMBEROFUNITS { get; set; }

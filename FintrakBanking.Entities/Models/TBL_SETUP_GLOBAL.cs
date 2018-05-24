@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_SETUP_GLOBAL")]
+    [Table("core.TBL_SETUP_GLOBAL")]
     public partial class TBL_SETUP_GLOBAL
     {
         [Key]

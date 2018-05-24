@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_MATURITY_INSTRU_TYPE")]
+    [Table("credit.TBL_LOAN_MATURITY_INSTRU_TYPE")]
     public partial class TBL_LOAN_MATURITY_INSTRU_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

@@ -39,8 +39,11 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     approvedStatusId = c.approvedStatusId,
                     createdBy = token.GetStaffId,
+                    customerCode = c.customerCode,
+                    reason = c.reason,
                     overrideItemId = c.overrideItemId,
                     sourceReferenceNumber = c.sourceReferenceNumber
+                     
                 }).ToList();
                  
                 var response = _override.AddOverRideRequest(model);

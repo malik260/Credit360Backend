@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_SCHEDULE_PERIODIC")]
+    [Table("credit.TBL_LOAN_SCHEDULE_PERIODIC")]
     public partial class TBL_LOAN_SCHEDULE_PERIODIC
     {
         [Key]
@@ -16,47 +16,47 @@ namespace FintrakBanking.Entities.Models
 
         public int PAYMENTNUMBER { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime PAYMENTDATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal STARTPRINCIPALAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PERIODPAYMENTAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PERIODINTERESTAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PERIODPRINCIPALAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal ENDPRINCIPALAMOUNT { get; set; }
 
         public double INTERESTRATE { get; set; }
 
         public double? PREVIOUSINTERESTRATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PREVIOUSINTERESTAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal PREVIOUSPRINCIPALAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal AMORTISEDSTARTPRINCIPALAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal AMORTISEDPERIODPAYMENTAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal AMORTISEDPERIODINTERESTAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal AMORTISEDPERIODPRINCIPALAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal AMORTISEDENDPRINCIPALAMOUNT { get; set; }
 
         public double EFFECTIVEINTERESTRATE { get; set; }

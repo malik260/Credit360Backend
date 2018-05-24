@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_TEMP_COLLATERAL_MISCELLAN")]
+    [Table("temp.TBL_TEMP_COLLATERAL_MISCELLAN")]
     public partial class TBL_TEMP_COLLATERAL_MISCELLAN
     {
         [Key]
@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string NAMEOFSECURITY { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal SECURITYVALUE { get; set; }
 
         [Required]

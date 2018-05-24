@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LOAN_APPLICATION_DETL_LOG")]
+    [Table("credit.TBL_LOAN_APPLICATION_DETL_LOG")]
     public partial class TBL_LOAN_APPLICATION_DETL_LOG
     {
         [Key]
@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
 
         public double APPROVEDINTERESTRATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal APPROVEDAMOUNT { get; set; }
 
         public double EXCHANGERATE { get; set; }

@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_TEMP_CUSTOMER_COMPANYINFO")]
+    [Table("temp.TBL_TEMP_CUSTOMER_COMPANYINFO")]
     public partial class TBL_TEMP_CUSTOMER_COMPANYINFO
     {
         [Key]
@@ -39,7 +39,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? AUTHORISEDCAPITAL { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? SHAREHOLDER_FUND { get; set; }
 
         public int CREATEDBY { get; set; }

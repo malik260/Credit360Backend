@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CASA_LIEN")]
+    [Table("core.TBL_CASA_LIEN")]
     public partial class TBL_CASA_LIEN
     {
         [Key]
@@ -28,7 +28,7 @@ namespace FintrakBanking.Entities.Models
 
         public short BRANCHID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal LIENAMOUNT { get; set; }
 
         [Required]

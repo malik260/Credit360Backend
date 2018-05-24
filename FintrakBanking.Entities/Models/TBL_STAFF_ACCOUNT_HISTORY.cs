@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_STAFF_ACCOUNT_HISTORY")]
+    [Table("core.TBL_STAFF_ACCOUNT_HISTORY")]
     public partial class TBL_STAFF_ACCOUNT_HISTORY
     {
         [Key]
@@ -14,10 +14,10 @@ namespace FintrakBanking.Entities.Models
 
         public int STAFFID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime STARTDATE { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime ENDDATE { get; set; }
 
         public int NEWSTAFFID { get; set; }

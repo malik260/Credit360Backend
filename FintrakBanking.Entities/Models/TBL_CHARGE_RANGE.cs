@@ -6,16 +6,16 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CHARGE_RANGE")]
+    [Table("finance.TBL_CHARGE_RANGE")]
     public partial class TBL_CHARGE_RANGE
     {
         [Key]
         public int CHARGERANGEID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? MINIMUM { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? MAXIMUM { get; set; }
 
         public bool? MINIMUMANDABOVE { get; set; }
@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
 
         public double? RATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal? AMOUNT { get; set; }
 
         public int CHARGEFEEID { get; set; }

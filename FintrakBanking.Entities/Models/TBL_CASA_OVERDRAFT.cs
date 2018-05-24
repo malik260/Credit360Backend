@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CASA_OVERDRAFT")]
+    [Table("core.TBL_CASA_OVERDRAFT")]
     public partial class TBL_CASA_OVERDRAFT
     {
         [Key]
@@ -14,20 +14,20 @@ namespace FintrakBanking.Entities.Models
 
         public int CASAACCOUNTID { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime EFFECTIVEDATE { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal CREDITAMOUNT { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "money")]
         public decimal DEBITAMOUNT { get; set; }
 
         [Required]
         [StringLength(500)]
         public string DESCRIPTION { get; set; }
 
-        //[Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime DATECREATED { get; set; }
 
         public int CREATEDBY { get; set; }

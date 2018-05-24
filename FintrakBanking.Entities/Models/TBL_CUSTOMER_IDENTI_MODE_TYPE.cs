@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CUSTOMER_IDENTI_MODE_TYPE")]
+    [Table("core.TBL_CUSTOMER_IDENTI_MODE_TYPE")]
     public partial class TBL_CUSTOMER_IDENTI_MODE_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

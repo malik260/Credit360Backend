@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_JOB_TYPE_DEPARTMENT")]
+    [Table("core.TBL_JOB_TYPE_DEPARTMENT")]
     public partial class TBL_JOB_TYPE_DEPARTMENT
     {
         [Key]

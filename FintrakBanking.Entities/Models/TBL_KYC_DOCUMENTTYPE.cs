@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_KYC_DOCUMENTTYPE")]
+    [Table("core.TBL_KYC_DOCUMENTTYPE")]
     public partial class TBL_KYC_DOCUMENTTYPE
     {
         [Key]

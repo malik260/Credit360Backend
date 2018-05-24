@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CHECKLIST_RESPONSE_TYPE")]
+    [Table("core.TBL_CHECKLIST_RESPONSE_TYPE")]
     public partial class TBL_CHECKLIST_RESPONSE_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
