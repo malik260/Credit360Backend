@@ -114,7 +114,7 @@ namespace FintrakBanking.APICore.Providers
                             return;
                         }
 
-                        authRepo.SessionInfo = sessionState;
+                       // authRepo.SessionInfo = sessionState;
                     }
 
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)

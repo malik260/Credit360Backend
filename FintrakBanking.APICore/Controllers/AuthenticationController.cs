@@ -250,7 +250,7 @@ namespace FintrakBanking.APICore.Controllers
                         activities = userActivities,
                         staffId = currUser.staffId,
                         staffName = currUser.staffName,
-                          sessionStatusInfo = currUser.sessionStatusInfo,
+                        sessionStatusInfo = currUser.sessionStatusInfo,
                         applicationDate = _genSetup.GetApplicationDate(),
                         lastLoginDate = currUser.lastLoginDate,
                     }

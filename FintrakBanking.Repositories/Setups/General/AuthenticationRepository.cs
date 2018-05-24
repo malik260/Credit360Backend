@@ -136,7 +136,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public UserViewModel FindUserByUserName(string username)
         {
-            var result = _sessionInfo;
+            //var result = _sessionInfo;
+            var result = CheckSessionState(username);
 
             if (result.state > 0)
                  result = new SessionStatusInfo
@@ -189,7 +190,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     throw new CustomException(ex.Message);
                 }
             }
-
             return null;
         }
 
@@ -213,7 +213,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 int timeStamp =( _user.LASTLOCKOUTDATE.Value.Date - DateTime.Now).Minutes;
 
-                if (timeStamp < 2 && _user.LOGINCODE != Guid.Empty.ToString())
+                if (timeStamp < 2 &&  _user.LOGINCODE != null && _user.LOGINCODE != Guid.Empty.ToString())
                 {
                     result = new SessionStatusInfo
                     {
@@ -233,21 +233,18 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 }
             }
-           
-
-
             return result;
         }
 
 
 
-        private SessionStatusInfo _sessionInfo;
+        //private SessionStatusInfo _sessionInfo;
 
-        public SessionStatusInfo SessionInfo
-        {
-            get => _sessionInfo;
-            set => _sessionInfo = value;
-        }
+        //public SessionStatusInfo SessionInfo
+        //{
+        //    get => _sessionInfo;
+        //    set => _sessionInfo = value;
+        //}
 
 
 
@@ -257,7 +254,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var appSetup = context.TBL_SETUP_GLOBAL.Single();
 
-            SessionStatusInfo result = _sessionInfo;
+           // SessionStatusInfo result = _sessionInfo;
+            SessionStatusInfo result = CheckSessionState(username);
 
             
             if (result == null) return null;
