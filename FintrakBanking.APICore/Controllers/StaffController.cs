@@ -632,7 +632,12 @@ namespace FintrakBanking.APICore.Controllers
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+                var innerException = ex.InnerException;
+                string innerMessage = "";
+                if (innerException != null)
+                    innerMessage = innerException.Message;
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException} inner exception - {innerMessage}" });
             }
         }
 
