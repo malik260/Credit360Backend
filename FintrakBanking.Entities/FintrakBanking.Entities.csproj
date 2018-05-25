@@ -215,6 +215,7 @@
     <Compile Include="Models\TBL_CUSTOMER_SIGNATORY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOM_CASADAILYBALANCE.cs" />
+    <Compile Include="Models\TBL_CUSTOM_CHART_OF_ACCOUNT.cs" />
     <Compile Include="Models\TBL_CUSTOM_CRCBUREAU_PRODUCT.cs" />
     <Compile Include="Models\TBL_CUSTOM_FIANCE_TRANSACTION.cs" />
     <Compile Include="Models\TBL_CUSTOM_FIELDS.cs" />

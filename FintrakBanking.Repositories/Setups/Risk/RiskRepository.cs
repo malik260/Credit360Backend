@@ -288,7 +288,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 CREATEDBY = entity.createdBy,
                 COMPANYID = entity.companyId,
                 RISKTYPEID = entity.riskTypeId,
-                PRODUCTID = (short) entity.productId,
+                PRODUCTID = entity.productId,
             };
             this.context.TBL_RISK_ASSESSMENT_TITLE.Add(title);
 

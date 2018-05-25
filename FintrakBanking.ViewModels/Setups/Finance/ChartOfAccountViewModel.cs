@@ -50,4 +50,13 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public short glClassId { get; set; }
         public string glClassName { get; set; }
     }
+
+    public class CustomChartOfAccountViewModel : GeneralEntity
+    {
+        public int customAccountId { get; set; }
+        public string accountId { get; set; }
+        public string accountName { get; set; }
+        public string currencyCode { get; set; }
+        public string placeholderId { get; set; }
+    }
 }
