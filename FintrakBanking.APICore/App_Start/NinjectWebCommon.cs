@@ -205,7 +205,8 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IIntegrationWithCWGAPI>().To<IntegrationWithCWGAPI>();
             kernel.Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>();
             kernel.Bind<IOverDraftValidation>().To<OverDraftValidation>();
-            
+            kernel.Bind<ICustomChartOfAccountRepository>().To<CustomChartOfAccountRepository>();
+
         }
 
     }
