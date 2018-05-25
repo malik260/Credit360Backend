@@ -41,6 +41,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CASA_LIEN_TYPE> TBL_CASA_LIEN_TYPE { get; set; }
         public virtual DbSet<TBL_CASA_OVERDRAFT> TBL_CASA_OVERDRAFT { get; set; }
         public virtual DbSet<TBL_CASA_POSTNOSTATUS> TBL_CASA_POSTNOSTATUS { get; set; }
+        public virtual DbSet<TBL_CUSTOM_CHART_OF_ACCOUNT> TBL_CUSTOM_CHART_OF_ACCOUNT { get; set; }
         public virtual DbSet<TBL_CHARGE_FEE> TBL_CHARGE_FEE { get; set; }
         public virtual DbSet<TBL_CHARGE_FEE_DETAIL> TBL_CHARGE_FEE_DETAIL { get; set; }
         public virtual DbSet<TBL_CHARGE_FEE_DETAIL_TYPE> TBL_CHARGE_FEE_DETAIL_TYPE { get; set; }
@@ -375,8 +376,8 @@ namespace FintrakBanking.Entities.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-
-            modelBuilder.HasDefaultSchema("FINTRAKBANKING");
+            var databaseUsername = System.Configuration.ConfigurationManager.AppSettings["BankingOracleDatabaseUsername"];
+            modelBuilder.HasDefaultSchema(databaseUsername);
 
             //modelBuilder.Entity<ELMAH_ERROR>()
             //    .Property(e => e.ERRORID)

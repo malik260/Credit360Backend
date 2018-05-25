@@ -32,6 +32,8 @@ namespace FintrakBanking.Repositories.Setups.General
         private IApprovalLevelStaffRepository level;
         private FinTrakBankingDocumentsContext documentsContext;
 
+        public object FileUploadControl { get; private set; }
+
         public StaffRepository(FinTrakBankingContext _context,
                                IAuditTrailRepository _auditTrail,
                                IGeneralSetupRepository _genSetup,
@@ -494,7 +496,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public int GoForApproval(ApprovalViewModel entity)
         {
             using (var trans = context.Database.BeginTransaction())
             {
@@ -512,6 +514,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     context.SaveChanges();
 
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var staff = context.TBL_TEMP_STAFF.Find(entity.targetId);
+                        staff.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                        context.SaveChanges();
+                        trans.Commit();
+                        return 2;
+                    }
+
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = ApproveStaff(entity.targetId, (short)workflow.StatusId, entity);
@@ -520,14 +531,14 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             trans.Commit();
                         }
-                        return true;
+                        return 1;
                     }
                     else
                     {
                         trans.Commit();
                     }
 
-                    return false;
+                    return 0;
                 }
                 catch (Exception ex)
                 {
@@ -826,9 +837,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         else
                         {
                             trans.Commit();
-                        }
-
-                        output = false;
+                            output = false;
+                        } 
                     }
                     catch (Exception ex)
                     {
@@ -1603,23 +1613,26 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private string StoredFilePath(string filename)
         {
-            CreditBureauHelp helper = new CreditBureauHelp();
+            //CreditBureauHelp helper = new CreditBureauHelp();
 
-            string folderName = string.Empty;
-            folderName = helper.FilePath();
-            folderName = Path.Combine(folderName, "UploadedFiles");
-            string pathString = Path.Combine(folderName, filename);
+            //string folderName = string.Empty;
+            //folderName = helper.FilePath();
+            //folderName = Path.Combine(folderName, "Excel_Uploads");
+            //string dir = Directory.GetCurrentDirectory();
 
-            if (!Directory.Exists(folderName))
+            string appRoot = System.Web.Hosting.HostingEnvironment.MapPath("~\\Content");
+            string pathString = Path.Combine(appRoot,"UploadFiles", filename);
+            Directory.GetAccessControl(pathString);
+            if (!Directory.Exists(pathString))
             {
-                Directory.CreateDirectory(folderName);
+                Directory.CreateDirectory(pathString);
             }
 
             if (!File.Exists(pathString))
             {
                 using (StreamWriter sw = new StreamWriter(pathString))
                 {
-                    // sw.Write(pathString);
+                    sw.Write(pathString);
                 }
                 return pathString;
             }

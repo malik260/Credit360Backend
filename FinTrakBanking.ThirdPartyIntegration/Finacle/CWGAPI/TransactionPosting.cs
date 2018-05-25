@@ -730,29 +730,34 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             if (response.IsSuccessStatusCode)
             {
                 GLAccountDetailsViewModel data = await response.Content.ReadAsAsync<GLAccountDetailsViewModel>();
-                result = new GLAccountDetailsViewModel
+                if (data == null)
                 {
-                    accountName = data.accountName,
-                    accountNumber = data.accountNumber,
-                    balance = data.balance,
-                    branch = data.branch,
-                    currencyType = data.currencyType,
-                    glSubHeadCode = data.glSubHeadCode,
-                    partitionedFlag = data.partitionedFlag,
-                    partitionedType = data.partitionedType,
-                    product = data.product,
-                    productName = data.productName,
-                    productType = data.productType,
-                    systemAccountFlag = data.systemAccountFlag,
-                    response = response,
-                };
-                handler.Dispose();
-                client.Dispose();
-                return result;
+                    result = new GLAccountDetailsViewModel
+                    {
+                        accountName = data.accountName,
+                        accountNumber = data.accountNumber,
+                        balance = data.balance,
+                        branch = data.branch,
+                        currencyType = data.currencyType,
+                        glSubHeadCode = data.glSubHeadCode,
+                        partitionedFlag = data.partitionedFlag,
+                        partitionedType = data.partitionedType,
+                        product = data.product,
+                        productName = data.productName,
+                        productType = data.productType,
+                        systemAccountFlag = data.systemAccountFlag,
+                        response = response,
+                    };
+                    handler.Dispose();
+                    client.Dispose();
+                    return result;
+                }
+                else throw new Exception("Record not fund");
             }
             handler.Dispose();
             client.Dispose();
             return result;
+       
         }
 
         public async Task<TDAccountRecordViewModel> APIOfficeAccountGetTermDepositAccountRecord(string teamDepositAccountNumber)

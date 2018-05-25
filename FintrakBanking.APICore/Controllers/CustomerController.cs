@@ -888,7 +888,7 @@ namespace FintrakBanking.APICore.Controllers
                         return Request.CreateResponse(HttpStatusCode.OK,
                            new { success = false, message = "The BVN you entered already exist" });
                     }
-                    if (entity.rcNumber != null)
+                    if (entity.rcNumber != null && entity.customerTypeId == (int)CustomerTypeEnum.Corporate)
                     {
                         if (repo.ValidateCustomerRCnumber(entity.customerId, entity.rcNumber))
                         {
