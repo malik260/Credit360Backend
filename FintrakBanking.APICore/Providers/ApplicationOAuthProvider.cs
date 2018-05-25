@@ -170,22 +170,29 @@ namespace FintrakBanking.APICore.Providers
             }
             catch (Exception ex)
             {
+                var innerException = ex.InnerException;
+                string innerMessage = "";
+                if (innerException != null)
+                    innerMessage = innerException.Message;
 
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException} inner exception - {innerMessage}" });
+
+                context.SetError("invalid_grant", $"Server error: {ex.Message} inner exception - {innerMessage}");
 
                 //  context.SetError("invalid_grant", "The user name or password is incorrect.");
-                if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
-                {
-                    context.SetError("invalid_grant", ex.Message.Replace("1001", ""));
-                }
+                //if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
+                //{
+                //    context.SetError("invalid_grant", ex.Message.Replace("1001", ""));
+                //}
 
-                if (ex.Message.Contains("network-related"))
-                {
-                    context.SetError("invalid_grant", "Server error: Contact System Administrator");
-                }
-                else
-                {
-                    context.SetError("invalid_grant", "Server error: Contact System Administrator");
-                }
+                //if (ex.Message.Contains("network-related"))
+                //{
+                //    context.SetError("invalid_grant", "Server error: Contact System Administrator");
+                //}
+                //else
+                //{
+                //    context.SetError("invalid_grant", "Server error: Contact System Administrator");
+                //}
             }
         }
 
