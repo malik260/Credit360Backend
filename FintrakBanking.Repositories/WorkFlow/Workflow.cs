@@ -717,14 +717,17 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 else
                 {
-                    var nextLevel = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
-                    var staffRoleEmails = context.TBL_STAFF.Where(x => x.STAFFROLEID == nextLevel.STAFFROLEID)
-                        .Select(x => x.EMAIL)
-                        .Distinct();
-                    var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
-                        .Select(x => x.TBL_STAFF.EMAIL)
-                        .Distinct();
-                    emails = staffRoleEmails.Union(levelStaffEmails).ToList();
+                    if (this.nextLevelId != null)
+                    {
+                        var nextLevel = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
+                        var staffRoleEmails = context.TBL_STAFF.Where(x => x.STAFFROLEID == nextLevel.STAFFROLEID)
+                            .Select(x => x.EMAIL)
+                            .Distinct();
+                        var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
+                            .Select(x => x.TBL_STAFF.EMAIL)
+                            .Distinct();
+                        emails = staffRoleEmails.Union(levelStaffEmails).ToList();
+                    }
                 }
 
                 var time = String.Format("{0:F}", DateTime.Now);
@@ -764,7 +767,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         message = new TBL_MESSAGE_LOG // RECIEVERS
                         {
-                            TOADDRESS = this.toStaffId != null ? reciever.EMAIL : string.Join(";", emails),
+                            TOADDRESS = this.toStaffId != null ? reciever.EMAIL : string.Join(";", emails.Distinct()),
                             MESSAGESUBJECT = messageSubject,
                             MESSAGEBODY = messageBody,
                             MESSAGESTATUSID = (short)MessageStatusEnum.Pending,

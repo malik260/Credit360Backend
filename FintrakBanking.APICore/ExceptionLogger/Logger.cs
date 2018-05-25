@@ -13,8 +13,8 @@ namespace FintrakBanking.APICore.ExceptionLogger
             {
 
                 Log.Logger = new LoggerConfiguration()
-                    .WriteTo.File(@"C:\Logs\logfile- " + DateTime.Now.Date +" -lastlog}.txt")
-                    .Enrich.With<WebApiRouteTemplateEnricher>()
+                    .WriteTo.File(@"C:\Logs\logfile.txt")
+                    //.Enrich.With<WebApiRouteTemplateEnricher>()
                     .Enrich.With<WebApiControllerNameEnricher>()
                     .Enrich.With<WebApiActionNameEnricher>()
                     .Enrich.With<HttpRequestIdEnricher>()

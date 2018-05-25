@@ -1023,7 +1023,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return AllProduct().SingleOrDefault(p => p.productCode == productCode && p.companyId == companyId);
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public int GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.ProductCreation;
 
@@ -1033,28 +1033,35 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 try
                 {
-                    //workFlow.LogForApproval(entity);
-                    //var b = workFlow.NextLevelId ?? 0;
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
 
-                    workFlow.StaffId = entity.createdBy;
-                    workFlow.CompanyId = entity.companyId;
-                    workFlow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
-                    workFlow.TargetId = entity.targetId;
-                    workFlow.Comment = entity.comment;
-                    workFlow.OperationId = entity.operationId;
-                    workFlow.DeferredExecution = true;
-                    workFlow.ExternalInitialization = false;
+                    //workFlow.StaffId = entity.createdBy;
+                    //workFlow.CompanyId = entity.companyId;
+                    //workFlow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
+                    //workFlow.TargetId = entity.targetId;
+                    //workFlow.Comment = entity.comment;
+                    //workFlow.OperationId = entity.operationId;
+                    //workFlow.DeferredExecution = true;
+                    //workFlow.ExternalInitialization = false;
 
-                    workFlow.LogActivity();
+                    //workFlow.LogActivity();
 
-                    context.SaveChanges();
-                    //if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    //{
-                    //    trans.Rollback();
-                    //    throw new Exception("Approval Failed");
-                    //}
+                    //context.SaveChanges();
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
 
-
+                    if(entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var product = context.TBL_TEMP_PRODUCT.Find(entity.targetId);
+                        product.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                        context.SaveChanges();
+                        trans.Commit();
+                        return 2;
+                    }
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
@@ -1064,14 +1071,14 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             trans.Commit();
                         }
-                        return true;
+                        return 1;
                     }
                     else
                     {
                         trans.Commit();
                     }
 
-                    return false;
+                    return 0;
                 }
                 catch (Exception ex)
                 {
