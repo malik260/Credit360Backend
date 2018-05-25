@@ -51,7 +51,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId)
         {
             List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
-            var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId);
+            var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
             var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
             var customer = from a in context.TBL_CUSTOMER
                            where a.DELETED == false && a.CUSTOMERID == customerId
@@ -100,6 +100,14 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in customer)
             {
+                var casa = context.TBL_CASA.Where(x => x.CUSTOMERID == item.customerId).FirstOrDefault();
+                if (casa != null) item.customerAccountNo = casa.PRODUCTACCOUNTNUMBER;
+
+                var phoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == item.customerId).FirstOrDefault();
+                if (phoneContact != null) item.phoneNumber = phoneContact.PHONENUMBER;
+
+                if (customerInfo != null) item.rcNumber = customerInfo.REGISTRATIONNUMBER;
+
                 allCorporate.Add(item);
             }
 

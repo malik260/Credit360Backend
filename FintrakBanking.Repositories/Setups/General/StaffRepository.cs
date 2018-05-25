@@ -1607,7 +1607,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             string folderName = string.Empty;
             folderName = helper.FilePath();
-            folderName = Path.Combine(folderName, "Excel_Uploads");
+            folderName = Path.Combine(folderName, "UploadedFiles");
             string pathString = Path.Combine(folderName, filename);
 
             if (!Directory.Exists(folderName))

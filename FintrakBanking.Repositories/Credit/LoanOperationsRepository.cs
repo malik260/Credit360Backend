@@ -105,8 +105,6 @@ namespace FintrakBanking.Repositories.Credit
 
         [OperationBehavior(TransactionScopeRequired = true)]
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTeamLoansInterestAccrual(DateTime applicationDate)
-
-
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
