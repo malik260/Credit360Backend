@@ -21,7 +21,9 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         private string enableSsl = ConfigurationManager.AppSettings["enableSsl"];
         private string postNumber = ConfigurationManager.AppSettings["smtpPort"];
         private string testingEmails = ConfigurationManager.AppSettings["testingEmails"];
-        private string isEmailTest = ConfigurationManager.AppSettings["isEmailTest"];
+        private string isTestEmail = ConfigurationManager.AppSettings["isTestEmail"];
+        private string exceptionReportingEmails = ConfigurationManager.AppSettings["exceptionReportingEmails"];
+
         private  string[] Addy = { };
 
         FinTrakBankingContext dbContext = new FinTrakBankingContext();
@@ -43,12 +45,61 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                return new List<TBL_MESSAGE_LOG>();
+                var innerException = ex.InnerException;
+                string innerMessage = "";
+                if (innerException != null)
+                    innerMessage = innerException.Message;
+
+                throw new Exception("Failed with error : " + innerMessage);
             }
         }
 
         public bool SendEmailCompleted()
         {
+            return true;
+        }
+
+        public bool SendEmailOfException(string body)
+        {
+            using (SmtpClient client = new SmtpClient())
+            {
+                client.Port = Convert.ToInt32(postNumber);
+
+                client.EnableSsl = Convert.ToBoolean(enableSsl);
+
+                client.Host = smtpclient;
+
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+                client.UseDefaultCredentials = true;
+
+                client.Credentials = new System.Net.NetworkCredential(userName, password);
+
+                MailMessage mail = new MailMessage();
+
+                mail.From = new MailAddress(userName, "Fintrak Email Service - Urgent Attention");
+
+                char[] seperators = { ',', ';' };
+
+                Addy = exceptionReportingEmails.Split(seperators);
+
+                foreach (var emailAddy in Addy)
+                {
+                    if (emailAddy != null && emailAddy != string.Empty)
+                    {
+                        mail.To.Add(new MailAddress(emailAddy));
+                    }
+                }
+
+                mail.Subject = "Fintrak Credit 360 Email Alert Sender Service Exception";
+                mail.Body = "Dear Sir/Ma, <br /><br /> ERROR EXCEPTION REPORT <br /><br /> The service has failed with error : " + body + "<br /><br /> Kindly escalate this issue to Fintrak Credit 360 support for urgent attention." +
+                    "<br /><br /> Thanks <br /> Fintrak Credit 360.";
+               
+
+                client.Send(mail);
+                
+
+            }
             return true;
         }
 
@@ -85,9 +136,9 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                             {
                                 char[] seperators = { ',', ';' };
 
-                                if (!string.IsNullOrEmpty(isEmailTest))
+                                if (!string.IsNullOrEmpty(isTestEmail))
                                 {
-                                    if (Convert.ToBoolean(isEmailTest))
+                                    if (Convert.ToBoolean(isTestEmail))
                                     {
                                         Addy = testingEmails.Split(seperators);
                                     }
@@ -127,7 +178,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             {
                 UpdateMailDeliveryStatus(mailId, (int)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
 
-                return false;
+                throw new Exception("Failed with error : " + ex.Message);
             }
         }
 
@@ -177,7 +228,12 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                return false;
+                var innerException = ex.InnerException;
+                string innerMessage = "";
+                if (innerException != null)
+                    innerMessage = innerException.Message;
+
+                throw new Exception("Failed with error : " + innerMessage);
             }
         }
     }
