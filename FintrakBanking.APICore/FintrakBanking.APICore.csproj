@@ -188,8 +188,8 @@
     <Reference Include="Serilog.Sinks.PeriodicBatching, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.Sinks.PeriodicBatching.2.1.1\lib\net45\Serilog.Sinks.PeriodicBatching.dll</HintPath>
     </Reference>
-    <Reference Include="SerilogWeb.Classic, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9462ddd55fbc0e7f, processorArchitecture=MSIL">
-      <HintPath>..\packages\SerilogWeb.Classic.4.1.38\lib\net45\SerilogWeb.Classic.dll</HintPath>
+    <Reference Include="SerilogWeb.Classic, Version=4.2.0.0, Culture=neutral, PublicKeyToken=9462ddd55fbc0e7f, processorArchitecture=MSIL">
+      <HintPath>..\packages\SerilogWeb.Classic.4.2.41\lib\net45\SerilogWeb.Classic.dll</HintPath>
     </Reference>
     <Reference Include="SerilogWeb.Classic.WebApi, Version=2.0.0.0, Culture=neutral, PublicKeyToken=9462ddd55fbc0e7f, processorArchitecture=MSIL">
       <HintPath>..\packages\SerilogWeb.Classic.WebApi.2.0.9\lib\net45\SerilogWeb.Classic.WebApi.dll</HintPath>

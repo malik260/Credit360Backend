@@ -83,12 +83,25 @@ namespace FintrakBanking.APICore.Providers
 
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
+                if (!await authRepo.IsAccountActive(userVm.username))
+                {
+                    context.SetError("invalid_grant", "This account is INACTIVE");
+                    return;
+                }
+
+                if (authRepo.IsAccountLocked(userVm.username).GetAwaiter().GetResult())
+                {
+                    context.SetError("invalid_grant", "This account is LOCKED");
+                    return;
+                }
+
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {
                     if (Task.FromResult(
                         ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
                     {
-                        user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username)).Result;
+                        authRepo.SessionInfo = await authRepo.CheckSessionState(userVm.username.ToLower());
+                        user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username.ToLower())).Result;
                     }
                     else
                     {
@@ -99,16 +112,9 @@ namespace FintrakBanking.APICore.Providers
                 }
                 else
                 {
-                    if (!await authRepo.IsAccountActive(userVm.username))
-                    {
-                        context.SetError("invalid_grant", "This account is INACTIVE");
-                        return;
-                    }
-                    if (await authRepo.IsAccountLocked(userVm.username))
-                    {
-                        context.SetError("invalid_grant", "This account is LOCKED");
-                        return;
-                    }
+                   
+
+                    authRepo.SessionInfo = await authRepo.CheckSessionState(userVm.username.ToLower());
                     user = await Task
                         .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username, userVm.password))
                         .Result;
@@ -170,29 +176,21 @@ namespace FintrakBanking.APICore.Providers
             }
             catch (Exception ex)
             {
-                var innerException = ex.InnerException;
-                string innerMessage = "";
-                if (innerException != null)
-                    innerMessage = innerException.Message;
 
-                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException} inner exception - {innerMessage}" });
-
-                context.SetError("invalid_grant", $"Server error: {ex.Message} inner exception - {innerMessage}");
 
                 //  context.SetError("invalid_grant", "The user name or password is incorrect.");
-                //if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
-                //{
-                //    context.SetError("invalid_grant", ex.Message.Replace("1001", ""));
-                //}
+                if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
+                {
+                    string str = ex.Message.Replace("1001", "");
+                    context.SetError("invalid_grant", str);
+                    return;
+                }
 
-                //if (ex.Message.Contains("network-related"))
-                //{
-                //    context.SetError("invalid_grant", "Server error: Contact System Administrator");
-                //}
-                //else
-                //{
-                //    context.SetError("invalid_grant", "Server error: Contact System Administrator");
-                //}
+                if (ex.Message.Contains("network-related"))
+                {
+                    context.SetError("invalid_grant", "Server error: Contact System Administrator");
+                   
+                }
             }
         }
 
