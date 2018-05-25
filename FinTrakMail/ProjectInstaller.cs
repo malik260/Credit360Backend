@@ -36,9 +36,13 @@ namespace FinTrakMail
             serviceInstaller.StartType = ServiceStartMode.Automatic;
             Installers.Add(serviceInstaller);
 
+            
             serviceProcessInstaller = new ServiceProcessInstaller();
-            serviceProcessInstaller.Account = ServiceAccount.User;
+            serviceProcessInstaller.Account = ServiceAccount.LocalSystem;
+            serviceProcessInstaller.Username = null;
+            serviceProcessInstaller.Password = null;
             Installers.Add(serviceProcessInstaller);
+
         }
     }
 }
