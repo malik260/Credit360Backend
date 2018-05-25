@@ -847,30 +847,31 @@ namespace FintrakBanking.Repositories.Admin
 
         private IQueryable<ActiveUserDetails> UserDetails(int companyId)
         {
-            return from p in context.TBL_PROFILE_USER
-                   join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
-                   join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
-                   join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                   where st.COMPANYID == companyId
-                   select new ActiveUserDetails
-                   {
-                       companyId = coy.COMPANYID,
-                       staffId = p.STAFFID,
-                       user_id = p.USERID,
-                       username = p.USERNAME,
-                       staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                       branchId = st.BRANCHID.Value,
-                       countryId = coy.COUNTRYID,
-                       branchName = br.BRANCHNAME,
-                       companyName = coy.NAME,
-                       logincode = p.LOGINCODE,
-                       lastLoginDate = p.LASTLOGINDATE,
-                       isActive = p.ISACTIVE,
-                       isLocked = p.ISLOCKED,
-                       failedLogonAttempt = p.FAILEDLOGONATTEMPT,
-                       lastLockedOutDate = p.LASTLOCKOUTDATE
+            var data = (from p in context.TBL_PROFILE_USER
+                        join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
+                        join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                        join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                        where st.COMPANYID == companyId
+                        select new ActiveUserDetails
+                        {
+                            companyId = coy.COMPANYID,
+                            staffId = p.STAFFID,
+                            user_id = p.USERID,
+                            username = p.USERNAME,
+                            staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                            branchId = st.BRANCHID.Value,
+                            countryId = coy.COUNTRYID,
+                            branchName = br.BRANCHNAME,
+                            companyName = coy.NAME,
+                            logincode = p.LOGINCODE,
+                            lastLoginDate = p.LASTLOGINDATE,
+                            isActive = p.ISACTIVE,
+                            isLocked = p.ISLOCKED,
+                            failedLogonAttempt = p.FAILEDLOGONATTEMPT,
+                            lastLockedOutDate = p.LASTLOCKOUTDATE
 
-                   };
+                        });
+            return data;
         }
 
         public bool UpdateUserStatus(ActiveUserDetails entity, out string message)

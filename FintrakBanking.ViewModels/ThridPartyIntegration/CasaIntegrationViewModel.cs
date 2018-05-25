@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public decimal balance { get; set; }
         public string branch { get; set; }
         public string accountStatus  { get; set; }
-        public DateTime lastTransactionDate { get; set; }
+        public string lastTransactionDate { get; set; }
 
     }
 

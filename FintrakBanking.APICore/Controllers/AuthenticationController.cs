@@ -81,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                if (_repo.IsUserExits(user.username.ToLower()))
+                if (_repo.IsUserExisting(user.username.ToLower()))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "A user with this username already exit" });
                 }
@@ -189,11 +189,13 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
-                var foundUser = await _repo.FindUserByUserNameAndPassword(user.username, user.password);
+
+               _repo.SessionInfo = await _repo.CheckSessionState(user.username.ToLower());
+                var foundUser = await _repo.FindUserByUserNameAndPassword(user.username.ToLower(), user.password);
 
                 if (foundUser == null)
                 {
-                    var found = _repo.GetSingleUserByUserName(user.username);
+                    var found = _repo.GetSingleUserByUserName(user.username.ToLower());
 
                     if (found.branchId != null)
                     {
