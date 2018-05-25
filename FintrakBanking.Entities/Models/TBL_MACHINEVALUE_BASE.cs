@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_MACHINEVALUE_BASE")]
+    [Table("TBL_MACHINEVALUE_BASE")]
     public partial class TBL_MACHINEVALUE_BASE
     {
         [Key]

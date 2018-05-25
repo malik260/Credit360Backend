@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOM_HOSTPAGE")]
+    [Table("TBL_CUSTOM_HOSTPAGE")]
     public partial class TBL_CUSTOM_HOSTPAGE
     {
         [Key]

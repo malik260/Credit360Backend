@@ -104,11 +104,14 @@ namespace FintrakBanking.APICore.Providers
                         context.SetError("invalid_grant", "This account is INACTIVE");
                         return;
                     }
-                    if (await authRepo.IsAccountLocked(userVm.username))
+
+                    if ( authRepo.IsAccountLocked(userVm.username).GetAwaiter().GetResult())
                     {
                         context.SetError("invalid_grant", "This account is LOCKED");
                         return;
                     }
+
+                    authRepo.SessionInfo = await authRepo.CheckSessionState(userVm.username);
                     user = await Task
                         .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username, userVm.password))
                         .Result;
@@ -175,16 +178,15 @@ namespace FintrakBanking.APICore.Providers
                 //  context.SetError("invalid_grant", "The user name or password is incorrect.");
                 if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
                 {
-                    context.SetError("invalid_grant", ex.Message.Replace("1001", ""));
+                    string str = ex.Message.Replace("1001", "");
+                    context.SetError("invalid_grant", str);
+                    return;
                 }
 
                 if (ex.Message.Contains("network-related"))
                 {
                     context.SetError("invalid_grant", "Server error: Contact System Administrator");
-                }
-                else
-                {
-                    context.SetError("invalid_grant", "Server error: Contact System Administrator");
+                   
                 }
             }
         }

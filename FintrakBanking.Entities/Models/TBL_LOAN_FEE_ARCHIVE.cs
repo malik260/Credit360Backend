@@ -6,13 +6,13 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_FEE_ARCHIVE")]
+    [Table("TBL_LOAN_FEE_ARCHIVE")]
     public partial class TBL_LOAN_FEE_ARCHIVE
     {
         [Key]
         public int LOANCHARGEFEEARCHIVEID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime CHANGEEFFECTIVEDATE { get; set; }
 
         public bool ISAPPLIED { get; set; }
@@ -33,22 +33,22 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal FEERATEVALUE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal FEEDEPENDENTAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal FEEAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal EARNEDFEEAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal TAXAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal EARNEDTAXAMOUNT { get; set; }
 
         public bool ISINTEGRALFEE { get; set; }

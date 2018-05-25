@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_CALL_MEMO_LIMIT")]
+    [Table("TBL_CALL_MEMO_LIMIT")]
     public partial class TBL_CALL_MEMO_LIMIT
     {
         [Key]
@@ -14,10 +14,10 @@ namespace FintrakBanking.Entities.Models
 
         public int JOBTITLEID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal MINIMUMAMOUNT { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal MAXIMUMAMOUNT { get; set; }
 
         public short FREQUENCYID { get; set; }

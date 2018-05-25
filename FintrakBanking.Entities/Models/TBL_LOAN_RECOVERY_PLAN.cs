@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_RECOVERY_PLAN")]
+    [Table("TBL_LOAN_RECOVERY_PLAN")]
     public partial class TBL_LOAN_RECOVERY_PLAN
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -26,10 +26,10 @@ namespace FintrakBanking.Entities.Models
 
         public int? AGENTID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? AMOUNTOWED { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal WRITEOFFAMOUNT { get; set; }
 
         public int CREATEDBY { get; set; }

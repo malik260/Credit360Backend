@@ -100,7 +100,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public async Task<UserViewModel> FindUserByUserNameAsync(string username)
         {
-            var result = await CheckSessionState(username);
+            var result = _sessionInfo;
 
             if (result.state > 0)
                 result = new SessionStatusInfo
@@ -114,47 +114,51 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (user != null)
             {
-                try
-                {
-                    var data = (from p in context.TBL_PROFILE_USER
-                                join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
-                                join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
-                                join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                                where p.USERNAME.ToLower() == username.ToLower()
-                                select new UserViewModel
-                                {
-                                    companyId = coy.COMPANYID,
-                                    staffId = p.STAFFID,
-                                    user_id = p.USERID,
-                                    username = p.USERNAME,
-                                    staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                                    branchId = st.BRANCHID.Value,
-                                    countryId = coy.COUNTRYID,
-                                    branchName = br.BRANCHNAME,
-                                    companyName = coy.NAME,
-
-                                }).First();
-                    if (data == null)
+                var data = (from p in context.TBL_PROFILE_USER
+                    join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
+                    join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                    join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                    where p.USERNAME.ToLower() == username.ToLower()
+                    select new UserViewModel
                     {
-                        user.LOGINCODE = null;
-                        user.FAILEDLOGONATTEMPT += 1;
-                    }
-                    else
-                    {
-                        user.LASTLOGINDATE = DateTime.Now;
-                        user.LOGINCODE = result.loginCode.ToString();
-                    }
-                    context.SaveChanges();
+                        companyId = coy.COMPANYID,
+                        staffId = p.STAFFID,
+                        user_id = p.USERID,
+                        username = p.USERNAME,
+                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                        branchId = st.BRANCHID.Value,
+                        countryId = coy.COUNTRYID,
+                        branchName = br.BRANCHNAME,
+                        companyName = coy.NAME
+                    }).FirstOrDefault();
 
-                    return data;
-                }
-                catch (Exception ex)
+                if (data == null)
                 {
-                    throw new CustomException(ex.Message);
+                    int count = user.FAILEDLOGONATTEMPT ?? 0;
+                    if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                    {
+                        user.ISLOCKED = true;
+                        user.LASTLOCKOUTDATE = DateTime.Now;
+                    }
+
+                    user.LOGINCODE = null;
+                    user.FAILEDLOGONATTEMPT += 1;
                 }
+                else
+                {
+                    user.LASTLOGINDATE = DateTime.Now;
+                    user.LOGINCODE = result.loginCode.ToString();
+                }
+
+                context.SaveChanges();
+                
+                return data;
+
             }
 
-            return null;
+            throw new Exception("1001 Incorrect username or password.");
+
+            //return null;
         }
 
         public async Task<SessionStatusInfo> CheckSessionState(string username)
@@ -162,7 +166,6 @@ namespace FintrakBanking.Repositories.Setups.General
             Guid loginCode = Guid.Empty;
             var user = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(x => x.USERNAME == username); // && x.PASSWORD == password);
             SessionStatusInfo result = null;
-
 
             if (user != null)
             {
@@ -175,30 +178,38 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     };
 
-                int timeStamp = (user.LASTLOCKOUTDATE.Value.Date - DateTime.Now).Minutes;
-
-                if (timeStamp < 2 && user.LOGINCODE != Guid.Empty.ToString())
+                else if (user.LOGINCODE != null)
                 {
-                    result = new SessionStatusInfo
+                    int timeStamp = (DateTime.Now - user.LASTLOCKOUTDATE.Value.Date).Minutes;
+                    if (timeStamp < 2 && user.LOGINCODE != Guid.Empty.ToString())
                     {
-                        loginCode = Guid.Parse(user.LOGINCODE),//  Guid.Empty,
-                        state = 0,
-                        errorMessage = "",
-                    };
-                }
-                else
-                {
-                    result = new SessionStatusInfo
+                        result = new SessionStatusInfo
+                        {
+                            loginCode = Guid.Parse(user.LOGINCODE),
+                            state = 0,
+                            errorMessage = "",
+                        };
+                    }
+                    else
                     {
-                        loginCode = Guid.Parse(user.LOGINCODE),
-                        state = 1,
-                        errorMessage = "You are already logged.",
-                    };
-
+                        result = new SessionStatusInfo
+                        {
+                            loginCode = Guid.Parse(user.LOGINCODE),
+                            state = 1,
+                            errorMessage = "You are already logged.",
+                        };
+                    }
                 }
             }
-
-
+            else
+            {
+                result = new SessionStatusInfo
+                {
+                    loginCode = Guid.Parse(user.LOGINCODE),
+                    state = 1,
+                    errorMessage = "You are already logged.",
+                };
+            }
 
             return result;
         }
@@ -215,77 +226,21 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<UserViewModel> FindUserByUserNameAndPassword(string username, string password)
         {
-            UserViewModel data;
-
-            var appSetup = await context.TBL_SETUP_GLOBAL.SingleAsync();
-            var result = await CheckSessionState(username);
-
+            UserViewModel data = null;
+            var result = _sessionInfo;
+            data = UserLoginDetails(username, password);
             if (result.state > 0)
             {
-                data = UserLoginDetails(username, password);
+                if (data == null)
+                {
+                    throw new Exception("1001 Incorrect username or password.");
+                }
                 data.sessionStatusInfo = result;
-                return data;
             }
-
-            var user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
-            if (result.state == 0 && user != null)
-            {
-                try
-                {
-                    if (appSetup.USE_ACTIVE_DIRECTORY)
-                    {
-                        data = await FindUserByUserNameAsync(username);
-                        user.LASTLOGINDATE = DateTime.Now;
-                    }
-                    else
-                    {
-                        data = UserLoginDetails(username, password);
-                        data.sessionStatusInfo = result;
-
-                    }
-
-                    if (data == null)
-                    {
-                        user.LOGINCODE = null;
-
-                        if (user.FAILEDLOGONATTEMPT == CommonHelpers.MaxInvalidPasswordAttempts)
-                        {
-                            user.ISLOCKED = true;
-                            user.LASTLOCKOUTDATE = DateTime.Now;
-                        }
-                        user.FAILEDLOGONATTEMPT += 1;
-                    }
-                    else
-                    {
-                        user.LASTLOGINDATE = DateTime.Now;
-                        user.LOGINCODE = result.loginCode.ToString();
-
-                    }
-                    context.SaveChanges();
-                    return data;
-                }
-                catch (Exception ex)
-                {
-                    //  context.Dispose();
-                    throw new Exception(ex.Message);
-                }
-            }
-            else
-            {
-
-                user.LOGINCODE = null;
-                user.FAILEDLOGONATTEMPT += 1;
-                if (user.FAILEDLOGONATTEMPT == CommonHelpers.MaxInvalidPasswordAttempts)
-                {
-                    user.ISLOCKED = true;
-                    user.LASTLOCKOUTDATE = DateTime.Now;
-                }
-                context.SaveChanges();
-            }
-
-            return null;
+            data.sessionStatusInfo = result;
+            return data;
         }
-
+       
         public async Task<bool> IsAccountLocked(string userName)
         {
             var data = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(c => c.USERNAME == userName);
@@ -294,7 +249,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 return data.ISLOCKED;
             }
-            throw new Exception("1001 User do not exist");
+            throw new Exception("1001 Incorrect username or password.");
         }
 
         public async Task<bool> IsAccountActive(string userName)
@@ -305,19 +260,17 @@ namespace FintrakBanking.Repositories.Setups.General
                 return data.ISACTIVE;
             }
 
-            throw new Exception("1001 User do not exist");
+            throw new Exception("1001 Incorrect username or password.");
         }
 
         private UserViewModel UserLoginDetails(string username, string password)
         {
-            var data = context.TBL_PROFILE_USER.Where(c => c.USERNAME == username);
+            var data = context.TBL_PROFILE_USER.Where(c => c.USERNAME == username && c.PASSWORD == password);
 
-            if (data.Any())
-            {
-                var result = data.Where(p => p.PASSWORD == password);
-                if (result.Any())
+            
+                if (data.Any())
                 {
-                    return result.Select(c => new UserViewModel
+                    return data.Select(c => new UserViewModel
                     {
                         companyId = c.TBL_STAFF.COMPANYID,
                         staffId = c.STAFFID,
@@ -334,29 +287,41 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     }).FirstOrDefault();
                 }
-                else
+            else
+            {
+                var record = data.FirstOrDefault();
+                if (record == null)
                 {
-                    var record = data.FirstOrDefault();
-                    if (record != null)
+                    var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME == username);
+                    if (faileddata != null)
                     {
-                        record.LOGINCODE = null;
-                        record.FAILEDLOGONATTEMPT += 1;
+                        int count = faileddata.FAILEDLOGONATTEMPT ?? 0;
+                        if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                        {
+                            faileddata.ISLOCKED = true;
+                            faileddata.LASTLOCKOUTDATE = DateTime.Now;
+                        }
+
+                        faileddata.LOGINCODE = null;
+                        faileddata.FAILEDLOGONATTEMPT += 1;
+                        context.SaveChanges();
+
+                        throw new Exception("1001 Incorrect username or password.");
+                    }
+                    else
+                    {
+                        throw new CustomException("1001 User dose not exist.");
                     }
 
-                    if (record != null && record.FAILEDLOGONATTEMPT == CommonHelpers.MaxInvalidPasswordAttempts)
-                    {
-                        record.ISLOCKED = true;
-                        record.LASTLOCKOUTDATE = DateTime.Now;
-                    }
-                    context.SaveChanges();
-                    return null;
                 }
+
+                return null;
             }
-            return null;
+
 
         }
 
-        public bool IsUserExits(string username)
+        public bool IsUserExisting(string username)
         {
             return context.TBL_PROFILE_USER.Any(x => x.USERNAME.ToLower() == username);
         }

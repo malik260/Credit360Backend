@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_COLLATERAL_ITEM_POLI")]
+    [Table("TBL_TEMP_COLLATERAL_ITEM_POLI")]
     public partial class TBL_TEMP_COLLATERAL_ITEM_POLI
     {
         [Key]
@@ -25,13 +25,13 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string INSURANCETYPE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal SUMINSURED { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime STARTDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime ENDDATE { get; set; }
 
         public int CREATEDBY { get; set; }

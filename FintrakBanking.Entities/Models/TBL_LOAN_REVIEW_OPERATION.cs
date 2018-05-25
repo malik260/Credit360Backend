@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_REVIEW_OPERATION")]
+    [Table("TBL_LOAN_REVIEW_OPERATION")]
     public partial class TBL_LOAN_REVIEW_OPERATION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
 
         public int OPERATIONTYPEID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime EFFECTIVEDATE { get; set; }
 
         [Required]
@@ -32,30 +32,30 @@ namespace FintrakBanking.Entities.Models
 
         public double? INTERATERATE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? PREPAYMENT { get; set; }
 
         public int? PRINCIPALFREQUENCYTYPEID { get; set; }
 
         public int? INTERESTFREQUENCYTYPEID { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? PRINCIPALFIRSTPAYMENTDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? INTERESTFIRSTPAYMENTDATE { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? MATURITYDATE { get; set; }
 
         public int? TENOR { get; set; }
 
         public int? CASA_ACCOUNTID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? OVERDRAFTTOPUP { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? FEE_CHARGES { get; set; }
 
         public short? SCHEDULETYPEID { get; set; }
@@ -72,7 +72,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CREATEDBY { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime DATECREATED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

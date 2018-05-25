@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_CREDIT_APPRAISAL_MEMO_DETL")]
+    [Table("TBL_CREDIT_APPRAISAL_MEMO_DETL")]
     public partial class TBL_CREDIT_APPRAISAL_MEMO_DETL
     {
         [Key]
@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int APPRAISALMEMORANDUMID { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal PRINCIPALAMOUNT { get; set; }
 
         public double INTERESTRATE { get; set; }
