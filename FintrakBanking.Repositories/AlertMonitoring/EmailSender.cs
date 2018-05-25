@@ -14,13 +14,22 @@ namespace FintrakBanking.Repositories.AlertMonitoring
     public class EmailSender : IEmailSender
     {
         int mailId = 0;
+        private string displayName = ConfigurationManager.AppSettings["emailDisplayName"];
+        private string userName = ConfigurationManager.AppSettings["Username"];
+        private string password = ConfigurationManager.AppSettings["Password"];
+        private string smtpclient = ConfigurationManager.AppSettings["smtpClient"];
+        private string enableSsl = ConfigurationManager.AppSettings["enableSsl"];
+        private string postNumber = ConfigurationManager.AppSettings["smtpPort"];
+        private string testingEmails = ConfigurationManager.AppSettings["testingEmails"];
+        private string isEmailTest = ConfigurationManager.AppSettings["isEmailTest"];
+        private  string[] Addy = { };
+
+        FinTrakBankingContext dbContext = new FinTrakBankingContext();
 
         public List<TBL_MESSAGE_LOG> GetMaillingList()
         {
             try
             {
-                FinTrakBankingContext dbContext = new FinTrakBankingContext();
-
                 var mails = dbContext.TBL_MESSAGE_LOG.Where(p => p.MESSAGESTATUSID == (int)MessageStatusEnum.Sent).Take(100).ToList();
                 if (mails != null)
                 {
@@ -45,54 +54,72 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
         public bool SendMail()
         {
-            FinTrakBankingContext dbContext = new FinTrakBankingContext();
-
             try
             {
                 using (SmtpClient client = new SmtpClient())
                 {
-                    client.Port = Convert.ToInt32(ConfigurationManager.AppSettings["smtpPort"]);
+                    client.Port = Convert.ToInt32(postNumber);
 
-                    client.EnableSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["enableSsl"]);
+                    client.EnableSsl = Convert.ToBoolean(enableSsl);
 
-                    client.Host = ConfigurationManager.AppSettings["smtpClient"];
+                    client.Host = smtpclient;
 
                     client.DeliveryMethod = SmtpDeliveryMethod.Network;
 
                     client.UseDefaultCredentials = true;
 
-                    client.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["Username"], ConfigurationManager.AppSettings["Password"]);
+                    client.Credentials = new System.Net.NetworkCredential(userName, password);
 
-                    var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending || o.MESSAGESTATUSID == (int)MessageStatusEnum.Attempted).ToList();
+                    var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending 
+                    || o.MESSAGESTATUSID == (int)MessageStatusEnum.Attempted).ToList();
 
-                    foreach (var newMail in listOfMails)
+                    if (listOfMails!=null)
                     {
-                        MailMessage mail = new MailMessage();
-
-                        mail.From = new MailAddress(ConfigurationManager.AppSettings["Username"], "FBN Fintrak Credit 360");
-
-                        if (newMail.TOADDRESS != null && newMail.TOADDRESS != string.Empty)
+                        foreach (var newMail in listOfMails)
                         {
-                            char[] seperators = { ',', ';' };
-                            //string[] Addy = newMail.TOADDRESS.Split(seperators);
-                            string[] Addy = "isah.yarima@yahoo.com,anu.omotayo @fintraksoftware.com".Split(seperators);
-                            foreach (var emailAddy in Addy)
+                            MailMessage mail = new MailMessage();
+
+                            mail.From = new MailAddress(userName, displayName);
+
+                            if (newMail.TOADDRESS != null && newMail.TOADDRESS != string.Empty)
                             {
-                                if (emailAddy != null && emailAddy != string.Empty)
+                                char[] seperators = { ',', ';' };
+
+                                if (!string.IsNullOrEmpty(isEmailTest))
                                 {
-                                    mail.To.Add(new MailAddress(emailAddy));
+                                    if (Convert.ToBoolean(isEmailTest))
+                                    {
+                                        Addy = testingEmails.Split(seperators);
+                                    }
+                                    else
+                                    {
+                                        Addy = newMail.TOADDRESS.Split(seperators);
+                                    }
+                                }
+                                else
+                                {
+                                    Addy = newMail.TOADDRESS.Split(seperators);
+                                }
+
+                                foreach (var emailAddy in Addy)
+                                {
+                                    if (emailAddy != null && emailAddy != string.Empty)
+                                    {
+                                        mail.To.Add(new MailAddress(emailAddy));
+                                    }
                                 }
                             }
+
+                            mail.IsBodyHtml = true;
+                            mail.Subject = newMail.MESSAGESUBJECT;
+                            mail.Body = newMail.MESSAGEBODY;
+                            mailId = newMail.MESSAGEID;
+
+                            client.Send(mail);
+                            UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");
                         }
-
-                        mail.IsBodyHtml = true;
-                        mail.Subject = newMail.MESSAGESUBJECT;
-                        mail.Body = newMail.MESSAGEBODY;
-                        mailId = newMail.MESSAGEID;
-
-                        client.Send(mail);
-                        UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");
                     }
+                   
                 }
                 return true;
             }
@@ -106,7 +133,6 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
         public bool UpdateMailDeliveryStatus(int messageId, short statusId, string response)
         {
-            FinTrakBankingContext dbContext = new FinTrakBankingContext();
             var mailMessage = dbContext.TBL_MESSAGE_LOG.Find(messageId);
 
             if (mailMessage != null)
@@ -136,7 +162,6 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         {
             try
             {
-                FinTrakBankingContext dbContext = new FinTrakBankingContext();
                 var mail = dbContext.TBL_MESSAGE_LOG.Where(p => p.MESSAGEID == ID).FirstOrDefault();
                 if (mail != null)
                 {
