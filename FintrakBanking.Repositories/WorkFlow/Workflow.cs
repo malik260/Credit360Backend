@@ -459,7 +459,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 case 4: return 2;
                 case 5: return 3;
                 case 6: return 2;
-                case 7: return 2; 
+                case 7: return 2;
                 default: break;
             }
             return statusId;
@@ -491,7 +491,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             // allow business to drop process unconditionally 
             if (this.statusId == (int)ApprovalStatusEnum.Disapproved && GroupRole() == (int)ApprovalGroupEnum.Business) // for optimization the more expensive conditions are placed last. GroupRole() may not be called
             {
-                return; 
+                return;
             }
 
             if (this.skipLimitsCheck == true) { return; }
@@ -518,13 +518,13 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool WithinTenorLimit(TBL_APPROVAL_LEVEL level)
         {
-            if (this.untenored == true) { return level.CANAPPROVEUNTENORED == true ? true : false; } 
+            if (this.untenored == true) { return level.CANAPPROVEUNTENORED == true ? true : false; }
             if (tenor == 0 && level.TENOR == 0) { return true; } // setup
             if (tenor == 0 && level.TENOR == null) { return true; } // setup
             if (tenor > 0 && level.TENOR >= tenor) { return true; } // gen cam
             return false;
         }
-        
+
         private bool WithinMaximumLimit(TBL_APPROVAL_LEVEL level)
         {
             if (amount == 0) { return true; }
@@ -707,7 +707,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var level = string.Empty;
                 List<string> emails = new List<string>();
 
-                if (this.fromLevelId != null) level = " by " + context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId)?.LEVELNAME; 
+                if (this.fromLevelId != null) level = " by " + context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId)?.LEVELNAME;
                 if (this.nextLevelId != null && this.toStaffId == null) recipientName = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId)?.LEVELNAME;
 
                 if (this.toStaffId != null)
@@ -800,7 +800,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             return "forwarded";
         }
-        
+
         private bool Authorization() // TODO: intended to manage delegated staff actions
         {
             if (this.staffId > 0) // <---- mockup

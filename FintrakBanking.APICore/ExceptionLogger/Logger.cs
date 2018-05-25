@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using SerilogWeb.Classic.Enrichers;
 using SerilogWeb.Classic.WebApi.Enrichers;
+using System;
 
 namespace FintrakBanking.APICore.ExceptionLogger
 {
@@ -12,7 +13,7 @@ namespace FintrakBanking.APICore.ExceptionLogger
             {
 
                 Log.Logger = new LoggerConfiguration()
-                    .WriteTo.File(@"C:\Logs\logfile-{Date}.txt")
+                    .WriteTo.File(@"C:\Logs\logfile- " + DateTime.Now.Date +" -lastlog}.txt")
                     .Enrich.With<WebApiRouteTemplateEnricher>()
                     .Enrich.With<WebApiControllerNameEnricher>()
                     .Enrich.With<WebApiActionNameEnricher>()

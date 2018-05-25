@@ -826,9 +826,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         else
                         {
                             trans.Commit();
-                        }
-
-                        output = false;
+                            output = false;
+                        } 
                     }
                     catch (Exception ex)
                     {
