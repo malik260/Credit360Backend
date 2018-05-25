@@ -40,7 +40,7 @@ namespace EmailMessageLogger
             }
             catch (Exception ex)
             {
-                AuditTrail.LogFileManager.LogToFile("Error Occurred: Email Message Logger Service" + " " + ex.Message + " - " + DateTime.Now.ToString());
+              //  AuditTrail.LogFileManager.LogToFile("Error Occurred: Email Message Logger Service" + " " + ex.Message + " - " + DateTime.Now.ToString());
             }
         }
 
@@ -58,28 +58,28 @@ namespace EmailMessageLogger
             {
                 //  timer.Stop();
 
-                AuditTrail.LogFileManager.LogToFile("Email Message Logger Service Started Successfully" + DateTime.Now.ToString());
+             //   AuditTrail.LogFileManager.LogToFile("Email Message Logger Service Started Successfully" + DateTime.Now.ToString());
 
                string respose =  emailMessageLogic.Start();
 
-                AuditTrail.LogFileManager.LogToFile("Email Message Logger Service ends with these responses : " + respose + " " + DateTime.Now.ToString());
+              //  AuditTrail.LogFileManager.LogToFile("Email Message Logger Service ends with these responses : " + respose + " " + DateTime.Now.ToString());
 
                 this.IsBusy = false;
 
-                if (respose!="")
+                if (respose != "")
                 {
-                    AuditTrail.LogFileManager.LogToFile("Email Message Logger Service Ended Successfully" + DateTime.Now.ToString());
+                    //   AuditTrail.LogFileManager.LogToFile("Email Message Logger Service Ended Successfully" + DateTime.Now.ToString());
                     return;
                 }
-                else
+                else { }
 
-                    AuditTrail.LogFileManager.LogToFile("Email Message Logger Service Failed" + DateTime.Now.ToString());
+                  //  AuditTrail.LogFileManager.LogToFile("Email Message Logger Service Failed" + DateTime.Now.ToString());
 
 
             }
             catch (Exception ex)
             {
-                AuditTrail.LogFileManager.LogToFile("Error Occurred: Email Message Logger Service" + " " + ex.Message + " - " + ex.InnerException.ToString() + DateTime.Now.ToString());
+              //  AuditTrail.LogFileManager.LogToFile("Error Occurred: Email Message Logger Service" + " " + ex.Message + " - " + ex.InnerException.ToString() + DateTime.Now.ToString());
             }
             finally
             {
@@ -89,7 +89,7 @@ namespace EmailMessageLogger
 
         protected override void OnStop()
         {
-            AuditTrail.LogFileManager.LogToFile("Email Message Logger Service stopped" + DateTime.Now.ToString());
+         //   AuditTrail.LogFileManager.LogToFile("Email Message Logger Service stopped" + DateTime.Now.ToString());
             this.timer.Stop();
             this.timer.Dispose();
             this.timer = null;

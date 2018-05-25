@@ -288,7 +288,7 @@
     </Reference>
     <Reference Include="XLeratorDLL-financial, Version=1.15.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -361,6 +361,7 @@
     <Compile Include="Controllers\ConditionPrecedentController.cs" />
     <Compile Include="Controllers\ContingentLoanUsageController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
+    <Compile Include="Controllers\CustomChartOfAccountController.cs" />
     <Compile Include="Controllers\CustomerCreditBureauController.cs" />
     <Compile Include="Controllers\EditorController.cs" />
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
@@ -766,8 +767,14 @@
       <DependentUpon>CollateralDataSet.xsd</DependentUpon>
     </Content>
     <Content Include="App_Data\StaffSampleDocument.xlsx" />
-    <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
     <Content Include="Areas\HelpPage\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\ResourceModel.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Index.cshtml" />
@@ -786,12 +793,6 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
-    <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-reboot.min.css.map" />
-    <Content Include="Content\bootstrap-reboot.css.map" />
-    <Content Include="Content\bootstrap-grid.min.css.map" />
-    <Content Include="Content\bootstrap-grid.css.map" />
     <None Include="Reports\ReportDataset\CollateralDataSet.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>

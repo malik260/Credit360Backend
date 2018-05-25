@@ -19,5 +19,6 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         string DeleteGuideline(int prudentialGuidelineId);
 
         string AddGuideline(PrudentialGuidelineViewModel guideline);
+        IEnumerable<PrudentialGuidelineViewModel> GetAllGuidelineTypes(int getCompanyId);
     }
 }

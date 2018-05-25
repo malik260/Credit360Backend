@@ -105,7 +105,7 @@ namespace FintrakBanking.Repositories.Credit
                         CREATEDBY = c.CREATEDBY,
                         TIMELINEID = c.TIMELINEID,
                         LOANAPPLICATIONDETAILID = entity.detailId,
-                        RESPONSE_TYPEID = 1,
+                        RESPONSE_TYPEID = c.RESPONSE_TYPEID,
                         DATETIMECREATED = general.GetApplicationDate(),
                     };
                     context.TBL_LOAN_CONDITION_PRECEDENT.Add(data);
@@ -137,6 +137,7 @@ namespace FintrakBanking.Repositories.Credit
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
             data.TIMELINEID = model.timelineId;
+            data.RESPONSE_TYPEID = model.responseTypeId;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
 
@@ -178,6 +179,7 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                         loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                         timelineId = c.TIMELINEID,
+                        responseTypeId = c.RESPONSE_TYPEID,
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
                     });
@@ -206,6 +208,7 @@ namespace FintrakBanking.Repositories.Credit
                 corporate = c.CORPORATE,
                 retail = c.RETAIL,
                 productId = c.PRODUCTID,
+                responseTypeId = c.RESPONSE_TYPEID,
                 timelineId = c.TIMELINEID,
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
@@ -219,10 +222,11 @@ namespace FintrakBanking.Repositories.Credit
                 CONDITION = model.condition,
                 ISEXTERNAL = model.isExternal,
                 ISSUBSEQUENT = model.isSubsequent,
-                PRODUCTID = (short)model.productId,
+                PRODUCTID = model.productId,
                 TIMELINEID = model.timelineId,
                 CORPORATE = model.corporate,
                 RETAIL = model.retail,
+                RESPONSE_TYPEID = model.responseTypeId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
@@ -262,6 +266,7 @@ namespace FintrakBanking.Repositories.Credit
             data.TIMELINEID = model.timelineId;
             data.CORPORATE = model.corporate;
             data.RETAIL = model.retail;
+            data.RESPONSE_TYPEID = model.responseTypeId;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;

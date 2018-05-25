@@ -133,6 +133,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     middleName = customerViewModels.middleName,
                     customerTypeName = customerViewModels.customerType,
                     customerTypeId = (short)(customerViewModels.customerType == "CORPORATE" ? 2 : 1),
+                    isPoliticallyExposed = customerViewModels.politicallyExposedPerson == "N" ? false : true,
                 });
 
             }

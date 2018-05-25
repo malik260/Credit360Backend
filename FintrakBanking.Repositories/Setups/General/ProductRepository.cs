@@ -1033,13 +1033,28 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 try
                 {
-                    workFlow.LogForApproval(entity);
-                    var b = workFlow.NextLevelId ?? 0;
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
+                    //workFlow.LogForApproval(entity);
+                    //var b = workFlow.NextLevelId ?? 0;
+
+                    workFlow.StaffId = entity.createdBy;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.OperationId = entity.operationId;
+                    workFlow.DeferredExecution = true;
+                    workFlow.ExternalInitialization = false;
+
+                    workFlow.LogActivity();
+
+                    context.SaveChanges();
+                    //if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    //{
+                    //    trans.Rollback();
+                    //    throw new Exception("Approval Failed");
+                    //}
+
+
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
