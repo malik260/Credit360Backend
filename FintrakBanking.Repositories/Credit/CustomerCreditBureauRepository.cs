@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using FinTrakBanking.ThirdPartyIntegration.CWGAPI;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -102,6 +103,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 allCorporate.Add(item);
             }
+           
 
             if (customerType == (short)CustomerTypeEnum.Corporate)
             {
@@ -130,8 +132,25 @@ namespace FintrakBanking.Repositories.Credit
                                                                                   //  && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)).Count()
                     };
                     allCorporate.Add(shareholdersData);
+
+
+                    
                 }
+                
             }
+
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            {
+                foreach (var item in customer)
+                {
+                    CustomerDetails customerAPI = new CustomerDetails(context);
+                    customerAPI.AddCustomerAccounts(item.customerCode);
+                }
+
+            }
+
+
             return allCorporate;
         }
 
