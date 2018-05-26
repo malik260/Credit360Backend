@@ -83,13 +83,13 @@ namespace FintrakBanking.APICore.Providers
 
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
-                if (!await authRepo.IsAccountActive(userVm.username))
+                if (! await authRepo.IsAccountActive(userVm.username.ToLower()))
                 {
                     context.SetError("invalid_grant", "This account is INACTIVE");
                     return;
                 }
 
-                if (authRepo.IsAccountLocked(userVm.username).GetAwaiter().GetResult())
+                if (await authRepo.IsAccountLocked(userVm.username.ToLower()))
                 {
                     context.SetError("invalid_grant", "This account is LOCKED");
                     return;
@@ -100,7 +100,7 @@ namespace FintrakBanking.APICore.Providers
                     if (Task.FromResult(
                         ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
                     {
-                        authRepo.SessionInfo = await authRepo.CheckSessionState(userVm.username.ToLower());
+                        authRepo.SessionInfo =   authRepo.CheckSessionState(userVm.username.ToLower()).GetAwaiter().GetResult();
                         user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username.ToLower())).Result;
                     }
                     else
@@ -114,9 +114,9 @@ namespace FintrakBanking.APICore.Providers
                 {
                    
 
-                    authRepo.SessionInfo = await authRepo.CheckSessionState(userVm.username.ToLower());
+                    authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower()).GetAwaiter().GetResult();
                     user = await Task
-                        .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username, userVm.password))
+                        .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
                         .Result;
                     if (user == null)
                     {
