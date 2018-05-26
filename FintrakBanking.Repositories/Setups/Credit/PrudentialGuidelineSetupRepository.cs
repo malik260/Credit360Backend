@@ -142,9 +142,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public string UpdateGuideline(PrudentialGuidelineViewModel guideline, int prudentialGuidelineId)
         {
             var data = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(o => o.PRUDENTIALGUIDELINESTATUSID == prudentialGuidelineId).FirstOrDefault();
+            string prudentialGuidelineName = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(w => w.PRUDENTIALGUIDELINETYPEID == guideline.prudentialGuidelineTypeId).FirstOrDefault().PRUDENTIALGUIDELINETYPENAME;
+
             if (guideline != null)
             {
-                data.STATUSNAME = guideline.statusName;
+                data.STATUSNAME = prudentialGuidelineName;
                // data.CLASSIFICATION= guideline.classification;
                 data.INTERNALMINIMUM=guideline.internalMinimun;
                 data.INTERNALMAXIMUM=guideline.internalMaximun;

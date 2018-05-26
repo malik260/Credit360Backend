@@ -32,6 +32,8 @@ namespace FintrakBanking.Repositories.Setups.General
         private IApprovalLevelStaffRepository level;
         private FinTrakBankingDocumentsContext documentsContext;
 
+        public object FileUploadControl { get; private set; }
+
         public StaffRepository(FinTrakBankingContext _context,
                                IAuditTrailRepository _auditTrail,
                                IGeneralSetupRepository _genSetup,
@@ -494,7 +496,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public int GoForApproval(ApprovalViewModel entity)
         {
             using (var trans = context.Database.BeginTransaction())
             {
@@ -512,6 +514,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     context.SaveChanges();
 
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var staff = context.TBL_TEMP_STAFF.Find(entity.targetId);
+                        staff.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                        context.SaveChanges();
+                        trans.Commit();
+                        return 2;
+                    }
+
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = ApproveStaff(entity.targetId, (short)workflow.StatusId, entity);
@@ -520,14 +531,14 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             trans.Commit();
                         }
-                        return true;
+                        return 1;
                     }
                     else
                     {
                         trans.Commit();
                     }
 
-                    return false;
+                    return 0;
                 }
                 catch (Exception ex)
                 {
@@ -1599,37 +1610,6 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
-
-        private string StoredFilePath(string filename)
-        {
-            CreditBureauHelp helper = new CreditBureauHelp();
-
-            string folderName = string.Empty;
-            folderName = helper.FilePath();
-            folderName = Path.Combine(folderName, "Excel_Uploads");
-            string pathString = Path.Combine(folderName, filename);
-
-            if (!Directory.Exists(folderName))
-            {
-                Directory.CreateDirectory(folderName);
-            }
-
-            if (!File.Exists(pathString))
-            {
-                using (StreamWriter sw = new StreamWriter(pathString))
-                {
-                    // sw.Write(pathString);
-                }
-                return pathString;
-            }
-            return pathString;
-            //else
-            //{
-            //    DisposeTicket(pathString);
-            //    StoredTicket(userName, ticket);
-            //}
-        }
-
         public staffBulkFeedbackViewModel UploadStaffData(StaffDocumentViewModel model, byte[] file)
         {
             var staffInfo = new List<StaffInfoViewModel>();
@@ -1639,13 +1619,12 @@ namespace FintrakBanking.Repositories.Setups.General
             var staffBulkFeedbackViewModel = new staffBulkFeedbackViewModel();
 
             // Loads a spreadsheet from a file with the specified path
-            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5"); //SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
 
-            string path = "_" + model.createdBy + "." + model.fileExtension;
-            path = StoredFilePath(path);
-            File.WriteAllBytes(path, file.ToArray());
+            MemoryStream ms = new MemoryStream(file);
 
-            ExcelFile ef = ExcelFile.Load(path);
+            ExcelFile ef = ExcelFile.Load(ms,LoadOptions.XlsxDefault);
 
             ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
 

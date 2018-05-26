@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using FintrakBanking.ViewModels.Reports;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Report;
+using FintrakBanking.Common.CustomException;
+
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -60,9 +62,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -75,9 +85,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 var data = repo.RunningLoans(id, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -90,9 +108,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 var data = repo.GetRevolvingLoanTypes();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -111,9 +137,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -131,9 +165,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -151,9 +193,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -171,9 +221,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -191,9 +249,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -219,9 +285,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -239,9 +313,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -268,9 +350,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error saving gaurantor" });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving gaurantor {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -289,9 +379,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -307,9 +405,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -323,9 +429,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -339,9 +453,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -360,10 +482,18 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //        }
         //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
         //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
+        //    catch (ConditionNotMetException ce)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            //}
+            //catch (BadLogicException be)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            //}
+            //catch (Exception )
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            //}
         //}
 
         [HttpGet]
@@ -376,9 +506,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -392,9 +530,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -413,9 +559,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -434,9 +588,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -455,9 +617,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -476,9 +646,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -497,9 +675,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -518,9 +704,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -539,9 +733,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -583,10 +785,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                         new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
                 }
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -616,10 +825,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                         new { success = true, message = "Operation successful, request has been routed to the next approving office" });
                 }
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -639,9 +855,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -670,13 +894,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                     count = data.Count()
                 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new
-                {
-                    success = false,
-                    message = $"Error: {e.Message}"
-                });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -690,9 +918,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -710,9 +946,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -726,9 +970,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -747,9 +999,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -768,9 +1028,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -789,10 +1057,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -809,9 +1084,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -827,9 +1110,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -845,9 +1136,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -863,9 +1162,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -881,9 +1188,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -988,10 +1303,18 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         //        //return Request.CreateResponse(HttpStatusCode.OK, new { result = URL });
         //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //    }
+        //    catch (ConditionNotMetException ce)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            //}
+            //catch (BadLogicException be)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            //}
+            //catch (Exception)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            //}
 
         //}
 
@@ -1014,6 +1337,14 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
@@ -1035,16 +1366,23 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception )
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
         [HttpGet]
         [Route("availed-loan-applications/booking-ready")]
         public HttpResponseMessage GetAvailedLoanApplicationsReadyForBooking()
-
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
@@ -1057,16 +1395,24 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
             }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+
         }
 
         [HttpGet]
         [Route("availed-loan-application/booking-ready/{applicationDetailId}")]
         public HttpResponseMessage GetAvailedLoanApplicationDetailById(int applicationDetailId)
-
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
@@ -1079,16 +1425,23 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
         [HttpGet]
         [Route("loan-customer-company-information/{customerId}")]
         public HttpResponseMessage getLoanCustomerCompanyInformation(int customerId)
-
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
@@ -1101,9 +1454,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -1129,9 +1490,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                     new { success = false, message = "Initiating Booking was unsuccessful!" });
             }
-            catch (System.Exception ex)
-             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false,  message = ex.Message });
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -1150,9 +1519,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -1170,9 +1547,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -1190,9 +1575,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch (Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -1216,9 +1609,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 

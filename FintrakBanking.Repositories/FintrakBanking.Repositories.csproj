@@ -87,7 +87,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial">
-      <HintPath>..\..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +95,8 @@
     <Compile Include="Admin\AuditTrailRepository.cs" />
     <Compile Include="Admin\CanAuthorizationRepository.cs" />
     <Compile Include="Admin\CurrencyRateRepository.cs" />
+    <Compile Include="AlertMonitoring\AlertMessageLogger.cs" />
+    <Compile Include="AlertMonitoring\AlertMessagesEngine.cs" />
     <Compile Include="AlertMonitoring\EmailSender.cs" />
     <Compile Include="AppEmail\EmailRepository.cs" />
     <Compile Include="CASA\CasaLienRepository.cs" />

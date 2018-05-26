@@ -197,7 +197,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             DATETIMECREATED = general.GetApplicationDate(),
                             APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                             ISCURRENT = true,
-                            // TBL_TEMP_CHARGE_FEE_DETAIL = tempFeeDetail,
+                            TBL_TEMP_CHARGE_FEE_DETAIL = tempFeeDetail,
                             DELETED = false,
                             ISUPDATESTATUS = false
                         };
@@ -224,15 +224,15 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             this.auditTrail.AddAuditTrail(audit);
                             output = context.SaveChanges() > 0;
 
-                            if (output == true)
-                            {
-                                foreach (var item in tempFeeDetail)
-                                {
-                                    item.TEMPCHARGEFEEID = temChargeFee.TEMPCHARGEFEEID;
-                                }
-                                context.TBL_TEMP_CHARGE_FEE_DETAIL.AddRange(tempFeeDetail);
-                                output = context.SaveChanges() > 0;
-                            }
+                            //if (output == true)
+                            //{
+                            //    foreach (var item in tempFeeDetail)
+                            //    {
+                            //        item.TEMPCHARGEFEEID = temChargeFee.TEMPCHARGEFEEID;
+                            //    }
+                            //    context.TBL_TEMP_CHARGE_FEE_DETAIL.AddRange(tempFeeDetail);
+                            //    output = context.SaveChanges() > 0;
+                            //}
 
                             workFlow.StaffId = model.createdBy;
                             workFlow.CompanyId = model.companyId;
