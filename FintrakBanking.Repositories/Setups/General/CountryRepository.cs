@@ -45,16 +45,23 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddCity(CityViewModel entity)
         {
-            var cityEntity = new TBL_CITY
+            var data = context.TBL_CITY.Where(c => c.CITYNAME == entity.cityName && c.LOCALGOVERNMENTID == entity.localGovernmentId);
+            if (data.Any())
             {
-                CITYNAME = entity.cityName,
-                LOCALGOVERNMENTID = entity.localGovernmentId,
-                CITYCLASSID = entity.cityClassId,
-                ALLOWEDFORCOLLATERAL = entity.allowedForCollateral
+                var cityEntity = new TBL_CITY
+                {
+                    CITYNAME = entity.cityName,
+                    LOCALGOVERNMENTID = entity.localGovernmentId,
+                    CITYCLASSID = entity.cityClassId,
+                    ALLOWEDFORCOLLATERAL = entity.allowedForCollateral
 
-            };
-            context.TBL_CITY.Add(cityEntity);
-            return context.SaveChanges() != 0;
+                };
+                context.TBL_CITY.Add(cityEntity);
+                return context.SaveChanges() != 0;
+            }
+            else
+                throw new Exception("Record already exist");
+         
         }
         public bool UpdateCity(CityViewModel entity, int id)
         {
