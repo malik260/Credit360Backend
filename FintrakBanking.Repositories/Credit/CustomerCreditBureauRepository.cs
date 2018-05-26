@@ -91,8 +91,9 @@ namespace FintrakBanking.Repositories.Credit
                                //isCreditBureauUploadCompleted = false,
                                companyDirectorId = null,
                                creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false
-                                                                                            && x.COMPANYDIRECTORID == null).Count(),
-                               // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)).Count(),
+                                                                                            && x.COMPANYDIRECTORID == null
+                                                                                            && (DateTime.Now - a.DATETIMECREATED).TotalDays <= 30).Count(),
+                                                                                            // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)).Count(),
                            };
 
             foreach (var item in customer)
@@ -132,11 +133,11 @@ namespace FintrakBanking.Repositories.Credit
                         lastName = director.SURNAME,
                         middleName = director.MIDDLENAME,
                         creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
-                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID).Count(),
+                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
+                                                                                    && (DateTime.Now - x.DATETIMECREATED).TotalDays <= 30).Count(),
                                                                                   //  && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)).Count()
                     };
                     allCorporate.Add(shareholdersData);
-
                 }
             }
 
@@ -331,7 +332,8 @@ namespace FintrakBanking.Repositories.Credit
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                                 //&& (DbFunctions.DiffDays(DbFunctions.TruncateTime(a.DATETIMECREATED), DbFunctions.TruncateTime(DateTime.Now)).Value <= 30 ) 
+                                               && (DateTime.Now - a.DATETIMECREATED).TotalDays <= 30
+                                                //&& (DbFunctions.DiffDays(DbFunctions.TruncateTime(a.DATETIMECREATED), DbFunctions.TruncateTime(DateTime.Now)).Value <= 30 ) 
                                                 select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,
