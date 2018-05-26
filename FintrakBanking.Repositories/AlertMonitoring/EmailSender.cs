@@ -77,7 +77,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
                 MailMessage mail = new MailMessage();
 
-                mail.From = new MailAddress(userName, "Fintrak Email Service - Urgent Attention");
+                mail.From = new MailAddress(userName, "Fintrak Email Service");
 
                 char[] seperators = { ',', ';' };
 
@@ -90,8 +90,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                         mail.To.Add(new MailAddress(emailAddy));
                     }
                 }
-
-                mail.Subject = "Fintrak Credit 360 Email Alert Sender Service Exception";
+                mail.IsBodyHtml = true;
+                mail.Subject = "Fintrak Credit 360 Service - Email Alert Sender Exception";
                 mail.Body = "Dear Sir/Ma, <br /><br /> ERROR EXCEPTION REPORT <br /><br /> The service has failed with error : " + body + "<br /><br /> Kindly escalate this issue to Fintrak Credit 360 support for urgent attention." +
                     "<br /><br /> Thanks <br /> Fintrak Credit 360.";
                
