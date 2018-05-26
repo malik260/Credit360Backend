@@ -451,7 +451,7 @@ namespace FintrakBanking.APICore.Controllers
                 else if (data == 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Staff details has been approved." });
+                        new { success = true, message = "Staff details has been disapproved." });
                 }
                 else
                 {
