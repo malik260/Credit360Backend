@@ -95,6 +95,8 @@
     <Compile Include="Admin\AuditTrailRepository.cs" />
     <Compile Include="Admin\CanAuthorizationRepository.cs" />
     <Compile Include="Admin\CurrencyRateRepository.cs" />
+    <Compile Include="AlertMonitoring\AlertMessageLogger.cs" />
+    <Compile Include="AlertMonitoring\AlertMessagesEngine.cs" />
     <Compile Include="AlertMonitoring\EmailSender.cs" />
     <Compile Include="AppEmail\EmailRepository.cs" />
     <Compile Include="CASA\CasaLienRepository.cs" />
