@@ -56,7 +56,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("mature-commercial-loans/parent")]
         public HttpResponseMessage GetMaturedCommercialLoans()
         {
@@ -70,22 +71,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-      //[HttpGet] [ClaimsAuthorization]  
-      //  [Route("maturity-instruction-type")]
-      //  public HttpResponseMessage GetMaturityInstructionType()
-      //  {
-      //      try
-      //      {
-      //          var data = repo.GetMaturityInstructionType();
-      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-      //      }
-      //      catch (Exception ex)
-      //      {
-      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
-      //      }
-      //  }
 
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("maturity-instruction-type")]
+        public HttpResponseMessage GetMaturityInstructionType()
+        {
+            try
+            {
+                var data = repo.GetMaturityInstructionType();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("mature-commercial-loans/detail/{loanApplicationDetailId}")]
         public HttpResponseMessage GetMaturedCommercialLoans(int loanApplicationDetailId)
         {
@@ -100,22 +105,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpGet]
-        //[Route("running-commercial-loans/detail")]
-        //public HttpResponseMessage GetRunningCommercialLoanLines()
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetRunningCommercialLoanLines(token.GetCompanyId);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
-        //    }
-        //}
+        [HttpGet]
+        [Route("running-commercial-loans/detail")]
+        public HttpResponseMessage GetRunningCommercialLoanLines()
+        {
+            try
+            {
+                var data = repo.GetRunningCommercialLoanLines(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("running-commercial-loans/{refNo}")]
         public HttpResponseMessage GetRunningCommercialLoans(string refNo)
         {
@@ -173,7 +179,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("commercial-loan-interest-rate-change")]
         public HttpResponseMessage CommercialPaperRateReview([FromBody] InterestReviewViewModel entity)
         {
@@ -181,10 +188,10 @@ namespace FintrakBanking.APICore.Controllers
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        //        entity.userBranchId = (short)token.GetBranchId;
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
-        //        entity.createdBy = token.GetStaffId;
-        //        entity.companyId = token.GetCompanyId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
 
                 var data = repo.CommercialPaperRateReview(entity);
                 if (data)
@@ -192,50 +199,52 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Interest Rate Change was Successful " });
                 }
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record" });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record" });
+            }
+        }
 
-        // [HttpPost] [ClaimsAuthorization]
-        //[Route("commercial-loan-roll-over")]
-        //public HttpResponseMessage ProcessCommercialPaperRollOver([FromBody] MaturityIntructionViewModel entity)
-        //{
-        //    try
-        //    {
-        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
-        //        entity.userBranchId = (short)token.GetBranchId;
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
-        //        entity.createdBy = token.GetStaffId;
-        //        entity.companyId = token.GetCompanyId;
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("commercial-loan-roll-over")]
+        public HttpResponseMessage ProcessCommercialPaperRollOver([FromBody] MaturityIntructionViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
 
-        //        var data = repo.ProcessCommercialPaperRollOver(entity, null);
-        //        if (data)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan Rollover process was Successfully." });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an processing rollover for this record" });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. {e.Message}" });
-        //    }
-        //}
+                var data = repo.ProcessCommercialPaperRollOver(entity, null);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan Rollover process was Successfully." });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an processing rollover for this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. {e.Message}" });
+            }
+        }
 
-        // [HttpPost] [ClaimsAuthorization]
-        //[Route("commercial-loan-tenor-extension")]
-        //public HttpResponseMessage CommercialPaperTenorReview([FromBody] TenorExtionViewModel entity)
-        //{
-        //    try
-        //    {
-        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
-        //        entity.userBranchId = (short)token.GetBranchId;
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
-        //        entity.createdBy = token.GetStaffId;
-        //        entity.companyId = token.GetCompanyId;
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("commercial-loan-tenor-extension")]
+        public HttpResponseMessage CommercialPaperTenorReview([FromBody] TenorExtionViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
 
                 var data = repo.CommercialPaperTenorReview(entity);
                 if (data)
@@ -258,14 +267,14 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                foreach(var entity in models)
+                foreach (var entity in models)
                 {
                     entity.userBranchId = (short)token.GetBranchId;
                     entity.applicationUrl = HttpContext.Current.Request.Path;
                     entity.createdBy = token.GetStaffId;
                     entity.companyId = token.GetCompanyId;
                 }
-                
+
                 var data = repo.CommercialPaperSubAllocation(models);
                 if (data)
                 {
