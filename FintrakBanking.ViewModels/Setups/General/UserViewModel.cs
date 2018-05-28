@@ -106,5 +106,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public DateTime? lastLockedOutDate { get; set; }
         public int? lastUpdatedBy { get; set; }
         public string actionMessage { get; set; }
+
+        public bool activeIsTampered { get; set; }
+        public bool lockIsTampered { get; set; }
     }
 }
