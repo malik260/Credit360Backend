@@ -140,7 +140,99 @@
 
             }
 
-           
+
+
+            //public async Task<bool> APITransactionPosting(List<FinanceTransactionViewModel> model)
+            //{
+
+            //    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+            //    bool output = false;
+            //    var dta = context.TBL_SETUP_GLOBAL.ToList();
+            //    TransactionPostingViewModel responseModel = new TransactionPostingViewModel();
+            //    List<TransactionPostingViewModel> apiModel = new List<TransactionPostingViewModel>();
+            //    foreach (var item in model)
+            //    {
+
+
+            //        apiModel.Add(new TransactionPostingViewModel
+            //            {
+
+            //                accounts =
+            //                    item.casaAccountId
+            //                        .ToString(), //item.casaAccountId!= null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,                       
+            //                amounts = item.creditAmount > 0
+            //                    ? "C" + item.creditAmount.ToString()
+            //                    : "D" + item.debitAmount.ToString(),
+            //                //amounts = item.sourceReferenceNumber,
+            //                narration = item.description,
+            //                referenceNumber = item.batchCode,
+            //                currencyType = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId)
+            //                    .CURRENCYCODE,
+            //                operationId =
+            //                    item.operationId, // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+            //            }
+            //        );
+            //    }
+
+            //    handler.UseDefaultCredentials = true;
+            //    HttpClient client = new HttpClient(handler);
+
+            //    httpClientInstance = new HttpClient();
+            //    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            //    client.Timeout = TimeSpan.FromSeconds(30);
+            //    client.DefaultRequestHeaders.Authorization = token;
+            //    client.BaseAddress = new Uri(API_URL);
+            //    client.DefaultRequestHeaders.Accept.Clear();
+            //    client.DefaultRequestHeaders.Accept.Add(
+            //        new MediaTypeWithQualityHeaderValue("application/json"));
+
+            //    ServicePointManager.ServerCertificateValidationCallback +=
+            //        (sender, cert, chain, sslPolicyErrors) => true;
+            //    HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
+            //        new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        responseModel = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+
+            //    }
+
+            //    ResponseViewModel responseAPI = new ResponseViewModel();
+            //    responseAPI.responseCode = responseModel.responseCode;
+            //    responseAPI.webRequestDate = responseModel.webRequestDate;
+            //    responseAPI.webRequestStatus = responseModel.webRequestStatus;
+
+            //    handler.Dispose();
+            //    client.Dispose();
+            //    if (responseModel.responseCode == "0")
+            //    {
+            //        AddCustomTransactions(apiModel);
+            //        output = true;
+            //    }
+            //    else
+            //    {
+            //        output = false;
+            //        throw new Exception($"Transaction {responseAPI.webRequestStatus}");
+            //    }
+
+            //    return output;
+
+
+            //}
+
+            private string GetGLAccountCode(int glAccountId, string currencyCode, int branchId)
+            {
+                var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
+
+                var AccountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+                                   join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
+                                   where gl.CURRENCYCODE == currencyCode && gla.GLACCOUNTID == glAccountId
+                                   select gl.ACCOUNTID).FirstOrDefault();
+
+                var GLAccountCode = branchCode + AccountCode;
+
+                return GLAccountCode;
+            }
 
             public async Task<bool> APITransactionPosting(List<FinanceTransactionViewModel> model)
             {
@@ -153,25 +245,17 @@
                 foreach (var item in model)
                 {
 
+                    var transPosting = new TransactionPostingViewModel();
+                    //accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+                    transPosting.amounts = item.creditAmount > 0 ? "C" + item.creditAmount.ToString() : "D" + item.debitAmount.ToString();
+                    //amounts = item.sourceReferenceNumber,
+                    transPosting.narration = item.description;
+                    transPosting.referenceNumber = item.batchCode;
+                    transPosting.currencyType = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                    transPosting.operationId = item.operationId;// != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+                    transPosting.accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : GetGLAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
 
-                    apiModel.Add(new TransactionPostingViewModel
-                        {
-
-                            accounts =
-                                item.casaAccountId
-                                    .ToString(), //item.casaAccountId!= null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,                       
-                            amounts = item.creditAmount > 0
-                                ? "C" + item.creditAmount.ToString()
-                                : "D" + item.debitAmount.ToString(),
-                            //amounts = item.sourceReferenceNumber,
-                            narration = item.description,
-                            referenceNumber = item.batchCode,
-                            currencyType = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId)
-                                .CURRENCYCODE,
-                            operationId =
-                                item.operationId, // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
-                        }
-                    );
+                    apiModel.Add(transPosting);
                 }
 
                 handler.UseDefaultCredentials = true;
@@ -184,12 +268,11 @@
                 client.BaseAddress = new Uri(API_URL);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
+                new MediaTypeWithQualityHeaderValue("application/json"));
 
-                ServicePointManager.ServerCertificateValidationCallback +=
-                    (sender, cert, chain, sslPolicyErrors) => true;
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                 HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
-                    new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+                                                new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -219,8 +302,6 @@
 
 
             }
-
-          
 
             public async Task<bool> APIProcessLien(CasaLienViewModel model, string lienType)
             {
