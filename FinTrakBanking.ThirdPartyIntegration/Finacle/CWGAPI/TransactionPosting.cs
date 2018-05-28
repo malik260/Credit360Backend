@@ -18,7 +18,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 {
     public class TransactionPosting
     {
-         
+
         private FinTrakBankingContext context;
         string API_KEY, API_URL = string.Empty;
 
@@ -31,7 +31,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             API_KEY = configdata.APIKEY;
             API_URL = configdata.APIURL;
         }
-        
+
 
         private HttpClientHandler handler = new HttpClientHandler();
         private static HttpClient httpClientInstance;
@@ -61,7 +61,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
             exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
             exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
-            exchangeRateOutput.currencyId = (short) currencyId;
+            exchangeRateOutput.currencyId = (short)currencyId;
             exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
             exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
 
@@ -77,7 +77,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         private bool AddCustomTransactions(List<TransactionPostingViewModel> entity)
         {
             bool output = false;
-            foreach (var item in entity)            
+            foreach (var item in entity)
             {
                 var data = new TBL_CUSTOM_FIANCE_TRANSACTION();
                 {
@@ -90,7 +90,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     data.DATETIMECREATED = DateTime.Now;
                     data.NARRATION = item.narration;
                     data.OPERATIONID = item.operationId;
-                }             
+                }
                 context.TBL_CUSTOM_FIANCE_TRANSACTION.Add(data);
             };
 
@@ -105,20 +105,20 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             bool output = false;
             //foreach (var item in entity)
             //{
-                var data = new TBL_CUSTOM_LIEN_PROCESS();
-                {
-                    data.ACCOUNTID = entity.account;
-                    data.AMOUNT = entity.lienAmount;
-                    data.CURRENCYCODE = entity.lienAccountCurrency;
-                    data.CONSUMED = false;
-                    data.DATETIMECONSUMED = null;
-                    data.DATETIMECREATED = DateTime.Now;
-                    data.LIENTYPE = entity.lienProcessType;
-                    data.REASONCODE = entity.lienReasonCode;
-                    data.LIENREFERENCENUMBER = entity.lienUniqueReferenceNumber;
-                    data.DESCRIPTION = entity.lienReason;
-                };
-                context.TBL_CUSTOM_LIEN_PROCESS.Add(data);
+            var data = new TBL_CUSTOM_LIEN_PROCESS();
+            {
+                data.ACCOUNTID = entity.account;
+                data.AMOUNT = entity.lienAmount;
+                data.CURRENCYCODE = entity.lienAccountCurrency;
+                data.CONSUMED = false;
+                data.DATETIMECONSUMED = null;
+                data.DATETIMECREATED = DateTime.Now;
+                data.LIENTYPE = entity.lienProcessType;
+                data.REASONCODE = entity.lienReasonCode;
+                data.LIENREFERENCENUMBER = entity.lienUniqueReferenceNumber;
+                data.DESCRIPTION = entity.lienReason;
+            };
+            context.TBL_CUSTOM_LIEN_PROCESS.Add(data);
             //};
 
             context.SaveChanges();
@@ -127,7 +127,21 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
         }
 
-        public async Task<bool> APITransactionPosting (List<FinanceTransactionViewModel> model)
+        private string GetGLAccountCode(int glAccountId, string currencyCode, int branchId)
+        {
+            var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
+
+            var AccountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+                               join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
+                               where gl.CURRENCYCODE == currencyCode && gla.GLACCOUNTID == glAccountId
+                               select gl.ACCOUNTID).FirstOrDefault();
+
+            var GLAccountCode = branchCode + AccountCode;
+
+            return GLAccountCode;
+        }
+
+        public async Task<bool> APITransactionPosting(List<FinanceTransactionViewModel> model)
         {
 
             var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -137,20 +151,18 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             List<TransactionPostingViewModel> apiModel = new List<TransactionPostingViewModel>();
             foreach (var item in model)
             {
-             
 
-                apiModel.Add(new TransactionPostingViewModel
-                {
+                var transPosting = new TransactionPostingViewModel();
+                //accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+                transPosting.amounts = item.creditAmount > 0 ? "C" + item.creditAmount.ToString() : "D" + item.debitAmount.ToString();
+                //amounts = item.sourceReferenceNumber,
+                transPosting.narration = item.description;
+                transPosting.referenceNumber = item.batchCode;
+                transPosting.currencyType = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                transPosting.operationId = item.operationId;// != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+                transPosting.accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : GetGLAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
 
-                    accounts = item.casaAccountId.ToString(), //item.casaAccountId!= null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,                       
-                        amounts = item.creditAmount > 0 ? "C" + item.creditAmount.ToString() : "D" + item.debitAmount.ToString(),
-                        //amounts = item.sourceReferenceNumber,
-                        narration = item.description,
-                        referenceNumber = item.batchCode,
-                        currencyType = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE,
-                        operationId = item.operationId,// != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
-                    }
-                    );
+                apiModel.Add(transPosting);
             }
 
             handler.UseDefaultCredentials = true;
@@ -164,7 +176,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-         
+
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
             HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
                                             new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
@@ -172,7 +184,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             if (response.IsSuccessStatusCode)
             {
                 responseModel = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
-                
+
             }
 
             ResponseViewModel responseAPI = new ResponseViewModel();
@@ -223,7 +235,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
 
-           // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Authorization = token;
 
             LienProcessViewModel responseModel = new LienProcessViewModel();
@@ -255,15 +267,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
         }
 
-       
+
         //----------------------------------- OverDraft----------------------------------------
 
         public async Task<ResponseMessage> APIOverDraftNormal(OverDraftNormalViewModel model)
         {
-            model.sanctionLevel  = "003";
+            model.sanctionLevel = "003";
             model.sanctionAuthorizer = "999";
 
-       
+
             ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
             var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -275,7 +287,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri(  API_URL);
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -306,7 +318,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 {
                     APIResponse = res,
                     APIStatus = result,
-                    Message = response 
+                    Message = response
                 };
             }
             else
@@ -328,7 +340,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         {
             ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
-            var token = new AuthenticationHeaderValue("Authorization",API_KEY);
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -392,7 +404,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         {
             ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
-            var token = new AuthenticationHeaderValue("Authorization",  API_KEY);
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -401,7 +413,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri( API_URL);
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -454,10 +466,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
         public async Task<ResponseMessage> APIOverDraftExtend(OverDraftExtendViewModel model)
         {
-             
+
             ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
-            var token = new AuthenticationHeaderValue("Authorization",  API_KEY);
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -466,7 +478,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri( API_URL);
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -513,17 +525,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
         }
 
-     
+
         ////////////////////////////////////////////////////////////////////////////////////////////////
 
         //----------------------------------- TemporaryOverDraft----------------------------------------
         public async Task<ResponseMessage> APITemporaryOverDraftNormal(TemporaryOverDraftViewModel model)
         {
 
-            
+
             ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
-            var token = new AuthenticationHeaderValue("Authorization",  API_KEY);
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
@@ -532,7 +544,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri( API_URL);
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -585,7 +597,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
         public async Task<ResponseMessage> APITemporaryOverDraftRunning(TemporaryOverDraftViewModel model)
         {
-             
+
             ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
 
             var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -650,9 +662,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
         public async Task<ResponseMessage> APITemporaryOverDraftSingle(TemporaryOverDraftViewModel model)
         {
- 
+
             ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
-            var token = new AuthenticationHeaderValue("Authorization",  API_KEY); ;
+            var token = new AuthenticationHeaderValue("Authorization", API_KEY); ;
             handler.UseDefaultCredentials = true;
             HttpClient client = new HttpClient(handler);
 
@@ -660,7 +672,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
             client.Timeout = TimeSpan.FromSeconds(60);
             client.DefaultRequestHeaders.Authorization = token;
-            client.BaseAddress = new Uri( API_URL);
+            client.BaseAddress = new Uri(API_URL);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -757,7 +769,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             handler.Dispose();
             client.Dispose();
             return result;
-       
+
         }
 
         public async Task<TDAccountRecordViewModel> APIOfficeAccountGetTermDepositAccountRecord(string teamDepositAccountNumber)
@@ -790,11 +802,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     balance = data.balance,
                     branch = data.branch,
                     currencyType = data.currencyType,
-                    customerCode  =data.customerCode,
+                    customerCode = data.customerCode,
                     productName = data.productName,
                     productType = data.productType,
                     lienAmount = data.lienAmount,
-                     productCode = data.productCode,
+                    productCode = data.productCode,
                     response = response,
                 };
                 handler.Dispose();
