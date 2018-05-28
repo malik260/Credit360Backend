@@ -22,9 +22,17 @@ namespace FintrakBanking.Entities.StagingModels
         public virtual DbSet<STG_STAFF_RAW2> STG_STAFF_RAW2 { get; set; }
         //public virtual DbSet<STG_CASA_DAILY_BALANCE_INPUT> STG_CASA_DAILY_BALANCE_INPUT { get; set; }
         //public virtual DbSet<STG_CASA_DAILY_BALANCE> STG_CASA_DAILY_BALANCE { get; set; }
+        public virtual DbSet<FINTRAK_TRAN_PROC_MAIN> FINTRAK_TRAN_PROC_MAIN { get; set; }
+        public virtual DbSet<FINTRAK_TRAN_PROC_DETAILS> FINTRAK_TRAN_PROC_DETAILS { get; set; }
+        public virtual DbSet<TBL_FINANCE_TRANSACTION_STAGING> TBL_FINANCE_TRANSACTION_STAGING { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+
+            var databaseUsername = System.Configuration.ConfigurationManager.AppSettings["StagingOracleDatabaseUsername"];
+
+            modelBuilder.HasDefaultSchema(databaseUsername);
+
             modelBuilder.Entity<STG_LOAN_MART>()
                 .Property(e => e.PRINCIPALAMOUNT)
                 .HasPrecision(19, 4);

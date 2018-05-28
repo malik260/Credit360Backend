@@ -50,6 +50,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
@@ -240,6 +241,7 @@
     <Compile Include="Models\TBL_FEE_TYPE.cs" />
     <Compile Include="Models\TBL_FINANCECURRENTDATE.cs" />
     <Compile Include="Models\TBL_FINANCE_ENDOFDAY.cs" />
+    <Compile Include="Models\TBL_CUSTOM_TRANSACTION_BULK.cs" />
     <Compile Include="Models\TBL_FINANCE_TRANSACTION.cs" />
     <Compile Include="Models\TBL_FINANCIAL_STATEMENT_CAPTN.cs" />
     <Compile Include="Models\TBL_FINANCIAL_STATEMENT_TYPE.cs" />
@@ -444,6 +446,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StagingModels\CWG_TREASURY_RATE_TBL.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
+    <Compile Include="StagingModels\FINTRAK_TRAN_PROC_DETAILS.cs" />
+    <Compile Include="StagingModels\FINTRAK_TRAN_PROC_MAIN.cs" />
     <Compile Include="StagingModels\STG_BRANCH.cs" />
     <Compile Include="StagingModels\STG_CURRENCY_EXCHANGERATE.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />
@@ -451,6 +455,7 @@
     <Compile Include="StagingModels\STG_PRICE_INDEX_RATE.cs" />
     <Compile Include="StagingModels\STG_STAFF.cs" />
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
+    <Compile Include="StagingModels\TBL_FINANCE_TRANSACTION_STAGING.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

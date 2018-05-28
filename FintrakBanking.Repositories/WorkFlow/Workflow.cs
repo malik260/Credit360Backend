@@ -564,22 +564,22 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.nextLevelId == null && ActionIsApprovalDecision())
             {
-                this.EndProcess(this.statusId); return;
+                this.EndProcess(this.statusId);
             }
 
             if (this.nextLevelId == null && this.amount == 0)
             {
-                this.EndProcess(this.statusId); return;
+                this.EndProcess(this.statusId);
             }
 
-            if (this.nextLevelId == null)
-            {
-                throw new Exception("Workflow is missing an approval authority!");
-            }
+            //if (this.nextLevelId == null)
+            //{
+            //    throw new Exception("Workflow is missing an approval authority!");
+            //}
 
             if (this.fromLevelId != null && this.fromLevelId == this.finalLevel)
             {
-                this.EndProcess(this.statusId); return;
+                this.EndProcess(this.statusId);
             }
 
             if (this.keepPending == true)
@@ -597,6 +597,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.nextLevelId != null && this.statusId == (int)ApprovalStatusEnum.Escalated)
             {
                 this.ContinueProcess((int)ApprovalStatusEnum.Processing);
+            }
+
+            if (ActionIsApprovalDecision())
+            {
+                this.EndProcess(this.statusId);
             }
         }
 

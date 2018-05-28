@@ -53,7 +53,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     items = items.Where(x =>
                         x.referenceNumber.Contains(searchString)
-                        || x.principalAmount.ToString().Contains(searchString)
+                        //|| x.principalAmount.ToString().Contains(searchString)
                         || x.customerName.Contains(searchString)
                         ).Take(itemsPerPage);
                 }

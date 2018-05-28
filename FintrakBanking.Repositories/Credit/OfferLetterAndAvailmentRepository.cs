@@ -936,6 +936,501 @@ namespace FintrakBanking.Repositories.Credit
             return new Form3800ViewModel { };
         }
 
+        public Form3800ViewModel GenerateForm3800TemplateLMS(string refNumber)
+        {
+            var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+            var currentDate = DateTime.Now;
+            var loanApplId = 0;
+            var facility = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == refNumber);
+            if (facility == null)
+            {
+                var facility1 = context.TBL_LOAN_REVOLVING.Where(x => x.LOANREFERENCENUMBER == refNumber);
+                loanApplId = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == facility1.FirstOrDefault().LOANAPPLICATIONDETAILID).LOANAPPLICATIONID;
+            }
+
+            loanApplId = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == facility.FirstOrDefault().LOANAPPLICATIONDETAILID).LOANAPPLICATIONID;
+
+            var targetAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == loanApplId);
+
+            if (targetAppl.PRODUCTCLASSID == null)
+            {
+                targetAppl.PRODUCTCLASSID = 1;
+            }
+
+            var productClassProcess = context.TBL_PRODUCT_CLASS.FirstOrDefault(x => x.PRODUCTCLASSID == targetAppl.PRODUCTCLASSID);
+
+            var templateLink = GetProductSpecificTemplate(productClassProcess.PRODUCT_CLASS_PROCESSID, (short?)targetAppl.PRODUCTCLASSID ?? 1);
+
+
+            var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
+                                       join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                       join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                       where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER && b.ISSUBSEQUENT == false
+                                       select new OfferLetterConditionPrecidentViewModel()
+                                       {
+                                           conditionPrecident = b.CONDITION,
+                                           loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                           isExternal = b.ISEXTERNAL,
+                                           productName = c.TBL_PRODUCT.PRODUCTNAME
+                                       }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+
+            var conditionSubsequents = (from a in context.TBL_LOAN_APPLICATION
+                                        join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                        where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER && b.ISSUBSEQUENT == true
+                                        select new OfferLetterConditionPrecidentViewModel()
+                                        {
+                                            conditionPrecident = b.CONDITION,
+                                            loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                            isExternal = b.ISEXTERNAL,
+                                            productName = c.TBL_PRODUCT.PRODUCTNAME
+                                        }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+
+            var products = (from a in context.TBL_LOAN_APPLICATION
+                            join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                            where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
+                            select new ProductViewModel()
+                            {
+                                productId = c.TBL_PRODUCT.PRODUCTID,
+                                productName = c.TBL_PRODUCT.PRODUCTNAME,
+                                productClassId = a.PRODUCTCLASSID,
+                                productClassProcessId = productClassProcess.PRODUCT_CLASS_PROCESSID //a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID
+                            }).ToList();
+
+
+            var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
+                        join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                        where d.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
+                        select new ProductFeeViewModel()
+                        {
+                            feeName = c.CHARGEFEENAME,
+                            rateValue = a.RECOMMENDED_FEERATEVALUE
+                        }).ToList();
+
+            var loanDetails = (from a in context.TBL_LOAN_APPLICATION
+                               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                               join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
+                               from c in cc.DefaultIfEmpty()
+                               join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
+                               from d in cg.DefaultIfEmpty()
+                               where a.APPLICATIONREFERENCENUMBER.ToLower() == targetAppl.APPLICATIONREFERENCENUMBER.ToLower() &&
+                                     b.STATUSID == (int)ApprovalStatusEnum.Approved
+                               select new CamProcessedLoanViewModel()
+                               {
+                                   productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTNAME,
+                                   tenor = b.APPROVEDTENOR,
+                                   interestRate = b.APPROVEDINTERESTRATE,
+                                   purpose = b.LOANPURPOSE,
+                                   applicationDate = applDate,
+                               }).ToList();
+
+            var transactionDynamicsDetails = (from a in context.TBL_LOAN_TRANSACTION_DYNAMICS
+                                              join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                              //join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
+                                              //from c in cc.DefaultIfEmpty()
+                                              //join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
+                                              //from d in cg.DefaultIfEmpty()
+                                              where b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
+                                              select new TransactionDynamicsViewModel()
+                                              {
+                                                  dynamics = a.DYNAMICS,
+                                              }).ToList();
+
+            var loanCollaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
+                                       //join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                                   where x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
+                                   select new LoanApplicationCollateralViewModel()
+                                   {
+                                       collateralDetail = x.COLLATERALDETAIL,
+                                       collateralValue = x.COLLATERALVALUE,
+                                       stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT
+                                   }).ToList();
+
+
+            var loanMonitoringTriggers = (from x in context.TBL_LOAN_APPLICATN_DETL_MTRIG
+                                          join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals y.LOANAPPLICATIONDETAILID
+                                          where y.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
+                                          select new MonitoringTriggersViewModel()
+                                          {
+                                              monitoringTrigger = x.MONITORING_TRIGGER,
+                                          }).ToList();
+
+
+
+
+
+            var conditions = string.Empty;
+
+            var fee = string.Empty;
+
+            var loanDetail = string.Empty;
+
+            var loanCollateral = string.Empty;
+
+            var loanMonitoringTrigger = string.Empty;
+
+            var loanTransactionDynamics = string.Empty;
+
+            var internalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == false).ToList();
+
+            var externalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == true).ToList();
+
+            var internalConditionsSubsequents = conditionSubsequents.Where(x => x.isExternal == false).ToList();
+
+            var externalConditionsSubsequents = conditionSubsequents.Where(x => x.isExternal == true).ToList();
+
+            int noOfInternalConditions = 0;
+
+            int noOfExternalConditions = 0;
+
+            var finalConditionPrecedents = string.Empty;
+
+            var finalConditionSubsequents = string.Empty;
+
+            var loanfee = string.Empty;
+
+            var detail = string.Empty;
+
+            var collateral = string.Empty;
+
+            var monitoringTrigger = string.Empty;
+
+            var transactionDynamics = string.Empty;
+
+            int noOfDetails = 0;
+
+            int noOfFees = 0;
+
+            int noOfCollaterals = 0;
+
+            int noOfMonitoringTriggers = 0;
+
+            int noOfTransactionDynamics = 0;
+
+            foreach (var prod in products)
+            {
+                var productExternalConditions = externalConditionsPrecedents.Where(x => x.productName == prod.productName);
+
+                conditions = $"<p><strong> Conditions Precedent(to be satisfied before drawdown) {prod.productName}</strong></p>";
+
+                conditions = conditions +
+                        $"<table border='1' cellspacing='0' class='conditionsTable_OL' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                        $"<tr>" +
+                        $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                        $"<p> &nbsp;</p><p><strong> S/No </strong></p></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:225.05pt'><p> &nbsp;</p>" +
+
+                        $"<strong> Conditions Precedent </strong></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:100.05pt'><p> &nbsp;</p>" +
+
+                        $"<strong> Applicable Facility </strong ></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:1.0in'>" +
+
+                        $"<strong> *Credit Verification Officer&rsquo; s initial for compliance only</strong></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:67.5pt'>" +
+
+                        $"<strong> Location of document </strong><strong><em> (Corporate workflow)</em ></strong></td></tr>";
+
+                foreach (var item in productExternalConditions)
+                {
+                    conditions = conditions +
+                        $"<tr>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'><p> &nbsp;</p></td>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'><p>&nbsp;</p></td>" +
+                        $"</tr>";
+                }
+
+                noOfExternalConditions = 0;
+
+                conditions = conditions +
+                    "<tr class='removeConditions_OL'><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
+                    "<p><strong> Other Conditions Precedent for Internal usage which does not have to be included in the offer " +
+                    "letter.The RM must ensure compliance with these conditions before drawdown.</strong></p></td></tr> ";
+
+                var productInternalConditions = internalConditionsPrecedents.Where(x => x.productName == prod.productName);
+
+                foreach (var item in productInternalConditions)
+                {
+                    conditions = conditions +
+                        $"<tr class='removeConditions_OL'>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfInternalConditions}</li></ol></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'><p> &nbsp;</p></td>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'><p>&nbsp;</p></td>" +
+                        $"</tr>";
+                }
+
+                noOfInternalConditions = 0;
+
+                conditions = conditions + "</tbody></table><p> &nbsp;</p>";
+
+                finalConditionPrecedents += conditions;
+            }
+
+            foreach (var prod in products)
+            {
+                var productExternalConditions = externalConditionsSubsequents.Where(x => x.productName == prod.productName);
+
+                conditions = $"<p><strong>Conditions Subsequent (to be satisfied after drawdown) {prod.productName}</strong></p>";
+
+                conditions = conditions +
+                        $"<table border='1' cellspacing='0' class='conditionsTable_OL' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                        $"<tr>" +
+                        $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
+                        $"<strong> S/No </strong></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:225.05pt'><p> &nbsp;</p>" +
+
+                        $"<strong> Conditions Subsequent </strong></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:100.05pt'><p> &nbsp;</p>" +
+
+                        $"<strong> Timeline for compliance </strong ></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:1.0in'><p> &nbsp;</p>" +
+
+                        $"<strong> Credit Monitoring Officer’s initial for compliance only</strong></td>" +
+
+                        $"</tr>";
+
+                foreach (var item in productExternalConditions)
+                {
+                    conditions = conditions +
+                        $"<tr>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'>{item.conditionPrecident}</td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'>&nbsp</td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'> &nbsp;</td>" +
+                        $"</tr>";
+                }
+
+                noOfExternalConditions = 0;
+
+                conditions = conditions +
+                    "<tr class='removeConditions_OL'><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
+                    "<strong> Other Conditions Subsequent for Internal usage which does not have to be included in the offer " +
+                    "letter.The RM must ensure compliance with these conditions after drawdown.</strong></td></tr> ";
+
+                var productInternalConditions = internalConditionsSubsequents.Where(x => x.productName == prod.productName);
+
+                foreach (var item in productInternalConditions)
+                {
+                    conditions = conditions +
+                        $"<tr class='removeConditions_OL'>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfInternalConditions}</li></ol></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'>{item.conditionPrecident}</td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'>{prod.productName}</td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'> &nbsp;</td>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'>&nbsp;</td>" +
+                        $"</tr>";
+                }
+
+                noOfInternalConditions = 0;
+
+                conditions = conditions + "</tbody></table><p> &nbsp;</p>";
+
+                finalConditionSubsequents += conditions;
+            }
+
+            fee = $"<p><strong> Fee Deatils: </strong></p>";
+
+            fee = fee +
+                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                        $"<strong> S/No </strong></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> Name </strong></p></td>" +
+
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> Rate </strong></td></tr>";
+
+
+
+            foreach (var item in fees)
+            {
+                fee = fee +
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.feeName}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.rateValue}</p></td>" +
+                    $"</tr>";
+            }
+
+            noOfFees = 0;
+
+            fee = fee + "</tbody></table><p> &nbsp;</p>";
+
+            loanfee += fee;
+
+            var feeData = $"{loanfee}";
+
+
+
+            loanDetail = $" ";//<p><strong> Facility Deatils: </strong></p>
+
+            loanDetail = loanDetail +
+                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:1.25in'><p> &nbsp;</p>" +
+                    $"<strong> Facility Type </strong></p></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:130.5pt'><p> &nbsp;</p>" +
+                    $"<strong> Purpose </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:49.5pt'><p> &nbsp;</p>" +
+                    $"<strong> Tenor </strong></p></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
+                    $"<strong> Interest </strong></p></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
+                    $"<strong> Review Date </strong></td></tr>";
+
+
+
+            foreach (var item in loanDetails)
+            {
+                loanDetail = loanDetail +
+                    $"<tr>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate}</p></td>" +
+                    $"</tr>";
+            }
+
+            noOfDetails = 0;
+
+            loanDetail = loanDetail + "</tbody></table><p> &nbsp;</p>";
+
+            detail += loanDetail;
+
+            var loanDetailData = $"{detail}";
+
+
+            loanCollateral = $" ";//<p><strong> Collateral: </strong></p>
+
+            loanCollateral = loanCollateral +
+                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> S/No </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:1.25in'><p> &nbsp;</p>" +
+                    $"<strong> Type and description of security </strong></p></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:130.5pt'><p> &nbsp;</p>" +
+                    $"<strong> Value(<s>N</s>) </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
+                    $"<strong> Amount Stamped To Cover (<s>N</s>) </strong></td></tr>";
+
+            foreach (var item in loanCollaterals)
+            {
+                loanCollateral = loanCollateral +
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfCollaterals}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralDetail}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralValue}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount}</p> Days </td>" +
+                    $"</tr>";
+            }
+
+            noOfCollaterals = 0;
+
+            loanCollateral = loanCollateral + "</tbody></table><p> &nbsp;</p>";
+
+            collateral += loanCollateral;
+
+            var loanCollateralData = $"{collateral}";
+
+
+            loanMonitoringTrigger = $"<p><strong> Monitoring Triggers: </strong></p>";
+
+            loanMonitoringTrigger = loanMonitoringTrigger +
+                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                        $"<strong> S/No </strong></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong>  </strong></td></tr>";
+
+
+
+            foreach (var item in loanMonitoringTriggers)
+            {
+                loanMonitoringTrigger = loanMonitoringTrigger +
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.monitoringTrigger}</p></td>" +
+                    $"</tr>";
+            }
+
+            noOfMonitoringTriggers = 0;
+
+            loanMonitoringTrigger = loanMonitoringTrigger + "</tbody></table><p> &nbsp;</p>";
+
+            monitoringTrigger += loanMonitoringTrigger;
+
+            var monitoringTriggerData = $"{monitoringTrigger}";
+
+            // transactionDynamicsDetails
+
+            loanTransactionDynamics = $"<p><strong> Transaction Dynamics: </strong></p>";
+
+            loanTransactionDynamics = loanTransactionDynamics +
+                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> S/No </strong></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
+                    $"<strong> Dynamics </strong></p></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
+                    $"<strong> Credit Verification Officer’s initial for compliance only </strong></p></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong>  </strong></td></tr>";
+
+
+
+            foreach (var item in transactionDynamicsDetails)
+            {
+                loanTransactionDynamics = loanTransactionDynamics +
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.dynamics}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p></p></td>" +
+                    $"</tr>";
+            }
+
+            noOfTransactionDynamics = 0;
+
+            loanTransactionDynamics = loanTransactionDynamics + "</tbody></table><p> &nbsp;</p>";
+
+            transactionDynamics += loanTransactionDynamics;
+
+            var transactionDynamicsData = $"{transactionDynamics}";
+
+            var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
+
+            var customer = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER).TBL_CUSTOMER.FIRSTNAME;
+            var branch = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER).TBL_BRANCH.BRANCHNAME;
+            //var info = data;
+
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData, currentDate, loanCollateralData, monitoringTriggerData, transactionDynamicsData);
+
+            if (preparedTemplate != null)
+            {
+                return new Form3800ViewModel { documentTemplate = preparedTemplate };
+            }
+
+            return new Form3800ViewModel { };
+        }
+
         public OfferLetterTemplateViewModel GenerateOfferLetterTemplate(string applicationRefNumber)
         {
             throw new NotImplementedException();

@@ -228,6 +228,7 @@ namespace FintrakBanking.Common.Enum
         LoanTenorExtended = 205,
         LoanInterestRateChange = 206,
         Loggedfailed = 207,
+        WriteToStagingTable = 208,
     };
 
 
