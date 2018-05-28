@@ -877,33 +877,34 @@ namespace FintrakBanking.Repositories.Admin
         public bool UpdateUserStatus(ActiveUserDetails entity, out string message)
         {
             // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
-
+            string str = string.Empty;
             var data = context.TBL_PROFILE_USER.Find(entity.user_id);
 
             if (data != null)
             {
-                data.ISLOCKED = entity.isLocked;
 
-                data.DATETIMEUPDATED = DateTime.Now;
-                data.LASTUPDATEDBY = entity.lastUpdatedBy;
+                //data.ISLOCKED = entity.isLocked;
 
-                if (entity.isLocked)
+                //data.DATETIMEUPDATED = DateTime.Now;
+                //data.LASTUPDATEDBY = entity.lastUpdatedBy;
+
+                if (entity.lockStatus)
                 {
                     data.FAILEDLOGONATTEMPT = 0;
                     data.ISLOCKED = entity.isLocked;
                     data.LASTLOCKOUTDATE = DateTime.Now;
-                    entity.actionMessage = "Account has been locked successfully";
+                   str  += "Account has been locked successfully";
                 }
 
 
-                if (!entity.isActive)
+                if (entity.accountStatus)
                 {
                     data.ISACTIVE = entity.isActive;
                     data.DEACTIVATEDDATE = DateTime.Now;
-                    entity.actionMessage = "Account has been deactivated successfully";
+                    str = str.Count() > 0 ? str + "and  Account has been deactivated successfully": "Account has been deactivated successfully";
                 }
-
-
+                entity.actionMessage = str;
+ 
             }
             message = entity.actionMessage;
 

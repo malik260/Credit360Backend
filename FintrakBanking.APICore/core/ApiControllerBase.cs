@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.APICore.App_Start;
+using FintrakBanking.APICore.ExceptionLogger.SeriLogger;
 using FintrakBanking.APICore.Filters;
 using Serilog;
 using System.Security;
@@ -26,7 +27,7 @@ namespace FintrakBanking.APICore.core
     {
         public override void OnException(HttpActionExecutedContext context)
         {
-          
+            SeriLogger.LogSetup();
            // Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Elmah.Error(context.Exception));
         }
     }

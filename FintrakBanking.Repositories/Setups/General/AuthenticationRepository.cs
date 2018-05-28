@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     errorMessage = "",
                 };
 
-            var user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username);
+            var user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username);
 
             if (user != null)
             {
@@ -164,7 +164,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public async Task<SessionStatusInfo> CheckSessionState(string username)
         {
             Guid loginCode = Guid.Empty;
-            var user = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(x => x.USERNAME == username); // && x.PASSWORD == password);
+            var user = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
             SessionStatusInfo result = null;
 
             if (user != null)
@@ -243,7 +243,7 @@ namespace FintrakBanking.Repositories.Setups.General
        
         public async Task<bool> IsAccountLocked(string userName)
         {
-            var data = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(c => c.USERNAME == userName);
+            var data = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(c => c.USERNAME.ToLower() == userName);
             if (data != null)
             {
 
@@ -254,7 +254,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> IsAccountActive(string userName)
         {
-            var data = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(c => c.USERNAME == userName);
+            var data = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(c => c.USERNAME.ToLower() == userName);
             if (data != null)
             {
                 return data.ISACTIVE;
@@ -265,7 +265,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private UserViewModel UserLoginDetails(string username, string password)
         {
-            var data = context.TBL_PROFILE_USER.Where(c => c.USERNAME == username && c.PASSWORD == password);
+            var data = context.TBL_PROFILE_USER.Where(c => c.USERNAME.ToLower() == username && c.PASSWORD == password);
 
             
                 if (data.Any())
@@ -292,7 +292,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 var record = data.FirstOrDefault();
                 if (record == null)
                 {
-                    var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME == username);
+                    var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
                     if (faileddata != null)
                     {
                         int count = faileddata.FAILEDLOGONATTEMPT ?? 0;
@@ -310,7 +310,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     else
                     {
-                        throw new CustomException("1001 User dose not exist.");
+                        throw new Exception("1001 Incorrect username or password.");
                     }
 
                 }
@@ -423,7 +423,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool ClearLoginToken(string userName)
         {
             bool result = false;
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == userName);
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == userName);
             if (_user != null)
             {
                 _user.LOGINCODE = null;

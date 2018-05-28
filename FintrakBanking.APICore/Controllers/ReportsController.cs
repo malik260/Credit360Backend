@@ -226,7 +226,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offer-letter-lms")]
+        public HttpResponseMessage GetGeneratedOfferLetterLMS(string applicationRefNumber)
+        {
+            try
+            {
+                var data = repo.GetGeneratedOfferLetterLMS(applicationRefNumber);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost] [ClaimsAuthorization]
         [Route("monitoring/collateral-property-revaluation")]
         public HttpResponseMessage GetCollateralPropertyRevaluationReport(DateRange dateRange)
         {
