@@ -13,6 +13,7 @@ using System.Web.Http;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -74,7 +75,30 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("staff/sample-document")]
+        public HttpResponseMessage GetStaffSampleDocument()
+        {
+            try
+            {
+                var staffDoc = repo.GetStaffSampleDocument();
+
+                if (staffDoc == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffDoc });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("staff/approvals/temp/{staffId}")]
         public HttpResponseMessage GetTempStaffDetailsById(int staffId)
         {
@@ -420,19 +444,34 @@ namespace FintrakBanking.APICore.Controllers
 
                 var data = repo.GoForApproval(entity);
 
-                if (data)
+                if (data ==  1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Staff record has been approved successfully" });
+                        new { success = true, message = "Staff record has been approved successfully." });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Staff details has been disapproved." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+                
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -601,7 +640,12 @@ namespace FintrakBanking.APICore.Controllers
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+                var innerException = ex.InnerException;
+                string innerMessage = "";
+                if (innerException != null)
+                    innerMessage = innerException.Message;
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message} inner exception - {innerMessage}" });
             }
         }
 
@@ -709,7 +753,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record " });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " + ex.Message });
             }
         }
 

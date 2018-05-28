@@ -57,25 +57,33 @@ namespace FintrakBanking.Interfaces.Credit
         bool addInterestRateChange(LoanBulkInterestReviewViewModel model);
         IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId); 
          IEnumerable<LoanClassificationViewModel> CalculateLoanClassification(DateTime applicationDate);
-        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
-        // IEnumerable<LoanViewModel> GetRunningLoans(int companyId, string refNo);
         LoanViewModel GetRunningLoans(int companyId, string refNo);
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD();
         IEnumerable<LoanOperationTypeViewModel> GetRemedialOperationType();
-        List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId);
-        IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
-        List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID);
         IEnumerable<LoanFeeOperationViewModel> GetLoanChargeFeeByLoanId(int loanId);
-        //IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
-        //bool addMaturityInstruction(MaturityIntructionViewModel model);
-        //IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
-        //bool ProcessCommercialPaperRollOver(MaturityIntructionViewModel model, string refNo);
-        //void CommercialPaperRollOver(DateTime applicationDate);
-        //bool CommercialPaperTenorReview(TenorExtionViewModel userModel);
-        //List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
-        //bool CommercialPaperRateReview(int aplicationDetailId, double newRate, InterestReviewViewModel userModel);
+       
         IEnumerable<LoanClassificationViewModel> CalculateOverdraftClassification(DateTime applicationDate);
         IEnumerable<LoanViewModel> LoanHistory();
         IEnumerable<RevolvingLoanViewModel> OverDraftHistory();
+
+        #region COMMERCIAL PAPER LOANS
+        bool CommercialPaperSubAllocation(List<subAllocationViewModel> models);
+        IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
+        bool addMaturityInstruction(MaturityIntructionViewModel model);
+        IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
+        bool ProcessCommercialPaperRollOver(MaturityIntructionViewModel model, string refNo);
+        void CommercialPaperRollOver(DateTime applicationDate);
+        bool CommercialPaperTenorReview(TenorExtionViewModel userModel);
+        List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
+        bool CommercialPaperRateReview(InterestReviewViewModel userModel);
+        List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId);
+        List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID);
+        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
+        void CommercialPaperChangeOperativeAccount(int casaPayAccountId, int newCasaPayAccountId);
+        bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId);
+        bool CommercialPaperPrepayment(string refNo, decimal prepaymentAmount, DateTime applicationDate, int staffId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
+        bool CommercialPaperTenorReviewDetails(int loanAplicationDetailId, int newTenor);
+        #endregion
     }
 }

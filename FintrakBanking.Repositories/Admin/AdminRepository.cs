@@ -37,6 +37,21 @@ namespace FintrakBanking.Repositories.Admin
             workFlow = _workFlow;
             level = _level;
         }
+        #region DashBoard
+        public LookupViewModel GetDashboardStaffRole(int staffId)
+        {
+            var dash = (from st in context.TBL_STAFF 
+                        join sr in context.TBL_STAFF_ROLE on st.STAFFROLEID equals sr.STAFFROLEID
+                        where st.STAFFID == staffId
+                        select new LookupViewModel
+                       {
+                          lookupId = (short)sr.STAFFROLEID,
+                          lookupName = sr.STAFFROLENAME
+                       }).FirstOrDefault();
+            return dash;
+        }
+        #endregion
+
 
         #region Users
 
@@ -832,62 +847,64 @@ namespace FintrakBanking.Repositories.Admin
 
         private IQueryable<ActiveUserDetails> UserDetails(int companyId)
         {
-            return from p in context.TBL_PROFILE_USER
-                   join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
-                   join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
-                   join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                   where st.COMPANYID == companyId
-                   select new ActiveUserDetails
-                   {
-                       companyId = coy.COMPANYID,
-                       staffId = p.STAFFID,
-                       user_id = p.USERID,
-                       username = p.USERNAME,
-                       staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                       branchId = st.BRANCHID.Value,
-                       countryId = coy.COUNTRYID,
-                       branchName = br.BRANCHNAME,
-                       companyName = coy.NAME,
-                       logincode = p.LOGINCODE,
-                       lastLoginDate = p.LASTLOGINDATE,
-                       isActive = p.ISACTIVE,
-                       isLocked = p.ISLOCKED,
-                       failedLogonAttempt = p.FAILEDLOGONATTEMPT,
-                       lastLockedOutDate = p.LASTLOCKOUTDATE
+            var data = (from p in context.TBL_PROFILE_USER
+                        join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
+                        join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                        join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                        where st.COMPANYID == companyId
+                        select new ActiveUserDetails
+                        {
+                            companyId = coy.COMPANYID,
+                            staffId = p.STAFFID,
+                            user_id = p.USERID,
+                            username = p.USERNAME,
+                            staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                            branchId = st.BRANCHID.Value,
+                            countryId = coy.COUNTRYID,
+                            branchName = br.BRANCHNAME,
+                            companyName = coy.NAME,
+                            logincode = p.LOGINCODE,
+                            lastLoginDate = p.LASTLOGINDATE,
+                            isActive = p.ISACTIVE,
+                            isLocked = p.ISLOCKED,
+                            failedLogonAttempt = p.FAILEDLOGONATTEMPT,
+                            lastLockedOutDate = p.LASTLOCKOUTDATE
 
-                   };
+                        });
+            return data;
         }
 
         public bool UpdateUserStatus(ActiveUserDetails entity, out string message)
         {
             // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
-
+            string str = string.Empty;
             var data = context.TBL_PROFILE_USER.Find(entity.user_id);
 
             if (data != null)
             {
-                data.ISLOCKED = entity.isLocked;
 
-                data.DATETIMEUPDATED = DateTime.Now;
-                data.LASTUPDATEDBY = entity.lastUpdatedBy;
+                //data.ISLOCKED = entity.isLocked;
 
-                if (entity.isLocked)
+                //data.DATETIMEUPDATED = DateTime.Now;
+                //data.LASTUPDATEDBY = entity.lastUpdatedBy;
+
+                if (entity.lockStatus)
                 {
                     data.FAILEDLOGONATTEMPT = 0;
                     data.ISLOCKED = entity.isLocked;
                     data.LASTLOCKOUTDATE = DateTime.Now;
-                    entity.actionMessage = "Account has been locked successfully";
+                   str  += "Account has been locked successfully";
                 }
 
 
-                if (!entity.isActive)
+                if (entity.accountStatus)
                 {
                     data.ISACTIVE = entity.isActive;
                     data.DEACTIVATEDDATE = DateTime.Now;
-                    entity.actionMessage = "Account has been deactivated successfully";
+                    str = str.Count() > 0 ? str + "and  Account has been deactivated successfully": "Account has been deactivated successfully";
                 }
-
-
+                entity.actionMessage = str;
+ 
             }
             message = entity.actionMessage;
 

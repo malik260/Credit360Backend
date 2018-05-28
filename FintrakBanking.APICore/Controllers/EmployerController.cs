@@ -60,6 +60,8 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 employer.companyId = token.GetCompanyId;
+                employer.staffId = token.GetStaffId;
+                employer.userBranchId = (short)token.GetBranchId;
 
                 var data = repo.addEmployer(employer);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
@@ -75,6 +77,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                employer.companyId = token.GetCompanyId;
+                employer.staffId = token.GetStaffId;
+                employer.userBranchId = (short)token.GetBranchId;
+
                 var data = repo.updateEmployer(employerId,employer);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }

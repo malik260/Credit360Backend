@@ -316,17 +316,15 @@ namespace FintrakBanking.Repositories.Customer
                                 context.TBL_CUSTOMER_MODIFICATION.Add(modified);
                                 var output = context.SaveChanges() > 0;
                                 var targetId = modified.CUSTOMERMODIFICATIONID; //User the new inserted row in TBL_CUSTOMER_MODIFICATION as the approval trail targetId
-                                var model = new ApprovalViewModel
-                                {
-                                    staffId = entity.createdBy,
-                                    companyId = entity.companyId,
-                                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                    targetId = targetId,
-                                    operationId = (int)OperationsEnum.CustomerInformationApproval,
-                                    BranchId = entity.userBranchId,
-                                    externalInitialization = true
-                                };
-                                var returnVal = workflow.LogForApproval(model);
+
+                                workflow.StaffId = entity.staffId;
+                                workflow.CompanyId = entity.companyId;
+                                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                                workflow.TargetId = targetId;
+                                workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                                workflow.ExternalInitialization = true;
+
+                                var returnVal = workflow.LogActivity();
 
                                 if (returnVal)
                                 {
@@ -615,17 +613,16 @@ namespace FintrakBanking.Repositories.Customer
                                 context.TBL_CUSTOMER_MODIFICATION.Add(modified);
                                 var output = context.SaveChanges() > 0;
                                 var targetId = modified.CUSTOMERMODIFICATIONID; //User the new inserted row in TBL_CUSTOMER_MODIFICATION as the approval trail targetId
-                                var model = new ApprovalViewModel
-                                {
-                                    staffId = entity.createdBy,
-                                    companyId = entity.companyId,
-                                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                    targetId = targetId,
-                                    operationId = (int)OperationsEnum.CustomerInformationApproval,
-                                    BranchId = entity.userBranchId,
-                                    externalInitialization = true
-                                };
-                                var returnVal = workflow.LogForApproval(model);
+
+
+                                workflow.StaffId = entity.staffId;
+                                workflow.CompanyId = entity.companyId;
+                                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                                workflow.TargetId = targetId;
+                                workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                                workflow.ExternalInitialization = true;
+
+                                var returnVal = workflow.LogActivity();
 
                                 if (returnVal)
                                 {
@@ -786,17 +783,15 @@ namespace FintrakBanking.Repositories.Customer
                                 context.TBL_CUSTOMER_MODIFICATION.Add(modified);
                                 var output = context.SaveChanges() > 0;
                                 var targetId = modified.CUSTOMERMODIFICATIONID; //User the new inserted row in TBL_CUSTOMER_MODIFICATION as the approval trail targetId
-                                var model = new ApprovalViewModel
-                                {
-                                    staffId = entity.createdBy,
-                                    companyId = entity.companyId,
-                                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                    targetId = targetId,
-                                    operationId = (int)OperationsEnum.CustomerInformationApproval,
-                                    BranchId = entity.userBranchId,
-                                    externalInitialization = true
-                                };
-                                var returnVal = workflow.LogForApproval(model);
+
+                                workflow.StaffId = entity.staffId;
+                                workflow.CompanyId = entity.companyId;
+                                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                                workflow.TargetId = targetId;
+                                workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                                workflow.ExternalInitialization = true;
+
+                                var returnVal = workflow.LogActivity();
 
                                 if (returnVal)
                                 {
@@ -918,17 +913,15 @@ namespace FintrakBanking.Repositories.Customer
                                     context.TBL_CUSTOMER_MODIFICATION.Add(modified);
                                     var output = context.SaveChanges() > 0;
                                     var targetId = modified.CUSTOMERMODIFICATIONID; //User the new inserted row in TBL_CUSTOMER_MODIFICATION as the approval trail targetId
-                                    var model = new ApprovalViewModel
-                                    {
-                                        staffId = entity.createdBy,
-                                        companyId = entity.companyId,
-                                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                        targetId = targetId,
-                                        operationId = (int)OperationsEnum.CustomerInformationApproval,
-                                        BranchId = entity.userBranchId,
-                                        externalInitialization = true
-                                    };
-                                    var returnVal = workflow.LogForApproval(model);
+
+                                    workflow.StaffId = entity.staffId;
+                                    workflow.CompanyId = entity.companyId;
+                                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                                    workflow.TargetId = targetId;
+                                    workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                                    workflow.ExternalInitialization = true;
+
+                                    var returnVal = workflow.LogActivity();
 
                                     if (returnVal)
                                     {
@@ -1242,17 +1235,15 @@ namespace FintrakBanking.Repositories.Customer
                                 context.TBL_CUSTOMER_MODIFICATION.Add(modified);
                                 var output = context.SaveChanges() > 0;
                                 var targetId = modified.CUSTOMERMODIFICATIONID; //User the new inserted row in TBL_CUSTOMER_MODIFICATION as the approval trail targetId
-                                var model = new ApprovalViewModel
-                                {
-                                    staffId = entity.createdBy,
-                                    companyId = entity.companyId,
-                                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                    targetId = targetId,
-                                    operationId = (int)OperationsEnum.CustomerInformationApproval,
-                                    BranchId = entity.userBranchId,
-                                    externalInitialization = true
-                                };
-                                var returnVal = workflow.LogForApproval(model);
+
+                                workflow.StaffId = entity.staffId;
+                                workflow.CompanyId = entity.companyId;
+                                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                                workflow.TargetId = targetId;
+                                workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                                workflow.ExternalInitialization = true;
+
+                                var returnVal = workflow.LogActivity();
 
                                 if (returnVal)
                                 {
@@ -1529,17 +1520,15 @@ namespace FintrakBanking.Repositories.Customer
                                 context.TBL_CUSTOMER_MODIFICATION.Add(modified);
                                 var output = context.SaveChanges() > 0;
                                 var targetId = modified.CUSTOMERMODIFICATIONID; //User the new inserted row in TBL_CUSTOMER_MODIFICATION as the approval trail targetId
-                                var model = new ApprovalViewModel
-                                {
-                                    staffId = entity.createdBy,
-                                    companyId = entity.companyId,
-                                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                    targetId = targetId,
-                                    operationId = (int)OperationsEnum.CustomerInformationApproval,
-                                    BranchId = entity.userBranchId,
-                                    externalInitialization = true
-                                };
-                                var returnVal = workflow.LogForApproval(model);
+
+                                workflow.StaffId = entity.staffId;
+                                workflow.CompanyId = entity.companyId;
+                                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                                workflow.TargetId = targetId;
+                                workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                                workflow.ExternalInitialization = true;
+
+                                var returnVal = workflow.LogActivity();
 
                                 if (returnVal)
                                 {
@@ -1688,17 +1677,15 @@ namespace FintrakBanking.Repositories.Customer
                                 context.TBL_CUSTOMER_MODIFICATION.Add(modified);
                                 var output = context.SaveChanges() > 0;
                                 var targetId = modified.CUSTOMERMODIFICATIONID; //User the new inserted row in TBL_CUSTOMER_MODIFICATION as the approval trail targetId
-                                var model = new ApprovalViewModel
-                                {
-                                    staffId = entity.createdBy,
-                                    companyId = entity.companyId,
-                                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                    targetId = targetId,
-                                    operationId = (int)OperationsEnum.CustomerInformationApproval,
-                                    BranchId = entity.userBranchId,
-                                    externalInitialization = true
-                                };
-                                var returnVal = workflow.LogForApproval(model);
+
+                                workflow.StaffId = entity.staffId;
+                                workflow.CompanyId = entity.companyId;
+                                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                                workflow.TargetId = targetId;
+                                workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                                workflow.ExternalInitialization = true;
+
+                                var returnVal = workflow.LogActivity();
 
                                 if (returnVal)
                                 {
@@ -1783,11 +1770,83 @@ namespace FintrakBanking.Repositories.Customer
             return await context.SaveChangesAsync() != 0;
         }
 
+        public CustomerViewModels GetCustomer(int custormerId)
+        {
+            var data = from a in context.TBL_CUSTOMER
+                       join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
+                       where a.DELETED == false
+                       select new CustomerViewModels
+                       {
+                           accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
+                           branchId = a.BRANCHID,
+                           branchName = a.TBL_BRANCH.BRANCHNAME,
+                           companyMainId = a.COMPANYID,
+                           createdBy = a.CREATEDBY,
+                           creationMailSent = a.CREATIONMAILSENT,
+                           customerCode = a.CUSTOMERCODE,
+                           customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                           customerTypeId = (short)a.CUSTOMERTYPEID,
+                           dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                           customerId = a.CUSTOMERID,
+                           emailAddress = a.EMAILADDRESS,
+                           firstName = a.FIRSTNAME,
+                           gender = a.GENDER,
+                           lastName = a.LASTNAME,
+                           maidenName = a.MAIDENNAME,
+                           maritalStatus = a.MARITALSTATUS.Value,
+                           title = a.TITLE,
+                           middleName = a.MIDDLENAME,
+                           misCode = a.MISCODE,
+                           misStaff = a.MISSTAFF,
+                           nationality = a.NATIONALITY,
+                           occupation = a.OCCUPATION,
+                           placeOfBirth = a.PLACEOFBIRTH,
+                           isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                           relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                           relationshipOfficerName = st.FIRSTNAME + " " + st.LASTNAME,
+                           spouse = a.SPOUSE,
+                           sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
+                           sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                           subSectorId = (short)a.SUBSECTORID,
+                           subSectorName = a.TBL_SUB_SECTOR.NAME,
+                           taxNumber = a.TAXNUMBER,
+                           riskRatingId = a.RISKRATINGID,
+                           //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                           customerBVN = a.CUSTOMERBVN
+                       };
 
+            var cust =  data.FirstOrDefault();
+            if(cust != null)
+            {
+                if (USE_THIRD_PARTY_INTEGRATION)
+                {
+                    cust.isPoliticallyExposed = finaco.GetExposePersonStatus(cust.customerCode);
+                }
+
+
+                //cust.CustomerCompanyShareholder
+                //cust.CustomerCompanyInfomation
+                cust.CustomerPhoneContact = GetSingleCustomerPhoneContactInfo(cust.customerId).ToList();
+                cust.CustomerAddresses = GetSingleCustomerAddressInfo(cust.customerId).ToList();
+               // cust.
+                //cust.CustomerClientOrSupplier
+                //cust.CustomerEmploymentHistory
+                //cust.CustomerSupplier
+                //cust.
+                cust.CustomerChildren = GetSingleCustomerChildrenInfo(cust.customerId).ToList();
+                cust.CustomerCompanyDirectors = GetSingleCustomerDirectorInfo(cust.customerId, (int)CompanyDirectorTypeEnum.BoardMember).ToList();
+               // cust.CustomerCompanyAccountSignatory = GetSingleCustomerDirectorInfo(cust.customerId, (int)CompanyDirectorTypeEnum.Account_Signatory).ToList();
+               // cust.CustomerCompanyShareholder = GetSingleCustomerShareholderInfo(cust.customerId, (int)CustomerTypeEnum.Corporate).ToList();
+            }
+            
+
+            return cust;
+        }
 
         IQueryable<CustomerViewModels> GetCustomers()
         {
             return from a in context.TBL_CUSTOMER
+                   join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
                    where a.DELETED == false
                    select
 
@@ -1813,7 +1872,7 @@ namespace FintrakBanking.Repositories.Customer
                        title = a.TITLE,
                        middleName = a.MIDDLENAME,
                        //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                       customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                      // customerTypeName =  context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                        misCode = a.MISCODE,
                        misStaff = a.MISSTAFF,
                        nationality = a.NATIONALITY,
@@ -1821,8 +1880,7 @@ namespace FintrakBanking.Repositories.Customer
                        placeOfBirth = a.PLACEOFBIRTH,
                        isPoliticallyExposed =  a.ISPOLITICALLYEXPOSED ,
                        relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
-                       relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
-                      + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
+                       relationshipOfficerName = st.FIRSTNAME + " " + st.LASTNAME,
                        spouse = a.SPOUSE,
                        sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
@@ -1830,184 +1888,184 @@ namespace FintrakBanking.Repositories.Customer
                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                        taxNumber = a.TAXNUMBER,
                        riskRatingId = a.RISKRATINGID,
-                       riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                    //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                        customerBVN = a.CUSTOMERBVN,
-                       CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
-                       {
-                           address = x.ADDRESS,
-                           addressTypeId = x.ADDRESSTYPEID,
-                           cityId = x.CITYID,
-                           customerId = x.CUSTOMERID,
-                           homeTown = x.HOMETOWN,
-                           nearestLandmark = x.NEARESTLANDMARK,
-                           electricMeterNumber = x.ELECTRICMETERNUMBER,
-                           pobox = x.POBOX,
-                           stateId = x.STATEID,
-                           addressId = x.ADDRESSID
-                       }).ToList(),
-                       CustomerPhoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => new CustomerPhoneContactViewModels
-                       {
-                           active = c.ACTIVE,
-                           customerId = c.CUSTOMERID,
-                           phone = c.PHONE,
-                           phoneContactId = c.PHONECONTACTID,
-                           phoneNumber = c.PHONENUMBER
-                       }).ToList(),
-                       CustomerCompanyInfomation = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(d => d.CUSTOMERID == a.CUSTOMERID).Select(d => new CustomerCompanyInfomationViewModels()
-                       {
-                           annualTurnOver = d.ANNUALTURNOVER,
-                           companyEmail = d.COMPANYEMAIL,
-                           companyId = d.CUSTOMERID,
-                           companyName = d.COMPANYNAME,
-                           companyWebsite = d.COMPANYWEBSITE,
-                           companyInfomationId = d.COMPANYINFOMATIONID,
-                           corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
-                           createdBy = a.CREATEDBY,
-                           registeredOffice = d.REGISTEREDOFFICE,
-                           registrationNumber = d.REGISTRATIONNUMBER,
-                           paidUpCapital = d.PAIDUPCAPITAL,
-                           authorizedCapital = d.AUTHORISEDCAPITAL,
-                           shareholderFund = d.SHAREHOLDER_FUND
-                       }).ToList(),
-                       CustomerEmploymentHistory = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(s => s.CUSTOMERID == a.CUSTOMERID).Select(s => new CustomerEmploymentHistoryViewModels()
-                       {
-                           active = s.ACTIVE,
-                           previousEmployer = s.PREVIOUSEMPLOYER,
-                           customerId = s.CUSTOMERID,
-                           employDate = s.EMPLOYDATE,
-                           placeOfWorkId = s.PLACEOFWORKID,
-                           employerAddress = s.EMPLOYERADDRESS,
-                           employerCountryId = s.EMPLOYERCOUNTRYID,
-                           employerName = s.EMPLOYERNAME,
-                           officePhone = s.OFFICEPHONE,
-                           employerStateId = s.EMPLOYERSTATEID
-                       }).ToList(),
-                       CustomerCompanyDirectors = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                       .Select(s => new CustomerCompanyDirectorsViewModels()
-                       {
-                           companyDirectorId = s.COMPANYDIRECTORID,
-                           surname = s.SURNAME,
-                           firstname = s.FIRSTNAME,
-                           middlename = s.MIDDLENAME,
-                           customerNIN = s.CUSTOMERNIN,
-                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
-                           isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
-                           bankVerificationNumber = s.CUSTOMERBVN,
-                           companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                           customerId = s.CUSTOMERID,
-                           customerName = s.FIRSTNAME + " " + s.SURNAME,
-                           address = s.ADDRESS,
-                           phoneNumber = s.PHONENUMBER,
-                           email = s.EMAILADDRESS
-                       }).ToList(),
-                       CustomerCompanyShareholder = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder)
-                       .Select(s => new CustomerCompanyShareholderViewModels()
-                       {
-                           companyDirectorId = s.COMPANYDIRECTORID,
-                           surname = s.SURNAME,
-                           firstname = s.FIRSTNAME,
-                           middlename = s.MIDDLENAME,
-                           customerNIN = s.CUSTOMERNIN,
-                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
-                           isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
-                           bankVerificationNumber = s.CUSTOMERBVN,
-                           companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                           customerId = s.CUSTOMERID,
-                           customerName = s.FIRSTNAME + " " + s.SURNAME,
-                           address = s.ADDRESS,
-                           phoneNumber = s.PHONENUMBER,
-                           email = s.EMAILADDRESS
-                       }).ToList(),
-                       CustomerCompanyAccountSignatory = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory)
-                       .Select(s => new CustomerCompanyAccountSignatoryViewModels()
-                       {
-                           companyDirectorId = s.COMPANYDIRECTORID,
-                           surname = s.SURNAME,
-                           firstname = s.FIRSTNAME,
-                           middlename = s.MIDDLENAME,
-                           customerNIN = s.CUSTOMERNIN,
-                           numberOfShares = s.SHAREHOLDINGPERCENTAGE,
-                           isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
-                           bankVerificationNumber = s.CUSTOMERBVN,
-                           companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                           customerId = s.CUSTOMERID,
-                           customerName = s.FIRSTNAME + " " + s.SURNAME,
-                           address = s.ADDRESS,
-                           phoneNumber = s.PHONENUMBER,
-                           email = s.EMAILADDRESS
-                       }).ToList(),
-                       CustomerClientOrSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Client)
-                       .Select(cs => new CustomerClientOrSupplierViewModels()
-                       {
-                           client_SupplierId = cs.CLIENT_SUPPLIERID,
-                           clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
-                           firstName = cs.FIRSTNAME,
-                           middleName = cs.MIDDLENAME,
-                           lastName = cs.LASTNAME,
-                           taxNumber = cs.TAX_NUMBER,
-                           rcNumber = cs.REGISTRATION_NUMBER,
-                           hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
-                           bankName = cs.BANKNAME,
-                           casaAccountNumber = cs.CASA_ACCOUNTNO,
-                           natureOfBusiness = cs.NATURE_OF_BUSINESS,
-                           contactPerson = cs.CONTACT_PERSON,
-                           client_SupplierAddress = cs.ADDRESS,
-                           client_SupplierPhoneNumber = cs.PHONENUMBER,
-                           client_SupplierEmail = cs.EMAILADDRESS,
-                           client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
-                       }).ToList(),
-                       CustomerSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
-                       .Select(cs => new CustomerSupplierViewModels()
-                       {
-                           client_SupplierId = cs.CLIENT_SUPPLIERID,
-                           clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
-                           firstName = cs.FIRSTNAME,
-                           middleName = cs.MIDDLENAME,
-                           lastName = cs.LASTNAME,
-                           taxNumber = cs.TAX_NUMBER,
-                           rcNumber = cs.REGISTRATION_NUMBER,
-                           hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
-                           bankName = cs.BANKNAME,
-                           casaAccountNumber = cs.CASA_ACCOUNTNO,
-                           contactPerson = cs.CONTACT_PERSON,
-                           natureOfBusiness = cs.NATURE_OF_BUSINESS,
-                           client_SupplierAddress = cs.ADDRESS,
-                           client_SupplierPhoneNumber = cs.PHONENUMBER,
-                           client_SupplierEmail = cs.EMAILADDRESS,
-                           client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
-                       }).ToList(),
-                       CustomerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID)
-                       .Select(x => new CollateralViewModel()
-                       {
-                           collateralId = x.COLLATERALCUSTOMERID,
-                           collateralTypeId = x.COLLATERALTYPEID,
-                           collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                           customerId = x.CUSTOMERID,
-                           currencyId = x.CURRENCYID,
-                           currency = x.TBL_CURRENCY.CURRENCYNAME,
-                           collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                           collateralCode = x.COLLATERALCODE,
-                           camRefNumber = x.CAMREFNUMBER,
-                           allowSharing = x.ALLOWSHARING,
-                           isLocationBased = (bool)x.ISLOCATIONBASED,
-                           valuationCycle = x.VALUATIONCYCLE,
-                           collateralValue = x.COLLATERALVALUE,
-                           haircut = x.HAIRCUT,
-                           approvalStatus = x.APPROVALSTATUS,
-                       }).ToList(),
-                       CustomerChildren = context.TBL_CUSTOMER_CHILDREN.Where(chd => chd.CUSTOMERID == a.CUSTOMERID)
-                       .Select(kk => new CustomerChildrenViewModel()
-                       {
-                           customerChildrenId = kk.CUSTOMERCHILDRENID,
-                           customerId = kk.CUSTOMERID,
-                           childName = kk.CHILDNAME,
-                           childDateOfBirth = kk.CHILDDATEOFBIRTH
-                       }).ToList(),
+                       //CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
+                       //{
+                       //    address = x.ADDRESS,
+                       //    addressTypeId = x.ADDRESSTYPEID,
+                       //    cityId = x.CITYID,
+                       //    customerId = x.CUSTOMERID,
+                       //    homeTown = x.HOMETOWN,
+                       //    nearestLandmark = x.NEARESTLANDMARK,
+                       //    electricMeterNumber = x.ELECTRICMETERNUMBER,
+                       //    pobox = x.POBOX,
+                       //    stateId = x.STATEID,
+                       //    addressId = x.ADDRESSID
+                       //}).ToList(),
+                       //CustomerPhoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => new CustomerPhoneContactViewModels
+                       //{
+                       //    active = c.ACTIVE,
+                       //    customerId = c.CUSTOMERID,
+                       //    phone = c.PHONE,
+                       //    phoneContactId = c.PHONECONTACTID,
+                       //    phoneNumber = c.PHONENUMBER
+                       //}).ToList(),
+                       //CustomerCompanyInfomation = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(d => d.CUSTOMERID == a.CUSTOMERID).Select(d => new CustomerCompanyInfomationViewModels()
+                       //{
+                       //    annualTurnOver = d.ANNUALTURNOVER,
+                       //    companyEmail = d.COMPANYEMAIL,
+                       //    companyId = d.CUSTOMERID,
+                       //    companyName = d.COMPANYNAME,
+                       //    companyWebsite = d.COMPANYWEBSITE,
+                       //    companyInfomationId = d.COMPANYINFOMATIONID,
+                       //    corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
+                       //    createdBy = a.CREATEDBY,
+                       //    registeredOffice = d.REGISTEREDOFFICE,
+                       //    registrationNumber = d.REGISTRATIONNUMBER,
+                       //    paidUpCapital = d.PAIDUPCAPITAL,
+                       //    authorizedCapital = d.AUTHORISEDCAPITAL,
+                       //    shareholderFund = d.SHAREHOLDER_FUND
+                       //}).ToList(),
+                       //CustomerEmploymentHistory = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(s => s.CUSTOMERID == a.CUSTOMERID).Select(s => new CustomerEmploymentHistoryViewModels()
+                       //{
+                       //    active = s.ACTIVE,
+                       //    previousEmployer = s.PREVIOUSEMPLOYER,
+                       //    customerId = s.CUSTOMERID,
+                       //    employDate = s.EMPLOYDATE,
+                       //    placeOfWorkId = s.PLACEOFWORKID,
+                       //    employerAddress = s.EMPLOYERADDRESS,
+                       //    employerCountryId = s.EMPLOYERCOUNTRYID,
+                       //    employerName = s.EMPLOYERNAME,
+                       //    officePhone = s.OFFICEPHONE,
+                       //    employerStateId = s.EMPLOYERSTATEID
+                       //}).ToList(),
+                       //CustomerCompanyDirectors = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
+                       //.Select(s => new CustomerCompanyDirectorsViewModels()
+                       //{
+                       //    companyDirectorId = s.COMPANYDIRECTORID,
+                       //    surname = s.SURNAME,
+                       //    firstname = s.FIRSTNAME,
+                       //    middlename = s.MIDDLENAME,
+                       //    customerNIN = s.CUSTOMERNIN,
+                       //    numberOfShares = s.SHAREHOLDINGPERCENTAGE,
+                       //    isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                       //    bankVerificationNumber = s.CUSTOMERBVN,
+                       //    companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                       //    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                       //    customerId = s.CUSTOMERID,
+                       //    customerName = s.FIRSTNAME + " " + s.SURNAME,
+                       //    address = s.ADDRESS,
+                       //    phoneNumber = s.PHONENUMBER,
+                       //    email = s.EMAILADDRESS
+                       //}).ToList(),
+                       //CustomerCompanyShareholder = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder)
+                       //.Select(s => new CustomerCompanyShareholderViewModels()
+                       //{
+                       //    companyDirectorId = s.COMPANYDIRECTORID,
+                       //    surname = s.SURNAME,
+                       //    firstname = s.FIRSTNAME,
+                       //    middlename = s.MIDDLENAME,
+                       //    customerNIN = s.CUSTOMERNIN,
+                       //    numberOfShares = s.SHAREHOLDINGPERCENTAGE,
+                       //    isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                       //    bankVerificationNumber = s.CUSTOMERBVN,
+                       //    companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                       //    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                       //    customerId = s.CUSTOMERID,
+                       //    customerName = s.FIRSTNAME + " " + s.SURNAME,
+                       //    address = s.ADDRESS,
+                       //    phoneNumber = s.PHONENUMBER,
+                       //    email = s.EMAILADDRESS
+                       //}).ToList(),
+                       //CustomerCompanyAccountSignatory = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory)
+                       //.Select(s => new CustomerCompanyAccountSignatoryViewModels()
+                       //{
+                       //    companyDirectorId = s.COMPANYDIRECTORID,
+                       //    surname = s.SURNAME,
+                       //    firstname = s.FIRSTNAME,
+                       //    middlename = s.MIDDLENAME,
+                       //    customerNIN = s.CUSTOMERNIN,
+                       //    numberOfShares = s.SHAREHOLDINGPERCENTAGE,
+                       //    isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                       //    bankVerificationNumber = s.CUSTOMERBVN,
+                       //    companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                       //    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                       //    customerId = s.CUSTOMERID,
+                       //    customerName = s.FIRSTNAME + " " + s.SURNAME,
+                       //    address = s.ADDRESS,
+                       //    phoneNumber = s.PHONENUMBER,
+                       //    email = s.EMAILADDRESS
+                       //}).ToList(),
+                       //CustomerClientOrSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Client)
+                       //.Select(cs => new CustomerClientOrSupplierViewModels()
+                       //{
+                       //    client_SupplierId = cs.CLIENT_SUPPLIERID,
+                       //    clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
+                       //    firstName = cs.FIRSTNAME,
+                       //    middleName = cs.MIDDLENAME,
+                       //    lastName = cs.LASTNAME,
+                       //    taxNumber = cs.TAX_NUMBER,
+                       //    rcNumber = cs.REGISTRATION_NUMBER,
+                       //    hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
+                       //    bankName = cs.BANKNAME,
+                       //    casaAccountNumber = cs.CASA_ACCOUNTNO,
+                       //    natureOfBusiness = cs.NATURE_OF_BUSINESS,
+                       //    contactPerson = cs.CONTACT_PERSON,
+                       //    client_SupplierAddress = cs.ADDRESS,
+                       //    client_SupplierPhoneNumber = cs.PHONENUMBER,
+                       //    client_SupplierEmail = cs.EMAILADDRESS,
+                       //    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                       //    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
+                       //}).ToList(),
+                       //CustomerSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                       //.Select(cs => new CustomerSupplierViewModels()
+                       //{
+                       //    client_SupplierId = cs.CLIENT_SUPPLIERID,
+                       //    clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
+                       //    firstName = cs.FIRSTNAME,
+                       //    middleName = cs.MIDDLENAME,
+                       //    lastName = cs.LASTNAME,
+                       //    taxNumber = cs.TAX_NUMBER,
+                       //    rcNumber = cs.REGISTRATION_NUMBER,
+                       //    hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
+                       //    bankName = cs.BANKNAME,
+                       //    casaAccountNumber = cs.CASA_ACCOUNTNO,
+                       //    contactPerson = cs.CONTACT_PERSON,
+                       //    natureOfBusiness = cs.NATURE_OF_BUSINESS,
+                       //    client_SupplierAddress = cs.ADDRESS,
+                       //    client_SupplierPhoneNumber = cs.PHONENUMBER,
+                       //    client_SupplierEmail = cs.EMAILADDRESS,
+                       //    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                       //    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
+                       //}).ToList(),
+                       //CustomerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID)
+                       //.Select(x => new CollateralViewModel()
+                       //{
+                       //    collateralId = x.COLLATERALCUSTOMERID,
+                       //    collateralTypeId = x.COLLATERALTYPEID,
+                       //    collateralSubTypeId = x.COLLATERALSUBTYPEID,
+                       //    customerId = x.CUSTOMERID,
+                       //    currencyId = x.CURRENCYID,
+                       //    currency = x.TBL_CURRENCY.CURRENCYNAME,
+                       //    collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                       //    collateralCode = x.COLLATERALCODE,
+                       //    camRefNumber = x.CAMREFNUMBER,
+                       //    allowSharing = x.ALLOWSHARING,
+                       //    isLocationBased = (bool)x.ISLOCATIONBASED,
+                       //    valuationCycle = x.VALUATIONCYCLE,
+                       //    collateralValue = x.COLLATERALVALUE,
+                       //    haircut = x.HAIRCUT,
+                       //    approvalStatus = x.APPROVALSTATUS,
+                       //}).ToList(),
+                       //CustomerChildren = context.TBL_CUSTOMER_CHILDREN.Where(chd => chd.CUSTOMERID == a.CUSTOMERID)
+                       //.Select(kk => new CustomerChildrenViewModel()
+                       //{
+                       //    customerChildrenId = kk.CUSTOMERCHILDRENID,
+                       //    customerId = kk.CUSTOMERID,
+                       //    childName = kk.CHILDNAME,
+                       //    childDateOfBirth = kk.CHILDDATEOFBIRTH
+                       //}).ToList(),
                    };
 
 
@@ -2170,15 +2228,7 @@ namespace FintrakBanking.Repositories.Customer
             return data;
         }
 
-        public CustomerViewModels GetCustomer(int custormerId)
-        {
-
-            var data = GetCustomers().FirstOrDefault(a => a.customerId == custormerId);
-            if(USE_THIRD_PARTY_INTEGRATION)
-            data.isPoliticallyExposed = finaco.GetExposePersonStatus(data.customerCode);
-
-            return data;
-        }
+       
 
         public IEnumerable<CustomerViewModels> GetCustomerByBranchId(int branchId)
         {
@@ -2651,7 +2701,7 @@ namespace FintrakBanking.Repositories.Customer
                             maritalStatus = a.MARITALSTATUS.Value,
                             title = a.TITLE,
                             middleName = a.MIDDLENAME,
-                            customerTypeName = a.TBL_CUSTOMER_TYPE.NAME, // context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                            customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
                             misCode = a.MISCODE,
                             misStaff = a.MISSTAFF,
                             nationality = a.NATIONALITY,
@@ -2665,8 +2715,7 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
-                        //    relationshipOfficerName =context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
-                      //+ context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
+                            relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID).Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
@@ -2715,7 +2764,6 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
                             relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID).Select(f=>f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
-                     // + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
@@ -3454,7 +3502,11 @@ namespace FintrakBanking.Repositories.Customer
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerInformationApproval).ToList();
 
             return (from a in context.TBL_CUSTOMER_MODIFICATION
+                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                    join br in context.TBL_BRANCH on b.BRANCHID equals br.BRANCHID
+                    join st in context.TBL_STAFF on a.CREATEDBY equals st.STAFFID
                     join c in context.TBL_APPROVAL_TRAIL on a.CUSTOMERMODIFICATIONID equals c.TARGETID
+                    join e in context.TBL_APPROVAL_STATUS on c.APPROVALSTATUSID equals e.APPROVALSTATUSID
                     where
                         (c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                         && a.APPROVALCOMPLETED == false
@@ -3466,19 +3518,18 @@ namespace FintrakBanking.Repositories.Customer
                     select new CustomerInformationApprovalViemModel
                     {
                         customerId = a.CUSTOMERID,
-                        customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                        customerCode = b.CUSTOMERCODE,
                         customerModificationId = a.CUSTOMERMODIFICATIONID,
                         targetId = a.TARGETID,
-                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                        customerName = b.FIRSTNAME + " " + b.MIDDLENAME + " " + b.LASTNAME,
                         modificationTyepId = a.MODIFICATIONTYPEID,
                         modificationType = a.TBL_CUSTOMER_MODIFICATN_TYPE.MODIFICATIONTYPENAME,
-                     //   approvalStatus = c.APVL_ST.APPROVALSTATUSNAME,
+                        approvalStatus = e.APPROVALSTATUSNAME,
                         dateUpdated = a.DATETIMECREATED,
-                        createdBy = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == a.CREATEDBY).FIRSTNAME + " "
-                        + context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == a.CREATEDBY).LASTNAME,
-                        customerBranch = a.TBL_CUSTOMER.TBL_BRANCH.BRANCHNAME,
+                        createdBy = st.FIRSTNAME + " " + st.LASTNAME,
+                        customerBranch = br.BRANCHNAME,
                         operationId = (int)OperationsEnum.CustomerInformationApproval
-                    }).ToList(); //.GroupBy(x => ).Select(g => g.FirstOrDefault());
+                    }).ToList(); 
 
         }
         public bool GoForApproval(ApprovalViewModel entity)
@@ -3489,13 +3540,15 @@ namespace FintrakBanking.Repositories.Customer
             {
                 try
                 {
-                    workflow.LogForApproval(entity);
-                    var b = workflow.NextLevelId ?? 0;
-                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
+                    workflow.StaffId = entity.staffId;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workflow.TargetId = entity.targetId;
+                    workflow.Comment = entity.comment;
+                    workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+
+                    workflow.LogActivity();
+                   
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = ApproveCustomerInformation(entity.targetId, (short)workflow.StatusId, entity);

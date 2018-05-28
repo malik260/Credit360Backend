@@ -1,5 +1,7 @@
 ﻿using FintrakBanking.APICore.App_Start;
+using FintrakBanking.APICore.ExceptionLogger.SeriLogger;
 using FintrakBanking.APICore.Filters;
+using Serilog;
 using System.Security;
 using System.Web;
 using System.Web.Http;
@@ -9,7 +11,6 @@ using System.Web.Http.Filters;
 namespace FintrakBanking.APICore.core
 {
     [JWTAuthorize]
-
     //[EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class ApiControllerBase : ApiController
@@ -26,7 +27,8 @@ namespace FintrakBanking.APICore.core
     {
         public override void OnException(HttpActionExecutedContext context)
         {
-            Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Elmah.Error(context.Exception));
+            SeriLogger.LogSetup();
+           // Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Elmah.Error(context.Exception));
         }
     }
 }

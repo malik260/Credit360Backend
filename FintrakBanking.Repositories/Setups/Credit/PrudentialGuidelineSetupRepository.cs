@@ -38,17 +38,19 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public string AddGuideline(PrudentialGuidelineViewModel guideline)
         {
             int confirmation = 0;
+            string prudentialGuidelineName = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(w => w.PRUDENTIALGUIDELINETYPEID == guideline.prudentialGuidelineTypeId).FirstOrDefault().PRUDENTIALGUIDELINETYPENAME;
             if (guideline!=null)
             {
                 var guidelineList = new TBL_LOAN_PRUDENTIALGUIDELINE()
                 {
-                    STATUSNAME = guideline.statusName,
-                  //  CLASSIFICATION=guideline.classification,
+                    STATUSNAME = prudentialGuidelineName,
+                 PRUDENTIALGUIDELINETYPEID = (short)guideline.prudentialGuidelineId,
                     INTERNALMINIMUM=guideline.internalMinimun,
                     INTERNALMAXIMUM=guideline.internalMaximun,
                     EXTERNALMINIMUM=guideline.externalMinimun,
                     EXTERNALMAXIMUM=guideline.externalMaximun,
-                    NARRATION=guideline.naration
+                    NARRATION=guideline.naration,
+                    
 
                 };
 
@@ -100,12 +102,23 @@ namespace FintrakBanking.Repositories.Setups.Credit
                                prudentialGuidelineId = a.PRUDENTIALGUIDELINESTATUSID,
                                statusName= a.STATUSNAME,
                                classification= a.TBL_LOAN_PRUDENT_GUIDE_TYPE.PRUDENTIALGUIDELINETYPENAME,
-                               internalMinimun= a.INTERNALMINIMUM,
-                               internalMaximun= a.INTERNALMAXIMUM,
-                               externalMinimun= a.EXTERNALMINIMUM,
-                               externalMaximun= a.EXTERNALMAXIMUM,
+                               internalMinimun= (int)a.INTERNALMINIMUM,
+                               internalMaximun= (int)a.INTERNALMAXIMUM,
+                               externalMinimun= (int)a.EXTERNALMINIMUM,
+                               externalMaximun= (int)a.EXTERNALMAXIMUM,
                                naration= a.NARRATION
                             }).ToList();
+            return guideline;
+        }
+
+        public IEnumerable<PrudentialGuidelineViewModel> GetAllGuidelineTypes(int getCompanyId)
+        {
+            var guideline = (from a in context.TBL_LOAN_PRUDENT_GUIDE_TYPE
+                             select new PrudentialGuidelineViewModel
+                             {
+                                 prudentialGuidelineTypeId = a.PRUDENTIALGUIDELINETYPEID,
+                                 prudentialGuidelineTypeName = a.PRUDENTIALGUIDELINETYPENAME
+                             }).ToList();
             return guideline;
         }
 
@@ -117,10 +130,10 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  statusName = a.STATUSNAME,
                                 classification = a.TBL_LOAN_PRUDENT_GUIDE_TYPE.PRUDENTIALGUIDELINETYPENAME,
-                                 internalMinimun = a.INTERNALMINIMUM,
-                                 internalMaximun = a.INTERNALMAXIMUM,
-                                 externalMinimun = a.EXTERNALMINIMUM,
-                                 externalMaximun = a.EXTERNALMAXIMUM,
+                                 internalMinimun = (int)a.INTERNALMINIMUM,
+                                 internalMaximun = (int)a.INTERNALMAXIMUM,
+                                 externalMinimun = (int)a.EXTERNALMINIMUM,
+                                 externalMaximun = (int)a.EXTERNALMAXIMUM,
                                  naration = a.NARRATION
                              }).FirstOrDefault();
             return guideline;
@@ -129,9 +142,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public string UpdateGuideline(PrudentialGuidelineViewModel guideline, int prudentialGuidelineId)
         {
             var data = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(o => o.PRUDENTIALGUIDELINESTATUSID == prudentialGuidelineId).FirstOrDefault();
+            string prudentialGuidelineName = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(w => w.PRUDENTIALGUIDELINETYPEID == guideline.prudentialGuidelineTypeId).FirstOrDefault().PRUDENTIALGUIDELINETYPENAME;
+
             if (guideline != null)
             {
-                data.STATUSNAME = guideline.statusName;
+                data.STATUSNAME = prudentialGuidelineName;
                // data.CLASSIFICATION= guideline.classification;
                 data.INTERNALMINIMUM=guideline.internalMinimun;
                 data.INTERNALMAXIMUM=guideline.internalMaximun;

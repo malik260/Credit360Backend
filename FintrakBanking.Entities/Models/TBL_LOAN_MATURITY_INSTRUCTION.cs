@@ -20,11 +20,14 @@ namespace FintrakBanking.Entities.Models
 
         public short INSTRUCTIONTYPEID { get; set; }
 
+        public bool ISUSED { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
+
 
         public DateTime? DATETIMEUPDATED { get; set; }
 

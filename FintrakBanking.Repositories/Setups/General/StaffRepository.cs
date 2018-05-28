@@ -19,6 +19,7 @@ using System.Text;
 using GemBox.Spreadsheet;
 using System.IO;
 using FintrakBanking.ViewModels.Admin;
+using System.Web;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -30,6 +31,8 @@ namespace FintrakBanking.Repositories.Setups.General
         private IWorkflow workflow;
         private IApprovalLevelStaffRepository level;
         private FinTrakBankingDocumentsContext documentsContext;
+
+        public object FileUploadControl { get; private set; }
 
         public StaffRepository(FinTrakBankingContext _context,
                                IAuditTrailRepository _auditTrail,
@@ -136,26 +139,26 @@ namespace FintrakBanking.Repositories.Setups.General
                              departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
                              departmentUnitId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
                              departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
-                        
+
                              //MisInfoCode = c.MISC,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                              //State = c.State.StateName
                              CityId = c.CITYID,
                          }).ToList();
 
-         var department = (from k in context.TBL_DEPARTMENT_UNIT
-                           select new DepartmentViewModel()
-                           {
-                               departmentId = (short)k.DEPARTMENTID,
-                               unitId = k.DEPARTMENTUNITID,
-                               unitName = k.DEPARTMENTUNITNAME
-                           }).ToList();
+            var department = (from k in context.TBL_DEPARTMENT_UNIT
+                              select new DepartmentViewModel()
+                              {
+                                  departmentId = (short)k.DEPARTMENTID,
+                                  unitId = k.DEPARTMENTUNITID,
+                                  unitName = k.DEPARTMENTUNITNAME
+                              }).ToList();
 
             foreach (var s in staff)
             {
 
                 s.departmentUnits = department.Where(x => x.departmentId == s.DepartmentId);
-                                  
+
             }
             return staff;
         }
@@ -366,7 +369,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     FIRSTNAME = staffModel.FirstName,
                     MIDDLENAME = staffModel.MiddleName,
                     LASTNAME = staffModel.LastName,
-                    STAFFCODE = targetStaff?.STAFFCODE,
+                    STAFFCODE = staffModel.StaffCode,
                     JOBTITLEID = staffModel.JobTitleId,
                     COMPANYID = staffModel.companyId,
                     STAFFROLEID = staffModel.staffRoleId,
@@ -493,7 +496,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public int GoForApproval(ApprovalViewModel entity)
         {
             using (var trans = context.Database.BeginTransaction())
             {
@@ -511,6 +514,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     context.SaveChanges();
 
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var staff = context.TBL_TEMP_STAFF.Find(entity.targetId);
+                        staff.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                        context.SaveChanges();
+                        trans.Commit();
+                        return 2;
+                    }
+
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = ApproveStaff(entity.targetId, (short)workflow.StatusId, entity);
@@ -519,14 +531,14 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             trans.Commit();
                         }
-                        return true;
+                        return 1;
                     }
                     else
                     {
                         trans.Commit();
                     }
 
-                    return false;
+                    return 0;
                 }
                 catch (Exception ex)
                 {
@@ -681,7 +693,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (entity != null) //Update existing staff with tempStaff record
             {
-              
+
                 entity.FIRSTNAME = temp.FIRSTNAME;
                 entity.COMPANYID = temp.COMPANYID;
                 entity.MIDDLENAME = temp.MIDDLENAME;
@@ -825,9 +837,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         else
                         {
                             trans.Commit();
-                        }
-
-                        output = false;
+                            output = false;
+                        } 
                     }
                     catch (Exception ex)
                     {
@@ -1076,11 +1087,11 @@ namespace FintrakBanking.Repositories.Setups.General
                 context.TBL_AUDIT.Add(audit);
                 var output = context.SaveChanges() > 0;
 
-                if (tempUser!= null && isUpdate == false)
+                if (tempUser != null && isUpdate == false)
                 {
-                        targetUser.STAFFID = entity.STAFFID;
-                        context.TBL_PROFILE_USER.Add(targetUser);
-                        return context.SaveChanges() > 0;
+                    targetUser.STAFFID = entity.STAFFID;
+                    context.TBL_PROFILE_USER.Add(targetUser);
+                    return context.SaveChanges() > 0;
                 }
                 return output;
             }
@@ -1183,7 +1194,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 MIDDLENAME = staffModel.MiddleName,
                 COMPANYID = staffModel.companyId,
                 LASTNAME = staffModel.LastName,
-                STAFFCODE = StaticHelpers.GetUniqueKey(6),
+                STAFFCODE = staffModel.StaffCode,
                 JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
                 SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
@@ -1599,37 +1610,6 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
-
-        private string StoredFilePath(string filename)
-        {
-            CreditBureauHelp helper = new CreditBureauHelp();
-
-            string folderName = string.Empty;
-            folderName = helper.FilePath();
-            folderName = Path.Combine(folderName, "Excel_Uploads");
-            string pathString = Path.Combine(folderName, filename);
-
-            if (!Directory.Exists(folderName))
-            {
-                Directory.CreateDirectory(folderName);
-            }
-
-            if (!File.Exists(pathString))
-            {
-                using (StreamWriter sw = new StreamWriter(pathString))
-                {
-                    // sw.Write(pathString);
-                }
-                return pathString;
-            }
-            return pathString;
-            //else
-            //{
-            //    DisposeTicket(pathString);
-            //    StoredTicket(userName, ticket);
-            //}
-        }
-
         public staffBulkFeedbackViewModel UploadStaffData(StaffDocumentViewModel model, byte[] file)
         {
             var staffInfo = new List<StaffInfoViewModel>();
@@ -1639,13 +1619,12 @@ namespace FintrakBanking.Repositories.Setups.General
             var staffBulkFeedbackViewModel = new staffBulkFeedbackViewModel();
 
             // Loads a spreadsheet from a file with the specified path
-            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5"); //SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
 
-            string path = "_" + model.createdBy + "." + model.fileExtension;
-            path = StoredFilePath(path);
-            File.WriteAllBytes(path, file.ToArray());
+            MemoryStream ms = new MemoryStream(file);
 
-            ExcelFile ef = ExcelFile.Load(path);
+            ExcelFile ef = ExcelFile.Load(ms,LoadOptions.XlsxDefault);
 
             ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
 
@@ -1700,11 +1679,14 @@ namespace FintrakBanking.Repositories.Setups.General
                                 rowSuccess = false;
                                 staffRowData.staffRoleCode = cell.Value.ToString();
                                 staffRowData.message = staffRowData.message + $"The ROLECODE @  '{cellColumn}' does not exist in the role log. ";
-                                //throw new Exception("The ROLECODE @" + cellColumn + " does not exist in the role log");
                             }
                             break;
                         case "D":
-                            var branchInfo = context.TBL_BRANCH.Where(x => x.BRANCHCODE == cell.Value.ToString()).FirstOrDefault();
+                            string cellValue = cell.Value.ToString();
+                            var branchInfoSub = context.TBL_BRANCH.Where(x => x.BRANCHCODE == cellValue);
+
+                            var branchInfo = branchInfoSub.FirstOrDefault();
+
                             if (branchInfo != null)
                             {
                                 staffRowData.BranchId = branchInfo.BRANCHID;
@@ -1716,7 +1698,6 @@ namespace FintrakBanking.Repositories.Setups.General
                                 rowSuccess = false;
                                 staffRowData.branchCode = cell.Value.ToString();
                                 staffRowData.message = staffRowData.message + $"the 'BRANCHCODE' @  '{cellColumn}' does not exist in the branch log";
-                                //throw new Exception($"the 'BRANCHCODE' @" + cellColumn + " does not exist in the branch log");
                             }
                             break;
                         case "E":
@@ -1742,7 +1723,10 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRowData.Email = cell.Value.ToString();
                             break;
                         case "I":
-                            var supervisor = context.TBL_STAFF.Where(x => x.STAFFCODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+                            string iCellValue = cell.Value.ToString();
+                            var supervisorInfoSub = context.TBL_STAFF.Where(x => x.STAFFCODE == iCellValue);
+
+                            var supervisor = supervisorInfoSub.FirstOrDefault();
 
                             if (supervisor != null)
                             {
@@ -1753,7 +1737,6 @@ namespace FintrakBanking.Repositories.Setups.General
                             {
                                 rowSuccess = false;
                                 staffRowData.message = staffRowData.message + $"Supervisor Code @ '{cellColumn}' does not exist. ";
-                                // throw new Exception($"Supervisor @" + cellColumn + " does not exist.");
                             }
                             break;
                         case "J":
@@ -2101,6 +2084,24 @@ namespace FintrakBanking.Repositories.Setups.General
             workflow.LogActivity();
 
             return context.SaveChanges() > 0;
+        }
+        public byte[] GetStaffSampleDocument()
+        {
+            // HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data")
+            var pathString = HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data/StaffSampleDocument.xlsx");
+            byte[] readBuffer = System.IO.File.ReadAllBytes(pathString);
+
+            return readBuffer;
+
+            //string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            //string filePath = Path.Combine(appDataFolder, "test.txt");
+            //var reader = new StreamReader(filePath);
+
+            //string path = Server.MapPath(String.Format("~/App_Data/uploads/{0}", fileName));
+            //if (File.Exists(path))
+            //{
+            //    return File(path, "application/pdf");
+            //}
         }
     }
 }

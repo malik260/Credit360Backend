@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool AddTempStaff(StaffInfoViewModel staffModel);
 
-        bool GoForApproval(ApprovalViewModel entity);
+        int GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<StaffInfoViewModel> GetAllStaff();
 
@@ -64,5 +64,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateSupervisor(SupervisorViewModel entity);
 
         bool GoForBulkApproval(List<ApprovalViewModel> model, UserInfo userInfo);
+        byte[] GetStaffSampleDocument();
     }
 }

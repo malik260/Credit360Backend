@@ -6,16 +6,11 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
+    [Table("STG_LOAN_MART")]
     public partial class STG_LOAN_MART
     {
-        [Key]
-        [Column(Order = 0)]
-        [StringLength(255)]
-        public string LOANREFERENCENUMBER { get; set; }
-
-        [Key]
-        [Column(Order = 1, TypeName = "date")]
-        public DateTime REPORTDATE { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal ID { get; set; }
 
         [StringLength(255)]
         public string PRODUCTCODE { get; set; }
@@ -29,44 +24,37 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(255)]
         public string BRANCHCODE { get; set; }
 
-        public DateTime? EFFECTIVEDATE { get; set; }
-
         public DateTime? MATURITYDATE { get; set; }
 
+        [Key]
+        [Column(Order = 0)]
         [StringLength(255)]
-        public string COMPANYCODE { get; set; }
+        public string LOANREFERENCENUMBER { get; set; }
 
-        public double? TENOR { get; set; }
+        public int? TENOR { get; set; }
 
-        [StringLength(255)]
-        public string PRINCIPALFREQUENCYTYPEID { get; set; }
+        public int? PRINCIPALFREQUENCYTYPEID { get; set; }
 
-        [StringLength(255)]
-        public string INTERESTFREQUENCYTYPEID { get; set; }
+        public int? INTERESTFREQUENCYTYPEID { get; set; }
 
-        public double? INTERESTRATE { get; set; }
+        public int? FEEFREQUENCYTYPEID { get; set; }
 
-        //[Column(TypeName = "money")]
+        [Column(TypeName = "float")]
+        public decimal? INTERESTRATE { get; set; }
+
+        public DateTime? EFFECTIVEDATE { get; set; }
+
         public decimal? PRINCIPALAMOUNT { get; set; }
 
-        public double? PRINCIPALINSTALLMENTLEFT { get; set; }
+        public int? PRINCIPALINSTALLMENTLEFT { get; set; }
 
-        public double? INTERESTINSTALLMENTLEFT { get; set; }
+        public int? INTERESTINSTALLMENTLEFT { get; set; }
 
         public DateTime? FIRSTPRINCIPALPAYMENTDATE { get; set; }
 
         public DateTime? FIRSTINTERESTPAYMENTDATE { get; set; }
 
-        //[Column(TypeName = "money")]
         public decimal? OUTSTANDINGPRINCIPAL { get; set; }
-
-        //[Column(TypeName = "money")]
-        public decimal? OUTSTANDINGINTEREST { get; set; }
-
-        [StringLength(50)]
-        public string CURRENCY { get; set; }
-
-        public double? EXCHANGERATE { get; set; }
 
         [StringLength(255)]
         public string CLASSIFICATION { get; set; }
@@ -74,16 +62,27 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(255)]
         public string SUBCLASSIFICATION { get; set; }
 
-        //[Column(TypeName = "money")]
-        public decimal? CASABALANCE { get; set; }
+        public decimal CASABALANCE { get; set; }
 
-        [StringLength(255)]
+        [Key]
+        [Column(Order = 1)]
+        public DateTime REPORTDATE { get; set; }
+
+        [Required]
+        [StringLength(50)]
         public string STAFFCODE { get; set; }
 
-        [StringLength(255)]
+        [Required]
+        [StringLength(20)]
         public string SECTOR { get; set; }
 
-        [StringLength(255)]
+        [StringLength(20)]
         public string SUBSECTOR { get; set; }
+
+        [StringLength(20)]
+        public string CURRENCY { get; set; }
+
+        [Column(TypeName = "float")]
+        public decimal? EXCHANGERATE { get; set; }
     }
 }

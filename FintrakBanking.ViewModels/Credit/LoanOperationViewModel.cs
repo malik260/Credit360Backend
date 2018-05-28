@@ -52,4 +52,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int aplicationDetailId { get; set; }
     }
 
+    public class subAllocationViewModel : GeneralEntity
+    {
+        public decimal newPrincipalAmount { get; set; }
+        public string loanReferenceNumber { get; set; }
+    }
+
 }

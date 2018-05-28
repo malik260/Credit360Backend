@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using FinTrakBanking.ThirdPartyIntegration.CWGAPI;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -51,7 +52,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId)
         {
             List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
-            var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId);
+            var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
             var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
             var customer = from a in context.TBL_CUSTOMER
                            where a.DELETED == false && a.CUSTOMERID == customerId
@@ -68,7 +69,6 @@ namespace FintrakBanking.Repositories.Credit
                                dateOfBirth = (DateTime)a.DATEOFBIRTH,
                                customerId = a.CUSTOMERID,
                                emailAddress = a.EMAILADDRESS,
-                               //phoneNumber = a.TBL_CUSTOMER_PHONECONTACT.Any() ? a.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONE : null,
                                firstName = a.FIRSTNAME,
                                gender = a.GENDER,
                                lastName = a.LASTNAME,
@@ -76,7 +76,6 @@ namespace FintrakBanking.Repositories.Credit
                                maritalStatus = a.MARITALSTATUS.Value,
                                title = a.TITLE,
                                middleName = a.MIDDLENAME,
-                               //customerAccountNo = a.TBL_CASA.FirstOrDefault().PRODUCTACCOUNTNUMBER,
                               customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
                                nationality = a.NATIONALITY,
                                occupation = a.OCCUPATION,
@@ -84,24 +83,32 @@ namespace FintrakBanking.Repositories.Credit
                                isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                                sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                                sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                              // subSectorId = (short)a.SUBSECTORID,
                                subSectorName = a.TBL_SUB_SECTOR.NAME,
                                taxNumber = a.TAXNUMBER,
                                riskRatingId = a.RISKRATINGID,
                                riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                                customerBVN = a.CUSTOMERBVN,
-                               //rcNumber = customerInfo.Any() ? customerInfo.FirstOrDefault().REGISTRATIONNUMBER : null,
                                //isCreditBureauUploadCompleted = false,
                                companyDirectorId = null,
                                creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false
-                                                                                            && x.COMPANYDIRECTORID == null).Count(),
-                               // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)).Count(),
+                                                                                            && x.COMPANYDIRECTORID == null
+                                                                                            && (DateTime.Now - a.DATETIMECREATED).TotalDays <= 30).Count(),
+                                                                                            // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)).Count(),
                            };
 
             foreach (var item in customer)
             {
+                var casa = context.TBL_CASA.Where(x => x.CUSTOMERID == item.customerId).FirstOrDefault();
+                if (casa != null) item.customerAccountNo = casa.PRODUCTACCOUNTNUMBER;
+
+                var phoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == item.customerId).FirstOrDefault();
+                if (phoneContact != null) item.phoneNumber = phoneContact.PHONENUMBER;
+
+                if (customerInfo != null) item.rcNumber = customerInfo.REGISTRATIONNUMBER;
+
                 allCorporate.Add(item);
             }
+           
 
             if (customerType == (short)CustomerTypeEnum.Corporate)
             {
@@ -126,12 +133,24 @@ namespace FintrakBanking.Repositories.Credit
                         lastName = director.SURNAME,
                         middleName = director.MIDDLENAME,
                         creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
-                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID).Count(),
+                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
+                                                                                    && (DateTime.Now - x.DATETIMECREATED).TotalDays <= 30).Count(),
                                                                                   //  && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)).Count()
                     };
                     allCorporate.Add(shareholdersData);
                 }
             }
+
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            {
+                foreach (var item in customer)
+                {
+                    CustomerDetails customerAPI = new CustomerDetails(context);
+                    customerAPI.AddCustomerAccounts(item.customerCode);
+                }
+            }
+
             return allCorporate;
         }
 
@@ -313,7 +332,8 @@ namespace FintrakBanking.Repositories.Credit
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                                 //&& (DbFunctions.DiffDays(DbFunctions.TruncateTime(a.DATETIMECREATED), DbFunctions.TruncateTime(DateTime.Now)).Value <= 30 ) 
+                                               && (DateTime.Now - a.DATETIMECREATED).TotalDays <= 30
+                                                //&& (DbFunctions.DiffDays(DbFunctions.TruncateTime(a.DATETIMECREATED), DbFunctions.TruncateTime(DateTime.Now)).Value <= 30 ) 
                                                 select new LoanCreditBereauViewModel
                                                {
                                                    companyDirectorId = a.COMPANYDIRECTORID,

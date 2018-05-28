@@ -229,6 +229,10 @@ namespace FintrakBanking.Common.Enum
         LoanInterestRateChange = 206,
         Loggedfailed = 207,
         WriteToStagingTable = 208,
+        CustomChartOfAccountAdded = 208,
+        CustomChartOfAccountUpdated = 209,
+        CustomChartOfAccountDeleted = 210,
+
     };
 
 

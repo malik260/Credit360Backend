@@ -6,19 +6,22 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
+    [Table("STG_PRICE_INDEX_RATE")]
     public partial class STG_PRICE_INDEX_RATE
     {
-        public int ID { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal ID { get; set; }
 
-        [Column(TypeName = "date")]
         public DateTime? PRICEDATE { get; set; }
 
-        public double? BID_RATE { get; set; }
+        [Column(TypeName = "float")]
+        public decimal? BID_RATE { get; set; }
 
-        [StringLength(250)]
+        [StringLength(255)]
         public string PRICEINDEX { get; set; }
 
-        public double? OFFER_RATE { get; set; }
+        [Column(TypeName = "float")]
+        public decimal? OFFER_RATE { get; set; }
 
         [StringLength(20)]
         public string CURRENCY { get; set; }

@@ -374,7 +374,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("revolving-type")]
+        public HttpResponseMessage GetRevolvingType()
+        {
+            try
+            {
+                var data = repo.GetRevolvingTypes();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("product-type/{productTypeId}")]
         public HttpResponseMessage GetProductTypeById(short productTypeId)
         {
@@ -931,14 +954,23 @@ namespace FintrakBanking.APICore.Controllers
 
                 var data = repo.GoForApproval(entity);
 
-                if (data)
+                if (data == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Product record has been approved successfully" });
+                        new { success = true, message = "Product record has been approved successfully." });
+                }
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Product details has been disapproved." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office." });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                
             }
             catch (System.Exception ex)
             {

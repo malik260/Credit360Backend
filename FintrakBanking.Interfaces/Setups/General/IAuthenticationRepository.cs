@@ -18,13 +18,24 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         Task<bool> DeleteUser(int userId);
 
+        Task<bool> IsAccountLocked(string userName);
+
+        Task<SessionStatusInfo> CheckSessionState(string username);
+
+        SessionStatusInfo SessionInfo { get; set; }
+
         Task<bool> UpdateUser(int userId, UserViewModel user);
 
-        UserViewModel FindUserByUserNameAndPassword(string username, string password);
+        Task<bool> IsAccountActive(string userName);
 
-        bool IsUserExits(string username);
+
+        Task<UserViewModel> FindUserByUserNameAndPassword(string username, string password);
+ 
+
+        bool IsUserExisting(string username);
 
         bool IsUserAccountValid(string username);
+
         List<string> GetUserActivitiesByUser(int userId);
 
         // Groups

@@ -18,7 +18,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string staffName { get; set; }
         public bool isSubsequent { get; set; }
         public int loanApplicationDetailId { get; set; }
-        public short? responseTypeId { get; set; }
+        public short responseTypeId { get; set; }
         public short? checkListStatusId { get; set; }
         public bool? checkListValidated { get; set; }
         public short? approvalStatusId { get; set; }

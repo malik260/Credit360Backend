@@ -133,6 +133,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     middleName = customerViewModels.middleName,
                     customerTypeName = customerViewModels.customerType,
                     customerTypeId = (short)(customerViewModels.customerType == "CORPORATE" ? 2 : 1),
+                    isPoliticallyExposed = customerViewModels.politicallyExposedPerson == "N" ? false : true,
                 });
 
             }
@@ -156,7 +157,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             foreach (var item in data)
             {
                 var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currency).CURRENCYID;
-                var accountStatusId = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME == item.accountStatusName).ACCOUNTSTATUSID;
+                var accountStatusId = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower()).ACCOUNTSTATUSID;
                 TBL_CASA addCustomerAcct = new TBL_CASA();
                 addCustomerAcct.CUSTOMERID = customerId;
                 addCustomerAcct.AVAILABLEBALANCE = item.availableBalance;
@@ -165,7 +166,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addCustomerAcct.PRODUCTACCOUNTNUMBER = item.productAccountNumber;
                 addCustomerAcct.PRODUCTID = (short)(item.productCode != "" ? 8 : 8);
                 addCustomerAcct.COMPANYID = 1;
-                addCustomerAcct.BRANCHID = (short)(item.branchCode != "" ? 1 : 1);
+                addCustomerAcct.BRANCHID = (short)(item.branchCode != "" ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode).BRANCHID : 94);
                 addCustomerAcct.CURRENCYID = currencyId;//(short)(item.currency == "NGN" ? 1 : 0);
                 addCustomerAcct.ISCURRENTACCOUNT = true;
                 addCustomerAcct.ACCOUNTSTATUSID = (short) accountStatusId;//(short)(item.accountStatusName == "Active" ? 1 : 3);
@@ -180,7 +181,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             if (customerExist == null)
             {
                 this.context.TBL_CASA.AddRange(customerAcct);
-                //context.SaveChangesAsync();
+                context.SaveChanges();
             }
             else
             {
@@ -322,7 +323,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                         currency = d.currencyType,
                         branchCode = d.branch,
                         accountStatusName = d.accountStatus,
-                        effectiveDate = d.lastTransactionDate,
+                        //effectiveDate = d.lastTransactionDate,
                         availableBalance = d.balance,
                         ledgerBalance = d.balance,
 

@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public decimal balance { get; set; }
         public string branch { get; set; }
         public string accountStatus  { get; set; }
-        public DateTime lastTransactionDate { get; set; }
+        public string lastTransactionDate { get; set; }
 
     }
 
@@ -53,7 +53,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string customerType { get; set; }
         public string relationshipOfficerCode { get; set; }
         public string relationshipOfficerName { get; set; }
-        public bool politicallyExposedPerson  { get; set; }
+        public string politicallyExposedPerson  { get; set; }
         public string misCode { get; set; }
         public string staffCode { get; set; }
         public string fsCaptionGroupCode { get; set; }

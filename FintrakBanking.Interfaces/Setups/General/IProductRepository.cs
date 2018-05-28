@@ -10,6 +10,7 @@ namespace FintrakBanking.Interfaces.Setups.General
     public interface IProductRepository
     {
         IEnumerable<ProductCategoryViewModel> GetAllProductCategory();
+        IEnumerable<RevolvingTypeViewModel> GetRevolvingTypes();
         IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId);
         IEnumerable<LookupViewModel> GetAllProductClass();
         IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId);
@@ -27,7 +28,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductViewModel> GetProductByTypeAndCategory(short productTypeId, short productCategoryId);
         bool IsProductCodeAlreadyExist(string productCode);
         bool IsProductExist(string productCode);
-        bool GoForApproval(ApprovalViewModel entity);
+        int GoForApproval(ApprovalViewModel entity);
         Task<ProductViewModel> AddTempProduct(ProductViewModel product);
         Task<bool> UpdateProduct(int productId, ProductViewModel product);
         IEnumerable<LookupViewModel> GetAllProductBehaviourTypes();

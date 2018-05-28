@@ -22,7 +22,7 @@ namespace FintrakBanking.Repositories.Setups.General
             this.context = _context;
         }
 
-      
+
 
         public async Task<bool> CreateUser(UserViewModel user)
         {
@@ -81,7 +81,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> UpdateUser(int userId, UserViewModel user)
         {
-            bool result = false;
             try
             {
                 var targetUser = context.TBL_PROFILE_USER.Find(userId);
@@ -92,193 +91,186 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 targetUser.USERNAME = user.username;
                 var response = await context.SaveChangesAsync();
-                result = true;
+                return true;
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-
-            return result;
         }
-        public UserViewModel FindUserByUserName(string username)
+        public async Task<UserViewModel> FindUserByUserNameAsync(string username)
         {
-            var result = CheckSessionState(username);
+            var result = _sessionInfo;
 
             if (result.state > 0)
-                throw new CustomException(result.errorMessage);
-
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username);
-
-            if (_user != null)
-            {
-                try
+                result = new SessionStatusInfo
                 {
-                    var data = (from p in context.TBL_PROFILE_USER
-                                join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
-                                join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
-                                join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                                where p.USERNAME == username
-                                select new UserViewModel
-                                {
-                                    companyId = coy.COMPANYID,
-                                    staffId = p.STAFFID,
-                                    user_id = p.USERID,
-                                    username = p.USERNAME,
-                                    staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                                    branchId = st.BRANCHID.Value,
-                                    countryId = coy.COUNTRYID,
-                                    branchName = br.BRANCHNAME,
-                                    companyName = coy.NAME,
+                    loginCode = Guid.NewGuid(),
+                    state = 0,
+                    errorMessage = "",
+                };
 
-                                }).First();
-                    if (data == null)
-                    {
-                        _user.LOGINCODE = null;
-                        _user.FAILEDLOGONATTEMPT += 1;
-                    }
-                    else
-                    {
-                        _user.LASTLOGINDATE = DateTime.Now;
-                        _user.LOGINCODE = result.loginCode.ToString();
-                    }
-                    context.SaveChanges();
+            var user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username);
 
-                    return data;
+            if (user != null)
+            {
+                var data = (from p in context.TBL_PROFILE_USER
+                    join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
+                    join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                    join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                    where p.USERNAME.ToLower() == username.ToLower()
+                    select new UserViewModel
+                    {
+                        companyId = coy.COMPANYID,
+                        staffId = p.STAFFID,
+                        user_id = p.USERID,
+                        username = p.USERNAME,
+                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                        branchId = st.BRANCHID.Value,
+                        countryId = coy.COUNTRYID,
+                        branchName = br.BRANCHNAME,
+                        companyName = coy.NAME
+                    }).FirstOrDefault();
+
+                if (data == null)
+                {
+                    int count = user.FAILEDLOGONATTEMPT ?? 0;
+                    if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                    {
+                        user.ISLOCKED = true;
+                        user.LASTLOCKOUTDATE = DateTime.Now;
+                    }
+
+                    user.LOGINCODE = null;
+                    user.FAILEDLOGONATTEMPT += 1;
                 }
-                catch (Exception ex)
-                {                
-                    throw new CustomException(ex.Message);
+                else
+                {
+                    user.LASTLOGINDATE = DateTime.Now;
+                    user.LOGINCODE = result.loginCode.ToString();
                 }
+
+                context.SaveChanges();
+                
+                return data;
+
             }
 
-            return null;
+            throw new Exception("1001 Incorrect username or password.");
+
+            //return null;
         }
-         
-        private SessionStatusInfo CheckSessionState(string username)
+
+        public async Task<SessionStatusInfo> CheckSessionState(string username)
         {
             Guid loginCode = Guid.Empty;
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
-            dynamic result = null;
-          
+            var user = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
+            SessionStatusInfo result = null;
 
-            if (_user != null)
+            if (user != null)
             {
-                if (_user.LOGINCODE == null || _user.LOGINCODE == Guid.Empty.ToString())
+                if (user.LOGINCODE == null || user.LOGINCODE == Guid.Empty.ToString())
                     result = new SessionStatusInfo
                     {
                         loginCode = Guid.NewGuid(),
                         state = 0,
                         errorMessage = "",
-                         
+
                     };
 
-                else
+                else if (user.LOGINCODE != null)
                 {
-                    result = new SessionStatusInfo
+                    int timeStamp = (DateTime.Now - user.LASTLOCKOUTDATE.Value.Date).Minutes;
+                    if (timeStamp < 2 && user.LOGINCODE != Guid.Empty.ToString())
                     {
-                        loginCode = Guid.Empty,
-                        state = 1,
-                        errorMessage = "You are already logged in",                        
-                    };                   
-
-                }
-
-            }
-         return   result;
-        }
-
-        public UserViewModel FindUserByUserNameAndPassword(string username, string password)
-        {
-            UserViewModel data;
-
-            var appSetup = context.TBL_SETUP_GLOBAL.Single();
-            var  result =    CheckSessionState(username);
-
-            if (result.state > 0)
-            {
-                data = UserLoginDetails(username, password);
-             
-                data.sessionStatusInfo = result;
-
-                return data;
-            }
-
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
-            if (result.state == 0 && _user != null)
-            {
-                try
-                {
-                    if (appSetup.USE_ACTIVE_DIRECTORY)
-                    {
-                        data = FindUserByUserName(username);
-                        _user.LASTLOGINDATE = DateTime.Now;
-                    }
-                    else
-                    {
-                        data = UserLoginDetails(username, password);
-                        data.sessionStatusInfo = result;
-
-                    }
-
-                    if (data == null)
-                    {
-                        _user.LOGINCODE = null;
-                        
-                        if (_user.FAILEDLOGONATTEMPT == CommonHelpers.MaxInvalidPasswordAttempts)
+                        result = new SessionStatusInfo
                         {
-                            _user.ISLOCKED = true;
-                            _user.LASTLOCKOUTDATE = DateTime.Now;
-                        }
-                        _user.FAILEDLOGONATTEMPT += 1;
+                            loginCode = Guid.Parse(user.LOGINCODE),
+                            state = 0,
+                            errorMessage = "",
+                        };
                     }
                     else
                     {
-                        _user.LASTLOGINDATE = DateTime.Now;
-                        _user.LOGINCODE = result.loginCode.ToString();
-                       
+                        result = new SessionStatusInfo
+                        {
+                            loginCode = Guid.Parse(user.LOGINCODE),
+                            state = 1,
+                            errorMessage = "You are already logged.",
+                        };
                     }
-                    context.SaveChanges();
-                    return data;
-                }
-                catch (Exception ex)
-                {
-                  //  context.Dispose();
-                    throw new Exception(ex.Message);
                 }
             }
             else
             {
-                
-                _user.LOGINCODE = null;
-                _user.FAILEDLOGONATTEMPT += 1;
-                if (_user.FAILEDLOGONATTEMPT ==  CommonHelpers.MaxInvalidPasswordAttempts)
+                result = new SessionStatusInfo
                 {
-                    _user.ISLOCKED = true;
-                    _user.LASTLOCKOUTDATE = DateTime.Now;
-                }
-                context.SaveChanges();
+                    loginCode = Guid.Parse(user.LOGINCODE),
+                    state = 1,
+                    errorMessage = "You are already logged.",
+                };
             }
 
-            return null;
+            return result;
         }
-        
-        private UserViewModel UserLoginDetails(string username, string password)
-        {           
 
-            var data = context.TBL_PROFILE_USER.Where(c => c.USERNAME == username).ToList();
-            if (!data.FirstOrDefault().ISACTIVE)
-                throw new Exception("1001 Your account is inactive");
 
-            if (data.FirstOrDefault().ISLOCKED)
-                throw new Exception("1001 Your account has been locked");
 
-            if (data.Any())
+        private SessionStatusInfo _sessionInfo;
+
+        public SessionStatusInfo SessionInfo
+        {
+            get => _sessionInfo;
+            set => _sessionInfo = value;
+        }
+
+        public async Task<UserViewModel> FindUserByUserNameAndPassword(string username, string password)
+        {
+            UserViewModel data = null;
+            var result = _sessionInfo;
+            data = UserLoginDetails(username, password);
+            if (result.state > 0)
             {
-             var result =  data.Where(p => p.PASSWORD == password);
-                if (result.Any())
+                if (data == null)
                 {
-                    return result.Select(c => new UserViewModel
+                    throw new Exception("1001 Incorrect username or password.");
+                }
+                data.sessionStatusInfo = result;
+            }
+            data.sessionStatusInfo = result;
+            return data;
+        }
+       
+        public async Task<bool> IsAccountLocked(string userName)
+        {
+            var data = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(c => c.USERNAME.ToLower() == userName);
+            if (data != null)
+            {
+
+                return data.ISLOCKED;
+            }
+            throw new Exception("1001 Incorrect username or password.");
+        }
+
+        public async Task<bool> IsAccountActive(string userName)
+        {
+            var data = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(c => c.USERNAME.ToLower() == userName);
+            if (data != null)
+            {
+                return data.ISACTIVE;
+            }
+
+            throw new Exception("1001 Incorrect username or password.");
+        }
+
+        private UserViewModel UserLoginDetails(string username, string password)
+        {
+            var data = context.TBL_PROFILE_USER.Where(c => c.USERNAME.ToLower() == username && c.PASSWORD == password);
+
+            
+                if (data.Any())
+                {
+                    return data.Select(c => new UserViewModel
                     {
                         companyId = c.TBL_STAFF.COMPANYID,
                         staffId = c.STAFFID,
@@ -295,24 +287,41 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     }).FirstOrDefault();
                 }
-                else
+            else
+            {
+                var record = data.FirstOrDefault();
+                if (record == null)
                 {
-                    data.FirstOrDefault().LOGINCODE = null;
-                    data.FirstOrDefault().FAILEDLOGONATTEMPT += 1;
-                    if (data.FirstOrDefault().FAILEDLOGONATTEMPT == CommonHelpers.MaxInvalidPasswordAttempts)
+                    var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
+                    if (faileddata != null)
                     {
-                        data.FirstOrDefault().ISLOCKED = true;
-                        data.FirstOrDefault().LASTLOCKOUTDATE = DateTime.Now;
+                        int count = faileddata.FAILEDLOGONATTEMPT ?? 0;
+                        if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                        {
+                            faileddata.ISLOCKED = true;
+                            faileddata.LASTLOCKOUTDATE = DateTime.Now;
+                        }
+
+                        faileddata.LOGINCODE = null;
+                        faileddata.FAILEDLOGONATTEMPT += 1;
+                        context.SaveChanges();
+
+                        throw new Exception("1001 Incorrect username or password.");
                     }
-                    context.SaveChanges();
-                    return null;
-                }                
+                    else
+                    {
+                        throw new Exception("1001 Incorrect username or password.");
+                    }
+
+                }
+
+                return null;
             }
-            return null;
-       
+
+
         }
 
-        public bool IsUserExits(string username)
+        public bool IsUserExisting(string username)
         {
             return context.TBL_PROFILE_USER.Any(x => x.USERNAME.ToLower() == username);
         }
@@ -399,7 +408,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return (from u in context.TBL_PROFILE_USER
                     join st in context.TBL_STAFF
                     on u.STAFFID equals st.STAFFID
-                    where u.USERNAME == userName && u.ISACTIVE && !u.ISLOCKED
+                    where u.USERNAME.ToLower() == userName.ToLower() && u.ISACTIVE && !u.ISLOCKED
                     select new UserViewModel()
                     {
                         user_id = u.USERID,
@@ -414,7 +423,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool ClearLoginToken(string userName)
         {
             bool result = false;
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == userName);
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == userName);
             if (_user != null)
             {
                 _user.LOGINCODE = null;
