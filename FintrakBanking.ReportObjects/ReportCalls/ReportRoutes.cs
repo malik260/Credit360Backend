@@ -143,6 +143,38 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                 throw ex;
             }
         }
+
+        public string GetGeneratedOfferLetterLMS(string refNumber)
+        {
+            try
+            {
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+                    var loanApplId = 0;
+                    var facility = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == refNumber);
+                    if (facility == null)
+                    {
+                        var facility1 = context.TBL_LOAN_REVOLVING.Where(x => x.LOANREFERENCENUMBER == refNumber);
+                        loanApplId = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == facility1.FirstOrDefault().LOANAPPLICATIONDETAILID).LOANAPPLICATIONID;
+                    }
+
+                    loanApplId = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == facility.FirstOrDefault().LOANAPPLICATIONDETAILID).LOANAPPLICATIONID;
+                    var targetAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == loanApplId);
+
+                    var productClassId = context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER).PRODUCTCLASSID;
+                    var productClassProcessId = context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER).PRODUCT_CLASS_PROCESSID;
+                    return GetProductSpecificTemplate(productClassProcessId, productClassId, targetAppl.APPLICATIONREFERENCENUMBER);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public string GetProductSpecificTemplate(short? productClassProcessId, short? productClassId, string applicationRefNumber)
         {
           

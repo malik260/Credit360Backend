@@ -75,28 +75,28 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("staff/sample-document")]
-        public HttpResponseMessage GetStaffSampleDocument()
-        {
-            try
-            {
-                var staffDoc = repo.GetStaffSampleDocument();
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("staff/sample-document")]
+        //public HttpResponseMessage GetStaffSampleDocument()
+        //{
+        //    try
+        //    {
+        //        var staffDoc = repo.GetStaffSampleDocument();
 
-                if (staffDoc == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffDoc });
-            }
-            catch (System.Exception ex)
-            {
-                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+        //        if (staffDoc == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffDoc });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
 
-        }
+        //}
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("staff/approvals/temp/{staffId}")]

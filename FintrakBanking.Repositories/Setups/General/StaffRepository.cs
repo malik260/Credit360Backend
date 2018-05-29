@@ -2085,13 +2085,13 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() > 0;
         }
-        public byte[] GetStaffSampleDocument()
-        {
-            // HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data")
-            var pathString = HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data/StaffSampleDocument.xlsx");
-            byte[] readBuffer = System.IO.File.ReadAllBytes(pathString);
+        //public byte[] GetStaffSampleDocument()
+        //{
+        //    // HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data")
+        //    var pathString = HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data/StaffSampleDocument.xlsx");
+        //    byte[] readBuffer = System.IO.File.ReadAllBytes(pathString);
 
-            return readBuffer;
+        //    return readBuffer;
 
             //string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             //string filePath = Path.Combine(appDataFolder, "test.txt");
@@ -2102,6 +2102,6 @@ namespace FintrakBanking.Repositories.Setups.General
             //{
             //    return File(path, "application/pdf");
             //}
-        }
+       // }
     }
 }

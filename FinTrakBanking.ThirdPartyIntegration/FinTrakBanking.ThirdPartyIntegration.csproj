@@ -76,6 +76,8 @@
     <Compile Include="CreditBureau\CreditBureauProcess.cs" />
     <Compile Include="CreditBureau\XDS\XDSService.cs" />
     <Compile Include="Finacle\CWGAPI\CustomerDetails.cs" />
+    <Compile Include="Finacle\CWGAPI\ForeignCurrencyAccount.cs" />
+    <Compile Include="Finacle\CWGAPI\OverDraft.cs" />
     <Compile Include="Finacle\IntegrationWithCWGAPI.cs" />
     <Compile Include="Finacle\CWGAPI\TransactionPosting.cs" />
     <Compile Include="Notification\SMS\SMSIntegration.cs" />

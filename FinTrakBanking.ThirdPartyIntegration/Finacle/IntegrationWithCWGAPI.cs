@@ -13,12 +13,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Credit
     {
         private FinTrakBankingContext context;
         private TransactionPosting transaction;
+        private OverDraft overDraft;
+
         private CustomerDetails customer;
-        public IntegrationWithCWGAPI(FinTrakBankingContext context, TransactionPosting transaction, CustomerDetails customer)
+        public IntegrationWithCWGAPI(FinTrakBankingContext context, TransactionPosting transaction, CustomerDetails customer, OverDraft overDraft)
         {
             this.context = context;
             this.transaction = transaction;
             this.customer = customer;
+            this.overDraft = overDraft;
         }
 
         public ResponseMessageViewModel OverDraftExtend(OverDraftExtendViewModel model)
@@ -27,7 +30,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Credit
 
             ResponseMessage result = null;
             if(LogOverDraftExtend(model))
-            Task.Run(async () => result = await transaction.APIOverDraftExtend(model)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await overDraft.APIOverDraftExtend(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -52,7 +55,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Credit
         {
             ResponseMessage result = null;
            if( LogOverDraftNormal(model))
-            Task.Run(async () => result = await transaction.APIOverDraftNormal(model)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await overDraft.APIOverDraftNormal(model)).GetAwaiter().GetResult();
           
             if (result.Message.IsSuccessStatusCode)
             {
@@ -81,7 +84,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Credit
             model.apiUrl = @"api/OverDraft/TopUp";
 
             if (LogOverDraftTopUpAndRenew(model))
-            Task.Run(async () => result = await transaction.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -108,7 +111,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Credit
             model.apiUrl = @"api/OverDraft/Renew ";
 
             if (LogOverDraftTopUpAndRenew(model))
-                Task.Run(async () => result = await transaction.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -134,7 +137,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Credit
             model.APIUrl = @"api/TemporaryOverDraft/Normal";
 
 
-            Task.Run(async () => result = await transaction.APITemporaryOverDraftNormal(model)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await overDraft.APITemporaryOverDraftNormal(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -160,7 +163,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Credit
             ResponseMessage result = null;
 
             if (LogTemporaryOverDraft(model))  
-                Task.Run(async () => result = await transaction.APITemporaryOverDraftRunning(model)).GetAwaiter().GetResult();            
+                Task.Run(async () => result = await overDraft.APITemporaryOverDraftRunning(model)).GetAwaiter().GetResult();            
            
           
 
@@ -193,7 +196,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Credit
             model.APIUrl = @"api/TemporaryOverDraft/Single";
             ResponseMessage result = null;
            if(LogTemporaryOverDraft(model))
-            Task.Run(async () => result = await transaction.APITemporaryOverDraftSingle(model)).GetAwaiter().GetResult();            
+            Task.Run(async () => result = await overDraft.APITemporaryOverDraftSingle(model)).GetAwaiter().GetResult();            
 
             if (result.Message.IsSuccessStatusCode)
             {

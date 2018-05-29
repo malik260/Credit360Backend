@@ -754,6 +754,32 @@ namespace FintrakBanking.ViewModels.Credit
         public string prudentialGuildlineTypeName { get; set; }
     }
 
+    public class PastDueOnPastDueViewModel : GeneralEntity
+
+    {
+        public DateTime date { get; set; }
+
+        public int count  { get; set; }
+
+        public decimal amount { get; set; }
+
+        public decimal interestOnAmount { get; set; }
+
+    }
+
+    public class PastDueOnPastDueViewModel1  : GeneralEntity
+
+    {
+        public DateTime date { get; set; }
+
+        public int count { get; set; }
+
+        public decimal amount { get; set; }
+
+        public decimal interestOnAmount { get; set; }
+
+    }
+
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
     //    public int maturityInstructionId { get; set; }

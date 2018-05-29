@@ -56,7 +56,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("mature-commercial-loans/parent")]
         public HttpResponseMessage GetMaturedCommercialLoans()
         {
@@ -70,7 +71,10 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("maturity-instruction-type")]
         public HttpResponseMessage GetMaturityInstructionType()
         {
@@ -85,7 +89,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("mature-commercial-loans/detail/{loanApplicationDetailId}")]
         public HttpResponseMessage GetMaturedCommercialLoans(int loanApplicationDetailId)
         {
@@ -115,7 +120,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("running-commercial-loans/{refNo}")]
         public HttpResponseMessage GetRunningCommercialLoans(string refNo)
         {
@@ -173,7 +179,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("commercial-loan-interest-rate-change")]
         public HttpResponseMessage CommercialPaperRateReview([FromBody] InterestReviewViewModel entity)
         {
@@ -200,7 +207,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("commercial-loan-roll-over")]
         public HttpResponseMessage ProcessCommercialPaperRollOver([FromBody] MaturityIntructionViewModel entity)
         {
@@ -225,7 +233,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("commercial-loan-tenor-extension")]
         public HttpResponseMessage CommercialPaperTenorReview([FromBody] TenorExtionViewModel entity)
         {
@@ -258,14 +267,14 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                foreach(var entity in models)
+                foreach (var entity in models)
                 {
                     entity.userBranchId = (short)token.GetBranchId;
                     entity.applicationUrl = HttpContext.Current.Request.Path;
                     entity.createdBy = token.GetStaffId;
                     entity.companyId = token.GetCompanyId;
                 }
-                
+
                 var data = repo.CommercialPaperSubAllocation(models);
                 if (data)
                 {

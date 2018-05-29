@@ -19,7 +19,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         CasaBalanceViewModel GetCASABalance(int casaAccountId);
 
-        FinanceTransactionViewModel PostDailyLoansInterestAccrual(DailyInterestAccrualViewModel model);
+        bool PostDailyLoansInterestAccrual(DailyInterestAccrualViewModel model);
 
         FinanceTransactionViewModel PostDailyAuthorisedOverdraftInterestAccrual(DailyInterestAccrualViewModel model);
 
@@ -52,5 +52,6 @@ namespace FintrakBanking.Interfaces.Finance
         FinanceTransactionViewModel PostDailyInterestSuspension(DailyInterestAccrualViewModel model, int loanId, DateTime applicationDate, int staffId);
 
         void UpdateCustomTransactions(string batchCode);
+
     }
 }
