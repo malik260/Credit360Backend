@@ -564,14 +564,15 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var data = repo.GetAllStaffSignatures(token.GetCompanyId);
 
-                var staffInfo = repo.GetAllStaff();
-
-                foreach (var item in data)
-                {
-                    var staffName = staffInfo.FirstOrDefault(x => x.StaffCode == item.staffCode);
-
-                    item.StaffName = staffName.FirstName + " " + staffName.MiddleName + " " + staffName.LastName;
-                }
+                //var staffInfo = repo.GetAllStaff();
+                //foreach (var item in data)
+                //{
+                //    var staffName = staffInfo.FirstOrDefault(x => x.StaffCode == item.staffCode);
+                //    if (staffName!=null)
+                //    {
+                //    item.StaffName = staffName.FirstName + " " + staffName.MiddleName + " " + staffName.LastName;
+                //    }
+                //}
 
                 if (data.Any())
                 {
