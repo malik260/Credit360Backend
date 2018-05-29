@@ -1144,7 +1144,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanChargeFeesPosting(LoanViewModel model)
+        public bool PostBuildLoanChargeFeesPosting(LoanViewModel model)
 
         {
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
@@ -1166,7 +1166,7 @@ namespace FintrakBanking.Repositories.Finance
                     else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
                         debitAmount = (decimal)debits.VALUE ;
 
-                    debit.operationId = (int)OperationsEnum.TermLoanBooking;
+                    debit.operationId = (int)OperationsEnum.TermLoanBooking;//// to be change 
                     debit.description = $"Fee charge on {debits.DESCRIPTION}" ;
                     debit.valueDate = generalSetup.GetApplicationDate();
                     debit.transactionDate = debit.valueDate;
@@ -1227,7 +1227,7 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             
-            PostTransaction(inputTransactions);
+            var batchPost = PostTransaction(inputTransactions);
 
             // Audit Section ---------------------------            
 
@@ -1246,8 +1246,15 @@ namespace FintrakBanking.Repositories.Finance
             this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
-            context.SaveChanges();
-            return null;
+            //context.SaveChanges();
+            //return null;
+
+            if (batchPost != null)
+            {
+                var result = context.SaveChanges() > 0;
+                return result;
+            }
+            return false;
 
         }
 

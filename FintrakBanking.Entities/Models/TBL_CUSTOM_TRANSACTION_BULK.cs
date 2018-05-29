@@ -80,6 +80,8 @@ namespace FintrakBanking.Entities.Models
         public int VALUEDATENUMBER { get; set; }
 
         [StringLength(10)]
-        public string BANKID { get; set; }       
+        public string BANKID { get; set; }
+
+        public decimal AMOUNTCOLLECTED { get; set; }
     }
 }
