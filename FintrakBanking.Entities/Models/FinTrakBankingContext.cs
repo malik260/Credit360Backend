@@ -373,6 +373,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
         //public virtual DbSet<TBL_APPROVAL_TRAIL2> TBL_APPROVAL_TRAIL2 { get; set; }
         public virtual DbSet<TBL_PROFILE_SETTING> TBL_PROFILE_SETTING { get; set; }
+        public virtual DbSet<TBL_CUSTOM_TRANSACTION_BULK> TBL_CUSTOM_TRANSACTION_BULK { get; set; }
+        
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
