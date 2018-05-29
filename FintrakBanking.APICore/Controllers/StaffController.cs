@@ -75,28 +75,28 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("staff/sample-document")]
-        public HttpResponseMessage GetStaffSampleDocument()
-        {
-            try
-            {
-                var staffDoc = repo.GetStaffSampleDocument();
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("staff/sample-document")]
+        //public HttpResponseMessage GetStaffSampleDocument()
+        //{
+        //    try
+        //    {
+        //        var staffDoc = repo.GetStaffSampleDocument();
 
-                if (staffDoc == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffDoc });
-            }
-            catch (System.Exception ex)
-            {
-                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+        //        if (staffDoc == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffDoc });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
 
-        }
+        //}
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("staff/approvals/temp/{staffId}")]
@@ -564,14 +564,15 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var data = repo.GetAllStaffSignatures(token.GetCompanyId);
 
-                var staffInfo = repo.GetAllStaff();
-
-                foreach (var item in data)
-                {
-                    var staffName = staffInfo.FirstOrDefault(x => x.StaffCode == item.staffCode);
-
-                    item.StaffName = staffName.FirstName + " " + staffName.MiddleName + " " + staffName.LastName;
-                }
+                //var staffInfo = repo.GetAllStaff();
+                //foreach (var item in data)
+                //{
+                //    var staffName = staffInfo.FirstOrDefault(x => x.StaffCode == item.staffCode);
+                //    if (staffName!=null)
+                //    {
+                //    item.StaffName = staffName.FirstName + " " + staffName.MiddleName + " " + staffName.LastName;
+                //    }
+                //}
 
                 if (data.Any())
                 {

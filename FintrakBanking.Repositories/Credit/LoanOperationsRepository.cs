@@ -11493,6 +11493,7 @@ namespace FintrakBanking.Repositories.Credit
             newCommercialLoanLineEntry.LOANAPPLICATIONDETAILID = result.LOANAPPLICATIONDETAILID;
             newCommercialLoanLineEntry.CASAACCOUNTID = result.CASAACCOUNTID;
             newCommercialLoanLineEntry.CASAACCOUNTID2 = result.CASAACCOUNTID2;
+            newCommercialLoanLineEntry.LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility;
             newCommercialLoanLineEntry.BRANCHID = result.BRANCHID;
             newCommercialLoanLineEntry.SUBSECTORID = result.SUBSECTORID;
             newCommercialLoanLineEntry.CURRENCYID = result.CURRENCYID;
