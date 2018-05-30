@@ -3947,6 +3947,7 @@ namespace FintrakBanking.Repositories.Credit
                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                         where m.COMPANYID == companyId && d.DELETED == false && s.DELETED == false
+                        && d.STATUSID == (short)ApprovalStatusEnum.Approved
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
@@ -4006,13 +4007,6 @@ namespace FintrakBanking.Repositories.Credit
                             isOverdraft = d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
                             repaymentTerms = d.REPAYMENTTERMS,
                             repaymentSchedule = d.REPAYMENTSCHEDULE,
-                            //customerAvailableAmount =   pt.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || pt.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper || pt.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating
-                            //                            ? (d.APPROVEDAMOUNT - d.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.PRINCIPALAMOUNT) )
-                            //                            : ((pt.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
-                            //                            ? (d.APPROVEDAMOUNT - d.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.OVERDRAFTLIMIT))
-                            //                            : (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
-                            //                            ? (d.APPROVEDAMOUNT - d.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.CONTINGENTAMOUNT))
-                            //                            : 0)),
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
                             applicationDate = m.APPLICATIONDATE,
@@ -4020,13 +4014,15 @@ namespace FintrakBanking.Repositories.Credit
 
                         }).ToList().Take(500);
 
-            data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
-
             foreach (var item in data)
             {
                 var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
                 var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
                 var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                if(item.applicationReferenceNumber == "1527669761")
+                {
+
+                }
                 switch (item.productTypeId)
                 {
                     case (short)LoanProductTypeEnum.TermLoan:
@@ -4080,12 +4076,18 @@ namespace FintrakBanking.Repositories.Credit
                 //    if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
                 //        item.customerAvailableAmount = contingent.Sum(s => s.CONTINGENTAMOUNT);
 
-                //if (item.customerAvailableAmount != 0)
-                //{
-                //    if (!item.customerAvailableAmount.HasValue)
-                //        item.customerAvailableAmount = item.approvedAmount;
-                //}
+
             }
+            //foreach (var item in data)
+            //{
+            //    if (item.customerAvailableAmount != 0)
+            //    {
+            //        if (!item.customerAvailableAmount.HasValue)
+            //            item.customerAvailableAmount = item.approvedAmount;
+            //    }
+            //}
+
+            data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
             return data.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Pending).ToList();
             //return data.ToList();
         }
