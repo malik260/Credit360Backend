@@ -1389,7 +1389,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
         {
-            searchString = searchString.ToLower();
+            searchString = searchString.Trim().ToLower();
 
             var applications = context.TBL_LOAN_APPLICATION
                     .Join(context.TBL_LOAN_APPLICATION_DETAIL,
@@ -1437,13 +1437,13 @@ namespace FintrakBanking.Repositories.Credit
                         accountNumber = x.s.PRODUCTACCOUNTNUMBER,
                     })
                     .Where(x => x.applicationReferenceNumber == searchString
-                        || x.firstName.ToLower().Contains(searchString)
-                        || x.lastName.ToLower().Contains(searchString)
-                        || x.middleName.ToLower().Contains(searchString)
+                        || x.firstName.ToLower() == searchString
+                        || x.lastName.ToLower() == searchString
+                        || x.middleName.ToLower() == searchString
                         || x.customerCode.ToLower() == searchString)
                     ;
 
-            return applications.Distinct().ToList();
+            return applications.ToList().GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
         }
 
         public dynamic GetLoanApplicationDetailsProductProgram(int loanApplicationDetailId)
@@ -1762,7 +1762,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERGROUPID = appl.CUSTOMERGROUPID,
                 CASAACCOUNTID = appl.CASAACCOUNTID,
                 APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress,
-                APPROVALSTATUSID = appl.APPROVALSTATUSID,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                 APPLICATIONAMOUNT = appl.APPLICATIONAMOUNT,
                 APPLICATIONTENOR = appl.APPLICATIONTENOR,
                 ISINVESTMENTGRADE = appl.ISINVESTMENTGRADE,

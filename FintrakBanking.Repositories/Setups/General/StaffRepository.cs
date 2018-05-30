@@ -1610,40 +1610,6 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
-
-        private string StoredFilePath(string filename)
-        {
-            //CreditBureauHelp helper = new CreditBureauHelp();
-
-            //string folderName = string.Empty;
-            //folderName = helper.FilePath();
-            //folderName = Path.Combine(folderName, "Excel_Uploads");
-            //string dir = Directory.GetCurrentDirectory();
-
-            string appRoot = System.Web.Hosting.HostingEnvironment.MapPath("~\\Content");
-            string pathString = Path.Combine(appRoot,"UploadFiles", filename);
-            Directory.GetAccessControl(pathString);
-            if (!Directory.Exists(pathString))
-            {
-                Directory.CreateDirectory(pathString);
-            }
-
-            if (!File.Exists(pathString))
-            {
-                using (StreamWriter sw = new StreamWriter(pathString))
-                {
-                    sw.Write(pathString);
-                }
-                return pathString;
-            }
-            return pathString;
-            //else
-            //{
-            //    DisposeTicket(pathString);
-            //    StoredTicket(userName, ticket);
-            //}
-        }
-
         public staffBulkFeedbackViewModel UploadStaffData(StaffDocumentViewModel model, byte[] file)
         {
             var staffInfo = new List<StaffInfoViewModel>();
@@ -1653,13 +1619,12 @@ namespace FintrakBanking.Repositories.Setups.General
             var staffBulkFeedbackViewModel = new staffBulkFeedbackViewModel();
 
             // Loads a spreadsheet from a file with the specified path
-            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5"); //SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
 
-            string path = "_" + model.createdBy + "." + model.fileExtension;
-            path = StoredFilePath(path);
-            File.WriteAllBytes(path, file.ToArray());
+            MemoryStream ms = new MemoryStream(file);
 
-            ExcelFile ef = ExcelFile.Load(path);
+            ExcelFile ef = ExcelFile.Load(ms,LoadOptions.XlsxDefault);
 
             ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
 
@@ -2120,13 +2085,13 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() > 0;
         }
-        public byte[] GetStaffSampleDocument()
-        {
-            // HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data")
-            var pathString = HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data/StaffSampleDocument.xlsx");
-            byte[] readBuffer = System.IO.File.ReadAllBytes(pathString);
+        //public byte[] GetStaffSampleDocument()
+        //{
+        //    // HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data")
+        //    var pathString = HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data/StaffSampleDocument.xlsx");
+        //    byte[] readBuffer = System.IO.File.ReadAllBytes(pathString);
 
-            return readBuffer;
+        //    return readBuffer;
 
             //string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             //string filePath = Path.Combine(appDataFolder, "test.txt");
@@ -2137,6 +2102,6 @@ namespace FintrakBanking.Repositories.Setups.General
             //{
             //    return File(path, "application/pdf");
             //}
-        }
+       // }
     }
 }
