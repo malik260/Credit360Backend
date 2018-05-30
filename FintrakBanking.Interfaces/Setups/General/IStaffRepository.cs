@@ -64,6 +64,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateSupervisor(SupervisorViewModel entity);
 
         bool GoForBulkApproval(List<ApprovalViewModel> model, UserInfo userInfo);
-        byte[] GetStaffSampleDocument();
+       // byte[] GetStaffSampleDocument();
     }
 }

@@ -51,6 +51,12 @@ namespace FintrakBanking.Repositories.Credit
         #region Credit Bureau 
         public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId)
         {
+            var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == customerId && x.DELETED == false
+                                                                                            && x.COMPANYDIRECTORID == null
+                                                                                            && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30));
+
+            int creditBureauCount = data.Count();
+
             List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
             var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
             var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
@@ -90,10 +96,7 @@ namespace FintrakBanking.Repositories.Credit
                                customerBVN = a.CUSTOMERBVN,
                                //isCreditBureauUploadCompleted = false,
                                companyDirectorId = null,
-                               creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == a.CUSTOMERID && x.DELETED == false
-                                                                                            && x.COMPANYDIRECTORID == null
-                                                                                            && (DateTime.Now - a.DATETIMECREATED).TotalDays <= 30).Count(),
-                                                                                            // && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)).Count(),
+                               creditBureauCount = creditBureauCount
                            };
 
             foreach (var item in customer)
@@ -115,6 +118,10 @@ namespace FintrakBanking.Repositories.Credit
                 var shareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).ToList();
                 foreach (var director in shareholders)
                 {
+                    var directorData = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
+                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
+                                                                                     && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30));
+                    int directorCount = directorData.Count();
                     CustomerViewModels shareholdersData = new CustomerViewModels
                     {
                         companyDirectorId = director.COMPANYDIRECTORID,
@@ -132,10 +139,7 @@ namespace FintrakBanking.Repositories.Credit
                         firstName = director.FIRSTNAME,
                         lastName = director.SURNAME,
                         middleName = director.MIDDLENAME,
-                        creditBureauCount = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
-                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
-                                                                                    && (DateTime.Now - x.DATETIMECREATED).TotalDays <= 30).Count(),
-                                                                                  //  && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)).Count()
+                        creditBureauCount = directorCount
                     };
                     allCorporate.Add(shareholdersData);
                 }
@@ -332,7 +336,7 @@ namespace FintrakBanking.Repositories.Credit
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                               && (DateTime.Now - a.DATETIMECREATED).TotalDays <= 30
+                                                && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)
                                                 //&& (DbFunctions.DiffDays(DbFunctions.TruncateTime(a.DATETIMECREATED), DbFunctions.TruncateTime(DateTime.Now)).Value <= 30 ) 
                                                 select new LoanCreditBereauViewModel
                                                {
