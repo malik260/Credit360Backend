@@ -1202,6 +1202,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+
         // [HttpPost] [ClaimsAuthorization][Route("schedule/export")]
         //public HttpResponseMessage ExportScheduleToExcel([FromBody] PaymentScheduleExcelViewModel model)
         //{
@@ -1304,17 +1305,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //        //return Request.CreateResponse(HttpStatusCode.OK, new { result = URL });
         //    }
         //    catch (ConditionNotMetException ce)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            //}
-            //catch (BadLogicException be)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            //}
-            //catch (Exception)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            //}
+        //{
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+        //}
+        //catch (BadLogicException be)
+        //{
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+        //}
+        //catch (Exception)
+        //{
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+        //}
 
         //}
 

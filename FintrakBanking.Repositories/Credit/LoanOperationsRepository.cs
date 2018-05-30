@@ -22,6 +22,7 @@ using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.ServiceModel;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 
@@ -10712,7 +10713,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        #region Commercial Paper  Operation
+        #region Commercial Paper Operation
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool CommercialPaperSubAllocation(List<subAllocationViewModel> models)
         {
@@ -10855,7 +10856,7 @@ namespace FintrakBanking.Repositories.Credit
             TBL_LOAN_APPLICATION_DETAIL loanApp = new TBL_LOAN_APPLICATION_DETAIL();
 
             if (userModel.newTenor == 0)
-                throw new Exception("You cannot extend tenor with a zero value");
+                throw new BadLogicException("You cannot extend tenor with a zero value");
 
             if (userModel.loanRef != null)
             {
@@ -10875,7 +10876,7 @@ namespace FintrakBanking.Repositories.Credit
             else if (!userModel.isParent)
             {
                 if (userModel.appRef == null)
-                    throw new Exception("Line tenor extention require application detail");
+                    throw new ConditionNotMetException("Line tenor extention require application detail");
 
                 loanApp = (TBL_LOAN_APPLICATION_DETAIL)context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == userModel.id);
                 userModel.id = loanApp.LOANAPPLICATIONDETAILID;
@@ -11055,7 +11056,7 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
 
             if (context.TBL_LOAN_MATURITY_INSTRUCTION.Where(x => x.LOANID == model.loanId && x.ISUSED == false).Any())
-                throw new Exception("There is already an an active maturity instruction on this loan");
+                throw new BadImageFormatException("There is already an an active maturity instruction on this loan");
 
             TBL_LOAN_MATURITY_INSTRUCTION maturity = new TBL_LOAN_MATURITY_INSTRUCTION();
 
@@ -11405,7 +11406,6 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate)
-
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
@@ -11483,7 +11483,6 @@ namespace FintrakBanking.Repositories.Credit
             }
             return data;
         }
-
         #endregion END OF COMMERCIAL PAPER
 
 

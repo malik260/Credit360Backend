@@ -106,7 +106,7 @@ namespace FintrakBanking.Repositories.Credit
                     });
         }
 
-        public CasaBalanceViewModel GetCASABalance(int casaAccountId, int companyId)
+        public CasaBalanceViewModel GetCASABalanceById(int casaAccountId, int companyId)
         {
             var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
 
@@ -229,7 +229,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal AllfeeAmount = 0;
             foreach (var item in model.loanChargeFee){ AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
-            var casaBalance = GetCASABalance(model.casaAccountId, model.companyId).availableBalance;
+            var casaBalance = GetCASABalanceById(model.casaAccountId, model.companyId).availableBalance;
             var customer = context.TBL_CUSTOMER.Find(model.customerId);
 
             if (AllfeeAmount > casaBalance)
@@ -410,7 +410,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal AllfeeAmount = 0;
             foreach (var item in entity.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
-            var casaBalance = GetCASABalance(entity.casaAccountId, entity.companyId).availableBalance;
+            var casaBalance = GetCASABalanceById(entity.casaAccountId, entity.companyId).availableBalance;
             var customer = context.TBL_CUSTOMER.Find(entity.customerId);
 
             if (AllfeeAmount > casaBalance)
@@ -581,7 +581,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal AllfeeAmount = 0;
             foreach (var item in entity.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
-            var casaBalance = GetCASABalance(entity.casaAccountId, entity.companyId).availableBalance;
+            var casaBalance = GetCASABalanceById(entity.casaAccountId, entity.companyId).availableBalance;
             var customer = context.TBL_CUSTOMER.Find(entity.customerId);
 
             if (AllfeeAmount > casaBalance)
@@ -799,7 +799,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal AllfeeAmount = 0;
             foreach (var item in entity.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
-            var casaBalance = GetCASABalance(entity.casaAccountId2, entity.companyId).availableBalance;
+            var casaBalance = GetCASABalanceById(entity.casaAccountId2, entity.companyId).availableBalance;
             var customer = context.TBL_CUSTOMER.Find(entity.customerId);
 
             if (AllfeeAmount > casaBalance)
@@ -3947,6 +3947,7 @@ namespace FintrakBanking.Repositories.Credit
                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                         where m.COMPANYID == companyId && d.DELETED == false && s.DELETED == false
+                        && d.STATUSID == (short) ApprovalStatusEnum.Approved
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {

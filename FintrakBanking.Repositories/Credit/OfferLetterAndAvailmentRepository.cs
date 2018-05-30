@@ -1809,15 +1809,18 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         foreach (var record in loanApplicationDetails)
                         {
-                            var request = new TBL_LOAN_BOOKING_REQUEST
+                            if(record.STATUSID == (short)ApprovalStatusEnum.Approved)
                             {
-                                AMOUNT_REQUESTED = entity.amount,
-                                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                                LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
-                                DATETIMECREATED = DateTime.Now,
-                                CREATEDBY = entity.staffId,
-                            };
-                            context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                                var request = new TBL_LOAN_BOOKING_REQUEST
+                                {
+                                    AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                                    LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                                    DATETIMECREATED = DateTime.Now,
+                                    CREATEDBY = entity.staffId,
+                                };
+                                context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                            }
                         };
                     }
                 }               
