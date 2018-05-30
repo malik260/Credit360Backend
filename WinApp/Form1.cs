@@ -35,7 +35,7 @@ namespace WinApp
         //IGeneralSetupRepository genSetup;
         //IFinanceTransactionRepository financeTransaction;
         //ILoanScheduleRepository loanSchedule;
-        FinTrakBankingContext context = new FinTrakBankingContext();
+     //   FinTrakBankingContext context = new FinTrakBankingContext();
         //ILoanOperationsRepository loanOperation;
         //ICustomerFSRatioRepository cust;
         //ILoanRepository loan;
@@ -51,7 +51,7 @@ namespace WinApp
         public Form1(FinTrakBankingContext _context)
         {
             InitializeComponent();
-           this.context = _context;
+         //  this.context = _context;
             //this.auditTrail = _auditTrail;
             //this.genSetup = _genSetup;
             //this.loanSchedule = _loanSchedule;
@@ -341,6 +341,13 @@ namespace WinApp
         private void button3_Click_1(object sender, EventArgs e)
         {
            // cwpAIP.ValidateTDAccountNumber("1014010029564");
+        }
+
+        private void buttonDateC_Click(object sender, EventArgs e)
+        {
+           var date = dateTimePicker.Value.ToString(String.Format("dd-MMM-yy"));
+            DateTime c = Convert.ToDateTime(date);
+            MessageBox.Show(c.ToString ());
         }
     }
 }

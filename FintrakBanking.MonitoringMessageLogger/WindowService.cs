@@ -56,7 +56,9 @@ namespace FintrakBanking.MonitoringMessageLogger
             {
                 try
                 {
-                    bool response = messageLogger.Start();
+                    bool response = true;
+                    var res = messageLogger.Start();
+
 
                     if (response == true)
                     {
@@ -75,7 +77,7 @@ namespace FintrakBanking.MonitoringMessageLogger
                     _log.ErrorFormat("==================================================================");
                     _log.ErrorFormat("Alert message logger has failed with error : " + ex + " at : "  + DateTime.Now);
 
-                    messageLogger.SendEmailOfException(ex.ToString());
+                  //  messageLogger.SendEmailOfException(ex.ToString());
                 }
                 finally
                 {
@@ -92,7 +94,7 @@ namespace FintrakBanking.MonitoringMessageLogger
             {
                 try
                 {
-                    messageLogger.Stop();
+                  //  messageLogger.Stop();
                 }
                 finally
                 {

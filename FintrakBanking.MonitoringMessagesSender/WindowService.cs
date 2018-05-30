@@ -16,6 +16,7 @@ namespace FintrakBanking.MonitoringMessagesSender
         private static object s_lock = new object();
         private IEmailSender emailSender;
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
+        private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
 
         public WindowService(IEmailSender _emailSender)
@@ -65,11 +66,36 @@ namespace FintrakBanking.MonitoringMessagesSender
                         _log.ErrorFormat("Emails has been sent successfully and ends at : " + DateTime.Now);
                     }
                     else
+                    {
                         _log.ErrorFormat("");
-                    _log.ErrorFormat("==================================================================");
-                    _log.ErrorFormat("No email has been sent as at : " + DateTime.Now);
+                        _log.ErrorFormat("==================================================================");
+                        _log.ErrorFormat("No email has been sent as at : " + DateTime.Now);
+                    }
 
-                }catch(Exception ex)
+
+                    //MONITORING ALERT LOGGIN
+                    TimeSpan currentTime = DateTime.Now.TimeOfDay;
+                    TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
+
+                    TimeSpan alertLoggerRuntime = TimeSpan.FromMinutes(30);
+                    TimeSpan LoggeingTimeFromConfigExtended = LoggeingTimeFromConfig.Add(alertLoggerRuntime);
+
+
+                    if (currentTime >= LoggeingTimeFromConfig && currentTime <= LoggeingTimeFromConfigExtended)
+                    {
+                        _log.ErrorFormat("##############   started at " + currentTime + "     ##################### ");
+                        _log.ErrorFormat("==================================================================");
+                        _log.ErrorFormat("Monitoring alert has started successfully");
+
+                        emailSender.LogMonitorringAlert();
+
+                        _log.ErrorFormat("");
+                        _log.ErrorFormat("==================================================================");
+                        _log.ErrorFormat("Monitoring alert has finished logging successfully ");
+                    }
+
+                }
+                catch (Exception ex)
                 {
                     _log.ErrorFormat("");
                     _log.ErrorFormat("==================================================================");
