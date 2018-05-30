@@ -39,7 +39,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         decimal GetLienBalance(string productAccountNumber);
 
-        FinanceTransactionViewModel PostBuildLoanChargeFeesPosting(LoanViewModel model);
+        bool PostBuildLoanChargeFeesPosting(LoanViewModel model);
 
         FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
 
