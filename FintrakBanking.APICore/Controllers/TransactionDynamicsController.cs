@@ -16,26 +16,26 @@ using System.Collections.Generic;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/credit")]
-    public class ConditionPrecedentController : ApiControllerBase
+    public class TransactionDynamicsController : ApiControllerBase
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
-        private IConditionPrecedentRepository repo;
+        private ITransactionDynamicsRepository repo;
 
-        public ConditionPrecedentController(IConditionPrecedentRepository repo)
+        public TransactionDynamicsController(ITransactionDynamicsRepository repo)
         {
             this.repo = repo;
         }
 
-        #region DEFAULT conditions
+        #region DEFAULT dynamics
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("condition-precedent-template/application-detail/{detailId}")]
-        public HttpResponseMessage GetConditionPrecedentDefaultByApplicationId(int detailId)
+        [Route("transaction-dynamics-template/application-detail/{detailId}")]
+        public HttpResponseMessage GetTransactionDynamicsDefaultByDetailId(int detailId)
         {
             try
             {
-                List<ConditionPrecedentViewModel> data = repo.GetConditionPrecedentDefaultByDetailId(detailId);
+                List<TransactionDynamicsViewModel> data = repo.GetTransactionDynamicsDefaultByDetailId(detailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -46,12 +46,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("condition-precedent-template")]
-        public HttpResponseMessage GetConditionPrecedentTemplate()
+        [Route("transaction-dynamics-template")]
+        public HttpResponseMessage GetTransactionDynamicsTemplate()
         {
             try
             {
-                var data = repo.GetConditionPrecedentTemplate();
+                var data = repo.GetTransactionDynamicsTemplate();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -62,8 +62,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("condition-precedent-template")]
-        public HttpResponseMessage AddConditionPrecedentTemplate([FromBody] ConditionPrecedentViewModel entity)
+        [Route("transaction-dynamics-template")]
+        public HttpResponseMessage AddTransactionDynamicsTemplate([FromBody] TransactionDynamicsViewModel entity)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddConditionPrecedentTemplate(entity);
+                var data = repo.AddTransactionDynamicsTemplate(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
@@ -88,8 +88,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [ClaimsAuthorization]
-        [Route("condition-precedent-template/{conditionId}")]
-        public HttpResponseMessage UpdateConditionPrecedentTemplate([FromBody] ConditionPrecedentViewModel entity, int conditionId)
+        [Route("transaction-dynamics-template/{conditionId}")]
+        public HttpResponseMessage UpdateTransactionDynamicsTemplate([FromBody] TransactionDynamicsViewModel entity, int conditionId)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.UpdateConditionPrecedentTemplate(entity, conditionId);
+                var data = repo.UpdateTransactionDynamicsTemplate(entity, conditionId);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
@@ -112,18 +112,18 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        #endregion DEFAULT conditions
+        #endregion DEFAULT dynamics
 
-        #region LOS conditions
+        #region LOS dynamics
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("condition-precedent/application-detail/{detailId}")]
-        public HttpResponseMessage GetConditionPrecedentByApplicationId(int detailid)
+        [Route("transaction-dynamics/application-detail/{detailId}")]
+        public HttpResponseMessage GetTransactionDynamicsByDetailId(int detailId)
         {
             try
             {
-                var data = repo.GetConditionPrecedentByDetailId(detailid);
+                var data = repo.GetTransactionDynamicsByDetailId(detailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -134,8 +134,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("condition-precedent")]
-        public HttpResponseMessage AddConditionPrecedent([FromBody] ConditionPrecedentViewModel entity)
+        [Route("transaction-dynamics")]
+        public HttpResponseMessage AddTransactionDynamics([FromBody] TransactionDynamicsViewModel entity)
         {
             try
             {
@@ -144,7 +144,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddConditionPrecedent(entity);
+                var data = repo.AddTransactionDynamics(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
@@ -158,31 +158,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("condition-precedent/selected")]
-        public HttpResponseMessage AddSelectedConditionPrecedent([FromBody] SelectedIdsViewModel entity)
-        {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-
-                List<ConditionPrecedentViewModel> data = repo.AddSelectedConditionPrecedent(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
-            }
-        }
-
         [HttpPut]
         [ClaimsAuthorization]
-        [Route("condition-precedent-edit/{id}")]
-        public HttpResponseMessage EditLoanCditionPrecedent([FromBody] ConditionPrecedentViewModel entity, int id)
+        [Route("transaction-dynamics-edit/{id}")]
+        public HttpResponseMessage EditLoanCditionPrecedent([FromBody] TransactionDynamicsViewModel entity, int id)
         {
             try
             {
@@ -192,7 +171,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.EditLoanConditionPrecedent(id, entity);
+                var data = repo.EditLoanTransactionDynamics(id, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been modified successfully" });
@@ -208,8 +187,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("condition-precedent-remove/{id}")]
-        public HttpResponseMessage RemoveLoanConditionPrecedent(int id)
+        [Route("transaction-dynamics-remove/{id}")]
+        public HttpResponseMessage RemoveLoanTransactionDynamics(int id)
         {
             try
             {
@@ -220,7 +199,7 @@ namespace FintrakBanking.APICore.Controllers
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
                 };
-                var data = repo.RemoveLoanConditionPrecedent(id, user);
+                var data = repo.RemoveLoanTransactionDynamics(id, user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been removed successfully" });
             }
             catch (Exception ex)
@@ -229,18 +208,38 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        #endregion LOS conditions
-
-        #region LMS conditions
-
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
-        [Route("lms-condition-precedent/application-detail/{detailId}")]
-        public HttpResponseMessage GetConditionPrecedentByApplicationIdLms(int detailid)
+        [Route("transaction-dynamics/selected")]
+        public HttpResponseMessage AddSelectedTransactionDynamics([FromBody] SelectedIdsViewModel entity)
         {
             try
             {
-                var data = repo.GetConditionPrecedentByDetailIdLms(detailid);
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                List<TransactionDynamicsViewModel> data = repo.AddSelectedTransactionDynamics(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        #endregion LOS dynamics
+
+        #region LMS dynamics
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-transaction-dynamics/application-detail/{detailId}")]
+        public HttpResponseMessage GetTransactionDynamicsByDetailIdLms(int detailId)
+        {
+            try
+            {
+                var data = repo.GetTransactionDynamicsByDetailIdLms(detailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -251,8 +250,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("lms-condition-precedent")]
-        public HttpResponseMessage AddConditionPrecedentLms([FromBody] ConditionPrecedentViewModel entity)
+        [Route("lms-transaction-dynamics")]
+        public HttpResponseMessage AddTransactionDynamicsLms([FromBody] TransactionDynamicsViewModel entity)
         {
             try
             {
@@ -261,7 +260,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddConditionPrecedentLms(entity);
+                var data = repo.AddTransactionDynamicsLms(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
@@ -275,31 +274,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("lms-condition-precedent/selected")]
-        public HttpResponseMessage AddSelectedConditionPrecedentLms([FromBody] SelectedIdsViewModel entity)
-        {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-
-                List<ConditionPrecedentViewModel> data = repo.AddSelectedConditionPrecedentLms(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
-            }
-        }
-
         [HttpPut]
         [ClaimsAuthorization]
-        [Route("lms-condition-precedent-edit/{id}")]
-        public HttpResponseMessage EditLoanCditionPrecedentLms([FromBody] ConditionPrecedentViewModel entity, int id)
+        [Route("lms-transaction-dynamics-edit/{id}")]
+        public HttpResponseMessage EditLoanCditionPrecedentLms([FromBody] TransactionDynamicsViewModel entity, int id)
         {
             try
             {
@@ -309,7 +287,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.EditLoanConditionPrecedentLms(id, entity);
+                var data = repo.EditLoanTransactionDynamicsLms(id, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been modified successfully" });
@@ -325,8 +303,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("lms-condition-precedent-remove/{id}")]
-        public HttpResponseMessage RemoveLoanConditionPrecedentLms(int id)
+        [Route("lms-transaction-dynamics-remove/{id}")]
+        public HttpResponseMessage RemoveLoanTransactionDynamicsLms(int id)
         {
             try
             {
@@ -337,7 +315,7 @@ namespace FintrakBanking.APICore.Controllers
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
                 };
-                var data = repo.RemoveLoanConditionPrecedentLms(id, user);
+                var data = repo.RemoveLoanTransactionDynamicsLms(id, user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been removed successfully" });
             }
             catch (Exception ex)
@@ -346,32 +324,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        #endregion LMS conditions
-
-
-
-        #region Compliance Timeline template
-
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("compliance-timeline-template")]
-        public HttpResponseMessage GetComplianceTimelineTemplate()
-        {
-            try
-            {
-                var data = repo.GetComplianceTimelineTemplate();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("compliance-timeline-template")]
-        public HttpResponseMessage AddComplianceTimelineTemplate([FromBody] ComplianceTimelineViewModel entity)
+        [Route("lms-transaction-dynamics/selected")]
+        public HttpResponseMessage AddSelectedTransactionDynamicsLms([FromBody] SelectedIdsViewModel entity)
         {
             try
             {
@@ -379,14 +335,8 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
-
-                var data = repo.AddComplianceTimelineTemplate(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                List<TransactionDynamicsViewModel> data = repo.AddSelectedTransactionDynamicsLms(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
             }
             catch (Exception ex)
             {
@@ -394,32 +344,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
-        [ClaimsAuthorization]
-        [Route("compliance-timeline-template/{conditionId}")]
-        public HttpResponseMessage UpdateComplianceTimelineTemplate([FromBody] ComplianceTimelineViewModel entity, int conditionId)
-        {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.lastUpdatedBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+        #endregion LMS dynamics
 
-                var data = repo.UpdateComplianceTimelineTemplate(entity, conditionId);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}", error = ex.InnerException });
-            }
-        }
-
-        #endregion Compliance Timeline template
     }
 }

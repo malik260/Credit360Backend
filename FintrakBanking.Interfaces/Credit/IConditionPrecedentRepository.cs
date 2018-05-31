@@ -31,5 +31,12 @@ namespace FintrakBanking.Interfaces.Credit
         List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByDetailId(int detailId);
 
         List<ConditionPrecedentViewModel> AddSelectedConditionPrecedent(SelectedIdsViewModel entity);
+
+        // LMS approval
+        bool RemoveLoanConditionPrecedentLms(int id, UserInfo user);
+        bool EditLoanConditionPrecedentLms(int id, ConditionPrecedentViewModel entity);
+        List<ConditionPrecedentViewModel> AddSelectedConditionPrecedentLms(SelectedIdsViewModel entity);
+        bool AddConditionPrecedentLms(ConditionPrecedentViewModel entity);
+        IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByDetailIdLms(int detailid);
     }
 }

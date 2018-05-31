@@ -273,15 +273,17 @@ namespace FintrakBanking.Repositories.Setups.General
                               select new DepartmentCustomersViewModel()
                               {
                                   createdBy = d.CREATEDBY.Value,
+                                  branchName = c.TBL_BRANCH_REGION.Any() ? c.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.Any() ? c.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : null : null,
                                   departmentName = d.DEPARTMENTNAME,
                                   departmentCode = d.DEPARTMENTCODE,
+                                  departmentUnitName = d.TBL_DEPARTMENT_UNIT.Any() ? d.TBL_DEPARTMENT_UNIT.FirstOrDefault().DEPARTMENTUNITNAME : "n/a",
+                                  departmentUnitId = d.TBL_DEPARTMENT_UNIT.Any() ? d.TBL_DEPARTMENT_UNIT.FirstOrDefault().DEPARTMENTUNITID : (short) 0,
                                   description = d.DESCRIPTION,
                                   departmentId = d.DEPARTMENTID,
                                   firstname = c.FIRSTNAME,
                                   lastname = c.LASTNAME,
                                   staffId = c.STAFFID,
                                   middlename = c.MIDDLENAME,
-                               
                                   roleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
                                   jobTitleName = c.TBL_STAFF_JOBTITLE.JOBTITLENAME
                               });
@@ -309,7 +311,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     .Where(x => x.firstname.Contains(searchQuery)
                || x.lastname.Contains(searchQuery)
                || x.middlename.Contains(searchQuery)
-               && x.departmentId == departmentId
+              // && x.departmentId == departmentId
                 );
             }
 
