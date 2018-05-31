@@ -85,7 +85,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<ConditionPrecedentViewModel> AddSelectedConditionPrecedent(SelectedIdsViewModel entity)
         {
-
             var loanconditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.CONDITIONID != null
                 && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == entity.id
             );
@@ -137,7 +136,6 @@ namespace FintrakBanking.Repositories.Credit
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
             data.TIMELINEID = model.timelineId;
-            data.RESPONSE_TYPEID = model.responseTypeId;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
 
@@ -395,5 +393,181 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion Timeline for Compliance
+
+
+        #region LMS approval process
+
+        public bool RemoveLoanConditionPrecedentLms(int id, UserInfo model)
+        {
+            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(id);
+            if (data == null)
+            {
+                return false;
+            }
+            context.TBL_LOAN_CONDITION_PRECEDENT.Remove(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
+                STAFFID = model.staffId,
+                BRANCHID = (short)model.BranchId,
+                DETAIL = $"Remove Condition Precedent '{ data.CONDITION }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool EditLoanConditionPrecedentLms(int id, ConditionPrecedentViewModel model)
+        {
+            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(id);
+            if (data == null)
+            {
+                return false;
+            }
+
+            data.CONDITION = model.condition;
+            data.ISEXTERNAL = (bool)model.isExternal;
+            data.ISSUBSEQUENT = (bool)model.isSubsequent;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+            data.TIMELINEID = model.timelineId;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+
+            context.Entry(data).State = System.Data.Entity.EntityState.Modified;
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Condition Precedent '{ model.conditionId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public List<ConditionPrecedentViewModel> AddSelectedConditionPrecedentLms(SelectedIdsViewModel entity)
+        {
+            var loanconditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.CONDITIONID != null
+                && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == entity.id
+            );
+            var deletableIds = loanconditions.Where(x => x.CONDITIONID != null && !entity.selectedIds.Contains((int)x.CONDITIONID)).Select(x => x.LOANCONDITIONID);
+
+            var conditions = context.TBL_CONDITION_PRECEDENT.Where(x => entity.selectedIds.Contains(x.CONDITIONID)).ToList();
+            foreach (var c in conditions)
+            {
+                if (!loanconditions.Any(x => x.CONDITIONID == (int)c.CONDITIONID))
+                {
+                    var data = new TBL_LOAN_CONDITION_PRECEDENT
+                    {
+                        CONDITION = c.CONDITION,
+                        CONDITIONID = c.CONDITIONID,
+                        ISEXTERNAL = (bool)c.ISEXTERNAL,
+                        ISSUBSEQUENT = c.ISSUBSEQUENT,
+                        CREATEDBY = c.CREATEDBY,
+                        TIMELINEID = c.TIMELINEID,
+                        LOANAPPLICATIONDETAILID = entity.detailId,
+                        RESPONSE_TYPEID = c.RESPONSE_TYPEID,
+                        DATETIMECREATED = general.GetApplicationDate(),
+                    };
+                    context.TBL_LOAN_CONDITION_PRECEDENT.Add(data);
+                }
+            }
+
+            context.TBL_LOAN_CONDITION_DEFERRAL.RemoveRange(
+                context.TBL_LOAN_CONDITION_DEFERRAL.Where(x => deletableIds.Contains((int)x.LOANCONDITIONID))
+            );
+            context.TBL_LOAN_CONDITION_PRECEDENT.RemoveRange(
+                context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => deletableIds.Contains((int)x.LOANCONDITIONID))
+            );
+            context.SaveChanges();
+
+            return GetConditionPrecedentByDetailId(entity.detailId).ToList();
+        }
+
+        public bool AddConditionPrecedentLms(ConditionPrecedentViewModel model)
+        {
+            var data = new TBL_LOAN_CONDITION_PRECEDENT
+            {
+                CONDITION = model.condition,
+                ISEXTERNAL = (bool)model.isExternal,
+                ISSUBSEQUENT = model.isSubsequent,
+                CREATEDBY = model.createdBy,
+                //LOANAPPLICATIONID = model.loanApplicationId,
+                TIMELINEID = model.timelineId,
+                LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                RESPONSE_TYPEID = 1,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_LOAN_CONDITION_PRECEDENT.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Condition Precedent '{ model.conditionId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByDetailIdLms(int detailId)
+        {
+            return this.GetAllConditionPrecedentLms().Where(x => x.loanApplicationDetailId == detailId);
+        }
+
+        public IEnumerable<ConditionPrecedentViewModel> GetAllConditionPrecedentLms()
+        {
+            var x = this.context.TBL_LOAN_CONDITION_PRECEDENT
+                .Join(
+                    context.TBL_STAFF,
+                    c => c.CREATEDBY,
+                    s => s.STAFFID,
+                    (c, s) => new ConditionPrecedentViewModel
+                    {
+                        loanConditionId = c.LOANCONDITIONID,
+                        condition = c.CONDITION,
+                        conditionId = c.CONDITIONID == null ? 0 : (int)c.CONDITIONID,
+                        isExternal = c.ISEXTERNAL,
+                        isSubsequent = c.ISSUBSEQUENT,
+                        staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
+                        loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                        loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                        timelineId = c.TIMELINEID,
+                        responseTypeId = c.RESPONSE_TYPEID,
+                        dateTimeCreated = c.DATETIMECREATED,
+                        dateTimeUpdated = c.DATETIMEUPDATED,
+                    });
+
+            var test = x.ToList();
+
+            return x;
+        }
+
+        #endregion LMS approval process
     }
 }
