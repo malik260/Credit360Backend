@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
         private IOverRideRepository overrider;
         //private ICasaRepository casaRep;
 
-        private IIntegrationWithCWGAPI cwgapi;
+        private IIntegrationWithFinacle finacle;
         bool USE_THIRD_PARTY_INTEGRATION = false;
 
         public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
@@ -57,9 +57,9 @@ namespace FintrakBanking.Repositories.Credit
                                         ILoanCovenantRepository _loanCovenant, IAuditTrailRepository _audit,
                                         IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
                                         ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
-                                        //ICasaRepository _casaRep,
+                                     
                                         IOverRideRepository _overrider,
-                                        IIntegrationWithCWGAPI cwgapi)
+            IIntegrationWithFinacle finacle)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
@@ -74,7 +74,7 @@ namespace FintrakBanking.Repositories.Credit
             this.casaLien = _casaLien;
             this.overrider = _overrider;
             //this.casaRep = _casaRep;
-            this.cwgapi = cwgapi;
+            this.finacle = finacle;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
@@ -1880,7 +1880,7 @@ namespace FintrakBanking.Repositories.Credit
                                     sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
                                 };
 
-                                ResponseMessageViewModel res = cwgapi.OverDraftNormal(model);
+                                ResponseMessageViewModel res = finacle.OverDraftNormal(model);
                                 revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                             }
 

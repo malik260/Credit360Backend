@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         bool UpdateLoanApplicationStatus(string applicationRefNumber, short applicationStatusId);
 
-        IQueryable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId);
+        IQueryable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int branchId, int companyId);
 
         IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailmentCheckList(int companyId);
 

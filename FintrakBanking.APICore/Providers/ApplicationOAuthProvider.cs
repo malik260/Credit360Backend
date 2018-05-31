@@ -83,24 +83,26 @@ namespace FintrakBanking.APICore.Providers
 
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
-                if (! await authRepo.IsAccountActive(userVm.username.ToLower()))
-                {
-                    context.SetError("invalid_grant", "This account is INACTIVE");
-                    return;
-                }
-
                 if (await authRepo.IsAccountLocked(userVm.username.ToLower()))
                 {
                     context.SetError("invalid_grant", "This account is LOCKED");
                     return;
                 }
 
+                if (! await authRepo.IsAccountActive(userVm.username.ToLower()))
+                {
+                    context.SetError("invalid_grant", "This account is INACTIVE");
+                    return;
+                }
+
+               
+
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {
                     if (Task.FromResult(
                         ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
                     {
-                        authRepo.SessionInfo =   authRepo.CheckSessionState(userVm.username.ToLower()).GetAwaiter().GetResult();
+                        authRepo.SessionInfo =   authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress).GetAwaiter().GetResult();
                         user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username.ToLower())).Result;
                     }
                     else
@@ -114,7 +116,7 @@ namespace FintrakBanking.APICore.Providers
                 {
                    
 
-                    authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower()).GetAwaiter().GetResult();
+                    authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress).GetAwaiter().GetResult();
                     user = await Task
                         .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
                         .Result;

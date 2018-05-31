@@ -16,6 +16,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
+using System.Web;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -181,6 +182,12 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        //public string GetIpAddress(HttpRequestMessage request)
+        //{
+        //    if (!request.Properties.ContainsKey(HttpContext)) return null;
+        //    dynamic context = request.Properties[HttpContext];
+        //    return context != null ? (string)context.Request.UserHostAddress : null;
+        //}
 
         [HttpPost]// [ClaimsAuthorization]
         [Route("token")]
@@ -189,8 +196,11 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
+                string ipAddressStr = null;
+                if(token.LoginCode == null)
+                    ipAddressStr = token.LoginCode.Split('@')[1];
 
-               _repo.SessionInfo = await _repo.CheckSessionState(user.username.ToLower());
+               _repo.SessionInfo = await _repo.CheckSessionState(user.username.ToLower(), ipAddressStr);
                 var foundUser = await _repo.FindUserByUserNameAndPassword(user.username.ToLower(), user.password);
 
                 if (foundUser == null)

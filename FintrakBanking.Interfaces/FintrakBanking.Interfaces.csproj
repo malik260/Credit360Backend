@@ -69,7 +69,7 @@
     <Compile Include="CASA\IOverRideRepository.cs" />
     <Compile Include="Setups\Finance\ICustomChartOfAccountRepository.cs" />
     <Compile Include="Validation\ICreditLimitValidationsRepository.cs" />
-    <Compile Include="Credit\IIntegrationWithCWGAPI.cs" />
+    <Compile Include="Credit\IIntegrationWithFinacle.cs" />
     <Compile Include="Credit\ILoanPerformanceRepository.cs" />
     <Compile Include="Credit\IStaffAccountHistoryRepository.cs" />
     <Compile Include="Credit\IAppraisalMemorandumRepository.cs" />

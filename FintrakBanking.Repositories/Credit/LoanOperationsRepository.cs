@@ -39,13 +39,14 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository casaLien;
         private ILoanRepository loan;
         private IOverDraftValidation validate;
-        private IIntegrationWithCWGAPI cwgapi;
+      
         private FinTrakBankingStagingContext stagingContext;
+        private IIntegrationWithFinacle finacle;
         bool USE_THIRD_PARTY_INTEGRATION = false;
         public LoanOperationsRepository(
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
             ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien
-            , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithCWGAPI cwgapi, FinTrakBankingStagingContext _stagingContext)
+            , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stagingContext)
         {
 
             this.context = _context;
@@ -57,7 +58,7 @@ namespace FintrakBanking.Repositories.Credit
             this.level = _level;
             this.casaLien = _casaLien;
             this.loan = _loan;
-            this.cwgapi = cwgapi;
+            this.finacle = finacle;
             this.stagingContext = _stagingContext;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -3842,7 +3843,7 @@ namespace FintrakBanking.Repositories.Credit
                         expiryDate = loan.maturityDate.ToString(),
                         reviewedDate = loan.effectiveDate.ToString()
                     };
-                    cwgapi.OverDraftTopUp(data);
+                    finacle.OverDraftTopUp(data);
                 }
 
             }
@@ -3988,7 +3989,7 @@ namespace FintrakBanking.Repositories.Credit
                     expiryDate = loan.maturityDate.ToString(),
                     reviewedDate = loan.effectiveDate.ToString()
                 };
-                cwgapi.OverDraftRenew(data);
+                finacle.OverDraftRenew(data);
             }
 
             context.SaveChanges();
@@ -4133,7 +4134,7 @@ namespace FintrakBanking.Repositories.Credit
                     accountNumber = loan.productAccountNumber,
                     expiryDate = loan.maturityDate.ToString()
                 };
-                cwgapi.OverDraftExtend(data);
+                finacle.OverDraftExtend(data);
             }
 
             //context.SaveChanges();

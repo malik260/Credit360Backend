@@ -51,7 +51,7 @@ namespace FintrakBanking.Repositories.Credit
             .Join(context.TBL_BRANCH, al => al.l.BRANCHID, b => b.BRANCHID, (al, b) => new { al, b })
             .Join(context.TBL_CUSTOMER, alb => alb.al.l.CUSTOMERID, c => c.CUSTOMERID, (alb, c) => new { alb, c, b = alb.b })
             .GroupJoin(
-                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == 47),
+                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
                 alaba => alaba.alb.al.a.LOANREVIEWAPPLICATIONID,
                 trail => trail.TARGETID,
                 (alaba, trail) => new { application = alaba.alb.al.a, loan = alaba.alb.al.l, trail, branch = alaba.b, customer = alaba.c })
@@ -97,7 +97,7 @@ namespace FintrakBanking.Repositories.Credit
             .Join(context.TBL_BRANCH, al => al.l.BRANCHID, b => b.BRANCHID, (al, b) => new { al, b })
             .Join(context.TBL_CUSTOMER, alb => alb.al.l.CUSTOMERID, c => c.CUSTOMERID, (alb, c) => new { alb, c, b = alb.b })
             .GroupJoin(
-                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == 47),
+                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
                 alaba => alaba.alb.al.a.LOANREVIEWAPPLICATIONID,
                 trail => trail.TARGETID,
                 (alaba, trail) => new { application = alaba.alb.al.a, loan = alaba.alb.al.l, trail, branch = alaba.b, customer = alaba.c })
