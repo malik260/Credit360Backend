@@ -26,6 +26,7 @@ namespace FintrakBanking.Interfaces.CASA
 
         IEnumerable<dynamic> GetAllCustomerAccountByCustomerId(int customerId, int companyId);
 
+
         CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId);
 
         string GetAllCASAAccount(string casaAccountNumber, int companyId);

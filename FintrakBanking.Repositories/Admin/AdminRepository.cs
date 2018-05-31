@@ -893,7 +893,7 @@ namespace FintrakBanking.Repositories.Admin
                     data.FAILEDLOGONATTEMPT = 0;
                     data.ISLOCKED = entity.isLocked;
                     data.LASTLOCKOUTDATE = DateTime.Now;
-                   str  += "Account has been locked successfully";
+                   
                 }
 
 
@@ -901,13 +901,13 @@ namespace FintrakBanking.Repositories.Admin
                 {
                     data.ISACTIVE = entity.isActive;
                     data.DEACTIVATEDDATE = DateTime.Now;
-                    str = str.Count() > 0 ? str + "and  Account has been deactivated successfully": "Account has been deactivated successfully";
                 }
-                entity.actionMessage = str;
+
+                entity.actionMessage = "Operation Successful";
  
             }
             message = entity.actionMessage;
-
+            StaticHelpers.RestartService();
             return context.SaveChanges() > 0;
         }
 

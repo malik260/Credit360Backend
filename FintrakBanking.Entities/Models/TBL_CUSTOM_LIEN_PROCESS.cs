@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("custom.TBL_CUSTOM_LIEN_PROCESS")]
+    [Table("TBL_CUSTOM_LIEN_PROCESS")]
     public partial class TBL_CUSTOM_LIEN_PROCESS
     {
         [Key]

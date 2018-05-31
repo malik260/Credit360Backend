@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
         private IOverRideRepository overrider;
         //private ICasaRepository casaRep;
 
-        private IIntegrationWithCWGAPI cwgapi;
+        private IIntegrationWithFinacle finacle;
         bool USE_THIRD_PARTY_INTEGRATION = false;
 
         public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
@@ -57,9 +57,9 @@ namespace FintrakBanking.Repositories.Credit
                                         ILoanCovenantRepository _loanCovenant, IAuditTrailRepository _audit,
                                         IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
                                         ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
-                                        //ICasaRepository _casaRep,
+                                     
                                         IOverRideRepository _overrider,
-                                        IIntegrationWithCWGAPI cwgapi)
+            IIntegrationWithFinacle finacle)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
@@ -74,7 +74,7 @@ namespace FintrakBanking.Repositories.Credit
             this.casaLien = _casaLien;
             this.overrider = _overrider;
             //this.casaRep = _casaRep;
-            this.cwgapi = cwgapi;
+            this.finacle = finacle;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
@@ -106,7 +106,7 @@ namespace FintrakBanking.Repositories.Credit
                     });
         }
 
-        public CasaBalanceViewModel GetCASABalance(int casaAccountId, int companyId)
+        public CasaBalanceViewModel GetCASABalanceById(int casaAccountId, int companyId)
         {
             var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
 
@@ -229,7 +229,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal AllfeeAmount = 0;
             foreach (var item in model.loanChargeFee){ AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
-            var casaBalance = GetCASABalance(model.casaAccountId, model.companyId).availableBalance;
+            var casaBalance = GetCASABalanceById(model.casaAccountId, model.companyId).availableBalance;
             var customer = context.TBL_CUSTOMER.Find(model.customerId);
 
             if (AllfeeAmount > casaBalance)
@@ -410,7 +410,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal AllfeeAmount = 0;
             foreach (var item in entity.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
-            var casaBalance = GetCASABalance(entity.casaAccountId, entity.companyId).availableBalance;
+            var casaBalance = GetCASABalanceById(entity.casaAccountId, entity.companyId).availableBalance;
             var customer = context.TBL_CUSTOMER.Find(entity.customerId);
 
             if (AllfeeAmount > casaBalance)
@@ -581,7 +581,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal AllfeeAmount = 0;
             foreach (var item in entity.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
-            var casaBalance = GetCASABalance(entity.casaAccountId, entity.companyId).availableBalance;
+            var casaBalance = GetCASABalanceById(entity.casaAccountId, entity.companyId).availableBalance;
             var customer = context.TBL_CUSTOMER.Find(entity.customerId);
 
             if (AllfeeAmount > casaBalance)
@@ -799,7 +799,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal AllfeeAmount = 0;
             foreach (var item in entity.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
-            var casaBalance = GetCASABalance(entity.casaAccountId2, entity.companyId).availableBalance;
+            var casaBalance = GetCASABalanceById(entity.casaAccountId2, entity.companyId).availableBalance;
             var customer = context.TBL_CUSTOMER.Find(entity.customerId);
 
             if (AllfeeAmount > casaBalance)
@@ -1880,7 +1880,7 @@ namespace FintrakBanking.Repositories.Credit
                                     sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
                                 };
 
-                                ResponseMessageViewModel res = cwgapi.OverDraftNormal(model);
+                                ResponseMessageViewModel res = finacle.OverDraftNormal(model);
                                 revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                             }
 
@@ -3947,6 +3947,7 @@ namespace FintrakBanking.Repositories.Credit
                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                         where m.COMPANYID == companyId && d.DELETED == false && s.DELETED == false
+                        && d.STATUSID == (short) ApprovalStatusEnum.Approved
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {

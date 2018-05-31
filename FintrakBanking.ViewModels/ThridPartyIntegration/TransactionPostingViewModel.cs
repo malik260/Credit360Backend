@@ -18,7 +18,10 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public DateTime webRequestDate { get; set; }
         public string responseCode { get; set; }
         public int operationId { get; set; }
-        
+        public string valueDate { get; set; }
+
+        public string rateCode { get; set; }
+        public string rateUnit { get; set; }
 
     }
 
@@ -50,6 +53,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string freeCodeEight  {get; set;}
         public string freeCodeNine  {get; set;}
         public string freeCodeTen { get; set; }
+        public HttpResponseMessage response { get; set; }
 
     }
 
@@ -156,6 +160,16 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public HttpResponseMessage APIMessage { get; set; }
     }
 
+    public class AccountCreationResponseMessageViewModel : ResponseMessageViewModel
+    {
+
+        public string accountNumber { get; set; }
+        public string referenceNumber { get; set; }
+        public string customerName { get; set; }
+        public string errorMessage { get; set; } 
+    }
+
+
     public class BVNCustomerDetailsViewModel
     {
         public string phoneNumber { get; set; }
@@ -199,9 +213,16 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public HttpResponseMessage response { get; set; }
     }
 
-public class ResponseMessage
+    public class ResponseMessage
     {
         public ResponseMessageViewModel APIResponse { get; set; }
+        public bool APIStatus { get; set; }
+        public HttpResponseMessage Message { get; set; }
+    }
+
+    public class AccountCreationRespones
+    {
+       public AccountCreationResponseMessageViewModel APIResponse { get; set; }
         public bool APIStatus { get; set; }
         public HttpResponseMessage Message { get; set; }
     }
