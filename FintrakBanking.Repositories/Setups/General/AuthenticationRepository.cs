@@ -147,7 +147,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 else
                 {
                     user.LASTLOGINDATE = DateTime.Now;
-                    user.LOGINCODE = result.loginCode.ToString();
+                    user.LOGINCODE = result.loginCode.ToString() + "@" + result.ipaddress;
                 }
 
                 context.SaveChanges();
@@ -161,32 +161,45 @@ namespace FintrakBanking.Repositories.Setups.General
             //return null;
         }
 
-        public async Task<SessionStatusInfo> CheckSessionState(string username)
+        public async Task<SessionStatusInfo> CheckSessionState(string username, string ipAddress)
         {
             Guid loginCode = Guid.Empty;
-            var user = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
+            var user = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(x =>
+                x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
             SessionStatusInfo result = null;
+            string loginCodeStr = null;
+            string ipAddressStr = null;
 
             if (user != null)
             {
-                if (user.LOGINCODE == null || user.LOGINCODE == Guid.Empty.ToString())
+                if (user.LOGINCODE != null)
+                {
+                    var gcode = user.LOGINCODE.Split('@');
+                    loginCodeStr = gcode[0];
+                    ipAddressStr = gcode[1];
+                }
+            
+
+                if (loginCodeStr == null || loginCodeStr == Guid.Empty.ToString())
                     result = new SessionStatusInfo
                     {
                         loginCode = Guid.NewGuid(),
                         state = 0,
+                        ipaddress =   ipAddressStr,
                         errorMessage = "",
 
                     };
 
-                else if (user.LOGINCODE != null)
+                else if (loginCodeStr != null)
                 {
-                    int timeStamp = (DateTime.Now - user.LASTLOCKOUTDATE.Value.Date).Minutes;
-                    if (timeStamp < 2 && user.LOGINCODE != Guid.Empty.ToString())
+                    //  int timeStamp = 1;// (DateTime.Now - Convert.ToDateTime(user.LASTLOCKOUTDATE.HasValue) ).Minutes;
+                    if (ipAddressStr == ipAddress && loginCodeStr != Guid.Empty.ToString())
                     {
                         result = new SessionStatusInfo
                         {
-                            loginCode = Guid.Parse(user.LOGINCODE),
+                            loginCode = Guid.Parse(loginCodeStr),
                             state = 0,
+                            ipaddress = ipAddressStr,
                             errorMessage = "",
                         };
                     }
@@ -194,8 +207,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         result = new SessionStatusInfo
                         {
-                            loginCode = Guid.Parse(user.LOGINCODE),
+                            loginCode = Guid.Parse(loginCodeStr),
                             state = 1,
+                            ipaddress = ipAddressStr,
                             errorMessage = "You are already logged.",
                         };
                     }
@@ -205,16 +219,15 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 result = new SessionStatusInfo
                 {
-                    loginCode = Guid.Parse(user.LOGINCODE),
+                    loginCode = Guid.Parse(loginCodeStr),
                     state = 1,
                     errorMessage = "You are already logged.",
+                    ipaddress = ipAddressStr,
                 };
             }
 
             return result;
         }
-
-
 
         private SessionStatusInfo _sessionInfo;
 

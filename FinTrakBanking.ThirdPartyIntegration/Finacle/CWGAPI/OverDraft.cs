@@ -13,7 +13,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 
-    namespace Finacle.CWGAPI
+    namespace OverDraftTransactions
     {
         public class OverDraft
         {
@@ -67,11 +67,9 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 ResponseMessage responseMsg = null;
 
                 ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
-                bool result = false;
-                result = response.IsSuccessStatusCode;
-                if (result)
+               
+                if (response.IsSuccessStatusCode)
                 {
-
                     responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
                     var res = new ResponseMessageViewModel
                     {
@@ -85,7 +83,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     responseMsg = new ResponseMessage
                     {
                         APIResponse = res,
-                        APIStatus = result,
+                        APIStatus = response.IsSuccessStatusCode,
                         Message = response
                     };
                 }
@@ -94,7 +92,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     responseMsg = new ResponseMessage
                     {
                         APIResponse = null,
-                        APIStatus = result,
+                        APIStatus = response.IsSuccessStatusCode,
                         Message = response
                     };
                 }
@@ -125,14 +123,15 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
                 ResponseMessage responseMsg = null;
-                bool result = false;
-                result = response.IsSuccessStatusCode;
+                 
+               bool result = response.IsSuccessStatusCode;
                 if (result)
                 {
 
                     responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
                     var res = new ResponseMessageViewModel
                     {
+                       
                         responseCode = responseAPI.responseCode,
                         webRequestDate = responseAPI.webRequestDate,
                         webRequestStatus = responseAPI.webRequestStatus,
@@ -184,8 +183,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = client.PostAsync("api/OverDraft/Renew ", new StringContent(
                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
                 ResponseMessage responseMsg = null;
-                bool result = false;
-                result = response.IsSuccessStatusCode;
+                bool result = response.IsSuccessStatusCode;
                 if (result)
                 {
 
@@ -243,9 +241,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                 ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
                 ResponseMessage responseMsg = null;
-                bool result = false;
-                result = response.IsSuccessStatusCode;
-                if (result)
+               
+                if (response.IsSuccessStatusCode)
                 {
 
                     responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
@@ -261,16 +258,16 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     responseMsg = new ResponseMessage
                     {
                         APIResponse = res,
-                        APIStatus = result,
+                        APIStatus = response.IsSuccessStatusCode,
                         Message = response
                     };
                 }
                 else
-                {
+                {   
                     responseMsg = new ResponseMessage
                     {
                         APIResponse = null,
-                        APIStatus = result,
+                        APIStatus = response.IsSuccessStatusCode,
                         Message = response
                     };
                 }

@@ -87,6 +87,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public Guid loginCode { get; set; }
         public int state { get; set; }
         public string errorMessage { get; set; }
+        public string ipaddress { get; set; }
     }
 
     public class ActiveUserDetails
@@ -111,6 +112,4 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool lockStatus { get; set; }
         public bool accountStatus { get; set; }
     }
-
-
 }

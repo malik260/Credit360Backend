@@ -1,68 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using FintrakBanking.Common;
-using FintrakBanking.Entities;
-using FintrakBanking.Interfaces;
-using FintrakBanking.Repositories;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.Repositories.Setups.General;
-using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Repositories.Credit;
-using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Interfaces.Customer;
-using FintrakBanking.Interfaces.CreditLimitValidations;
-using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
-using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 
 namespace WinApp
 {
     public partial class Form1 : Form
     {
-        //private IAuditTrailRepository auditTrail;
-        //IGeneralSetupRepository genSetup;
-        //IFinanceTransactionRepository financeTransaction;
-        //ILoanScheduleRepository loanSchedule;
+         
         FinTrakBankingContext context = new FinTrakBankingContext();
-        //ILoanOperationsRepository loanOperation;
-        //ICustomerFSRatioRepository cust;
-        //ILoanRepository loan;
-        //ICreditLimitValidationsRepository credit;
-        //ICustomerStagingRepository customer;
-        //IIntegrationWithCWGAPI cwpAIP;
+        private IIntegrationWithFinacle _integration;
 
-        //public Form1(FinTrakBankingContext _context , IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction,
-        //    ILoanScheduleRepository _loanSchedule, ICustomerFSRatioRepository _cust, ILoanRepository _loan,
-        //    IAuditTrailRepository _auditTrail, ILoanOperationsRepository _loanOperation , ICreditLimitValidationsRepository _credit,
-        //    ICustomerStagingRepository _customer, IIntegrationWithCWGAPI _cwpAIP)
-        ////IGeneralSetupRepository _genSetup )
-        public Form1(FinTrakBankingContext _context)
+
+        public Form1(FinTrakBankingContext _context, IIntegrationWithFinacle integration)
         {
             InitializeComponent();
            this.context = _context;
-            //this.auditTrail = _auditTrail;
-            //this.genSetup = _genSetup;
-            //this.loanSchedule = _loanSchedule;
-            //this.financeTransaction = _financeTransaction;
-            //this.loanOperation = _loanOperation;
-            //this.cust = _cust;
-            //this.loan = _loan;
-            //credit = _credit;
-            //customer = _customer;
-            //cwpAIP = _cwpAIP;
-
+            this._integration = integration;
         }
 
         //public class FinanceTransactionViewModel  : GeneralEntity
@@ -340,7 +298,60 @@ namespace WinApp
 
         private void button3_Click_1(object sender, EventArgs e)
         {
-           // cwpAIP.ValidateTDAccountNumber("1014010029564");
+            //List<FinanceTransactionViewModel> tran = new List<FinanceTransactionViewModel>();
+
+            //FinanceTransactionViewModel tran1 = new FinanceTransactionViewModel();
+
+            //{
+
+            //    tran1.operationId = 7;
+            //    tran1.sourceReferenceNumber = "C10000";
+            //    tran1.description = "yes";
+            //    tran1.batchCode = "22222";
+            //    tran1.currencyId = 1;
+            //    tran1.casaAccountId = 202236746;
+            //    tran1.debitAmount = 200000;
+            //    tran1.valueDate = DateTime.Now;
+
+
+
+            //}
+            //tran.Add(tran1);
+            //FinanceTransactionViewModel tran2 = new FinanceTransactionViewModel();
+            //{
+            //    tran2.operationId = 3;
+            //    tran2.sourceReferenceNumber = "D10000";
+            //    tran2.description = "no";
+            //    tran2.batchCode = "22222";
+            //    tran2.currencyId = 1;
+            //    tran2.casaAccountId = 2004169347;
+            //    tran2.creditAmount = 200000;
+            //    tran2.valueDate = DateTime.Now;
+
+            //}
+            //tran.Add(tran2);
+
+            //var result = _integration.PostTransactions(tran);
+
+            // var result = _integration.GetCustomerByAccountsNumber(textBox2.Text);
+            //  "003";
+            // "999";
+            var result = _integration.OverDraftNormal(new OverDraftNormalViewModel()
+            {
+                sanctionReferenceNumber = "123358",
+                accountNumber = textBox2.Text, // "1000451805",
+                applicationDate = "30-05-2018",// DateTime.Now.Date.ToString(),
+                documentDate = "30-05-2018",
+                expiryDate = "30-11-2018",
+                reviewedDate = "30-05-2018",
+                sanctionAuthorizer = "999",
+                sanctionLevel = "003",
+                sanctionDate = "31-05-2018",
+                sanctionLimit = 100000.ToString()
+
+            });
+
+            // cwpAIP.ValidateTDAccountNumber("1014010029564");
         }
     }
 }

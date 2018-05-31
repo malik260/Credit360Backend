@@ -37,13 +37,13 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository casaLien;
         private ILoanRepository loan;
         private IOverDraftValidation validate;
-        private IIntegrationWithCWGAPI cwgapi;
+        private IIntegrationWithFinacle cwgapi;
         bool USE_THIRD_PARTY_INTEGRATION = false;
         public LoanOperationsRepository(
 
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
             ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien
-            , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithCWGAPI cwgapi)
+            , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithFinacle cwgapi)
         {
 
             this.context = _context;

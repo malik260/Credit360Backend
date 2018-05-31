@@ -1,5 +1,5 @@
-﻿ 
- 
+﻿namespace FinTrakBanking.ThirdPartyIntegration
+{
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -12,37 +12,31 @@
     using FintrakBanking.Entities.Models;
     using FintrakBanking.ViewModels.ThridPartyIntegration;
 
-namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
-{
-
-    public class ForeignCurrencyAccount
+    namespace ForeignCurrencyAccountCreation
     {
-        private FinTrakBankingContext _context;
-        string API_KEY, API_URL = string.Empty;
-        private readonly HttpClientHandler _handler = new HttpClientHandler();
-        private static HttpClient _httpClientInstance;
 
-
-        public ForeignCurrencyAccount(FinTrakBankingContext context)
+        public class ForeignCurrencyAccount
         {
-            this._context = context;
-            var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
-            if (configdata != null)
+            private FinTrakBankingContext _context;
+            string API_KEY, API_URL = string.Empty;
+            private readonly HttpClientHandler _handler = new HttpClientHandler();
+            private static HttpClient _httpClientInstance;
+
+
+            public ForeignCurrencyAccount(FinTrakBankingContext context)
             {
-                API_KEY = configdata.APIKEY;
-                API_URL = configdata.APIURL;
+                this._context = context;
+                var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
+                if (configdata != null)
+                {
+                    API_KEY = configdata.APIKEY;
+                    API_URL = configdata.APIURL;
+                }
             }
-        }
 
-        
-
-
-
-
-
-        public async Task<ResponseMessage> CreateAccount(CreateAccountViewModel entity)
-        {
-            ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
+            public async Task<AccountCreationRespones> CreateAccount(CreateAccountViewModel entity)
+            {
+                ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY); ;
                 _handler.UseDefaultCredentials = true;
                 HttpClient client = new HttpClient(_handler);
@@ -59,34 +53,39 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 HttpResponseMessage response = client.PostAsync("api/TemporaryOverDraft/Single", new StringContent(
                                                 new JavaScriptSerializer().Serialize(entity), Encoding.UTF8, "application/json")).Result;
 
-                ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
+                AccountCreationResponseMessageViewModel responseAPI = new AccountCreationResponseMessageViewModel();
 
-                ResponseMessage responseMsg = null;
+                AccountCreationRespones responseMsg = null;
                 bool result = false;
                 result = response.IsSuccessStatusCode;
                 if (result)
                 {
 
-                    responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
-                    var res = new ResponseMessageViewModel
+                    responseAPI = await response.Content.ReadAsAsync<AccountCreationResponseMessageViewModel>();
+                    var res = new AccountCreationResponseMessageViewModel
                     {
                         responseCode = responseAPI.responseCode,
                         webRequestDate = responseAPI.webRequestDate,
                         webRequestStatus = responseAPI.webRequestStatus,
                         serialNumber = responseAPI.serialNumber,
+                        accountNumber = responseAPI.accountNumber,
+                        customerName = responseAPI.customerName,
+                        errorMessage = responseAPI.errorMessage,
+                        referenceNumber = responseAPI.referenceNumber,
                         message = responseAPI.message
                     };
 
-                    responseMsg = new ResponseMessage
+                    responseMsg = new AccountCreationRespones
                     {
-                        APIResponse = res,
+                         APIResponse = res,
                         APIStatus = result,
-                        Message = response
+                        Message = response, 
+                        
                     };
                 }
                 else
                 {
-                    responseMsg = new ResponseMessage
+                    responseMsg = new AccountCreationRespones
                     {
                         APIResponse = null,
                         APIStatus = result,
@@ -98,8 +97,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 return responseMsg;
             }
 
-        
+
+        }
     }
+
 }
+
+
+
 
 

@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         //private ICasaRepository casa;
 
-        private IIntegrationWithCWGAPI cwgapi;
+        private IIntegrationWithFinacle cwgapi;
         bool USE_THIRD_PARTY_INTEGRATION = false;
 
         public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
@@ -56,7 +56,7 @@ namespace FintrakBanking.Repositories.Credit
                                         ILoanCovenantRepository _loanCovenant, IAuditTrailRepository _audit,
                                         IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
                                         ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
-                                        IIntegrationWithCWGAPI cwgapi)
+                                        IIntegrationWithFinacle cwgapi)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
