@@ -235,18 +235,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IQueryable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId)
         {
-            //var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.OfferLetterApproval);
-            //int staffApprovalLevelId = 0;
-            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
-            //var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(companyId).Where(x => x.operationId == (int)OperationsEnum.OfferLetterApproval).ToList();
-
-            var staffApprovalLevelIds =
-                context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval)// && x.PRODUCTCLASSID == classId)
-                .Select(x => x.TBL_APPROVAL_GROUP)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.ISACTIVE == true))
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId))
-                .Select(x => x.APPROVALLEVELID)
-                .ToList();
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
 
             IQueryable<CamProcessedLoanViewModel> data;
 
@@ -263,8 +252,7 @@ namespace FintrakBanking.Repositories.Credit
                           && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                           && e.RESPONSESTAFFID == null
                           && e.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
-                           //&& e.TOAPPROVALLEVELID == staffApprovalLevelId
-                           && staffApprovalLevelIds.Contains((int)e.TOAPPROVALLEVELID)
+                          && ids.Contains((int)e.TOAPPROVALLEVELID)
                     select new CamProcessedLoanViewModel
                     {
                         loanApplicationId = a.LOANAPPLICATIONID,
