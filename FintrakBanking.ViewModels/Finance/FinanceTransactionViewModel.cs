@@ -91,4 +91,42 @@ namespace FintrakBanking.ViewModels.Finance
         public string description { get; set; }
         public short sourceApplicationId { get; set; }
     }
+
+    public class FinanceTransactionStagingViewModel : GeneralEntity
+    {
+        public string batchId  { get; set; }
+        public int batchRefId { get; set; }
+        public string transType { get; set; }
+        public string flowType { get; set; }
+        public int operationId { get; set; }
+        public string description { get; set; }
+        public DateTime valueDate { get; set; }
+        public DateTime transactionDate { get; set; }
+        public string currencyCode { get; set; }
+        public double currencyRate { get; set; }
+        public string currencyRateCode{ get; set; }
+        public DateTime postedDateTime { get; set; }
+        public bool isApproved { get; set; }
+        public string postedBy { get; set; }
+        public int approvedBy { get; set; }
+        public DateTime approvedDate { get; set; }
+        public DateTime approvedDateTime { get; set; }
+        public short sourceApplicationId { get; set; }
+        public int transactionId { get; set; }
+        public string creditGlAccount { get; set; }
+        public string debitGlAccount { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public decimal amount { get; set; }
+        public decimal amountCollected { get; set; }
+        public short sourceBranchId { get; set; }
+        public short destinationBranchId { get; set; }
+        public string bankId { get; set; }
+        public short branchId { get; set; }
+        public int recordCount { get; set; }
+        public string status { get; set; }
+        public int sid { get; set; }
+
+
+
+    }
 }

@@ -8,6 +8,8 @@ using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.Common.Enum;
 using System.Linq;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.Repositories.Setups.Finance
 {
@@ -16,16 +18,20 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
+        private IIntegrationWithCWGAPI finaco;
 
-        public CustomChartOfAccountRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+        public CustomChartOfAccountRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IIntegrationWithCWGAPI finaco)
         {
             this.context = context;
             this.general = general;
             this.audit = audit;
+            this.finaco = finaco;
         }
 
         public bool AddCustomChartOfAccount(CustomChartOfAccountViewModel model)
         {
+            ValidateAccountId(model.accountId);
+
             var data = new TBL_CUSTOM_CHART_OF_ACCOUNT
             {
                 ACCOUNTID = model.accountId,
@@ -54,8 +60,23 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return context.SaveChanges() != 0;
         }
 
+        private void ValidateAccountId(string accountId)
+        {
+            var applicationSetup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+
+            if (applicationSetup.USE_THIRD_PARTY_INTEGRATION == true)
+            {
+                if (finaco.ValidateGLNumber("100" + accountId) == null) // 100 is headoffice code
+                {
+                    throw new Exception("The pecified account id do not exist!");
+                }
+            }
+        }
+
         public bool UpdateCustomChartOfAccount(CustomChartOfAccountViewModel model, int customChartOfAccountId)
         {
+            ValidateAccountId(model.accountId);
+
             var data = this.context.TBL_CUSTOM_CHART_OF_ACCOUNT.Find(customChartOfAccountId);
             if (data == null)
             {

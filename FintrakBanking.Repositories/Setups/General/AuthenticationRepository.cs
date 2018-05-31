@@ -447,60 +447,33 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public List<string> GetUserActivitiesByUser(int userId)
         {
-            List<string> listOfActivities = new List<string>();
+            List<string> activities = new List<string>();
+            var user = context.TBL_PROFILE_USER.Find(userId);
 
-            var userGroupIds = context.TBL_PROFILE_USERGROUP.Where(x => x.USERID == userId).Select(x => x.GROUPID).ToList();
+            var additionalActivityIds = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == userId).Select(x => x.ACTIVITYID);
 
-            var staffRoleId = (from a in context.TBL_PROFILE_USER
-                               join b in context.TBL_STAFF
-                               on a.STAFFID equals b.STAFFID
-                               where a.USERID == userId
-                               select b.STAFFROLEID).FirstOrDefault();
+            var roleActivityIds = context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.Where(x => x.STAFFROLEID == user.TBL_STAFF.STAFFROLEID).Select(x => x.ACTIVITYID);
 
-            var staffGroupIds = context.TBL_PROFILE_STAFF_ROLE_GROUP.Where(x => x.STAFFROLEID == staffRoleId)
-                                .Select(x => x.GROUPID).ToList();
+            var userGroupActivityIds = context.TBL_PROFILE_USERGROUP.Where(x => x.USERID == userId)
+                .Select(x => x.TBL_PROFILE_GROUP)
+                .SelectMany(x => x.TBL_PROFILE_GROUP_ACTIVITY)
+                .Select(x => x.ACTIVITYID);
 
-            var staffRoleActivities = (from grpAct in context.TBL_PROFILE_GROUP_ACTIVITY
-                                       join act in context.TBL_PROFILE_ACTIVITY on grpAct.ACTIVITYID
-                                      equals act.ACTIVITYID
-                                       where staffGroupIds.Contains(grpAct.GROUPID)
-                                       select act.ACTIVITYNAME.ToLower()).ToList();
+            var roleGroupActivityIds = user.TBL_STAFF.TBL_STAFF_ROLE.TBL_PROFILE_STAFF_ROLE_GROUP
+                .Select(x => x.TBL_PROFILE_GROUP)
+                .SelectMany(x => x.TBL_PROFILE_GROUP_ACTIVITY)
+                .Select(x => x.ACTIVITYID);
 
-            var staffRoleAdditionalActivities = (from addAct in context.TBL_PROFILE_STAFF_ROLE_ADT_ACT
-                                                 join act in context.TBL_PROFILE_ACTIVITY
-                                                 on addAct.ACTIVITYID equals act.ACTIVITYID
-                                                 where addAct.STAFFROLEID == staffRoleId
-                                                 select act.ACTIVITYNAME.ToLower()).ToList();
+            activities = context.TBL_PROFILE_ACTIVITY.Where(x => additionalActivityIds.Contains(x.ACTIVITYID)
+                || roleActivityIds.Contains(x.ACTIVITYID)
+                || userGroupActivityIds.Contains(x.ACTIVITYID)
+                || roleGroupActivityIds.Contains(x.ACTIVITYID)
+            ).Select(x => x.ACTIVITYNAME).ToList();
 
-            var activities = (from grpAct in context.TBL_PROFILE_GROUP_ACTIVITY
-                              join act in context.TBL_PROFILE_ACTIVITY on grpAct.ACTIVITYID
-                             equals act.ACTIVITYID
-                              //where userGroupIds.Contains(grpAct.GROUPID)
-                              select act.ACTIVITYNAME.ToLower()).ToList();
+            //var test1 = userGroupActivityIds.ToList();
+            //var test2 = roleGroupActivityIds.ToList();
 
-            var additionalActivities = (from addAct in context.TBL_PROFILE_ADDITIONALACTIVITY
-                                        join act in context.TBL_PROFILE_ACTIVITY
-                                        on addAct.ACTIVITYID equals act.ACTIVITYID
-                                        where addAct.USERID == userId
-                                        select act.ACTIVITYNAME.ToLower()).ToList();
-            if (activities.Any())
-            {
-                listOfActivities = listOfActivities.Concat(activities).Distinct().ToList();
-            }
-            if (additionalActivities.Any())
-            {
-                listOfActivities = listOfActivities.Concat(additionalActivities).Distinct().ToList();
-            }
-            if (staffRoleActivities.Any())
-            {
-                listOfActivities = listOfActivities.Concat(staffRoleActivities).Distinct().ToList();
-            }
-            if (staffRoleAdditionalActivities.Any())
-            {
-                listOfActivities = listOfActivities.Concat(staffRoleAdditionalActivities).Distinct().ToList();
-            }
-
-            return listOfActivities.Distinct().ToList();
+            return activities;
         }
 
     }

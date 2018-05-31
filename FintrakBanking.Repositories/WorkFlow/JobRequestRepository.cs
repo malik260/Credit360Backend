@@ -323,49 +323,21 @@ namespace FintrakBanking.Repositories.WorkFlow
                                               averageMonthlyTurnover = tr.AVERAGE_MONTHLY_TURNOVER,
                                               loanApplicationDetailId = tr.LOANAPPLICATIONDETAILID,
                                           }).ToList();
-                //var loanCollateral = (from cl in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == i.loanApplicationId)
-                //                      select new CollateralViewModel
-                //                      {
-                //                          allowSharing = cl.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                //                          collateralCode = cl.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                //                          collateralValue = cl.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                //                          collateralTypeName = cl.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                //                          collateralTypeId = cl.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
-                //                          currencyCode = cl.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
-                //                          valuationCycle = cl.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                //                          haircut = cl.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                //                          customerName = cl.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + cl.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
-                //                         + " " + cl.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
-
-                //                      }).ToList();
-                var allJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
-                                && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
-                                ).Count();
+                var allJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId).Count();
 
                 var allPendingJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
-                               && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
                                && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Count();
 
                 var allApprovedJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
-                              && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
                               && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved).Count();
 
                 var allDisapproveJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
-                              && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
                               && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Count();
 
                 var allProcessingJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
-                               && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
                                && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.processing).Count();
 
                 var allCancelledJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == i.loanApplicationDetailId
-                               && ((x.OPERATIONSID == (short)OperationsEnum.LoanApplication) || (x.OPERATIONSID == (short)OperationsEnum.CAM)
-                                                                                           || (x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval))
                                && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.cancel).Count();
 
                 i.invoiceDiscountDetail = invoiceDiscountDetail;
@@ -959,6 +931,40 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         #endregion job-type
 
+        #region Middle Office Updates
+        public bool UpdateInvoiceStatus(JobRequestInvoiceViewModel model)
+        {
+            var job = this.context.TBL_JOB_REQUEST.Find(model.jobRequestId);
+            if (job == null)
+            {
+                if (model.status) job.REQUESTSTATUSID = (short) RequestStatusEnum.Approved;
+                else
+                {
+                    job.REQUESTSTATUSID = (short)RequestStatusEnum.Disapproved;
+                    job.JOB_STATUS_FEEDBACKID = model.rejectionId;
+                }
+            }
+
+            // Audit Section ---------------------------
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.JobTypeUpdated,
+            //    STAFFID = model.lastUpdatedBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"Updated JobType '{ model.jobTypeName }' ",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
+            //this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        #endregion End Middle Office Updates
+
         #region Job-Request Document
 
         public bool AddJobReplyAndDocument(RequestDocumentViewModel model, byte[] file)
@@ -1006,7 +1012,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return docContext.SaveChanges() != 0;
         }
-
 
         public bool AddJobDocument(RequestDocumentViewModel model, JobRequestViewModel requestModel, byte[] file)
         {
@@ -1287,6 +1292,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             financeTransaction.PostTransaction(inputTransactions);
         }
         #endregion
+
+        
 
         //public bool AddJobRequest(JobRequestViewModel model)
         //{

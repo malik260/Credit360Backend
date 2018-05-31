@@ -78,6 +78,7 @@ namespace FintrakBanking.Repositories.CASA
 
         }
 
+
         public CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId)
         {
             int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
@@ -442,8 +443,8 @@ namespace FintrakBanking.Repositories.CASA
                             branchId = casa.BRANCHID,
                             branchCode = casa.TBL_BRANCH.BRANCHCODE,
                             branchName = casa.TBL_BRANCH.BRANCHNAME,
-                            relationshipOfficerId = casa.RELATIONSHIPOFFICERID ?? 0,
-                            relationshipManagerId = casa.RELATIONSHIPMANAGERID ?? 0,
+                            relationshipOfficerId = cust.RELATIONSHIPOFFICERID ?? 0,
+                            relationshipManagerId = cust.TBL_STAFF.SUPERVISOR_STAFFID ?? 0,
                             subSectorId = sector.SUBSECTORID,
                             subSectorName = sector.NAME,
                             customerTypeId =cust.CUSTOMERTYPEID,
@@ -615,7 +616,8 @@ namespace FintrakBanking.Repositories.CASA
                             casaAccountId = a.CASAACCOUNTID,
                             productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE + ")",
                             productAccountName = a.PRODUCTACCOUNTNAME,
-                            availableBalance = a.AVAILABLEBALANCE
+                            availableBalance = a.AVAILABLEBALANCE,
+                            currencyId = a.CURRENCYID
                         });
             return data.ToList();
         }
