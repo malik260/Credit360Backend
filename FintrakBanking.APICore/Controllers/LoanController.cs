@@ -295,7 +295,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured. " + ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured. " + ex.Message + " "+ex.InnerException});
             }
         }
 
