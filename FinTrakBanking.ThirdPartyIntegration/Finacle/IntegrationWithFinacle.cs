@@ -569,6 +569,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
             foreach (var item in model)
             {
 
+            //    var account ;
+
                 var transPosting = new TransactionPostingViewModel();
                 //accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
                 transPosting.amounts = item.creditAmount > 0
@@ -580,8 +582,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 transPosting.currencyType = context.TBL_CURRENCY
                     .FirstOrDefault(x => x.CURRENCYID == item.currencyId)
                     ?.CURRENCYCODE;
-                transPosting.operationId =
-                    item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+                transPosting.operationId = item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
                 transPosting.accounts = item.casaAccountId != null
                     ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
                         .PRODUCTACCOUNTNUMBER
