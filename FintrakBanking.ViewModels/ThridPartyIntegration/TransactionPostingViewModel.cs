@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -18,7 +19,10 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public DateTime webRequestDate { get; set; }
         public string responseCode { get; set; }
         public int operationId { get; set; }
-        
+        public string valueDate { get; set; }
+
+        public string rateCode { get; set; }
+        public string rateUnit { get; set; }
 
     }
 
@@ -50,6 +54,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string freeCodeEight  {get; set;}
         public string freeCodeNine  {get; set;}
         public string freeCodeTen { get; set; }
+        public HttpResponseMessage response { get; set; }
 
     }
 
@@ -100,13 +105,18 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
     {
         public string accountNumber { get; set; }
         public string sanctionReferenceNumber { get; set; }
+         [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string documentDate { get; set; }
         public string sanctionLevel { get; set; }
         public string sanctionAuthorizer { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string reviewedDate { get; set; }
         public string sanctionLimit { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string applicationDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string expiryDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string sanctionDate { get; set; }
         public int overdraftNormalId { get; set; }
     }
@@ -117,9 +127,12 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string sanctionReferenceNumber { get; set; } 
         public string sanctionLevel { get; set; }
         public string sanctionAuthorizer { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string reviewedDate { get; set; }
         public string sanctionLimit { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string applicationDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string expiryDate { get; set; }
         public int overdraftExtendId { get; set; }
         public string apiUrl { get; set; }
@@ -131,6 +144,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string accountNumber { get; set; }
         public string sanctionReferenceNumber { get; set; }         
         public string sanctionLimit { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string expiryDate { get; set; }
         public int overdraftExtendId { get; set; }
     }
@@ -140,6 +154,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string AccountNumber { get; set; }
         public string TemporaryOverDraftFlag { get; set; }
         public string TemporaryOverDraftAmount { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string TemporaryOverDraftDate { get; set; }
         public string TemporaryOverDraftNaration { get; set; }
         public string APIUrl { get; set; }
@@ -149,12 +164,23 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
     public class ResponseMessageViewModel
     {
         public string webRequestStatus { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public DateTime webRequestDate { get; set; }
         public string responseCode { get; set; }
         public string serialNumber { get; set; }
         public string message { get; set; }
         public HttpResponseMessage APIMessage { get; set; }
     }
+
+    public class AccountCreationResponseMessageViewModel : ResponseMessageViewModel
+    {
+
+        public string accountNumber { get; set; }
+        public string referenceNumber { get; set; }
+        public string customerName { get; set; }
+        public string errorMessage { get; set; } 
+    }
+
 
     public class BVNCustomerDetailsViewModel
     {
@@ -199,9 +225,16 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public HttpResponseMessage response { get; set; }
     }
 
-public class ResponseMessage
+    public class ResponseMessage
     {
         public ResponseMessageViewModel APIResponse { get; set; }
+        public bool APIStatus { get; set; }
+        public HttpResponseMessage Message { get; set; }
+    }
+
+    public class AccountCreationRespones
+    {
+       public AccountCreationResponseMessageViewModel APIResponse { get; set; }
         public bool APIStatus { get; set; }
         public HttpResponseMessage Message { get; set; }
     }

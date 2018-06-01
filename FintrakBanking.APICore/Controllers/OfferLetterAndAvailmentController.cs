@@ -80,7 +80,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var staffid = token.GetStaffId;
-                var response = await repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToListAsync();
+                var response = await repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });

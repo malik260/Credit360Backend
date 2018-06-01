@@ -5,14 +5,14 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.CASA;
-using FintrakBanking.ViewModels.Finance;
-using FinTrakBanking.ThirdPartyIntegration.Finacle;
-using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
+using FintrakBanking.ViewModels.Finance; 
+using FinTrakBanking.ThirdPartyIntegration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -22,12 +22,13 @@ namespace FintrakBanking.Repositories.CASA
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
         //private ILoanOperationsRepository creditOperations;
-
+        private TransactionPosting tran;
         public CasaLienRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail,
                                             //ILoanOperationsRepository _creditOperations, 
-                                            FinTrakBankingContext _context)
+                                            FinTrakBankingContext _context, TransactionPosting tran)
         {
             this.context = _context;
+            this.tran = tran;
             this.generalSetup = _genSetup;
             auditTrail = _auditTrail;
             //this.creditOperations = _creditOperations;
@@ -44,7 +45,7 @@ namespace FintrakBanking.Repositories.CASA
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             if (setup.USE_THIRD_PARTY_INTEGRATION)
             {
-                TransactionPosting tran = new TransactionPosting(context);
+                 
                 bool dataModel = false;
 
                 Task.Run(async () => { dataModel = await tran.APIProcessLien(model, "PLACE"); }).GetAwaiter().GetResult();
@@ -132,7 +133,7 @@ namespace FintrakBanking.Repositories.CASA
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             if (setup.USE_THIRD_PARTY_INTEGRATION)
             {
-                TransactionPosting tran = new TransactionPosting(context);
+              
                 bool dataModel = false;
 
                 Task.Run(async () => { dataModel = await tran.APIProcessLien(model, "LIFTLIEN"); }).GetAwaiter().GetResult();

@@ -18,9 +18,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Data.Entity;
-using FinTrakBanking.ThirdPartyIntegration.CWGAPI;
-using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
+using System.Data.Entity; 
+using FinTrakBanking.ThirdPartyIntegration ;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -31,21 +30,24 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IFinanceTransactionRepository financeTransaction;
-
+        private  IntegrationWithFinacle integration;
+        private CreditBureauProcess _creditBureau;
 
         public CustomerCreditBureauRepository(
-                IAuditTrailRepository _auditTrail,
-                IGeneralSetupRepository _genSetup,
-                FinTrakBankingDocumentsContext _docContext,
-                FinTrakBankingContext _context,
-                IFinanceTransactionRepository _financials
-            )
+            IAuditTrailRepository _auditTrail,
+            IGeneralSetupRepository _genSetup,
+            FinTrakBankingDocumentsContext _docContext,
+            FinTrakBankingContext _context,
+            IFinanceTransactionRepository _financials,  IntegrationWithFinacle integration,
+            CreditBureauProcess creditBureau)
         {
             this.context = _context;
             docContext = _docContext;
             auditTrail = _auditTrail;
             this.genSetup = _genSetup;
             financeTransaction = _financials;
+            this.integration = integration;
+            _creditBureau = creditBureau;
         }
 
         #region Credit Bureau 
@@ -150,8 +152,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach (var item in customer)
                 {
-                    CustomerDetails customerAPI = new CustomerDetails(context);
-                    customerAPI.AddCustomerAccounts(item.customerCode);
+                     
+                    integration.AddCustomerAccounts(item.customerCode);
                 }
             }
 
@@ -386,15 +388,18 @@ namespace FintrakBanking.Repositories.Credit
         #region Integration 
         public List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
-            var creditBureauProc = new CreditBureauProcess();
+            
 
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfoList.creditBureauId);
-            searchInfoList.userName = creditBureau.USERNAME;
-            searchInfoList.password = creditBureau.PASSWORD;
+            if (creditBureau != null)
+            {
+                searchInfoList.userName = creditBureau.USERNAME;
+                searchInfoList.password = creditBureau.PASSWORD;
+            }
 
             List<string> searchResult = new List<string>();
             
-            var task = Task.Run(() => searchResult.Add(creditBureauProc.XDSSearchCreditBureau(searchInfoList)));
+            var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
 
             if (task.Wait(TimeSpan.FromSeconds(640)))
             {
@@ -445,15 +450,14 @@ namespace FintrakBanking.Repositories.Credit
                 DebitCustomer(creditBureau, casa, chargeAmount, creditBureauInputs);
             }
 
-            var creditBureauProcess = new CreditBureauProcess();
-            CRCSearchResult searchResponse = new CRCSearchResult();
+            CRCSearchResult searchResponse = null;
 
             using (var docTrans = docContext.Database.BeginTransaction())
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var task = Task.Run(() => searchResponse = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
+                    var task = Task.Run(() => searchResponse = _creditBureau .CRCCreditBureauSearch(searchInfo));
 
                     if (task.Wait(TimeSpan.FromSeconds(640)))
                     {
@@ -465,7 +469,7 @@ namespace FintrakBanking.Repositories.Credit
                                 byte file = Convert.ToByte(searchResponse.SearchResult);
                                 byte[] fileArray = new byte[file];
                                 var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
-                                if (!saveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
+                                if (!SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
                                 {
                                     throw new Exception("Could not save file");
                                 }
@@ -498,19 +502,22 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool saveCrcPdfFile(CRCRequestViewModel searchInfo, SearchInput creditBureauInputs)
         {
-            var creditBureauProcess = new CreditBureauProcess();
-            CRCSearchResult searchResponse = new CRCSearchResult();
+           
+            CRCSearchResult searchResponse = null;// new CRCSearchResult();
 
             using (var docTrans = docContext.Database.BeginTransaction())
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var task = Task.Run(() => searchResponse = (creditBureauProcess.CRCCreditBureauSearch(searchInfo)));
+                    var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
                     var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
 
-                    searchInfo.password = creditBureau.PASSWORD;
-                    searchInfo.userName = creditBureau.USERNAME;
+                    if (creditBureau != null)
+                    {
+                        searchInfo.password = creditBureau.PASSWORD;
+                        searchInfo.userName = creditBureau.USERNAME;
+                    }
 
                     if (task.Wait(TimeSpan.FromSeconds(640)))
                     {
@@ -524,7 +531,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
 
-                                if (!saveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
+                                if (!SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
                                 {
                                     throw new Exception("Could not save file");
                                 }
@@ -704,7 +711,7 @@ namespace FintrakBanking.Repositories.Credit
                     try
                     {
                         var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
-                        if (!saveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
+                        if (!SaveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
                         {
                             throw new Exception("Could not save file");
                         }
@@ -726,7 +733,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private bool saveCreditBureauReportFile(int customerCreditBureauId, byte[] file, SearchInput model)
+        private bool SaveCreditBureauReportFile(int customerCreditBureauId, byte[] file, SearchInput model)
         {
             try
             {

@@ -54,5 +54,9 @@ namespace FintrakBanking.Interfaces.WorkFlow
         RequestDocumentViewModel GetJobDocument(int documentId);
         IEnumerable<RequestDocumentViewModel> GetJobRequestDocuments(string jobRequestCode);
         IEnumerable<RequestDocumentViewModel> GetJobRequestDocumentById(int documentId);
+
+        #region Middle Office Updates
+        bool UpdateInvoiceStatus(JobRequestInvoiceViewModel entity);
+        #endregion End Middle Office Updates
     }
 }

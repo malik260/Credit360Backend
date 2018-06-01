@@ -262,18 +262,21 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("manage-account-status/user/{userId}/lock-status/{lockStatus}")]
-        public HttpResponseMessage ManageUserAccountStatus(int userId, int lockStatus)
+        public IHttpActionResult ManageUserAccountStatus(int userId, int lockStatus)
         {
             try
             {
                 var data = repo.ManageUserAccount(userId, lockStatus);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { data });
+
+                return this.Ok(new { data });
+              //  return Request.CreateResponse(HttpStatusCode.OK, new { data });
             }
             catch (Exception ex)
             {
                 errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured {ex.Message}" });
+                return this.Ok(new { success = true, message = $"An unknown error occured {ex.Message}" });
+               // return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured {ex.Message}" });
             }
         }
 
