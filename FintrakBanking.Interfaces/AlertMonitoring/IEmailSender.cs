@@ -15,6 +15,7 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
         List<TBL_MESSAGE_LOG> GetMaillingList();
         bool UpdateMailStatus(int ID);
         bool UpdateMailDeliveryStatus(int messageId, short statusId, string response);
+        void LogMonitorringAlert();
 
     }
 }

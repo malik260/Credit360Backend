@@ -46,9 +46,10 @@ namespace FintrakBanking.Repositories.Credit
         private ICustomerRepository customers;
         private IWorkflow workflow;
         private IAuditTrailRepository audit;
-        //private ICasaRepository casa;
+        private IOverRideRepository overrider;
+        //private ICasaRepository casaRep;
 
-        private IIntegrationWithCWGAPI cwgapi;
+        private IIntegrationWithFinacle finacle;
         bool USE_THIRD_PARTY_INTEGRATION = false;
 
         public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
@@ -56,7 +57,9 @@ namespace FintrakBanking.Repositories.Credit
                                         ILoanCovenantRepository _loanCovenant, IAuditTrailRepository _audit,
                                         IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
                                         ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
-                                        IIntegrationWithCWGAPI cwgapi)
+                                     
+                                        IOverRideRepository _overrider,
+            IIntegrationWithFinacle finacle)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
@@ -69,8 +72,9 @@ namespace FintrakBanking.Repositories.Credit
             this.customers = _customers;
             this.workflow = _workflow;
             this.casaLien = _casaLien;
-            //this.casa = _casa;
-            this.cwgapi = cwgapi;
+            this.overrider = _overrider;
+            //this.casaRep = _casaRep;
+            this.finacle = finacle;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
@@ -100,6 +104,20 @@ namespace FintrakBanking.Repositories.Credit
                         lookupId = data.LOANAPPLICATIONTYPEID,
                         lookupName = data.LOANAPPLICATIONTYPENAME
                     });
+        }
+
+        public CasaBalanceViewModel GetCASABalanceById(int casaAccountId, int companyId)
+        {
+            var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
+
+            return new CasaBalanceViewModel
+            {
+                accountName = $" {account.TBL_CUSTOMER.LASTNAME } {account.TBL_CUSTOMER.FIRSTNAME} {account.TBL_CUSTOMER.MIDDLENAME} ",
+                availableBalance = account.AVAILABLEBALANCE,
+                ledgerBalance = account.LEDGERBALANCE,
+                accountNo = account.PRODUCTACCOUNTNAME,
+                productName = account.TBL_PRODUCT.PRODUCTNAME
+            };
         }
 
         /// <summary>
@@ -141,6 +159,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <exception cref="Exception">The Product type is Invalid</exception>
         public string AddLoanBooking(LoanViewModel entity)
         {
+
             //...................CHECK IF THE LOAN RECORD IS TERM(SCHEDULED) LOAN..................//
             if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating)
             {
@@ -204,8 +223,22 @@ namespace FintrakBanking.Repositories.Credit
             revolvingLoanInput.revolvingTypeId = (short)LoanRevolvingTypeEnum.NormalOverdraft;
 
             if (revolvingLoanInput.revolvingTypeId == 0)
-                revolvingLoanInput.revolvingTypeId = (short)LoanRevolvingTypeEnum.NormalOverdraft; 
+                revolvingLoanInput.revolvingTypeId = (short)LoanRevolvingTypeEnum.NormalOverdraft;
 
+            // ............. Checking customer balance, and fee override ......
+            decimal AllfeeAmount = 0;
+            foreach (var item in model.loanChargeFee){ AllfeeAmount = AllfeeAmount + item.feeAmount; }
+
+            var casaBalance = GetCASABalanceById(model.casaAccountId, model.companyId).availableBalance;
+            var customer = context.TBL_CUSTOMER.Find(model.customerId);
+
+            if (AllfeeAmount > casaBalance)
+            {
+                bool custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, 1, loanReferenceNumber) > 0;
+                if (custFeeOverridable) model.feeOverride = true;
+                else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
+            } 
+            // ...........End checking customer balance, and fee override ..........
 
             var data = new TBL_LOAN_REVOLVING
             {
@@ -373,7 +406,20 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId, entity.productTypeId);
+            // ............. Checking customer balance, and fee override ......
+            decimal AllfeeAmount = 0;
+            foreach (var item in entity.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
+            var casaBalance = GetCASABalanceById(entity.casaAccountId, entity.companyId).availableBalance;
+            var customer = context.TBL_CUSTOMER.Find(entity.customerId);
+
+            if (AllfeeAmount > casaBalance)
+            {
+                bool custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, 1, loanReferenceNumber) > 0;
+                if (custFeeOverridable) entity.feeOverride = true;
+                else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
+            }
+            // ...........End checking customer balance, and fee override ..........
             var data = new TBL_LOAN_CONTINGENT
             {
                 CUSTOMERID = entity.customerId,
@@ -407,7 +453,6 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now
             };
-
 
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -472,10 +517,7 @@ namespace FintrakBanking.Repositories.Credit
                         //.....Commit transaction ............
                         trans.Commit();
                     }
-
-
                     //.......................END OF APPROVAL LOG......................................................
-
                     if (dataCount > 0)
                         return loanReferenceNumber;
                     else
@@ -510,7 +552,6 @@ namespace FintrakBanking.Repositories.Credit
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
-
             var principalAmount = from a in context.TBL_LOAN
                                   where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
                                   let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
@@ -536,7 +577,20 @@ namespace FintrakBanking.Repositories.Credit
                 entity.loanScheduleInput.principalFrequency = null;
                 entity.loanScheduleInput.interestFrequency = null;
             }
+            // ............. Checking customer balance, and fee override ......
+            decimal AllfeeAmount = 0;
+            foreach (var item in entity.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
+            var casaBalance = GetCASABalanceById(entity.casaAccountId, entity.companyId).availableBalance;
+            var customer = context.TBL_CUSTOMER.Find(entity.customerId);
+
+            if (AllfeeAmount > casaBalance)
+            {
+                bool custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, 1, loanReferenceNumber) > 0;
+                if (custFeeOverridable) entity.feeOverride = true;
+                else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
+            }
+            // ...........End checking customer balance, and fee override ..........
             var data = new TBL_LOAN
             {
                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
@@ -741,6 +795,20 @@ namespace FintrakBanking.Repositories.Credit
             if (totalPrincipalAmount > (decimal)approvedAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
+            // ............. Checking customer balance, and fee override ......
+            decimal AllfeeAmount = 0;
+            foreach (var item in entity.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
+
+            var casaBalance = GetCASABalanceById(entity.casaAccountId2, entity.companyId).availableBalance;
+            var customer = context.TBL_CUSTOMER.Find(entity.customerId);
+
+            if (AllfeeAmount > casaBalance)
+            {
+                bool custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, 1, loanReferenceNumber) > 0;
+                if (custFeeOverridable) entity.feeOverride = true;
+                else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
+            }
+            // ...........End checking customer balance, and fee override ..........
             var data = new TBL_LOAN
             {
                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
@@ -1812,7 +1880,7 @@ namespace FintrakBanking.Repositories.Credit
                                     sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
                                 };
 
-                                ResponseMessageViewModel res = cwgapi.OverDraftNormal(model);
+                                ResponseMessageViewModel res = finacle.OverDraftNormal(model);
                                 revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                             }
 
@@ -2693,59 +2761,10 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         /// 
 
-
-        public void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short loanSystemTypeId, int companyId, bool feeOverride)
-        {
-            foreach (var ent in feeModel)
-            {
-
-                var fee = new TBL_LOAN_FEE
-                {
-                    CHARGEFEEID = ent.chargeFeeId,
-                    FEEAMOUNT = ent.feeAmount,
-                    FEEDEPENDENTAMOUNT = ent.feeDependentAmount,
-                    FEERATEVALUE = ent.feeRateValue,
-                    ISINTEGRALFEE = ent.isIntegralFee,
-                    LOANID = loanId,
-                    LOANSYSTEMTYPEID = loanSystemTypeId,
-                    ISRECURRING = ent.recurring,
-                    RECURRINGPAYMENTDAY = 28,
-                    CREATEDBY = staffId, // ent.createdBy,
-                    DATETIMECREATED = DateTime.Now.Date,
-                    ISPOSTED = ent.isPosted
-                };
-                if (feeOverride && ent.isPosted)
-                    throw new ConditionNotMetException("Fee posted must be must be disabled for fee override until after approval");
-
-                context.TBL_LOAN_FEE.Add(fee);
-                if (feeOverride)
-                {
-                    context.SaveChanges();
-                    var approvalModel = new ForwardViewModel
-                    {
-
-                        createdBy = fee.CREATEDBY,
-                        companyId = companyId,
-                        applicationId = fee.LOANCHARGEFEEID,
-                        comment = "Please approve this fee ",
-                        amount = fee.FEEAMOUNT,
-                    };
-                    LogApproval(approvalModel, (int)OperationsEnum.LoanBookingFeeDeferral, true, (int)ApprovalStatusEnum.Pending);
-                }
-                else
-                {
-                    context.SaveChanges();
-                }
-
-            }
-
-            //return context.SaveChanges() > 0;
-        }
         private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short loanSystemTypeId, int companyId, bool feeOverride)
         {
             foreach (var ent in feeModel)
             {
-
                 var fee = new TBL_LOAN_FEE
                 {
                     CHARGEFEEID = ent.chargeFeeId,
@@ -2762,31 +2781,13 @@ namespace FintrakBanking.Repositories.Credit
                     ISPOSTED = ent.isPosted
                 };
                 if (feeOverride)
+                {
                     fee.ISPOSTED = false;
+                }
                 else fee.ISPOSTED = true;
 
                 context.TBL_LOAN_FEE.Add(fee);
-                if (feeOverride)
-                {
-                    context.SaveChanges();
-                    var approvalModel = new ForwardViewModel
-                    {
-                        createdBy = fee.CREATEDBY,
-                        companyId = companyId,
-                        applicationId = fee.LOANCHARGEFEEID,
-                        comment = "Please approve this fee ",
-                        amount = fee.FEEAMOUNT,
-
-                    };
-                    LogApproval(approvalModel, (int)OperationsEnum.LoanBookingFeeDeferral, true, (int)ApprovalStatusEnum.Pending);
-                }
-                else
-                {
-                    context.SaveChanges();
-                }
-
             }
-
             //return context.SaveChanges() > 0;
         }
 
@@ -3946,6 +3947,7 @@ namespace FintrakBanking.Repositories.Credit
                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                         where m.COMPANYID == companyId && d.DELETED == false && s.DELETED == false
+                        && d.STATUSID == (short) ApprovalStatusEnum.Approved
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {

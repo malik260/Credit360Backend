@@ -20,7 +20,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         Task<bool> IsAccountLocked(string userName);
 
-        Task<SessionStatusInfo> CheckSessionState(string username);
+        Task<SessionStatusInfo> CheckSessionState(string username, string ipAddress);
 
         SessionStatusInfo SessionInfo { get; set; }
 

@@ -58,17 +58,16 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public string strIsFirstLogin
         {
-            get
-            {
-                return this.IsFirstLoginAttempt.HasValue ? "First Login" : "Not a first login";
-            }
+            get { return this.IsFirstLoginAttempt.HasValue ? "First Login" : "Not a first login"; }
         }
 
         public string strNextPasswordChange
         {
             get
             {
-                return this.nextPasswordChangeDate.HasValue ? this.nextPasswordChangeDate.Value.ToString("dd/MM/yyyy") : DateTime.Now.AddDays(30).ToString("dd/MM/yyyy");
+                return this.nextPasswordChangeDate.HasValue
+                    ? this.nextPasswordChangeDate.Value.ToString("dd/MM/yyyy")
+                    : DateTime.Now.AddDays(30).ToString("dd/MM/yyyy");
             }
         }
 
@@ -76,15 +75,19 @@ namespace FintrakBanking.ViewModels.Setups.General
         {
             get
             {
-                return this.lastLoginDate.HasValue ? this.lastLoginDate.Value.ToString("dd/MM/yyyy") : DateTime.Now.AddDays(-5).ToString("dd/MM/yyyy");
+                return this.lastLoginDate.HasValue
+                    ? this.lastLoginDate.Value.ToString("dd/MM/yyyy")
+                    : DateTime.Now.AddDays(-5).ToString("dd/MM/yyyy");
             }
         }
     }
+
     public class SessionStatusInfo
     {
         public Guid loginCode { get; set; }
         public int state { get; set; }
         public string errorMessage { get; set; }
+        public string ipaddress { get; set; }
     }
 
     public class ActiveUserDetails
@@ -106,8 +109,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public DateTime? lastLockedOutDate { get; set; }
         public int? lastUpdatedBy { get; set; }
         public string actionMessage { get; set; }
-
-        public bool accountStatus { get; set; }
         public bool lockStatus { get; set; }
+        public bool accountStatus { get; set; }
     }
 }

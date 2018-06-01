@@ -245,6 +245,7 @@
     <Compile Include="Models\TBL_FEE_TYPE.cs" />
     <Compile Include="Models\TBL_FINANCECURRENTDATE.cs" />
     <Compile Include="Models\TBL_FINANCE_ENDOFDAY.cs" />
+    <Compile Include="Models\TBL_CUSTOM_TRANSACTION_BULK.cs" />
     <Compile Include="Models\TBL_FINANCE_TRANSACTION.cs" />
     <Compile Include="Models\TBL_FINANCIAL_STATEMENT_CAPTN.cs" />
     <Compile Include="Models\TBL_FINANCIAL_STATEMENT_TYPE.cs" />
@@ -450,6 +451,8 @@
     <Compile Include="OracleDatabaseConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
+    <Compile Include="StagingModels\FINTRAK_TRAN_PROC_DETAILS.cs" />
+    <Compile Include="StagingModels\FINTRAK_TRAN_PROC_MAIN.cs" />
     <Compile Include="StagingModels\STG_BRANCH.cs" />
     <Compile Include="StagingModels\STG_CASA_BALANCE.cs" />
     <Compile Include="StagingModels\STG_CASA_DAILY_BALANCE.cs" />
@@ -466,6 +469,7 @@
     <Compile Include="StagingModels\STG_STAFF.cs" />
     <Compile Include="StagingModels\STG_STAFFMIS.cs" />
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
+    <Compile Include="StagingModels\TBL_FINANCE_TRANSACTION_STAGING.cs" />
     <Compile Include="StagingModels\TBL_CUSTOMER_SIGNATORY.cs" />
   </ItemGroup>
   <ItemGroup>

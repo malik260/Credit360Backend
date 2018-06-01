@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.ErrorLogger
                 TIMEUTC = DateTime.Now
             };
             this.context.TBL_ERRORLOG.Add(errorDetails);
-            context.SaveChanges();
+           // context.SaveChanges();
 
             //bool sendMail = bool.Parse(CommonHelpers.SendErrorMail);//  _config["AppConstants:sendErrorMail"]);
             //if (sendMail)

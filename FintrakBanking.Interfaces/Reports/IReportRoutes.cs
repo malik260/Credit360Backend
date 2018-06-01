@@ -45,6 +45,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetFacilityApprovedNotUtilized(ReportSearchEntity searchEntity, int companyId, int staffId);
         string GetCollateralPropertyDueForVisitationReport(int companyId, DateRange dateRange, int staffId);
         string GetBondAndGuaranteeReport(DateRange dateRange, int companyId, int staffId);
+        string GetGeneratedOfferLetterLMS(string refNumber);
 
     }
 }

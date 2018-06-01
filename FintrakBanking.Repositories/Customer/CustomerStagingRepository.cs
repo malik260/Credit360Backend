@@ -7,9 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FinTrakBanking.ThirdPartyIntegration.Finacle;
-using FintrakBanking.ViewModels.ThridPartyIntegration;
-using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
+using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -17,11 +15,12 @@ namespace FintrakBanking.Repositories.Customer
     {
         private FinTrakBankingStagingContext context;
         private FinTrakBankingContext mainContext;
-
-       public CustomerStagingRepository(FinTrakBankingStagingContext _context, FinTrakBankingContext _mainContext)
+        private CustomerDetails _customer;
+       public CustomerStagingRepository(FinTrakBankingStagingContext _context, FinTrakBankingContext _mainContext, CustomerDetails customer)
         {
             context = _context;
             mainContext = _mainContext;
+            this._customer = customer;
         }
 
         //CustomerInformationStagingViewModels
@@ -84,13 +83,14 @@ namespace FintrakBanking.Repositories.Customer
                 { 
                 //mainContext.TBL_CASA.Where(a => a.PRODUCTACCOUNTNUMBER == searchTerm);
                 //var existingCustomer = mainContext.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == searchTerm);
-                CustomerDetails customer = new CustomerDetails(mainContext);
+                //CustomerDetails customer = new CustomerDetails(mainContext);
                 //customer.RunAsync().GetAwaiter().GetResult();
                 //return await customer.GetCustomerByAccountNumber(searchTerm);//GetAllCustomers
                 //return customer.GetAllCustomers(searchTerm).GetAwaiter().GetResult();
 
                 //return  customer.GetCustomerByAccountNumber(searchTerm).GetAwaiter().GetResult();
-                Task.Run(async () => { data = await customer.GetCustomerByAccountsNumber(searchTerm); }).GetAwaiter().GetResult();
+                    
+                Task.Run(async () => { data = await _customer.GetCustomerByAccountsNumber(searchTerm); }).GetAwaiter().GetResult();
 
                 return data;
                 }

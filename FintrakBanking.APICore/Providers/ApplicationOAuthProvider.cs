@@ -83,24 +83,26 @@ namespace FintrakBanking.APICore.Providers
 
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
-                if (! await authRepo.IsAccountActive(userVm.username.ToLower()))
-                {
-                    context.SetError("invalid_grant", "This account is INACTIVE");
-                    return;
-                }
-
                 if (await authRepo.IsAccountLocked(userVm.username.ToLower()))
                 {
                     context.SetError("invalid_grant", "This account is LOCKED");
                     return;
                 }
 
+                if (! await authRepo.IsAccountActive(userVm.username.ToLower()))
+                {
+                    context.SetError("invalid_grant", "This account is INACTIVE");
+                    return;
+                }
+
+               
+
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {
                     if (Task.FromResult(
                         ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
                     {
-                        authRepo.SessionInfo =   authRepo.CheckSessionState(userVm.username.ToLower()).GetAwaiter().GetResult();
+                        authRepo.SessionInfo =   authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress).GetAwaiter().GetResult();
                         user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username.ToLower())).Result;
                     }
                     else
@@ -114,7 +116,7 @@ namespace FintrakBanking.APICore.Providers
                 {
                    
 
-                    authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower()).GetAwaiter().GetResult();
+                    authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress).GetAwaiter().GetResult();
                     user = await Task
                         .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
                         .Result;
@@ -147,7 +149,7 @@ namespace FintrakBanking.APICore.Providers
                     currIdentity.AddClaim(new Claim("branchId", user.branchId.ToString()));
                     currIdentity.AddClaim(new Claim("countryId", user.countryId.ToString()));
                     currIdentity.AddClaim(new Claim("userId", user.user_id.ToString()));
-                    currIdentity.AddClaim(new Claim("logincode", user.logincode == null ? Guid.NewGuid().ToString() : user.logincode));
+                    currIdentity.AddClaim(new Claim("logincode", user.logincode == null ? Guid.NewGuid().ToString()+"@"+ipAddress : user.logincode));
                     var today = DateTime.Now;
                     TimeSpan duration = new TimeSpan(exipredHr, exipredMin, exipredSec); //(exipredHr, 0, 0);
 

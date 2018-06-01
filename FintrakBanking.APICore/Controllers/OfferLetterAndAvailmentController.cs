@@ -80,7 +80,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var staffid = token.GetStaffId;
-                var response = await repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToListAsync();
+                var response = await repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
@@ -247,7 +247,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application/prepared-form38b-template-lms/{applicationRefNumber}")]
+        public HttpResponseMessage GenerateForm3800TemplateLMS([FromUri] string applicationRefNumber)
+        {
+            try
+            {
+                var response = repo.GenerateForm3800TemplateLMS(applicationRefNumber);
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter")]
         public HttpResponseMessage SaveDraftOfferLetter([FromBody] OfferLetterTemplateViewModel model)
         {

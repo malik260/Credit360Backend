@@ -180,4 +180,12 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string physicalLocation { get; set; }
 
     }
-}
+
+    public class JobRequestInvoiceViewModel : GeneralEntity
+    {
+        public bool status { get; set; }
+        public short? rejectionId { get; set; }
+        public short jobRequestId { get; set; }
+    }
+
+   }

@@ -37,7 +37,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMESENT { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string GATEWAYRESPONSE { get; set; }
 
         public int? OPERATIONID { get; set; }

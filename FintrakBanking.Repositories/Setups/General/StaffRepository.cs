@@ -1678,7 +1678,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             {
                                 rowSuccess = false;
                                 staffRowData.staffRoleCode = cell.Value.ToString();
-                                staffRowData.message = staffRowData.message + $"The ROLECODE @  '{cellColumn}' does not exist in the role log. ";
+                                staffRowData.message = staffRowData.message + $"The ROLECODE @  cell '{cellColumn}' of row '{cellRow}' does not exist in the role log. ";
                             }
                             break;
                         case "D":
@@ -1697,7 +1697,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             {
                                 rowSuccess = false;
                                 staffRowData.branchCode = cell.Value.ToString();
-                                staffRowData.message = staffRowData.message + $"the 'BRANCHCODE' @  '{cellColumn}' does not exist in the branch log";
+                                staffRowData.message = staffRowData.message + $"the 'BRANCHCODE' @  cell '{cellColumn}' of row '{cellRow}' does not exist in the branch log";
                             }
                             break;
                         case "E":
@@ -1736,7 +1736,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             else
                             {
                                 rowSuccess = false;
-                                staffRowData.message = staffRowData.message + $"Supervisor Code @ '{cellColumn}' does not exist. ";
+                                staffRowData.message = staffRowData.message + $"Supervisor Code @ cell '{cellColumn}' of row '{cellRow}' does not exist. ";
                             }
                             break;
                         case "J":
@@ -1771,32 +1771,40 @@ namespace FintrakBanking.Repositories.Setups.General
                     staffRowData.message = "Success";
                     staffInfo.Add(staffRowData);
                 }
-                else if (!rowSuccess) failedStaffInfo.Add(staffRowData);
+                else if (!rowSuccess && excelRowPosition > 1) failedStaffInfo.Add(staffRowData);
 
             };
-
-            foreach (var staffInfoRow in staffInfo)
+            if(staffInfo.Count() < 1)
             {
-                staffInfoRow.createdBy = model.createdBy;
-                staffInfoRow.companyId = model.companyId;
-                staffInfoRow.BranchId = model.userBranchId;
-                staffInfoRow.applicationUrl = model.applicationUrl;
-                staffInfoRow.userIPAddress = model.userIPAddress;
-                staffInfoRow.applicationUrl = model.applicationUrl;
-
                 staffBulkFeedbackViewModel.commitedRows = staffInfo;
                 staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
-
-                var response = AddSimpleTempStaff(staffInfoRow);
-                if (!response)
+            }
+            else
+            {
+                foreach (var staffInfoRow in staffInfo)
                 {
-                    staffBulkFeedbackViewModel.discardedRows.Add(staffInfoRow);
-                    staffBulkFeedbackViewModel.commitedRows.Remove(staffInfoRow);
-                    staffBulkFeedbackViewModel.failureCount = staffBulkFeedbackViewModel.failureCount + 1;
-                    staffBulkFeedbackViewModel.successCount = staffBulkFeedbackViewModel.successCount - 1;
-                }
+                    staffInfoRow.createdBy = model.createdBy;
+                    staffInfoRow.companyId = model.companyId;
+                    staffInfoRow.BranchId = model.userBranchId;
+                    staffInfoRow.applicationUrl = model.applicationUrl;
+                    staffInfoRow.userIPAddress = model.userIPAddress;
+                    staffInfoRow.applicationUrl = model.applicationUrl;
 
-            };
+                    staffBulkFeedbackViewModel.commitedRows = staffInfo;
+                    staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
+
+                    var response = AddSimpleTempStaff(staffInfoRow);
+                    if (!response)
+                    {
+                        staffBulkFeedbackViewModel.discardedRows.Add(staffInfoRow);
+                        staffBulkFeedbackViewModel.commitedRows.Remove(staffInfoRow);
+                        staffBulkFeedbackViewModel.failureCount = staffBulkFeedbackViewModel.failureCount + 1;
+                        staffBulkFeedbackViewModel.successCount = staffBulkFeedbackViewModel.successCount - 1;
+                    }
+
+                };
+            }
+           
             return staffBulkFeedbackViewModel;
         }
 
@@ -2085,13 +2093,13 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() > 0;
         }
-        public byte[] GetStaffSampleDocument()
-        {
-            // HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data")
-            var pathString = HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data/StaffSampleDocument.xlsx");
-            byte[] readBuffer = System.IO.File.ReadAllBytes(pathString);
+        //public byte[] GetStaffSampleDocument()
+        //{
+        //    // HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data")
+        //    var pathString = HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data/StaffSampleDocument.xlsx");
+        //    byte[] readBuffer = System.IO.File.ReadAllBytes(pathString);
 
-            return readBuffer;
+        //    return readBuffer;
 
             //string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             //string filePath = Path.Combine(appDataFolder, "test.txt");
@@ -2102,6 +2110,6 @@ namespace FintrakBanking.Repositories.Setups.General
             //{
             //    return File(path, "application/pdf");
             //}
-        }
+       // }
     }
 }

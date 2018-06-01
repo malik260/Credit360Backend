@@ -22,32 +22,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
         private FinTrakBankingContext context = new FinTrakBankingContext();
-        private IAuditTrailRepository auditTrail;
-        private EmailHelpers emailHelpers;
-        private IGeneralSetupRepository genSetup;
         private DateTime applDate;
-        private IStaffRepository staffRepo;
         public string response = string.Empty;
 
         private readonly string supportEmail = ConfigurationManager.AppSettings["SupportEmailAddr"];
-
-
-        public AlertMessageLogger(
-             FinTrakBankingContext _context,
-                IAuditTrailRepository _auditTrail,
-                EmailHelpers _emailHelpers,
-                IGeneralSetupRepository _general,
-                IStaffRepository _staffRepo
-            )
-        {
-            context = _context;
-            auditTrail = _auditTrail;
-            emailHelpers = _emailHelpers;
-            genSetup = _general;
-            staffRepo = _staffRepo;
-        }
-
-
 
         public bool SendAlertsForCovenantsApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {

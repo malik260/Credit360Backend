@@ -29,7 +29,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private IGeneralSetupRepository _genSetup;
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
-        private IIntegrationWithCWGAPI cwpAIP;
+        private IIntegrationWithFinacle cwpAIP;
 
         public bool USE_THIRD_PARTY_INTEGRATION { get; private set; }
 
@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                                                 IGeneralSetupRepository genSetup,
                                                 IWorkflow _workFlow,
                                                 IApprovalLevelStaffRepository _level,
-                                                     IIntegrationWithCWGAPI cwpAIP)
+                                                     IIntegrationWithFinacle cwpAIP)
         {
             this.context = _context;
             this._genSetup = genSetup;
@@ -243,6 +243,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         private int AddAccount2(ChartOfAccountViewModel account)
         {
+            ValidateAccountId(account.accountCode);
+
             if (account.currencies.Count < 1)
                 throw new Exception("Chart of Account Currency must be specified");
 
@@ -508,6 +510,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         private bool UpdateAccount2(short accountId, ChartOfAccountViewModel account)
         {
+            ValidateAccountId(account.accountCode);
+
             var accountModel = this.context.TBL_CHART_OF_ACCOUNT.Find(accountId);
 
             if (accountModel == null)
@@ -553,6 +557,19 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return this.SaveAll();
 
             //throw new NotImplementedException();
+        }
+
+        private void ValidateAccountId(string accountCode)
+        {
+            var applicationSetup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (applicationSetup.USE_THIRD_PARTY_INTEGRATION == true)
+            {
+                var placeholder = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == accountCode);
+                if (placeholder.Any() == false)
+                {
+                    throw new Exception("The pecified account id do not exist!");
+                }
+            }
         }
 
         public bool UpdateAccount(short accountId, ChartOfAccountViewModel accountModel)

@@ -1762,7 +1762,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERGROUPID = appl.CUSTOMERGROUPID,
                 CASAACCOUNTID = appl.CASAACCOUNTID,
                 APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress,
-                APPROVALSTATUSID = appl.APPROVALSTATUSID,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                 APPLICATIONAMOUNT = appl.APPLICATIONAMOUNT,
                 APPLICATIONTENOR = appl.APPLICATIONTENOR,
                 ISINVESTMENTGRADE = appl.ISINVESTMENTGRADE,
