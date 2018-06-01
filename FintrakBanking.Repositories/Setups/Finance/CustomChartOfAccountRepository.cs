@@ -8,7 +8,7 @@ using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.Common.Enum;
 using System.Linq;
-using FinTrakBanking.ThirdPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.Repositories.Setups.Finance
@@ -20,8 +20,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private IAuditTrailRepository audit;
         private IIntegrationWithFinacle finacle;
 
-        public CustomChartOfAccountRepository(FinTrakBankingContext context, IGeneralSetupRepository general,
-            IAuditTrailRepository audit, IIntegrationWithFinacle finacle)
+        public CustomChartOfAccountRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IIntegrationWithFinacle finacle)
         {
             this.context = context;
             this.general = general;

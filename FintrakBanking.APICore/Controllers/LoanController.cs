@@ -293,9 +293,13 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+                var innerException = "";
+                if (ex.InnerException != null)
+                    innerException = ex.InnerException.Message;
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured. " + ex.Message + " inner exception "+ innerException });
             }
         }
 
@@ -1007,9 +1011,9 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: An error occured" });
             }
         }
 

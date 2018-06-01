@@ -501,7 +501,7 @@
     <Compile Include="Reports\ReportViews\SeftLiquidatingLoans.aspx.designer.cs">
       <DependentUpon>SeftLiquidatingLoans.aspx</DependentUpon>
     </Compile>
-    <Compile Include="TransactionDynamicsController.cs" />
+    <Compile Include="Controllers\TransactionDynamicsController.cs" />
     <Compile Include="core\ApiControllerBase.cs" />
     <Compile Include="Filters\DeflateCompressionAttribute.cs" />
     <Compile Include="Filters\JWTAuthorizeAttribute.cs" />
