@@ -8,6 +8,8 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
+using System.Data;
+using FintrakBanking.Common.Extensions;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -97,6 +99,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<EmployerViewModel> getEmployer(int companyId)
         {
+
             var employerData = (from a in _context.TBL_CUSTOMER_EMPLOYER
                                 join c in _context.TBL_CITY on a.CITYID equals c.CITYID
                                 join sb in _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB on a.EMPLOYER_SUB_TYPEID equals sb.EMPLOYER_SUB_TYPEID
@@ -120,9 +123,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
                                 }).ToList();
 
+            
+
             return employerData;
         }
 
+      
         public EmployerViewModel getEmployer(int employerId, int companyId)
         {
             var employerData = (from a in _context.TBL_CUSTOMER_EMPLOYER
