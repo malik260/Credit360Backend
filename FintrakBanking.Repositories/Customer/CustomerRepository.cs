@@ -32,14 +32,14 @@ namespace FintrakBanking.Repositories.Customer
         private IWorkflow workflow;
         private IApprovalLevelStaffRepository level;
         private IIntegrationWithCWGAPI finaco;
-        private int customerId  ;
+        private int customerId;
         int status = 0;
         bool USE_THIRD_PARTY_INTEGRATION;
         public CustomerRepository(IAuditTrailRepository _auditTrail,
                                     IGeneralSetupRepository genSetup,
                                      IWorkflow _workFlow,
                                       IApprovalLevelStaffRepository _level,
-                                    FinTrakBankingContext _context, 
+                                    FinTrakBankingContext _context,
                                     ICustomerCreditBureauRepository bureau, IIntegrationWithCWGAPI finaco)
         {
             context = _context;
@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Customer
             level = _level;
             this.finaco = finaco;
             this.bureau = bureau;
-        var global =    context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            var global = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             this.USE_THIRD_PARTY_INTEGRATION = global.USE_THIRD_PARTY_INTEGRATION;
         }
 
@@ -70,8 +70,8 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool AddCustomer(CustomerViewModels entity)
         {
-            if(USE_THIRD_PARTY_INTEGRATION)
-                 entity.isPoliticallyExposed = finaco.GetExposePersonStatus(entity.customerCode);
+            if (USE_THIRD_PARTY_INTEGRATION)
+                entity.isPoliticallyExposed = finaco.GetExposePersonStatus(entity.customerCode);
 
             var customer = new TBL_CUSTOMER
             {
@@ -1815,8 +1815,8 @@ namespace FintrakBanking.Repositories.Customer
                            customerBVN = a.CUSTOMERBVN
                        };
 
-            var cust =  data.FirstOrDefault();
-            if(cust != null)
+            var cust = data.FirstOrDefault();
+            if (cust != null)
             {
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
@@ -1828,17 +1828,17 @@ namespace FintrakBanking.Repositories.Customer
                 //cust.CustomerCompanyInfomation
                 cust.CustomerPhoneContact = GetSingleCustomerPhoneContactInfo(cust.customerId).ToList();
                 cust.CustomerAddresses = GetSingleCustomerAddressInfo(cust.customerId).ToList();
-               // cust.
+                // cust.
                 //cust.CustomerClientOrSupplier
                 //cust.CustomerEmploymentHistory
                 //cust.CustomerSupplier
                 //cust.
                 cust.CustomerChildren = GetSingleCustomerChildrenInfo(cust.customerId).ToList();
                 cust.CustomerCompanyDirectors = GetSingleCustomerDirectorInfo(cust.customerId, (int)CompanyDirectorTypeEnum.BoardMember).ToList();
-               // cust.CustomerCompanyAccountSignatory = GetSingleCustomerDirectorInfo(cust.customerId, (int)CompanyDirectorTypeEnum.Account_Signatory).ToList();
-               // cust.CustomerCompanyShareholder = GetSingleCustomerShareholderInfo(cust.customerId, (int)CustomerTypeEnum.Corporate).ToList();
+                // cust.CustomerCompanyAccountSignatory = GetSingleCustomerDirectorInfo(cust.customerId, (int)CompanyDirectorTypeEnum.Account_Signatory).ToList();
+                // cust.CustomerCompanyShareholder = GetSingleCustomerShareholderInfo(cust.customerId, (int)CustomerTypeEnum.Corporate).ToList();
             }
-            
+
 
             return cust;
         }
@@ -1872,13 +1872,13 @@ namespace FintrakBanking.Repositories.Customer
                        title = a.TITLE,
                        middleName = a.MIDDLENAME,
                        //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                      // customerTypeName =  context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                       // customerTypeName =  context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                        misCode = a.MISCODE,
                        misStaff = a.MISSTAFF,
                        nationality = a.NATIONALITY,
                        occupation = a.OCCUPATION,
                        placeOfBirth = a.PLACEOFBIRTH,
-                       isPoliticallyExposed =  a.ISPOLITICALLYEXPOSED ,
+                       isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                        relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                        relationshipOfficerName = st.FIRSTNAME + " " + st.LASTNAME,
                        spouse = a.SPOUSE,
@@ -1888,7 +1888,7 @@ namespace FintrakBanking.Repositories.Customer
                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                        taxNumber = a.TAXNUMBER,
                        riskRatingId = a.RISKRATINGID,
-                    //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                       //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                        customerBVN = a.CUSTOMERBVN,
                        //CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
                        //{
@@ -2105,7 +2105,7 @@ namespace FintrakBanking.Repositories.Customer
                        nationality = a.NATIONALITY,
                        occupation = a.OCCUPATION,
                        placeOfBirth = a.PLACEOFBIRTH,
-                       isPoliticallyExposed = a.ISPOLITICALLYEXPOSED  == false ? finaco.GetExposePersonStatus(a.CUSTOMERCODE) : a.ISPOLITICALLYEXPOSED,
+                       isPoliticallyExposed = a.ISPOLITICALLYEXPOSED == false ? finaco.GetExposePersonStatus(a.CUSTOMERCODE) : a.ISPOLITICALLYEXPOSED,
                        relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                        relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
                       + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
@@ -2163,7 +2163,7 @@ namespace FintrakBanking.Repositories.Customer
                            email = s.EMAILADDRESS
                        }).ToList(),
                    };
-            
+
         }
 
         IQueryable<CustomerViewModels> GetCustomersLite()
@@ -2196,7 +2196,7 @@ namespace FintrakBanking.Repositories.Customer
                 nationality = a.NATIONALITY,
                 occupation = a.OCCUPATION,
                 placeOfBirth = a.PLACEOFBIRTH,
-                isPoliticallyExposed = a.ISPOLITICALLYEXPOSED ,
+                isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                 relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                 //relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
                 //         + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
@@ -2207,7 +2207,7 @@ namespace FintrakBanking.Repositories.Customer
                 subSectorName = a.TBL_SUB_SECTOR.NAME,
                 taxNumber = a.TAXNUMBER,
                 riskRatingId = a.RISKRATINGID,
-               // riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                // riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                 customerBVN = a.CUSTOMERBVN,
             });
         }
@@ -2228,7 +2228,7 @@ namespace FintrakBanking.Repositories.Customer
             return data;
         }
 
-       
+
 
         public IEnumerable<CustomerViewModels> GetCustomerByBranchId(int branchId)
         {
@@ -2719,8 +2719,8 @@ namespace FintrakBanking.Repositories.Customer
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
-            if(USE_THIRD_PARTY_INTEGRATION)
-                data.isPoliticallyExposed = finaco.GetExposePersonStatus(data.customerCode);
+          //  if (USE_THIRD_PARTY_INTEGRATION)
+          //      data.isPoliticallyExposed = finaco.GetExposePersonStatus(data.customerCode);
 
             return data;
         }
@@ -2754,7 +2754,7 @@ namespace FintrakBanking.Repositories.Customer
                             misStaff = a.MISSTAFF,
                             nationality = a.NATIONALITY,
                             occupation = a.OCCUPATION,
-                            placeOfBirth = a.PLACEOFBIRTH,                          
+                            placeOfBirth = a.PLACEOFBIRTH,
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                             spouse = a.SPOUSE,
                             isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
@@ -2763,12 +2763,12 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
-                            relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID).Select(f=>f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
+                            relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID).Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
-            if(USE_THIRD_PARTY_INTEGRATION)
-                data.isPoliticallyExposed = finaco.GetExposePersonStatus(data.customerCode);
+           // if (USE_THIRD_PARTY_INTEGRATION)
+              //  data.isPoliticallyExposed = finaco.GetExposePersonStatus(data.customerCode);
             return data;
         }
         public CustomerViewModels GetSingleCustomerGeneralInfoByCustomerId(int customerId, int targetId)
@@ -2779,7 +2779,7 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
                             branchId = a.BRANCHID,
-                            branchName = context.TBL_BRANCH.FirstOrDefault(u=> u.BRANCHID == a.BRANCHID).BRANCHNAME,
+                            branchName = context.TBL_BRANCH.FirstOrDefault(u => u.BRANCHID == a.BRANCHID).BRANCHNAME,
                             companyMainId = a.COMPANYID,
                             createdBy = a.CREATEDBY,
                             creationMailSent = a.CREATIONMAILSENT,
@@ -2805,13 +2805,13 @@ namespace FintrakBanking.Repositories.Customer
                             isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                             spouse = a.SPOUSE,
-                          //  sectorId = context.TBL_SUB_SECTOR.FirstOrDefault(c=>c.SUBSECTORID == (short)a.SUBSECTORID).SECTORID,
-                           // sectorName = context.TBL_SECTOR.FirstOrDefault(d=>d.TBL_SUB_SECTOR.FirstOrDefault(l=>l.SUBSECTORID==a.SUBSECTORID).NAME,
+                            //  sectorId = context.TBL_SUB_SECTOR.FirstOrDefault(c=>c.SUBSECTORID == (short)a.SUBSECTORID).SECTORID,
+                            // sectorName = context.TBL_SECTOR.FirstOrDefault(d=>d.TBL_SUB_SECTOR.FirstOrDefault(l=>l.SUBSECTORID==a.SUBSECTORID).NAME,
                             subSectorId = (short)a.SUBSECTORID,
-                            subSectorName = context.TBL_SUB_SECTOR.FirstOrDefault(r=>r.SUBSECTORID==a.SUBSECTORID).NAME,
+                            subSectorName = context.TBL_SUB_SECTOR.FirstOrDefault(r => r.SUBSECTORID == a.SUBSECTORID).NAME,
                             taxNumber = a.TAXNUMBER,
                             relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
-                      + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME, 
+                      + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
                             customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
 
@@ -3123,7 +3123,7 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
                                         taxNumber = s.TAX_NUMBER,
-                                       // companyDirectorTypeName = context.TBL_CUSTOMER_COMPANY_DIREC_TYP.FirstOrDefault(x => x.COMPANYDIRECTORYTYPEID == s.COMPANYDIRECTORTYPEID).COMPANYDIRECTORYTYPENAME,
+                                        // companyDirectorTypeName = context.TBL_CUSTOMER_COMPANY_DIREC_TYP.FirstOrDefault(x => x.COMPANYDIRECTORYTYPEID == s.COMPANYDIRECTORTYPEID).COMPANYDIRECTORYTYPENAME,
                                         customerId = s.CUSTOMERID,
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
                                         address = s.ADDRESS,
@@ -3139,7 +3139,7 @@ namespace FintrakBanking.Repositories.Customer
                                     select new CustomerClientOrSupplierViewModels()
                                     {
                                         customerTypeId = cs.CUSTOMERTYPEID,
-                                       // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
+                                        // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
                                         client_SupplierId = cs.CLIENT_SUPPLIERID,
                                         clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
                                         firstName = cs.FIRSTNAME,
@@ -3168,7 +3168,7 @@ namespace FintrakBanking.Repositories.Customer
                                     select new CustomerClientOrSupplierViewModels()
                                     {
                                         customerTypeId = cs.CUSTOMERTYPEID,
-                                       // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
+                                        // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
                                         client_SupplierId = cs.TEMPCLIENT_SUPPLIERID,
                                         clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
                                         firstName = cs.FIRSTNAME,
@@ -3185,7 +3185,7 @@ namespace FintrakBanking.Repositories.Customer
                                         client_SupplierPhoneNumber = cs.PHONENUMBER,
                                         client_SupplierEmail = cs.EMAILADDRESS,
                                         client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                      //  client_SupplierTypeName = context.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.FirstOrDefault(x => x.CLIENT_SUPPLIERTYPEID == cs.CLIENT_SUPPLIERTYPEID).CLIENT_SUPPLIERTYPENAME
+                                        //  client_SupplierTypeName = context.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.FirstOrDefault(x => x.CLIENT_SUPPLIERTYPEID == cs.CLIENT_SUPPLIERTYPEID).CLIENT_SUPPLIERTYPENAME
                                     }).ToList();
             return clientOrSupplier;
         }
@@ -3235,36 +3235,36 @@ namespace FintrakBanking.Repositories.Customer
                 {
                     CustomerDetails customer = new CustomerDetails(context);
                     Task.Run(async () => { data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerinfo[0].customerCode); }).GetAwaiter().GetResult();
-                   // return data.ToList();
+                    // return data.ToList();
 
                 }
                 return data;
             }
             else
             {
-                    var casaInformation = context.TBL_CASA.Where(a => a.CUSTOMERID == customerId).Select(x => new CasaViewModel()
-                    {
-                        casaAccountId = x.CASAACCOUNTID,
-                        productAccountNumber = x.PRODUCTACCOUNTNUMBER,
-                        productAccountName = x.PRODUCTACCOUNTNAME,
-                        isCurrentAccount = x.ISCURRENTACCOUNT,
-                        customerId = x.CUSTOMERID,
-                        productId = x.PRODUCTID,
-                        productCode = x.TBL_PRODUCT.PRODUCTCODE,
-                        productName = x.TBL_PRODUCT.PRODUCTNAME,
-                        branchId = x.BRANCHID,
-                        branchCode = x.TBL_BRANCH.BRANCHCODE,
-                        branchName = x.TBL_BRANCH.BRANCHNAME,
-                        currencyId = x.CURRENCYID,
-                        currency = x.TBL_CURRENCY.CURRENCYNAME,
-                        availableBalance = x.AVAILABLEBALANCE,
-                        ledgerBalance = x.LEDGERBALANCE,
-                        accountStatusName = x.TBL_CASA_ACCOUNTSTATUS.ACCOUNTSTATUSNAME,
-                        relationshipManagerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
-                        relationshipOfficerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
-                        hasOverdraft = x.HASOVERDRAFT,
-                        hasLien = x.HASLIEN
-                    }).ToList();
+                var casaInformation = context.TBL_CASA.Where(a => a.CUSTOMERID == customerId).Select(x => new CasaViewModel()
+                {
+                    casaAccountId = x.CASAACCOUNTID,
+                    productAccountNumber = x.PRODUCTACCOUNTNUMBER,
+                    productAccountName = x.PRODUCTACCOUNTNAME,
+                    isCurrentAccount = x.ISCURRENTACCOUNT,
+                    customerId = x.CUSTOMERID,
+                    productId = x.PRODUCTID,
+                    productCode = x.TBL_PRODUCT.PRODUCTCODE,
+                    productName = x.TBL_PRODUCT.PRODUCTNAME,
+                    branchId = x.BRANCHID,
+                    branchCode = x.TBL_BRANCH.BRANCHCODE,
+                    branchName = x.TBL_BRANCH.BRANCHNAME,
+                    currencyId = x.CURRENCYID,
+                    currency = x.TBL_CURRENCY.CURRENCYNAME,
+                    availableBalance = x.AVAILABLEBALANCE,
+                    ledgerBalance = x.LEDGERBALANCE,
+                    accountStatusName = x.TBL_CASA_ACCOUNTSTATUS.ACCOUNTSTATUSNAME,
+                    relationshipManagerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                    relationshipOfficerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+                    hasOverdraft = x.HASOVERDRAFT,
+                    hasLien = x.HASLIEN
+                }).ToList();
                 return casaInformation;
 
             }
@@ -3312,21 +3312,21 @@ namespace FintrakBanking.Repositories.Customer
             }).ToList();
             return nextOfKin;
         }
-        public IEnumerable< GroupCustomerMembersViewModel> GetCustomerAndType(int custormerId)
+        public IEnumerable<GroupCustomerMembersViewModel> GetCustomerAndType(int custormerId)
         {
             List<GroupCustomerMembersViewModel> lstCustomer = new List<GroupCustomerMembersViewModel>();
             var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId && c.ACCOUNTCREATIONCOMPLETE == true).Select(c => new GroupCustomerMembersViewModel()
             {
                 customerId = c.CUSTOMERID,
-                firstName  =    c.FIRSTNAME + " " + c.MIDDLENAME,
+                firstName = c.FIRSTNAME + " " + c.MIDDLENAME,
                 lastName = c.LASTNAME,
                 customerTypeId = c.CUSTOMERTYPEID,
                 customerType = c.TBL_CUSTOMER_TYPE.NAME
             });
 
-            foreach( var item in data)
+            foreach (var item in data)
             {
-                if(bureau.VerifyCustomerValidCreditBureau(item.customerId))
+                if (bureau.VerifyCustomerValidCreditBureau(item.customerId))
                 {
                     lstCustomer.Add(item);
                 }
@@ -3340,7 +3340,7 @@ namespace FintrakBanking.Repositories.Customer
         public bool ValidateCustomerCode(string customerCode)
         {
             bool itemExist = false;
-            var data = (from a in context.TBL_CUSTOMER where a.CUSTOMERCODE == customerCode select a).ToList();         
+            var data = (from a in context.TBL_CUSTOMER where a.CUSTOMERCODE == customerCode select a).ToList();
             if (data.Count > 0)
             {
                 itemExist = true;
@@ -3529,7 +3529,7 @@ namespace FintrakBanking.Repositories.Customer
                         createdBy = st.FIRSTNAME + " " + st.LASTNAME,
                         customerBranch = br.BRANCHNAME,
                         operationId = (int)OperationsEnum.CustomerInformationApproval
-                    }).ToList(); 
+                    }).ToList();
 
         }
         public bool GoForApproval(ApprovalViewModel entity)
@@ -3548,7 +3548,7 @@ namespace FintrakBanking.Repositories.Customer
                     workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
 
                     workflow.LogActivity();
-                   
+
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = ApproveCustomerInformation(entity.targetId, (short)workflow.StatusId, entity);
@@ -4198,6 +4198,95 @@ namespace FintrakBanking.Repositories.Customer
 
             return context.SaveChanges() > 0;
         }
+        #region Customer Related Party
+        public IEnumerable<CustomerRelatedPartyViewModel> GetCustomerRelatedParty(int customerId)
+        {
+            var related = (from a in context.TBL_CUSTOMER_RELATED_PARTY
+                           join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                           join c in context.TBL_COMPANY_DIRECTOR on a.COMPANYDIRECTORID equals c.COMPANYDIRECTORID
+                           where a.CUSTOMERID == customerId
+                           select new CustomerRelatedPartyViewModel
+                           {
+                               customerName = b.FIRSTNAME + " " + b.MIDDLENAME + " " + b.LASTNAME,
+                               directorName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               relationshipType = a.RELATIONSHIPTYPE,
+                               relatedPartyId = a.RELATEDPARTYID,
+                               customerId = b.CUSTOMERID,
+                               companyDirectorId = c.COMPANYDIRECTORID
+                           }).ToList();
+            return related;
+        }
+
+        public bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity)
+        {
+            if (entity == null) return false;
+            try
+            {
+                TBL_CUSTOMER_RELATED_PARTY relParty;
+                if (entity.relatedPartyId > 0)
+                {
+                    relParty = context.TBL_CUSTOMER_RELATED_PARTY.Find();
+                    if (relParty != null)
+                    {
+                        relParty.COMPANYDIRECTORID = entity.companyDirectorId;
+                        relParty.CUSTOMERID = entity.customerId;
+                        relParty.RELATIONSHIPTYPE = entity.relationshipType;
+                        relParty.LASTUPDATEDBY = entity.createdBy;
+                        relParty.DATETIMEUPDATED = DateTime.Now;
+                    }
+                }
+                else
+                {
+                    relParty = new TBL_CUSTOMER_RELATED_PARTY()
+                    {
+                        RELATEDPARTYID = entity.relatedPartyId,
+                        COMPANYDIRECTORID = entity.companyDirectorId,
+                        CUSTOMERID = entity.customerId,
+                        RELATIONSHIPTYPE = entity.relationshipType,
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                        DELETED = false
+                    };
+                    context.TBL_CUSTOMER_RELATED_PARTY.Add(relParty);
+                }
+
+                // Audit Section ----------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerRelatedPartyAddedUpdated,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = "Added/updated Customer Related Party Information",
+                    IPADDRESS = entity.userIPAddress,
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+
+                var response = context.SaveChanges() != 0;
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+                throw new Exception(ex.Message);
+            }
+        }
+        public bool ValidateRelatedPartyEntry(int customerId, int companyDirectorId)
+        {
+            var exist = (from a in context.TBL_CUSTOMER_RELATED_PARTY
+                         where a.CUSTOMERID == customerId && a.COMPANYDIRECTORID == companyDirectorId
+                         select a).ToList();
+            if (exist.Any())
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
     }
 }
 

@@ -231,6 +231,9 @@ namespace FintrakBanking.Common.Enum
         CustomChartOfAccountAdded = 208,
         CustomChartOfAccountUpdated = 209,
         CustomChartOfAccountDeleted = 210,
+        CompanyDirectorAddedUpdated = 211,
+        CompanyDirectorDeleted = 212,
+        CustomerRelatedPartyAddedUpdated = 213,
 
     };
 

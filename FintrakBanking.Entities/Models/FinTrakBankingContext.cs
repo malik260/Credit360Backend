@@ -371,7 +371,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
         public virtual DbSet<TBL_TENOR_MODE> TBL_TENOR_MODE { get; set; }
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
-        //public virtual DbSet<TBL_APPROVAL_TRAIL2> TBL_APPROVAL_TRAIL2 { get; set; }
+        public virtual DbSet<TBL_COMPANY_DIRECTOR> TBL_COMPANY_DIRECTOR { get; set; }
+        public virtual DbSet<TBL_CUSTOMER_RELATED_PARTY> TBL_CUSTOMER_RELATED_PARTY { get; set; }
         public virtual DbSet<TBL_PROFILE_SETTING> TBL_PROFILE_SETTING { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

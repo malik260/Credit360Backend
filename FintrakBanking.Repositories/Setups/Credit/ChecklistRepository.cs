@@ -99,7 +99,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_CHECKLIST_DEFINITION
                         join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
                         where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checkListTypeId 
-                        && a.OPERATIONID == operationId && a.DELETED == false
+                        && a.OPERATIONID == (int)OperationsEnum.ChecklistOperation && a.DELETED == false
                         select new ChecklistDefinitionAndDetailViewModel
                         {
                            checkListDetailId = 0,
