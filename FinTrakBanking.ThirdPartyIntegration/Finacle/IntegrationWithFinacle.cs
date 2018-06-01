@@ -70,7 +70,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model)
         {
             ResponseMessage result = null;
-            if( LogOverDraftNormal(model))
+           // if( LogOverDraftNormal(model))
                 Task.Run(async () => result = await overDraft.APIOverDraftNormal(model)).GetAwaiter().GetResult();
           
             if (result.Message.IsSuccessStatusCode)
@@ -468,25 +468,25 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                var data = new TBL_CUSTOM_OVERDRAFTNORMAL
-                {
-                    ACCOUNTNUMBER = model.accountNumber,
-                    APIURL = @"api/OverDraft/Normal",
-                    DATETIMECREATED = DateTime.Now,
-                    EXPIRYDATE = model.expiryDate,
-                    SANCTIONLIMIT = model.sanctionLimit,
-                    SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber,
-                    APPLICATIONDATE = model.applicationDate,
-                    DOCUMENTDATE = model.documentDate,
-                    REVIEWEDDATE = model.reviewedDate,
-                    SANCTIONAUTHORIZER = model.sanctionAuthorizer,
-                    SANCTIONDATE = model.sanctionDate,
-                    SANCTIONLEVEL = model.sanctionLevel,
+                //var data = new TBL_CUSTOM_OVERDRAFTNORMAL
+                //{
+                //    ACCOUNTNUMBER = model.accountNumber,
+                //    APIURL = @"api/OverDraft/Normal",
+                //    DATETIMECREATED = DateTime.Now,
+                //    EXPIRYDATE = model.expiryDate,
+                //    SANCTIONLIMIT = model.sanctionLimit,
+                //    SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber,
+                //    APPLICATIONDATE = model.applicationDate,
+                //    DOCUMENTDATE = model.documentDate,
+                //    REVIEWEDDATE = model.reviewedDate,
+                //    SANCTIONAUTHORIZER = model.sanctionAuthorizer,
+                //    SANCTIONDATE = model.sanctionDate,
+                //    SANCTIONLEVEL = model.sanctionLevel,
 
-                };
-                context.TBL_CUSTOM_OVERDRAFTNORMAL.Add(data);
-                result = context.SaveChanges() > 0;
-                model.overdraftNormalId = data.OVERDRAFTNORMALID;
+                //};
+                //context.TBL_CUSTOM_OVERDRAFTNORMAL.Add(data);
+                //result = context.SaveChanges() > 0;
+               // model.overdraftNormalId = data.OVERDRAFTNORMALID;
             }
             return result;
         }

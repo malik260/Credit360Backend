@@ -248,7 +248,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     throw new Exception("1001 Incorrect username or password.");
                 }
+
                 data.sessionStatusInfo = result;
+
+
             }
             data.sessionStatusInfo = result;
             return data;
@@ -283,7 +286,9 @@ namespace FintrakBanking.Repositories.Setups.General
             
                 if (data.Any())
                 {
-                    return data.Select(c => new UserViewModel
+                data.FirstOrDefault().FAILEDLOGONATTEMPT += 1;
+                context.SaveChanges();
+                return data.Select(c => new UserViewModel
                     {
                         companyId = c.TBL_STAFF.COMPANYID,
                         staffId = c.STAFFID,
