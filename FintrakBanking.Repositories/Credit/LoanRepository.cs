@@ -108,16 +108,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public CasaBalanceViewModel GetCASABalanceById(int casaAccountId, int companyId)
         {
-            var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
-
-            return new CasaBalanceViewModel
-            {
-                accountName = $" {account.TBL_CUSTOMER.LASTNAME } {account.TBL_CUSTOMER.FIRSTNAME} {account.TBL_CUSTOMER.MIDDLENAME} ",
-                availableBalance = account.AVAILABLEBALANCE,
-                ledgerBalance = account.LEDGERBALANCE,
-                accountNo = account.PRODUCTACCOUNTNAME,
-                productName = account.TBL_PRODUCT.PRODUCTNAME
-            };
+            var accountDetails = financeTransaction.GetCASABalance(casaAccountId);
+            return accountDetails;
         }
 
         /// <summary>
@@ -229,7 +221,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal AllfeeAmount = 0;
             foreach (var item in model.loanChargeFee){ AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
-            var casaBalance = GetCASABalanceById(model.casaAccountId, model.companyId).availableBalance;
+            var casaBalance = GetCASABalanceById(model.casaAccountId,model.companyId).availableBalance;
             var customer = context.TBL_CUSTOMER.Find(model.customerId);
 
             if (AllfeeAmount > casaBalance)
