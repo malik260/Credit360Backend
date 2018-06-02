@@ -136,6 +136,10 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
         public short jobTypeId { get; set; }
 
+        public string jobTypeName { get; set; }
+
+        public string requestStatusName { get; set; }
+
     }
 
     public class JobTypeViewModel : GeneralEntity

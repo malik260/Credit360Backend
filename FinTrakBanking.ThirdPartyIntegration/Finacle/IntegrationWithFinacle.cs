@@ -296,6 +296,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public bool PostTransactions(List<FinanceTransactionViewModel> model)
         {
             ResponseMessage result = null;
+
             List<TransactionPostingViewModel> transactionLst = TransactionData(model);
 
             Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionLst)).GetAwaiter().GetResult();
@@ -569,6 +570,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
             foreach (var item in model)
             {
 
+            //    var account ;
+
                 var transPosting = new TransactionPostingViewModel();
                 //accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
                 transPosting.amounts = item.creditAmount > 0
@@ -576,12 +579,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     : "D" + item.debitAmount.ToString();
                 //amounts = item.sourceReferenceNumber,
                 transPosting.narration = item.description;
+                transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
+
                 transPosting.referenceNumber = item.batchCode;
                 transPosting.currencyType = context.TBL_CURRENCY
                     .FirstOrDefault(x => x.CURRENCYID == item.currencyId)
                     ?.CURRENCYCODE;
-                transPosting.operationId =
-                    item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+                transPosting.operationId = item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
                 transPosting.accounts = item.casaAccountId != null
                     ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
                         .PRODUCTACCOUNTNUMBER

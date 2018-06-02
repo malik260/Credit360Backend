@@ -13,7 +13,8 @@ namespace FintrakBanking.MonitoringMessageLogger
     {
         public override void Load()
         {
-            Bind<IAlertMessagesEngine>().To<AlertMessagesEngine>().InSingletonScope();
+       //     Bind<IAlertMessagesEngine>().To<AlertMessagesEngine>().InSingletonScope();
+            Bind<IAlertMessageLogger>().To<AlertMessageLogger>().InSingletonScope();
         }
     }
 }

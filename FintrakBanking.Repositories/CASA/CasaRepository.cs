@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Finance;
 using System.Text;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using System.Threading.Tasks;
+using FintrakBanking.Interfaces.Finance;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -18,11 +19,13 @@ namespace FintrakBanking.Repositories.CASA
     {
         private FinTrakBankingContext context;
         private ICreditLimitValidationsRepository creditLimitRepo;
+        private IFinanceTransactionRepository transRepo;
 
-        public CasaRepository(FinTrakBankingContext _context, ICreditLimitValidationsRepository _creditLimitRepo)
+        public CasaRepository(FinTrakBankingContext _context, ICreditLimitValidationsRepository _creditLimitRepo, IFinanceTransactionRepository _transRepo)
         {
             this.context = _context;
             this.creditLimitRepo = _creditLimitRepo;
+            this.transRepo = _transRepo;
         }
 
         private bool SaveAll()
@@ -78,21 +81,13 @@ namespace FintrakBanking.Repositories.CASA
 
         }
 
-
         public CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId)
         {
             int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
             var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
-
-            return new CasaBalanceViewModel
-            {
-                accountName = $" {account.TBL_CUSTOMER.LASTNAME } {account.TBL_CUSTOMER.FIRSTNAME} {account.TBL_CUSTOMER.MIDDLENAME} ",
-                availableBalance = account.AVAILABLEBALANCE,
-                ledgerBalance = account.LEDGERBALANCE,
-                accountNo = account.PRODUCTACCOUNTNAME,
-                productName = account.TBL_PRODUCT.PRODUCTNAME
-            };
+            return transRepo.GetCASABalance(account.CASAACCOUNTID);
         }
+
         /// TODO: Implement server side filtering due to large number of records that may be returned
         public IEnumerable<CasaViewModel> FindAccount(string accountNumberOrName, int companyId)
         {

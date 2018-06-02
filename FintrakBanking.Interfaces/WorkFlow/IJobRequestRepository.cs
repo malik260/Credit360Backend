@@ -18,14 +18,14 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         IEnumerable<JobRequestViewModel> GetAllJobRequest();
 
-       // IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId);
+        // IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId);
 
         IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId);
         IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId, int branchId);
 
         IEnumerable<JobRequestMessageViewModel> GetJobComments(int jobRequestId);
 
-       // bool AddJobRequest(JobRequestViewModel model);
+        // bool AddJobRequest(JobRequestViewModel model);
         string AddGlobalJobRequest(JobRequestViewModel model);
         bool AddJobComment(JobRequestMessageViewModel model);
 
@@ -55,8 +55,11 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<RequestDocumentViewModel> GetJobRequestDocuments(string jobRequestCode);
         IEnumerable<RequestDocumentViewModel> GetJobRequestDocumentById(int documentId);
 
-        #region Middle Office Updates
-        bool UpdateInvoiceStatus(JobRequestInvoiceViewModel entity);
-        #endregion End Middle Office Updates
+        #region Job Request Feedback
+        IEnumerable<LookupViewModel> GetJobRequestStatus();
+        IEnumerable<JobRequestStatusFeedbackViewModel> GetAllJobRequestStatusFeedback();
+        bool AddUpdateJobRequestFeedBack(JobRequestStatusFeedbackViewModel feedback);
+        bool ValidateJobRequestFeedBack(string feedback);
+        #endregion
     }
 }

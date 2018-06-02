@@ -200,7 +200,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string vehicleStatus { get; set; }
         public string vehicleMake { get; set; }
         public string modelName { get; set; }
-        public string manufacturedDate { get; set; }
+        public DateTime manufacturedDate { get; set; }
         public string registrationNumber { get; set; }
         public string serialNumber { get; set; }
         public string chasisNumber { get; set; }
@@ -584,7 +584,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string vehicleStatus { get; set; }
         public string vehicleMake { get; set; }
         public string modelName { get; set; }
-        public string manufacturedDate { get; set; }
+        public DateTime manufacturedDate { get; set; }
         public string registrationNumber { get; set; }
         public string serialNumber { get; set; }
         public string chasisNumber { get; set; }
