@@ -123,6 +123,7 @@
     <Compile Include="Customer\CustomerIdentificationViewModels.cs" />
     <Compile Include="Customer\CustomerNextOfKinViewModels.cs" />
     <Compile Include="Customer\CustomerPhoneContactViewModels.cs" />
+    <Compile Include="Customer\CustomerRelatedPartyViewModel.cs" />
     <Compile Include="Customer\CustomerTypeViewModels.cs" />
     <Compile Include="Customer\CustomerViewModels.cs" />
     <Compile Include="DataMigration\BranchViewModel.cs" />

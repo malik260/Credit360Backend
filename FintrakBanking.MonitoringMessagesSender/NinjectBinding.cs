@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.MonitoringMessagesSender
 {
-    public class NinjectBindings : NinjectModule
+    public class NinjectBinding : NinjectModule
     {
         public override void Load()
         {
             Bind<IEmailSender>().To<EmailSender>().InSingletonScope();
+            Bind<IAlertMessagesEngine>().To<AlertMessagesEngine>().InSingletonScope();
+            Bind<IAlertMessageLogger>().To<AlertMessageLogger>().InSingletonScope();
+
         }
     }
 }

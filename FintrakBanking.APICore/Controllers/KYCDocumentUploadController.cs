@@ -103,7 +103,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
       [HttpGet] [ClaimsAuthorization]  
-        [Route("checklist-upload/definitionId/{definitionId}/statusId/{statusId}/detailId/{detailId}/isProductBased/{isProductBased}")]
+        [Route("checklist-upload/")]
         public HttpResponseMessage GetLoanDocument(int definitionId, int statusId, int detailId, bool isProductBased)
         {
             try
