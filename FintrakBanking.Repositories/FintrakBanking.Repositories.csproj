@@ -95,6 +95,7 @@
     <Compile Include="Admin\AuditTrailRepository.cs" />
     <Compile Include="Admin\CanAuthorizationRepository.cs" />
     <Compile Include="Admin\CurrencyRateRepository.cs" />
+    <Compile Include="Admin\ProfileSetupRepository.cs" />
     <Compile Include="AlertMonitoring\AlertMessageLogger.cs" />
     <Compile Include="AlertMonitoring\AlertMessagesEngine.cs" />
     <Compile Include="AlertMonitoring\EmailSender.cs" />

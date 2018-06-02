@@ -14,34 +14,33 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.APICore.App_Start;
+using FintrakBanking.Interfaces;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/admin")]
     public class AdminController : ApiControllerBase
     {
-
+        private IProfileSetupRepository profileSetup;
         private readonly IAdminRepository repo;
         private readonly IErrorLogRepository errorLogger;
-        private readonly ICanAuthorizationRepository I;
+        private readonly ICanAuthorizationRepository canAuthorization;
         private readonly IAuditTrailRepository audit;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public AdminController(IAdminRepository _repo,
                                 IErrorLogRepository _errorLogger,
-                                ICanAuthorizationRepository _I,
-                                IAuditTrailRepository _audit)
+                                ICanAuthorizationRepository _canAuthorization,
+                                IAuditTrailRepository _audit, IProfileSetupRepository _profileSetup)
         {
             this.repo = _repo;
             this.errorLogger = _errorLogger;
             this.audit = _audit;
-            this.I = _I;
+            this.profileSetup = _profileSetup;
+            this.canAuthorization = _canAuthorization;
 
         }
-
-        public AdminController()
-        {
-        }
+ 
 
         private string username { get { return token.GetUsername; } }
 
@@ -183,7 +182,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                if (I.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
+                if (canAuthorization.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
                 {
                     if (repo.isUserExist(user.username))
                     {
@@ -259,26 +258,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
-        [ClaimsAuthorization]
-        [Route("manage-account-status/user/{userId}/lock-status/{lockStatus}")]
-        public IHttpActionResult ManageUserAccountStatus(int userId, int lockStatus)
-        {
-            try
-            {
-                var data = repo.ManageUserAccount(userId, lockStatus);
+        //[HttpPut]
+        //[ClaimsAuthorization]
+        //[Route("manage-account-status/user/{userId}/lock-status/{lockStatus}")]
+        //public IHttpActionResult ManageUserAccountStatus(int userId, int lockStatus)
+        //{
+        //    try
+        //    {
+        //        var data = repo.ManageUserAccount(userId, lockStatus);
 
 
-                return this.Ok(new { data });
-              //  return Request.CreateResponse(HttpStatusCode.OK, new { data });
-            }
-            catch (Exception ex)
-            {
-                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                return this.Ok(new { success = true, message = $"An unknown error occured {ex.Message}" });
-               // return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured {ex.Message}" });
-            }
-        }
+        //        return this.Ok(new { data });
+        //        //  return Request.CreateResponse(HttpStatusCode.OK, new { data });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+        //        return this.Ok(new { success = true, message = $"An unknown error occured {ex.Message}" });
+        //        // return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured {ex.Message}" });
+        //    }
+        //}
 
         #endregion
 
@@ -552,7 +551,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("accountmanagement")]
         public IHttpActionResult UpdateApplicationUsers([FromBody] ActiveUserDetails entity)
@@ -576,6 +575,33 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("profileconfiguration")]
+        public IHttpActionResult ProfileConfiguration([FromBody] ProfileSettingViewModel entity)
+        {
+            try
+            {
+                if (entity != null)
+                {
+                    var data = profileSetup.ProfileConfiguration(entity);
+
+                    if (data == null)
+                        return Ok(new { success = false, result = data, message = $"Record not fund" });
+                }
+
+                return Ok(new { success = false, message = $"Account not fund" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = $"Action Failed" });
+            }
+
+        }
+
+
         #endregion
     }
 }

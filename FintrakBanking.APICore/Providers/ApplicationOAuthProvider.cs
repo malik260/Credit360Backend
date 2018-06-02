@@ -21,11 +21,9 @@ namespace FintrakBanking.APICore.Providers
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
-        private FinTrakBankingContext _bankingContext;
+        private readonly FinTrakBankingContext _bankingContext;
         private TBL_SETUP_GLOBAL appSetup;
         private const string HttpContext = "MS_HttpContext";
-
-
 
         public ApplicationOAuthProvider(string publicClientId)
         {
@@ -83,13 +81,13 @@ namespace FintrakBanking.APICore.Providers
 
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
-                if (await authRepo.IsAccountLocked(userVm.username.ToLower()))
+                if (authRepo.IsAccountLocked(userVm.username.ToLower()))
                 {
                     context.SetError("invalid_grant", "This account is LOCKED");
                     return;
                 }
 
-                if (! await authRepo.IsAccountActive(userVm.username.ToLower()))
+                if (! authRepo.IsAccountActive(userVm.username.ToLower()))
                 {
                     context.SetError("invalid_grant", "This account is INACTIVE");
                     return;
@@ -129,17 +127,17 @@ namespace FintrakBanking.APICore.Providers
 
                 bool isUserAccountValid;
 
-                if (Task.FromResult(authRepo.IsUserAccountValid(userVm.username)).Result)
-                {
-                    isUserAccountValid = true;
-                }
-                else
-                {
-                    isUserAccountValid = false;
-                }
+                //if (Task.FromResult(authRepo.IsUserAccountValid(userVm.username)).Result)
+                //{
+                //    isUserAccountValid = true;
+                //}
+                //else
+                //{
+                //    isUserAccountValid = false;
+                //}
 
-                if (isUserAccountValid)
-                {
+                //if (isUserAccountValid)
+                //{
                     var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
 
                     currIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
@@ -165,12 +163,12 @@ namespace FintrakBanking.APICore.Providers
                     context.Validated(ticket);
 
                     context.Request.Context.Authentication.SignIn(currIdentity);
-                }
-                else
-                {
-                    context.SetError("unauthorized_access", "The user name or password is incorrect");
-                    return;
-                }
+               // }
+                //else
+                //{
+                //    context.SetError("unauthorized_access", "The user name or password is incorrect");
+                //    return;
+                //}
 
 
                 await Task.CompletedTask;
