@@ -27,7 +27,7 @@ namespace FintrakBanking.Repositories.Finance
         private CustomerDetails customerInfo;
         private IIntegrationWithFinacle integration;
         bool USE_THIRD_PARTY_INTEGRATION;
-        public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, IIntegrationWithFinacle integration,
+        public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, IIntegrationWithFinacle _integration,
                                             //ILoanOperationsRepository _creditOperations, 
                                             FinTrakBankingContext _context, CustomerDetails customerInfo)
         {
@@ -35,6 +35,7 @@ namespace FintrakBanking.Repositories.Finance
             this.customerInfo = customerInfo;
             this.generalSetup = _genSetup;
             auditTrail = _auditTrail;
+            this.integration = _integration;
             //this.creditOperations = _creditOperations;
             var global = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             if (global != null)  USE_THIRD_PARTY_INTEGRATION = global.USE_THIRD_PARTY_INTEGRATION;
@@ -283,26 +284,26 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             //api call
-            
+
             if (USE_THIRD_PARTY_INTEGRATION)
-            { 
+            {
                 bool data;
 
                 data = integration.PostTransactions(inputTransactions);
-                
-                if(data)
+
+                if (data)
                 {
                     PostTransactionSub(batchCode, inputTransactions, transactions);
                     UpdateCustomTransactions(batchCode);
                 }
                 else
-                { 
+                {
                     throw new Exception($"Transaction Failed.");
                 }
-                    
+
             }
             else
-               PostTransactionSub(batchCode, inputTransactions, transactions);
+                PostTransactionSub(batchCode, inputTransactions, transactions);
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
             context.SaveChanges();

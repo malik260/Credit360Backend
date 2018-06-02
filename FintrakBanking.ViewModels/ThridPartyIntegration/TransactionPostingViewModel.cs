@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -104,13 +105,18 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
     {
         public string accountNumber { get; set; }
         public string sanctionReferenceNumber { get; set; }
+         [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string documentDate { get; set; }
         public string sanctionLevel { get; set; }
         public string sanctionAuthorizer { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string reviewedDate { get; set; }
         public string sanctionLimit { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string applicationDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string expiryDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string sanctionDate { get; set; }
         public int overdraftNormalId { get; set; }
     }
@@ -121,9 +127,12 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string sanctionReferenceNumber { get; set; } 
         public string sanctionLevel { get; set; }
         public string sanctionAuthorizer { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string reviewedDate { get; set; }
         public string sanctionLimit { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string applicationDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string expiryDate { get; set; }
         public int overdraftExtendId { get; set; }
         public string apiUrl { get; set; }
@@ -135,6 +144,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string accountNumber { get; set; }
         public string sanctionReferenceNumber { get; set; }         
         public string sanctionLimit { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string expiryDate { get; set; }
         public int overdraftExtendId { get; set; }
     }
@@ -144,6 +154,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string AccountNumber { get; set; }
         public string TemporaryOverDraftFlag { get; set; }
         public string TemporaryOverDraftAmount { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string TemporaryOverDraftDate { get; set; }
         public string TemporaryOverDraftNaration { get; set; }
         public string APIUrl { get; set; }
@@ -153,6 +164,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
     public class ResponseMessageViewModel
     {
         public string webRequestStatus { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public DateTime webRequestDate { get; set; }
         public string responseCode { get; set; }
         public string serialNumber { get; set; }

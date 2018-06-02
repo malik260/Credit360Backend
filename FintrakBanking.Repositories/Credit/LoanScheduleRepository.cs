@@ -14,6 +14,9 @@ using System.ComponentModel.Composition;
 using System.ServiceModel;
 using FintrakBanking.Interfaces.Setups.General;
 using XLeratorDLL_financial;
+using OfficeOpenXml.Style;
+using System.Drawing;
+using OfficeOpenXml;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -199,6 +202,109 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
+        public byte[] GenerateLoanScheduleExport(LoanPaymentScheduleInputViewModel loanInput)
+        {
+            if (loanInput.principalAmount <= 0)
+                throw new Exception("Please Enter Loan Amount");
+            if (loanInput.interestRate < 0)
+                throw new Exception("Please Enter Loan Interest Amount");
+            List<LoanPaymentSchedulePeriodicViewModel> output = null; // new List<LoanPaymentSchedulePeriodicViewModel>();
+            LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
+
+            if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                output = GenerateIrregularPeriodicScheduleWithAmortisedCost(loanInput).ToList();
+            else if (scheduleMethod == LoanScheduleTypeEnum.Annuity)
+            {
+                if (loanInput.interestFirstpaymentDate == loanInput.principalFirstpaymentDate && loanInput.interestFrequency == loanInput.principalFrequency)
+                    output = GenerateNormalAnnuityPeriodicSchedule(loanInput);
+                else
+                    output = GenerateMoratoriumAnnuityPeriodicSchedule(loanInput);
+            }
+            else if (scheduleMethod == LoanScheduleTypeEnum.ReducingBalance)
+                output = GenerateReducingBalancePeriodicSchedule(loanInput);
+            else if (scheduleMethod == LoanScheduleTypeEnum.BulletPayment)
+                output = GenerateBulletPeriodicScheduleWithAmortisedCost(loanInput);
+            else if (scheduleMethod == LoanScheduleTypeEnum.ConstantPrincipalAndInterest)
+                output = GenerateConstantPrincipalAndInterestPeriodicScheduleWithAmortisedCost(loanInput);
+            else if (scheduleMethod == LoanScheduleTypeEnum.BallonPayment)
+                output = GenerateBallonPeriodicSchedule(loanInput);
+
+            Byte[] fileBytes = null;
+
+            if (output != null)
+            {
+               
+                using (ExcelPackage pck = new ExcelPackage())
+                {
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("SearchReport");
+                    ws.DefaultColWidth = 20;
+                    ws.Cells.Style.WrapText = true;
+
+                    ws.Cells["A2:F2"].Merge = true;
+                    ws.Cells["A3:F3"].Merge = true;
+                    ws.Cells["A4:F4"].Merge = true;
+                    ws.Cells["A5:F5"].Merge = true;
+
+                    ws.Cells["A2:F2"].Style.Font.Bold = true;
+                    ws.Cells["A3:F3"].Style.Font.Bold = true;
+                    ws.Cells["A4:F4"].Style.Font.Bold = true;
+                    ws.Cells["A5:F5"].Style.Font.Bold = true;
+
+                    ws.Cells[2, 1].Value = "GRANTED AMOUNT  :  " + loanInput.principalAmount;
+                    ws.Cells[3, 1].Value = "INTEREST AMOUNT  :  " + loanInput.interestRate;
+                    ws.Cells[4, 1].Value = "EFFECTIVE DATE  :  " + loanInput.effectiveDate;
+                    ws.Cells[5, 1].Value = "MATURITY DATE  :  " + loanInput.maturityDate;
+
+                    ws.Cells[7, 1].Value = "Payment Number";
+                    ws.Cells[7, 2].Value = "Payment Date";
+                    ws.Cells[7, 3].Value = "Start Principal";
+                    ws.Cells[7, 4].Value = "Period Amount";
+                    ws.Cells[7, 5].Value = "Principal Amount";
+                    ws.Cells[7, 6].Value = "Interest Amount";
+                    ws.Cells[7, 7].Value = "Balance";
+                    ws.Cells[7, 8].Value = "AM Start Principal";
+                    ws.Cells[7, 9].Value = "AM Periodic Amount";
+                    ws.Cells[7, 10].Value = "AM Principal Amount";
+                    ws.Cells[7, 11].Value = "AM Interest Amount";
+                    ws.Cells[7, 12].Value = "AM Balancet";
+
+
+                    Color colFromHex = System.Drawing.ColorTranslator.FromHtml("#B8860B");
+                    ws.Cells["A7:K8"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    ws.Cells["A7:K8"].Style.Fill.BackgroundColor.SetColor(colFromHex);
+                    ws.Cells["A7:K8"].Style.Font.Bold = true;
+
+                    ws.Cells["A7:K8"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    ws.Cells["A7:K8"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    ws.Cells["A7:K8"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    ws.Cells["A7:K8"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                    for (int i = 8; i <= output.Count + 7; i++)
+                    {
+                        var record = output[i - 8];
+                        ws.Cells[i, 1].Value = i - 7;
+                        ws.Cells[i, 2].Value = record.paymentDate;
+                        ws.Cells[i, 3].Value = record.startPrincipalAmount;
+                        ws.Cells[i, 4].Value = record.periodPaymentAmount;
+                        ws.Cells[i, 5].Value = record.periodPrincipalAmount;
+                        ws.Cells[i, 6].Value = record.periodInterestAmount;
+                        ws.Cells[i, 7].Value = record.endPrincipalAmount;
+                        ws.Cells[i, 8].Value = record.amortisedStartPrincipalAmount;
+                        ws.Cells[i, 9].Value = record.amortisedPeriodPaymentAmount;
+                        ws.Cells[i, 10].Value = record.amortisedPeriodPrincipalAmount;
+                        ws.Cells[i, 11].Value = record.amortisedPeriodInterestAmount;
+                        ws.Cells[i, 12].Value = record.amortisedEndPrincipalAmount;
+
+                    }
+                    fileBytes = pck.GetAsByteArray();
+                }
+
+
+            }
+
+
+            return fileBytes;
+        }
         private int GetDaysInAYear(DayCountConventionEnum dayCountId)
         {
             if (dayCountId == DayCountConventionEnum.Actual_Actual)

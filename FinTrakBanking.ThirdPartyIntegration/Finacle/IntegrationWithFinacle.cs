@@ -70,7 +70,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model)
         {
             ResponseMessage result = null;
-            if( LogOverDraftNormal(model))
+           // if( LogOverDraftNormal(model))
                 Task.Run(async () => result = await overDraft.APIOverDraftNormal(model)).GetAwaiter().GetResult();
           
             if (result.Message.IsSuccessStatusCode)
@@ -296,6 +296,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public bool PostTransactions(List<FinanceTransactionViewModel> model)
         {
             ResponseMessage result = null;
+
             List<TransactionPostingViewModel> transactionLst = TransactionData(model);
 
             Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionLst)).GetAwaiter().GetResult();
@@ -468,25 +469,25 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                var data = new TBL_CUSTOM_OVERDRAFTNORMAL
-                {
-                    ACCOUNTNUMBER = model.accountNumber,
-                    APIURL = @"api/OverDraft/Normal",
-                    DATETIMECREATED = DateTime.Now,
-                    EXPIRYDATE = model.expiryDate,
-                    SANCTIONLIMIT = model.sanctionLimit,
-                    SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber,
-                    APPLICATIONDATE = model.applicationDate,
-                    DOCUMENTDATE = model.documentDate,
-                    REVIEWEDDATE = model.reviewedDate,
-                    SANCTIONAUTHORIZER = model.sanctionAuthorizer,
-                    SANCTIONDATE = model.sanctionDate,
-                    SANCTIONLEVEL = model.sanctionLevel,
+                //var data = new TBL_CUSTOM_OVERDRAFTNORMAL
+                //{
+                //    ACCOUNTNUMBER = model.accountNumber,
+                //    APIURL = @"api/OverDraft/Normal",
+                //    DATETIMECREATED = DateTime.Now,
+                //    EXPIRYDATE = model.expiryDate,
+                //    SANCTIONLIMIT = model.sanctionLimit,
+                //    SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber,
+                //    APPLICATIONDATE = model.applicationDate,
+                //    DOCUMENTDATE = model.documentDate,
+                //    REVIEWEDDATE = model.reviewedDate,
+                //    SANCTIONAUTHORIZER = model.sanctionAuthorizer,
+                //    SANCTIONDATE = model.sanctionDate,
+                //    SANCTIONLEVEL = model.sanctionLevel,
 
-                };
-                context.TBL_CUSTOM_OVERDRAFTNORMAL.Add(data);
-                result = context.SaveChanges() > 0;
-                model.overdraftNormalId = data.OVERDRAFTNORMALID;
+                //};
+                //context.TBL_CUSTOM_OVERDRAFTNORMAL.Add(data);
+                //result = context.SaveChanges() > 0;
+               // model.overdraftNormalId = data.OVERDRAFTNORMALID;
             }
             return result;
         }
@@ -569,6 +570,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
             foreach (var item in model)
             {
 
+            //    var account ;
+
                 var transPosting = new TransactionPostingViewModel();
                 //accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
                 transPosting.amounts = item.creditAmount > 0
@@ -576,12 +579,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     : "D" + item.debitAmount.ToString();
                 //amounts = item.sourceReferenceNumber,
                 transPosting.narration = item.description;
+                transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
+
                 transPosting.referenceNumber = item.batchCode;
                 transPosting.currencyType = context.TBL_CURRENCY
                     .FirstOrDefault(x => x.CURRENCYID == item.currencyId)
                     ?.CURRENCYCODE;
-                transPosting.operationId =
-                    item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+                transPosting.operationId = item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
                 transPosting.accounts = item.casaAccountId != null
                     ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
                         .PRODUCTACCOUNTNUMBER
