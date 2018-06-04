@@ -296,6 +296,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public bool PostTransactions(List<FinanceTransactionViewModel> model)
         {
             ResponseMessage result = null;
+
             List<TransactionPostingViewModel> transactionLst = TransactionData(model);
 
             Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionLst)).GetAwaiter().GetResult();
@@ -578,6 +579,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     : "D" + item.debitAmount.ToString();
                 //amounts = item.sourceReferenceNumber,
                 transPosting.narration = item.description;
+                transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
+
                 transPosting.referenceNumber = item.batchCode;
                 transPosting.currencyType = context.TBL_CURRENCY
                     .FirstOrDefault(x => x.CURRENCYID == item.currencyId)
