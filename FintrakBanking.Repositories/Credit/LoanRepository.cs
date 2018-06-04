@@ -2496,7 +2496,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public List<FinanceTransactionViewModel> BuildLoanChargeFeesPosting(LoanViewModel loanDetails)
         {
-
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
             foreach (var item in loanDetails.loanChargeFee)
@@ -2536,6 +2536,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
+                            debit.batchCode = batchCode;
                             debit.casaAccountId = casa.CASAACCOUNTID;
                             debit.debitAmount = debitAmount;
                             debit.creditAmount = 0;
@@ -2570,6 +2571,7 @@ namespace FintrakBanking.Repositories.Credit
                             credit.companyId = loanDetails.companyId;
                             credit.glAccountId = (int)credits.GLACCOUNTID1;
                             credit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
+                            credit.batchCode = batchCode;
                             credit.casaAccountId = null;
                             credit.debitAmount = 0;
                             credit.creditAmount = creditAmount;

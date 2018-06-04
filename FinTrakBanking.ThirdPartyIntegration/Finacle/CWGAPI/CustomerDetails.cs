@@ -115,13 +115,14 @@
                 CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
                 CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
                 ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = await client.GetAsync($"api/Customer/GetCustomerAccountNumber?accountNumber={customerAccount}");
+                HttpResponseMessage response = await client.GetAsync($"api/Customer/GetCustomerAccountBalance?accountNumber={customerAccount}");
                 if (response.IsSuccessStatusCode)
                 {
                     accountAPI = await response.Content.ReadAsAsync<CasaIntegrationViewModel>();
                 
                 var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountAPI.currencyType).CURRENCYID;
-                var accountStatusId = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME == accountAPI.accountStatus).ACCOUNTSTATUSID;
+                var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
+                var accountStatusId = account.ACCOUNTSTATUSID;
 
                 accountOutput.accountName = accountAPI.accountName;
                 accountOutput.accountNo = accountAPI.accountNumber;
