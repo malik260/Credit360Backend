@@ -550,13 +550,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return result;
         }
 
-        private string GetGlAccountCode(int glAccountId, string currencyCode, int branchId)
+        public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
             var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
 
             var accountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
                 join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
-                where gl.CURRENCYCODE == currencyCode && gla.GLACCOUNTID == glAccountId
+                join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
+                where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
                 select gl.ACCOUNTID).FirstOrDefault();
 
             var glAccountCode = branchCode + accountCode;
@@ -589,7 +590,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 transPosting.accounts = item.casaAccountId != null
                     ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
                         .PRODUCTACCOUNTNUMBER
-                    : GetGlAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
+                    : GetGlAccountCode(item.glAccountId, item.currencyId, item.sourceBranchId);
 
                 transactionLst.Add(transPosting);
             }
