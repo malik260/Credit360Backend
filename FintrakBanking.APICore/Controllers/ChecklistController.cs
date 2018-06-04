@@ -353,14 +353,13 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = true, result = data, message = "The record has been updated successfully" });
-
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                new { success = false, message = "There was an error updating this record" });
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
+                return Request.CreateResponse(HttpStatusCode.InternalServerError,
                  new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
 

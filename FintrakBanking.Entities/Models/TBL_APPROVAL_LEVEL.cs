@@ -56,6 +56,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISPOLITICALLYEXPOSED { get; set; }
 
+        public int SLANOTIFICATIONINTERVAL { get; set; }
+
         public bool ISACTIVE { get; set; }
 
         public bool CANVIEWDOCUMENT { get; set; }
