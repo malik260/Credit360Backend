@@ -371,14 +371,16 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
         public virtual DbSet<TBL_TENOR_MODE> TBL_TENOR_MODE { get; set; }
         public virtual DbSet<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
-        //public virtual DbSet<TBL_APPROVAL_TRAIL2> TBL_APPROVAL_TRAIL2 { get; set; }
+        public virtual DbSet<TBL_COMPANY_DIRECTOR> TBL_COMPANY_DIRECTOR { get; set; }
+        public virtual DbSet<TBL_CUSTOMER_RELATED_PARTY> TBL_CUSTOMER_RELATED_PARTY { get; set; }
         public virtual DbSet<TBL_PROFILE_SETTING> TBL_PROFILE_SETTING { get; set; }
         public virtual DbSet<TBL_CUSTOM_TRANSACTION_BULK> TBL_CUSTOM_TRANSACTION_BULK { get; set; }
-        
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            var databaseUsername = System.Configuration.ConfigurationManager.AppSettings["BankingOracleDatabaseUsername"];
+            var databaseUsername =
+                System.Configuration.ConfigurationManager.AppSettings["BankingOracleDatabaseUsername"];
             modelBuilder.HasDefaultSchema(databaseUsername);
 
             //modelBuilder.Entity<ELMAH_ERROR>()
@@ -2310,10 +2312,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
 
-      //      modelBuilder.Entity<TBL_CUSTOMER>()
-      //.HasMany(e => e.TBL_CUSTOMER_RISK_RATING)
-      //.WithRequired(e => e.TBL_CUSTOMER)
-      //.WillCascadeOnDelete(false);
+            //      modelBuilder.Entity<TBL_CUSTOMER>()
+            //.HasMany(e => e.TBL_CUSTOMER_RISK_RATING)
+            //.WithRequired(e => e.TBL_CUSTOMER)
+            //.WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_DAILY_ACCRUAL)

@@ -108,16 +108,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public CasaBalanceViewModel GetCASABalanceById(int casaAccountId, int companyId)
         {
-            var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
-
-            return new CasaBalanceViewModel
-            {
-                accountName = $" {account.TBL_CUSTOMER.LASTNAME } {account.TBL_CUSTOMER.FIRSTNAME} {account.TBL_CUSTOMER.MIDDLENAME} ",
-                availableBalance = account.AVAILABLEBALANCE,
-                ledgerBalance = account.LEDGERBALANCE,
-                accountNo = account.PRODUCTACCOUNTNAME,
-                productName = account.TBL_PRODUCT.PRODUCTNAME
-            };
+            var accountDetails = financeTransaction.GetCASABalance(casaAccountId);
+            return accountDetails;
         }
 
         /// <summary>
@@ -229,7 +221,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal AllfeeAmount = 0;
             foreach (var item in model.loanChargeFee){ AllfeeAmount = AllfeeAmount + item.feeAmount; }
 
-            var casaBalance = GetCASABalanceById(model.casaAccountId, model.companyId).availableBalance;
+            var casaBalance = GetCASABalanceById(model.casaAccountId,model.companyId).availableBalance;
             var customer = context.TBL_CUSTOMER.Find(model.customerId);
 
             if (AllfeeAmount > casaBalance)
@@ -2504,7 +2496,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public List<FinanceTransactionViewModel> BuildLoanChargeFeesPosting(LoanViewModel loanDetails)
         {
-
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
             foreach (var item in loanDetails.loanChargeFee)
@@ -2544,6 +2536,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
+                            debit.batchCode = batchCode;
                             debit.casaAccountId = casa.CASAACCOUNTID;
                             debit.debitAmount = debitAmount;
                             debit.creditAmount = 0;
@@ -2578,6 +2571,7 @@ namespace FintrakBanking.Repositories.Credit
                             credit.companyId = loanDetails.companyId;
                             credit.glAccountId = (int)credits.GLACCOUNTID1;
                             credit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
+                            credit.batchCode = batchCode;
                             credit.casaAccountId = null;
                             credit.debitAmount = 0;
                             credit.creditAmount = creditAmount;

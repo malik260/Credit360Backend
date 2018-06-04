@@ -173,7 +173,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.AddChargeFee(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully, now waiting for approval" });
                 }
                 else
                 {
@@ -200,7 +200,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.UpdateChargeFee(entity, chargeFeeId);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully, now waiting for approval" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });

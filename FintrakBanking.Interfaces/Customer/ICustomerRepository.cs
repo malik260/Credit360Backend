@@ -96,6 +96,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool ValidateCustomerRCnumber(int customerId, string rcNumber);
         bool ValidateCustomerTIN(int customerId, string tin);
         bool ValidateCustomerEmail(int customerId, string email);
+        bool ValidateRelatedPartyEntry(int customerId, int companyDirectorId);
 
         //TBL_CUSTOMER_CLIENT_SUPPLIER
         bool ValidateClientSupplierEmail(int customerId, string email);
@@ -124,5 +125,8 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerPhoneContactViewModels> GetSingleCustomerPhoneContactInfo(int customerId, int targetId);
         IEnumerable<CustomerEmploymentHistoryViewModels> GetSingleCustomerEmploymentHistoryInfo(int customerId, int targetId);
         #endregion
+
+        IEnumerable<CustomerRelatedPartyViewModel> GetCustomerRelatedParty(int customerId);
+      bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity);
     }
 }

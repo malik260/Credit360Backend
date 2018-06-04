@@ -3287,29 +3287,29 @@ namespace FintrakBanking.Repositories.Customer
             short clientTypeId)
         {
             var clientOrSupplier = (from cs in context.TBL_CUSTOMER_CLIENT_SUPPLIER
-                where cs.CUSTOMERID == customerId && cs.CLIENT_SUPPLIERTYPEID == clientTypeId
-                select new CustomerClientOrSupplierViewModels()
-                {
-                    customerTypeId = cs.CUSTOMERTYPEID,
-                    // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
-                    client_SupplierId = cs.CLIENT_SUPPLIERID,
-                    clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
-                    firstName = cs.FIRSTNAME,
-                    middleName = cs.MIDDLENAME,
-                    lastName = cs.LASTNAME,
-                    taxNumber = cs.TAX_NUMBER,
-                    rcNumber = cs.REGISTRATION_NUMBER,
-                    hasCASAAccount = cs.HAS_CASA_ACCOUNT,
-                    bankName = cs.BANKNAME,
-                    casaAccountNumber = cs.CASA_ACCOUNTNO,
-                    contactPerson = cs.CONTACT_PERSON,
-                    natureOfBusiness = cs.NATURE_OF_BUSINESS,
-                    client_SupplierAddress = cs.ADDRESS,
-                    client_SupplierPhoneNumber = cs.PHONENUMBER,
-                    client_SupplierEmail = cs.EMAILADDRESS,
-                    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
-                }).ToList();
+                                    where cs.CUSTOMERID == customerId && cs.CLIENT_SUPPLIERTYPEID == clientTypeId
+                                    select new CustomerClientOrSupplierViewModels()
+                                    {
+                                        customerTypeId = cs.CUSTOMERTYPEID,
+                                        // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
+                                        client_SupplierId = cs.CLIENT_SUPPLIERID,
+                                        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
+                                        firstName = cs.FIRSTNAME,
+                                        middleName = cs.MIDDLENAME,
+                                        lastName = cs.LASTNAME,
+                                        taxNumber = cs.TAX_NUMBER,
+                                        rcNumber = cs.REGISTRATION_NUMBER,
+                                        hasCASAAccount = cs.HAS_CASA_ACCOUNT,
+                                        bankName = cs.BANKNAME,
+                                        casaAccountNumber = cs.CASA_ACCOUNTNO,
+                                        contactPerson = cs.CONTACT_PERSON,
+                                        natureOfBusiness = cs.NATURE_OF_BUSINESS,
+                                        client_SupplierAddress = cs.ADDRESS,
+                                        client_SupplierPhoneNumber = cs.PHONENUMBER,
+                                        client_SupplierEmail = cs.EMAILADDRESS,
+                                        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
+                                    }).ToList();
             return clientOrSupplier;
         }
 
@@ -3317,30 +3317,30 @@ namespace FintrakBanking.Repositories.Customer
             short clientTypeId, int targetId)
         {
             var clientOrSupplier = (from cs in context.TBL_TEMP_CUST_CLIENT_SUPPLIER
-                where cs.CUSTOMERID == customerId && cs.CLIENT_SUPPLIERTYPEID == clientTypeId
-                                                  && cs.TEMPCLIENT_SUPPLIERID == targetId
-                select new CustomerClientOrSupplierViewModels()
-                {
-                    customerTypeId = cs.CUSTOMERTYPEID,
-                    // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
-                    client_SupplierId = cs.TEMPCLIENT_SUPPLIERID,
-                    clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
-                    firstName = cs.FIRSTNAME,
-                    middleName = cs.MIDDLENAME,
-                    lastName = cs.LASTNAME,
-                    taxNumber = cs.TAX_NUMBER,
-                    rcNumber = cs.REGISTRATION_NUMBER,
-                    hasCASAAccount = cs.HAS_CASA_ACCOUNT,
-                    bankName = cs.BANKNAME,
-                    casaAccountNumber = cs.CASA_ACCOUNTNO,
-                    contactPerson = cs.CONTACT_PERSON,
-                    natureOfBusiness = cs.NATURE_OF_BUSINESS,
-                    client_SupplierAddress = cs.ADDRESS,
-                    client_SupplierPhoneNumber = cs.PHONENUMBER,
-                    client_SupplierEmail = cs.EMAILADDRESS,
-                    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                    //  client_SupplierTypeName = context.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.FirstOrDefault(x => x.CLIENT_SUPPLIERTYPEID == cs.CLIENT_SUPPLIERTYPEID).CLIENT_SUPPLIERTYPENAME
-                }).ToList();
+                                    where cs.CUSTOMERID == customerId && cs.CLIENT_SUPPLIERTYPEID == clientTypeId
+                                    && cs.TEMPCLIENT_SUPPLIERID == targetId
+                                    select new CustomerClientOrSupplierViewModels()
+                                    {
+                                        customerTypeId = cs.CUSTOMERTYPEID,
+                                        // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
+                                        client_SupplierId = cs.TEMPCLIENT_SUPPLIERID,
+                                        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
+                                        firstName = cs.FIRSTNAME,
+                                        middleName = cs.MIDDLENAME,
+                                        lastName = cs.LASTNAME,
+                                        taxNumber = cs.TAX_NUMBER,
+                                        rcNumber = cs.REGISTRATION_NUMBER,
+                                        hasCASAAccount = cs.HAS_CASA_ACCOUNT,
+                                        bankName = cs.BANKNAME,
+                                        casaAccountNumber = cs.CASA_ACCOUNTNO,
+                                        contactPerson = cs.CONTACT_PERSON,
+                                        natureOfBusiness = cs.NATURE_OF_BUSINESS,
+                                        client_SupplierAddress = cs.ADDRESS,
+                                        client_SupplierPhoneNumber = cs.PHONENUMBER,
+                                        client_SupplierEmail = cs.EMAILADDRESS,
+                                        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                                        //  client_SupplierTypeName = context.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.FirstOrDefault(x => x.CLIENT_SUPPLIERTYPEID == cs.CLIENT_SUPPLIERTYPEID).CLIENT_SUPPLIERTYPENAME
+                                    }).ToList();
             return clientOrSupplier;
         }
 
@@ -4472,6 +4472,95 @@ namespace FintrakBanking.Repositories.Customer
 
             return context.SaveChanges() > 0;
         }
+        #region Customer Related Party
+        public IEnumerable<CustomerRelatedPartyViewModel> GetCustomerRelatedParty(int customerId)
+        {
+            var related = (from a in context.TBL_CUSTOMER_RELATED_PARTY
+                           join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                           join c in context.TBL_COMPANY_DIRECTOR on a.COMPANYDIRECTORID equals c.COMPANYDIRECTORID
+                           where a.CUSTOMERID == customerId
+                           select new CustomerRelatedPartyViewModel
+                           {
+                               customerName = b.FIRSTNAME + " " + b.MIDDLENAME + " " + b.LASTNAME,
+                               directorName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               relationshipType = a.RELATIONSHIPTYPE,
+                               relatedPartyId = a.RELATEDPARTYID,
+                               customerId = b.CUSTOMERID,
+                               companyDirectorId = c.COMPANYDIRECTORID
+                           }).ToList();
+            return related;
+        }
+
+        public bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity)
+        {
+            if (entity == null) return false;
+            try
+            {
+                TBL_CUSTOMER_RELATED_PARTY relParty;
+                if (entity.relatedPartyId > 0)
+                {
+                    relParty = context.TBL_CUSTOMER_RELATED_PARTY.Find();
+                    if (relParty != null)
+                    {
+                        relParty.COMPANYDIRECTORID = entity.companyDirectorId;
+                        relParty.CUSTOMERID = entity.customerId;
+                        relParty.RELATIONSHIPTYPE = entity.relationshipType;
+                        relParty.LASTUPDATEDBY = entity.createdBy;
+                        relParty.DATETIMEUPDATED = DateTime.Now;
+                    }
+                }
+                else
+                {
+                    relParty = new TBL_CUSTOMER_RELATED_PARTY()
+                    {
+                        RELATEDPARTYID = entity.relatedPartyId,
+                        COMPANYDIRECTORID = entity.companyDirectorId,
+                        CUSTOMERID = entity.customerId,
+                        RELATIONSHIPTYPE = entity.relationshipType,
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                        DELETED = false
+                    };
+                    context.TBL_CUSTOMER_RELATED_PARTY.Add(relParty);
+                }
+
+                // Audit Section ----------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerRelatedPartyAddedUpdated,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = "Added/updated Customer Related Party Information",
+                    IPADDRESS = entity.userIPAddress,
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+
+                var response = context.SaveChanges() != 0;
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+                throw new Exception(ex.Message);
+            }
+        }
+        public bool ValidateRelatedPartyEntry(int customerId, int companyDirectorId)
+        {
+            var exist = (from a in context.TBL_CUSTOMER_RELATED_PARTY
+                         where a.CUSTOMERID == customerId && a.COMPANYDIRECTORID == companyDirectorId
+                         select a).ToList();
+            if (exist.Any())
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
     }
 }
 

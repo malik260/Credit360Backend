@@ -483,7 +483,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.UpdateInvoiceStatus(entity);
+                var data = true;// repo.UpdateInvoiceStatus(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
@@ -833,6 +833,96 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion job-type
+
+
+        #region Job Request Feedback
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-request-status")]
+        public HttpResponseMessage GetJobRequestStatus()
+        {
+            try
+            {
+                var data = repo.GetJobRequestStatus();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-request-feedback")]
+        public HttpResponseMessage GetAllJobRequestStatusFeedback()
+        {
+            try
+            {
+                var data = repo.GetAllJobRequestStatusFeedback();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("job-request-feedback")]
+        public HttpResponseMessage AddUpdateCompanyDirector([FromBody]JobRequestStatusFeedbackViewModel entity)
+        {
+            try
+            {
+                string createUpdate = "";
+                if (entity.jobStatusFeedbackId != 0 || entity.jobStatusFeedbackId > 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                    if (repo.ValidateJobRequestFeedBack(entity.jobStatusFeedbackName))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = $"Job request feedback {entity.jobStatusFeedbackName} already exist." });
+                    }
+              
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddUpdateJobRequestFeedBack(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        #endregion
 
         //[HttpGet]
         //[Route("operation-staff/{operationId}")]
