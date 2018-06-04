@@ -280,7 +280,9 @@
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
             
                 var dta = context.TBL_SETUP_GLOBAL.ToList();
-                
+
+                var objData = new JavaScriptSerializer().Serialize(model);
+
                 handler.UseDefaultCredentials = true;
                 HttpClient client = new HttpClient(handler);
 
@@ -297,22 +299,21 @@
                 HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
                                                 new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
-                ResponseMessageViewModel responseApi = new ResponseMessageViewModel();
+                TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
                 ResponseMessage responseMsg = null;
                 bool result = false;
                
                 if (response.IsSuccessStatusCode)
                 {
                     result = response.IsSuccessStatusCode;
-                    await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+                    responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
 
                     var res = new ResponseMessageViewModel
                     {
                         responseCode = responseApi.responseCode,
                         webRequestDate = responseApi.webRequestDate,
-                        webRequestStatus = responseApi.webRequestStatus,
-                        serialNumber = responseApi.serialNumber,
-                        message = responseApi.message
+                        webRequestStatus = responseApi.webRequestStatus,                     
+                     
                     };
                     responseMsg = new ResponseMessage
                     {
