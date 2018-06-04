@@ -294,7 +294,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+      [HttpPost] [ClaimsAuthorization]  
         [Route("monitoring/non-performing-loans")]
         public HttpResponseMessage GetNonPerformingLoansReport(DateRange dateRange)
         {
@@ -316,7 +316,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+      [HttpPost] [ClaimsAuthorization]  
         [Route("monitoring/overdraft-loans")]
         public HttpResponseMessage GetExpiredOverdraftLoansReport(DateRange dateRange)
         {
