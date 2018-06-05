@@ -77,7 +77,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if( result.APIResponse.webRequestStatus.Replace(":","") == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {

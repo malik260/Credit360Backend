@@ -1871,13 +1871,13 @@ namespace FintrakBanking.Repositories.Credit
                                 var model = new OverDraftNormalViewModel
                                 {
                                     accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                    applicationDate = revolvingLoanRecord.BOOKINGDATE.ToShortDateString(),
-                                    documentDate = revolvingLoanRecord.BOOKINGDATE.ToShortDateString(),
-                                    expiryDate = revolvingLoanRecord.MATURITYDATE.ToShortDateString(),
-                                    reviewedDate = revolvingLoanRecord.DISBURSEDATE.ToString(),
-                                    sanctionDate = revolvingLoanRecord.DISBURSEDATE.ToString(),
-                                    sanctionLimit = revolvingLoanRecord.OVERDRAFTLIMIT.ToString(),
-                                    sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
+                                    applicationDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
+                                    documentDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
+                                    expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                                    reviewedDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
+                                    sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                                    sanctionLimit = revolvingLoanRecord.OVERDRAFTLIMIT.ToString(), //String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                                    sanctionReferenceNumber =  revolvingLoanRecord.LOANREFERENCENUMBER
                                 };
 
                                 ResponseMessageViewModel res = finacle.OverDraftNormal(model);
