@@ -15,4 +15,6 @@ namespace FintrakBanking.ViewModels.Customer
         public string directorName { get; set; }
         public string customerName { get; set; }
     }
+
+   
 }

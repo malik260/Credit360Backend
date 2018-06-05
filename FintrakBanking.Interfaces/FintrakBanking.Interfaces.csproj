@@ -64,6 +64,7 @@
     <Compile Include="AlertMonitoring\IAlertMessagesEngine.cs" />
     <Compile Include="AlertMonitoring\IAlertMessageLogger.cs" />
     <Compile Include="AlertMonitoring\IEmailSender.cs" />
+    <Compile Include="AlertMonitoring\ISLANotification.cs" />
     <Compile Include="AppEmail\IEmailRepository.cs" />
     <Compile Include="CASA\ICasaLienRepository.cs" />
     <Compile Include="CASA\ICasaRepository.cs" />

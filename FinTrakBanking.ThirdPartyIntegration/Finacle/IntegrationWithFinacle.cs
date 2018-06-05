@@ -581,8 +581,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
                 .PRODUCTACCOUNTNUMBER: GetGlAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
                 transPosting.amounts = item.creditAmount > 0
-                    ? "C" + item.creditAmount.ToString("#.##")
-                    : "D" + item.debitAmount.ToString("#.##");
+                    ? "C" + String.Format("{0:0.00}", item.creditAmount)
+                    : "D" + String.Format("{0:0.00}", item.debitAmount) ;
                 //amounts = item.sourceReferenceNumber,
                 transPosting.narration = item.description;
                 transPosting.referenceNumber = item.batchCode;

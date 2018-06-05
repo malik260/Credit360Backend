@@ -68,6 +68,7 @@
     <Compile Include="Admin\CurrencyRateViewModel.cs" />
     <Compile Include="Admin\ProfileSettingViewModel.cs" />
     <Compile Include="Admin\UserActions.cs" />
+    <Compile Include="AlertMonitoring\SLANotificationViewModel.cs" />
     <Compile Include="Authentication\TokenVM.cs" />
     <Compile Include="CASA\CasaViewModel.cs" />
     <Compile Include="CASA\CustomerSearchVM.cs" />
