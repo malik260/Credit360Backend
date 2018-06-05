@@ -339,9 +339,103 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
 
-
         // end application
 
         #endregion Loan Covenant Type
+
+        # region LMS APPROVAL
+
+
+        public IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationCovenantLms(int applicationId)
+        {
+            var ids = context.TBL_LOAN_APPLICATION_DETAIL
+                 .Where(x => x.LOANAPPLICATIONID == applicationId)
+                 .Select(x => x.LOANAPPLICATIONDETAILID);
+
+            return context.TBL_LOAN_APPLICATION_COVENANT.Where(x =>
+                    x.DELETED == false && ids.Contains(x.LOANAPPLICATIONDETAILID)
+                ).Select(c => new LoanCovenantDetailViewModel
+                {
+                    loanCovenantDetailId = c.LOANCOVENANTDETAILID,
+                    covenantAmount = c.COVENANTAMOUNT,
+                    covenantDate = c.COVENANTDATE,
+                    covenantDetail = c.COVENANTDETAIL,
+                    covenantTypeId = c.COVENANTTYPEID,
+                    covenantTypeName = c.TBL_LOAN_COVENANT_TYPE.COVENANTTYPENAME,
+                    frequencyTypeId = c.FREQUENCYTYPEID,
+                    frequencyTypeName = c.TBL_FREQUENCY_TYPE.MODE,
+                    loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                    isPercentage = c.ISPERCENTAGE,
+                    nextCovenantDate = c.NEXTCOVENANTDATE,
+                    casaAccountId = c.CASAACCOUNTID,
+
+                    companyId = c.COMPANYID,
+                });
+        }
+
+        public bool AddLoanApplicationCovenantLms(LoanCovenantDetailViewModel entity)
+        {
+            var convenant = new TBL_LOAN_APPLICATION_COVENANT
+            {
+                LOANCOVENANTDETAILID = entity.loanCovenantDetailId,
+                COVENANTAMOUNT = entity.covenantAmount,
+                COVENANTDATE = entity.covenantDate,
+                COVENANTDETAIL = entity.covenantDetail,
+                COVENANTTYPEID = entity.covenantTypeId,
+                FREQUENCYTYPEID = entity.frequencyTypeId,
+                LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
+                ISPERCENTAGE = entity.isPercentage,
+                NEXTCOVENANTDATE = entity.nextCovenantDate,
+                CASAACCOUNTID = entity.casaAccountId,
+
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = this.genSetup.GetApplicationDate().Date,
+                COMPANYID = entity.companyId,
+            };
+            context.TBL_LOAN_APPLICATION_COVENANT.Add(convenant);
+
+            var appl = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantDetailAdd,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added loan application covenant on application: { appl.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteLoanApplicationCovenantLms(int covenantId, UserInfo user)
+        {
+            var covenant = context.TBL_LOAN_APPLICATION_COVENANT.Find(covenantId);
+            covenant.DELETED = true;
+            covenant.DELETEDBY = user.staffId;
+            covenant.DATETIMEDELETED = DateTime.Now;
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantDetailDelete,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Delete loan application covenant: { covenant.COVENANTDETAIL } ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            return context.SaveChanges() != 0;
+        }
+
+        # endregion LMS APPROVAL
+
     }
 }

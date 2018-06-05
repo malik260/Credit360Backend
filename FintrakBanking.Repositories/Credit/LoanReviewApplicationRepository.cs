@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.Credit
             (x, trail) => new LoanReviewApplicationViewModel
             {
                 //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
-                approvalState = trail == null ? "" : trail.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalState = trail == null ? "Pending" : trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalTrailId = trail == null ? 0 : trail.APPROVALTRAILID,
                 currentApprovalLevel = trail == null ? "" : trail.TBL_APPROVAL_LEVEL.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                 currentApprovalLevelId = trail == null ? 0 : trail.TOAPPROVALLEVELID,
@@ -74,6 +74,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanId = x.application.LOANID,
                 loanReviewApplicationId = x.application.LOANREVIEWAPPLICATIONID,
                 operationTypeId = x.application.OPERATIONID,
+                operationType = x.application.TBL_OPERATIONS.OPERATIONNAME,
 
                 referenceNumber = x.loan.LOANREFERENCENUMBER,
 
@@ -106,7 +107,7 @@ namespace FintrakBanking.Repositories.Credit
             (x, trail) => new LoanReviewApplicationViewModel
             {
                 //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
-                approvalState = trail == null ? "" : trail.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalState = trail == null ? "Pending" : trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalTrailId = trail == null ? 0 : trail.APPROVALTRAILID,
                 currentApprovalLevel = trail == null ? "" : trail.TBL_APPROVAL_LEVEL.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                 currentApprovalLevelId = trail == null ? 0 : trail.TOAPPROVALLEVELID,
@@ -120,6 +121,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanId = x.application.LOANID,
                 loanReviewApplicationId = x.application.LOANREVIEWAPPLICATIONID,
                 operationTypeId = x.application.OPERATIONID,
+                operationType = x.application.TBL_OPERATIONS.OPERATIONNAME,
 
                 referenceNumber = x.loan.LOANREFERENCENUMBER,
 
@@ -165,25 +167,36 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
-            var application = new TBL_LOAN_REVIEW_APPLICATION
-            {
-                LOANID = model.loanId,
-                PRODUCTTYPEID = (short) model.productTypeId, // 1. termloan
-                OPERATIONID = model.operationTypeId,
-                REVIEWDETAILS = model.reviewDetails,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                CREATEDBY = model.createdBy,
-                BRANCHID = model.branchId,
-                DATECREATED = general.GetApplicationDate(),
-            };
+            //var application = context.TBL_LOAN_REVIEW_APPLICATION.Add(new TBL_LOAN_REVIEW_APPLICATION
+            //{
+            //    // NEW TABLE THAT MUST CONTAIN [LOANREVIEWAPPLICATIONID]
+            //});
 
-            context.TBL_LOAN_REVIEW_APPLICATION.Add(application);
+            foreach(var detail in model.applicationDetails)
+            {
+                context.TBL_LOAN_REVIEW_APPLICATION.Add(new TBL_LOAN_REVIEW_APPLICATION
+                {
+                    // application.LOANREVIEWAPPLICATIONID,
+                    LOANID = model.loanId,
+                    PRODUCTTYPEID = model.productTypeId, 
+                    OPERATIONID = detail.operationTypeId,
+                    REVIEWDETAILS = detail.reviewDetails,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    CREATEDBY = model.createdBy,
+                    BRANCHID = model.branchId,
+                    DATECREATED = general.GetApplicationDate(),
+                });
+            }
 
             // ------------AUDIT CODE HERE! -------------
 
             if (context.SaveChanges() == 0) return false;
 
-            PassApplicationToOperation(application.LOANREVIEWAPPLICATIONID, (int)OperationsEnum.LoanReviewApprovalAppraisal, model.createdBy, "New loan review application");
+            //PassApplicationToOperation(
+            //        application.LOANREVIEWAPPLICATIONID, 
+            //        (int)OperationsEnum.LoanReviewApprovalAppraisal, 
+            //        model.createdBy, "New loan review application"
+            //    );
 
             return true;
         }
