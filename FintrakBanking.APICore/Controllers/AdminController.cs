@@ -577,26 +577,25 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+        [HttpGet]
         [ClaimsAuthorization]
-        [Route("profileconfiguration")]
-        public IHttpActionResult ProfileConfiguration([FromBody] ProfileSettingViewModel entity)
+        [Route("getprofileconfiguration")]
+        public HttpResponseMessage GetProfileConfiguration()
         {
             try
             {
-                if (entity != null)
-                {
-                    var data = profileSetup.ProfileConfiguration(entity);
+                var data = profileSetup.GetProfileConfiguration();
 
-                    if (data == null)
-                        return Ok(new { success = false, result = data, message = $"Record not fund" });
-                }
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new {success = false, result = data, message = $"Record not fund"});
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new {success = false, result = data, message = $"Record not fund"});
 
-                return Ok(new { success = false, message = $"Account not fund" });
             }
             catch (Exception ex)
             {
-                return Ok(new { success = false, message = $"Action Failed" });
+                return Request.CreateResponse(HttpStatusCode.OK, (new {success = false, message = $"Action Failed"}));
             }
 
         }

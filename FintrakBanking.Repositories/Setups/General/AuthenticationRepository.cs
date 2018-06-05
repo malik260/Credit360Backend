@@ -156,7 +156,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             }
 
-            throw new Exception("1001 Incorrect username or password.");
+            throw new Exception("1001 Login Failure.");
 
             //return null;
         }
@@ -230,7 +230,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             loginCode = Guid.Parse(loginCodeStr),
                             state = 1,
                             ipaddress = ipAddressStr,
-                            errorMessage = "You are already logged.",
+                            errorMessage = "You already have an active session.",
                         };
                     }
                 }
@@ -241,7 +241,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     loginCode = Guid.Parse(loginCodeStr),
                     state = 1,
-                    errorMessage = "You are already logged.",
+                    errorMessage = "You already have an active session.",
                     ipaddress = ipAddressStr,
                 };
             }
@@ -268,7 +268,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 if (data == null)
                 {
-                    throw new Exception("1001 Incorrect username or password.");
+                    throw new Exception("1001 Login Failure.");
                 }
 
                 data.sessionStatusInfo = result;
@@ -286,7 +286,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 return data.isLocked;
             }
-            throw new Exception("1001 Incorrect username or password.");
+            throw new Exception("1001 Login Failure.");
         }
 
         public  bool IsAccountActive(string userName)
@@ -297,7 +297,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 return data.isActive;
             }
 
-            throw new Exception("1001 Incorrect username or password.");
+            throw new Exception("1001 Login Failure.");
         }
 
         private UserViewModel UserLoginDetails(string username, string password)
@@ -354,11 +354,11 @@ namespace FintrakBanking.Repositories.Setups.General
                         faileddata.FAILEDLOGONATTEMPT += 1;
                         context.SaveChanges();
 
-                        throw new Exception("1001 Incorrect username or password.");
+                        throw new Exception("1001 Login Failure.");
                     }
                     else
                     {
-                        throw new Exception("1001 Incorrect username or password.");
+                        throw new Exception("1001 Not Fund.");
                     }
 
                 }
