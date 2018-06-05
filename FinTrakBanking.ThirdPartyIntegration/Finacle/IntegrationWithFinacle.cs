@@ -559,7 +559,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 where gl.CURRENCYCODE == currencyCode && gla.GLACCOUNTID == glAccountId
                 select gl.ACCOUNTID).FirstOrDefault();
 
-            var glAccountCode = branchCode + accountCode;
+            var glAccountCode =  "100" + accountCode;//branchCode + accountCode;
 
             return glAccountCode;
         }
@@ -574,22 +574,25 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 var transPosting = new TransactionPostingViewModel();
                 //accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+                transPosting.currencyType = context.TBL_CURRENCY
+                   .FirstOrDefault(x => x.CURRENCYID == item.currencyId)
+                   ?.CURRENCYCODE;
+                transPosting.accounts = item.casaAccountId != null
+                ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
+                .PRODUCTACCOUNTNUMBER: GetGlAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
                 transPosting.amounts = item.creditAmount > 0
-                    ? "C" + item.creditAmount.ToString()
-                    : "D" + item.debitAmount.ToString();
+                    ? "C" + String.Format("{0:0.00}", item.creditAmount)
+                    : "D" + String.Format("{0:0.00}", item.debitAmount) ;
                 //amounts = item.sourceReferenceNumber,
                 transPosting.narration = item.description;
+                transPosting.referenceNumber = item.batchCode;
+                
                 transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
 
-                transPosting.referenceNumber = item.batchCode;
-                transPosting.currencyType = context.TBL_CURRENCY
-                    .FirstOrDefault(x => x.CURRENCYID == item.currencyId)
-                    ?.CURRENCYCODE;
+                
+               
                 transPosting.operationId = item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
-                transPosting.accounts = item.casaAccountId != null
-                    ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
-                        .PRODUCTACCOUNTNUMBER
-                    : GetGlAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
+
 
                 transactionLst.Add(transPosting);
             }
@@ -599,6 +602,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         
         private bool AddCustomTransactions(List<TransactionPostingViewModel> entity)
         {
+            List<TBL_CUSTOM_FIANCE_TRANSACTION> lstData = new List<TBL_CUSTOM_FIANCE_TRANSACTION>();
             bool output = false;
             foreach (var item in entity)
             {
@@ -614,11 +618,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     data.NARRATION = item.narration;
                     data.OPERATIONID = item.operationId;
                 }
-                context.TBL_CUSTOM_FIANCE_TRANSACTION.Add(data);
-            }
-
-            ;
-
+               lstData.Add(data);
+            };
+            context.TBL_CUSTOM_FIANCE_TRANSACTION.AddRange(lstData);
             context.SaveChanges();
             output = true;
             return output;

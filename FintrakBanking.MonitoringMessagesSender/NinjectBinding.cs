@@ -16,7 +16,7 @@ namespace FintrakBanking.MonitoringMessagesSender
             Bind<IEmailSender>().To<EmailSender>().InSingletonScope();
             Bind<IAlertMessagesEngine>().To<AlertMessagesEngine>().InSingletonScope();
             Bind<IAlertMessageLogger>().To<AlertMessageLogger>().InSingletonScope();
-
+            Bind<ISLANotification>().To<SLANotification>().InSingletonScope();
         }
     }
 }

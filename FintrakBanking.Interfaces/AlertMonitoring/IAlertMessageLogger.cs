@@ -99,5 +99,7 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
         int SaveMessageDetails(MessageLogViewModel model);
 
         List<TBL_MONITORING_ALERT_SETUP> getAlertMessageSetting();
+
+        void SLAApprovalNotification();
     }
 }
