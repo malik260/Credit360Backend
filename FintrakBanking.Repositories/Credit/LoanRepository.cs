@@ -298,7 +298,7 @@ namespace FintrakBanking.Repositories.Credit
                         AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
 
                     //...................Update the Loan Request table.......................
-                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
 
                     //...................Adding Audit...............................
                     context.TBL_AUDIT.Add(audit);
@@ -468,7 +468,7 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.TBL_LOAN_CONTINGENT.Add(data);
 
                     //...................Update the Loan Request table.......................
-                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
 
                     //...................Adding Audit...............................
                     context.TBL_AUDIT.Add(audit);
@@ -676,7 +676,7 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.TBL_LOAN.Add(data);
 
                     //...................Update the Loan Request table.......................
-                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
 
                     //...................Adding Audit...............................
                     var dataCount = context.SaveChanges();
@@ -879,7 +879,7 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.TBL_LOAN.Add(data);
 
                     //...................Update the Loan Request table.......................
-                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
 
                     //...................Adding Audit...............................
                     var dataCount = context.SaveChanges();
@@ -1006,7 +1006,8 @@ namespace FintrakBanking.Repositories.Credit
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join atrail in context.TBL_APPROVAL_TRAIL on ln.TERMLOANID equals atrail.TARGETID
                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                                   && atrail.OPERATIONID == (int)OperationsEnum.TermLoanBooking || atrail.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                                  && atrail.OPERATIONID == (int)OperationsEnum.TermLoanBooking || atrail.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                                  && req.DELETED == false && req.APPROVALSTATUSID ==  (short)ApprovalStatusEnum.Approved
                                   && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                   && atrail.RESPONSESTAFFID == null
                             orderby ln.TERMLOANID descending
@@ -1128,6 +1129,9 @@ namespace FintrakBanking.Repositories.Credit
 
 
                             });
+
+                var test = data.ToList();
+
                 return data;
             }
             catch (Exception ex)
@@ -1155,6 +1159,7 @@ namespace FintrakBanking.Repositories.Credit
                             join atrail in context.TBL_APPROVAL_TRAIL on ln.REVOLVINGLOANID equals atrail.TARGETID
                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                                   && atrail.OPERATIONID == (int)OperationsEnum.RevolvingLoanBooking
+                                  && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                   && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                   && atrail.RESPONSESTAFFID == null
                             orderby ln.REVOLVINGLOANID descending
@@ -1283,6 +1288,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on ln.CONTINGENTLOANID equals atrail.TARGETID
                         where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                               && atrail.OPERATIONID == (int)OperationsEnum.ContigentLoanBooking
+                              && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                               && atrail.RESPONSESTAFFID == null
                         orderby ln.CONTINGENTLOANID descending
@@ -2412,7 +2418,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
             var product = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId && x.COMPANYID == model.companyId);
-
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             //loanTransaction.operationId = (int)OperationsEnum.TermLoanBooking;
             //loanTransaction.description = "Loan Disbursment Amount";
             //loanTransaction.valueDate = generalSetup.GetApplicationDate();
@@ -2445,6 +2451,7 @@ namespace FintrakBanking.Repositories.Credit
 
             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == product.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = model.loanReferenceNumber;
+            debit.batchCode = batchCode;
             debit.casaAccountId = null;
             debit.debitAmount = model.principalAmount;
             debit.creditAmount = 0;
@@ -2470,6 +2477,7 @@ namespace FintrakBanking.Repositories.Credit
             var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
             credit.glAccountId = repaymentAccountGL;
             credit.sourceReferenceNumber = model.loanReferenceNumber;
+            credit.batchCode = batchCode;
             credit.casaAccountId = casa.CASAACCOUNTID;
             credit.debitAmount = 0;
             credit.creditAmount = model.principalAmount;
