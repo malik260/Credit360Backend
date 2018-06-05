@@ -1008,6 +1008,7 @@ namespace FintrakBanking.Repositories.Credit
                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                                   && atrail.OPERATIONID == (int)OperationsEnum.TermLoanBooking || atrail.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
                                   && req.DELETED == false && req.APPROVALSTATUSID ==  (short)ApprovalStatusEnum.Approved
+                                  && ln.LOANSTATUSID == (short)LoanStatusEnum.Inactive
                                   && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                   && atrail.RESPONSESTAFFID == null
                             orderby ln.TERMLOANID descending
@@ -1160,6 +1161,7 @@ namespace FintrakBanking.Repositories.Credit
                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                                   && atrail.OPERATIONID == (int)OperationsEnum.RevolvingLoanBooking
                                   && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                                  && ln.LOANSTATUSID == (short)LoanStatusEnum.Inactive
                                   && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                   && atrail.RESPONSESTAFFID == null
                             orderby ln.REVOLVINGLOANID descending
@@ -1289,6 +1291,7 @@ namespace FintrakBanking.Repositories.Credit
                         where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                               && atrail.OPERATIONID == (int)OperationsEnum.ContigentLoanBooking
                               && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                              && ln.LOANSTATUSID == (short)LoanStatusEnum.Inactive
                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                               && atrail.RESPONSESTAFFID == null
                         orderby ln.CONTINGENTLOANID descending
@@ -1699,12 +1702,6 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId)
         {
-            var loanFee = context.TBL_LOAN_FEE.Where(x => x.LOANID == entity.targetId);
-            foreach (var fee in loanFee)
-            {
-                //if (fee.ISPOSTED == false) throw new ConditionNotMetException("This Loan has unapproved fee deferral which must be approved first");
-            }
-
             using (var trans = context.Database.BeginTransaction())
             {
                 try
