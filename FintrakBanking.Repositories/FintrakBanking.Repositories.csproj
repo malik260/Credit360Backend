@@ -111,6 +111,7 @@
     <Compile Include="AlertMonitoring\AlertMessageLogger.cs" />
     <Compile Include="AlertMonitoring\AlertMessagesEngine.cs" />
     <Compile Include="AlertMonitoring\EmailSender.cs" />
+    <Compile Include="AlertMonitoring\SLANotification.cs" />
     <Compile Include="AppEmail\EmailRepository.cs" />
     <Compile Include="CASA\CasaLienRepository.cs" />
     <Compile Include="CASA\CasaRepository.cs" />

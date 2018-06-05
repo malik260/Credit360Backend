@@ -601,19 +601,24 @@ namespace FintrakBanking.Repositories.CASA
             return new CasaCustomerSearchViewModel { };
         }
 
-        public IEnumerable<dynamic> GetAllCustomerAccountByCustomerId(int customerId, int companyId)
+        public IEnumerable<CasaBalanceViewModel> GetAllCustomerAccountByCustomerId(int customerId, int companyId)
         {
             var data = (from a in context.TBL_CASA
                         where a.CUSTOMERID == customerId && a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
-                        select new
+                        select new CasaBalanceViewModel
 
                         {
                             casaAccountId = a.CASAACCOUNTID,
                             productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE + ")",
                             productAccountName = a.PRODUCTACCOUNTNAME,
-                            availableBalance = a.AVAILABLEBALANCE,
+                            availableBalance = a.AVAILABLEBALANCE, //transRepo.GetCASABalance(a.CASAACCOUNTID).availableBalance,
                             currencyId = a.CURRENCYID
                         });
+            //foreach (var item in data)
+            //{
+            //    item.availableBalance = transRepo.GetCASABalance(item.casaAccountId).availableBalance;
+            //}
+
             return data.ToList();
         }
     }

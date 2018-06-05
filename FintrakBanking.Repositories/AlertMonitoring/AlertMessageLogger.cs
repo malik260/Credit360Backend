@@ -19,7 +19,11 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 {
     public class AlertMessageLogger : IAlertMessageLogger
     {
-
+        private ISLANotification sla;
+        public AlertMessageLogger(ISLANotification _sla)
+        {
+             sla =_sla;
+        }
 
         private FinTrakBankingContext context = new FinTrakBankingContext();
         private DateTime applDate;
@@ -2851,6 +2855,38 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         public List<TBL_MONITORING_ALERT_SETUP> getAlertMessageSetting()
         {
             return context.TBL_MONITORING_ALERT_SETUP.ToList();
+        }
+
+        private void CreateSLAApprovalNotificationMethod(string bodyContent, string messageTtile, string emailRecipient)
+        {
+           // string body = "Dear "
+            //message = new TBL_MESSAGE_LOG // INITIATOR
+            //{
+            //    TOADDRESS = owner.EMAIL,
+            //    MESSAGESUBJECT = ownerMessageSubject,
+            //    MESSAGEBODY = ownerMessageBody,
+            //    MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+            //    MESSAGETYPEID = (short)MessageTypeEnum.Email,
+            //    FROMADDRESS = this.support,
+            //    DATETIMERECEIVED = DateTime.Now,
+            //    SENDONDATETIME = DateTime.Now,
+            //    TARGETID = targetId,
+            //    OPERATIONID = operationId
+            //};
+            //context.TBL_MESSAGE_LOG.Add(message);
+        }
+
+        public void SLAApprovalNotification()
+        {
+          var notification =  sla.RoleBasedApprovalNotification();
+
+            foreach (var x in notification)
+            {
+                if (x.operationId == (int)OperationsEnum.OfferLetterApproval)
+                {
+                    
+                }
+            }
         }
     }
 }
