@@ -17,7 +17,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var listOfMailsSub = context.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending || o.MESSAGESTATUSID == (int)MessageStatusEnum.Attempted);
 
                 var data =  from _audit in context.TBL_AUDIT
                 join atype in context.TBL_AUDIT_TYPE on _audit.AUDITTYPEID equals atype.AUDITTYPEID

@@ -2859,8 +2859,23 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
         private void CreateSLAApprovalNotificationMethod(string bodyContent, string messageTtile, string emailRecipient)
         {
-
+           // string body = "Dear "
+            //message = new TBL_MESSAGE_LOG // INITIATOR
+            //{
+            //    TOADDRESS = owner.EMAIL,
+            //    MESSAGESUBJECT = ownerMessageSubject,
+            //    MESSAGEBODY = ownerMessageBody,
+            //    MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+            //    MESSAGETYPEID = (short)MessageTypeEnum.Email,
+            //    FROMADDRESS = this.support,
+            //    DATETIMERECEIVED = DateTime.Now,
+            //    SENDONDATETIME = DateTime.Now,
+            //    TARGETID = targetId,
+            //    OPERATIONID = operationId
+            //};
+            //context.TBL_MESSAGE_LOG.Add(message);
         }
+
         public void SLAApprovalNotification()
         {
           var notification =  sla.RoleBasedApprovalNotification();
@@ -2869,7 +2884,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             {
                 if (x.operationId == (int)OperationsEnum.OfferLetterApproval)
                 {
-
+                    
                 }
             }
         }
