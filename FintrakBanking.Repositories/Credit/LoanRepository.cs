@@ -997,6 +997,9 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanViewModel> GetTermLoanBookingAwaitingApproval(int staffId, int companyId)
         {
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
+            List<int> operationIds = new List<int>();
+            operationIds.Add((int)OperationsEnum.TermLoanBooking);
+            operationIds.Add((int)OperationsEnum.CommercialPaperLoanBooking);
 
             try
             {
@@ -1006,7 +1009,7 @@ namespace FintrakBanking.Repositories.Credit
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join atrail in context.TBL_APPROVAL_TRAIL on ln.TERMLOANID equals atrail.TARGETID
                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                                  && atrail.OPERATIONID == (int)OperationsEnum.TermLoanBooking || atrail.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                                  && operationIds.Contains(atrail.OPERATIONID) 
                                   && req.DELETED == false && req.APPROVALSTATUSID ==  (short)ApprovalStatusEnum.Approved
                                   && ln.LOANSTATUSID == (short)LoanStatusEnum.Inactive
                                   && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
@@ -1104,6 +1107,10 @@ namespace FintrakBanking.Repositories.Credit
                                 isBidbond = false,
                                 isOverdraft = false,
 
+                                requestStatusId = req.APPROVALSTATUSID,
+                                requestDeleted = req.DELETED,
+                                loanStatusId = ln.LOANSTATUSID,
+
                                 loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANID == ln.TERMLOANID && x.LOANSYSTEMTYPEID == ln.LOANSYSTEMTYPEID)
                                                   select (new LoanCollateralMappingViewModel
                                                   {
@@ -1131,9 +1138,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             });
 
-                var test = data.ToList();
-
-                return data;
+                return data; 
             }
             catch (Exception ex)
             {
