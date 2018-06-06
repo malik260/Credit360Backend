@@ -84,6 +84,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool CommercialPaperPrepayment(string refNo, decimal prepaymentAmount, DateTime applicationDate, int staffId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
         bool CommercialPaperTenorReviewDetails(int loanAplicationDetailId, int newTenor);
+        bool GetRepaymentFromStaging();
         #endregion
     }
 }
