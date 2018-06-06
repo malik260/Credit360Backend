@@ -4,6 +4,7 @@ using FintrakBanking.Interfaces.AlertMonitoring;
 using FintrakBanking.ViewModels.AlertMonitoring;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.SqlServer;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                    join b in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals b.APPROVALLEVELID
                                    join s in context.TBL_STAFF on a.TOSTAFFID equals s.STAFFID
                                    join o in context.TBL_OPERATIONS on a.OPERATIONID equals o.OPERATIONID
-                                   let dueTime =  a.SYSTEMARRIVALDATETIME.AddHours(b.SLANOTIFICATIONINTERVAL)
+                                   let dueTime = DbFunctions.AddHours( a.SYSTEMARRIVALDATETIME,b.SLANOTIFICATIONINTERVAL)
                                    where a.APPROVALSTATUSID == 0
                                    && a.RESPONSESTAFFID == null
                                    && a.TOSTAFFID != null
@@ -37,8 +38,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                        fromApprovalLevelId=(int)a.FROMAPPROVALLEVELID,
                                        operationId = a.OPERATIONID,
                                        requestStaffId = a.REQUESTSTAFFID,
-                                       salDateLine = a.SYSTEMARRIVALDATETIME.AddHours(b.SLAINTERVAL),
-                                       slaNotificationDate =  a.SYSTEMARRIVALDATETIME.AddHours(b.SLANOTIFICATIONINTERVAL),
+                                       salDateLine = DbFunctions.AddHours(a.SYSTEMARRIVALDATETIME,b.SLAINTERVAL),
+                                       slaNotificationDate = DbFunctions.AddHours(a.SYSTEMARRIVALDATETIME,b.SLANOTIFICATIONINTERVAL),
                                        salInterval = b.SLAINTERVAL,
                                        systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                                        systemResponseDate = a.SYSTEMRESPONSEDATETIME,

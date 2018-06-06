@@ -42,7 +42,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string FLOWTYPE { get; set; }
         
-
         [Required]
         [StringLength(500)]
         public string DESCRIPTION { get; set; }
@@ -55,9 +54,9 @@ namespace FintrakBanking.Entities.Models
 
         public int COMPANYID { get; set; }
 
-        public short SOURCEBRANCHID { get; set; }
+        public int SOURCEBRANCHID { get; set; }
 
-        public short DESTINATIONBRANCHID { get; set; }
+        public int DESTINATIONBRANCHID { get; set; }
 
         [StringLength(50)]
         public string CURRENCYCODE { get; set; }
