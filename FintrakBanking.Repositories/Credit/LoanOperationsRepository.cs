@@ -11633,6 +11633,9 @@ namespace FintrakBanking.Repositories.Credit
                         addStaging.STATUS = "NEW";
                         addStaging.RCRE_DATE = applicationDate;
                         addStaging.PSTD_FLG = "N";
+                        addStaging.PSTD_DATE = applicationDate;
+
+
 
 
                 staging.Add(addStaging);
@@ -11666,9 +11669,8 @@ namespace FintrakBanking.Repositories.Credit
                                  }).ToList();
 
                     List<FINTRAK_TRAN_PROC_MAIN> main = new List<FINTRAK_TRAN_PROC_MAIN>();
-                    var recordCount = model.Count();
-
-                    foreach (var item in model)
+            var recordCount = this.context.TBL_CUSTOM_TRANSACTION_BULK.Where(x => x.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && x.BATCHID == batchCode).Count();
+            foreach (var item in model)
                     {
                         FINTRAK_TRAN_PROC_MAIN addMain = new FINTRAK_TRAN_PROC_MAIN();
 
@@ -11680,10 +11682,12 @@ namespace FintrakBanking.Repositories.Credit
                         addMain.STATUS = "NEW";
                         addMain.REC_COUNT = recordCount;
                         addMain.BANK_ID = "01";
-                        //addMain.SID = 1;
+                        addMain.IS_SELECTED = "N";
+                        addMain.PSTD_DATE = applicationDate;
+                //addMain.SID = 1;
 
 
-                        main.Add(addMain);
+                main.Add(addMain);
 
                     }
                     this.stagingContext.FINTRAK_TRAN_PROC_MAIN.AddRange(main);
