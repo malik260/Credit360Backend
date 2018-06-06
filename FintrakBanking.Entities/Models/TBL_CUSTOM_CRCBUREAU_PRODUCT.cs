@@ -6,7 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("custom.TBL_CUSTOM_CRCBUREAU_PRODUCT")]
+    [Table("TBL_CUSTOM_CRCBUREAU_PRODUCT")]
     public partial class TBL_CUSTOM_CRCBUREAU_PRODUCT
     {
         [Key]

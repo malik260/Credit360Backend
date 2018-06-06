@@ -4,6 +4,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -123,7 +124,6 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanStatus(int companyId);
 
         IEnumerable<CustomerCompanyInfomationViewModels> getLoanCustomerCompanyInformation(int customerId);
-
 
     }
 }

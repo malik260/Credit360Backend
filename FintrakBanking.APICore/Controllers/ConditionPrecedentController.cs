@@ -26,92 +26,16 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("condition-precedent")]
-        public HttpResponseMessage GetConditionPrecedent()
-        {
-            try
-            {
-                var data = repo.GetAllConditionPrecedent();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        #region DEFAULT conditions
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("condition-precedent/application-detail/{detailId}")]
-        public HttpResponseMessage GetConditionPrecedentByApplicationId(int detailid)
-        {
-            try
-            {
-                var data = repo.GetConditionPrecedentByDetailId(detailid);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-         [HttpPost] [ClaimsAuthorization]
-        [Route("condition-precedent")]
-        public HttpResponseMessage AddConditionPrecedent([FromBody] ConditionPrecedentViewModel entity)
-        {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-
-                var data = repo.AddConditionPrecedent(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
-            }
-        }
-
-         [HttpPost] [ClaimsAuthorization]
-        [Route("condition-precedent/selected")]
-        public HttpResponseMessage AddSelectedConditionPrecedent([FromBody] SelectedIdsViewModel entity)
-        {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-
-                List<ConditionPrecedentViewModel> data = repo.AddSelectedConditionPrecedent(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
-            }
-        }
-
-
-        
-        #region CP template
-
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("condition-precedent-template/application-detail/{detailId}")]
         public HttpResponseMessage GetConditionPrecedentDefaultByApplicationId(int detailId)
         {
             try
             {
-                List<ConditionPrecedentViewModel> data= repo.GetConditionPrecedentDefaultByDetailId(detailId);
+                List<ConditionPrecedentViewModel> data = repo.GetConditionPrecedentDefaultByDetailId(detailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -120,7 +44,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("condition-precedent-template")]
         public HttpResponseMessage GetConditionPrecedentTemplate()
         {
@@ -135,7 +60,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("condition-precedent-template")]
         public HttpResponseMessage AddConditionPrecedentTemplate([FromBody] ConditionPrecedentViewModel entity)
         {
@@ -160,7 +86,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("condition-precedent-template/{conditionId}")]
         public HttpResponseMessage UpdateConditionPrecedentTemplate([FromBody] ConditionPrecedentViewModel entity, int conditionId)
         {
@@ -185,9 +112,75 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        #endregion CP template
+        #endregion DEFAULT conditions
 
-       [HttpPut] [ClaimsAuthorization]
+        #region LOS conditions
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("condition-precedent/application-detail/{detailId}")]
+        public HttpResponseMessage GetConditionPrecedentByApplicationId(int detailid)
+        {
+            try
+            {
+                var data = repo.GetConditionPrecedentByDetailId(detailid);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("condition-precedent")]
+        public HttpResponseMessage AddConditionPrecedent([FromBody] ConditionPrecedentViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.AddConditionPrecedent(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("condition-precedent/selected")]
+        public HttpResponseMessage AddSelectedConditionPrecedent([FromBody] SelectedIdsViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                List<ConditionPrecedentViewModel> data = repo.AddSelectedConditionPrecedent(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("condition-precedent-edit/{id}")]
         public HttpResponseMessage EditLoanCditionPrecedent([FromBody] ConditionPrecedentViewModel entity, int id)
         {
@@ -202,7 +195,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.EditLoanConditionPrecedent(id, entity);
                 if (data)
                 {
-                    return Request.CreateResponse(  HttpStatusCode.OK, new { success = true, result = data, message = "The record has been modified successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been modified successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
@@ -213,7 +206,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete]
+        [ClaimsAuthorization]
         [Route("condition-precedent-remove/{id}")]
         public HttpResponseMessage RemoveLoanConditionPrecedent(int id)
         {
@@ -235,9 +229,131 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        #endregion LOS conditions
+
+        #region LMS conditions
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-condition-precedent/application-detail/{detailId}")]
+        public HttpResponseMessage GetConditionPrecedentByApplicationIdLms(int detailid)
+        {
+            try
+            {
+                var data = repo.GetConditionPrecedentByDetailIdLms(detailid);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lms-condition-precedent")]
+        public HttpResponseMessage AddConditionPrecedentLms([FromBody] ConditionPrecedentViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.AddConditionPrecedentLms(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lms-condition-precedent/selected")]
+        public HttpResponseMessage AddSelectedConditionPrecedentLms([FromBody] SelectedIdsViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                List<ConditionPrecedentViewModel> data = repo.AddSelectedConditionPrecedentLms(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("lms-condition-precedent-edit/{id}")]
+        public HttpResponseMessage EditLoanCditionPrecedentLms([FromBody] ConditionPrecedentViewModel entity, int id)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.EditLoanConditionPrecedentLms(id, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been modified successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("lms-condition-precedent-remove/{id}")]
+        public HttpResponseMessage RemoveLoanConditionPrecedentLms(int id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
+                var data = repo.RemoveLoanConditionPrecedentLms(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been removed successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        #endregion LMS conditions
+
+
+
         #region Compliance Timeline template
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("compliance-timeline-template")]
         public HttpResponseMessage GetComplianceTimelineTemplate()
         {
@@ -252,7 +368,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("compliance-timeline-template")]
         public HttpResponseMessage AddComplianceTimelineTemplate([FromBody] ComplianceTimelineViewModel entity)
         {
@@ -277,7 +394,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("compliance-timeline-template/{conditionId}")]
         public HttpResponseMessage UpdateComplianceTimelineTemplate([FromBody] ComplianceTimelineViewModel entity, int conditionId)
         {

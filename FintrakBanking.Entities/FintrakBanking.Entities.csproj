@@ -156,6 +156,7 @@
     <Compile Include="Models\TBL_COLLATERAL_VISITATION.cs" />
     <Compile Include="Models\TBL_COMPANY.cs" />
     <Compile Include="Models\TBL_COMPANY_CLASS.cs" />
+    <Compile Include="Models\TBL_COMPANY_DIRECTOR.cs" />
     <Compile Include="Models\TBL_COMPANY_TYPE.cs" />
     <Compile Include="Models\TBL_COMPLIANCE_TIMELINE.cs" />
     <Compile Include="Models\TBL_CONDITION_PRECEDENT.cs" />
@@ -210,6 +211,7 @@
     <Compile Include="Models\TBL_CUSTOMER_NEXTOFKIN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_PHONECONTACT.cs" />
     <Compile Include="Models\TBL_CUSTOMER_PRODUCT_FEE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_RELATED_PARTY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_RISK_RATING.cs" />
     <Compile Include="Models\TBL_CUSTOMER_SENSITIVITY_LEVEL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_SIGNATORY.cs" />
@@ -393,6 +395,7 @@
     <Compile Include="Models\TBL_SOURCE_APPLICATION.cs" />
     <Compile Include="Models\TBL_STAFF.cs" />
     <Compile Include="Models\TBL_STAFF_ACCOUNT_HISTORY.cs" />
+    <Compile Include="Models\TBL_STAFF_EXTENDED.cs" />
     <Compile Include="Models\TBL_STAFF_JOBTITLE.cs" />
     <Compile Include="Models\TBL_STAFF_RELIEF.cs" />
     <Compile Include="Models\TBL_STAFF_ROLE.cs" />

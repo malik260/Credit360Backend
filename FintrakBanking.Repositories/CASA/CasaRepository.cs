@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Finance;
 using System.Text;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using System.Threading.Tasks;
+using FintrakBanking.Interfaces.Finance;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -18,11 +19,13 @@ namespace FintrakBanking.Repositories.CASA
     {
         private FinTrakBankingContext context;
         private ICreditLimitValidationsRepository creditLimitRepo;
+        private IFinanceTransactionRepository transRepo;
 
-        public CasaRepository(FinTrakBankingContext _context, ICreditLimitValidationsRepository _creditLimitRepo)
+        public CasaRepository(FinTrakBankingContext _context, ICreditLimitValidationsRepository _creditLimitRepo, IFinanceTransactionRepository _transRepo)
         {
             this.context = _context;
             this.creditLimitRepo = _creditLimitRepo;
+            this.transRepo = _transRepo;
         }
 
         private bool SaveAll()
@@ -82,16 +85,9 @@ namespace FintrakBanking.Repositories.CASA
         {
             int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
             var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
-
-            return new CasaBalanceViewModel
-            {
-                accountName = $" {account.TBL_CUSTOMER.LASTNAME } {account.TBL_CUSTOMER.FIRSTNAME} {account.TBL_CUSTOMER.MIDDLENAME} ",
-                availableBalance = account.AVAILABLEBALANCE,
-                ledgerBalance = account.LEDGERBALANCE,
-                accountNo = account.PRODUCTACCOUNTNAME,
-                productName = account.TBL_PRODUCT.PRODUCTNAME
-            };
+            return transRepo.GetCASABalance(account.CASAACCOUNTID);
         }
+
         /// TODO: Implement server side filtering due to large number of records that may be returned
         public IEnumerable<CasaViewModel> FindAccount(string accountNumberOrName, int companyId)
         {
@@ -442,8 +438,8 @@ namespace FintrakBanking.Repositories.CASA
                             branchId = casa.BRANCHID,
                             branchCode = casa.TBL_BRANCH.BRANCHCODE,
                             branchName = casa.TBL_BRANCH.BRANCHNAME,
-                            relationshipOfficerId = casa.RELATIONSHIPOFFICERID ?? 0,
-                            relationshipManagerId = casa.RELATIONSHIPMANAGERID ?? 0,
+                            relationshipOfficerId = cust.RELATIONSHIPOFFICERID ?? 0,
+                            relationshipManagerId = cust.TBL_STAFF.SUPERVISOR_STAFFID ?? 0,
                             subSectorId = sector.SUBSECTORID,
                             subSectorName = sector.NAME,
                             customerTypeId =cust.CUSTOMERTYPEID,
@@ -605,18 +601,24 @@ namespace FintrakBanking.Repositories.CASA
             return new CasaCustomerSearchViewModel { };
         }
 
-        public IEnumerable<dynamic> GetAllCustomerAccountByCustomerId(int customerId, int companyId)
+        public IEnumerable<CasaBalanceViewModel> GetAllCustomerAccountByCustomerId(int customerId, int companyId)
         {
             var data = (from a in context.TBL_CASA
                         where a.CUSTOMERID == customerId && a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
-                        select new
+                        select new CasaBalanceViewModel
 
                         {
                             casaAccountId = a.CASAACCOUNTID,
                             productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE + ")",
                             productAccountName = a.PRODUCTACCOUNTNAME,
-                            availableBalance = a.AVAILABLEBALANCE
+                            availableBalance = a.AVAILABLEBALANCE, //transRepo.GetCASABalance(a.CASAACCOUNTID).availableBalance,
+                            currencyId = a.CURRENCYID
                         });
+            //foreach (var item in data)
+            //{
+            //    item.availableBalance = transRepo.GetCASABalance(item.casaAccountId).availableBalance;
+            //}
+
             return data.ToList();
         }
     }

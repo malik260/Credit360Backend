@@ -233,20 +233,9 @@ namespace FintrakBanking.Repositories.Credit
         //    return camProcessedData;
         //}
 
-        public IQueryable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId)
+        public IQueryable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int branchId, int companyId)
         {
-            //var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.OfferLetterApproval);
-            //int staffApprovalLevelId = 0;
-            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
-            //var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(companyId).Where(x => x.operationId == (int)OperationsEnum.OfferLetterApproval).ToList();
-
-            var staffApprovalLevelIds =
-                context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval)// && x.PRODUCTCLASSID == classId)
-                .Select(x => x.TBL_APPROVAL_GROUP)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.ISACTIVE == true))
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId))
-                .Select(x => x.APPROVALLEVELID)
-                .ToList();
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
 
             IQueryable<CamProcessedLoanViewModel> data;
 
@@ -258,13 +247,14 @@ namespace FintrakBanking.Repositories.Credit
                     from d in camDoc.DefaultIfEmpty()
                     join e in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals e.TARGETID into apprTrail
                     from e in apprTrail.DefaultIfEmpty()
-                    where a.COMPANYID == companyId && a.DELETED == false
-                          && b.STATUSID == (int)ApprovalStatusEnum.Approved
-                          && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                          && e.RESPONSESTAFFID == null
-                          && e.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
-                           //&& e.TOAPPROVALLEVELID == staffApprovalLevelId
-                           && staffApprovalLevelIds.Contains((int)e.TOAPPROVALLEVELID)
+                    where a.COMPANYID == companyId 
+                        && a.DELETED == false
+                        && a.BRANCHID == branchId
+                        && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                        && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                        && e.RESPONSESTAFFID == null
+                        && e.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
+                        && ids.Contains((int)e.TOAPPROVALLEVELID)
                     select new CamProcessedLoanViewModel
                     {
                         loanApplicationId = a.LOANAPPLICATIONID,
@@ -1794,33 +1784,69 @@ namespace FintrakBanking.Repositories.Credit
 
                
                 //CHECKING FOR COMMERCIAL LOANS IN LOOP
-                foreach (var record in loanApplicationDetails) 
+                foreach (var record in loanApplicationDetails)
                 {
                     if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper)
                     {
                         record.EFFECTIVEDATE = DateTime.Now;
                         record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
                     }
-                }
-                //CHECKING FOR PRODUCT BASED LOANS IN LOOP
-                if (loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
-                {
-                    if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                    else if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                     {
-                        foreach (var record in loanApplicationDetails)
+                        if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                         {
                             var request = new TBL_LOAN_BOOKING_REQUEST
                             {
-                                AMOUNT_REQUESTED = entity.amount,
+                                AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
                                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                                 LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                                 DATETIMECREATED = DateTime.Now,
                                 CREATEDBY = entity.staffId,
                             };
                             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
-                        };
+                        }
                     }
-                }               
+                    else if(record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan)
+                    {
+                        if(loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                        {
+                            if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
+                            {
+                                var request = new TBL_LOAN_BOOKING_REQUEST
+                                {
+                                    AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                                    LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                                    DATETIMECREATED = DateTime.Now,
+                                    CREATEDBY = entity.staffId,
+                                };
+                                context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                            }
+                        }
+                    }
+                };
+                //CHECKING FOR PRODUCT BASED LOANS IN LOOP
+                //if (loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
+                //{
+                //    if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                //    {
+                //        foreach (var record in loanApplicationDetails)
+                //        {
+                //            if(record.STATUSID == (short)ApprovalStatusEnum.Approved)
+                //            {
+                //                var request = new TBL_LOAN_BOOKING_REQUEST
+                //                {
+                //                    AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                //                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                //                    LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                //                    DATETIMECREATED = DateTime.Now,
+                //                    CREATEDBY = entity.staffId,
+                //                };
+                //                context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                //            }
+                //        };
+                //    }
+                //}               
             }
 
             context.SaveChanges();

@@ -29,7 +29,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private IGeneralSetupRepository _genSetup;
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
-        private IIntegrationWithCWGAPI cwpAIP;
+        private IIntegrationWithFinacle cwpAIP;
 
         public bool USE_THIRD_PARTY_INTEGRATION { get; private set; }
 
@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                                                 IGeneralSetupRepository genSetup,
                                                 IWorkflow _workFlow,
                                                 IApprovalLevelStaffRepository _level,
-                                                     IIntegrationWithCWGAPI cwpAIP)
+                                                     IIntegrationWithFinacle cwpAIP)
         {
             this.context = _context;
             this._genSetup = genSetup;

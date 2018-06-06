@@ -16,7 +16,7 @@
     using System.Threading.Tasks;
     using System.Web.Script.Serialization;
 
-    namespace Finacle.CWGAPI
+    namespace Finacle 
     {
         public class TransactionPosting
         {
@@ -36,6 +36,8 @@
 
             private HttpClientHandler handler = new HttpClientHandler();
             private static HttpClient httpClientInstance;
+
+
 
             public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode,
                 string toCurrencyCode, string rateCode)
@@ -79,37 +81,6 @@
 
 
             }
-
-          
-
-            private bool AddCustomTransactions(List<TransactionPostingViewModel> entity)
-            {
-                bool output = false;
-                foreach (var item in entity)
-                {
-                    var data = new TBL_CUSTOM_FIANCE_TRANSACTION();
-                    {
-                        data.ACCOUNTID = item.accounts;
-                        data.AMOUNT = item.amounts;
-                        data.BATCHCODE = item.referenceNumber;
-                        data.CONSUMED = false;
-                        data.CURRENCYCODE = item.currencyType;
-                        data.DATETIMECONSUMED = null;
-                        data.DATETIMECREATED = DateTime.Now;
-                        data.NARRATION = item.narration;
-                        data.OPERATIONID = item.operationId;
-                    }
-                    context.TBL_CUSTOM_FIANCE_TRANSACTION.Add(data);
-                }
-
-                ;
-
-                context.SaveChanges();
-                output = true;
-                return output;
-
-            }
-
            
 
             private bool AddCustomLien(LienProcessViewModel entity)
@@ -220,43 +191,12 @@
 
             //}
 
-            private string GetGLAccountCode(int glAccountId, string currencyCode, int branchId)
-            {
-                var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
-
-                var AccountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
-                                   join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
-                                   where gl.CURRENCYCODE == currencyCode && gla.GLACCOUNTID == glAccountId
-                                   select gl.ACCOUNTID).FirstOrDefault();
-
-                var GLAccountCode = branchCode + AccountCode;
-
-                return GLAccountCode;
-            }
-
-            public async Task<bool> APITransactionPosting(List<FinanceTransactionViewModel> model)
+            public async Task<ResponseMessage> ApiPostCrossCurrencyTransactions(List<TransactionPostingViewModel> model)
             {
 
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-                bool output = false;
+
                 var dta = context.TBL_SETUP_GLOBAL.ToList();
-                TransactionPostingViewModel responseModel = new TransactionPostingViewModel();
-                List<TransactionPostingViewModel> apiModel = new List<TransactionPostingViewModel>();
-                foreach (var item in model)
-                {
-
-                    var transPosting = new TransactionPostingViewModel();
-                    //accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
-                    transPosting.amounts = item.creditAmount > 0 ? "C" + item.creditAmount.ToString() : "D" + item.debitAmount.ToString();
-                    //amounts = item.sourceReferenceNumber,
-                    transPosting.narration = item.description;
-                    transPosting.referenceNumber = item.batchCode;
-                    transPosting.currencyType = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                    transPosting.operationId = item.operationId;// != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
-                    transPosting.accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : GetGLAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
-
-                    apiModel.Add(transPosting);
-                }
 
                 handler.UseDefaultCredentials = true;
                 HttpClient client = new HttpClient(handler);
@@ -272,36 +212,151 @@
 
                 ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                 HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
-                                                new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                ResponseMessageViewModel responseApi = new ResponseMessageViewModel();
+                ResponseMessage responseMsg = null;
+                bool result = false;
 
                 if (response.IsSuccessStatusCode)
                 {
-                    responseModel = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+                    result = response.IsSuccessStatusCode;
+                    await response.Content.ReadAsAsync<TransactionPostingViewModel>();
 
-                }
+                    var res = new ResponseMessageViewModel
+                    {
+                        responseCode = responseApi.responseCode,
+                        webRequestDate = responseApi.webRequestDate,
+                        webRequestStatus = responseApi.webRequestStatus,
+                        serialNumber = responseApi.serialNumber,
+                        message = responseApi.message
+                    };
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = res,
+                        APIStatus = result,
+                        Message = response
+                    };
 
-                ResponseViewModel responseAPI = new ResponseViewModel();
-                responseAPI.responseCode = responseModel.responseCode;
-                responseAPI.webRequestDate = responseModel.webRequestDate;
-                responseAPI.webRequestStatus = responseModel.webRequestStatus;
-
-                handler.Dispose();
-                client.Dispose();
-                if (responseModel.responseCode == "0")
-                {
-                    AddCustomTransactions(apiModel);
-                    output = true;
                 }
                 else
                 {
-                    output = false;
-                    throw new Exception($"Transaction {responseAPI.webRequestStatus}");
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = null,
+                        APIStatus = result,
+                        Message = response
+                    };
                 }
+                handler.Dispose();
+                client.Dispose();
+                return responseMsg;
 
-                return output;
+
+
+
+
+
+                //if (responseModel.responseCode == "0")
+                //{
+                //  //  AddCustomTransactions(model);
+                //    output = true;
+                //}
+                //else
+                //{
+                //    output = false;
+                //    throw new Exception($"Transaction {responseAPI.webRequestStatus}");
+                //}
+
+                //return output;
 
 
             }
+
+
+            public async Task<ResponseMessage> ApiTransactionPosting(List<TransactionPostingViewModel> model)
+            {
+
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+            
+                var dta = context.TBL_SETUP_GLOBAL.ToList();
+
+                var objData = new JavaScriptSerializer().Serialize(model);
+
+                handler.UseDefaultCredentials = true;
+                HttpClient client = new HttpClient(handler);
+
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.Authorization = token;
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
+                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
+                ResponseMessage responseMsg = null;
+                bool result = false;
+               
+                if (response.IsSuccessStatusCode)
+                {
+                    result = response.IsSuccessStatusCode;
+                    responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+
+                    var res = new ResponseMessageViewModel
+                    {
+                        responseCode = responseApi.responseCode,
+                        webRequestDate = responseApi.webRequestDate,
+                        webRequestStatus = responseApi.webRequestStatus,                     
+                     
+                    };
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = res,
+                        APIStatus = result,
+                        Message = response
+                    };
+
+                }
+                else
+                {
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = null,
+                        APIStatus = result,
+                        Message = response
+                    };
+                }
+                handler.Dispose();
+                client.Dispose();
+                return responseMsg;
+
+
+
+
+
+            
+                //if (responseModel.responseCode == "0")
+                //{
+                //  //  AddCustomTransactions(model);
+                //    output = true;
+                //}
+                //else
+                //{
+                //    output = false;
+                //    throw new Exception($"Transaction {responseAPI.webRequestStatus}");
+                //}
+
+                //return output;
+
+
+            }
+
 
             public async Task<bool> APIProcessLien(CasaLienViewModel model, string lienType)
             {
@@ -359,117 +414,9 @@
                 {
                     output = false;
                 }
-
                 return output;
-
             }
-
-            public async Task<GLAccountDetailsViewModel> APIOfficeAccountGetGeneralLedgerAccountRecord(string glNumber)
-            {
-                handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
-                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Authorization = token;
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
-
-                CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
-                CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
-                ServicePointManager.ServerCertificateValidationCallback +=
-                    (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response =
-                    await client.GetAsync($"api/OfficeAccount/GetGeneralLedgerAccountRecord?accountNumber={glNumber}");
-
-                GLAccountDetailsViewModel result = null;
-                if (response.IsSuccessStatusCode)
-                {
-                    GLAccountDetailsViewModel data = await response.Content.ReadAsAsync<GLAccountDetailsViewModel>();
-                    if (data == null)
-                    {
-                        result = new GLAccountDetailsViewModel
-                        {
-                            accountName = data.accountName,
-                            accountNumber = data.accountNumber,
-                            balance = data.balance,
-                            branch = data.branch,
-                            currencyType = data.currencyType,
-                            glSubHeadCode = data.glSubHeadCode,
-                            partitionedFlag = data.partitionedFlag,
-                            partitionedType = data.partitionedType,
-                            product = data.product,
-                            productName = data.productName,
-                            productType = data.productType,
-                            systemAccountFlag = data.systemAccountFlag,
-                            response = response,
-                        };
-                        handler.Dispose();
-                        client.Dispose();
-                        return result;
-                    }
-                    else throw new Exception("Record not fund");
-                }
-
-                handler.Dispose();
-                client.Dispose();
-                return result;
-
-            }
-
-            public async Task<TDAccountRecordViewModel> APIOfficeAccountGetTermDepositAccountRecord(
-                string teamDepositAccountNumber)
-            {
-                handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
-                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Authorization = token;
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
-
-                CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
-                CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
-                ServicePointManager.ServerCertificateValidationCallback +=
-                    (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = await client.GetAsync(
-                    $"api/OfficeAccount/GetTermDepositAccountRecord?accountNumber={teamDepositAccountNumber}");
-
-                TDAccountRecordViewModel result = null;
-                if (response.IsSuccessStatusCode)
-                {
-                    TDAccountRecordViewModel data = await response.Content.ReadAsAsync<TDAccountRecordViewModel>();
-                    result = new TDAccountRecordViewModel
-                    {
-                        accountName = data.accountName,
-                        accountNumber = data.accountNumber,
-                        balance = data.balance,
-                        branch = data.branch,
-                        currencyType = data.currencyType,
-                        customerCode = data.customerCode,
-                        productName = data.productName,
-                        productType = data.productType,
-                        lienAmount = data.lienAmount,
-                        productCode = data.productCode,
-                        response = response,
-                    };
-                    handler.Dispose();
-                    client.Dispose();
-                    return result;
-                }
-
-                handler.Dispose();
-                client.Dispose();
-                return result;
-            }
-
+         
         }
     }
 }

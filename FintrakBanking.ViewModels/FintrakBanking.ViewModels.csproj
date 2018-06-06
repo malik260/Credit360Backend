@@ -66,7 +66,9 @@
     <Compile Include="Admin\AuditViewModel.cs" />
     <Compile Include="Admin\CanGroupViewModel.cs" />
     <Compile Include="Admin\CurrencyRateViewModel.cs" />
+    <Compile Include="Admin\ProfileSettingViewModel.cs" />
     <Compile Include="Admin\UserActions.cs" />
+    <Compile Include="AlertMonitoring\SLANotificationViewModel.cs" />
     <Compile Include="Authentication\TokenVM.cs" />
     <Compile Include="CASA\CasaViewModel.cs" />
     <Compile Include="CASA\CustomerSearchVM.cs" />
@@ -123,6 +125,7 @@
     <Compile Include="Customer\CustomerIdentificationViewModels.cs" />
     <Compile Include="Customer\CustomerNextOfKinViewModels.cs" />
     <Compile Include="Customer\CustomerPhoneContactViewModels.cs" />
+    <Compile Include="Customer\CustomerRelatedPartyViewModel.cs" />
     <Compile Include="Customer\CustomerTypeViewModels.cs" />
     <Compile Include="Customer\CustomerViewModels.cs" />
     <Compile Include="DataMigration\BranchViewModel.cs" />

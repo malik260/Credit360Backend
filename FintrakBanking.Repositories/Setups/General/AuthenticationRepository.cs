@@ -147,7 +147,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 else
                 {
                     user.LASTLOGINDATE = DateTime.Now;
-                    user.LOGINCODE = result.loginCode.ToString();
+                    user.LOGINCODE = result.loginCode.ToString() + "@" + result.ipaddress;
                 }
 
                 context.SaveChanges();
@@ -161,41 +161,75 @@ namespace FintrakBanking.Repositories.Setups.General
             //return null;
         }
 
-        public async Task<SessionStatusInfo> CheckSessionState(string username)
+        public async Task<SessionStatusInfo> CheckSessionState(string username, string ipAddress)
         {
             Guid loginCode = Guid.Empty;
-            var user = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
+            var user = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(x =>
+                x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
             SessionStatusInfo result = null;
+            string loginCodeStr = null;
+            string ipAddressStr = null;
 
+            
             if (user != null)
             {
-                if (user.LOGINCODE == null || user.LOGINCODE == Guid.Empty.ToString())
+                if (user.LOGINCODE != null)
+                {
+                    this.LogCode = user.LOGINCODE;
+                    var gcode = user.LOGINCODE.Split('@');
+                    loginCodeStr = gcode[0];
+                    ipAddressStr = gcode[1];
+                }
+
+
+                if (loginCodeStr == null || loginCodeStr == Guid.Empty.ToString())
+                {
+                    var gcode = Guid.NewGuid();
                     result = new SessionStatusInfo
                     {
                         loginCode = Guid.NewGuid(),
                         state = 0,
+                        ipaddress = ipAddressStr,
                         errorMessage = "",
 
                     };
-
-                else if (user.LOGINCODE != null)
+                    this.LogCode = gcode.ToString()+"@"+ipAddress;
+                }
+                   
+               
+                else if (loginCodeStr != null)
                 {
-                    int timeStamp = (DateTime.Now - user.LASTLOCKOUTDATE.Value.Date).Minutes;
-                    if (timeStamp < 2 && user.LOGINCODE != Guid.Empty.ToString())
+                    //  int timeStamp = 1;// (DateTime.Now - Convert.ToDateTime(user.LASTLOCKOUTDATE.HasValue) ).Minutes;
+                    if (ipAddressStr == ipAddress && loginCodeStr != Guid.Empty.ToString())
                     {
+                        this.LogCode = loginCodeStr+"@"+ ipAddressStr;
                         result = new SessionStatusInfo
                         {
-                            loginCode = Guid.Parse(user.LOGINCODE),
+                            loginCode = Guid.Parse(loginCodeStr),
                             state = 0,
+                            ipaddress = ipAddressStr,
                             errorMessage = "",
                         };
                     }
-                    else
+                    else if(this.LogCode.Split('@')[1] != null)
                     {
+                        this.LogCode = loginCodeStr + "@" + ipAddressStr;
                         result = new SessionStatusInfo
                         {
-                            loginCode = Guid.Parse(user.LOGINCODE),
+                            loginCode = Guid.Parse(loginCodeStr),
+                            state = 0,
+                            ipaddress = ipAddressStr,
+                            errorMessage = "",
+                        };
+                    }
+                    else  
+                    {
+                        this.LogCode = loginCodeStr + "@" + ipAddressStr;
+                        result = new SessionStatusInfo
+                        {
+                            loginCode = Guid.Parse(loginCodeStr),
                             state = 1,
+                            ipaddress = ipAddressStr,
                             errorMessage = "You are already logged.",
                         };
                     }
@@ -205,16 +239,15 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 result = new SessionStatusInfo
                 {
-                    loginCode = Guid.Parse(user.LOGINCODE),
+                    loginCode = Guid.Parse(loginCodeStr),
                     state = 1,
                     errorMessage = "You are already logged.",
+                    ipaddress = ipAddressStr,
                 };
             }
 
             return result;
         }
-
-
 
         private SessionStatusInfo _sessionInfo;
 
@@ -223,6 +256,8 @@ namespace FintrakBanking.Repositories.Setups.General
             get => _sessionInfo;
             set => _sessionInfo = value;
         }
+
+        public string LogCode { get; set; }
 
         public async Task<UserViewModel> FindUserByUserNameAndPassword(string username, string password)
         {
@@ -235,29 +270,31 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     throw new Exception("1001 Incorrect username or password.");
                 }
+
                 data.sessionStatusInfo = result;
+
+
             }
             data.sessionStatusInfo = result;
             return data;
         }
        
-        public async Task<bool> IsAccountLocked(string userName)
+        public bool IsAccountLocked(string userName)
         {
-            var data = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(c => c.USERNAME.ToLower() == userName);
+            var data = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == userName);
             if (data != null)
             {
-
-                return data.ISLOCKED;
+                return data.isLocked;
             }
             throw new Exception("1001 Incorrect username or password.");
         }
 
-        public async Task<bool> IsAccountActive(string userName)
+        public  bool IsAccountActive(string userName)
         {
-            var data = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(c => c.USERNAME.ToLower() == userName);
+            var data = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == userName);
             if (data != null)
             {
-                return data.ISACTIVE;
+                return data.isActive;
             }
 
             throw new Exception("1001 Incorrect username or password.");
@@ -267,26 +304,37 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = context.TBL_PROFILE_USER.Where(c => c.USERNAME.ToLower() == username && c.PASSWORD == password);
 
-            
-                if (data.Any())
+
+            if (data.Any())
+            {
+                var dat = data.FirstOrDefault();
+
+                if (dat != null)
                 {
-                    return data.Select(c => new UserViewModel
-                    {
-                        companyId = c.TBL_STAFF.COMPANYID,
-                        staffId = c.STAFFID,
-                        user_id = c.USERID,
-                        username = c.USERNAME,
-                        staffName = c.TBL_STAFF.FIRSTNAME + " " + c.TBL_STAFF.MIDDLENAME + " " + c.TBL_STAFF.LASTNAME,
-                        branchId = c.TBL_STAFF.BRANCHID.Value,
-                        countryId = c.TBL_STAFF.TBL_COMPANY.COUNTRYID,
-                        branchName = context.TBL_BRANCH.FirstOrDefault(d => d.BRANCHID == c.TBL_STAFF.BRANCHID.Value).BRANCHNAME,
-                        companyName = c.TBL_STAFF.TBL_COMPANY.NAME,
-                        logincode = c.LOGINCODE,
-                        lastLoginDate = c.LASTLOGINDATE
-
-
-                    }).FirstOrDefault();
+                    dat.LOGINCODE = LogCode;
+                    dat.FAILEDLOGONATTEMPT = 0;
+                    context.SaveChanges();
                 }
+                
+
+                return data.Select(c => new UserViewModel
+                {
+                    companyId = c.TBL_STAFF.COMPANYID,
+                    staffId = c.STAFFID,
+                    user_id = c.USERID,
+                    username = c.USERNAME,
+                    staffName = c.TBL_STAFF.FIRSTNAME + " " + c.TBL_STAFF.MIDDLENAME + " " + c.TBL_STAFF.LASTNAME,
+                    branchId = c.TBL_STAFF.BRANCHID.Value,
+                    countryId = c.TBL_STAFF.TBL_COMPANY.COUNTRYID,
+                    branchName = context.TBL_BRANCH.FirstOrDefault(d => d.BRANCHID == c.TBL_STAFF.BRANCHID.Value)
+                        .BRANCHNAME,
+                    companyName = c.TBL_STAFF.TBL_COMPANY.NAME,
+                    logincode = c.LOGINCODE,
+                    lastLoginDate = c.LASTLOGINDATE
+
+
+                }).FirstOrDefault();
+            }
             else
             {
                 var record = data.FirstOrDefault();

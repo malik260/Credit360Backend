@@ -596,38 +596,25 @@ namespace FintrakBanking.Repositories.Admin
             return false;
         }
 
-        public Object ManageUserAccount(int userId, int lockStatus)
-        {
-            var userAccount = context.TBL_PROFILE_USER.Find(userId);
+        //public Object ManageUserAccount(int userId, int lockStatus)
+        //{
+        //    var userAccount = context.TBL_PROFILE_USER.Find(userId);
 
-            try
-            {
-                if (userAccount != null && lockStatus == (int)UserAccountLockStatusEnum.Locked)
-                {
-                    userAccount.ISLOCKED = true;
-                    userAccount.ISACTIVE = false;
-
-                    context.SaveChanges();
-
-                    return new { message = "User Account Locked" };
-                }
-                if (userAccount != null && lockStatus == (int)UserAccountLockStatusEnum.Unlocked)
-                {
-                    userAccount.ISLOCKED = false;
-                    userAccount.ISACTIVE = true;
-
-                    context.SaveChanges();
-
-                    return new { message = "User Account Unlocked" };
-                }
-
-                return new { message = "No Account Found" };
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        //    try
+        //    {
+        //            userAccount.ISLOCKED = true;
+        //            userAccount.ISACTIVE = false;
+        //            userAccount.ISLOCKED = false;
+        //            userAccount.ISACTIVE = true;
+                
+        //        context.SaveChanges();
+        //        return new { message = "No Account Found" };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
         #endregion Users
 
         #region Group
@@ -882,18 +869,10 @@ namespace FintrakBanking.Repositories.Admin
 
             if (data != null)
             {
-
-                //data.ISLOCKED = entity.isLocked;
-
-                //data.DATETIMEUPDATED = DateTime.Now;
-                //data.LASTUPDATEDBY = entity.lastUpdatedBy;
-
                 if (entity.lockStatus)
                 {
                     data.FAILEDLOGONATTEMPT = 0;
                     data.ISLOCKED = entity.isLocked;
-                    data.LASTLOCKOUTDATE = DateTime.Now;
-                   str  += "Account has been locked successfully";
                 }
 
 
@@ -901,13 +880,15 @@ namespace FintrakBanking.Repositories.Admin
                 {
                     data.ISACTIVE = entity.isActive;
                     data.DEACTIVATEDDATE = DateTime.Now;
-                    str = str.Count() > 0 ? str + "and  Account has been deactivated successfully": "Account has been deactivated successfully";
                 }
-                entity.actionMessage = str;
- 
-            }
-            message = entity.actionMessage;
 
+                data.LASTUPDATEDBY = entity.lastUpdatedBy;
+                entity.actionMessage = "Operation Successful";
+
+            }
+
+            message = entity.actionMessage;
+            StaticHelpers.RestartService();
             return context.SaveChanges() > 0;
         }
 

@@ -11,6 +11,7 @@ using System.Web.Http;
 using FintrakBanking.ViewModels.Credit;
 using System.Threading.Tasks;
 using System.Linq;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -34,9 +35,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllJobRequest();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
             }
         }
 
@@ -49,9 +58,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetJobRequestLegalJobDetails();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
             }
         }
 
@@ -64,9 +81,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetLoanApplicationJobsById(applicationId, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
             }
         }
 
@@ -79,9 +104,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetJobRequestStatusFeedback(statusId, jobTypeId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
             }
         }
 
@@ -94,9 +127,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetJobRequestByStaffId(token.GetStaffId, token.GetBranchId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
             catch (System.Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
             }
         }
 
@@ -114,9 +155,17 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception )
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
             }
         }
 
@@ -134,9 +183,17 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An eror occured" });
             }
         }
 
@@ -154,9 +211,17 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
             }
         }
 
@@ -170,9 +235,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetJobRequestByDepartment(token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
             }
         }
 
@@ -186,9 +259,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetJobRequestByDepartment(token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message ="An error occured."});
             }
         }
 
@@ -211,9 +292,17 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Collateral Search Instructions failed to save " });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " + ex.Message, error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " });
             }
         }
 
@@ -236,9 +325,17 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured."});
             }
         }
 
@@ -262,13 +359,21 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error logging this request" });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error logging this request" , error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error logging this request" });
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("job-request/comment")]
         public HttpResponseMessage AddJobComment([FromBody] JobRequestMessageViewModel entity)
         {
@@ -287,14 +392,22 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error commenting on this job" });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error commenting on this request", error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error commenting on this request" });
             }
         }
 
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut] [ClaimsAuthorization]
         [Route("job-request/reply/{jobRequestId}")]
         public HttpResponseMessage ReplyJobRequest([FromBody] JobRequestViewModel entity, int jobRequestId)
         {
@@ -313,9 +426,17 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record." });
             }
         }
 
@@ -337,15 +458,57 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
             }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
             }
         }
 
+        #region Middle Office Request
+        [HttpPut, Route("job-request/invoice-status")]
+        public HttpResponseMessage UpdateInvoiceStatus([FromBody] JobRequestInvoiceViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = true;// repo.UpdateInvoiceStatus(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record." });
+            }
+        }
+        #endregion Middle Office Request
+
         #region Job-Documents
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("job-request-documents/{jobRequestCode}")]
         public HttpResponseMessage GetJobRequestDocuments(string jobRequestCode)
         {
@@ -354,9 +517,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetJobRequestDocuments(jobRequestCode);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
             }
         }
 
@@ -369,9 +540,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetJobRequestDocumentById(documentId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
             }
         }
 
@@ -455,9 +634,17 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record." + ex.Message +". "+ex.InnerException });
             }
         }
 
@@ -517,9 +704,17 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record." });
             }
         }
         #endregion Job-Documents
@@ -536,9 +731,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllJobType();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
             }
         }
 
@@ -551,9 +754,17 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetJobSubType(jobId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
             }
         }
 
@@ -575,9 +786,17 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record." });
             }
         }
 
@@ -599,13 +818,111 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record." });
             }
         }
 
         #endregion job-type
+
+
+        #region Job Request Feedback
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-request-status")]
+        public HttpResponseMessage GetJobRequestStatus()
+        {
+            try
+            {
+                var data = repo.GetJobRequestStatus();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-request-feedback")]
+        public HttpResponseMessage GetAllJobRequestStatusFeedback()
+        {
+            try
+            {
+                var data = repo.GetAllJobRequestStatusFeedback();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("job-request-feedback")]
+        public HttpResponseMessage AddUpdateCompanyDirector([FromBody]JobRequestStatusFeedbackViewModel entity)
+        {
+            try
+            {
+                string createUpdate = "";
+                if (entity.jobStatusFeedbackId != 0 || entity.jobStatusFeedbackId > 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                    if (repo.ValidateJobRequestFeedBack(entity.jobStatusFeedbackName))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = $"Job request feedback {entity.jobStatusFeedbackName} already exist." });
+                    }
+              
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddUpdateJobRequestFeedBack(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        #endregion
 
         //[HttpGet]
         //[Route("operation-staff/{operationId}")]

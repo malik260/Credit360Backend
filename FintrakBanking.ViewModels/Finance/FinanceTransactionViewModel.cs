@@ -77,6 +77,10 @@ namespace FintrakBanking.ViewModels.Finance
 
     public class CasaBalanceViewModel
     {
+        public int casaAccountId { get; set; }
+        public string productAccountNumber { get; set; }
+        public string productAccountName { get; set; }
+
         public string  accountName { get; set; }
         public decimal availableBalance { get; set; }
         public decimal ledgerBalance { get; set; }

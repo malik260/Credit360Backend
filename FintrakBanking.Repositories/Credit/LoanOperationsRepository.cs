@@ -22,6 +22,7 @@ using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.ServiceModel;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 
@@ -38,13 +39,14 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository casaLien;
         private ILoanRepository loan;
         private IOverDraftValidation validate;
-        private IIntegrationWithCWGAPI cwgapi;
+      
         private FinTrakBankingStagingContext stagingContext;
+        private IIntegrationWithFinacle finacle;
         bool USE_THIRD_PARTY_INTEGRATION = false;
         public LoanOperationsRepository(
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
             ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien
-            , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithCWGAPI cwgapi, FinTrakBankingStagingContext _stagingContext)
+            , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stagingContext)
         {
 
             this.context = _context;
@@ -56,7 +58,7 @@ namespace FintrakBanking.Repositories.Credit
             this.level = _level;
             this.casaLien = _casaLien;
             this.loan = _loan;
-            this.cwgapi = cwgapi;
+            this.finacle = finacle;
             this.stagingContext = _stagingContext;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -11843,7 +11845,7 @@ namespace FintrakBanking.Repositories.Credit
             TBL_LOAN_APPLICATION_DETAIL loanApp = new TBL_LOAN_APPLICATION_DETAIL();
 
             if (userModel.newTenor == 0)
-                throw new Exception("You cannot extend tenor with a zero value");
+                throw new BadLogicException("You cannot extend tenor with a zero value");
 
             if (userModel.loanRef != null)
             {
@@ -11863,7 +11865,7 @@ namespace FintrakBanking.Repositories.Credit
             else if (!userModel.isParent)
             {
                 if (userModel.appRef == null)
-                    throw new Exception("Line tenor extention require application detail");
+                    throw new ConditionNotMetException("Line tenor extention require application detail");
 
                 loanApp = (TBL_LOAN_APPLICATION_DETAIL)context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == userModel.id);
                 userModel.id = loanApp.LOANAPPLICATIONDETAILID;
@@ -12043,7 +12045,7 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
 
             if (context.TBL_LOAN_MATURITY_INSTRUCTION.Where(x => x.LOANID == model.loanId && x.ISUSED == false).Any())
-                throw new Exception("There is already an an active maturity instruction on this loan");
+                throw new BadImageFormatException("There is already an an active maturity instruction on this loan");
 
             TBL_LOAN_MATURITY_INSTRUCTION maturity = new TBL_LOAN_MATURITY_INSTRUCTION();
 
@@ -12393,7 +12395,6 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate)
-
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
@@ -12471,7 +12472,6 @@ namespace FintrakBanking.Repositories.Credit
             }
             return data;
         }
-
         #endregion END OF COMMERCIAL PAPER
 
 

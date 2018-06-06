@@ -25,5 +25,12 @@ namespace FintrakBanking.Interfaces.Credit
         List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByDetailId(int detailId);
 
         List<TransactionDynamicsViewModel> AddSelectedTransactionDynamics(SelectedIdsViewModel entity);
+
+        // LMS approval
+        List<TransactionDynamicsViewModel> AddSelectedTransactionDynamicsLms(SelectedIdsViewModel entity);
+        bool RemoveLoanTransactionDynamicsLms(int id, UserInfo user);
+        bool EditLoanTransactionDynamicsLms(int id, TransactionDynamicsViewModel entity);
+        bool AddTransactionDynamicsLms(TransactionDynamicsViewModel entity);
+        IEnumerable<TransactionDynamicsViewModel> GetTransactionDynamicsByDetailIdLms(int detailId);
     }
 }

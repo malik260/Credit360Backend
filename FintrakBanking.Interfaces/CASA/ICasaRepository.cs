@@ -24,7 +24,8 @@ namespace FintrakBanking.Interfaces.CASA
 
         IQueryable<CasaCustomerSearchViewModel> SearchForCustomerAccount(int companyId, string searchQuery, int customerTypeId);
 
-        IEnumerable<dynamic> GetAllCustomerAccountByCustomerId(int customerId, int companyId);
+        IEnumerable<CasaBalanceViewModel> GetAllCustomerAccountByCustomerId(int customerId, int companyId);
+
 
         CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId);
 

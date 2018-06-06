@@ -9,15 +9,11 @@ using System.Linq;
 using System;
 using System.ServiceModel;
 using System.Collections.Generic;
-using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
-using System.Data.Entity;
-using FintrakBanking.ViewModels;
 using System.Threading.Tasks;
-using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.Interfaces.Credit;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
-using FintrakBanking.ViewModels.CASA;
-using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
+using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -28,15 +24,21 @@ namespace FintrakBanking.Repositories.Finance
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
         //private ILoanOperationsRepository creditOperations;
-
-        public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, 
+        private CustomerDetails customerInfo;
+        private IIntegrationWithFinacle integration;
+        bool USE_THIRD_PARTY_INTEGRATION;
+        public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, IIntegrationWithFinacle _integration,
                                             //ILoanOperationsRepository _creditOperations, 
-                                            FinTrakBankingContext _context)
+                                            FinTrakBankingContext _context, CustomerDetails customerInfo)
         {
             this.context = _context;
+            this.customerInfo = customerInfo;
             this.generalSetup = _genSetup;
             auditTrail = _auditTrail;
+            this.integration = _integration;
             //this.creditOperations = _creditOperations;
+            var global = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (global != null)  USE_THIRD_PARTY_INTEGRATION = global.USE_THIRD_PARTY_INTEGRATION;
         }
 
         private void UpdateCASABalances(int casaAccountId, decimal debitAmount, decimal creditAmount)
@@ -57,16 +59,15 @@ namespace FintrakBanking.Repositories.Finance
 
         public CasaBalanceViewModel GetCASABalance(int casaAccountId)
         {
-            CustomerDetails cust = new CustomerDetails(context);
+          
             var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
-            var data = new CasaBalanceViewModel();
-            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            var data = new CasaBalanceViewModel(); 
+            if (USE_THIRD_PARTY_INTEGRATION)
             {
-                Task.Run(async () => { data = await cust.GetCustomerAccountBalance(account.PRODUCTACCOUNTNUMBER); }).GetAwaiter().GetResult();
+                data = integration.GetCustomerAccountBalance(account.PRODUCTACCOUNTNUMBER);
+                //Task.Run(async () => { data = await customerInfo .GetCustomerAccountBalance(account.PRODUCTACCOUNTNUMBER); }).GetAwaiter().GetResult();
                 return data; //  new CasaBalanceViewModel { availableBalance = data.availableBalance, ledgerBalance = 0,accountStatusId = data.accountStatusId);
             }
-
             else
             {
                 return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID,currencyId = account.CURRENCYID,accountNo = account.PRODUCTACCOUNTNUMBER,accountName= account.PRODUCTACCOUNTNAME };
@@ -283,28 +284,26 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             //api call
-            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
+
+            if (USE_THIRD_PARTY_INTEGRATION)
             {
-                TransactionPosting tran = new TransactionPosting(context);
-                bool data = false;
+                bool data;
 
-                Task.Run(async () => { data = await tran.APITransactionPosting(inputTransactions); }).GetAwaiter().GetResult();
+                data = integration.PostTransactions(inputTransactions);
 
-                if(data == true)
+                if (data)
                 {
                     PostTransactionSub(batchCode, inputTransactions, transactions);
                     UpdateCustomTransactions(batchCode);
                 }
                 else
                 {
-                    //display message
                     throw new Exception($"Transaction Failed.");
                 }
-                    
+
             }
             else
-               PostTransactionSub(batchCode, inputTransactions, transactions);
+                PostTransactionSub(batchCode, inputTransactions, transactions);
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
             context.SaveChanges();
@@ -476,9 +475,8 @@ namespace FintrakBanking.Repositories.Finance
         {
             var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
             TransactionPosting transPosting = new TransactionPosting(context);
-            var data = new CurrencyExchangeRateViewModel();
-            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            var data = new CurrencyExchangeRateViewModel(); 
+            if (USE_THIRD_PARTY_INTEGRATION)
             {
 
                 if (currencyId == baseCurrency)
@@ -490,6 +488,8 @@ namespace FintrakBanking.Repositories.Finance
                     var fromCurrencyCode = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == baseCurrency).CURRENCYCODE;
                     var toCurrencyCode = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == currencyId).CURRENCYCODE;
                     var rateCode = "TTB";
+
+                   // integration.
                     Task.Run(async () => { data = await transPosting.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode); }).GetAwaiter().GetResult();
                     return new CurrencyExchangeRateViewModel
                     {

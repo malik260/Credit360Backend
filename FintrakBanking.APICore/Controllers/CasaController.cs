@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.CASA;
+using FintrakBanking.Repositories.Finance;
 using FintrakBanking.ViewModels.CASA;
 using System;
 using System.Linq;
@@ -38,6 +39,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
 
         [HttpGet]
         [ClaimsAuthorization]

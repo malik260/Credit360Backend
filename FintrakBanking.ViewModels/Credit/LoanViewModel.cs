@@ -47,6 +47,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public short requestStatusId;
+        public bool requestDeleted;
+
         //public short loanSystemTypeId;
 
         public decimal disbursableAmount { get; set; }

@@ -8,7 +8,7 @@ using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.Common.Enum;
 using System.Linq;
-using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.Repositories.Setups.Finance
@@ -18,14 +18,14 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
-        private IIntegrationWithCWGAPI finaco;
+        private IIntegrationWithFinacle finacle;
 
-        public CustomChartOfAccountRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IIntegrationWithCWGAPI finaco)
+        public CustomChartOfAccountRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IIntegrationWithFinacle finacle)
         {
             this.context = context;
             this.general = general;
             this.audit = audit;
-            this.finaco = finaco;
+            this.finacle = finacle;
         }
 
         public bool AddCustomChartOfAccount(CustomChartOfAccountViewModel model)
@@ -66,7 +66,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             if (applicationSetup.USE_THIRD_PARTY_INTEGRATION == true)
             {
-                if (finaco.ValidateGLNumber("100" + accountId) == null) // 100 is headoffice code
+                if (finacle.ValidateGLNumber("100" + accountId) == null) // 100 is headoffice code
                 {
                     throw new Exception("The pecified account id do not exist!");
                 }

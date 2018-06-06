@@ -1,3 +1,6 @@
+using FintrakBanking.Interfaces;
+using FintrakBanking.Repositories;
+
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(FintrakBanking.APICore.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(FintrakBanking.APICore.App_Start.NinjectWebCommon), "Stop")]
 
@@ -55,7 +58,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Reports;
     using FintrakBanking.Repositories.Setups.Credit;
     using Ninject.Web.Common.WebHost;
-    using FinTrakBanking.ThirdPartyIntegration.Credit;
+    using FinTrakBanking.ThirdPartyIntegration;
     using FintrakBanking.Repositories.Validetion;
     using FintrakBanking.Interfaces.Validation;
 
@@ -202,11 +205,11 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IContingentLoanUsageRepository>().To<ContingentLoanUsageRepository>();
             kernel.Bind<IOverRideRepository>().To<OverRideRepository>();
             kernel.Bind<IStaffAccountHistoryRepository>().To<StaffAccountHistoryRepository>();
-            kernel.Bind<IIntegrationWithCWGAPI>().To<IntegrationWithCWGAPI>();
+            kernel.Bind<IIntegrationWithFinacle>().To<IntegrationWithFinacle>();
             kernel.Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>();
             kernel.Bind<IOverDraftValidation>().To<OverDraftValidation>();
             kernel.Bind<ICustomChartOfAccountRepository>().To<CustomChartOfAccountRepository>();
-
+            kernel.Bind<IProfileSetupRepository>().To<ProfileSetupRepository>();
         }
 
     }
