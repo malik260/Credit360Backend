@@ -12,7 +12,7 @@ namespace FintrakBanking.ViewModels.AlertMonitoring
         public DateTime systemArrivalDate { get; set; }
         public DateTime? salDateLine { get; set; }
         public int approvalTrailId { get; set; }
-        public int TargetId { get; set; }
+        public int targetId { get; set; }
         public DateTime arrivalDate { get; set; }
         public DateTime? systemResponseDate { get; set; }
         public int requestStaffId { get; set; }

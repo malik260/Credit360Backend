@@ -58,7 +58,7 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
-                    bool response = emailSender.SendMail();
+                    bool response = false; //emailSender.SendMail();
 
                     if (response == true)
                     {
@@ -75,16 +75,16 @@ namespace FintrakBanking.MonitoringMessagesSender
 
 
                     //MONITORING ALERT LOGGIN
-                    TimeSpan currentTime = DateTime.Now.TimeOfDay;
-                    TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
+                    //TimeSpan currentTime = DateTime.Now.TimeOfDay;
+                    //TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
 
-                    TimeSpan alertLoggerMaxRuntime = TimeSpan.FromMinutes(30);
-                    TimeSpan LoggeingTimeFromConfigExtended = LoggeingTimeFromConfig.Add(alertLoggerMaxRuntime);
+                    //TimeSpan alertLoggerMaxRuntime = TimeSpan.FromMinutes(30);
+                    //TimeSpan LoggeingTimeFromConfigExtended = LoggeingTimeFromConfig.Add(alertLoggerMaxRuntime);
 
 
-                    if (currentTime >= LoggeingTimeFromConfig && currentTime <= LoggeingTimeFromConfigExtended)
-                    {
-                        _log.Info("##############   started at " + currentTime + "     ##################### ");
+                    //if (currentTime >= LoggeingTimeFromConfig && currentTime <= LoggeingTimeFromConfigExtended)
+                    //{
+                      //  _log.Info("##############   started at " + currentTime + "     ##################### ");
                         _log.Info("==================================================================");
                         _log.Info("Monitoring alert has started successfully");
 
@@ -93,7 +93,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                         _log.Info("");
                         _log.Info("==================================================================");
                         _log.Info("Monitoring alert has finished logging successfully ");
-                    }
+                    //}
 
                 }
                 catch (DbEntityValidationException ee)

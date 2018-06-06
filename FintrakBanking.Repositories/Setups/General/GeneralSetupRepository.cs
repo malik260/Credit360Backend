@@ -388,5 +388,18 @@ namespace FintrakBanking.Repositories.Setups.General
             //return staffLevels.Union(roleLevelIds); // without relief code
             return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
         }
-      }
+        public IEnumerable<int> GetStaffApprovalLevelIdByStaffId (int staffId, int operationId)
+        {
+            var relievedLevelids = GetRelievedStaffApprovalLevelIds(staffId, operationId); 
+
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var roleLevelIds = context.TBL_APPROVAL_LEVEL
+                .Where(x => x.STAFFROLEID == staff.STAFFROLEID)
+                .Select(x => x.APPROVALLEVELID)
+                .Distinct();
+
+            return roleLevelIds.Union(relievedLevelids);
+        }
+        }
 }

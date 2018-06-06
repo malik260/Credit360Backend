@@ -82,7 +82,7 @@ namespace FintrakBanking.Entities.StagingModels
 
         public byte? VALUE_DATE_NUM { get; set; }
 
-        [StringLength(16)]
+        [StringLength(50)]
         public string LOAN_ACCT { get; set; }
 
         [StringLength(4)]

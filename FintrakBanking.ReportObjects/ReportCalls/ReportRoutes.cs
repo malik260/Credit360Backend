@@ -335,6 +335,35 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                 throw ex;
             }
         }
+        public string GetCollateralInsuranceReport(DateRange dateRange, int companyId, int staffId)
+        {
+            try
+            {
+                string path = string.Empty;
+                path = reportPath + "ReportViews/CollateralInsurance.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                return path;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public string GetTurnoverCovenantReport(DateRange dateRange, int companyId, int staffId)
+        {
+            try
+            {
+                string path = string.Empty;
+                path = reportPath + "ReportViews/TurnOverConvenant.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                return path;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
         #endregion Loan Monitoring Reports
 
         public string GetLoanCommercialReport(DateRange dateRange, int companyId, int staffId)

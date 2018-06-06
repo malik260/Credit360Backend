@@ -52,7 +52,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                model.companyId = token.GetCompanyId;
+                model.companyId = token.GetCompanyId; 
                 model.createdBy = token.GetStaffId;
                 model.userBranchId = (short) token.GetBranchId;
                 var data = repoEOD.RunEndOfDay(model);

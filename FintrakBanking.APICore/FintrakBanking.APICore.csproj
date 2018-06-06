@@ -445,6 +445,13 @@
     <Compile Include="Reports\ReportViews\BondAndGuarantee.aspx.designer.cs">
       <DependentUpon>BondAndGuarantee.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CollateralInsurance.aspx.cs">
+      <DependentUpon>CollateralInsurance.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralInsurance.aspx.designer.cs">
+      <DependentUpon>CollateralInsurance.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -683,6 +690,13 @@
     <Compile Include="Reports\ReportViews\LoanStatement.aspx.designer.cs">
       <DependentUpon>LoanStatement.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\TurnOverConvenant.aspx.cs">
+      <DependentUpon>TurnOverConvenant.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\TurnOverConvenant.aspx.designer.cs">
+      <DependentUpon>TurnOverConvenant.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\Workflow.aspx.cs">
       <DependentUpon>Workflow.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -738,6 +752,7 @@
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
     <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
     <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
+    <Content Include="Reports\ReportViews\CollateralInsurance.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
@@ -762,6 +777,7 @@
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
     <Content Include="Reports\ReportViews\SeftLiquidatingLoans.aspx" />
+    <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
     <Content Include="ApplicationInsights.config">
@@ -894,7 +910,9 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Web_Test.config" />
+    <Content Include="Web_Test.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Web_Test.Debug.config">
       <DependentUpon>Web_Test.config</DependentUpon>
     </None>
@@ -961,6 +979,7 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CollateralInsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
@@ -992,6 +1011,7 @@
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\TurnoverCovenant.rdlc" />
     <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />
   </ItemGroup>
   <ItemGroup>

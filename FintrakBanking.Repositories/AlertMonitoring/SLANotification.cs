@@ -5,6 +5,7 @@ using FintrakBanking.ViewModels.AlertMonitoring;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Objects;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,11 +24,12 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                    join b in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals b.APPROVALLEVELID
                                    join s in context.TBL_STAFF on a.TOSTAFFID equals s.STAFFID
                                    join o in context.TBL_OPERATIONS on a.OPERATIONID equals o.OPERATIONID
+                                   let dueTime =  a.SYSTEMARRIVALDATETIME.AddHours(b.SLANOTIFICATIONINTERVAL)
                                    where a.APPROVALSTATUSID == 0
                                    && a.RESPONSESTAFFID == null
                                    && a.TOSTAFFID != null
                                    && b.SLAINTERVAL > 0
-                                   && DateTime.Now >= EntityFunctions.AddHours(a.SYSTEMARRIVALDATETIME, b.SLANOTIFICATIONINTERVAL)
+                                   && DateTime.Now >= dueTime
                                    select new SLANotificationViewModel
                                    {
                                        approvalTrailId = a.APPROVALTRAILID,
@@ -35,12 +37,12 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                        fromApprovalLevelId=(int)a.FROMAPPROVALLEVELID,
                                        operationId = a.OPERATIONID,
                                        requestStaffId = a.REQUESTSTAFFID,
-                                       salDateLine = EntityFunctions.AddHours(a.SYSTEMARRIVALDATETIME, b.SLAINTERVAL),
-                                       slaNotificationDate = EntityFunctions.AddHours(a.SYSTEMARRIVALDATETIME, b.SLANOTIFICATIONINTERVAL),
+                                       salDateLine = a.SYSTEMARRIVALDATETIME.AddHours(b.SLAINTERVAL),
+                                       slaNotificationDate =  a.SYSTEMARRIVALDATETIME.AddHours(b.SLANOTIFICATIONINTERVAL),
                                        salInterval = b.SLAINTERVAL,
                                        systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                                        systemResponseDate = a.SYSTEMRESPONSEDATETIME,
-                                       TargetId =a.TARGETID,
+                                       targetId =a.TARGETID,
                                        toApprovalLevelId = a.TOAPPROVALLEVELID,
                                        toStaffId = a.TOSTAFFID,
                                        staffEmail = s.EMAIL,
@@ -73,7 +75,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                        salInterval = b.SLAINTERVAL,
                                        systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                                        systemResponseDate = a.SYSTEMRESPONSEDATETIME,
-                                       TargetId = a.TARGETID,
+                                       targetId = a.TARGETID,
                                        toApprovalLevelId = a.TOAPPROVALLEVELID,
                                        toStaffId = a.TOSTAFFID,
                                        staffEmail = s.EMAIL,
@@ -106,7 +108,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                        salInterval = b.SLAINTERVAL,
                                        systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                                        systemResponseDate = a.SYSTEMRESPONSEDATETIME,
-                                       TargetId = a.TARGETID,
+                                       targetId = a.TARGETID,
                                        toApprovalLevelId = a.TOAPPROVALLEVELID,
                                        toStaffId = a.TOSTAFFID,
                                        staffEmail = s.EMAIL,

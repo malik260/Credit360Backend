@@ -5,6 +5,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.AlertMonitoring;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels.AlertMonitoring;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
@@ -2857,34 +2858,42 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             return context.TBL_MONITORING_ALERT_SETUP.ToList();
         }
 
-        private void CreateSLAApprovalNotificationMethod(string bodyContent, string messageTtile, string emailRecipient)
+        private void CreateSLAApprovalNotificationMethod(string bodyContent, string ownerMessageSubject, SLANotificationViewModel sla)
         {
-           // string body = "Dear "
-            //message = new TBL_MESSAGE_LOG // INITIATOR
-            //{
-            //    TOADDRESS = owner.EMAIL,
-            //    MESSAGESUBJECT = ownerMessageSubject,
-            //    MESSAGEBODY = ownerMessageBody,
-            //    MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-            //    MESSAGETYPEID = (short)MessageTypeEnum.Email,
-            //    FROMADDRESS = this.support,
-            //    DATETIMERECEIVED = DateTime.Now,
-            //    SENDONDATETIME = DateTime.Now,
-            //    TARGETID = targetId,
-            //    OPERATIONID = operationId
-            //};
-            //context.TBL_MESSAGE_LOG.Add(message);
+          var  message = new TBL_MESSAGE_LOG // INITIATOR
+            {
+                TOADDRESS = sla.staffEmail,
+                MESSAGESUBJECT = ownerMessageSubject,
+                MESSAGEBODY = bodyContent,
+                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                MESSAGETYPEID = (short)MessageTypeEnum.Email,
+                FROMADDRESS = "sendere amail",
+                DATETIMERECEIVED = DateTime.Now,
+                SENDONDATETIME = DateTime.Now,
+                TARGETID = sla.targetId,
+                OPERATIONID = sla.operationId
+          };
+            context.TBL_MESSAGE_LOG.Add(message);
         }
 
         public void SLAApprovalNotification()
         {
-          var notification =  sla.RoleBasedApprovalNotification();
+            var notification = sla.RoleBasedApprovalNotification();//.Union(sla.StaffSetupBasedApprovalNotification()).Union(sla.StaffSpecificBasedApprovalNotification());
 
-            foreach (var x in notification)
+            foreach (var slaAlert in notification)
             {
-                if (x.operationId == (int)OperationsEnum.OfferLetterApproval)
+                if (slaAlert.operationId == (int)OperationsEnum.LoanApplication || slaAlert.operationId == (int)OperationsEnum.CAM || slaAlert.operationId == (int)OperationsEnum.OfferLetterApproval )
                 {
-                    
+                    var bodyContent = @"
+                      <p>Dear Sir/Ma,</p>
+                      <p>This is to bring to your attention that you have a pending approval request with Loan Application Number : " + slaAlert.targetId;
+                    var bPart = @" which will be due by" + slaAlert.salDateLine;
+                           var cPart  =  @"Kindly you swift response needed.</p>
+                      <p>Thanks,<br>Fintrak Credit 360</br></p>
+                      ";
+                    var EmailSubject = "LOS APPROVAL NOTIFICATION";
+
+                    CreateSLAApprovalNotificationMethod(bodyContent + bPart + cPart, EmailSubject, slaAlert);
                 }
             }
         }
