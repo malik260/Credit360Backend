@@ -2874,19 +2874,23 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 OPERATIONID = sla.operationId
           };
             context.TBL_MESSAGE_LOG.Add(message);
+            context.SaveChanges();
         }
 
         public void SLAApprovalNotification()
         {
-            var notification = sla.RoleBasedApprovalNotification();//.Union(sla.StaffSetupBasedApprovalNotification()).Union(sla.StaffSpecificBasedApprovalNotification());
+            var notification = sla.RoleBasedApprovalNotification().Union(sla.StaffSetupBasedApprovalNotification()).Union(sla.StaffSpecificBasedApprovalNotification());
 
             foreach (var slaAlert in notification)
             {
                 if (slaAlert.operationId == (int)OperationsEnum.LoanApplication || slaAlert.operationId == (int)OperationsEnum.CAM || slaAlert.operationId == (int)OperationsEnum.OfferLetterApproval )
                 {
+                  var loanRef =  context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == slaAlert.targetId);
+
                     var bodyContent = @"
                       <p>Dear Sir/Ma,</p>
-                      <p>This is to bring to your attention that you have a pending approval request with Loan Application Number : " + slaAlert.targetId;
+                      <p>This is to bring to your attention that you have a pending " + slaAlert.operationName +
+                       @"approval request with Loan Reference Number : " + loanRef;
                     var bPart = @" which will be due by" + slaAlert.salDateLine;
                            var cPart  =  @"Kindly you swift response needed.</p>
                       <p>Thanks,<br>Fintrak Credit 360</br></p>

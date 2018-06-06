@@ -23,5 +23,6 @@ namespace FintrakBanking.ViewModels.AlertMonitoring
         public DateTime? slaNotificationDate { get; set; }
         public string staffEmail { get; set; }
         public string operationName { get; set; }
+        public int slaNotificationInterval { get; set; }
     }
 }

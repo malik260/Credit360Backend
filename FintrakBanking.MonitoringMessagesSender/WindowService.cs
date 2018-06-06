@@ -19,10 +19,11 @@ namespace FintrakBanking.MonitoringMessagesSender
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
-
-        public WindowService(IEmailSender _emailSender)
+        private IAlertMessageLogger logger;
+        public WindowService(IEmailSender _emailSender, IAlertMessageLogger _logger)
         {
             emailSender = _emailSender;
+            logger = _logger;
         }
         public bool Start(HostControl hostControl)
         {
@@ -58,8 +59,8 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
-                    bool response = false; //emailSender.SendMail();
-
+                    bool response = false;//emailSender.SendMail();
+                    logger.SLAApprovalNotification();
                     if (response == true)
                     {
                         _log.Info("");
@@ -74,26 +75,26 @@ namespace FintrakBanking.MonitoringMessagesSender
                     }
 
 
-                    //MONITORING ALERT LOGGIN
-                    //TimeSpan currentTime = DateTime.Now.TimeOfDay;
-                    //TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
+                  //  MONITORING ALERT LOGGIN
+                    TimeSpan currentTime = DateTime.Now.TimeOfDay;
+                    TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
 
-                    //TimeSpan alertLoggerMaxRuntime = TimeSpan.FromMinutes(30);
-                    //TimeSpan LoggeingTimeFromConfigExtended = LoggeingTimeFromConfig.Add(alertLoggerMaxRuntime);
+                    TimeSpan alertLoggerMaxRuntime = TimeSpan.FromMinutes(30);
+                    TimeSpan LoggeingTimeFromConfigExtended = LoggeingTimeFromConfig.Add(alertLoggerMaxRuntime);
 
 
-                    //if (currentTime >= LoggeingTimeFromConfig && currentTime <= LoggeingTimeFromConfigExtended)
-                    //{
-                      //  _log.Info("##############   started at " + currentTime + "     ##################### ");
+                    if (currentTime >= LoggeingTimeFromConfig && currentTime <= LoggeingTimeFromConfigExtended)
+                    {
+                        //  _log.Info("##############   started at " + currentTime + "     ##################### ");
                         _log.Info("==================================================================");
                         _log.Info("Monitoring alert has started successfully");
 
-                        emailSender.LogMonitorringAlert();
+                     //   emailSender.LogMonitorringAlert();
 
                         _log.Info("");
                         _log.Info("==================================================================");
                         _log.Info("Monitoring alert has finished logging successfully ");
-                    //}
+                    }
 
                 }
                 catch (DbEntityValidationException ee)
