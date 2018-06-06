@@ -26,13 +26,13 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                    join s in context.TBL_STAFF on a.TOSTAFFID equals s.STAFFID
                                    join o in context.TBL_OPERATIONS on a.OPERATIONID equals o.OPERATIONID
                                    //let dueTime = DbFunctions(a.SYSTEMARRIVALDATETIME.AddHours,b.SLANOTIFICATIONINTERVAL)
-                                   let dueTime = a.SYSTEMARRIVALDATETIME.Date.AddHours((double)b.SLANOTIFICATIONINTERVAL)
+                                   //let dueTime = 
 
-                                   where a.APPROVALSTATUSID == 0
+                                   where a.APPROVALSTATUSID == 1
                                   // && a.RESPONSESTAFFID == null
                                    && a.TOSTAFFID != null
                                    && b.SLAINTERVAL > 0
-                                   && DateTime.Now >= dueTime
+                                   && DateTime.Now >= a.SYSTEMARRIVALDATETIME.Date.AddHours((double)b.SLANOTIFICATIONINTERVAL)
                                    select new SLANotificationViewModel
                                    {
                                        approvalTrailId = a.APPROVALTRAILID,
