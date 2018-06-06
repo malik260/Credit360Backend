@@ -11634,6 +11634,7 @@ namespace FintrakBanking.Repositories.Credit
                         addStaging.RCRE_DATE = applicationDate;
                         addStaging.PSTD_FLG = "N";
                         addStaging.PSTD_DATE = applicationDate;
+                        addStaging.DEL_FLG = "N";
 
 
 
@@ -11684,6 +11685,8 @@ namespace FintrakBanking.Repositories.Credit
                         addMain.BANK_ID = "01";
                         addMain.IS_SELECTED = "N";
                         addMain.PSTD_DATE = applicationDate;
+                        addMain.PSTD_FLG = "N";
+                        addMain.DEL_FLG = "N";
                 //addMain.SID = 1;
 
 
