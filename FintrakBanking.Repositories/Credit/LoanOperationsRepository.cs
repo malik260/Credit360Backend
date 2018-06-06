@@ -11602,6 +11602,7 @@ namespace FintrakBanking.Repositories.Credit
                                     bankId = a.BANKID,
                                     branchId = (short)a.DESTINATIONBRANCHID,
                                     sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
+
                                     //sid = a.SID,
 
 
@@ -11629,9 +11630,12 @@ namespace FintrakBanking.Repositories.Credit
                         addStaging.BANK_ID = item.bankId;
                         addStaging.TOD_FLG = "N";
                         addStaging.LOAN_ACCT = item.sourceReferenceNumber;
+                        addStaging.STATUS = "NEW";
+                        addStaging.RCRE_DATE = applicationDate;
+                        addStaging.PSTD_FLG = "N";
 
 
-                        staging.Add(addStaging);
+                staging.Add(addStaging);
 
                     }
                     this.stagingContext.FINTRAK_TRAN_PROC_DETAILS.AddRange(staging);
@@ -11673,7 +11677,7 @@ namespace FintrakBanking.Repositories.Credit
                         addMain.TRAN_TYPE = TransactionType;
                         addMain.RCRE_USER = "SYSTEM";
                         addMain.TOTAL_AMT = item.amount;
-                        addMain.STATUS = "N";
+                        addMain.STATUS = "NEW";
                         addMain.REC_COUNT = recordCount;
                         addMain.BANK_ID = "01";
                         //addMain.SID = 1;
