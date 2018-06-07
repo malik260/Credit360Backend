@@ -119,29 +119,31 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
 
-            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
+            //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
+            //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            loanOperation.ProcessDailyPastDueInterestAccrual(date);
+            //loanOperation.ProcessDailyPastDueInterestAccrual(date);
 
-            loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
+            //loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
 
-            loanOperation.ProcessLoanRepaymentPostingPastDue(date);
+            //loanOperation.ProcessLoanRepaymentPostingPastDue(date);
 
 
-            loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(date);
-            loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue(date);
-            loanOperation.ProcessIDFExpiryAndlocking(date);
-            loanOperation.ProcessCFFExpiryAndlocking(date);
-            loanOperation.ProcessLPOExpiryAndlocking(date);
-            loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
-            loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
-            loanOperation.ProcessIntervalFeeandCommissionPosting(date);
+            //loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(date);
+            //loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue(date);
+            //loanOperation.ProcessIDFExpiryAndlocking(date);
+            //loanOperation.ProcessCFFExpiryAndlocking(date);
+            //loanOperation.ProcessLPOExpiryAndlocking(date);
+            //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
+            //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
+            //loanOperation.ProcessIntervalFeeandCommissionPosting(date);
 
-            collateralItemPolicy.CheckForExpiredItemPolicies(date);
+            //collateralItemPolicy.CheckForExpiredItemPolicies(date);
 
-            loanOperation.CalculateLoanClassification(date);
+            //loanOperation.CalculateLoanClassification(date);
+
+            loanOperation.GetRepaymentFromStaging();
 
             endOfDay.ENDDATETIME = DateTime.Now;
 

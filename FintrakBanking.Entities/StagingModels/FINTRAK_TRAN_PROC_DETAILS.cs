@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(20)]
         public string BATCH_ID { get; set; }
 
-        public int? BATCH_REF_ID { get; set; }
+        public int BATCH_REF_ID { get; set; }
 
         [StringLength(10)]
         public string TRAN_TYPE { get; set; }
@@ -23,7 +23,7 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(10)]
         public string FLOW_TYPE { get; set; }
 
-        public decimal? AMT { get; set; }
+        public decimal AMT { get; set; }
 
         [StringLength(16)]
         public string DR_ACCT { get; set; }
@@ -37,7 +37,7 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(5)]
         public string RATE_CODE { get; set; }
 
-        public decimal? RATE { get; set; }
+        public decimal RATE { get; set; }
 
         [StringLength(50)]
         public string NARRATION { get; set; }
@@ -51,9 +51,9 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(1)]
         public string PSTD_FLG { get; set; }
 
-        public DateTime? PSTD_DATE { get; set; }
+        public DateTime PSTD_DATE { get; set; }
 
-        public DateTime? RCRE_DATE { get; set; }
+        public DateTime RCRE_DATE { get; set; }
 
         [StringLength(15)]
         public string PSTD_USR_ID { get; set; }
@@ -70,9 +70,9 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(200)]
         public string FAILURE_REASON { get; set; }
 
-        public decimal? AMT_COLLECTED { get; set; }
+        public decimal AMT_COLLECTED { get; set; }
 
-        public decimal? LIEN_AMT { get; set; }
+        public decimal LIEN_AMT { get; set; }
 
         [StringLength(1)]
         public string LIEN_FLG { get; set; }
@@ -80,9 +80,9 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(1)]
         public string TOD_FLG { get; set; }
 
-        public byte? VALUE_DATE_NUM { get; set; }
+        public int VALUE_DATE_NUM { get; set; }
 
-        [StringLength(16)]
+        [StringLength(50)]
         public string LOAN_ACCT { get; set; }
 
         [StringLength(4)]
