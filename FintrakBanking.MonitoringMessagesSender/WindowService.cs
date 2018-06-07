@@ -59,8 +59,10 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
-                    bool response = false;//emailSender.SendMail();
-                    logger.SLAApprovalNotification();
+                    bool response = emailSender.LogMonitoringEmailAlerts();
+
+                    logger.LogSLAApprovalNotification();
+
                     if (response == true)
                     {
                         _log.Info("");

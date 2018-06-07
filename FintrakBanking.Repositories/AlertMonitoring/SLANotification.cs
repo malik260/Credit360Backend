@@ -47,6 +47,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                        staffEmail = s.EMAIL,
                                        operationName = o.OPERATIONNAME,
                                        slaNotificationInterval = b.SLANOTIFICATIONINTERVAL,
+                                       
 
                                    };
 
@@ -73,13 +74,14 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                         toStaffId = x.toStaffId,
                         staffEmail = x.staffEmail,
                         operationName = x.operationName,
-                        slaNotificationInterval = x.slaNotificationInterval
+                        slaNotificationInterval = x.slaNotificationInterval,
+                       
                     };
                     list.Add(data);
                 }
             }
             return list.ToList();
-        }
+       }
 
         public IEnumerable<SLANotificationViewModel> StaffSetupBasedApprovalNotification()
         {
@@ -93,7 +95,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                    && a.RESPONSESTAFFID == null
                                    && a.TOSTAFFID == null
                                      && b.SLAINTERVAL > 0
-                                     && a.STAFFROLEID == null
+                                     && b.STAFFROLEID != null
                                    select new SLANotificationViewModel
                                    {
                                        approvalTrailId = a.APPROVALTRAILID,
@@ -153,7 +155,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                    where a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                                    && a.RESPONSESTAFFID == null
                                    && a.TOSTAFFID == null
-                                   && a.STAFFROLEID == null
+                                   && b.STAFFROLEID == null
                                    && b.SLAINTERVAL > 0
                                    select new SLANotificationViewModel
                                    {

@@ -117,7 +117,6 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
             //logger.SendAlertsOnSelfLiquidatingLoanExpiry(title, body, alertSetups);
 
-            logger.SLAApprovalNotification();
 
             return true;
         }
