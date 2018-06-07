@@ -378,8 +378,10 @@ namespace FintrakBanking.Repositories.Credit
                 }).ToList();
         }
 
-        public CamViewModel GetCamDocumentByApprovalLevel(int applicationId, int approvalLevelId)
+        public CamViewModel GetCamDocumentByApprovalLevel(int applicationId, int staffId)
         {
+            var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CAM).ToList();
+
             var cams = context.TBL_LOAN_REVIEW_APPLICATN_CAM.Where(x =>
                 x.LOANREVIEWAPPLICATIONID == applicationId
                 //&& x.APPROVALLEVELID == approvalLevelId
@@ -389,8 +391,8 @@ namespace FintrakBanking.Repositories.Credit
 
             TBL_LOAN_REVIEW_APPLICATN_CAM cam;
 
-            if (cams.Any(x => x.APPROVALLEVELID == approvalLevelId) == true)
-                cam = cams.Where(x => x.APPROVALLEVELID == approvalLevelId).OrderByDescending(x => x.LOANREVIEWCAMID).FirstOrDefault();
+            if (cams.Any(x => ids.Contains(x.APPROVALLEVELID)) == true)
+                cam = cams.Where(x => ids.Contains(x.APPROVALLEVELID)).OrderByDescending(x => x.LOANREVIEWCAMID).FirstOrDefault();
             else
                 cam = cams.OrderByDescending(x => x.LOANREVIEWCAMID).FirstOrDefault();
 

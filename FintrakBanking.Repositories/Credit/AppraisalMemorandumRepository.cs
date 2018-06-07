@@ -712,7 +712,8 @@ namespace FintrakBanking.Repositories.Credit
                     loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
                     relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
-                    newApplicationDate = x.a.APPLICATIONDATE,
+                    applicationDate = x.a.APPLICATIONDATE,
+                    //newApplicationDate = x.a.APPLICATIONDATE,
                     applicationAmount = x.a.APPLICATIONAMOUNT,
                     approvedAmount = x.a.APPROVEDAMOUNT,
                     interestRate = x.a.INTERESTRATE,
@@ -744,7 +745,7 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .OrderByDescending(x => x.newApplicationDate)
+                .OrderByDescending(x => x.applicationDate)
                 .ThenByDescending(x => x.loanApplicationId);
 
             return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
