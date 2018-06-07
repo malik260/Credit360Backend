@@ -267,7 +267,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.newApplicationDate) // OrderBy() must be called for Skip() to work!
+                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
                     .ThenByDescending(x => x.loanApplicationId)
                     .Skip(page)
                     .Take(itemsPerPage)
@@ -442,9 +442,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion MONITORING TRIGGERS
 
-        
-
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("repayment-schedule-terms")]
         public HttpResponseMessage SaveRepaymentScheduleAndTerms([FromBody] RepaymentScheduleTermsViewModel entity)
         {
@@ -555,6 +553,109 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion recommended collateral
+
+
+
+        #region LMS APPROVAL
+
+        [HttpGet]
+        [Route("lms-application-monitoring-triggers/{applicationId}")]
+        public HttpResponseMessage GetApplicationMonitoringTriggersLms(int applicationId)
+        {
+            try
+            {
+                IEnumerable<MonitoringTriggersViewModel> response = repo.GetApplicationMonitoringTriggersLms(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lms-application-monitoring-triggers/{applicationId}")]
+        public HttpResponseMessage SaveApplicationMonitoringTriggersLms(int applicationId, [FromBody] List<MonitoringTriggersViewModel> entity)
+        {
+            try
+            {
+                IEnumerable<MonitoringTriggersViewModel> response = repo.SaveApplicationMonitoringTriggersLms(applicationId, entity, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lms-repayment-schedule-terms")]
+        public HttpResponseMessage SaveRepaymentScheduleAndTermsLms([FromBody] RepaymentScheduleTermsViewModel entity)
+        {
+            try
+            {
+                List<RepaymentScheduleTermsViewModel> response = repo.SaveRepaymentScheduleAndTermsLms(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("lms-recommended-collateral/{applicationId}")]
+        public HttpResponseMessage GetRecommendedCollateralLms(int applicationId)
+        {
+            try
+            {
+                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralLms(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lms-recommended-collateral")]
+        public HttpResponseMessage AddRecommendedCollateralLms([FromBody] RecommendedCollateralViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                List<RecommendedCollateralViewModel> response = repo.AddRecommendedCollateralLms(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("lms-recommended-collateral")]
+        public HttpResponseMessage UpdateRecommendedCollateralLms([FromBody] RecommendedCollateralViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                List<RecommendedCollateralViewModel> response = repo.UpdateRecommendedCollateralLms(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion LMS APPROVAL
+
 
     }
 }

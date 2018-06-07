@@ -64,11 +64,9 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId)
         {
-            // var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
-            var ids = _genSetup.GetStaffApprovalLevelIdByStaffId(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
+
             
-
-
             List <CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
             var detailItem = (from s in context.TBL_CHECKLIST_DETAIL
                               join k in context.TBL_CHECKLIST_DEFINITION
@@ -87,12 +85,12 @@ namespace FintrakBanking.Repositories.Credit
                                   itemDescription = k.ITEMDESCRIPTION,
                                   checklistStatusId = s.CHECKLISTSTATUSID,
                                   approvalLevelId = k.APPROVALLEVELID,
-                            //      responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID).
-                            //Select(x => new CheckListStatusViewModel()
-                            //{
-                            //    checklistStatusId = x.CHECKLISTSTATUSID,
-                            //    checklistStatusName = x.CHECKLISTSTATUSNAME,
-                            //}).ToList()
+                                  responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID).
+                            Select(x => new CheckListStatusViewModel()
+                            {
+                                checklistStatusId = x.CHECKLISTSTATUSID,
+                                checklistStatusName = x.CHECKLISTSTATUSNAME,
+                            }).ToList()
                               });
             var proposedProductId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == loanTargetId select (short?)id.PROPOSEDPRODUCTID).ToList();
             var isproductBased = context.TBL_CHECKLIST_TYPE.FirstOrDefault(x => x.CHECKLIST_TYPEID == checkListTypeId).ISPRODUCT_BASED;
@@ -100,9 +98,8 @@ namespace FintrakBanking.Repositories.Credit
            
             var data = (from a in context.TBL_CHECKLIST_DEFINITION
                         join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
-                        where   a.CHECKLIST_TYPEID == checkListTypeId
-                      //  where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checkListTypeId 
-                        && a.OPERATIONID == (int)OperationsEnum.ChecklistOperation && a.DELETED == false
+                        where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checkListTypeId 
+                        && a.OPERATIONID == operationId && a.DELETED == false
                         select new ChecklistDefinitionAndDetailViewModel
                         {
                            checkListDetailId = 0,
@@ -116,24 +113,24 @@ namespace FintrakBanking.Repositories.Credit
                             itemDescription = a.ITEMDESCRIPTION,
                             productId = a.PRODUCTID,
                             approvalLevelId = a.APPROVALLEVELID,
-                            //responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == d.RESPONSE_TYPEID).
-                            //Select(x => new CheckListStatusViewModel()
-                            //{
-                            //    checklistStatusId = x.CHECKLISTSTATUSID,
-                            //    checklistStatusName = x.CHECKLISTSTATUSNAME,
-                            //}).ToList()
+                            responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == d.RESPONSE_TYPEID).
+                            Select(x => new CheckListStatusViewModel()
+                            {
+                                checklistStatusId = x.CHECKLISTSTATUSID,
+                                checklistStatusName = x.CHECKLISTSTATUSNAME,
+                            }).ToList()
 
-                        }).ToList();
+                        });
            
             if (isproductBased)
             {
                 if (productId > 0)
                 {
-                 //   data = data.Where(x => x.productId == productId);
+                    data = data.Where(x => x.productId == productId);
                 }
                 else if (proposedProductId.Any())
                 {
-                   // data = data.Where(x => proposedProductId.Contains(x.productId));
+                    data = data.Where(x => proposedProductId.Contains(x.productId));
                 }
             }
             var definitionList = data.ToList();
@@ -252,9 +249,8 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId)
         {
-            //var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
-            var ids = _genSetup.GetStaffApprovalLevelIdByStaffId(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
-
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
+           
             var checkType = (from a in context.TBL_CHECKLIST_TYPE
                              join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
                              where ids.Contains((int)b.APPROVALLEVELID)

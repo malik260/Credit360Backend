@@ -1239,6 +1239,25 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         #endregion Loan
 
+        #region Frequency Type
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("limit-frequency-type")]
+        public HttpResponseMessage GetAllFrequencyType()
+        {
+            try
+            {
+                var response = repo.GetAllFrequencyType();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        #endregion
+
         #region (Loan Application Date) Pre - Loan booking
 
         [HttpGet]
