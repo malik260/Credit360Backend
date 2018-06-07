@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
@@ -46,14 +47,14 @@ namespace FintrakBanking.Repositories.Finance
 
 
             if (financeEod == true)
-                throw new Exception("End of Day for "+ applicationDate+" has already been run.");
+                throw new ConditionNotMetException("End of Day for "+ applicationDate+" has already been run.");
 
             var countryId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).COUNTRYID;
 
             var nextWorkDay = publicHoliday.GetNextWorkDay(applicationDate, countryId);
 
-            if (applicationDate.AddDays(1) == nextWorkDay)
-               ProcessEndOfDay(applicationDate, model.companyId, model.createdBy);
+            if (applicationDate.AddDays(1) == nextWorkDay) { }
+            //ProcessEndOfDay(applicationDate, model.companyId, model.createdBy);
             else
             {
                 DateTime runDate = applicationDate;
@@ -118,29 +119,31 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
 
-            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
+            //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
+            //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            loanOperation.ProcessDailyPastDueInterestAccrual(date);
+            //loanOperation.ProcessDailyPastDueInterestAccrual(date);
 
-            loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
+            //loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
 
-            loanOperation.ProcessLoanRepaymentPostingPastDue(date);
+            //loanOperation.ProcessLoanRepaymentPostingPastDue(date);
 
 
-            loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(date);
-            loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue(date);
-            loanOperation.ProcessIDFExpiryAndlocking(date);
-            loanOperation.ProcessCFFExpiryAndlocking(date);
-            loanOperation.ProcessLPOExpiryAndlocking(date);
-            loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
-            loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
-            loanOperation.ProcessIntervalFeeandCommissionPosting(date);
+            //loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(date);
+            //loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue(date);
+            //loanOperation.ProcessIDFExpiryAndlocking(date);
+            //loanOperation.ProcessCFFExpiryAndlocking(date);
+            //loanOperation.ProcessLPOExpiryAndlocking(date);
+            //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
+            //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
+            //loanOperation.ProcessIntervalFeeandCommissionPosting(date);
 
-            collateralItemPolicy.CheckForExpiredItemPolicies(date);
+            //collateralItemPolicy.CheckForExpiredItemPolicies(date);
 
-            loanOperation.CalculateLoanClassification(date);
+            //loanOperation.CalculateLoanClassification(date);
+
+            loanOperation.GetRepaymentFromStaging();
 
             endOfDay.ENDDATETIME = DateTime.Now;
 

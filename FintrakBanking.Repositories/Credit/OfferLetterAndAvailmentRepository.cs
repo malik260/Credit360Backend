@@ -383,6 +383,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return data.GroupBy(x => x.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanApplicationId).ToList();
         }
+
         public Form3800ViewModel GenerateForm3800Template(string applicationRefNumber)
         {
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
@@ -1863,8 +1864,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.DeferredExecution = true;
                     workflow.ExternalInitialization = true;
                     workflow.LogActivity();
-                }
-                else
+                } else
                 {
                     workflow.OperationId = (int)OperationsEnum.LoanAvailment;
                     workflow.ProductClassId = appl.PRODUCTCLASSID;

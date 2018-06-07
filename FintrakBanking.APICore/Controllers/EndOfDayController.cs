@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.ViewModels.Finance;
 using System;
@@ -37,10 +38,17 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "An unknown error has occured" });
 
             }
-            catch (Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"An unhandled error occured {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
             }
 
         }
@@ -65,13 +73,21 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                                new { success = false, message = "End of day transaction failed" });
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
+            }
+            catch (Exception e )
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
             }
         }
 
-
+        
 
     }
 
