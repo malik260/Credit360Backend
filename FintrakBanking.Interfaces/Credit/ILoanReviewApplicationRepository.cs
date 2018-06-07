@@ -22,9 +22,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         CamViewModel GetCamDocument(int documentationId);
 
-        CamViewModel GetCamDocumentByApprovalLevel(int applicationId, int approvalLevelId);
+        CamViewModel GetCamDocumentByApprovalLevel(int applicationId, int staffId);
         
         List<CamViewModel> GetCamDocuments(int applicationId);
+
         int ForwardApplication(ForwardReviewViewModel model);
     }
 }

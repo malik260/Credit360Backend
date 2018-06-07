@@ -56,5 +56,11 @@ namespace FintrakBanking.Interfaces.Credit
         List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId);
         List<RecommendedCollateralViewModel> AddRecommendedCollateral(RecommendedCollateralViewModel entity);
         List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity);
+        IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersLms(int applicationId);
+        IEnumerable<MonitoringTriggersViewModel> SaveApplicationMonitoringTriggersLms(int applicationId, List<MonitoringTriggersViewModel> entity, int getStaffId);
+        List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTermsLms(RepaymentScheduleTermsViewModel entity);
+        List<RecommendedCollateralViewModel> UpdateRecommendedCollateralLms(RecommendedCollateralViewModel entity);
+        List<RecommendedCollateralViewModel> AddRecommendedCollateralLms(RecommendedCollateralViewModel entity);
+        List<RecommendedCollateralViewModel> GetRecommendedCollateralLms(int applicationId);
     }
 }
