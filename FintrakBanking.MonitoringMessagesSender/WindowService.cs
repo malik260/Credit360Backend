@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Interfaces.AlertMonitoring;
 using System;
 using System.Configuration;
+using System.Data.Entity.Validation;
 using System.Threading;
 using System.Timers;
 using Topshelf;
@@ -16,6 +17,7 @@ namespace FintrakBanking.MonitoringMessagesSender
         private static object s_lock = new object();
         private IEmailSender emailSender;
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
+        private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
 
         public WindowService(IEmailSender _emailSender)
@@ -60,23 +62,78 @@ namespace FintrakBanking.MonitoringMessagesSender
 
                     if (response == true)
                     {
-                        _log.ErrorFormat("");
-                        _log.ErrorFormat("==================================================================");
-                        _log.ErrorFormat("Emails has been sent successfully and ends at : " + DateTime.Now);
+                        _log.Info("");
+                        _log.Info("==================================================================");
+                        _log.Info("Emails has been sent successfully and ends at : " + DateTime.Now);
                     }
                     else
-                        _log.ErrorFormat("");
-                    _log.ErrorFormat("==================================================================");
-                    _log.ErrorFormat("No email has been sent as at : " + DateTime.Now);
+                    {
+                        _log.Info("");
+                        _log.Info("==================================================================");
+                        _log.Info("No email has been sent as at : " + DateTime.Now);
+                    }
 
-                }catch(Exception ex)
+
+                    //MONITORING ALERT LOGGIN
+                    TimeSpan currentTime = DateTime.Now.TimeOfDay;
+                    TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
+
+                    TimeSpan alertLoggerMaxRuntime = TimeSpan.FromMinutes(30);
+                    TimeSpan LoggeingTimeFromConfigExtended = LoggeingTimeFromConfig.Add(alertLoggerMaxRuntime);
+
+
+                    if (currentTime >= LoggeingTimeFromConfig && currentTime <= LoggeingTimeFromConfigExtended)
+                    {
+                        _log.Info("##############   started at " + currentTime + "     ##################### ");
+                        _log.Info("==================================================================");
+                        _log.Info("Monitoring alert has started successfully");
+
+                        emailSender.LogMonitorringAlert();
+
+                        _log.Info("");
+                        _log.Info("==================================================================");
+                        _log.Info("Monitoring alert has finished logging successfully ");
+                    }
+
+                }
+                catch (DbEntityValidationException ee)
+                {
+                    foreach (var error in ee.EntityValidationErrors)
+                    {
+                        foreach (var thisError in error.ValidationErrors)
+                        {
+                            Console.WriteLine("DbEntityValidationException   :   " + thisError.ErrorMessage);
+
+                            _log.ErrorFormat("DbEntityValidationException   :    " + thisError.ErrorMessage);
+                            _log.ErrorFormat("");
+                            _log.ErrorFormat("==================================================================");
+                        }
+                    }
+                }
+                catch (Exception ex)
                 {
                     _log.ErrorFormat("");
                     _log.ErrorFormat("==================================================================");
                     _log.ErrorFormat("Email Sender has failed with error : " + ex + " at : "  + DateTime.Now);
+                    _log.ErrorFormat("");
+                    _log.ErrorFormat("==================================================================");
+                    if (ex.InnerException!=null)
+                    {
+                        _log.ErrorFormat("InnerException  :  " + ex.InnerException);
+                        _log.ErrorFormat("");
+                        _log.ErrorFormat("==================================================================");
+
+                        Console.WriteLine(ex.InnerException);
+
+                    }
+                    _log.ErrorFormat("ex.Message   :    " + ex.Message);
+                    _log.ErrorFormat("");
+                    _log.ErrorFormat("==================================================================");
+                    Console.WriteLine(ex.Message);
 
                     emailSender.SendEmailOfException(ex.ToString());
                 }
+                
                 finally
                 {
                     //unlock the job

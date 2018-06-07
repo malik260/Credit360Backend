@@ -22,6 +22,11 @@ namespace FintrakBanking.Common
             return date.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
         }
 
+        public static string DateTimeToString(DateTime date)
+        {
+            return String.Format("{0:dd-MMM-yyyy}", date);
+        }
+
         /// <summary>
         /// For parsing DateTime string from the format "yyyyMMdd"
         /// </summary>
@@ -376,7 +381,7 @@ namespace FintrakBanking.Common
 
         public static int GetLoanReferanceNumber()
         {
-            TimeSpan epochTicks = new TimeSpan(new DateTime(1970, 1, 1).Ticks);
+            TimeSpan epochTicks = new TimeSpan(new DateTime(1980, 1, 1).Ticks);
             TimeSpan unixTicks = new TimeSpan(DateTime.UtcNow.Ticks) - epochTicks;
             double unixTime = unixTicks.TotalSeconds;
             return (int)unixTime;

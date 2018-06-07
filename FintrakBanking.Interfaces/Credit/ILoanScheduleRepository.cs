@@ -32,5 +32,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddLoanSchedule(int loanId, LoanPaymentScheduleInputViewModel loanInput, int staffId);
 
         bool AddLoanFeeSchedule(int loanId, decimal amount, DateTime feeDate, DateTime loanMaturityDate, int feeDay, FrequencyTypeEnum frequency);
+
+       byte[] GenerateLoanScheduleExport(LoanPaymentScheduleInputViewModel loanInput);
+
     }
 }

@@ -70,14 +70,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model)
         {
             ResponseMessage result = null;
-            if( LogOverDraftNormal(model))
+           // if( LogOverDraftNormal(model))
                 Task.Run(async () => result = await overDraft.APIOverDraftNormal(model)).GetAwaiter().GetResult();
           
             if (result.Message.IsSuccessStatusCode)
             {
                 if( result.APIResponse.webRequestStatus.Replace(":","") == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -296,6 +296,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public bool PostTransactions(List<FinanceTransactionViewModel> model)
         {
             ResponseMessage result = null;
+
             List<TransactionPostingViewModel> transactionLst = TransactionData(model);
 
             Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionLst)).GetAwaiter().GetResult();
@@ -468,25 +469,25 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                var data = new TBL_CUSTOM_OVERDRAFTNORMAL
-                {
-                    ACCOUNTNUMBER = model.accountNumber,
-                    APIURL = @"api/OverDraft/Normal",
-                    DATETIMECREATED = DateTime.Now,
-                    EXPIRYDATE = model.expiryDate,
-                    SANCTIONLIMIT = model.sanctionLimit,
-                    SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber,
-                    APPLICATIONDATE = model.applicationDate,
-                    DOCUMENTDATE = model.documentDate,
-                    REVIEWEDDATE = model.reviewedDate,
-                    SANCTIONAUTHORIZER = model.sanctionAuthorizer,
-                    SANCTIONDATE = model.sanctionDate,
-                    SANCTIONLEVEL = model.sanctionLevel,
+                //var data = new TBL_CUSTOM_OVERDRAFTNORMAL
+                //{
+                //    ACCOUNTNUMBER = model.accountNumber,
+                //    APIURL = @"api/OverDraft/Normal",
+                //    DATETIMECREATED = DateTime.Now,
+                //    EXPIRYDATE = model.expiryDate,
+                //    SANCTIONLIMIT = model.sanctionLimit,
+                //    SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber,
+                //    APPLICATIONDATE = model.applicationDate,
+                //    DOCUMENTDATE = model.documentDate,
+                //    REVIEWEDDATE = model.reviewedDate,
+                //    SANCTIONAUTHORIZER = model.sanctionAuthorizer,
+                //    SANCTIONDATE = model.sanctionDate,
+                //    SANCTIONLEVEL = model.sanctionLevel,
 
-                };
-                context.TBL_CUSTOM_OVERDRAFTNORMAL.Add(data);
-                result = context.SaveChanges() > 0;
-                model.overdraftNormalId = data.OVERDRAFTNORMALID;
+                //};
+                //context.TBL_CUSTOM_OVERDRAFTNORMAL.Add(data);
+                //result = context.SaveChanges() > 0;
+               // model.overdraftNormalId = data.OVERDRAFTNORMALID;
             }
             return result;
         }
@@ -549,16 +550,17 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return result;
         }
 
-        private string GetGlAccountCode(int glAccountId, string currencyCode, int branchId)
+        public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
             var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
 
             var accountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
                 join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
-                where gl.CURRENCYCODE == currencyCode && gla.GLACCOUNTID == glAccountId
+                join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
+                where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
                 select gl.ACCOUNTID).FirstOrDefault();
 
-            var glAccountCode = branchCode + accountCode;
+            var glAccountCode =  "100" + accountCode;//branchCode + accountCode;
 
             return glAccountCode;
         }
@@ -569,23 +571,29 @@ namespace FinTrakBanking.ThirdPartyIntegration
             foreach (var item in model)
             {
 
+            //    var account ;
+
                 var transPosting = new TransactionPostingViewModel();
                 //accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+                transPosting.currencyType = context.TBL_CURRENCY
+                   .FirstOrDefault(x => x.CURRENCYID == item.currencyId)
+                   ?.CURRENCYCODE;
+                transPosting.accounts = item.casaAccountId != null
+                ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
+                .PRODUCTACCOUNTNUMBER: GetGlAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
                 transPosting.amounts = item.creditAmount > 0
-                    ? "C" + item.creditAmount.ToString()
-                    : "D" + item.debitAmount.ToString();
+                    ? "C" + String.Format("{0:0.00}", item.creditAmount)
+                    : "D" + String.Format("{0:0.00}", item.debitAmount) ;
                 //amounts = item.sourceReferenceNumber,
                 transPosting.narration = item.description;
                 transPosting.referenceNumber = item.batchCode;
-                transPosting.currencyType = context.TBL_CURRENCY
-                    .FirstOrDefault(x => x.CURRENCYID == item.currencyId)
-                    ?.CURRENCYCODE;
-                transPosting.operationId =
-                    item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
-                transPosting.accounts = item.casaAccountId != null
-                    ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
-                        .PRODUCTACCOUNTNUMBER
-                    : GetGlAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
+                
+                transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
+
+                
+               
+                transPosting.operationId = item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+
 
                 transactionLst.Add(transPosting);
             }
@@ -595,6 +603,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         
         private bool AddCustomTransactions(List<TransactionPostingViewModel> entity)
         {
+            List<TBL_CUSTOM_FIANCE_TRANSACTION> lstData = new List<TBL_CUSTOM_FIANCE_TRANSACTION>();
             bool output = false;
             foreach (var item in entity)
             {
@@ -610,11 +619,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     data.NARRATION = item.narration;
                     data.OPERATIONID = item.operationId;
                 }
-                context.TBL_CUSTOM_FIANCE_TRANSACTION.Add(data);
-            }
-
-            ;
-
+               lstData.Add(data);
+            };
+            context.TBL_CUSTOM_FIANCE_TRANSACTION.AddRange(lstData);
             context.SaveChanges();
             output = true;
             return output;

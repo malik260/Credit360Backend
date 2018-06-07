@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using FintrakBanking.Common;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
@@ -336,17 +337,22 @@ namespace WinApp
             // var result = _integration.GetCustomerByAccountsNumber(textBox2.Text);
             //  "003";
             // "999";
+
+            DateTime experyDate  =  DateTime.Now.Date.AddMonths(12);
+             
+            DateTime dat = DateTime.Now.Date;
+            var datstr = dat ;
             var result = _integration.OverDraftNormal(new OverDraftNormalViewModel()
             {
-                sanctionReferenceNumber = "123358",
+                sanctionReferenceNumber = "12311358",
                 accountNumber = textBox2.Text, // "1000451805",
-                applicationDate = "30-05-2018",// DateTime.Now.Date.ToString(),
-                documentDate = "30-05-2018",
-                expiryDate = "30-11-2018",
-                reviewedDate = "30-05-2018",
+                applicationDate = datstr.ToShortDateString(),
+                documentDate = datstr.ToShortDateString(),
+                expiryDate = experyDate.ToShortDateString(),
+                reviewedDate = datstr.ToShortDateString(),
                 sanctionAuthorizer = "999",
                 sanctionLevel = "003",
-                sanctionDate = "31-05-2018",
+                sanctionDate = datstr.ToShortDateString(),
                 sanctionLimit = 100000.ToString()
 
             });

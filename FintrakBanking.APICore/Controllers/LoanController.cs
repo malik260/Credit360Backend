@@ -16,7 +16,13 @@ using FintrakBanking.ViewModels.Reports;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Extensions;
+using System.Data;
+using System.Net.Http.Headers;
 
+using System.IO;
+
+using System.Drawing;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -28,6 +34,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         private ICustomerRepository repoCustomer;
         private ILoanScheduleRepository scheduleRepo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
+      private  ExportDataTableToExcel export = new ExportDataTableToExcel();
 
         //private IHostingEnvironment _hostingEnvironment;
         //private IHostingEnvironment _hostingEnvironment;
@@ -287,15 +294,15 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
             catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $" {ce.Message}" });
             }
             catch (BadLogicException be)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{be.Message}" });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured. " + ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -1009,7 +1016,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: An error occured" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
 
@@ -1203,121 +1210,32 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
 
-        // [HttpPost] [ClaimsAuthorization][Route("schedule/export")]
-        //public HttpResponseMessage ExportScheduleToExcel([FromBody] PaymentScheduleExcelViewModel model)
-        //{
-        //    try
-        //    {
-        //        string sWebRootFolder = _hostingEnvironment.ContentRootPath;
-        //        string sFileName = $"schedule{DateTime.Now.Ticks.ToString()}.xlsx";
-        //        string _path = "docs\\" + sFileName;
-        //        string URL = Path.Combine(sWebRootFolder, _path); //
-        //        string downloadUrl = string.Format("{0}://{1}/{2}/{3}", Request.Scheme, Request.Host, "docs", sFileName);
-        //        FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, _path));
-        //        if (file.Exists)
-        //        {
-        //            file.Delete();
-        //            file = new FileInfo(Path.Combine(sWebRootFolder, _path));
-        //        }
-        //        using (ExcelPackage package = new ExcelPackage(file))
-        //        {
-        //            // add a new worksheet to the empty workbook
-        //            var workSheetName = $"Schedule_{DateTime.Now.Ticks.ToString()}";
-        //            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(workSheetName);
-        //            //First add the headers
 
-        //            worksheet.Cells[1, 1].Value = "LOAN REPAYMENT SCHEDULE";
-        //            worksheet.Cells[1, 1].Style.Font.Bold = true;
-        //            worksheet.Cells[1, 1].Style.Font.Size = 16;
-        //            worksheet.Cells[3, 1, 5, 4].Style.Font.Size = 12;
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("schedule/export")]
+        public HttpResponseMessage ExportScheduleToExcel([FromBody] LoanPaymentScheduleInputViewModel model)
+        {
+            try
+            {
+                var fileBytes = scheduleRepo.GenerateLoanScheduleExport(model);
 
-        //            var numberformat = "#,##0";
-        //            var dataCellStyleName = "TableNumber";
-        //            var numStyle = package.Workbook.Styles.CreateNamedStyle(dataCellStyleName);
-        //            numStyle.Style.Numberformat.Format = numberformat;
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
 
-        //            var dateFormat = "dd/MM/yyyy";
-        //            var dataCellDateStyleName = "TableDate";
-        //            var dtStyle = package.Workbook.Styles.CreateNamedStyle(dataCellDateStyleName);
-        //            dtStyle.Style.Numberformat.Format = dateFormat;
-
-        //            worksheet.Cells[3, 1].Value = "Principal Amount";
-        //            worksheet.Cells[3, 2].Value = model.principalAmount;
-        //            worksheet.Cells[3, 2].Style.Numberformat.Format = numberformat;
-
-        //            worksheet.Cells[3, 3].Value = "Interest Rate";
-        //            worksheet.Cells[3, 4].Value = model.interestRate;
-        //            worksheet.Cells[3, 4].Style.Numberformat.Format = numberformat;
-
-        //            worksheet.Cells[4, 1].Value = "Payment Mode";
-        //            worksheet.Cells[4, 2].Value = model.tenorMode;
-        //            worksheet.Cells[4, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-
-        //            worksheet.Cells[4, 3].Value = "No of Repayment";
-        //            worksheet.Cells[4, 4].Value = model.numberOfPayments;
-        //            worksheet.Cells[4, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-
-        //            worksheet.Cells[5, 1].Value = "Loan Date";
-        //            worksheet.Cells[5, 2].Value = model.loanDate;
-        //            worksheet.Cells[5, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-        //            worksheet.Cells[5, 2].Style.Numberformat.Format = dateFormat;
-
-        //            worksheet.Cells[5, 3].Value = "First Repyment Date";
-        //            worksheet.Cells[5, 4].Value = model.firstPaymentDate;
-        //            worksheet.Cells[5, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-        //            worksheet.Cells[5, 4].Style.Numberformat.Format = dateFormat;
-
-        //            worksheet.Cells[7, 1].Value = "Periodic Payment Amount";
-        //            worksheet.Cells[7, 2].Value = "Periodic Interest Amount";
-        //            worksheet.Cells[7, 3].Value = "Periodic Principal Amount";
-        //            worksheet.Cells[7, 4].Value = "Payment Date";
-        //            worksheet.Cells[7, 5].Value = "Deferred Interest Amount";
-
-        //            int rowNum = 8;
-        //            //int colNum = 1;
-        //            foreach (var item in model.scheduleList)
-        //            {
-        //                worksheet.Cells[rowNum, 1].Value = item.periodicPaymentAmount;
-        //                worksheet.Cells[rowNum, 2].Value = item.periodInterestAmount;
-        //                worksheet.Cells[rowNum, 3].Value = item.periodPrincipalAmount;
-        //                worksheet.Cells[rowNum, 4].Value = item.paymentDate;
-        //                worksheet.Cells[rowNum, 5].Value = item.deferredInterestAmount;
-
-        //                //Format Money
-        //                worksheet.Cells[rowNum, 1].Style.Numberformat.Format = numberformat;
-        //                worksheet.Cells[rowNum, 2].Style.Numberformat.Format = numberformat;
-        //                worksheet.Cells[rowNum, 3].Style.Numberformat.Format = numberformat;
-        //                worksheet.Cells[rowNum, 5].Style.Numberformat.Format = numberformat;
-
-        //                rowNum++;
-        //            }
-
-        //            package.Save(); //Save the workbook.
-        //            //var bytes = System.IO.File.ReadAllBytes(URL);
-        //            //var stream = File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
-        //            //return stream;
-        //        }
-
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { result = downloadUrl });
-        //        //var fs = new FileStream(URL, FileMode.Open);
-        //        //Byte[] fileByte = fs.WriteByte();
-
-        //        //return Request.CreateResponse(HttpStatusCode.OK, new { result = URL });
-        //    }
-        //    catch (ConditionNotMetException ce)
-        //{
-        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-        //}
-        //catch (BadLogicException be)
-        //{
-        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-        //}
-        //catch (Exception)
-        //{
-        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-        //}
-
-        //}
+        }
 
         #endregion Loan
 

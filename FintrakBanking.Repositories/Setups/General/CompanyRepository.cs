@@ -1,6 +1,9 @@
-﻿using FintrakBanking.Entities.DocumentModels;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
@@ -15,11 +18,16 @@ namespace FintrakBanking.Repositories.Setups.General
     {
         private FinTrakBankingContext context;
         private FinTrakBankingDocumentsContext documentContext;
+        private IAuditTrailRepository auditTrail;
+        private IGeneralSetupRepository generalSetup;
 
-        public CompanyRepository(FinTrakBankingContext _context, FinTrakBankingDocumentsContext _documentContext)
+        public CompanyRepository(FinTrakBankingContext _context, FinTrakBankingDocumentsContext _documentContext,
+            IAuditTrailRepository _auditTrail, IGeneralSetupRepository _generalSetup)
         {
             this.context = _context;
             this.documentContext = _documentContext;
+            this.auditTrail = _auditTrail;
+            this.generalSetup = _generalSetup;
         }
 
         private bool SaveAll()
@@ -120,7 +128,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<CompanyViewModel> GetCompanies()
         {
-            var companies = (from data in context.TBL_COMPANY  
+            var companies = (from data in context.TBL_COMPANY
                              select new CompanyViewModel()
                              {
                                  companyId = data.COMPANYID,
@@ -148,7 +156,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                  investmentObjective = data.INVESTMENTOBJECTIVE,
                                  website = data.WEBSITE,
                                  countryId = data.COUNTRYID,
-                                 country =  data.TBL_COUNTRY.NAME ?? string.Empty,
+                                 country = data.TBL_COUNTRY.NAME ?? string.Empty,
                                  companyClassId = data.COMPANYCLASSID ?? 1,
                                  companyTypeId = data.COMPANYTYPEID ?? 1,
                                  accountingStandardId = data.ACCOUNTINGSTANDARDID ?? 1,
@@ -285,7 +293,174 @@ namespace FintrakBanking.Repositories.Setups.General
                 .FirstOrDefault(x => x.DOCUMENTID == 1)
                 ?.FILEDATA;
         }
-    }
+        #region Company Director
+        public IEnumerable<CompanyDirectorsViewModel> GetCompanyDirectors()
+        {
+            var directors = (from data in context.TBL_COMPANY_DIRECTOR
+                             where data.DELETED == false
+                             select new CompanyDirectorsViewModel()
+                             {
+                                 title = data.TITLE,
+                                 companyDirectorId = data.COMPANYDIRECTORID,
+                                 companyId = data.COMPANYID,
+                                 firstName = data.FIRSTNAME,
+                                 middleName = data.MIDDLENAME,
+                                 lastName = data.LASTNAME,
+                                 gender = data.GENDER,
+                                 bvn = data.BVN,
+                                 address = data.ADDRESS,
+                                 email = data.EMAIL,
+                                 phoneNumber = data.PHONENUMBER,
+                                 isActive = data.ISACTIVE,
+                             }).ToList();
+            return directors;
+        }
 
-    
+        public IEnumerable<LookupViewModel> GetCompanyDirectorsByCompanyId(int companyId)
+        {
+            var directors = (from data in context.TBL_COMPANY_DIRECTOR
+                             where data.COMPANYID == companyId && data.DELETED == false
+                             select new LookupViewModel()
+                             {
+                               lookupId = (short)data.COMPANYDIRECTORID,
+                               lookupName = data.FIRSTNAME +" "+data.MIDDLENAME+" "+data.LASTNAME
+                             }).ToList();
+            return directors;
+        }
+        public IEnumerable<CompanyDirectorsViewModel> GetCustomerCompanyDirectorsByCompanyId(int companyId)
+        {
+            var directors = (from data in context.TBL_COMPANY_DIRECTOR
+                             where data.COMPANYID == companyId && data.DELETED == false
+                             select new CompanyDirectorsViewModel()
+                             {
+                                 title = data.TITLE,
+                                 companyDirectorId = data.COMPANYDIRECTORID,
+                                 companyId = data.COMPANYID,
+                                 firstName = data.FIRSTNAME,
+                                 middleName = data.MIDDLENAME,
+                                 lastName = data.LASTNAME,
+                                 gender = data.GENDER,
+                                 bvn = data.BVN,
+                                 address = data.ADDRESS,
+                                 email = data.EMAIL,
+                                 phoneNumber = data.PHONENUMBER,
+                                 isActive = data.ISACTIVE,
+                                 directorName = data.FIRSTNAME + " " + data.MIDDLENAME + " " + data.LASTNAME
+                             }).ToList();
+
+            return directors;
+        }
+
+
+        public bool AddUpdateCompanyDirector(CompanyDirectorsViewModel director)
+        {
+            if (director == null) return false;
+            try
+            {
+                TBL_COMPANY_DIRECTOR comDirector = null;
+
+                if (director.companyDirectorId > 0)
+                {
+                    comDirector = context.TBL_COMPANY_DIRECTOR.Find(director.companyDirectorId);
+                    if (comDirector != null)
+                    {
+                        comDirector.TITLE = director.title;
+                        comDirector.FIRSTNAME = director.firstName;
+                        comDirector.MIDDLENAME = director.middleName;
+                        comDirector.LASTNAME = director.lastName;
+                        comDirector.GENDER = director.gender;
+                        comDirector.BVN = director.bvn;
+                        comDirector.ADDRESS = director.address;
+                        comDirector.EMAIL = director.email;
+                        comDirector.PHONENUMBER = director.phoneNumber;
+                        comDirector.ISACTIVE = director.isActive;
+                        comDirector.LASTUPDATEDBY = director.createdBy;
+                        comDirector.DATETIMEUPDATED = DateTime.Now;
+                    }
+                }
+                else
+                {
+                    comDirector = new TBL_COMPANY_DIRECTOR()
+                    {
+                        COMPANYDIRECTORID = director.companyDirectorId,
+                        COMPANYID = director.companyId,
+                        TITLE = director.title,
+                        FIRSTNAME = director.firstName,
+                        MIDDLENAME = director.middleName,
+                        LASTNAME = director.lastName,
+                        GENDER = director.gender,
+                        BVN = director.bvn,
+                        ADDRESS = director.address,
+                        EMAIL = director.email,
+                        PHONENUMBER = director.phoneNumber,
+                        ISACTIVE = director.isActive,
+                        CREATEDBY = director.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                        DELETED = false,
+                    };
+                    context.TBL_COMPANY_DIRECTOR.Add(comDirector);
+                }
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CompanyDirectorAddedUpdated,
+                    STAFFID = director.createdBy,
+                    BRANCHID = (short)director.userBranchId,
+                    DETAIL = $"Added new director information {director.firstName} {director.lastName}",
+                    IPADDRESS = director.userIPAddress,
+                    URL = director.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.auditTrail.AddAuditTrail(audit);
+                return context.SaveChanges() > 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public bool DeleteCompanyDirector(int companyDirectorId, UserInfo user)
+        {
+            if (companyDirectorId == 0) return false;
+
+            var comDirector = context.TBL_COMPANY_DIRECTOR.Find(companyDirectorId);
+            if (comDirector != null)
+            {
+                comDirector.DELETED = true;
+                comDirector.DELETEDBY = user.staffId;
+            }
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CompanyDirectorDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = "Deleted Company Director information with companyDirectorId: " + companyDirectorId,
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            return context.SaveChanges() > 0;
+        }
+        public bool ValidateCompanyDirectorBVN(int companyId, string bvn)
+        {
+            var bvnExist = (from a in context.TBL_COMPANY_DIRECTOR where a.COMPANYID == companyId && a.BVN == bvn select a).ToList();
+            if (bvnExist.Any())
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool ValidateCompanyDirectorEmail(int companyId, string email)
+        {
+            var emailExist = (from a in context.TBL_COMPANY_DIRECTOR where a.COMPANYID == companyId && a.EMAIL == email select a).ToList();
+            if (emailExist.Any())
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
+    }
 }

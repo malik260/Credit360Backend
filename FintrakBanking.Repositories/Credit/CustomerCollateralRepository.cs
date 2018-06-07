@@ -73,10 +73,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCollateral(CollateralViewModel entity, byte[] file) //, 
         {
-            //using (var trans = context.Database.BeginTransaction())
-            //{
-               
-                    int collateralId = AddTempCollateralMainForm(entity);
+            using (var trans = context.Database.BeginTransaction())
+            {
+                int collateralId = AddTempCollateralMainForm(entity);
 
                     if (collateralId > 0)
                     {
@@ -105,22 +104,18 @@ namespace FintrakBanking.Repositories.Credit
                         try
                         {
                             saved = context.SaveChanges() != 0;
+                            trans.Commit();
                         }
                         catch (Exception ex)
                         {
-                             //trans.Rollback();
+                             trans.Rollback();
 
                             throw new Exception("Error has occured while creating this collateral");
                         }
                         if (saved) { return true; }
 
-                        //DeleteCollateral(collateralId);
-                        //DeleteCollateralDocument(collateralId);
                     }
-
-
-                
-            //}
+            }
             
             return false;
         }
@@ -3709,8 +3704,8 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool GoForApproval(ApprovalViewModel model)
         {
-            //using (var transaction = context.Database.BeginTransaction())
-            //{
+            using (var transaction = context.Database.BeginTransaction())
+            {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (short)model.approvalStatusId;
@@ -3727,22 +3722,26 @@ namespace FintrakBanking.Repositories.Credit
                     UpdateCutomerCollateralApprovalStatus(model, (short)workflow.StatusId);
                 }
                 
-                    return context.SaveChanges() > 0;
+                    int responce = context.SaveChanges();
+                    transaction.Commit();
+
+                    return responce > 0;
 
                 } catch (Exception ex) {
 
-                    //transaction.Rollback();
+                    transaction.Rollback();
+
 
                     throw new Exception("Error has occured while approving this collateral, kindly try again");
                 }
                 //return false;
-            //}
+            }
         }
 
         public bool GoForPolicyApproval(ApprovalViewModel model)
         {
-            //using (var transaction = context.Database.BeginTransaction())
-            //{
+            using (var transaction = context.Database.BeginTransaction())
+            {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (short)model.approvalStatusId;
@@ -3758,18 +3757,21 @@ namespace FintrakBanking.Repositories.Credit
                     TBL_TEMP_COLLATERAL_ITEM_POLI data = context.TBL_TEMP_COLLATERAL_ITEM_POLI.Where(x => x.TEMPPOLICYID == model.targetId).FirstOrDefault();
                     UpdateItemPolicyApproval(data);
                 }
-                
-                    return context.SaveChanges() > 0;
+
+                    int responce = context.SaveChanges();
+                    transaction.Commit();
+
+                    return responce > 0;
 
                 }
                 catch (Exception ex)
                 {
 
-                    //transaction.Rollback();
+                    transaction.Rollback();
 
                     throw new Exception("Error has occured while approving this insurance policy, kindly try again");
                 }
-            //}
+            }
         }
 
         private void UpdateCutomerCollateralApprovalStatus(ApprovalViewModel ApprovalModel, short status)
