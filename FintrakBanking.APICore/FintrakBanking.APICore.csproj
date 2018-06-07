@@ -895,7 +895,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Web_Local.config">
+    <Content Include="Web_LOcal.config">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Report\FintrakReport.cshtml" />
@@ -919,11 +919,11 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Web_Local.Debug.config">
-      <DependentUpon>Web_Local.config</DependentUpon>
+    <None Include="Web_LOcal.Debug.config">
+      <DependentUpon>Web_LOcal.config</DependentUpon>
     </None>
-    <None Include="Web_Local.Release.config">
-      <DependentUpon>Web_Local.config</DependentUpon>
+    <None Include="Web_LOcal.Release.config">
+      <DependentUpon>Web_LOcal.config</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -20,7 +20,7 @@
             <LocalReport ReportPath="Reports\Report\CollateralVisitation.rdlc" >
                 
                 <datasources>
-                          <rsweb:ReportDataSource DataSourceId="ObjectDataSourceAudit" Name="Audit" />
+                          <rsweb:ReportDataSource DataSourceId="ObjectDataSourceCollateralVisitation" Name="CollateralVisitation" />
                       </datasources>
             </LocalReport>
         </rsweb:ReportViewer>

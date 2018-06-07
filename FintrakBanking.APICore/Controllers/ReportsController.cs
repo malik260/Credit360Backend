@@ -182,7 +182,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
          [HttpPost] [ClaimsAuthorization]
-        [Route("collateral/property-due-for-vistation")]
+        [Route("monitoring/property-due-for-vistation")]
         public HttpResponseMessage GetCollateralpropertyDueForVisitation(DateRange dateRange)
         {
             var token = new TokenDecryptionHelper();

@@ -282,7 +282,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "Credit/Monitoring/ExpiredSelfLiquidatingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/ExpiredSelfLiquidatingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
                 return path;
             }
             catch (Exception ex)
