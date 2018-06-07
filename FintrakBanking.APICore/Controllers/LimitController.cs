@@ -429,23 +429,6 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
-        #region Frequency Type
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("limit-frequency-type")]
-        public HttpResponseMessage GetAllFrequencyType()
-        {
-            try
-            {
-                var response = repo.GetAllFrequencyType();
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-        #endregion
 
         #region Obligor Limit 
       [HttpGet] [ClaimsAuthorization]  

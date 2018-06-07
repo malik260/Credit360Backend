@@ -176,7 +176,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     select new LookupViewModel()
                     {
                         lookupId = data.FREQUENCYTYPEID,
-                        lookupName = data.MODE
+                        lookupName = data.MODE,
+                        isVisible = data.ISVISIBLE,
+                        value = data.VALUE,
                     });
         }
 
@@ -389,6 +391,6 @@ namespace FintrakBanking.Repositories.Setups.General
             return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
         }
 
-       
+        
     }
 }

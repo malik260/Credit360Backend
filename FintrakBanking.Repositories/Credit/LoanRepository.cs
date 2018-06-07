@@ -768,10 +768,9 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
-            if (loans.Any())
-            {
+            if (loans.Any()) {
                 if (loans.First().OUTSTANDINGPRINCIPAL > 0)
-                    throw new ConditionNotMetException("There is already a running CP which has not been paid down");
+                    throw new ConditionNotMetException("The customer already have a running Commercial Loan which has not been paid down");
             }
 
             var principalAmount = from a in context.TBL_LOAN
@@ -5632,6 +5631,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanStatus = a.ACCOUNTSTATUS,
                         loanStatusId = a.LOANSTATUSID
                     });
+        }
+
+        public IEnumerable<LookupViewModel> GetAllFrequencyType()
+        {
+            var frequencyTypes =  generalSetup.GetAllFrequencyTypes();
+            return frequencyTypes;
         }
     }
 }
