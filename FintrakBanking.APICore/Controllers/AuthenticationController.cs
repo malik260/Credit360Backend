@@ -226,7 +226,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
 
                     _context.SaveChanges();
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Wrong username or password" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "1001 Login Failure." });
                 }
 
                 var currUser = foundUser;
@@ -276,9 +276,13 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
+                string str = string.Empty;
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
+                if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
+                {
+                    str = ex.Message.Replace("1001", "");                    
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = str });
             }
         }
 

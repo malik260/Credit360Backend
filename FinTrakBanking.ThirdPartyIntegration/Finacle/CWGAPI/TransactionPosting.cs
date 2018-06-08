@@ -301,15 +301,15 @@
 
                 TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
                 ResponseMessage responseMsg = null;
-                bool result = false;
+            
                
                 if (response.IsSuccessStatusCode)
                 {
-                    result = response.IsSuccessStatusCode;
+                  
                     responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
 
                     var res = new ResponseMessageViewModel
-                    {
+                    { 
                         responseCode = responseApi.responseCode,
                         webRequestDate = responseApi.webRequestDate,
                         webRequestStatus = responseApi.webRequestStatus,                     
@@ -318,7 +318,7 @@
                     responseMsg = new ResponseMessage
                     {
                         APIResponse = res,
-                        APIStatus = result,
+                        APIStatus = response.IsSuccessStatusCode,
                         Message = response
                     };
 
@@ -328,33 +328,13 @@
                     responseMsg = new ResponseMessage
                     {
                         APIResponse = null,
-                        APIStatus = result,
+                        APIStatus = response.IsSuccessStatusCode,
                         Message = response
                     };
                 }
                 handler.Dispose();
                 client.Dispose();
                 return responseMsg;
-
-
-
-
-
-            
-                //if (responseModel.responseCode == "0")
-                //{
-                //  //  AddCustomTransactions(model);
-                //    output = true;
-                //}
-                //else
-                //{
-                //    output = false;
-                //    throw new Exception($"Transaction {responseAPI.webRequestStatus}");
-                //}
-
-                //return output;
-
-
             }
 
 

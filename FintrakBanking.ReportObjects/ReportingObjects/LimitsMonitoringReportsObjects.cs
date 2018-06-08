@@ -140,7 +140,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                              }).ToList();
 
             return loanDetails;
-        }
+        } //done
 
         public List<CollateralViewModel> CollateralPropertyRevaluation(DateTime startDate, DateTime endDate)
         {
@@ -166,7 +166,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                      }).ToList();
 
             return PropertyRevaluation;
-        }
+        } //done
 
         public List<CollateralViewModel> CollateralPropertyDueForVisitation(DateTime startDate, DateTime endDate)
         {
@@ -196,7 +196,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                      }).ToList();
 
             return PropertyDueForVisitation;
-        }
+        } //to do
 
         public List<LoanCovenantDetailViewModel> TurnoverCovenant(DateTime startDate, DateTime endDate)
         {
@@ -228,7 +228,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                  officerEmail = d.EMAIL,
                                                              }).ToList();
             return turnoverCovenant;
-        }
+        } // to do
 
         public List<LoanViewModel> NPL(DateTime startDate, DateTime endDate, int classification)
         {
@@ -280,7 +280,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
           
             
-        }
+        }  //done
 
         public List<LoanViewModel> SelfLiquidatingLoan(DateTime startDate, DateTime endDate)
         {
@@ -310,7 +310,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL
                                                }).ToList();
             return selfLiquidatingLoan;
-        }
+        } //to do
 
         public List<LoanViewModel> OverDraft(DateTime startDate, DateTime endDate)
         {
@@ -340,7 +340,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                }).ToList();
 
             return overDraft;
-        }
+        } //done
 
         public List<LoanViewModel> BondAndGuarantee(DateTime startDate, DateTime endDate , int status)
         {
@@ -406,7 +406,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                         }).ToList();
                 return bondAndGuarantee;
             }
-        }
+        } // to do
 
         public List<LoanViewModel> SendAlertOnAccountWithExeption_Overdrawn(DateTime startDate, DateTime endDate)
         {
@@ -469,7 +469,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return pastDueObligation;
         }
 
-        public List<CollateralViewModel> SendAlertOnInsuranceApprochingExpiration (DateTime startDate, DateTime endDate)
+        public List<CollateralViewModel> InsuranceApprochingExpiration (DateTime startDate, DateTime endDate)
         {
             List<CollateralViewModel> insuranceApprochingExpiration = (from a in context.TBL_COLLATERAL_CUSTOMER
                                                      join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -494,6 +494,63 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                          endDate = (DateTime?)p.ENDDATE,
                                                      }).ToList();
             return insuranceApprochingExpiration;
+        } //to do
+
+        public CollateralHistory getCollateralHistory(int collateralId)
+        {
+            var termLoanCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility),
+                    c => c.COLLATERALCUSTOMERID, lc => lc.COLLATERALCUSTOMERID, (c, lc) => new { c, lc })
+                .Join(context.TBL_LOAN, clc => clc.lc.LOANID, l => l.TERMLOANID, (clc, l) => new { clc, l }) // TBL_LOAN
+                .Select(o => new CollateralHistoryList
+                {
+                    customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
+                    loanRef = o.l.LOANREFERENCENUMBER,
+                    expirationDate = o.l.MATURITYDATE,
+                    collateralValue = o.clc.c.COLLATERALVALUE,
+                    outstandingPrincipal = o.l.OUTSTANDINGPRINCIPAL,
+                    runningPrincipal = o.l.PRINCIPALAMOUNT,
+                    dateUsed = o.clc.lc.DATETIMECREATED,
+                    haircut = o.clc.c.HAIRCUT,
+                    exchangeRate = o.l.EXCHANGERATE,
+                    approvedLoanAmount = o.l.PRINCIPALAMOUNT,
+                });
+
+            var odCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
+                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility),
+                    c => c.COLLATERALCUSTOMERID, lc => lc.COLLATERALCUSTOMERID, (c, lc) => new { c, lc })
+                .Join(context.TBL_LOAN_REVOLVING, clc => clc.lc.LOANID, l => l.REVOLVINGLOANID, (clc, l) => new { clc, l }) // TBL_LOAN_REVOLVING
+                .Select(o => new CollateralHistoryList
+                {
+                    customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
+                    loanRef = o.l.LOANREFERENCENUMBER,
+                    expirationDate = o.l.MATURITYDATE,
+                    collateralValue = o.clc.c.COLLATERALVALUE,
+                    outstandingPrincipal = o.l.OVERDRAFTLIMIT,
+                    runningPrincipal = o.l.OVERDRAFTLIMIT,
+                    dateUsed = o.clc.lc.DATETIMECREATED,
+                    haircut = o.clc.c.HAIRCUT,
+                    exchangeRate = o.l.EXCHANGERATE,
+                    approvedLoanAmount = o.l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                });
+
+            var collaterals = new CollateralHistory();
+
+            collaterals.usage = termLoanCollaterals.Union(odCollaterals);
+            collaterals.totalAmountUsedByOutstanding = collaterals.usage.Sum(x => x.outstandingPrincipal);
+            collaterals.totalAmountUsedByPrincipal = collaterals.usage.Sum(x => x.approvedLoanAmount);
+            collaterals.collateralValue = collaterals.usage.Any() ? collaterals.usage.Max(x => x.collateralValue) : 0;
+            collaterals.availableValueByPrincipal = collaterals.collateralValue - collaterals.totalAmountUsedByPrincipal;
+            collaterals.availableValueByOutstanding = collaterals.collateralValue - collaterals.totalAmountUsedByOutstanding;
+
+            /*
+            var testL = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false).ToList();// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
+            var test = termLoanCollaterals.Union(odCollaterals).ToList();
+            var testTL = termLoanCollaterals.ToList();
+            var testOD = odCollaterals.ToList();
+            */
+
+            return collaterals;
         }
 
     }

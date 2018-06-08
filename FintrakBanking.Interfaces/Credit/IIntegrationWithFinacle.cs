@@ -31,5 +31,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<CustomerViewModels> GetCustomerByAccountsNumber(string customerAccount);
         List<CasaViewModel> GetCustomerAccountsBalanceByCustomerCode(string customerCode);
         string GetGlAccountCode(int glAccountId, int currencyId, int branchId);
+        CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode);
     }
 }

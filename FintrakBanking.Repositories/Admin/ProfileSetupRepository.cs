@@ -9,7 +9,7 @@ using FintrakBanking.ViewModels.Admin;
 
 namespace FintrakBanking.Repositories
 {
-    public class ProfileSetupRepository :IProfileSetupRepository
+    public class ProfileSetupRepository : IProfileSetupRepository
     {
         private FinTrakBankingContext _context;
 
@@ -19,7 +19,7 @@ namespace FintrakBanking.Repositories
         }
 
 
-        public ProfileSettingViewModel ProfileConfiguration(ProfileSettingViewModel entity)
+        public ProfileSettingViewModel UpdateProfileConfiguration(ProfileSettingViewModel entity)
         {
             var settings = _context.TBL_PROFILE_SETTING.FirstOrDefault(p => p.PROFILESETTINGID == entity.profileSettingId);
             if (settings != null)
@@ -35,6 +35,9 @@ namespace FintrakBanking.Repositories
                 settings.REQUIRESQUESTIONANDANSWER = entity.requiresQuestionAndAnswer;
                 settings.REQUIRESUNIQUEEMAIL = entity.requiresUniqueEmail;
                 settings.SESSIONTIMEOUT = entity.sessionTimeOut;
+                settings.BusinessStartTime = entity.BusinessStartTime;
+                settings.BusinessCloseTime = entity.BusinessCloseTime;
+
                 _context.SaveChanges() ;
             }
             else
@@ -43,6 +46,32 @@ namespace FintrakBanking.Repositories
             }
 
             return entity;
+        }
+
+        public ProfileSettingViewModel GetProfileConfiguration()
+        {
+            var settings = _context.TBL_PROFILE_SETTING.Select(p => new ProfileSettingViewModel()
+            {
+                allowPasswordReuseAfter = p.ALLOWPASSWORDREUSEAFTER,
+                enablePasswordReset = p.ENABLEPASSWORDRESET,
+                enablePasswordRetrieval = p.ENABLEPASSWORDRETRIEVAL,
+                expirePasswordAfter = p.EXPIREPASSWORDAFTER,
+                maxInvalidPasswordAttempts = p.MAXINVALIDPASSWORDATTEMPTS,
+                maxPeriodOfUserInactivity = p.MAXPERIODOFUSERINACTIVITY,
+                minrequiredNonAlphanumericChar = p.MINREQUIREDNONALPHANUMERICCHAR,
+                minRequiredPasswordLength = p.MINREQUIREDPASSWORDLENGTH,
+                requiresQuestionAndAnswer = p.REQUIRESQUESTIONANDANSWER,
+                requiresUniqueEmail = p.REQUIRESUNIQUEEMAIL,
+                sessionTimeOut = p.SESSIONTIMEOUT,
+                BusinessStartTime = p.BusinessStartTime,
+                BusinessCloseTime = p.BusinessCloseTime,
+            }).FirstOrDefault();
+            if (settings == null)
+            { 
+                throw new Exception("Record not fund");
+            }
+
+            return settings;
         }
     }
 }

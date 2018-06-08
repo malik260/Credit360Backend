@@ -299,63 +299,63 @@ namespace WinApp
 
         private void button3_Click_1(object sender, EventArgs e)
         {
-            //List<FinanceTransactionViewModel> tran = new List<FinanceTransactionViewModel>();
+            List<FinanceTransactionViewModel> tran = new List<FinanceTransactionViewModel>();
 
-            //FinanceTransactionViewModel tran1 = new FinanceTransactionViewModel();
+            FinanceTransactionViewModel tran1 = new FinanceTransactionViewModel();
 
-            //{
+            {
 
-            //    tran1.operationId = 7;
-            //    tran1.sourceReferenceNumber = "C10000";
-            //    tran1.description = "yes";
-            //    tran1.batchCode = "22222";
-            //    tran1.currencyId = 1;
-            //    tran1.casaAccountId = 202236746;
-            //    tran1.debitAmount = 200000;
-            //    tran1.valueDate = DateTime.Now;
+                tran1.operationId = 7;
+                tran1.sourceReferenceNumber = "C10000";
+                tran1.description = "yes";
+                tran1.batchCode = "22222";
+                tran1.currencyId = 1;
+                tran1.casaAccountId = 202236746;
+                tran1.debitAmount = 200000;
+                tran1.valueDate = DateTime.Now;
 
 
 
-            //}
-            //tran.Add(tran1);
-            //FinanceTransactionViewModel tran2 = new FinanceTransactionViewModel();
-            //{
-            //    tran2.operationId = 3;
-            //    tran2.sourceReferenceNumber = "D10000";
-            //    tran2.description = "no";
-            //    tran2.batchCode = "22222";
-            //    tran2.currencyId = 1;
-            //    tran2.casaAccountId = 2004169347;
-            //    tran2.creditAmount = 200000;
-            //    tran2.valueDate = DateTime.Now;
+            }
+            tran.Add(tran1);
+            FinanceTransactionViewModel tran2 = new FinanceTransactionViewModel();
+            {
+                tran2.operationId = 3;
+                tran2.sourceReferenceNumber = "D10000";
+                tran2.description = "no";
+                tran2.batchCode = "22222";
+                tran2.currencyId = 1;
+                tran2.casaAccountId = 2004169347;
+                tran2.creditAmount = 200000;
+                tran2.valueDate = DateTime.Now;
 
-            //}
-            //tran.Add(tran2);
+            }
+            tran.Add(tran2);
 
-            //var result = _integration.PostTransactions(tran);
+            var result = _integration.PostTransactions(tran);
 
             // var result = _integration.GetCustomerByAccountsNumber(textBox2.Text);
             //  "003";
             // "999";
 
-            DateTime experyDate  =  DateTime.Now.Date.AddMonths(12);
-             
-            DateTime dat = DateTime.Now.Date;
-            var datstr = dat ;
-            var result = _integration.OverDraftNormal(new OverDraftNormalViewModel()
-            {
-                sanctionReferenceNumber = "12311358",
-                accountNumber = textBox2.Text, // "1000451805",
-                applicationDate = datstr.ToShortDateString(),
-                documentDate = datstr.ToShortDateString(),
-                expiryDate = experyDate.ToShortDateString(),
-                reviewedDate = datstr.ToShortDateString(),
-                sanctionAuthorizer = "999",
-                sanctionLevel = "003",
-                sanctionDate = datstr.ToShortDateString(),
-                sanctionLimit = 100000.ToString()
+            //DateTime experyDate  =  DateTime.Now.Date.AddMonths(12);
 
-            });
+            //DateTime dat = DateTime.Now.Date;
+            //var datstr = dat ;
+            //var result = _integration.OverDraftNormal(new OverDraftNormalViewModel()
+            //{
+            //    sanctionReferenceNumber = "12311358",
+            //    accountNumber = textBox2.Text, // "1000451805",
+            //    applicationDate = datstr.ToShortDateString(),
+            //    documentDate = datstr.ToShortDateString(),
+            //    expiryDate = experyDate.ToShortDateString(),
+            //    reviewedDate = datstr.ToShortDateString(),
+            //    sanctionAuthorizer = "999",
+            //    sanctionLevel = "003",
+            //    sanctionDate = datstr.ToShortDateString(),
+            //    sanctionLimit = 100000.ToString()
+
+            //});
 
             // cwpAIP.ValidateTDAccountNumber("1014010029564");
         }

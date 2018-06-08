@@ -248,6 +248,7 @@ namespace FintrakBanking.Repositories.Credit
                         addStaging.VALUEDATE = item.date;
                         addStaging.TRANSACTIONTYPE = "BP";
                         addStaging.BANKID = "01";
+                        addStaging.SYSTEMDATETIME = item.date;
                         this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                         context.SaveChanges();
                         if (setup.USE_THIRD_PARTY_INTEGRATION == false)
@@ -1477,7 +1478,7 @@ namespace FintrakBanking.Repositories.Credit
                             amount = (decimal)a.AMT,
                             debitGlAccount = a.DR_ACCT,
                             creditGlAccount = a.CR_ACCT,
-                            currencyCode = a.REF_CRNCY_CODE,
+                            //currencyCode = a.REF_CRNCY_CODE,
                             currencyRate = (double)a.RATE,
                             currencyRateCode = a.RATE_CODE,
                             description = a.NARRATION,
@@ -1494,12 +1495,26 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in data)
             {
-                TBL_CUSTOM_TRANSACTION_BULK result = (from p in context.TBL_CUSTOM_TRANSACTION_BULK
-                                                      where p.BATCHID == item.batchId && p.BATCHREFID
+                var result = (from p in context.TBL_CUSTOM_TRANSACTION_BULK
+                              where p.BATCHID == item.batchId && p.BATCHREFID
                                                       == item.batchRefId
-                                   select p).SingleOrDefault();
-                result.AMOUNTCOLLECTED = item.amountCollected;
-                output = context.SaveChanges()> 0;
+                               select p).SingleOrDefault();
+                              //select new FinanceTransactionStagingViewModel()
+                              //{
+                              //    amountCollected = p.AMOUNTCOLLECTED,
+
+                              //}).SingleOrDefault();
+                if (result != null)
+                {
+                    result.AMOUNTCOLLECTED = item.amountCollected;
+                    output = context.SaveChanges() > 0;
+                }
+                //else
+                //{
+
+                //}
+                //result.AMOUNTCOLLECTED = item.amountCollected;
+                //output = context.SaveChanges()> 0;
             }
             //this.stagingContext.FINTRAK_TRAN_PROC_DETAILS.AddRange(staging);
             //context.SaveChanges();
@@ -11701,7 +11716,7 @@ namespace FintrakBanking.Repositories.Credit
                         //trans.Commit();
                         output = true;
                     }
-                    output = false;
+                    //output = false;
             //    }
             //    catch (Exception ex)
             //    {
@@ -12094,7 +12109,8 @@ namespace FintrakBanking.Repositories.Credit
                            numberofTranchesBooked = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking).Count(),
                            numberofrunningTranches = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Count(),
                            customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
-                           customerCode = c.CUSTOMERCODE
+                           customerCode = c.CUSTOMERCODE,
+
                        };
 
             return data.ToList();
