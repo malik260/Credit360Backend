@@ -1544,5 +1544,67 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         #endregion Workflow Tracker
 
+        #region Loan Disbursement 
+
+        //IEnumerable<LoanDisbursementViewModel> GetAllLoanDisbursement(int loanId);
+        //bool AddUpdateLoanDisbursement(LoanDisbursementViewModel entity);
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-disbursement")]
+        public HttpResponseMessage GetAllLoanDisbursement(int loanId)
+        {
+            try
+            {
+                var data = repo.GetAllLoanDisbursement(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-disbursement")]
+        public HttpResponseMessage AddUpdateLoanDisbursement([FromBody]LoanDisbursementViewModel entity)
+        {
+            try
+            {
+                string createUpdate = "";
+                if (entity.loanDisbursementId != 0 || entity.loanDisbursementId < 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                }
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = (short)token.GetCompanyId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
+
+                var data = repo.AddUpdateLoanDisbursement(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        #endregion
     }
 }

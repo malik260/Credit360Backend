@@ -415,8 +415,8 @@ namespace FintrakBanking.Repositories.Credit
 
                         where a.COMPANYID == companyId && a.DELETED == false
                               && b.STATUSID == (int)ApprovalStatusEnum.Approved &&
-                               (a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.OfferLetterReviewCompleted
-                               || a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.AvailmentInProgress)
+                               (a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.OfferLetterReviewInProgress
+                               || a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted)
                         select new CamProcessedLoanViewModel
                         {
                             loanApplicationId = a.LOANAPPLICATIONID,

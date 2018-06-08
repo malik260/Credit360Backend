@@ -116,6 +116,7 @@
     <Compile Include="CASA\CasaRepository.cs" />
     <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="Helper\DataExport.cs" />
+    <Compile Include="Setups\Credit\FSAccountCreationRepository.cs" />
     <Compile Include="Setups\Finance\CustomChartOfAccountRepository.cs" />
     <Compile Include="Validetion\CreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\LoanPerformanceRepository.cs" />

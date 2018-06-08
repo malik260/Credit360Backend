@@ -2829,8 +2829,8 @@ namespace FintrakBanking.Repositories.Customer
                     riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                     customerBVN = a.CUSTOMERBVN,
                 }).FirstOrDefault();
-            if (USE_THIRD_PARTY_INTEGRATION)
-                data.isPoliticallyExposed = finacle.GetExposePersonStatus(data.customerCode);
+       //     if (USE_THIRD_PARTY_INTEGRATION)
+       //         data.isPoliticallyExposed = finacle.GetExposePersonStatus(data.customerCode);
 
             return data;
         }
@@ -3135,7 +3135,8 @@ namespace FintrakBanking.Repositories.Customer
             short directorTypeId)
         {
             var companyDirectors = (from s in context.TBL_CUSTOMER_COMPANY_DIRECTOR
-                where s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == directorTypeId
+                                    join dt in context.TBL_CUSTOMER_COMPANY_DIREC_TYP on s.COMPANYDIRECTORTYPEID equals dt.COMPANYDIRECTORYTYPEID
+                                    where s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == directorTypeId
                 select new CustomerCompanyDirectorsViewModels()
                 {
                     companyDirectorId = s.COMPANYDIRECTORID,
@@ -3149,8 +3150,7 @@ namespace FintrakBanking.Repositories.Customer
                     companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                     rcNumber = s.REGISTRATION_NUMBER,
                     taxNumber = s.TAX_NUMBER,
-
-                    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                    companyDirectorTypeName = dt.COMPANYDIRECTORYTYPENAME,
                     customerId = s.CUSTOMERID,
                     customerName = s.FIRSTNAME + " " + s.SURNAME,
                     address = s.ADDRESS,
@@ -3179,7 +3179,8 @@ namespace FintrakBanking.Repositories.Customer
             short directorTypeId, int targetId)
         {
             var companyDirectors = (from s in context.TBL_TEMP_CUSTOMER_DIRECTOR
-                where s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == directorTypeId
+                                    join dt in context.TBL_CUSTOMER_COMPANY_DIREC_TYP on s.COMPANYDIRECTORTYPEID equals dt.COMPANYDIRECTORYTYPEID
+                                    where s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == directorTypeId
                                                  && s.TEMPCOMPANYDIRECTORID == targetId
                 select new CustomerCompanyDirectorsViewModels()
                 {
@@ -3194,8 +3195,7 @@ namespace FintrakBanking.Repositories.Customer
                     companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                     rcNumber = s.REGISTRATION_NUMBER,
                     taxNumber = s.TAX_NUMBER,
-
-                    //companyDirectorTypeName = context.TBL_CUSTOMER_COMPANY_DIREC_TYP.FirstOrDefault(x => x.COMPANYDIRECTORYTYPEID == s.COMPANYDIRECTORTYPEID).COMPANYDIRECTORYTYPENAME,
+                    companyDirectorTypeName =dt.COMPANYDIRECTORYTYPENAME,
                     customerId = s.CUSTOMERID,
                     customerName = s.FIRSTNAME + " " + s.SURNAME,
                     address = s.ADDRESS,
@@ -3224,7 +3224,8 @@ namespace FintrakBanking.Repositories.Customer
             short customerTypeId)
         {
             var companyDirectors = (from s in context.TBL_CUSTOMER_COMPANY_DIRECTOR
-                where s.CUSTOMERID == customerId &&
+                                    join dt in context.TBL_CUSTOMER_COMPANY_DIREC_TYP on s.COMPANYDIRECTORTYPEID equals dt.COMPANYDIRECTORYTYPEID
+                                    where s.CUSTOMERID == customerId &&
                       s.COMPANYDIRECTORTYPEID == (short) CompanyDirectorTypeEnum.Shareholder &&
                       s.CUSTOMERTYPEID == customerTypeId
                 select new CustomerCompanyDirectorsViewModels()
@@ -3241,7 +3242,7 @@ namespace FintrakBanking.Repositories.Customer
                     companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                     rcNumber = s.REGISTRATION_NUMBER,
                     taxNumber = s.TAX_NUMBER,
-                    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                    companyDirectorTypeName = dt.COMPANYDIRECTORYTYPENAME,
                     customerId = s.CUSTOMERID,
                     customerName = s.FIRSTNAME + " " + s.SURNAME,
                     address = s.ADDRESS,
@@ -3255,6 +3256,7 @@ namespace FintrakBanking.Repositories.Customer
             short customerTypeId, int targetId)
         {
             var companyDirectors = (from s in context.TBL_TEMP_CUSTOMER_DIRECTOR
+                                    join dt in context.TBL_CUSTOMER_COMPANY_DIREC_TYP on s.COMPANYDIRECTORTYPEID equals dt.COMPANYDIRECTORYTYPEID
                 where s.CUSTOMERID == customerId &&
                       s.COMPANYDIRECTORTYPEID == (short) CompanyDirectorTypeEnum.Shareholder &&
                       s.CUSTOMERTYPEID == customerTypeId
@@ -3273,7 +3275,7 @@ namespace FintrakBanking.Repositories.Customer
                     companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                     rcNumber = s.REGISTRATION_NUMBER,
                     taxNumber = s.TAX_NUMBER,
-                    // companyDirectorTypeName = context.TBL_CUSTOMER_COMPANY_DIREC_TYP.FirstOrDefault(x => x.COMPANYDIRECTORYTYPEID == s.COMPANYDIRECTORTYPEID).COMPANYDIRECTORYTYPENAME,
+                     companyDirectorTypeName = dt.COMPANYDIRECTORYTYPENAME,
                     customerId = s.CUSTOMERID,
                     customerName = s.FIRSTNAME + " " + s.SURNAME,
                     address = s.ADDRESS,
@@ -3287,11 +3289,12 @@ namespace FintrakBanking.Repositories.Customer
             short clientTypeId)
         {
             var clientOrSupplier = (from cs in context.TBL_CUSTOMER_CLIENT_SUPPLIER
+                                    join ct in context.TBL_CUSTOMER_TYPE on cs.CUSTOMERTYPEID equals ct.CUSTOMERTYPEID
                                     where cs.CUSTOMERID == customerId && cs.CLIENT_SUPPLIERTYPEID == clientTypeId
                                     select new CustomerClientOrSupplierViewModels()
                                     {
                                         customerTypeId = cs.CUSTOMERTYPEID,
-                                        // customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
+                                        customerTypeName = ct.NAME,
                                         client_SupplierId = cs.CLIENT_SUPPLIERID,
                                         clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
                                         firstName = cs.FIRSTNAME,

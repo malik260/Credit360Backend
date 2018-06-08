@@ -73,6 +73,16 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
 
+        public bool ValidateFSCaption(string captionName)
+        {
+            var exist = from a in context.TBL_CUSTOMER_FS_CAPTION where a.FSCAPTIONNAME == captionName select a;
+            if (exist.Any())
+            {
+                return true;
+            }
+            return false;
+        }
+
         public bool DeleteCustomerFSCaption(int fsCaptionId, UserInfo user)
         {
             var data = context.TBL_CUSTOMER_FS_CAPTION.Find(fsCaptionId);
@@ -109,6 +119,7 @@ namespace FintrakBanking.Repositories.Customer
                             fsCaptionId = a.FSCAPTIONID,
                             fsCaptionName = a.FSCAPTIONNAME,
                             fsCaptionGroupId = a.FSCAPTIONGROUPID,
+                            position = a.POSITION,
                             fsCaptionGroupName = a.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME,
                             isRatio = a.ISRATIO,
                             dateTimeCreated = a.DATETIMECREATED,
@@ -198,6 +209,7 @@ namespace FintrakBanking.Repositories.Customer
             data.FSCAPTIONNAME = entity.fsCaptionName;
             data.FSCAPTIONGROUPID = entity.fsCaptionGroupId;
             data.ISRATIO = entity.isRatio;
+            data.POSITION = entity.position;
             data.LASTUPDATEDBY = (int)entity.createdBy;
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
 

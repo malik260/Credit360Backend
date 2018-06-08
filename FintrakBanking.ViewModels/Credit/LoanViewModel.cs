@@ -780,6 +780,25 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class LoanDisbursementViewModel : GeneralEntity
+    { 
+    
+        public int loanDisbursementId { get; set; }
+
+        public int termLoanId { get; set; }
+
+        public string  accountNumber { get; set; }
+
+        public decimal amountDisbursed { get; set; }
+
+        public string customerName { get; set; }
+
+        public string loanReferenceNo { get; set; }
+
+
+
+    }
+
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
     //    public int maturityInstructionId { get; set; }

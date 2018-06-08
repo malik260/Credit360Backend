@@ -125,5 +125,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CustomerCompanyInfomationViewModels> getLoanCustomerCompanyInformation(int customerId);
 
+        #region Loan Disbursement 
+        IEnumerable<LoanDisbursementViewModel> GetAllLoanDisbursement(int loanId);
+        bool AddUpdateLoanDisbursement(LoanDisbursementViewModel entity);
+        #endregion
     }
 }

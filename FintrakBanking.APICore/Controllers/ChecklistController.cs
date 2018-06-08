@@ -360,7 +360,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
+                return Request.CreateResponse(HttpStatusCode.InternalServerError,
                  new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
 
