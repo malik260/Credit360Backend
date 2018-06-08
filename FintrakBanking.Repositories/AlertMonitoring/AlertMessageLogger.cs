@@ -5,6 +5,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.AlertMonitoring;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels.AlertMonitoring;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
@@ -2857,36 +2858,104 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             return context.TBL_MONITORING_ALERT_SETUP.ToList();
         }
 
-        private void CreateSLAApprovalNotificationMethod(string bodyContent, string messageTtile, string emailRecipient)
+        private void CreateSLAApprovalNotificationMethod(string bodyContent, string ownerMessageSubject, string email,int targetId, int operationId)
         {
-           // string body = "Dear "
-            //message = new TBL_MESSAGE_LOG // INITIATOR
-            //{
-            //    TOADDRESS = owner.EMAIL,
-            //    MESSAGESUBJECT = ownerMessageSubject,
-            //    MESSAGEBODY = ownerMessageBody,
-            //    MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-            //    MESSAGETYPEID = (short)MessageTypeEnum.Email,
-            //    FROMADDRESS = this.support,
-            //    DATETIMERECEIVED = DateTime.Now,
-            //    SENDONDATETIME = DateTime.Now,
-            //    TARGETID = targetId,
-            //    OPERATIONID = operationId
-            //};
-            //context.TBL_MESSAGE_LOG.Add(message);
+          var  message = new TBL_MESSAGE_LOG // INITIATOR
+            {
+                TOADDRESS = email,
+                MESSAGESUBJECT = ownerMessageSubject,
+                MESSAGEBODY = bodyContent,
+                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                MESSAGETYPEID = (short)MessageTypeEnum.Email,
+                FROMADDRESS = "sendere amail",
+                DATETIMERECEIVED = DateTime.Now,
+                SENDONDATETIME = DateTime.Now,
+                TARGETID = targetId,
+                OPERATIONID = operationId
+          };
+            context.TBL_MESSAGE_LOG.Add(message);
+            context.SaveChanges();
         }
 
-        public void SLAApprovalNotification()
+        public void LogSLAApprovalNotification()
         {
-          var notification =  sla.RoleBasedApprovalNotification();
+            var notification = sla.RoleBasedApprovalNotification().Union(sla.StaffSetupBasedApprovalNotification()).Union(sla.StaffSpecificBasedApprovalNotification());
 
-            foreach (var x in notification)
+            foreach (var slaAlert in notification)
             {
-                if (x.operationId == (int)OperationsEnum.OfferLetterApproval)
+                if (slaAlert.operationId == (int)OperationsEnum.LoanApplication || slaAlert.operationId == (int)OperationsEnum.CAM || slaAlert.operationId == (int)OperationsEnum.OfferLetterApproval )
                 {
-                    
+                  var loanRef =  context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == slaAlert.targetId).FirstOrDefault();
+
+                    var operationName = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)slaAlert.operationId).FirstOrDefault();
+
+                    var staffDetail = context.TBL_STAFF.Where(x => x.STAFFID == slaAlert.toStaffId).FirstOrDefault();
+
+                    if (loanRef!=null && operationName!=null)
+                    {
+                        LogSLAApprovalNotification(loanRef.APPLICATIONREFERENCENUMBER, operationName.OPERATIONNAME, slaAlert, staffDetail);
+                    }
+                   
+                }
+
+                if (slaAlert.operationId == (int)OperationsEnum.ItemPolicyApproval || slaAlert.operationId == (int)OperationsEnum.CollateralMaintenance || slaAlert.operationId == (int)OperationsEnum.CollateralApproval)
+                {
+                    var loanRef = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == slaAlert.targetId).FirstOrDefault();
+
+                    var operationName = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)slaAlert.operationId).FirstOrDefault();
+
+                    var staffDetail = context.TBL_STAFF.Where(x => x.STAFFID == slaAlert.toStaffId).FirstOrDefault();
+
+                    if (loanRef != null && operationName != null)
+                    {
+                        LogSLAApprovalNotification(loanRef.APPLICATIONREFERENCENUMBER, operationName.OPERATIONNAME, slaAlert, staffDetail);
+                    }
+
                 }
             }
+        }
+
+        private void LogSLAApprovalNotification(string refNo, string operation, SLANotificationViewModel sla, TBL_STAFF staff)
+        {
+            var bodyContent = @"
+                      <p>Dear Sir/Ma,</p>
+                      <p>This is to bring to your attention that you have a pending " + operation +
+                         @" approval request with a Loan Reference Number : " + refNo;
+            var bPart = @" which will be due by " + sla.salDateLine;
+            var cPart = @" Kindly you swift response is needed. <br /><br />Note: Kindly be informed that your suppervisor has been notified of this task. </p>
+                      <p>Thanks,<br>Fintrak Credit 360</br></p>
+                      ";
+            var EmailSubject = operation+ "Approval Notification";
+
+            string templateUrl = "EmailTemplates\\Monitoring.html";
+            string mailBody = EmailHelpers.PopulateBody(bodyContent + bPart + cPart, templateUrl);
+
+            CreateSLAApprovalNotificationMethod(mailBody, EmailSubject, sla.staffEmail, sla.targetId, sla.operationId);
+
+            if (staff.SUPERVISOR_STAFFID != null)
+            {
+                var supervisorDetail = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                var name = staff.FIRSTNAME + " " + staff.LASTNAME + " " + staff.MIDDLENAME;
+
+                LogSupervisorEscalationForSLAApprovalNotification(name, refNo, operation, supervisorDetail.EMAIL, sla.targetId, sla.operationId);
+            }
+
+        }
+        private void LogSupervisorEscalationForSLAApprovalNotification(string staffName, string refNo, string operation, string email, int targetId, int operationId)
+        {
+                        var bodyContent = @"
+                      <p>Dear Sir/Ma,</p>
+                      <p>Kindly be informed that <b>" + operation + "<b /> approval request has been sent to : <b>" + staffName +
+                           "<b /> who is under your supervision </p><br /><br />" +
+                     " <p>Thanks,<br>Fintrak Credit 360</br></p>";
+                        var EmailSubject = operation + "Approval Notification";
+
+            string templateUrl = "EmailTemplates\\Monitoring.html";
+                        string mailBody = EmailHelpers.PopulateBody(bodyContent, templateUrl);
+
+                        CreateSLAApprovalNotificationMethod(mailBody, EmailSubject, email, targetId, operationId);
+
         }
     }
 }
