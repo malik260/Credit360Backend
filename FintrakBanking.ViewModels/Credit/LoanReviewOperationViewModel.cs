@@ -226,8 +226,12 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanReviewApplicationId { get; set; }
         public int loanId { get; set; }
         public int productTypeId { get; set; }
+
         public int operationTypeId { get; set; }
         public string reviewDetails { get; set; }
+
+        public List<applicationDetails> applicationDetails { get; set; }
+
         public float interateRate { get; set; }
         public decimal? prepayment { get; set; }
         public int principalFrequencyTypeId { get; set; }
@@ -264,6 +268,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public string branchName { get; set; }
         public string approvalState { get; set; }
+    }
+
+    public class applicationDetails
+    {
+        public int operationTypeId { get; set; }
+        public string reviewDetails { get; set; }
+        public string operationType { get; set; } // not relevant
     }
 
     public class SelectListViewModel

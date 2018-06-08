@@ -70,5 +70,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_STAFF TBL_STAFF2 { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF3 { get; set; }
+   
     }
 }

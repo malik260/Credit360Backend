@@ -100,5 +100,6 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
 
         List<TBL_MONITORING_ALERT_SETUP> getAlertMessageSetting();
 
+        void LogSLAApprovalNotification();
     }
 }

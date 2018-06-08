@@ -74,6 +74,7 @@ namespace FintrakBanking.Common.Enum
         LoanPerformance = 62,
         CommercialPaperLoanBooking = 63,
         LoanRecovery = 64,
-        ChecklistOperation = 65
+        ChecklistOperation = 65,
+        OverrideRequest= 66
     }
 }

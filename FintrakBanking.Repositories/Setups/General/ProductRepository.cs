@@ -538,9 +538,6 @@ namespace FintrakBanking.Repositories.Setups.General
                                    principalBalanceGl = data.PRINCIPALBALANCEGL,
                                    principalBalanceGlCode = (data.PRINCIPALBALANCEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                                   principalBalanceGl2 = data.PRINCIPALBALANCEGL2,
-                                   principalBalanceGl2Code = (data.PRINCIPALBALANCEGL2.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
-
                                    interestIncomeExpenseGl = data.INTERESTINCOMEEXPENSEGL,
                                    interestIncomeExpenseGlCode = (data.INTERESTINCOMEEXPENSEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
@@ -565,8 +562,23 @@ namespace FintrakBanking.Repositories.Setups.General
                                    approvedBy = data.APPROVEDBY,
                                    completed = data.COMPLETED,
                                    approved = data.APPROVED,
-                                 
-                               
+                                   ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == data.PRODUCTID).Select(d => new ProductBehaviourViewModel()
+                                   {
+                                       customerLimit = d.CUSTOMER_LIMIT,
+                                       collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                                       collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+                                       productLimit = d.PRODUCT_LIMIT,
+                                       isInvoiceBased = d.ISINVOICEBASED
+
+                                   }).FirstOrDefault(),
+                                   currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == data.PRODUCTID && curr.DELETED != false)
+                                   .Select(c => new ProductCurrencyViewModel()
+                                   {
+                                       productId = c.PRODUCTID,
+                                       productCurrencyId = c.PRODUCTCURRENCYID,
+                                       currencyId = c.CURRENCYID,
+                                       currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
+                                   }).ToList(),
 
                                    dateTimeUpdated = data.DATETIMEUPDATED,
                                    deleted = data.DELETED,
@@ -589,41 +601,109 @@ namespace FintrakBanking.Repositories.Setups.General
 
                                });
 
-            // from p in productData
-            //join c in context.TBL_PRODUCT_CURRENCY on p.productId equals c.PRODUCTID
-            //where p.deleted != false
-            //select new ProductCurrencyViewModel
-            //{
-            //    productCurrencyId = c.PRODUCTCURRENCYID,
-            //    currencyId = c.CURRENCYID,
-            //    currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
-            //};
 
-            
-            foreach (var item in productData)
-            {
-                item.currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
-                              .Select(c => new ProductCurrencyViewModel()
-                              {
-                                  productCurrencyId = c.PRODUCTCURRENCYID,
-                                  currencyId = c.CURRENCYID,
-                                  currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
-                              }).ToList();
+//            var productData = (from data in context.TBL_PRODUCT
+//                               select new ProductViewModel()
+//                               {
+//                                   productId = data.PRODUCTID,
+//                                   companyId = data.COMPANYID,
+//                                   productTypeId = data.PRODUCTTYPEID,
+//                                   productTypeName = data.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+//                                   productGroupName = data.TBL_PRODUCT_TYPE.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
+//                                   productCategoryId = data.PRODUCTCATEGORYID,
+//                                   productCategoryName = data.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
+//                                   productClassId = data.PRODUCTCLASSID,
+//                                   productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
-                item.ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
-                {
-                    customerLimit = d.CUSTOMER_LIMIT,
-                    collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
-                    collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
-                    productLimit = d.PRODUCT_LIMIT,
-                    isInvoiceBased = d.ISINVOICEBASED,
-                    requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
-                    allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false,
-                    isTemporaryOverDraft = d.ISTEMPORARYOVERDRAFT != null ? (bool)d.ISTEMPORARYOVERDRAFT : false,
+//                                   customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
 
-                }).FirstOrDefault();
+//                                   productPriceIndexId = data.PRODUCTPRICEINDEXID,
+//                                   productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+//                                   productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
 
-            }
+//                                   productCode = data.PRODUCTCODE,
+//                                   productName = data.PRODUCTNAME,
+//                                   productDescription = data.PRODUCTDESCRIPTION,
+
+//                                   productGroupId = data.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
+
+//                                   principalBalanceGl = data.PRINCIPALBALANCEGL,
+//                                   principalBalanceGlCode = (data.PRINCIPALBALANCEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+
+//                                   principalBalanceGl2 = data.PRINCIPALBALANCEGL2,
+//                                   principalBalanceGl2Code = (data.PRINCIPALBALANCEGL2.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+
+//                                   interestIncomeExpenseGl = data.INTERESTINCOMEEXPENSEGL,
+//                                   interestIncomeExpenseGlCode = (data.INTERESTINCOMEEXPENSEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+
+//                                   interestReceivablePayableGl = data.INTERESTRECEIVABLEPAYABLEGL,
+//                                   interestReceivablePayableGlCode = (data.INTERESTRECEIVABLEPAYABLEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+
+//                                   dormantGl = data.DORMANTGL,
+//                                   premiumDiscountGl = data.PREMIUMDISCOUNTGL,
+
+//                                   dealTypeId = data.DEALTYPEID,
+//                                   dealTypeName = data.TBL_DEAL_TYPE.DEALTYPENAME,
+//                                   dealClassificationId = data.DEALCLASSIFICATIONID,
+//                                   dealClassificationName = data.TBL_DEAL_CLASSIFICATION.CLASSIFICATION,
+//                                   dayCountId = data.DAYCOUNTCONVENTIONID,
+//                                   dayCountName = data.TBL_DAY_COUNT_CONVENTION.DAYCOUNTCONVENTIONNAME,
+
+//                                   maximumTenor = data.MAXIMUMTENOR,
+//                                   minimumTenor = data.MINIMUMTENOR,
+//                                   maximumRate = data.MAXIMUMRATE,
+//                                   minimumRate = data.MINIMUMRATE,
+//                                   minimumBalance = data.MINIMUMBALANCE,
+//                                   approvedBy = data.APPROVEDBY,
+//                                   completed = data.COMPLETED,
+//                                   approved = data.APPROVED,
+                                 
+                               
+
+//                                   dateTimeUpdated = data.DATETIMEUPDATED,
+//                                   deleted = data.DELETED,
+//                                   deletedBy = data.DELETEDBY,
+//                                   dateTimeDeleted = data.DATETIMEDELETED,
+
+//                                   allowCustomerAccountForceDebit = data.ALLOWCUSTOMERACCOUNTFORCEDEBIT,
+//                                   allowMoratorium = data.ALLOWMORATORIUM,
+//                                   allowScheduleTypeOverride = data.ALLOWSCHEDULETYPEOVERRIDE,
+//                                   allowTenor = data.ALLOWTENOR,
+//                                   allowRate = data.ALLOWOVERDRAWN,
+//                                   allowOverdrawn = data.ALLOWOVERDRAWN,
+
+//                                   cleanupPeriod = data.CLEANUPPERIOD,
+//                                   defaultGracePeriod = data.DEFAULTGRACEPERIOD,
+//                                   equityContribution = data.EQUITYCONTRIBUTION,
+//                                   expiryPeriod = data.EXPIRYPERIOD,
+//                                   scheduleTypeId = data.SCHEDULETYPEID,
+
+
+//                               });
+//foreach (var item in productData)
+//            {
+//                item.currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
+//                              .Select(c => new ProductCurrencyViewModel()
+//                              {
+//                                  productCurrencyId = c.PRODUCTCURRENCYID,
+//                                  currencyId = c.CURRENCYID,
+//                                  currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
+//                              }).ToList();
+
+//                item.ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
+//                {
+//                    customerLimit = d.CUSTOMER_LIMIT,
+//                    collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+//                    collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+//                    productLimit = d.PRODUCT_LIMIT,
+//                    isInvoiceBased = d.ISINVOICEBASED,
+//                    requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
+//                    allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false,
+//                    isTemporaryOverDraft = d.ISTEMPORARYOVERDRAFT != null ? (bool)d.ISTEMPORARYOVERDRAFT : false,
+
+//                }).FirstOrDefault();
+
+//            }
 
             return productData.AsEnumerable().AsQueryable();
         }

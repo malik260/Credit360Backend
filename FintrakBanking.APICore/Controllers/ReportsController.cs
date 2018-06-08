@@ -182,7 +182,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
          [HttpPost] [ClaimsAuthorization]
-        [Route("collateral/property-due-for-vistation")]
+        [Route("monitoring/property-due-for-vistation")]
         public HttpResponseMessage GetCollateralpropertyDueForVisitation(DateRange dateRange)
         {
             var token = new TokenDecryptionHelper();
@@ -294,7 +294,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+      [HttpPost] [ClaimsAuthorization]  
         [Route("monitoring/non-performing-loans")]
         public HttpResponseMessage GetNonPerformingLoansReport(DateRange dateRange)
         {
@@ -316,7 +316,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+      [HttpPost] [ClaimsAuthorization]  
         [Route("monitoring/overdraft-loans")]
         public HttpResponseMessage GetExpiredOverdraftLoansReport(DateRange dateRange)
         {
@@ -359,9 +359,55 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+      
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("monitoring/insurance-expiration")]
+        public HttpResponseMessage GetInsuranceExpirationReport(DateRange dateRange)
+        {
+            try
+            {
+                var data = repo.GetCollateralInsuranceReport(dateRange, token.GetCompanyId, token.GetStaffId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("monitoring/turnover-covenant")]
+        public HttpResponseMessage GetTurnoverCovenantReport(DateRange dateRange)
+        {
+            try
+            {
+                var data = repo.GetTurnoverCovenantReport(dateRange, token.GetCompanyId, token.GetStaffId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         #endregion Offer-Letter Generation & Loan Monitoring Reports
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan-commercial")]
         public HttpResponseMessage GetLoanCommercialReport(DateRange dateRange)
         {

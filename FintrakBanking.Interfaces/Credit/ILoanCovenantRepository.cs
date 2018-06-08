@@ -31,6 +31,10 @@ namespace FintrakBanking.Interfaces.Customer
         Task<bool> UpdateLoanCovenantType(short loanCovenantTypeId, LoanCovenantTypeViewModel entity);
         IEnumerable<LoanCovenantTypeViewModel> GetLoanCovenantType(int companyId);
 
+        IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationCovenantLms(int id);
+        bool AddLoanApplicationCovenantLms(LoanCovenantDetailViewModel entity);
+        bool DeleteLoanApplicationCovenantLms(int id, UserInfo user);
+
 
         #endregion Loan Covenant Detail
     }
