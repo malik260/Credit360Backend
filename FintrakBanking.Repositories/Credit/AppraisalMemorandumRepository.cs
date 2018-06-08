@@ -90,7 +90,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
 
-            int approvalLevelId = GetFirstApprovalLevelId(/*appl.ProductId,*/ appl.PRODUCTCLASSID, model.createdBy);
+            int approvalLevelId = GetFirstApprovalLevelId(model.createdBy, (int)OperationsEnum.CAM, appl.PRODUCTCLASSID, null);
 
             var memo = context.TBL_CREDIT_APPRAISAL_MEMORANDM.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).SingleOrDefault();
 
@@ -154,6 +154,57 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
+        private int GetFirstApprovalLevelId(int staffId, int operationId, int? productClassId, int? productId)
+        {
+
+            IQueryable<TBL_APPROVAL_GROUP_MAPPING> groupMappings;
+
+            if (productId != null)
+            {
+                groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
+                    x.OPERATIONID == operationId
+                    && x.PRODUCTCLASSID == productClassId
+                    && x.PRODUCTID == productId
+                );
+            }
+            else
+            {
+                groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
+                    x.OPERATIONID == (int)OperationsEnum.CAM
+                    && x.PRODUCTCLASSID == productClassId
+                );
+            }
+
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var staffLevels = groupMappings
+            .Select(x => x.TBL_APPROVAL_GROUP)
+            .SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.STAFFROLEID == staff.STAFFROLEID))
+                       .Select(x => new
+                       {
+                           staffId = staffId,
+                           levelId = x.APPROVALLEVELID
+                       });
+
+            if (staffLevels.Any() == false)
+            {
+                staffLevels = groupMappings
+                .Select(x => x.TBL_APPROVAL_GROUP)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF)
+                .Select(x => new
+                {
+                    staffId = x.STAFFID,
+                    levelId = x.TBL_APPROVAL_LEVEL.APPROVALLEVELID
+                })
+                .Where(x => x.staffId == staffId);
+            }
+
+            if (staffLevels.FirstOrDefault() == null) { throw new Exception("No workflow setup for this product"); }
+
+            return staffLevels.Select(x => x.levelId).First();
+        }
+
         private IQueryable<int> GetAllCamProductIds()
         {
             return context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCT_CLASS_PROCESSID == 1)
@@ -167,38 +218,6 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x => (int?)x.PROPOSEDPRODUCTID)
                 .Distinct();
-        }
-
-        private int GetFirstApprovalLevelId(/*short productId,*/ short? productClassId, int staffId = 0) // ---- REFACTOR when we have productId!!!
-        {
-            var groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
-                x.OPERATIONID == (int)OperationsEnum.CAM
-                && x.PRODUCTCLASSID == productClassId
-            //&& x.ProductId == productId
-            );
-
-            if (groupMappings.Any() == false) // MAY BECOME REDUNDANT!
-            {
-                groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
-                    x.OPERATIONID == (int)OperationsEnum.CAM
-                    && x.PRODUCTCLASSID == productClassId
-                );
-            }
-
-            var staffLevels = groupMappings
-            .Select(x => x.TBL_APPROVAL_GROUP)
-            .SelectMany(x => x.TBL_APPROVAL_LEVEL)
-            .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF)
-            .Select(x => new
-            {
-                staffId = x.STAFFID,
-                levelId = x.TBL_APPROVAL_LEVEL.APPROVALLEVELID
-            })
-            .Where(x => x.staffId == staffId);
-
-            if (staffLevels.FirstOrDefault() == null) { throw new Exception("No workflow setup for this product"); }
-
-            return staffLevels.Select(x => x.levelId).First();
         }
 
         private bool FlagSubmittedForAppraisal(int id)
@@ -415,12 +434,12 @@ namespace FintrakBanking.Repositories.Credit
                     responseStaffId = x.RESPONSESTAFFID,
                     requestStaffId = x.REQUESTSTAFFID,
                     fromApprovalLevelId = x.FROMAPPROVALLEVELID,
-                 //   fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : x.TBL_APVL_LVL.LEVELNAME,
+                    fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : x.TBL_APPROVAL_LEVEL.LEVELNAME,
                     toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
                     approvalStateId = x.APPROVALSTATEID,
                     approvalStatusId = x.APPROVALSTATUSID,
-                   // approvalState = x.APVL_LVL_STATE.APPROVALSTATE,
-                   // approvalStatus = x.APVL_ST.APPROVALSTATUSNAME,
+                    approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                    approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                     comment = x.COMMENT,
                     staffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
                 }).OrderByDescending(x => x.approvalTrailId);

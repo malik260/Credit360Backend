@@ -930,6 +930,16 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                 }
+                catch (BadLogicException be)
+                {
+                    trans.Rollback();
+                    throw new ConditionNotMetException(be.Message);
+                }
+                catch (ConditionNotMetException ce)
+                {
+                    trans.Rollback();
+                    throw new ConditionNotMetException(ce.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();

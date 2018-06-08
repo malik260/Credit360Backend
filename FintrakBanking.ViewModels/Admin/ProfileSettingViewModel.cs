@@ -31,5 +31,10 @@ namespace FintrakBanking.ViewModels.Admin
         public int maxPeriodOfUserInactivity { get; set; }
 
         public int sessionTimeOut { get; set; }
+
+        public int BusinessStartTime { get; set; }
+
+        public int BusinessCloseTime { get; set; }
+
     }
 }
