@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Credit
                 //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                 approvalState = trail == null ? "Pending" : trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalTrailId = trail == null ? 0 : trail.APPROVALTRAILID,
-                currentApprovalLevel = trail == null ? "" : trail.TBL_APPROVAL_LEVEL.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                currentApprovalLevel = trail == null ? "" : trail.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                 currentApprovalLevelId = trail == null ? 0 : trail.TOAPPROVALLEVELID,
                 lastComment = trail == null ? "" : trail.COMMENT,
                 toStaffId = trail == null ? 0 : trail.TOSTAFFID,
@@ -109,7 +109,7 @@ namespace FintrakBanking.Repositories.Credit
                 //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                 approvalState = trail == null ? "Pending" : trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalTrailId = trail == null ? 0 : trail.APPROVALTRAILID,
-                currentApprovalLevel = trail == null ? "" : trail.TBL_APPROVAL_LEVEL.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                currentApprovalLevel = trail == null ? "" : trail.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                 currentApprovalLevelId = trail == null ? 0 : trail.TOAPPROVALLEVELID,
                 lastComment = trail == null ? "" : trail.COMMENT,
                 toStaffId = trail == null ? 0 : trail.TOSTAFFID,
