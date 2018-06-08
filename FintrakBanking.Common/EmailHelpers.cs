@@ -32,22 +32,6 @@ namespace FintrakBanking.Common
         public static string PopulateBody(string description, string templateLink)
         {
             string body;
-            //StreamReader stream = new StreamReader();
-            //string p2 = HostingEnvironment.ApplicationPhysicalPath;
-            //int h = p2.LastIndexOf("bin");
-            //string hostEnvironment = p2.Remove(h);
-
-            //string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
-
-            //To get the location the assembly normally resides on disk or the install directory
-            //string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
-
-            //once you have the path you get the directory with:
-            //var directory = Path.GetDirectoryName(path);
-
-            //int stripDown = directory.LastIndexOf("bin");
-
-            //string hostingEnvironment = directory.Remove(stripDown);
 
             using (var reader = new StreamReader(HostingEnvironment.MapPath(templateLink) ?? throw new InvalidOperationException()))
             {

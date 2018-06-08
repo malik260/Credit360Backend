@@ -9,11 +9,11 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
 {
   public interface ISLANotification
     {
-        List<SLANotificationViewModel> StaffSpecificBasedApprovalNotification();
+        IEnumerable<SLANotificationViewModel> StaffSpecificBasedApprovalNotification();
 
-        List<SLANotificationViewModel> RoleBasedApprovalNotification();
+        IEnumerable<SLANotificationViewModel> RoleBasedApprovalNotification();
 
-        List<SLANotificationViewModel> StaffSetupBasedApprovalNotification();
+        IEnumerable<SLANotificationViewModel> StaffSetupBasedApprovalNotification();
      
     }
 }

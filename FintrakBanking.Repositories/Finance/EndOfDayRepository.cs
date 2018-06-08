@@ -117,7 +117,7 @@ namespace FintrakBanking.Repositories.Finance
             endOfDay.CREATEDBY = staffId;
             endOfDay.STARTDATETIME = DateTime.Now;
 
-            loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
+            //loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
 
             //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 

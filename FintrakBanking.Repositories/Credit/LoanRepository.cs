@@ -4874,8 +4874,10 @@ namespace FintrakBanking.Repositories.Credit
                 var allFilteredLoan = (from a in context.TBL_LOAN
                                        join b in context.TBL_LOAN_REVIEW_APPLICATION on a.TERMLOANID equals b.LOANID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                       join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
                                        where a.ISDISBURSED == true && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                                      && d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
@@ -4959,7 +4961,7 @@ namespace FintrakBanking.Repositories.Credit
                                            interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
                                            interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
                                            pastDueInterest = a.PASTDUEINTEREST,
-                                           accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).ACCRUEDINTEREST
+                                           accrualedAmount = d.ACCRUEDINTEREST//context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,
                                        }).ToList();
 
                 return allFilteredLoan;
