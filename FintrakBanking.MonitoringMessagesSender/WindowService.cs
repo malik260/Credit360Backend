@@ -19,10 +19,11 @@ namespace FintrakBanking.MonitoringMessagesSender
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
-
-        public WindowService(IEmailSender _emailSender)
+        private IAlertMessageLogger logger;
+        public WindowService(IEmailSender _emailSender, IAlertMessageLogger _logger)
         {
             emailSender = _emailSender;
+            logger = _logger;
         }
         public bool Start(HostControl hostControl)
         {
@@ -58,7 +59,9 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
-                    bool response = emailSender.SendMail();
+                    bool response = emailSender.LogMonitoringEmailAlerts();
+
+                    logger.LogSLAApprovalNotification();
 
                     if (response == true)
                     {
@@ -74,7 +77,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                     }
 
 
-                    //MONITORING ALERT LOGGIN
+                  //  MONITORING ALERT LOGGIN
                     TimeSpan currentTime = DateTime.Now.TimeOfDay;
                     TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
 
@@ -84,11 +87,11 @@ namespace FintrakBanking.MonitoringMessagesSender
 
                     if (currentTime >= LoggeingTimeFromConfig && currentTime <= LoggeingTimeFromConfigExtended)
                     {
-                        _log.Info("##############   started at " + currentTime + "     ##################### ");
+                        //  _log.Info("##############   started at " + currentTime + "     ##################### ");
                         _log.Info("==================================================================");
                         _log.Info("Monitoring alert has started successfully");
 
-                        emailSender.LogMonitorringAlert();
+                     //   emailSender.LogMonitorringAlert();
 
                         _log.Info("");
                         _log.Info("==================================================================");

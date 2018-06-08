@@ -106,7 +106,7 @@ namespace FintrakBanking.APICore.Providers
                     else
                     {
                         context.SetError("invalid_grant",
-                            "The user name is not registered in the application. Contact the system administrator.");
+                            "The user is not registered in the application. Contact the system administrator.");
                         return;
                     }
                 }
@@ -120,7 +120,7 @@ namespace FintrakBanking.APICore.Providers
                         .Result;
                     if (user == null)
                     {
-                        context.SetError("invalid_grant", "The user name or password is incorrect.");
+                        context.SetError("invalid_grant", "Login Failure.");
                         return;
                     }
                 }
@@ -163,12 +163,7 @@ namespace FintrakBanking.APICore.Providers
                     context.Validated(ticket);
 
                     context.Request.Context.Authentication.SignIn(currIdentity);
-               // }
-                //else
-                //{
-                //    context.SetError("unauthorized_access", "The user name or password is incorrect");
-                //    return;
-                //}
+              
 
 
                 await Task.CompletedTask;
@@ -178,26 +173,15 @@ namespace FintrakBanking.APICore.Providers
             {
 
 
-                //  context.SetError("invalid_grant", "The user name or password is incorrect.");
 
-                var innerExceptionMessage = "";
-                if (ex.InnerException != null)
-                    innerExceptionMessage = ex.InnerException.Message;
+                if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
+                {
+                    string str = ex.Message.Replace("1001", "");
+                    context.SetError("invalid_grant", str);
+                    return;
+                }
 
-                context.SetError("invalid_grant", $"Server error: {ex.Message} inner exception {innerExceptionMessage}");
 
-                //if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
-                //{
-                //    string str = ex.Message.Replace("1001", "");
-                //    context.SetError("invalid_grant", str);
-                //    return;
-                //}
-
-                //if (ex.Message.Contains("network-related"))
-                //{
-                //    context.SetError("invalid_grant", "Server error: Contact System Administrator");
-
-                //}
             }
         }
 

@@ -11,6 +11,7 @@ using System.Web.Http;
 using FintrakBanking.APICore.core;
 using System.Web;
 using FintrakBanking.ViewModels.Setups;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -308,5 +309,75 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        // lms approval
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-covenant/loan-application/{id}")]
+        public HttpResponseMessage GetLoanApplicationCovenantLms(int id)
+        {
+            try
+            {
+                IEnumerable<LoanCovenantDetailViewModel> data = repo.GetLoanApplicationCovenantLms(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lms-loan-application-covenant")]
+        public HttpResponseMessage AddLoanApplicationCovenantLms([FromBody] LoanCovenantDetailViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                bool data = repo.AddLoanApplicationCovenantLms(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("lms-loan-application-covenant/{id}")]
+        public HttpResponseMessage DeleteLoanApplicationCovenantLms(int id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                };
+                bool data = repo.DeleteLoanApplicationCovenantLms(id, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

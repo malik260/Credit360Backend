@@ -125,5 +125,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CustomerCompanyInfomationViewModels> getLoanCustomerCompanyInformation(int customerId);
 
+        #region Frequency Type
+        IEnumerable<LookupViewModel> GetAllFrequencyType();
+        #endregion
+
     }
 }

@@ -134,6 +134,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if (data == null)
                 {
+                    user.LOGINCODE = null;
+                    user.FAILEDLOGONATTEMPT += 1;
                     int count = user.FAILEDLOGONATTEMPT ?? 0;
                     if (count == CommonHelpers.MaxInvalidPasswordAttempts)
                     {
@@ -141,8 +143,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         user.LASTLOCKOUTDATE = DateTime.Now;
                     }
 
-                    user.LOGINCODE = null;
-                    user.FAILEDLOGONATTEMPT += 1;
+                 
                 }
                 else
                 {
@@ -343,6 +344,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
                     if (faileddata != null)
                     {
+                        faileddata.LOGINCODE = null;
+                        faileddata.FAILEDLOGONATTEMPT += 1;
                         int count = faileddata.FAILEDLOGONATTEMPT ?? 0;
                         if (count == CommonHelpers.MaxInvalidPasswordAttempts)
                         {
@@ -350,8 +353,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             faileddata.LASTLOCKOUTDATE = DateTime.Now;
                         }
 
-                        faileddata.LOGINCODE = null;
-                        faileddata.FAILEDLOGONATTEMPT += 1;
+                        
                         context.SaveChanges();
 
                         throw new Exception("1001 Login Failure.");

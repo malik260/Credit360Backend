@@ -46,6 +46,8 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCollateralPropertyDueForVisitationReport(int companyId, DateRange dateRange, int staffId);
         string GetBondAndGuaranteeReport(DateRange dateRange, int companyId, int staffId);
         string GetGeneratedOfferLetterLMS(string refNumber);
+        string GetCollateralInsuranceReport(DateRange dateRange, int companyId, int staffId);
+        string GetTurnoverCovenantReport(DateRange dateRange, int companyId, int staffId);
 
     }
 }
