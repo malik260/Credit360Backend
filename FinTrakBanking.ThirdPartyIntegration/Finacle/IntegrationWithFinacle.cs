@@ -52,7 +52,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -77,7 +77,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if( result.APIResponse.webRequestStatus.Replace(":","") == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -106,7 +106,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -133,7 +133,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -159,7 +159,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -187,7 +187,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -218,7 +218,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -235,6 +235,22 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
 
         #endregion
+
+
+        public CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
+        {
+            var data = new CurrencyExchangeRateViewModel();
+            Task.Run(async () => { data = await transaction.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode); }).GetAwaiter().GetResult();
+            return new CurrencyExchangeRateViewModel
+            {
+               // baseCurrencyId = baseCurrency,
+                currencyId = data.currencyId,
+                buyingRate = data.buyingRate,
+                sellingRate = data.sellingRate,
+                date = data.date,
+                isBaseCurrency = false
+            };
+        }
 
         public bool GetExposePersonStatus(string customerCode)
         {
@@ -306,6 +322,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 AddCustomTransactions(transactionLst);
             }
+            else
+            {
+                throw new Exception(result.Message.ReasonPhrase);
+            }
+
 
             return result.APIStatus;
         }

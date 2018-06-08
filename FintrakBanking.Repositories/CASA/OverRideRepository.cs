@@ -97,10 +97,17 @@ namespace FintrakBanking.Repositories.CASA
             return data.ToList();
         }
 
+
+
         private IQueryable<OverrideDetailVeiwModel> AllOverRideRequest()
         {
             var data = _context.TBL_OVERRIDE_DETAIL;
-            var cust = _context.TBL_CUSTOMER.Select(d => new { customer = d.LASTNAME + " " + d.FIRSTNAME + " " + d.MIDDLENAME, d.CUSTOMERCODE, d.CUSTOMERID });
+            var cust = _context.TBL_CUSTOMER.Select(d => new
+            {
+                customer = d.LASTNAME + " " + d.FIRSTNAME + " " + d.MIDDLENAME,
+                d.CUSTOMERCODE,
+                d.CUSTOMERID
+            });
 
             var over = from a in cust
                        join d in data on a.CUSTOMERCODE equals d.CUSTOMERCODE
@@ -159,6 +166,35 @@ namespace FintrakBanking.Repositories.CASA
             }
 
             return _context.SaveChanges() > 0;
+        }
+
+        public IEnumerable<OverrideDetailVeiwModel> GetOverrideAwaitingApproval(int staffId)
+        {
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerInformationApproval)
+              .ToList();
+            var data = (from o in _context.TBL_OVERRIDE_DETAIL
+                        join a in _context.TBL_APPROVAL_TRAIL on o.OVERRIDE_DETAILID equals a.TARGETID
+                        join c in _context.TBL_CUSTOMER on o.CUSTOMERCODE equals c.CUSTOMERCODE
+                        where a.OPERATIONID == (int)OperationsEnum.OverrideRequest &&
+                        (a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
+                         && ids.Contains((int)a.TOAPPROVALLEVELID)
+                        select new OverrideDetailVeiwModel()
+                        {
+                            approvedStatusId = o.APPROVALSTATUSID,
+                            createdBy = o.CREATEDBY,
+                            itemId = o.OVERRIDE_ITEMID,
+                            itemName = o.TBL_OVERRIDE_ITEM.OVERIDE_ITEMNAME,
+                            approvalStatus = o.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                            customerCode = o.CUSTOMERCODE, 
+                            sourceReferenceNumber = o.SOURCE_REFERENCE_NUMBER,
+                            isUsed = o.ISUSED,  
+                            customerId = c.CUSTOMERID ,
+                             customerName = c.LASTNAME +" "+ c.FIRSTNAME + " " + c.MAIDENNAME,
+                            dateTimeCreated = o.DATETIMECREATED,
+                            overrideDetailId = o.OVERRIDE_DETAILID
+                        });         
+
+            return data.ToList();
         }
     }
 }
