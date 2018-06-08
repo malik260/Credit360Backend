@@ -217,21 +217,6 @@ namespace FintrakBanking.Repositories.Credit
             if (revolvingLoanInput.revolvingTypeId == 0)
                 revolvingLoanInput.revolvingTypeId = (short)LoanRevolvingTypeEnum.NormalOverdraft;
 
-            // ............. Checking customer balance, and fee override ......
-            decimal AllfeeAmount = 0;
-            foreach (var item in model.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
-
-            var casaBalance = GetCASABalanceById(model.casaAccountId, model.companyId).availableBalance;
-            var customer = context.TBL_CUSTOMER.Find(model.customerId);
-
-            if (AllfeeAmount > casaBalance)
-            {
-                bool custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, 1, loanReferenceNumber) > 0;
-                if (custFeeOverridable) model.feeOverride = true;
-                else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
-            }
-            // ...........End checking customer balance, and fee override ..........
-
             var data = new TBL_LOAN_REVOLVING
             {
                 CUSTOMERID = model.customerId,
@@ -289,9 +274,9 @@ namespace FintrakBanking.Repositories.Credit
             using (var trans = context.Database.BeginTransaction())
             {
                 // ............. Checking customer balance, and fee override ......
-                decimal AllfeeAmount = 0;
+               decimal AllfeeAmount = 0;
                 foreach (var item in model.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
-
+                //Please check
                 var casaBalance = GetCASABalanceById(model.casaAccountId, model.companyId).availableBalance;
                 var customer = context.TBL_CUSTOMER.Find(model.customerId);
 
@@ -588,7 +573,7 @@ namespace FintrakBanking.Repositories.Credit
                 entity.loanScheduleInput.principalFrequency = null;
                 entity.loanScheduleInput.interestFrequency = null;
             }
-            
+
             var data = new TBL_LOAN
             {
                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
@@ -781,7 +766,8 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
-            if (loans.Any()) {
+            if (loans.Any())
+            {
                 if (loans.First().OUTSTANDINGPRINCIPAL > 0)
                     throw new ConditionNotMetException("The customer already have a running Commercial Loan which has not been paid down");
             }
@@ -1004,7 +990,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var feePostings = BuildLoanChargeFeesPosting(entity);
 
-            if(feePostings.Count() > 0)
+            if (feePostings.Count() > 0)
                 financeTransaction.PostTransaction(feePostings);
         }
 
@@ -1044,8 +1030,8 @@ namespace FintrakBanking.Repositories.Credit
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join atrail in context.TBL_APPROVAL_TRAIL on ln.TERMLOANID equals atrail.TARGETID
                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                                  && operationIds.Contains(atrail.OPERATIONID) 
-                                  && req.DELETED == false && req.APPROVALSTATUSID ==  (short)ApprovalStatusEnum.Approved
+                                  && operationIds.Contains(atrail.OPERATIONID)
+                                  && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                   && ln.LOANSTATUSID == (short)LoanStatusEnum.Inactive
                                   && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                   && atrail.RESPONSESTAFFID == null
@@ -1173,7 +1159,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             });
 
-                return data; 
+                return data;
             }
             catch (Exception ex)
             {
@@ -1912,7 +1898,7 @@ namespace FintrakBanking.Repositories.Credit
                                     reviewedDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
                                     sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                                     sanctionLimit = revolvingLoanRecord.OVERDRAFTLIMIT.ToString(), //String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
-                                    sanctionReferenceNumber =  revolvingLoanRecord.LOANREFERENCENUMBER
+                                    sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
                                 };
 
                                 ResponseMessageViewModel res = finacle.OverDraftNormal(model);
@@ -2055,8 +2041,8 @@ namespace FintrakBanking.Repositories.Credit
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
                             var systemDate = generalSetup.GetApplicationDate();
 
-                             //ProcessAccrualTeamLoansInterestAccrual(systemDate, loanId);
-                           
+                            //ProcessAccrualTeamLoansInterestAccrual(systemDate, loanId);
+
                             DisburseLoan(loanDisbursementModel);
 
                             loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
@@ -3790,8 +3776,8 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var data = AvailedLoanApplicationsDetails(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted
-           && x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased 
-           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan 
+           && x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
+           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
            && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
 
                 data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
@@ -4732,7 +4718,7 @@ namespace FintrakBanking.Repositories.Credit
                                        }).Take(10).AsQueryable();
                 }
                 return allFilteredLoan;
-               // return allFilteredLoan.Where(x => x.operationId == (short)OperationsEnum.CommercialPaperLoanBooking);
+                // return allFilteredLoan.Where(x => x.operationId == (short)OperationsEnum.CommercialPaperLoanBooking);
             }
             catch (System.Exception)
             {
@@ -5672,7 +5658,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return loan;
         }
-       
+
         public bool AddUpdateLoanDisbursement(LoanDisbursementViewModel entity)
         {
             if (entity == null) return false;
@@ -5733,8 +5719,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LookupViewModel> GetAllFrequencyType()
         {
-            var frequencyTypes =  generalSetup.GetAllFrequencyTypes();
+            var frequencyTypes = generalSetup.GetAllFrequencyTypes();
             return frequencyTypes;
         }
+        #endregion
     }
 }
