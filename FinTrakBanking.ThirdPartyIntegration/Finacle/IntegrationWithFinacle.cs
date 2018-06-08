@@ -580,7 +580,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
                    ?.CURRENCYCODE;
                 transPosting.accounts = item.casaAccountId != null
                 ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
-                .PRODUCTACCOUNTNUMBER: GetGlAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
+                .PRODUCTACCOUNTNUMBER: GetGlAccountCode(item.glAccountId, 1, item.sourceBranchId);
+                //.PRODUCTACCOUNTNUMBER: GetGlAccountCode(item.glAccountId, transPosting.currencyType, item.sourceBranchId);
                 transPosting.amounts = item.creditAmount > 0
                     ? "C" + String.Format("{0:0.00}", item.creditAmount)
                     : "D" + String.Format("{0:0.00}", item.debitAmount) ;

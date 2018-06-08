@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Credit
                 //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                 approvalState = trail == null ? "Pending" : trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalTrailId = trail == null ? 0 : trail.APPROVALTRAILID,
-                currentApprovalLevel = trail == null ? "" : trail.TBL_APPROVAL_LEVEL.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                currentApprovalLevel = trail == null ? "" : trail.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                 currentApprovalLevelId = trail == null ? 0 : trail.TOAPPROVALLEVELID,
                 lastComment = trail == null ? "" : trail.COMMENT,
                 toStaffId = trail == null ? 0 : trail.TOSTAFFID,
@@ -109,7 +109,7 @@ namespace FintrakBanking.Repositories.Credit
                 //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                 approvalState = trail == null ? "Pending" : trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalTrailId = trail == null ? 0 : trail.APPROVALTRAILID,
-                currentApprovalLevel = trail == null ? "" : trail.TBL_APPROVAL_LEVEL.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                currentApprovalLevel = trail == null ? "" : trail.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                 currentApprovalLevelId = trail == null ? 0 : trail.TOAPPROVALLEVELID,
                 lastComment = trail == null ? "" : trail.COMMENT,
                 toStaffId = trail == null ? 0 : trail.TOSTAFFID,
@@ -423,6 +423,25 @@ namespace FintrakBanking.Repositories.Credit
 
         public int ForwardApplication(ForwardReviewViewModel model)
         {
+            var appl = context.TBL_LOAN_REVIEW_APPLICATION.Find(model.applicationId);
+
+            if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal)
+            {
+                int customerId = 0;
+                if (appl.PRODUCTTYPEID == 1)
+                {
+                    var x = context.TBL_LOAN.Find(appl.LOANID);
+                    if (x != null) customerId = x.CUSTOMERID;
+                }
+                if (appl.PRODUCTTYPEID == 2)
+                {
+                    var x = context.TBL_LOAN_REVOLVING.Find(appl.LOANID);
+                    if (x != null) customerId = x.CUSTOMERID;
+                }
+
+                if (customerId > 0) workflow.Amount = GetCustomerTotalOutstandingBalance(customerId);
+            }
+
             workflow.StaffId = model.lastUpdatedBy;
             workflow.CompanyId = model.companyId;
             workflow.OperationId = model.operationId;
@@ -436,7 +455,7 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
-            var appl = context.TBL_LOAN_REVIEW_APPLICATION.Find(model.applicationId);
+            
             int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
 
             if (workflow.NewState == (int)ApprovalState.Ended)
@@ -458,5 +477,42 @@ namespace FintrakBanking.Repositories.Credit
 
             return (int)ApprovalStatusEnum.Processing; // default for now
         }
+
+        public decimal GetCustomerTotalOutstandingBalance(int customerId)
+        {
+            var loanData = context.TBL_LOAN.FirstOrDefault(x => x.CUSTOMERID == customerId);
+            var overdraftData = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.CUSTOMERID == customerId);
+            decimal loanBalance = 0;
+            decimal overdraftBalance = 0;
+
+            if (loanData != null)
+            {
+                var balance = (from a in context.TBL_LOAN
+                               where a.CUSTOMERID == customerId
+                               select a.OUTSTANDINGPRINCIPAL).Sum();
+                loanBalance = balance;
+            }
+            else
+            {
+                loanBalance = 0;
+            }
+
+            if (overdraftData != null)
+            {
+                var balance = (from a in context.TBL_LOAN_REVOLVING
+                               where a.CUSTOMERID == customerId
+                               select a.OVERDRAFTLIMIT).Sum();
+                overdraftBalance = balance;
+            }
+            else
+            {
+                overdraftBalance = 0;
+            }
+
+            decimal totalBalance = loanBalance + overdraftBalance;
+
+            return totalBalance;
+        }
+
     }
 }
