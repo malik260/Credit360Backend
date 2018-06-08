@@ -973,9 +973,14 @@ namespace FintrakBanking.Repositories.Credit
 
             inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));
 
-            inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
+            //inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
 
             financeTransaction.PostTransaction(inputTransactions);
+
+            var feePostings = BuildLoanChargeFeesPosting(entity);
+
+            if(feePostings.Count() > 0)
+                financeTransaction.PostTransaction(feePostings);
         }
 
         public void PostLoanFees(LoanViewModel entity)
@@ -2496,7 +2501,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in loanDetails.loanChargeFee)
             {
-                if (item.feeAmount != 0)
+                if (item.isPosted == false && item.feeAmount != 0)
                 {
                     var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanDetails.casaAccountId);
 
@@ -2577,6 +2582,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                     }
                 }
+
             }
             return inputTransactions;
         }

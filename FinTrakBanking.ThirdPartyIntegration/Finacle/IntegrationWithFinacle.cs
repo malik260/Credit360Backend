@@ -16,6 +16,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using OverDraftTransactions;
     using ForeignCurrencyAccountCreation;
     using AccountInformation;
+    using FintrakBanking.Common.CustomException;
 
     public   class IntegrationWithFinacle : IIntegrationWithFinacle
     {
@@ -305,9 +306,17 @@ namespace FinTrakBanking.ThirdPartyIntegration
             if (result.APIResponse.responseCode == "0")
             {
                 AddCustomTransactions(transactionLst);
+                return true;
             }
+            else
+            {
+                throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                //return false;
+            }
+           
 
-            return result.APIStatus;
+            //return result.APIStatus;
+
         }
 
         public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
