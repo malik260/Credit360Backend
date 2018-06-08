@@ -55,5 +55,13 @@ namespace FintrakBanking.Entities.Models
         [Column(Order = 7)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int SESSIONTIMEOUT { get; set; }
+
+        [Column(Order = 8)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int BusinessStartTime { get; set; }
+
+        [Column(Order = 9)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int BusinessCloseTime { get; set; }
     }
 }

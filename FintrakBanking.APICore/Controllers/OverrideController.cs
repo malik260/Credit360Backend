@@ -189,7 +189,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("override-awaiting-approval")]
+        public HttpResponseMessage GetOverrideAwaitingApproval()
+        {
+            try
+            {
+                var response = _override.GetOverrideAwaitingApproval(token.GetStaffId);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("get-override-request/referencenumber/{refno}")]
         public HttpResponseMessage GetOverRideRequestByReferenceNumber(string refNo)
         {

@@ -719,7 +719,7 @@ namespace FintrakBanking.Repositories.Credit
                         AddloanApplication(loan);
                     }
 
-                    //if (loan.LoanApplicationDetail.Count > 0)
+                    if (loan.LoanApplicationDetail.Count > 0)
                     {
                         AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
                     }
@@ -823,7 +823,7 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 APPLICATIONAMOUNT = loan.proposedAmount,
-                APPLICATIONTENOR = loan.proposedTenor,
+                APPLICATIONTENOR = loan.proposedTenor ,
                 ISINVESTMENTGRADE = loan.isInvestmentGrade,
                 LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
                 CUSTOMERID = loan.customerId,
@@ -864,8 +864,11 @@ namespace FintrakBanking.Repositories.Credit
 
         private void UpdateLoanApplication(LoanApplicationViewModel loan)
         {
-            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
-        //    int tenor = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).Max(c => c.PROPOSEDTENOR);
+           
+            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+
+            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a=> a.PROPOSEDAMOUNT);
+
 
             this.data.REQUIRECOLLATERAL = loan.requireCollateral;
             this.data.TOTALEXPOSUREAMOUNT = totalAmount;
@@ -879,7 +882,7 @@ namespace FintrakBanking.Repositories.Credit
             this.data.SYSTEMDATETIME = DateTime.Now;
             this.data.CASAACCOUNTID = loan.casaAccountId;
             this.data.APPLICATIONAMOUNT = loan.proposedAmount;
-            this.data.APPLICATIONTENOR = (int)loan.applicationTenor;
+            this.data.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)

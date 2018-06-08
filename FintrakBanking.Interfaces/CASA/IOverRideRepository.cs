@@ -21,8 +21,7 @@ namespace FintrakBanking.Interfaces.CASA
         IEnumerable<OverrideDetailVeiwModel> GetOverRideRequestByReferenceNumber(string refNo);
         bool UpdateOverRideRequest(OverrideDetailVeiwModel entity);
         int EffectOverride(string customerCode, int overrideItemId, string sourceRef);
-
-
+        IEnumerable<OverrideDetailVeiwModel> GetOverrideAwaitingApproval(int staffId);
     }
 
   
