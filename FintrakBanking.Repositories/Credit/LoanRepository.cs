@@ -1989,19 +1989,8 @@ namespace FintrakBanking.Repositories.Credit
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
                             var systemDate = generalSetup.GetApplicationDate();
 
-                            if (loanScheduleModel.effectiveDate < systemDate && loanScheduleModel.shouldDisburse == false)
-                            {
-                                //DisburseLoan(loanDisbursementModel);
-                                ProcessAccrualTeamLoansInterestAccrual(systemDate, loanId);
-                            }
-                            else if (loanScheduleModel.effectiveDate < systemDate && loanScheduleModel.shouldDisburse == true)// change to delete to IsDisbursed
-                            {
-                                // DisburseLoan(loanDisbursementModel);
-                            }
-                            else
-                            {
-                                DisburseLoan(loanDisbursementModel);
-                            }
+                            DisburseLoan(loanDisbursementModel);
+
                             loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             loanRecord.ISDISBURSED = true;
                             loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
