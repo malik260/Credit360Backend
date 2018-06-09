@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FintrakBanking.Entities.StagingModels
+﻿namespace FintrakBanking.Entities.StagingModels
 {
-  public partial  class STG_FREECODE7
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("STG_FREECODE7")]
+    public partial  class STG_FREECODE7
     {
+        [Key]
         [StringLength(10)]
         public string FREECODE7 { get; set; }
         [StringLength(255)]
