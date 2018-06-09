@@ -1561,7 +1561,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
                     || x.MIDDLENAME.ToLower().Contains(searchQuery)
                     || x.LASTNAME.ToLower().Contains(searchQuery)
-                    || x.STAFFCODE.Contains(searchQuery))
+                    || x.STAFFCODE.ToLower().Contains(searchQuery))
                     .Select(o => new simpleStaffModel
                     {
                         staffId = o.STAFFID,
