@@ -10319,7 +10319,7 @@ namespace FintrakBanking.Repositories.Credit
                             //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.PAYMENTDATE >= systemDate).PAYMENTDATE;
                             model.interestRate = model.newInterest;
                             model.effectiveDate = model.newEffectiveDate;
-                            model.scheduleMethodId = (short)LoanScheduleTypeEnum.IrregularSchedule;
+                            model.scheduleMethodId = model.scheduleMethodId;
                             LoanWorkOut(loanId, model, applicationDate, staffId);
                             updateLoanReviewOperation(loanReviewOperationsId, loanId);
                         }
@@ -10549,6 +10549,15 @@ namespace FintrakBanking.Repositories.Credit
                                 model.interestFrequency = (short)model.newInterestFrequency;
                                 model.principalFrequency = (short)model.newPrincipalFrequency;
                                 Restructured(loanId, model, applicationDate, staffId);
+                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            }
+                            else if ((int)OperationsEnum.LoanWorkOut == model.operationId)
+                            {
+                                //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.PAYMENTDATE >= systemDate).PAYMENTDATE;
+                                model.interestRate = model.newInterest;
+                                model.effectiveDate = model.newEffectiveDate;
+                                model.scheduleMethodId = model.scheduleMethodId;
+                                LoanWorkOut(loanId, model, applicationDate, staffId);
                                 updateLoanReviewOperation(loanReviewOperationsId, loanId);
                             }
                             else if ((int)OperationsEnum.LoanRecovery == model.operationId)
@@ -11632,9 +11641,7 @@ namespace FintrakBanking.Repositories.Credit
                         addStaging.PSTD_FLG = "N";
                         addStaging.PSTD_DATE = applicationDate;
                         addStaging.DEL_FLG = "N";
-
-
-
+                        addStaging.FAIL_FLG = "N";
 
                 staging.Add(addStaging);
 
@@ -11684,6 +11691,7 @@ namespace FintrakBanking.Repositories.Credit
                         addMain.PSTD_DATE = applicationDate;
                         addMain.PSTD_FLG = "N";
                         addMain.DEL_FLG = "N";
+                
                 //addMain.SID = 1;
 
 

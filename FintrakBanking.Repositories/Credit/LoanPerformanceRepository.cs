@@ -71,22 +71,27 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                                   join d in context.TBL_LOAN_APPLICATION_DETAIL  on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                                   join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                                   join f in context.TBL_LOAN_APPLICATION_TYPE on e.LOANAPPLICATIONTYPEID equals f.LOANAPPLICATIONTYPEID
+                                   join g in context.TBL_PRODUCT on a.PRODUCTID equals g.PRODUCTID
+                                   join h in context.TBL_CUSTOMER on a.CUSTOMERID equals h.CUSTOMERID
                                    where a.ISDISBURSED == true
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
-                                       customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                                       customerName = h.FIRSTNAME + " " + h.LASTNAME,//a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                       applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
-                                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                                       applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER ?? "N/A",//a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                       loanApplicationId = e.LOANAPPLICATIONID,//a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
                                        interestRate = a.INTERESTRATE,
                                        principalAmount = a.PRINCIPALAMOUNT,
                                        effectiveDate = a.EFFECTIVEDATE,
                                        maturityDate = a.MATURITYDATE,
-                                       loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                       productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
-                                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       loanTypeName = f.LOANAPPLICATIONTYPENAME,//a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       productTypeId = g.PRODUCTTYPEID,//a.TBL_PRODUCT.PRODUCTTYPEID,
+                                       productName = g.PRODUCTNAME,//a.TBL_PRODUCT.PRODUCTNAME,
                                        outstandingInterest = a.OUTSTANDINGINTEREST,
                                        outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
                                        internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
@@ -108,24 +113,31 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                                   join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                                   join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                                   join f in context.TBL_LOAN_APPLICATION_TYPE on e.LOANAPPLICATIONTYPEID equals f.LOANAPPLICATIONTYPEID
+                                   join g in context.TBL_PRODUCT on a.PRODUCTID equals g.PRODUCTID
+                                   join h in context.TBL_CUSTOMER on a.CUSTOMERID equals h.CUSTOMERID
+                                   join i in context.TBL_CASA on a.CASAACCOUNTID equals i.CASAACCOUNTID
+                                   
                                    where a.ISDISBURSED == true
                                    select new LoanViewModel
                                    {
                                        loanId = a.REVOLVINGLOANID,
                                        customerId = a.CUSTOMERID,
-                                       customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                                       customerName = h.FIRSTNAME + " " + h.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                       applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
-                                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                                       applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER ?? "N/A",//a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                       loanApplicationId = e.LOANAPPLICATIONID,//a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
                                        interestRate = a.INTERESTRATE,
                                        principalAmount = a.OVERDRAFTLIMIT,
                                        effectiveDate = a.EFFECTIVEDATE,
                                        maturityDate = a.MATURITYDATE,
-                                       loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                       productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
-                                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       loanTypeName = f.LOANAPPLICATIONTYPENAME,//a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       productTypeId = g.PRODUCTTYPEID,//a.TBL_PRODUCT.PRODUCTTYPEID,
+                                       productName = g.PRODUCTNAME,//a.TBL_PRODUCT.PRODUCTNAME,
                                        outstandingInterest = 0,
-                                       outstandingPrincipal = (decimal)a.TBL_CASA.OVERDRAFTAMOUNT,
+                                       outstandingPrincipal = (decimal)i.OVERDRAFTAMOUNT,//(decimal)a.TBL_CASA.OVERDRAFTAMOUNT,
                                        internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
                                        externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
                                        userPrudentialGuidelineStatusId = a.USER_PRUDENTIAL_GUIDE_STATUSID,
