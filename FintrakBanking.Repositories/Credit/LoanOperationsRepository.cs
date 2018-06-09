@@ -248,6 +248,14 @@ namespace FintrakBanking.Repositories.Credit
                         addStaging.VALUEDATE = item.date;
                         addStaging.TRANSACTIONTYPE = "BP";
                         addStaging.BANKID = "01";
+                        addStaging.PRODUCTID = product.PRODUCTID;
+                        addStaging.CURRENCYID = item.currencyId;
+                        addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
+                        addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                        addStaging.CREDITCASAACCOUNTID = null;
+                        addStaging.DEBITCASAACCOUNTID = null;
+
+
                         this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                         context.SaveChanges();
                         if (setup.USE_THIRD_PARTY_INTEGRATION == false)
@@ -1466,7 +1474,7 @@ namespace FintrakBanking.Repositories.Credit
             //var refNo = CommonHelpers.GenerateRandomDigitCode(10);
 
             var data = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
-                        where a.AMT_COLLECTED <= a.AMT //&& a.PSTD_FLG == "Y" || a.PSTD_FLG == "P"
+                        where a.AMT_COLLECTED <= a.AMT  && a.FINTRAK_FLG != "Y" //|| a.PSTD_FLG == "P"
                         //where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && a.BATCHID == batchCode
                         select new FinanceTransactionStagingViewModel()
                         {
@@ -1484,75 +1492,51 @@ namespace FintrakBanking.Repositories.Credit
                             amountCollected = (decimal)a.AMT_COLLECTED,
                             bankId = a.BANK_ID,
                             sourceReferenceNumber = a.LOAN_ACCT,
-                            //sid = a.SID,
-
 
                         }).ToList();
-
-           // List<TBL_CUSTOM_TRANSACTION_BULK> staging = new List<TBL_CUSTOM_TRANSACTION_BULK>();
-
-
             foreach (var item in data)
             {
                 TBL_CUSTOM_TRANSACTION_BULK result = (from p in context.TBL_CUSTOM_TRANSACTION_BULK
                                                       where p.BATCHID == item.batchId && p.BATCHREFID
                                                       == item.batchRefId
                                    select p).SingleOrDefault();
+                FinanceTransactionStagingViewModel model = new FinanceTransactionStagingViewModel();
+                model.actualAmount = item.amountCollected - result.AMOUNTCOLLECTED;
+                model.operationId = result.OPERATIONID;
+                model.description = result.DESCRIPTION;
+                model.valueDate = result.VALUEDATE;
+                model.transactionDate = result.VALUEDATE;
+                model.currencyId = result.CURRENCYID;
+                model.currencyRate = result.CURRENCYRATE;
+                model.companyId = result.COMPANYID;
+                model.debitGlAccountId = result.DEBITGLACCOUNTID;
+                model.sourceReferenceNumber = result.SOURCEREFERENCENUMBER;
+                model.debitCasaAccountId = result.DEBITCASAACCOUNTID;
+                model.sourceBranchId = (short)result.SOURCEBRANCHID;
+                model.destinationBranchId = (short)result.DESTINATIONBRANCHID;
+                model.creditGlAccountId = result.CREDITGLACCOUNTID;
+                model.creditCasaAccountId = result.CREDITCASAACCOUNTID;
+                model.batchId = result.BATCHID;
+                model.batchRefId = result.BATCHREFID;
                 result.AMOUNTCOLLECTED = item.amountCollected;
-                output = context.SaveChanges()> 0;
+                var results = financeTransaction.BulkIntegrationPosting(model);
+                if (results == true)
+                {
+                    if (result.AMOUNT == item.amountCollected)
+                    {
+                        result.ISPOSTED = true;
+
+                        FINTRAK_TRAN_PROC_DETAILS bulk = (from a  in stagingContext.FINTRAK_TRAN_PROC_DETAILS
+                                                            where a.BATCH_ID == model.batchId && a.BATCH_REF_ID
+                                                              == model.batchRefId
+                                                              select a).SingleOrDefault();
+                        bulk.FINTRAK_FLG = "Y";
+                    }
+                }
+
+               
             }
-            //this.stagingContext.FINTRAK_TRAN_PROC_DETAILS.AddRange(staging);
-            //context.SaveChanges();
-
-            //var audit = new TBL_AUDIT
-            //{
-            //    AUDITTYPEID = (short)AuditTypeEnum.WriteToStagingTable,
-            //    STAFFID = (int)SystemStaff.System,//model.createdBy,
-            //    BRANCHID = data.FirstOrDefault().branchId,
-            //    DETAIL = $"Write to Staging: {data.FirstOrDefault().sourceReferenceNumber}",
-            //    IPADDRESS = data.FirstOrDefault().userIPAddress,
-            //    URL = data.FirstOrDefault().applicationUrl,
-            //    APPLICATIONDATE = applicationDate,//generalSetup.GetApplicationDate(),
-            //    SYSTEMDATETIME = DateTime.Now
-            //};
-
-            //this.auditTrail.AddAuditTrail(audit);
-
-
-            //var model = (from a in context.TBL_CUSTOM_TRANSACTION_BULK
-            //             where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && a.BATCHID == batchCode
-            //             group a by new { a.BATCHID } into groupedQ
-            //             select new FinanceTransactionStagingViewModel()
-            //             {
-            //                 batchId = groupedQ.Key.BATCHID,
-            //                 amount = groupedQ.Sum(i => i.AMOUNT),
-            //             }).ToList();
-
-            //List<FINTRAK_TRAN_PROC_MAIN> main = new List<FINTRAK_TRAN_PROC_MAIN>();
-            //var recordCount = model.Count();
-
-            //foreach (var item in model)
-            //{
-            //    FINTRAK_TRAN_PROC_MAIN addMain = new FINTRAK_TRAN_PROC_MAIN();
-
-            //    addMain.BATCH_ID = item.batchId;
-            //    addMain.RCRE_DATE = applicationDate;
-            //    addMain.TRAN_TYPE = TransactionType;
-            //    addMain.RCRE_USER = "SYSTEM";
-            //    addMain.TOTAL_AMT = item.amount;
-            //    addMain.STATUS = "N";
-            //    addMain.REC_COUNT = recordCount;
-            //    addMain.BANK_ID = "01";
-            //    //addMain.SID = 1;
-
-
-            //    main.Add(addMain);
-
-            //}
-            //this.stagingContext.FINTRAK_TRAN_PROC_MAIN.AddRange(main);
-
-            //var result = stagingContext.SaveChanges() > 0;
-            //output = result;
+            output = context.SaveChanges() > 0;           
             return output;
         }
 
@@ -1923,6 +1907,12 @@ namespace FintrakBanking.Repositories.Credit
                             addStagingInterest.VALUEDATE = applicationDate;
                             addStagingInterest.TRANSACTIONTYPE = "BL";
                             addStagingInterest.BANKID = "01";
+                            addStagingInterest.PRODUCTID = product.PRODUCTID;
+                            addStagingInterest.CURRENCYID = item.currencyId;
+                            addStagingInterest.CREDITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                            addStagingInterest.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;//product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                            addStagingInterest.CREDITCASAACCOUNTID = null;
+                            addStagingInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                             this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
                             context.SaveChanges();
 
@@ -1954,6 +1944,12 @@ namespace FintrakBanking.Repositories.Credit
                             addStagingPrincipal.VALUEDATE = applicationDate;
                             addStagingPrincipal.TRANSACTIONTYPE = "BL";
                             addStagingPrincipal.BANKID = "01";
+                            addStagingPrincipal.PRODUCTID = product.PRODUCTID;
+                            addStagingPrincipal.CURRENCYID = item.currencyId;
+                            addStagingPrincipal.CREDITGLACCOUNTID = product.PRINCIPALBALANCEGL.Value;
+                            addStagingPrincipal.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;// product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                            addStagingPrincipal.CREDITCASAACCOUNTID = null;
+                            addStagingPrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                             this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPrincipal);
                             context.SaveChanges();
                             WriteBulkPostingToStaging(applicationDate, "BL", batchCode);

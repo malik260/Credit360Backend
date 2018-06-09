@@ -220,7 +220,7 @@ namespace FintrakBanking.Repositories.Finance
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions)
+        public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false)
         {
            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
 
@@ -285,7 +285,7 @@ namespace FintrakBanking.Repositories.Finance
 
             //api call
 
-            if (USE_THIRD_PARTY_INTEGRATION)
+            if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
             {
                 bool data;
 
@@ -1418,7 +1418,6 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-
         public FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model)
         {
             //*FinanceTransactionViewModel*/ loanTransaction = new FinanceTransactionViewModel();
@@ -1908,6 +1907,91 @@ namespace FintrakBanking.Repositories.Finance
                 transactions.Add(trans);
 
             }
+        }
+
+
+        public bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model)
+
+        {
+
+            //var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
+            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+            debit.operationId = model.operationId;
+            debit.description = model.description;
+            debit.valueDate = model.valueDate; //generalSetup.GetApplicationDate();
+            debit.transactionDate = debit.valueDate;
+            debit.currencyId = (short)model.currencyId;
+            debit.currencyRate = model.currencyRate;//GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+            debit.isApproved = true;
+            debit.postedBy = (int)SystemStaff.System;
+            debit.approvedBy = (int)SystemStaff.System;
+            debit.approvedDate = debit.transactionDate;
+            debit.approvedDateTime = DateTime.Now;
+            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            debit.companyId = model.companyId;
+            debit.glAccountId = model.debitGlAccountId;//product.INTERESTRECEIVABLEPAYABLEGL.Value;
+            debit.sourceReferenceNumber = model.sourceReferenceNumber;//product.PRODUCTCODE;
+            debit.casaAccountId = model.debitCasaAccountId;
+            debit.debitAmount = model.actualAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = model.branchId;
+            debit.batchId = model.batchId;
+
+            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+            credit.operationId = model.operationId;
+            credit.description = model.description;
+            credit.valueDate = model.valueDate;//generalSetup.GetApplicationDate();
+            credit.transactionDate = credit.valueDate;
+            credit.currencyId = (short)model.currencyId;
+            credit.currencyRate = model.currencyRate;//GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+            credit.isApproved = true;
+            credit.postedBy = (int)SystemStaff.System;
+            credit.approvedBy = (int)SystemStaff.System;
+            credit.approvedDate = credit.transactionDate;
+            credit.approvedDateTime = DateTime.Now;
+            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            credit.companyId = model.companyId;
+            credit.glAccountId = model.creditGlAccountId;//product.INTERESTINCOMEEXPENSEGL.Value;
+
+            credit.sourceReferenceNumber = model.sourceReferenceNumber;
+            credit.casaAccountId = model.creditCasaAccountId;
+            credit.debitAmount = 0;
+            credit.creditAmount = model.actualAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+            credit.batchId = model.batchId;
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(debit);
+            inputTransactions.Add(credit);
+
+            var batchPost = PostTransaction(inputTransactions,true);
+
+            // Audit Section ---------------------------            
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.BulkIntegrationPosting,
+                STAFFID = (int)SystemStaff.System,//model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"{ model.description}: {model.sourceReferenceNumber}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = model.valueDate,//generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            if (batchPost != null)
+            {
+                var result = context.SaveChanges() > 0;
+                return result;
+            }
+            return false;
+
         }
 
     }
