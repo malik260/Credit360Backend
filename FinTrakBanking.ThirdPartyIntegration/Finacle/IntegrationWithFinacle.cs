@@ -586,7 +586,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                                where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
                                select gl.ACCOUNTID).FirstOrDefault();
 
-            var glAccountCode = "100" + accountCode;//branchCode + accountCode;
+            var glAccountCode = branchCode + accountCode; //"100" + accountCode;
 
             return glAccountCode;
         }
