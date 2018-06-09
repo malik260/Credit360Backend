@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         //List<FinanceTransactionViewModel> PostCollateralSearch(CasaLienViewModel model);
 
-        string PostTransaction(List<FinanceTransactionViewModel> transaction);
+        string PostTransaction(List<FinanceTransactionViewModel> transaction, bool isBulkPosting = false);
 
         CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId);
 
@@ -52,6 +52,8 @@ namespace FintrakBanking.Interfaces.Finance
         FinanceTransactionViewModel PostDailyInterestSuspension(DailyInterestAccrualViewModel model, int loanId, DateTime applicationDate, int staffId);
 
         void UpdateCustomTransactions(string batchCode);
+
+        bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model);
 
     }
 }

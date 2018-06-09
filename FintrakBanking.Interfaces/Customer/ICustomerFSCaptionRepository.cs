@@ -16,5 +16,6 @@ namespace FintrakBanking.Interfaces.Customer
         bool AddCustomerFSCaption(CustomerFSCaptionViewModel entity);       
         bool UpdateCustomerFSCaption(int fsCaptionId, CustomerFSCaptionViewModel entity);
         bool DeleteCustomerFSCaption(int fsCaptionId, UserInfo user);
+        bool ValidateFSCaption(string captionName);
     }
 }

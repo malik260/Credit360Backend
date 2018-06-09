@@ -235,6 +235,7 @@ namespace FintrakBanking.Common.Enum
         CompanyDirectorAddedUpdated = 211,
         CompanyDirectorDeleted = 212,
         CustomerRelatedPartyAddedUpdated = 213,
+        BulkIntegrationPosting = 214,
 
     };
 
