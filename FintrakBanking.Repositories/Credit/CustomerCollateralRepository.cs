@@ -1518,7 +1518,7 @@ namespace FintrakBanking.Repositories.Credit
                                  CollateralVisitationID = x.COLLATERALVISITATIONID,
                                  collateralCustomerId = x.COLLATERALCUSTOMERID
 
-                             });
+                             }).ToList();
             foreach (var file in specifics)
             {
                 CollateralDocumentViewModel list = new CollateralDocumentViewModel();

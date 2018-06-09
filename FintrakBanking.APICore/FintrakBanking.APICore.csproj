@@ -894,7 +894,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <None Include="Web_Local.config">
+    <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
     <Content Include="Views\Report\FintrakReport.cshtml" />
@@ -909,20 +909,20 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Web.config">
+    <Content Include="Web_Test.config">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Web_Test.Debug.config">
+      <DependentUpon>Web_Test.config</DependentUpon>
+    </None>
+    <None Include="Web_Test.Release.config">
+      <DependentUpon>Web_Test.config</DependentUpon>
+    </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web_Local.Debug.config">
-      <DependentUpon>Web_Local.config</DependentUpon>
-    </None>
-    <None Include="Web_Local.Release.config">
-      <DependentUpon>Web_Local.config</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
