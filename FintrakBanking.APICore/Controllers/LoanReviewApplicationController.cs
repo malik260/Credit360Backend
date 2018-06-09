@@ -143,11 +143,11 @@ namespace FintrakBanking.APICore.Controllers
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("loan-review-application/get-cam")]
-        public HttpResponseMessage GetCamDocument(int applicationId, int levelId)
+        public HttpResponseMessage GetCamDocument(int applicationId)
         {
             try
             {
-                CamViewModel data = repo.GetCamDocumentByApprovalLevel(applicationId,levelId);
+                CamViewModel data = repo.GetCamDocumentByApprovalLevel(applicationId,token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)

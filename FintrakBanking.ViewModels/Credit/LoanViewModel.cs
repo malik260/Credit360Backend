@@ -74,6 +74,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string RelatedloanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
+        public int tenorUsed { get { return (DateTime.Now - this.effectiveDate).Days; } }
         public short ? principalFrequencyTypeId { get; set; }
         public short ? interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
@@ -818,6 +819,25 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal amount { get; set; }
 
         public decimal interestOnAmount { get; set; }
+
+    }
+
+    public class LoanDisbursementViewModel : GeneralEntity
+    { 
+    
+        public int loanDisbursementId { get; set; }
+
+        public int termLoanId { get; set; }
+
+        public string  accountNumber { get; set; }
+
+        public decimal amountDisbursed { get; set; }
+
+        public string customerName { get; set; }
+
+        public string loanReferenceNo { get; set; }
+
+
 
     }
 

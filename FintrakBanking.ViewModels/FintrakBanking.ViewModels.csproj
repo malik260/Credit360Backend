@@ -162,6 +162,7 @@
     <Compile Include="Setups\Credit\CreditTemplateViewModel.cs" />
     <Compile Include="Setups\Credit\CustomerProductFeeViewModel.cs" />
     <Compile Include="Setups\Credit\CustomFieldsViewModel.cs" />
+    <Compile Include="Setups\Credit\FSAccountCreationViewModel.cs" />
     <Compile Include="Setups\Credit\LoanCovenantTypeViewModel.cs" />
     <Compile Include="Setups\Credit\PrudentialGuidelineViewModel.cs" />
     <Compile Include="Setups\Finance\AccountCategoryViewModel.cs" />

@@ -30,6 +30,8 @@ namespace FintrakBanking.ViewModels.Customer
         public short branchId { get; set; }
         public bool completedInformation { get; set; }
         public bool crdeitBureauCompleted { get; set; }
+        public int? relationshipManagerId { get; set; }
+        public int? relationshipOfficerId { get; set; }
         public List<CustomerBvnViewModels> customerBvnInformation { get; set; }
         public List<CustomerCompanyShareholdersViewModels> customerCompanyShareholders { get; set; }
         public List<CustomerCompanyDirectorsViewModels> customerCompanyDirectors { get; set; }
@@ -45,9 +47,9 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class GroupCustomerMembersViewModel
     {
-        public int    customerId { get; set; }
-        public string  lastName   { get; set; }
-        public string  firstName { get; set; }
+        public int customerId { get; set; }
+        public string lastName { get; set; }
+        public string firstName { get; set; }
         public string customerName { get { return lastName + ' ' + firstName; } }
         public string customerCode { get; set; }
         public string customerType { get; set; }

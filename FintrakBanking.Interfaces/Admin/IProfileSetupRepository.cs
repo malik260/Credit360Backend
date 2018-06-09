@@ -9,6 +9,7 @@ namespace FintrakBanking.Interfaces
 {
   public   interface IProfileSetupRepository
   {
-      ProfileSettingViewModel ProfileConfiguration(ProfileSettingViewModel entity);
+      ProfileSettingViewModel UpdateProfileConfiguration(ProfileSettingViewModel entity);
+      ProfileSettingViewModel GetProfileConfiguration();
   }
 }

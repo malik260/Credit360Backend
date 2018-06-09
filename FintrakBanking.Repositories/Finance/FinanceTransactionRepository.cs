@@ -238,7 +238,8 @@ namespace FintrakBanking.Repositories.Finance
 
             foreach (var item in inputTransactions)
             {
-  
+                item.batchCode = batchCode;
+
                     if (item.debitAmount != 0 && item.creditAmount != 0)
                         throw new Exception("Debit or Credit Amount should be 0");
 
@@ -474,8 +475,8 @@ namespace FintrakBanking.Repositories.Finance
         public CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId,   int companyId)
         {
             var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
-            TransactionPosting transPosting = new TransactionPosting(context);
-            var data = new CurrencyExchangeRateViewModel(); 
+             
+      
             if (USE_THIRD_PARTY_INTEGRATION)
             {
 
@@ -489,17 +490,8 @@ namespace FintrakBanking.Repositories.Finance
                     var toCurrencyCode = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == currencyId).CURRENCYCODE;
                     var rateCode = "TTB";
 
-                   // integration.
-                    Task.Run(async () => { data = await transPosting.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode); }).GetAwaiter().GetResult();
-                    return new CurrencyExchangeRateViewModel
-                    {
-                        baseCurrencyId = baseCurrency,
-                        currencyId = data.currencyId,
-                        buyingRate = data.buyingRate,
-                        sellingRate = data.sellingRate,
-                        date = data.date,
-                        isBaseCurrency = false
-                    };
+                    // integration.
+                    return integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
                 }
  
                 //return data;

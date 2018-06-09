@@ -174,7 +174,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICollateralDocumentRepository>().To<CollateralDocumentRepository>();
             kernel.Bind<IJobRequestRepository>().To<JobRequestRepository>();
             kernel.Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
-        //    kernel.Bind<ILimitRepository>().To<LimitRepository>();
+            //kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IFinanceTransactionRepository>().To<FinanceTransactionRepository>();
             kernel.Bind<ILoanOperationsRepository>().To<LoanOperationsRepository>();
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
@@ -210,6 +210,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IOverDraftValidation>().To<OverDraftValidation>();
             kernel.Bind<ICustomChartOfAccountRepository>().To<CustomChartOfAccountRepository>();
             kernel.Bind<IProfileSetupRepository>().To<ProfileSetupRepository>();
+            kernel.Bind<IFSAccountCreationRepository>().To<FSAccountCreationRepository>();
         }
 
     }

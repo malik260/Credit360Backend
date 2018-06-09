@@ -20,13 +20,14 @@
             <LocalReport ReportPath="Reports\Report\CollateralVisitation.rdlc" >
                 
                 <datasources>
-                          <rsweb:ReportDataSource DataSourceId="ObjectDataSourceAudit" Name="Audit" />
+                          <rsweb:ReportDataSource DataSourceId="ObjectDataSourceCollateralVisitation" Name="CollateralVisitation" />
                       </datasources>
             </LocalReport>
         </rsweb:ReportViewer>
      
         <asp:ObjectDataSource ID="ObjectDataSourceCollateralVisitation" runat="server" SelectMethod="CollateralPropertyDueForVisitation" TypeName="FintrakBanking.ReportObjects.ReportingObjects.LimitsMonitoringReportsObjects">
             <SelectParameters> 
+
                 <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
           

@@ -16,6 +16,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using OverDraftTransactions;
     using ForeignCurrencyAccountCreation;
     using AccountInformation;
+    using FintrakBanking.Common.CustomException;
 
     public   class IntegrationWithFinacle : IIntegrationWithFinacle
     {
@@ -52,7 +53,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -106,7 +107,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -133,7 +134,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -159,7 +160,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -187,7 +188,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -218,7 +219,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.webRequestStatus);
+                    throw new Exception(result.APIResponse.message);
                 }
                 else
                 {
@@ -235,6 +236,22 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
 
         #endregion
+
+
+        public CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
+        {
+            var data = new CurrencyExchangeRateViewModel();
+            Task.Run(async () => { data = await transaction.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode); }).GetAwaiter().GetResult();
+            return new CurrencyExchangeRateViewModel
+            {
+               // baseCurrencyId = baseCurrency,
+                currencyId = data.currencyId,
+                buyingRate = data.buyingRate,
+                sellingRate = data.sellingRate,
+                date = data.date,
+                isBaseCurrency = false
+            };
+        }
 
         public bool GetExposePersonStatus(string customerCode)
         {
@@ -305,9 +322,17 @@ namespace FinTrakBanking.ThirdPartyIntegration
             if (result.APIResponse.responseCode == "0")
             {
                 AddCustomTransactions(transactionLst);
+                return true;
             }
+            else
+            {
+                throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                //return false;
+            }
+           
 
-            return result.APIStatus;
+            //return result.APIStatus;
+
         }
 
         public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
@@ -550,21 +575,22 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return result;
         }
 
+     
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
             var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
 
             var accountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
-                join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
-                join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
-                where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
-                select gl.ACCOUNTID).FirstOrDefault();
+                               join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
+                               join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
+                               where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
+                               select gl.ACCOUNTID).FirstOrDefault();
 
-            var glAccountCode =  "100" + accountCode;//branchCode + accountCode;
+            var glAccountCode = "100" + accountCode;//branchCode + accountCode;
 
             return glAccountCode;
         }
-        
+
         private List<TransactionPostingViewModel> TransactionData(List<FinanceTransactionViewModel> model)
         {
             List<TransactionPostingViewModel> transactionLst = new List<TransactionPostingViewModel>();

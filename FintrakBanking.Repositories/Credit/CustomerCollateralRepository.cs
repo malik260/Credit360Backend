@@ -4680,6 +4680,13 @@ namespace FintrakBanking.Repositories.Credit
             var specifics = (from x in context.TBL_TEMP_COLLATERAL_PLANT_EQUP
                              where x.TEMPCOLLATERALCUSTOMERID == collateralId
                              select (x)).FirstOrDefault();
+
+            var MACHINEVALUEBASENAME = (from value in context.TBL_MACHINEVALUE_BASE
+                             where value.MACHINEVALUEBASEID == specifics.VALUEBASETYPEID
+                             select (value.MACHINEVALUEBASENAME)).FirstOrDefault();
+
+          
+
             var details = new CollateralViewModel
             {
                 collateralId = specifics.TEMPCOLLATERALCUSTOMERID,
@@ -4689,12 +4696,13 @@ namespace FintrakBanking.Repositories.Credit
                 manufacturerName = specifics.MANUFACTURERNAME,
                 yearOfManufacture = specifics.YEAROFMANUFACTURE,
                 yearOfPurchase = specifics.YEAROFPURCHASE,
-                valueBaseTypeName = context.TBL_MACHINEVALUE_BASE.FirstOrDefault(x => x.MACHINEVALUEBASEID == specifics.VALUEBASETYPEID).MACHINEVALUEBASENAME,
+                valueBaseTypeName = MACHINEVALUEBASENAME,
                 machineCondition = specifics.MACHINECONDITION,
                 machineryLocation = specifics.MACHINERYLOCATION,
                 replacementValue = specifics.REPLACEMENTVALUE,
                 equipmentSize = specifics.EQUIPMENTSIZE,
                 intendedUse = specifics.INTENDEDUSE,
+                remark = specifics.REMARK
             };
             //details = GetTempCollateralInsurancePolicy(details);
             return details;

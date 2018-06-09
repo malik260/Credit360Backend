@@ -90,7 +90,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
 
-            int approvalLevelId = GetFirstApprovalLevelId(/*appl.ProductId,*/ appl.PRODUCTCLASSID, model.createdBy);
+            int approvalLevelId = GetFirstApprovalLevelId(model.createdBy, (int)OperationsEnum.CAM, appl.PRODUCTCLASSID, null);
 
             var memo = context.TBL_CREDIT_APPRAISAL_MEMORANDM.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).SingleOrDefault();
 
@@ -154,6 +154,57 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
+        private int GetFirstApprovalLevelId(int staffId, int operationId, int? productClassId, int? productId)
+        {
+
+            IQueryable<TBL_APPROVAL_GROUP_MAPPING> groupMappings;
+
+            if (productId != null)
+            {
+                groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
+                    x.OPERATIONID == operationId
+                    && x.PRODUCTCLASSID == productClassId
+                    && x.PRODUCTID == productId
+                );
+            }
+            else
+            {
+                groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
+                    x.OPERATIONID == (int)OperationsEnum.CAM
+                    && x.PRODUCTCLASSID == productClassId
+                );
+            }
+
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var staffLevels = groupMappings
+            .Select(x => x.TBL_APPROVAL_GROUP)
+            .SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.STAFFROLEID == staff.STAFFROLEID))
+                       .Select(x => new
+                       {
+                           staffId = staffId,
+                           levelId = x.APPROVALLEVELID
+                       });
+
+            if (staffLevels.Any() == false)
+            {
+                staffLevels = groupMappings
+                .Select(x => x.TBL_APPROVAL_GROUP)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF)
+                .Select(x => new
+                {
+                    staffId = x.STAFFID,
+                    levelId = x.TBL_APPROVAL_LEVEL.APPROVALLEVELID
+                })
+                .Where(x => x.staffId == staffId);
+            }
+
+            if (staffLevels.FirstOrDefault() == null) { throw new Exception("No workflow setup for this product"); }
+
+            return staffLevels.Select(x => x.levelId).First();
+        }
+
         private IQueryable<int> GetAllCamProductIds()
         {
             return context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCT_CLASS_PROCESSID == 1)
@@ -167,38 +218,6 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x => (int?)x.PROPOSEDPRODUCTID)
                 .Distinct();
-        }
-
-        private int GetFirstApprovalLevelId(/*short productId,*/ short? productClassId, int staffId = 0) // ---- REFACTOR when we have productId!!!
-        {
-            var groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
-                x.OPERATIONID == (int)OperationsEnum.CAM
-                && x.PRODUCTCLASSID == productClassId
-            //&& x.ProductId == productId
-            );
-
-            if (groupMappings.Any() == false) // MAY BECOME REDUNDANT!
-            {
-                groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
-                    x.OPERATIONID == (int)OperationsEnum.CAM
-                    && x.PRODUCTCLASSID == productClassId
-                );
-            }
-
-            var staffLevels = groupMappings
-            .Select(x => x.TBL_APPROVAL_GROUP)
-            .SelectMany(x => x.TBL_APPROVAL_LEVEL)
-            .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF)
-            .Select(x => new
-            {
-                staffId = x.STAFFID,
-                levelId = x.TBL_APPROVAL_LEVEL.APPROVALLEVELID
-            })
-            .Where(x => x.staffId == staffId);
-
-            if (staffLevels.FirstOrDefault() == null) { throw new Exception("No workflow setup for this product"); }
-
-            return staffLevels.Select(x => x.levelId).First();
         }
 
         private bool FlagSubmittedForAppraisal(int id)
@@ -415,12 +434,12 @@ namespace FintrakBanking.Repositories.Credit
                     responseStaffId = x.RESPONSESTAFFID,
                     requestStaffId = x.REQUESTSTAFFID,
                     fromApprovalLevelId = x.FROMAPPROVALLEVELID,
-                 //   fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : x.TBL_APVL_LVL.LEVELNAME,
+                    fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : x.TBL_APPROVAL_LEVEL.LEVELNAME,
                     toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
                     approvalStateId = x.APPROVALSTATEID,
                     approvalStatusId = x.APPROVALSTATUSID,
-                   // approvalState = x.APVL_LVL_STATE.APPROVALSTATE,
-                   // approvalStatus = x.APVL_ST.APPROVALSTATUSNAME,
+                    approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                    approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                     comment = x.COMMENT,
                     staffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
                 }).OrderByDescending(x => x.approvalTrailId);
@@ -712,7 +731,8 @@ namespace FintrakBanking.Repositories.Credit
                     loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
                     relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
-                    newApplicationDate = x.a.APPLICATIONDATE,
+                    applicationDate = x.a.APPLICATIONDATE,
+                    //newApplicationDate = x.a.APPLICATIONDATE,
                     applicationAmount = x.a.APPLICATIONAMOUNT,
                     approvedAmount = x.a.APPROVEDAMOUNT,
                     interestRate = x.a.INTERESTRATE,
@@ -744,7 +764,7 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .OrderByDescending(x => x.newApplicationDate)
+                .OrderByDescending(x => x.applicationDate)
                 .ThenByDescending(x => x.loanApplicationId);
 
             return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
@@ -1116,5 +1136,106 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
             return GetRecommendedCollateral(entity.applicationId);
         }
+
+        # region LMS APPROVAL
+
+        public IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersLms(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATN_DETL_MTRIG
+                .Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
+                .Select(x => new MonitoringTriggersViewModel
+                {
+                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    monitoringTriggerId = x.MONITORING_TRIGGERID,
+                    monitoringTrigger = x.MONITORING_TRIGGER,
+                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+                })
+                .ToList();
+        }
+
+        public IEnumerable<MonitoringTriggersViewModel> SaveApplicationMonitoringTriggersLms(int applicationId, List<MonitoringTriggersViewModel> items, int staffId)
+        {
+            context.TBL_LOAN_APPLICATN_DETL_MTRIG
+                .RemoveRange(
+                    context.TBL_LOAN_APPLICATN_DETL_MTRIG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
+                );
+            context.SaveChanges();
+
+            foreach (var o in items)
+            {
+                context.TBL_LOAN_APPLICATN_DETL_MTRIG.Add(new TBL_LOAN_APPLICATN_DETL_MTRIG
+                {
+                    LOANAPPLICATIONDETAILID = o.applicationDetailId,
+                    MONITORING_TRIGGERID = o.monitoringTriggerId,
+                    MONITORING_TRIGGER = o.monitoringTrigger,
+                    CREATEDBY = staffId,
+                    DATETIMECREATED = DateTime.Now
+                });
+            }
+            context.SaveChanges();
+
+            return GetApplicationMonitoringTriggers(applicationId);
+        }
+
+        public List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTermsLms(RepaymentScheduleTermsViewModel entity)
+        {
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
+            detail.REPAYMENTTERMS = entity.terms;
+            detail.REPAYMENTSCHEDULE = entity.schedule;
+            context.SaveChanges();
+            return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID)
+                .Select(x => new RepaymentScheduleTermsViewModel
+                {
+                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    terms = x.REPAYMENTTERMS,
+                    schedule = x.REPAYMENTSCHEDULE,
+                    productCustomerName = x.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME
+                }).ToList();
+        }
+
+        public List<RecommendedCollateralViewModel> UpdateRecommendedCollateralLms(RecommendedCollateralViewModel entity)
+        {
+            var recommendation = context.TBL_LOAN_APPLICATION_COLLATRL2.Find(entity.id);
+            recommendation.LOANAPPLICATIONDETAILID = entity.applicationDetailId;
+            recommendation.COLLATERALDETAIL = entity.collateralDetail;
+            recommendation.COLLATERALVALUE = entity.collateralValue;
+            recommendation.STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount;
+            context.SaveChanges();
+            return GetRecommendedCollateral(entity.applicationId);
+        }
+
+        public List<RecommendedCollateralViewModel> AddRecommendedCollateralLms(RecommendedCollateralViewModel entity)
+        {
+            context.TBL_LOAN_APPLICATION_COLLATRL2.Add(new TBL_LOAN_APPLICATION_COLLATRL2
+            {
+                LOANAPPLICATIONID = entity.applicationId,
+                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                COLLATERALDETAIL = entity.collateralDetail,
+                COLLATERALVALUE = entity.collateralValue,
+                STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
+                DATETIMECREATED = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            context.SaveChanges();
+            return GetRecommendedCollateral(entity.applicationId);
+        }
+
+        public List<RecommendedCollateralViewModel> GetRecommendedCollateralLms(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Select(x => new RecommendedCollateralViewModel
+                {
+                    id = x.COLLATERALBASICDETAILID,
+                    collateralDetail = x.COLLATERALDETAIL,
+                    collateralValue = x.COLLATERALVALUE,
+                    stampedToCoverAmount = x.STAMPEDTOCOVERAMOUNT,
+                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+                })
+                .ToList();
+        }
+
+        # endregion LMS APPROVAL
+
     }
 }
