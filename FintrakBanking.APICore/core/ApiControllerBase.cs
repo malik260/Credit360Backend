@@ -28,8 +28,8 @@ namespace FintrakBanking.APICore.core
         public override void OnException(HttpActionExecutedContext context)
         {
             Log.Error(context.Exception,"OOps");
-            SeriLogger.LogSetup();
-           // Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Elmah.Error(context.Exception));
+            SeriLogger.LogSetup();                
+            // Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Elmah.Error(context.Exception));
         }
     }
 }

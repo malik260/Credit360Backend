@@ -375,6 +375,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOMER_RELATED_PARTY> TBL_CUSTOMER_RELATED_PARTY { get; set; }
         public virtual DbSet<TBL_PROFILE_SETTING> TBL_PROFILE_SETTING { get; set; }
         public virtual DbSet<TBL_CUSTOM_TRANSACTION_BULK> TBL_CUSTOM_TRANSACTION_BULK { get; set; }
+        public virtual DbSet<TBL_STAFF_EXTENDED> TBL_STAFF_EXTENDED { get; set; }
+        public virtual DbSet<TBL_LOAN_DISBURSEMENT> TBL_LOAN_DISBURSEMENT { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

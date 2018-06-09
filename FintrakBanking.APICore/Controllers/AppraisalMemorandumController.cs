@@ -130,12 +130,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
           [HttpGet]  
-        [Route("appraisal-memorandum/trail/{loanApplicationId}/operation/{operationId}")]
-        public HttpResponseMessage GetAppraisalMemorandumTrail(int loanApplicationId, int operationId)
+        [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}")]
+        public HttpResponseMessage GetAppraisalMemorandumTrail(int applicationId, int operationId)
         {
             try
             {
-                var data = repo.GetAppraisalMemorandumTrail(loanApplicationId,operationId);
+                var data = repo.GetAppraisalMemorandumTrail(applicationId,operationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
