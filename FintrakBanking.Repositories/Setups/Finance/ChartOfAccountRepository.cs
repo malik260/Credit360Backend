@@ -38,12 +38,13 @@ namespace FintrakBanking.Repositories.Setups.Finance
                                                 IGeneralSetupRepository genSetup,
                                                 IWorkflow _workFlow,
                                                 IApprovalLevelStaffRepository _level,
-                                                     IIntegrationWithFinacle cwpAIP)
+                                                     IIntegrationWithFinacle _cwpAIP)
         {
             this.context = _context;
             this._genSetup = genSetup;
             auditTrail = _auditTrail;
             this.workFlow = _workFlow;
+            cwpAIP = _cwpAIP;
             level = _level;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -305,7 +306,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 return -1;
         }
 
-        public async Task<bool> AddTempAccount(ChartOfAccountViewModel accountModel)
+        public bool AddTempAccount(ChartOfAccountViewModel accountModel)
         {
             if (USE_THIRD_PARTY_INTEGRATION)
             {
@@ -383,7 +384,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 {
                     auditTrail.AddAuditTrail(audit);
                     context.TBL_TEMP_CHART_OF_ACCOUNT.Add(account);
-                    output = await context.SaveChangesAsync() > 0;
+                    output =  context.SaveChanges() > 0;
 
                     var entity = new ApprovalViewModel
                     {

@@ -11,18 +11,17 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int TEMPCOLLATERALMISCELLANEOUSID { get; set; }
-
+        [Required]
         public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
         public bool ISOWNEDBYCUSTOMER { get; set; }
-
+        [Required]
         [StringLength(50)]
         public string NAMEOFSECURITY { get; set; }
 
         //[Column(TypeName = "money")]
         public decimal SECURITYVALUE { get; set; }
 
-        [Required]
         [StringLength(100)]
         public string NOTE { get; set; }
 
