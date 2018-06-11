@@ -761,7 +761,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     }
                 }
 
-                return lstCustomer;
+                return lstCustomer.OrderBy(x=> x.customerName);
 
 
 
