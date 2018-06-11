@@ -83,6 +83,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         // miscellaneous
         public string securityName { get; set; }
+        public string note { get; set; }
 
         public List<MiscellaneousNote> notes { get; set; }
 
@@ -281,7 +282,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short baseCurrency { get; set; }
         public short baseCurrencyId { get; set; }
         public bool disAllowCollateral { get; set; }
-       
+        public string policyinsuranceType { get; set; }
+        public DateTime dateOfManufacture { get; set; }
     }
 
     public class crossGarantee
@@ -596,6 +598,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? lastValuationAmount { get; set; }
         public decimal invoiceValue { get; set; }
         public string remark { get; set; }
+        public DateTime dateOfManufacture { get; set; }
     }
 
     public class CollateralMiscellaneousViewModel

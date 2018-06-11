@@ -53,8 +53,9 @@ namespace FintrakBanking.Repositories.Finance
 
             var nextWorkDay = publicHoliday.GetNextWorkDay(applicationDate, countryId);
 
-            if (applicationDate.AddDays(1) == nextWorkDay) { }
-            //ProcessEndOfDay(applicationDate, model.companyId, model.createdBy);
+            if (applicationDate.AddDays(1) == nextWorkDay) { 
+            ProcessEndOfDay(applicationDate, model.companyId, model.createdBy);
+            }
             else
             {
                 DateTime runDate = applicationDate;
@@ -117,7 +118,7 @@ namespace FintrakBanking.Repositories.Finance
             endOfDay.CREATEDBY = staffId;
             endOfDay.STARTDATETIME = DateTime.Now;
 
-            //loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
+            loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
 
             //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
@@ -127,7 +128,7 @@ namespace FintrakBanking.Repositories.Finance
 
             //loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
 
-            //loanOperation.ProcessLoanRepaymentPostingPastDue(date);
+            loanOperation.ProcessLoanRepaymentPostingPastDue(date);
 
 
             //loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(date);
@@ -143,7 +144,7 @@ namespace FintrakBanking.Repositories.Finance
 
             //loanOperation.CalculateLoanClassification(date);
 
-            loanOperation.GetRepaymentFromStaging();
+            //loanOperation.GetRepaymentFromStaging();
 
             endOfDay.ENDDATETIME = DateTime.Now;
 

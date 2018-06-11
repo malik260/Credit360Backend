@@ -6,6 +6,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FinTrakBanking.ThirdPartyIntegration
 {
+    using FintrakBanking.Common.CustomException;
     using FintrakBanking.Entities.Models;
     using System;
     using System.Collections.Generic;
@@ -23,6 +24,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
             private HttpClientHandler handler = new HttpClientHandler();
             private static HttpClient _httpClientInstance;
 
+            public AccountDetail(FinTrakBankingContext _context)
+            {
+                this.context = _context;
+                var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
+                API_KEY = configdata.APIKEY;
+                API_URL = configdata.APIURL;
+            }
             public async Task<GLAccountDetailsViewModel> APIOfficeAccountGetGeneralLedgerAccountRecord(string glNumber)
             {
                 handler.UseDefaultCredentials = true;
@@ -47,7 +55,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (response.IsSuccessStatusCode)
                 {
                     GLAccountDetailsViewModel data = await response.Content.ReadAsAsync<GLAccountDetailsViewModel>();
-                    if (data == null)
+                    if (data != null)
                     {
                         result = new GLAccountDetailsViewModel
                         {
@@ -69,13 +77,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                         client.Dispose();
                         return result;
                     }
-                    else throw new Exception("Record not fund");
+                    else throw new ConditionNotMetException("Account number not found on finacle");
                 }
+                else throw new ConditionNotMetException("Account Number Search. " + response.ReasonPhrase);
 
-                handler.Dispose();
-                client.Dispose();
-                return result;
-
+                //handler.Dispose();
+               // client.Dispose();
+               // return result;
             }
 
             public async Task<TDAccountRecordViewModel> APIOfficeAccountGetTermDepositAccountRecord(
