@@ -79,6 +79,7 @@
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
     <Compile Include="Credit\CallMemoViewModel.cs" />
+    <Compile Include="Credit\LoanCAMSOLViewModel.cs" />
     <Compile Include="Credit\ChecklistApprovalViewModel.cs" />
     <Compile Include="Credit\CollateralCustomerViewModel.cs" />
     <Compile Include="Credit\CollateralDocumentViewModel.cs" />

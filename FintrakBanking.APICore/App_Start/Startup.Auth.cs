@@ -60,11 +60,11 @@ namespace FintrakBanking.APICore
             app.UseCookieAuthentication(new CookieAuthenticationOptions());
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
-            var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
+           // var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
             var exipredMin = int.Parse(ConfigurationManager.AppSettings["tokenExpiryMinute"]);
-            var exipredSec = int.Parse(ConfigurationManager.AppSettings["tokenExpirySecond"]);
+            //var exipredSec = int.Parse(ConfigurationManager.AppSettings["tokenExpirySecond"]);
 
-            var exipredTime = (exipredHr * 60 * 60) + (exipredMin * 60) + exipredSec;
+            //var exipredTime = (exipredHr * 60 * 60) + (exipredMin * 60) + exipredSec;
             // Configure the application for OAuth based flow
             PublicClientId = "self";
             OAuthOptions = new OAuthAuthorizationServerOptions
@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore
                 Provider = new ApplicationOAuthProvider(PublicClientId),
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
                 // AccessTokenExpireTimeSpan = TimeSpan.FromHours(exipredHr),
-                AccessTokenExpireTimeSpan = TimeSpan.FromSeconds(exipredTime),
+                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(exipredMin),
                  
             // In production mode set AllowInsecureHttp = false
             AllowInsecureHttp = true

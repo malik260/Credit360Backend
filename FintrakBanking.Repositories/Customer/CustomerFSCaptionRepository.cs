@@ -113,7 +113,7 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerFSCaptionViewModel> GetCustomerFSCaptionByGroupId(short fsCaptionGroupId)
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION
-                        where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false && a.ISRATIO == false
+                        where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false 
                         select new CustomerFSCaptionViewModel
                         {
                             fsCaptionId = a.FSCAPTIONID,
@@ -153,7 +153,7 @@ namespace FintrakBanking.Repositories.Customer
                             select data.FSCAPTIONID).ToList();
 
             var captions = (from a in context.TBL_CUSTOMER_FS_CAPTION
-                       where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false  && a.ISRATIO == false// && !dataList.Contains(data.ProductProductFeeId)
+                       where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false // && !dataList.Contains(data.ProductProductFeeId)
                        select new CustomerFSCaptionViewModel
                        {
                            fsCaptionId = a.FSCAPTIONID,
@@ -181,7 +181,7 @@ namespace FintrakBanking.Repositories.Customer
                             select data.FSCAPTIONID).ToList();
 
             var captions = (from a in context.TBL_CUSTOMER_FS_CAPTION
-                            where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false && a.ISRATIO == false // && !dataList.Contains(data.ProductProductFeeId)
+                            where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false// && !dataList.Contains(data.ProductProductFeeId)
                             select new CustomerFSCaptionViewModel
                             {
                                 fsCaptionId = a.FSCAPTIONID,
