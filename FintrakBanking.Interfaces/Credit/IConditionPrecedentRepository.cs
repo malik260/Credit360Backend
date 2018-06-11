@@ -27,6 +27,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddComplianceTimelineTemplate(ComplianceTimelineViewModel model);
 
         bool UpdateComplianceTimelineTemplate(ComplianceTimelineViewModel model, int timelineId);
+        bool RemoveComplianceTimelineTemplate(UserInfo user, int id);
 
         List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByDetailId(int detailId);
 
