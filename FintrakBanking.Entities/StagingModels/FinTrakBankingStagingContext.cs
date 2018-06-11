@@ -35,7 +35,24 @@ namespace FintrakBanking.Entities.StagingModels
         public virtual DbSet<TBL_CUSTOMER_SIGNATORY> TBL_CUSTOMER_SIGNATORY { get; set; }
         public virtual DbSet<STG_STAFF> STG_STAFF { get; set; }
 
+        public virtual DbSet<STG_FREECODE1> STG_FREECODE1 { get; set; }
+        public virtual DbSet<STG_FREECODE4> STG_FREECODE4 { get; set; }
+        public virtual DbSet<STG_FREECODE5> STG_FREECODE5 { get; set; }
+        public virtual DbSet<STG_FREECODE6> STG_FREECODE6 { get; set; }
+        public virtual DbSet<STG_FREECODE7> STG_FREECODE7 { get; set; }
+        public virtual DbSet<STG_FREECODE8> STG_FREECODE8 { get; set; }
+        public virtual DbSet<STG_FREECODE9> STG_FREECODE9 { get; set; }
+        public virtual DbSet<STG_FREECODE10> STG_FREECODE10 { get; set; }
+        public virtual DbSet<STG_MODE_OF_ADV> STG_MODE_OF_ADV { get; set; }
+        public virtual DbSet<STG_NAT_OF_ADV> STG_NAT_OF_ADV { get; set; }
+        public virtual DbSet<STG_OCCUPATION_CODE> STG_OCCUPATION_CODE { get; set; }
+        public virtual DbSet<STG_PURPOSE_OF_ADV> STG_PURPOSE_OF_ADV { get; set; }
+        public virtual DbSet<STG_SANCTION_AUTH> STG_SANCTION_AUTH { get; set; }
+        public virtual DbSet<STG_SANCTION_LEVEL> STG_SANCTION_LEVEL { get; set; }
+        public virtual DbSet<STG_SUB_SECTOR> STG_SUB_SECTOR { get; set; }
+        public virtual DbSet<STG_SECTOR_CODE> STG_SECTOR_CODE { get; set; }
         
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 

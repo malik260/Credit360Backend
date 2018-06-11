@@ -236,9 +236,12 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.SearchForCustomerGroupRealtime(token.GetCompanyId, searchQuery);
+                var data = repo.SearchForCustomerGroup(token.GetCompanyId, searchQuery);
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data.ToList() });
+                //var data = repo.SearchForCustomerGroupRealtime(token.GetCompanyId, searchQuery);
+                //return Request.CreateResponse(HttpStatusCode.OK,
+                //    new { success = true, result = data.ToList() });
             }
             catch (Exception e)
             {
@@ -248,7 +251,24 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e}" });
             }
         }
+        //   [HttpGet] [ClaimsAuthorization]  
+        //[Route("all-customer-group-mapping")]
+        //public HttpResponseMessage GetAllCustomerGroupMappingByGroupId(int customerGroupId)
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetAllCustomerGroupMappingByGroupId(customerGroupId);
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = data });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        //errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
 
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = $"Error: {e}" });
+        //    }
+        //}
       [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/")]
         public HttpResponseMessage CustomerGroupSearch(string searchQuery)

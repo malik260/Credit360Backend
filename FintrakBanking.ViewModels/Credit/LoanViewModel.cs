@@ -693,6 +693,44 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+
+    //public class BulkIntegrationPostingViewModel : GeneralEntity
+
+    //{
+    //    public int sid { get; set; }
+
+    //    public string batchId  { get; set; }
+
+    //    public short categoryId { get; set; }
+
+    //    public byte transactionTypeId { get; set; }
+
+    //    public short productId { get; set; }
+
+    //    //public int companyId { get; set; }
+
+    //    public short branchId { get; set; }
+
+    //    public short currencyId { get; set; }
+
+    //    public double exchangeRate { get; set; }
+
+    //    public decimal mainAmount { get; set; }
+
+    //    public double interestRate { get; set; }
+
+    //    public DateTime date { get; set; }
+
+    //    public short dayCountConventionId { get; set; }
+
+    //    public double dailyAccuralAmount { get; set; }
+
+    //    public decimal availableBalance { get; set; }
+
+    //    public int daysInAYear { get; set; }
+
+    //}
+
     public class SubAllocationViewModel 
     {
         public int fromLoanId  { get; set; }
@@ -781,6 +819,25 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal amount { get; set; }
 
         public decimal interestOnAmount { get; set; }
+
+    }
+
+    public class LoanDisbursementViewModel : GeneralEntity
+    { 
+    
+        public int loanDisbursementId { get; set; }
+
+        public int termLoanId { get; set; }
+
+        public string  accountNumber { get; set; }
+
+        public decimal amountDisbursed { get; set; }
+
+        public string customerName { get; set; }
+
+        public string loanReferenceNo { get; set; }
+
+
 
     }
 
