@@ -321,7 +321,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ComplianceTimelineViewModel> GetComplianceTimelineTemplate()
         {
-            return this.context.TBL_COMPLIANCE_TIMELINE
+            return this.context.TBL_COMPLIANCE_TIMELINE.Where(c=>c.DELETED == false)
             .Select(c => new ComplianceTimelineViewModel
             {
                 timelineId = c.TIMELINEID,
@@ -337,6 +337,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 TIMELINE = model.timeline,
                 CREATEDBY = model.createdBy,
+                DELETED = false,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
 
@@ -389,6 +390,16 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteComplianceTimelineTemplate( int timelineId)
+        {
+            var data = this.context.TBL_COMPLIANCE_TIMELINE.Find(timelineId);
+            if (data != null)
+            {
+                data.DELETED = true;
+            }
             return context.SaveChanges() != 0;
         }
 
