@@ -350,6 +350,16 @@ namespace FintrakBanking.Repositories.Credit
                     else
                         return "";
                 }
+                catch (BadLogicException be)
+                {
+                    trans.Rollback();
+                    throw new ConditionNotMetException(be.Message);
+                }
+                catch (ConditionNotMetException ce)
+                {
+                    trans.Rollback();
+                    throw new ConditionNotMetException(ce.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();
@@ -518,6 +528,16 @@ namespace FintrakBanking.Repositories.Credit
                         return loanReferenceNumber;
                     else
                         return "";
+                }
+                catch (BadLogicException be)
+                {
+                    trans.Rollback();
+                    throw new ConditionNotMetException(be.Message);
+                }
+                catch (ConditionNotMetException ce)
+                {
+                    trans.Rollback();
+                    throw new ConditionNotMetException(ce.Message);
                 }
                 catch (Exception ex)
                 {
@@ -736,6 +756,16 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         return "";
                     }
+                }
+                catch (BadLogicException be)
+                {
+                    trans.Rollback();
+                    throw new ConditionNotMetException(be.Message);
+                }
+                catch (ConditionNotMetException ce)
+                {
+                    trans.Rollback();
+                    throw new ConditionNotMetException(ce.Message);
                 }
                 catch (Exception ex)
                 {
@@ -1896,7 +1926,7 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                                     reviewedDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
                                     sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                                    sanctionLimit = revolvingLoanRecord.OVERDRAFTLIMIT.ToString(), //String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                                    sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT), 
                                     sanctionReferenceNumber =  revolvingLoanRecord.LOANREFERENCENUMBER
                                 };
 
