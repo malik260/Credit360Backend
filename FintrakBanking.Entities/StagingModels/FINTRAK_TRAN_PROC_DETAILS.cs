@@ -87,5 +87,8 @@ namespace FintrakBanking.Entities.StagingModels
 
         [StringLength(4)]
         public string BANK_ID { get; set; }
+
+        [StringLength(1)]
+        public string FINTRAK_FLG { get; set; }
     }
 }

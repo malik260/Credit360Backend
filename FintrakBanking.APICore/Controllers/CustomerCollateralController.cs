@@ -271,7 +271,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
 
                 var response = repo.GoForApproval(model);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message ="Approved Successfully"});
             }
             catch (Exception ex)
             {
@@ -316,6 +316,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.GetCollateralTypeByCollateralId(collateralId, typeId);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)

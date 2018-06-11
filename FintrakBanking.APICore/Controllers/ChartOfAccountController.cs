@@ -173,7 +173,7 @@ namespace FintrakBanking.APICore.Controllers
 
          [HttpPost] [ClaimsAuthorization]
         [Route("")]
-        public async Task<HttpResponseMessage> AddTempAccount([FromBody] ChartOfAccountViewModel model)
+        public HttpResponseMessage AddTempAccount([FromBody] ChartOfAccountViewModel model)
         {
             try
             {
@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.branchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
 
-                var account = await repo.AddTempAccount(model);
+                var account = repo.AddTempAccount(model);
                 if (account)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

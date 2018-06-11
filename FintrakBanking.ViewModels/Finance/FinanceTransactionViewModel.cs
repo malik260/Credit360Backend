@@ -71,6 +71,7 @@ namespace FintrakBanking.ViewModels.Finance
         public decimal creditAmount { get; set; }
         public short sourceBranchId { get; set; }
         public short destinationBranchId { get; set; }
+        public string batchId { get; set; }
 
     }
 
@@ -129,6 +130,13 @@ namespace FintrakBanking.ViewModels.Finance
         public int recordCount { get; set; }
         public string status { get; set; }
         public int sid { get; set; }
+        public int productId { get; set; }
+        public int currencyId { get; set; }
+        public decimal actualAmount { get; set; }
+        public int creditGlAccountId { get; set; }
+        public int debitGlAccountId { get; set; }
+        public int? creditCasaAccountId { get; set; }
+        public int? debitCasaAccountId{ get; set; }
 
 
 

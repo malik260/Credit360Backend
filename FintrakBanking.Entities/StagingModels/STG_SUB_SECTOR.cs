@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FintrakBanking.Entities.StagingModels
+﻿namespace FintrakBanking.Entities.StagingModels
 {
-   public partial class STG_SUB_SECTOR
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("STG_SUB_SECTOR")]
+    public partial class STG_SUB_SECTOR
     {
+        [Key]
         [StringLength(10)]
         public string SUB_SECTOR { get; set; }
         [StringLength(255)]
