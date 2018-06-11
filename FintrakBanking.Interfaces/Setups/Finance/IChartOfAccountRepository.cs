@@ -18,7 +18,7 @@ namespace FintrakBanking.Interfaces.Setups.Finance
         ChartOfAccountViewModel GetTempAccountDetail(int accountId);
         IEnumerable<ChartOfAccountViewModel> GetAccountsAwaitingApprovals(int staffId, int companyId);
         bool GoForApproval(ApprovalViewModel entity);
-        Task<bool> AddTempAccount(ChartOfAccountViewModel account);
+        bool AddTempAccount(ChartOfAccountViewModel account);
         bool IsAccountCodeAlreadyExist(string accountCode);
         bool IsTempAccountExist(string accountCode);
         bool UpdateAccount(short accountId, ChartOfAccountViewModel account);
