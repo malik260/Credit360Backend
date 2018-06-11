@@ -25,7 +25,7 @@ namespace FintrakBanking.Repositories.Customer
         private IApprovalLevelStaffRepository level;
         private ICreditLimitValidationsRepository creditLimitRepo;
         private ICustomerCreditBureauRepository creditBureau;
-       
+
 
         public CustomerGroupRepository(FinTrakBankingContext _context,
                                         IGeneralSetupRepository _genSetup,
@@ -53,17 +53,19 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<KYCItemViewModel> GetKYCItems(int companyId)
         {
-           var kycItem = (from d in context.TBL_KYC_ITEM where d.TBL_PRODUCT.COMPANYID == companyId select new KYCItemViewModel
-            {
-                createdBy = (int)d.CREATEDBY,
-                productId = (short)d.PRODUCTID,
-                kYCItemId = d.KYCITEMID,
-                item = d.ITEM,
-                isMandatory = d.ISMANDATORY,
-                dateTimeCreated = (DateTime)d.DATETIMECREATED,
-                displayOrder = d.DISPLAYORDER,
-                productName = d.TBL_PRODUCT.PRODUCTNAME
-            }).ToList();
+            var kycItem = (from d in context.TBL_KYC_ITEM
+                           where d.TBL_PRODUCT.COMPANYID == companyId
+                           select new KYCItemViewModel
+                           {
+                               createdBy = (int)d.CREATEDBY,
+                               productId = (short)d.PRODUCTID,
+                               kYCItemId = d.KYCITEMID,
+                               item = d.ITEM,
+                               isMandatory = d.ISMANDATORY,
+                               dateTimeCreated = (DateTime)d.DATETIMECREATED,
+                               displayOrder = d.DISPLAYORDER,
+                               productName = d.TBL_PRODUCT.PRODUCTNAME
+                           }).ToList();
             return kycItem;
         }
 
@@ -81,21 +83,21 @@ namespace FintrakBanking.Repositories.Customer
             };
             context.TBL_KYC_ITEM.Add(data);
 
-           // Audit Section ---------------------------
-           var audit = new TBL_AUDIT
-           {
-               AUDITTYPEID = (short)AuditTypeEnum.KYCItemAdded,
-               STAFFID = entity.createdBy,
-               BRANCHID = (short)entity.userBranchId,
-               DETAIL = $"Added KYC Item: { entity.item  } ",
-               IPADDRESS = entity.userIPAddress,
-               URL = entity.applicationUrl,
-               APPLICATIONDATE = genSetup.GetApplicationDate(),
-               SYSTEMDATETIME = DateTime.Now
-           };
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.KYCItemAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added KYC Item: { entity.item  } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
             this.auditTrail.AddAuditTrail(audit);
 
-           // end of Audit section -------------------------------
+            // end of Audit section -------------------------------
 
             return context.SaveChanges() != 0;
 
@@ -104,7 +106,7 @@ namespace FintrakBanking.Repositories.Customer
         public bool UpdatedKycItem(int kYCItemId, KYCItemViewModel entity)
         {
             var data = context.TBL_KYC_ITEM.Where(c => c.KYCITEMID == kYCItemId).SingleOrDefault();
-           
+
             data.DATETIMEUPDATED = DateTime.Now;
             data.DISPLAYORDER = entity.displayOrder;
             data.ITEM = entity.item;
@@ -168,11 +170,13 @@ namespace FintrakBanking.Repositories.Customer
         }
         public bool DoesGroupNameExist(string groupName, string groupCode)
         {
-            var exist = (from a in context.TBL_CUSTOMER_GROUP where
-                       a.GROUPNAME == groupName || a.GROUPCODE == groupCode select a).Any();
+            var exist = (from a in context.TBL_CUSTOMER_GROUP
+                         where
+a.GROUPNAME == groupName || a.GROUPCODE == groupCode
+                         select a).Any();
             return exist;
         }
-            public bool AddTempCustomerGroup(CustomerGroupViewModel custGroupModel)
+        public bool AddTempCustomerGroup(CustomerGroupViewModel custGroupModel)
         {
             bool output = false;
 
@@ -361,7 +365,7 @@ namespace FintrakBanking.Repositories.Customer
             }
             else
             {
-          //      var targetGroup = this.context.TBL_CUSTOMER_GROUP.Find(customerGroupId);
+                //      var targetGroup = this.context.TBL_CUSTOMER_GROUP.Find(customerGroupId);
 
                 tempCustomerGroup = new TBL_TEMP_CUSTOMER_GROUP()
                 {
@@ -644,7 +648,7 @@ namespace FintrakBanking.Repositories.Customer
                         DATETIMECREATED = DateTime.Now
                     };
                     listOfMappedGroup.Add(groupMap);
-                  
+
                     // Audit Section ---------------------------
                     var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
                                                             .Select(x => new
@@ -666,12 +670,12 @@ namespace FintrakBanking.Repositories.Customer
                     };
                     this.auditTrail.AddAuditTrail(audit);
                     //end of Audit section -----------------------
-                  
+
                 }
             }
             context.TBL_CUSTOMER_GROUP_MAPPING.AddRange(listOfMappedGroup);
             return context.SaveChanges() != 0;
-          
+
         }
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
@@ -737,17 +741,17 @@ namespace FintrakBanking.Repositories.Customer
                 List<GroupCustomerMembersViewModel> lstCustomer = new List<GroupCustomerMembersViewModel>();
 
                 var data = from b in context.TBL_CUSTOMER_GROUP_MAPPING
-                                           
-                                           where b.CUSTOMERGROUPID == customerGroupId && b.DELETED  == false 
-                                           && b.TBL_CUSTOMER.COMPANYID == companyId 
-                                           && b.TBL_CUSTOMER.VALIDATED == true
-                                           select new GroupCustomerMembersViewModel
-                                           {
-                                               customerId = b.CUSTOMERID,
-                                               customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
-                                               lastName = b.TBL_CUSTOMER.LASTNAME,
-                                               firstName = b.TBL_CUSTOMER.FIRSTNAME
-                                           };
+
+                           where b.CUSTOMERGROUPID == customerGroupId && b.DELETED == false
+                           && b.TBL_CUSTOMER.COMPANYID == companyId
+                           && b.TBL_CUSTOMER.VALIDATED == true
+                           select new GroupCustomerMembersViewModel
+                           {
+                               customerId = b.CUSTOMERID,
+                               customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                               lastName = b.TBL_CUSTOMER.LASTNAME,
+                               firstName = b.TBL_CUSTOMER.FIRSTNAME
+                           };
 
                 foreach (var item in data)
                 {
@@ -759,14 +763,14 @@ namespace FintrakBanking.Repositories.Customer
 
                 return lstCustomer;
 
-              
+
 
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-           
+
         }
 
         public bool DeleteCustomerGroupMaping(int groupMapId, UserInfo user)
@@ -1034,13 +1038,13 @@ namespace FintrakBanking.Repositories.Customer
                        lookupName = a.RELATIONSHIPTYPENAME
                    };
         }
-        public bool AddCustomerGroupRelationshipTypes(LookupViewModel model )
+        public bool AddCustomerGroupRelationshipTypes(LookupViewModel model)
         {
             if (model.lookupId > 0)
             {
-                var type = context.TBL_CUSTOMER_GROUP_RELATN_TYPE.FirstOrDefault(x=> x.RELATIONSHIPTYPEID == model.lookupId);
+                var type = context.TBL_CUSTOMER_GROUP_RELATN_TYPE.FirstOrDefault(x => x.RELATIONSHIPTYPEID == model.lookupId);
                 type.RELATIONSHIPTYPENAME = model.lookupName;
-              
+
             }
             else
             {
@@ -1062,87 +1066,88 @@ namespace FintrakBanking.Repositories.Customer
                             customerGroupId = a.CUSTOMERGROUPID,
                             customerGroupName = a.GROUPNAME,
                             customerGroupCode = a.GROUPCODE,
-                            customerGroupMappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(s => new CustomerGroupMappingViewModel
-                            {
-                                customerGroupMappingId = s.CUSTOMERGROUPMAPPINGID,
-                                customerGroupId = s.CUSTOMERGROUPID,
-                                customerId = s.CUSTOMERID,
-                                customerCode = s.TBL_CUSTOMER.CUSTOMERCODE,
-                                customerName = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.LASTNAME,
-                                customerType = s.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                                relationshipTypeId = s.RELATIONSHIPTYPEID,
-                                relationshipTypeName = s.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
-                                productAccountNumber = context.TBL_CASA.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                                accountHolder = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.LASTNAME,
-                                companyId = s.TBL_CUSTOMER.COMPANYID,
-                                branchId = s.TBL_CUSTOMER.BRANCHID,
-                                isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERCODE == s.TBL_CUSTOMER.CUSTOMERCODE),
-                                isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == s.CUSTOMERID) && x.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList),
-                                isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == s.CUSTOMERID)),
-                                taxIdentificationNumber = s.TBL_CUSTOMER.TAXNUMBER,
-                                registrationNumber = s.TBL_CUSTOMER.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).REGISTRATIONNUMBER,
-                                completedInformation = s.TBL_CUSTOMER.ACCOUNTCREATIONCOMPLETE,
-                               // crdeitBureauCompleted = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(w=>w.CUSTOMERID==s.CUSTOMERID).ISREPORTOKAY,
-                                customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == s.CUSTOMERID).Select(b => new CustomerBvnViewModels()
-                                {
-                                    bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
-                                    customerBvnid = b.CUSTOMERBVNID,
-                                    firstname = b.FIRSTNAME,
-                                    isValidBvn = b.ISVALIDBVN,
-                                    isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
-                                    surname = b.SURNAME
-                                }).ToList(),
-                                customerCompanyDirectors = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == s.CUSTOMERID &&
-                                x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).Select(x => new CustomerCompanyDirectorsViewModels()
-                                {
-                                    bankVerificationNumber = x.CUSTOMERBVN,
-                                    companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
-                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                                    customerId = x.CUSTOMERID,
-                                    firstname = x.FIRSTNAME,
-                                    surname = x.SURNAME
-                                }).ToList(),
-                                customerCompanyShareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == s.CUSTOMERID &&
-                                x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder).Select(x => new CustomerCompanyShareholdersViewModels()
-                                {
-                                    bankVerificationNumber = x.CUSTOMERBVN,
-                                    companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
-                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                                    customerId = x.CUSTOMERID,
-                                    firstname = x.FIRSTNAME,
-                                    surname = x.SURNAME
-                                }).ToList(),
-                                customerClients = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Client)
-                                    .Select(cs => new CustomerClientOrSupplierViewModels()
-                                    {
-                                        client_SupplierId = cs.CLIENT_SUPPLIERID,
-                                        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
-                                        firstName = cs.FIRSTNAME,
-                                        middleName = cs.MIDDLENAME,
-                                        lastName = cs.LASTNAME,
-                                        client_SupplierAddress = cs.ADDRESS,
-                                        client_SupplierPhoneNumber = cs.PHONENUMBER,
-                                        client_SupplierEmail = cs.EMAILADDRESS,
-                                        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
-                                    }).ToList(),
-                                customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
-                                    .Select(cs => new CustomerSupplierViewModels()
-                                    {
-                                        client_SupplierId = cs.CLIENT_SUPPLIERID,
-                                        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
-                                        firstName = cs.FIRSTNAME,
-                                        middleName = cs.MIDDLENAME,
-                                        lastName = cs.LASTNAME,
-                                        client_SupplierAddress = cs.ADDRESS,
-                                        client_SupplierPhoneNumber = cs.PHONENUMBER,
-                                        client_SupplierEmail = cs.EMAILADDRESS,
-                                        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
-                                    }).ToList(),
-                                //relationshipOfficerId = context.tbl_Staff.FirstOrDefault(),
-                                //relationshipManagerId = ,
-                            }).ToList(),
+                            // customerGroupMappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(s => new CustomerGroupMappingViewModel
+
+                            //{
+                            //    customerGroupMappingId = s.CUSTOMERGROUPMAPPINGID,
+                            //    customerGroupId = s.CUSTOMERGROUPID,
+                            //    customerId = s.CUSTOMERID,
+                            //    customerCode = s.TBL_CUSTOMER.CUSTOMERCODE,
+                            //    customerName = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.LASTNAME,
+                            //    customerType = s.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            //    relationshipTypeId = s.RELATIONSHIPTYPEID,
+                            //    relationshipTypeName = s.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                            //    productAccountNumber = context.TBL_CASA.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                            //    accountHolder = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.LASTNAME,
+                            //    companyId = s.TBL_CUSTOMER.COMPANYID,
+                            //    branchId = s.TBL_CUSTOMER.BRANCHID,
+                            //    isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERCODE == s.TBL_CUSTOMER.CUSTOMERCODE),
+                            //    isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == s.CUSTOMERID) && x.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList),
+                            //    isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == s.CUSTOMERID)),
+                            //    taxIdentificationNumber = s.TBL_CUSTOMER.TAXNUMBER,
+                            //    registrationNumber = s.TBL_CUSTOMER.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).REGISTRATIONNUMBER,
+                            //    completedInformation = s.TBL_CUSTOMER.ACCOUNTCREATIONCOMPLETE,
+                            //   // crdeitBureauCompleted = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(w=>w.CUSTOMERID==s.CUSTOMERID).ISREPORTOKAY,
+                            //    //customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == s.CUSTOMERID).Select(b => new CustomerBvnViewModels()
+                            //    //{
+                            //    //    bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
+                            //    //    customerBvnid = b.CUSTOMERBVNID,
+                            //    //    firstname = b.FIRSTNAME,
+                            //    //    isValidBvn = b.ISVALIDBVN,
+                            //    //    isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
+                            //    //    surname = b.SURNAME
+                            //    //}).ToList(),
+                            //    //customerCompanyDirectors = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == s.CUSTOMERID &&
+                            //    //x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).Select(x => new CustomerCompanyDirectorsViewModels()
+                            //    //{
+                            //    //    bankVerificationNumber = x.CUSTOMERBVN,
+                            //    //    companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
+                            //    //    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                            //    //    customerId = x.CUSTOMERID,
+                            //    //    firstname = x.FIRSTNAME,
+                            //    //    surname = x.SURNAME
+                            //    //}).ToList(),
+                            //    //customerCompanyShareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == s.CUSTOMERID &&
+                            //    //x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder).Select(x => new CustomerCompanyShareholdersViewModels()
+                            //    //{
+                            //    //    bankVerificationNumber = x.CUSTOMERBVN,
+                            //    //    companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
+                            //    //    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                            //    //    customerId = x.CUSTOMERID,
+                            //    //    firstname = x.FIRSTNAME,
+                            //    //    surname = x.SURNAME
+                            //    //}).ToList(),
+                            //    //customerClients = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Client)
+                            //    //    .Select(cs => new CustomerClientOrSupplierViewModels()
+                            //    //    {
+                            //    //        client_SupplierId = cs.CLIENT_SUPPLIERID,
+                            //    //        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                            //    //        firstName = cs.FIRSTNAME,
+                            //    //        middleName = cs.MIDDLENAME,
+                            //    //        lastName = cs.LASTNAME,
+                            //    //        client_SupplierAddress = cs.ADDRESS,
+                            //    //        client_SupplierPhoneNumber = cs.PHONENUMBER,
+                            //    //        client_SupplierEmail = cs.EMAILADDRESS,
+                            //    //        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                            //    //        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
+                            //    //    }).ToList(),
+                            //    //customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                            //    //    .Select(cs => new CustomerSupplierViewModels()
+                            //    //    {
+                            //    //        client_SupplierId = cs.CLIENT_SUPPLIERID,
+                            //    //        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                            //    //        firstName = cs.FIRSTNAME,
+                            //    //        middleName = cs.MIDDLENAME,
+                            //    //        lastName = cs.LASTNAME,
+                            //    //        client_SupplierAddress = cs.ADDRESS,
+                            //    //        client_SupplierPhoneNumber = cs.PHONENUMBER,
+                            //    //        client_SupplierEmail = cs.EMAILADDRESS,
+                            //    //        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                            //    //        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
+                            //    //    }).ToList(),
+                            //    //relationshipOfficerId = context.tbl_Staff.FirstOrDefault(),
+                            //    //relationshipManagerId = ,
+                            //}).ToList(),
                         });
 
             return data;
@@ -1168,6 +1173,148 @@ namespace FintrakBanking.Repositories.Customer
 
             return allGroups;
         }
+        public IEnumerable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery)
+        {
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                var data = (from a in context.TBL_CUSTOMER_GROUP
+                            where a.DELETED == false && a.GROUPNAME.ToLower().Contains(searchQuery)
+                            || a.GROUPCODE.ToLower().Contains(searchQuery)
+                            select new CustomerGroupViewModel
+                            {
+                                customerGroupId = a.CUSTOMERGROUPID,
+                                customerGroupName = a.GROUPNAME,
+                                customerGroupCode = a.GROUPCODE,
+                                customerGroupMappings = (from b in context.TBL_CUSTOMER_GROUP_MAPPING
+                                                         join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
+                                                         where b.CUSTOMERGROUPID == a.CUSTOMERGROUPID
+                                                         select new CustomerGroupMappingViewModel
+                                                         {
+                                                             customerGroupMappingId = b.CUSTOMERGROUPMAPPINGID,
+                                                             customerGroupId = b.CUSTOMERGROUPID,
+                                                             customerId = b.CUSTOMERID,
+                                                             customerCode = c.CUSTOMERCODE,
+                                                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                                                             customerType = c.TBL_CUSTOMER_TYPE.NAME,
+                                                             relationshipTypeId = b.RELATIONSHIPTYPEID,
+                                                             relationshipManagerId = c.RELATIONSHIPOFFICERID,
+                                                             relationshipOfficerId = c.RELATIONSHIPOFFICERID,
+                                                             relationshipTypeName = b.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                                             productAccountNumber = context.TBL_CASA.FirstOrDefault(x => x.CUSTOMERID == c.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                                                             accountHolder = c.FIRSTNAME + " " + c.LASTNAME,
+                                                             companyId = c.COMPANYID,
+                                                             branchId = c.BRANCHID,
+                                                             isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERCODE == c.CUSTOMERCODE),
+                                                             isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == c.CUSTOMERID) && x.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList),
+                                                             isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == c.CUSTOMERID)),
+                                                             taxIdentificationNumber = c.TAXNUMBER,
+                                                             registrationNumber = c.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == c.CUSTOMERID).REGISTRATIONNUMBER,
+                                                             completedInformation = c.ACCOUNTCREATIONCOMPLETE,
+                                                         }).ToList()
+                            }).Take(10).ToList();
+
+              
+
+                return data;
+            }
+
+            return null;
+        }
+        public IEnumerable<CustomerGroupMappingViewModel> GetAllCustomerGroupMappingByGroupId(int customerGroupId)
+        {
+            var GroupMappings = (from b in context.TBL_CUSTOMER_GROUP_MAPPING
+                                 join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
+                                 where b.CUSTOMERGROUPID == customerGroupId
+                                 select new CustomerGroupMappingViewModel
+                                 {
+                                     customerGroupMappingId = b.CUSTOMERGROUPMAPPINGID,
+                                     customerGroupId = b.CUSTOMERGROUPID,
+                                     customerId = b.CUSTOMERID,
+                                     customerCode = c.CUSTOMERCODE,
+                                     customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                                     customerType = c.TBL_CUSTOMER_TYPE.NAME,
+                                     relationshipTypeId = b.RELATIONSHIPTYPEID,
+                                     relationshipTypeName = b.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                     productAccountNumber = context.TBL_CASA.FirstOrDefault(x => x.CUSTOMERID == c.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                                     accountHolder = c.FIRSTNAME + " " + c.LASTNAME,
+                                     companyId = c.COMPANYID,
+                                     branchId = c.BRANCHID,
+                                     isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERCODE == c.CUSTOMERCODE),
+                                     isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == c.CUSTOMERID) && x.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList),
+                                     isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == c.CUSTOMERID)),
+                                     taxIdentificationNumber = c.TAXNUMBER,
+                                     registrationNumber = c.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == c.CUSTOMERID).REGISTRATIONNUMBER,
+                                     completedInformation = c.ACCOUNTCREATIONCOMPLETE,
+                                     // crdeitBureauCompleted = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(w=>w.CUSTOMERID==s.CUSTOMERID).ISREPORTOKAY,
+                                     //customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == s.CUSTOMERID).Select(b => new CustomerBvnViewModels()
+                                     //{
+                                     //    bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
+                                     //    customerBvnid = b.CUSTOMERBVNID,
+                                     //    firstname = b.FIRSTNAME,
+                                     //    isValidBvn = b.ISVALIDBVN,
+                                     //    isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
+                                     //    surname = b.SURNAME
+                                     //}).ToList(),
+                                     //customerCompanyDirectors = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == s.CUSTOMERID &&
+                                     //x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).Select(x => new CustomerCompanyDirectorsViewModels()
+                                     //{
+                                     //    bankVerificationNumber = x.CUSTOMERBVN,
+                                     //    companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
+                                     //    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                                     //    customerId = x.CUSTOMERID,
+                                     //    firstname = x.FIRSTNAME,
+                                     //    surname = x.SURNAME
+                                     //}).ToList(),
+                                     //customerCompanyShareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == s.CUSTOMERID &&
+                                     //x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder).Select(x => new CustomerCompanyShareholdersViewModels()
+                                     //{
+                                     //    bankVerificationNumber = x.CUSTOMERBVN,
+                                     //    companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
+                                     //    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                                     //    customerId = x.CUSTOMERID,
+                                     //    firstname = x.FIRSTNAME,
+                                     //    surname = x.SURNAME
+                                     //}).ToList(),
+                                     //customerClients = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Client)
+                                     //    .Select(cs => new CustomerClientOrSupplierViewModels()
+                                     //    {
+                                     //        client_SupplierId = cs.CLIENT_SUPPLIERID,
+                                     //        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                                     //        firstName = cs.FIRSTNAME,
+                                     //        middleName = cs.MIDDLENAME,
+                                     //        lastName = cs.LASTNAME,
+                                     //        client_SupplierAddress = cs.ADDRESS,
+                                     //        client_SupplierPhoneNumber = cs.PHONENUMBER,
+                                     //        client_SupplierEmail = cs.EMAILADDRESS,
+                                     //        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                                     //        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
+                                     //    }).ToList(),
+                                     //customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                                     //    .Select(cs => new CustomerSupplierViewModels()
+                                     //    {
+                                     //        client_SupplierId = cs.CLIENT_SUPPLIERID,
+                                     //        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                                     //        firstName = cs.FIRSTNAME,
+                                     //        middleName = cs.MIDDLENAME,
+                                     //        lastName = cs.LASTNAME,
+                                     //        client_SupplierAddress = cs.ADDRESS,
+                                     //        client_SupplierPhoneNumber = cs.PHONENUMBER,
+                                     //        client_SupplierEmail = cs.EMAILADDRESS,
+                                     //        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                                     //        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
+                                     //    }).ToList(),
+                                     //relationshipOfficerId = context.tbl_Staff.FirstOrDefault(),
+                                     //relationshipManagerId = ,
+                                 }).ToList();
+
+            return GroupMappings;
+        }
+
 
         public IEnumerable<CustomerGroupViewModel> CustomerGroupSearch(string search)
         {
@@ -1178,21 +1325,46 @@ namespace FintrakBanking.Repositories.Customer
                x.groupName.ToLower().Contains(search.ToLower())
                || x.groupCode.ToLower().Contains(search.ToLower())
                ).ToList();
-                
+
             }
             return customerGroups;
         }
 
         public CustomerGroupViewModel GetCustomerGroupDetailsByGroupId(int customerGroupId)
         {
-            var data = GellAllCustomerGroupMappings().FirstOrDefault(x => x.customerGroupId == customerGroupId);
-
-            if (data != null)
-            {
-                return data;
-            }
-
-            return new CustomerGroupViewModel { };
+            var data = (from a in context.TBL_CUSTOMER_GROUP
+                        where a.DELETED == false && a.CUSTOMERGROUPID == customerGroupId
+                        select new CustomerGroupViewModel
+                        {
+                            customerGroupId = a.CUSTOMERGROUPID,
+                            customerGroupName = a.GROUPNAME,
+                            customerGroupCode = a.GROUPCODE,
+                            customerGroupMappings = (from b in context.TBL_CUSTOMER_GROUP_MAPPING
+                                                     join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
+                                                     where b.CUSTOMERGROUPID == a.CUSTOMERGROUPID
+                                                     select new CustomerGroupMappingViewModel
+                                                     {
+                                                         customerGroupMappingId = b.CUSTOMERGROUPMAPPINGID,
+                                                         customerGroupId = b.CUSTOMERGROUPID,
+                                                         customerId = b.CUSTOMERID,
+                                                         customerCode = c.CUSTOMERCODE,
+                                                         customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                                                         customerType = c.TBL_CUSTOMER_TYPE.NAME,
+                                                         relationshipTypeId = b.RELATIONSHIPTYPEID,
+                                                         relationshipTypeName = b.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                                         productAccountNumber = context.TBL_CASA.FirstOrDefault(x => x.CUSTOMERID == c.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                                                         accountHolder = c.FIRSTNAME + " " + c.LASTNAME,
+                                                         companyId = c.COMPANYID,
+                                                         branchId = c.BRANCHID,
+                                                         isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERCODE == c.CUSTOMERCODE),
+                                                         isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == c.CUSTOMERID) && x.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList),
+                                                         isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == c.CUSTOMERID)),
+                                                         taxIdentificationNumber = c.TAXNUMBER,
+                                                         registrationNumber = c.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == c.CUSTOMERID).REGISTRATIONNUMBER,
+                                                         completedInformation = c.ACCOUNTCREATIONCOMPLETE,
+                                                     }).ToList()
+                        }).FirstOrDefault();
+            return data;
         }
         #endregion TBL_CUSTOMER Group Mapping
     }

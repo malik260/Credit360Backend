@@ -158,6 +158,12 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
+               if (_fsCaptionRepo.ValidateFSCaption(entity.fsCaptionName))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "FS Caption with the same name already exist." });
+                }
+
                 var data = _fsCaptionRepo.AddCustomerFSCaption(entity);
                 if (data)
                 {

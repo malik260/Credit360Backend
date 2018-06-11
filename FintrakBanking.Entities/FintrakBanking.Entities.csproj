@@ -295,6 +295,7 @@
     <Compile Include="Models\TBL_LOAN_CONTINGENT_USAGE.cs" />
     <Compile Include="Models\TBL_LOAN_COVENANT_DETAIL.cs" />
     <Compile Include="Models\TBL_LOAN_COVENANT_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN_DISBURSEMENT.cs" />
     <Compile Include="Models\TBL_LOAN_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_FEE.cs" />
     <Compile Include="Models\TBL_LOAN_FEE_ARCHIVE.cs" />
@@ -463,12 +464,28 @@
     <Compile Include="StagingModels\STG_CUSTOMER_SHAREHOLDER.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER_SUPPLIER.cs" />
     <Compile Include="StagingModels\STG_FINSCAN.cs" />
+    <Compile Include="StagingModels\STG_FREECODE1.cs" />
+    <Compile Include="StagingModels\STG_FREECODE10.cs" />
+    <Compile Include="StagingModels\STG_FREECODE4.cs" />
+    <Compile Include="StagingModels\STG_FREECODE5.cs" />
+    <Compile Include="StagingModels\STG_FREECODE6.cs" />
+    <Compile Include="StagingModels\STG_FREECODE7.cs" />
+    <Compile Include="StagingModels\STG_FREECODE8.cs" />
+    <Compile Include="StagingModels\STG_FREECODE9.cs" />
     <Compile Include="StagingModels\STG_LOAN_MART.cs" />
     <Compile Include="StagingModels\STG_LOAN_WATCHLIST.cs" />
+    <Compile Include="StagingModels\STG_MODE_OF_ADV.cs" />
+    <Compile Include="StagingModels\STG_NAT_OF_ADV.cs" />
+    <Compile Include="StagingModels\STG_OCCUPATION_CODE.cs" />
     <Compile Include="StagingModels\STG_PRICE_INDEX_RATE.cs" />
+    <Compile Include="StagingModels\STG_PURPOSE_OF_ADV.cs" />
+    <Compile Include="StagingModels\STG_SANCTION_AUTH.cs" />
+    <Compile Include="StagingModels\STG_SANCTION_LEVEL.cs" />
+    <Compile Include="StagingModels\STG_SECTOR_CODE.cs" />
     <Compile Include="StagingModels\STG_STAFF.cs" />
     <Compile Include="StagingModels\STG_STAFFMIS.cs" />
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
+    <Compile Include="StagingModels\STG_SUB_SECTOR.cs" />
     <Compile Include="StagingModels\TBL_FINANCE_TRANSACTION_STAGING.cs" />
     <Compile Include="StagingModels\TBL_CUSTOMER_SIGNATORY.cs" />
   </ItemGroup>

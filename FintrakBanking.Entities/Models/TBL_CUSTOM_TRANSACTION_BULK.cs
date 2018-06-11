@@ -17,8 +17,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string BATCHID { get; set; }
-
-        
+      
         public int BATCHREFID { get; set; }
 
         [StringLength(50)]
@@ -82,5 +81,17 @@ namespace FintrakBanking.Entities.Models
         public string BANKID { get; set; }
 
         public decimal AMOUNTCOLLECTED { get; set; }
+
+        public int PRODUCTID { get; set; }
+
+        public int CURRENCYID { get; set; }
+
+        public int DEBITGLACCOUNTID { get; set; }
+
+        public int CREDITGLACCOUNTID { get; set; }
+
+        public int? DEBITCASAACCOUNTID { get; set; }
+
+        public int? CREDITCASAACCOUNTID { get; set; }
     }
 }
