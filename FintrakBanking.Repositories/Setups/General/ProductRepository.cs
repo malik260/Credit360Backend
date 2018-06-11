@@ -1267,11 +1267,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
                     {
-                        //ProductId = item.productId,
+                        PRODUCTID = item.PRODUCTID,
+                        //PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
                         COLLATERALTYPEID = item.COLLATERALTYPEID,
                         COMPANYID = item.COMPANYID,
                         CREATEDBY = item.CREATEDBY,
-                        DATETIMECREATED = genSetup.GetApplicationDate()
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false,
+
                     };
                     productCollateral.Add(productCollaterals);
                 }
@@ -1374,12 +1377,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
                         {
-                            //ProductId = item.productId,
+                           PRODUCTID = item.PRODUCTID,
+                        //    PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
                             COLLATERALTYPEID = item.COLLATERALTYPEID,
                             COMPANYID = item.COMPANYID,
                             CREATEDBY = item.CREATEDBY,
                             DATETIMECREATED = genSetup.GetApplicationDate(),
-                            DELETED = false
+                            DELETED = false,
                         };
                         productCollateral.Add(productCollaterals);
                     }
