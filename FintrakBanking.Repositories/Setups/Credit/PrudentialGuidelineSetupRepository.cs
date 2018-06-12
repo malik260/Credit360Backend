@@ -102,10 +102,10 @@ namespace FintrakBanking.Repositories.Setups.Credit
                                prudentialGuidelineId = a.PRUDENTIALGUIDELINESTATUSID,
                                statusName= a.STATUSNAME,
                                classification= a.TBL_LOAN_PRUDENT_GUIDE_TYPE.PRUDENTIALGUIDELINETYPENAME,
-                               internalMinimun= (int)a.INTERNALMINIMUM,
-                               internalMaximun= (int)a.INTERNALMAXIMUM,
-                               externalMinimun= (int)a.EXTERNALMINIMUM,
-                               externalMaximun= (int)a.EXTERNALMAXIMUM,
+                               internalMinimun= a.INTERNALMINIMUM,
+                               internalMaximun= a.INTERNALMAXIMUM,
+                               externalMinimun= a.EXTERNALMINIMUM,
+                               externalMaximun= a.EXTERNALMAXIMUM,
                                naration= a.NARRATION
                             }).ToList();
             return guideline;
