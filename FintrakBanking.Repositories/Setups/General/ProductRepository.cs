@@ -511,6 +511,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private IQueryable<ProductViewModel> AllProduct()
         {
             var productData = (from data in context.TBL_PRODUCT
+                               join g in context.TBL_PRODUCT_TYPE on data.PRODUCTTYPEID equals g.PRODUCTTYPEID
                                select new ProductViewModel()
                                {
                                    productId = data.PRODUCTID,
@@ -533,7 +534,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                    productName = data.PRODUCTNAME,
                                    productDescription = data.PRODUCTDESCRIPTION,
 
-                                   productGroupId = data.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
+                                   productGroupId = g.PRODUCTGROUPID,
 
                                    principalBalanceGl = data.PRINCIPALBALANCEGL,
                                    principalBalanceGlCode = (data.PRINCIPALBALANCEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
@@ -562,24 +563,6 @@ namespace FintrakBanking.Repositories.Setups.General
                                    approvedBy = data.APPROVEDBY,
                                    completed = data.COMPLETED,
                                    approved = data.APPROVED,
-                                   ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == data.PRODUCTID).Select(d => new ProductBehaviourViewModel()
-                                   {
-                                       customerLimit = d.CUSTOMER_LIMIT,
-                                       collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
-                                       collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
-                                       productLimit = d.PRODUCT_LIMIT,
-                                       isInvoiceBased = d.ISINVOICEBASED
-
-                                   }).FirstOrDefault(),
-                                   currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == data.PRODUCTID && curr.DELETED != false)
-                                   .Select(c => new ProductCurrencyViewModel()
-                                   {
-                                       productId = c.PRODUCTID,
-                                       productCurrencyId = c.PRODUCTCURRENCYID,
-                                       currencyId = c.CURRENCYID,
-                                       currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
-                                   }).ToList(),
-
                                    dateTimeUpdated = data.DATETIMEUPDATED,
                                    deleted = data.DELETED,
                                    deletedBy = data.DELETEDBY,
@@ -756,7 +739,38 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId)
         {
-            return AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
+            var productData = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
+         var product =   productData.Where(c => c.productClassId == productClassId && (c.productGroupId == 1)).ToList();
+            foreach (var item in product)
+            {
+                var ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
+                {
+                    customerLimit = d.CUSTOMER_LIMIT,
+                    collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                    collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+                    productLimit = d.PRODUCT_LIMIT,
+                    isInvoiceBased = d.ISINVOICEBASED
+
+                }).FirstOrDefault();
+
+                item.ProductBehaviour = ProductBehaviour;
+
+
+                var currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
+                                .Select(c => new ProductCurrencyViewModel()
+                                {
+                                    productId = c.PRODUCTID,
+                                    productCurrencyId = c.PRODUCTCURRENCYID,
+                                    currencyId = c.CURRENCYID,
+                                    currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
+                                }).ToList();
+                item.currencies = currencies;
+            }
+
+
+            return productData;
+
+            //return AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
         }
 
         public ProductViewModel GetProductById(int productId)
@@ -1253,11 +1267,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
                     {
-                        //ProductId = item.productId,
+                        PRODUCTID = item.PRODUCTID,
+                        //PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
                         COLLATERALTYPEID = item.COLLATERALTYPEID,
                         COMPANYID = item.COMPANYID,
                         CREATEDBY = item.CREATEDBY,
-                        DATETIMECREATED = genSetup.GetApplicationDate()
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false,
+
                     };
                     productCollateral.Add(productCollaterals);
                 }
@@ -1360,12 +1377,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
                         {
-                            //ProductId = item.productId,
+                           PRODUCTID = item.PRODUCTID,
+                        //    PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
                             COLLATERALTYPEID = item.COLLATERALTYPEID,
                             COMPANYID = item.COMPANYID,
                             CREATEDBY = item.CREATEDBY,
                             DATETIMECREATED = genSetup.GetApplicationDate(),
-                            DELETED = false
+                            DELETED = false,
                         };
                         productCollateral.Add(productCollaterals);
                     }

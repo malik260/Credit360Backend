@@ -1272,18 +1272,15 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
                     {
-                        var approvalModel = new ApprovalViewModel
-                        {
-                            staffId = model.createdBy,
-                            companyId = model.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = data.LOANCONDITIONID,
-                            operationId = (int)OperationsEnum.ChecklistApproval,
-                            BranchId = model.userBranchId,
-                            comment = "Initiation",
-                            externalInitialization = true
-                        };
-                        var response = workFlow.LogForApproval(approvalModel);
+
+                        workFlow.StaffId = model.createdBy;
+                        workFlow.CompanyId = model.companyId;
+                        workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                        workFlow.TargetId = data.LOANCONDITIONID;
+                        workFlow.Comment = "Checklist Approval";
+                        workFlow.OperationId = (int)OperationsEnum.ChecklistApproval;
+                        workFlow.ExternalInitialization = true;
+                        workFlow.LogActivity();
                     }
                     trans.Commit();
                     return output;

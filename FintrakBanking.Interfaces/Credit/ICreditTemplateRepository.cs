@@ -18,5 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddCreditTemplate(CreditTemplateViewModel model);
 
         bool UpdateCreditTemplate(CreditTemplateViewModel model, int creditTemplateId);
+
+        bool DeleteCreditTemplate(int creditTemplateId);
     }
 }

@@ -93,6 +93,15 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
+        public bool DeleteCreditTemplate(int creditTemplateId)
+        {
+            var data = this.context.TBL_CREDIT_TEMPLATE.Find(creditTemplateId);
+            if (data != null)
+            {
+                data.DELETED = true;
+            }
+            return context.SaveChanges() != 0;
+        }
         public IEnumerable<CreditTemplateViewModel> GetAllCreditTemplate()
         {
             return this.context.TBL_CREDIT_TEMPLATE.Where(x => x.DELETED == false).Select(x => new CreditTemplateViewModel
@@ -108,7 +117,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public CreditTemplateViewModel GetCreditTemplate(int creditTemplateId)
         {
-            var data = this.context.TBL_CREDIT_TEMPLATE.Find(creditTemplateId);
+            var data = this.context.TBL_CREDIT_TEMPLATE.Where(x=> x.DELETED == false && x.CREDITTEMPLATEID==creditTemplateId).FirstOrDefault();
 
             if (data == null)
             {

@@ -83,6 +83,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         // miscellaneous
         public string securityName { get; set; }
+        public string note { get; set; }
 
         public List<MiscellaneousNote> notes { get; set; }
 

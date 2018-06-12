@@ -156,9 +156,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private int GetFirstApprovalLevelId(int staffId, int operationId, int? productClassId, int? productId)
         {
-
             IQueryable<TBL_APPROVAL_GROUP_MAPPING> groupMappings;
-
             if (productId != null)
             {
                 groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
@@ -180,11 +178,11 @@ namespace FintrakBanking.Repositories.Credit
             var staffLevels = groupMappings
             .Select(x => x.TBL_APPROVAL_GROUP)
             .SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.STAFFROLEID == staff.STAFFROLEID))
-                       .Select(x => new
-                       {
-                           staffId = staffId,
-                           levelId = x.APPROVALLEVELID
-                       });
+            .Select(x => new
+            {
+                staffId = staffId,
+                levelId = x.APPROVALLEVELID
+            });
 
             if (staffLevels.Any() == false)
             {
@@ -201,7 +199,6 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             if (staffLevels.FirstOrDefault() == null) { throw new Exception("No workflow setup for this product"); }
-
             return staffLevels.Select(x => x.levelId).First();
         }
 

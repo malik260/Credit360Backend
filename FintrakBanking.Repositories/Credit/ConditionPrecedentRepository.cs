@@ -321,7 +321,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ComplianceTimelineViewModel> GetComplianceTimelineTemplate()
         {
-            return this.context.TBL_COMPLIANCE_TIMELINE
+            return this.context.TBL_COMPLIANCE_TIMELINE.Where(x => x.DELETED == false)
             .Select(c => new ComplianceTimelineViewModel
             {
                 timelineId = c.TIMELINEID,
@@ -383,6 +383,37 @@ namespace FintrakBanking.Repositories.Credit
                 DETAIL = $"Updated Condition Precedent template '{ model.timelineId }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool RemoveComplianceTimelineTemplate(UserInfo user, int timelineId)
+        {
+            var data = this.context.TBL_COMPLIANCE_TIMELINE.Find(timelineId);
+            if (data == null)
+            {
+                return false;
+            }
+
+            data.DELETED = true;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.LASTUPDATEDBY = user.staffId;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ComplianceTimelineUpdated,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Delete timeline for compliance'{ timelineId }' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
