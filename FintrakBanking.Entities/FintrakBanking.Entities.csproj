@@ -286,6 +286,7 @@
     <Compile Include="Models\TBL_LOAN_BOOKING_REQUEST.cs" />
     <Compile Include="Models\TBL_LOAN_BULK_INTEREST_REVIEW.cs" />
     <Compile Include="Models\TBL_LOAN_CAMSOL.cs" />
+    <Compile Include="Models\TBL_LOAN_CAMSOL_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_COLLATERAL_MAPPING.cs" />
     <Compile Include="Models\TBL_LOAN_COMMENT.cs" />
     <Compile Include="Models\TBL_LOAN_CONCESSION_TYPE.cs" />

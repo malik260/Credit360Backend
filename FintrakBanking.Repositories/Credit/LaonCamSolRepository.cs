@@ -27,10 +27,13 @@ namespace FintrakBanking.Repositories.Credit
             workflow = _workflow;
         }
 
-        public List<LoanCAMSOLViewModel> GetCamSol(string customerName)
+        public List<LoanCAMSOLViewModel> GetCamSol()//string customerName)
         {
             var data = from camsol in context.TBL_LOAN_CAMSOL
-                       where camsol.CUSTOMERNAME.StartsWith(customerName)
+                       //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
+                      // join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
+                       //join l in context.TBL_LOAN on camsol.LOANID equals l.LOANAPPLICATIONDETAILID
+                      // where camsol.CUSTOMERNAME.StartsWith(customerName)
                        select new LoanCAMSOLViewModel
                        {
                            accountname =camsol.ACCOUNTNAME,
@@ -41,12 +44,15 @@ namespace FintrakBanking.Repositories.Credit
                            customercode = camsol.CUSTOMERCODE,
                            customername = camsol.CUSTOMERNAME,
                            date = camsol.DATE,
+                          // loansystemtype = a.LOANSYSTEMTYPENAME,
+                          // camsolType = c.CAMSOLTYPENAME,
                            interestinsuspense = camsol.INTERESTINSUSPENSE,
                            loancamsolid = camsol.LOAN_CAMSOLID,
                            loanid = camsol.LOANID,
                            principal = camsol.PRINCIPAL,
                            remark = camsol.REMARK,
-                           
+
+
                        };
             return data.ToList();
         }
@@ -70,6 +76,7 @@ namespace FintrakBanking.Repositories.Credit
                            loanid = camsol.LOANID,
                            principal = camsol.PRINCIPAL,
                            remark = camsol.REMARK,
+                           
                        };
             return data.FirstOrDefault();
         }
