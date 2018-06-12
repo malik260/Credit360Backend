@@ -480,9 +480,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.externalInitialization == true) { return true; }
             var position = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (position == null) { return false; }
+
             var lineManager = context.TBL_STAFF.Where(x => x.STAFFID == position.SUPERVISOR_STAFFID).FirstOrDefault();
-            if (lineManager == null) { return false; }
-            this.toStaffId = lineManager.STAFFID;
+            if (lineManager != null && next != null)
+            {
+                if (lineManager.STAFFROLEID == next.DefaultRoleId) this.toStaffId = lineManager.STAFFID;
+            }
+
             return true;
         }
 
