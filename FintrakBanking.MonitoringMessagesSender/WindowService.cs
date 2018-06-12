@@ -17,6 +17,7 @@ namespace FintrakBanking.MonitoringMessagesSender
         private static object s_lock = new object();
         private IEmailSender emailSender;
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
+        private string slaEscalationIntervalInHours = ConfigurationManager.AppSettings["SLAEscalationIntervalInHours"];
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
         private IAlertMessageLogger logger;
@@ -59,9 +60,31 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
+
+
                     bool response = emailSender.LogMonitoringEmailAlerts();
 
-                    logger.LogSLAApprovalNotification();
+                    if (slaEscalationIntervalInHours!=null)
+                    {
+                        DateTime currentDate = DateTime.Now;
+                        TimeSpan escalationTime = currentDate.AddHours(Convert.ToInt32(slaEscalationIntervalInHours)).TimeOfDay;
+                        TimeSpan endOfescalationTime = DateTime.Now.AddMinutes(5).TimeOfDay;
+                        TimeSpan timeAtTheMoment = DateTime.Now.TimeOfDay;
+
+                        if (escalationTime >= timeAtTheMoment && escalationTime <= endOfescalationTime)
+                        {
+                            _log.Info("");
+                            _log.Info("==================================================================");
+                            _log.Info("SLA notification has started successfully at : " + DateTime.Now);
+
+                            logger.LogSLAApprovalNotification();
+
+                            _log.Info("");
+                            _log.Info("==================================================================");
+                            _log.Info("SLA notification has ends at : " + DateTime.Now);
+                        }
+
+                    }
 
                     if (response == true)
                     {
