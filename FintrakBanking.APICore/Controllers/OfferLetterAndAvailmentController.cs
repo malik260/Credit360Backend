@@ -31,18 +31,14 @@ namespace FintrakBanking.APICore.Controllers
             repo = _repo;
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/credit-assessment-memorandum/approved-loans")]
         public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForOfferLetter()
         {
             try
             {
-                var response = await repo.GetApplicationsDueForOfferLetterGeneration(token.GetStaffId, token.GetCompanyId).ToListAsync();
-                //if (!response.Any())
-                //{
-                //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response });
-                //}
-
+                var response = await repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count(), message = "No record found" });
             }
             catch (Exception e)
@@ -73,7 +69,8 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/credit-assessment-memorandum/due-for-review")]
         public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForReview()
         {
@@ -94,7 +91,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/credit-assessment-memorandum/due-for-availment")]
         public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForAvailment()
         {
@@ -115,19 +113,14 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("availment-due-for-checklist")]
-        public  HttpResponseMessage GetApplicationsDueForAvailmentCheckList()
+        public HttpResponseMessage GetApplicationsDueForAvailmentCheckList()
         {
             try
             {
-                var response = repo.GetApplicationsDueForAvailmentCheckList(token.GetCompanyId);
-
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
-                }
-
+                var response = repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetBranchId, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (Exception e)
@@ -136,19 +129,14 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/credit-assessment-memorandum/under-review")]
         public async Task<HttpResponseMessage> GetCamProcessedApplicationsUnderReview()
         {
             try
             {
-                var response = await repo.GetApplicationsUnderForReview(token.GetCompanyId).ToListAsync();
-
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
-                }
-
+                var response = await repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (Exception e)
@@ -157,29 +145,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
-        [Route("loan-application/applicationRef/{applicationRefNumber}/statusId/{applicationStatusId}")]
-        public HttpResponseMessage UpdateApplicationStatus([FromUri] string applicationRefNumber, [FromUri] short applicationStatusId)
-        {
-            try
-            {
-                var response = repo.UpdateLoanApplicationStatus(applicationRefNumber.Trim(), applicationStatusId);
+        //[HttpPut] [ClaimsAuthorization]
+        // [Route("loan-application/applicationRef/{applicationRefNumber}/statusId/{applicationStatusId}")]
+        // public HttpResponseMessage UpdateApplicationStatus([FromUri] string applicationRefNumber, [FromUri] short applicationStatusId)
+        // {
+        //     try
+        //     {
+        //         var response = repo.UpdateLoanApplicationStatus(applicationRefNumber.Trim(), applicationStatusId);
 
-                if (!response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "record not updated successfully" });
-                }
+        //         if (!response)
+        //         {
+        //             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "record not updated successfully" });
+        //         }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "record updated successfully" });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
-            }
-        }
+        //         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "record updated successfully" });
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+        //     }
+        // }
 
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("updateFinalOfferLetter/{applicationRef}")]
         public HttpResponseMessage UpdateFinalOfferLetter(string applicationRef, OfferLetterTemplateViewModel model)
         {
@@ -205,7 +194,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #region Offer Letter & Availment
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter-template/{applicationRefNumber}")]
         public HttpResponseMessage GenerateOfferLetterTemplate([FromUri] string applicationRefNumber)
         {
@@ -226,7 +216,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/prepared-form38b-template/{applicationRefNumber}")]
         public HttpResponseMessage GenerateForm3800Template([FromUri] string applicationRefNumber)
         {
@@ -270,7 +261,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter")]
         public HttpResponseMessage SaveDraftOfferLetter([FromBody] OfferLetterTemplateViewModel model)
         {
@@ -290,7 +282,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter/{documentId}")]
         public HttpResponseMessage UpdateDraftOfferLetter(int documentId, [FromBody] OfferLetterTemplateViewModel model)
         {
@@ -316,7 +309,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter/all")]
         public HttpResponseMessage GetAllDraftOfferLetters()
         {
@@ -337,7 +331,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter/{applicationRefNumber}")]
         public HttpResponseMessage GetDraftOfferLetterByApplRefNumber([FromUri] string applicationRefNumber)
         {
@@ -358,7 +353,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter/final/all")]
         public HttpResponseMessage GetAllFinalOfferLetters()
         {
@@ -379,7 +375,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter/final/{applicationRefNumber}")]
         public HttpResponseMessage GetFinalOfferLetterByApplRefNumber([FromUri] string applicationRefNumber)
         {
@@ -400,7 +397,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter/final")]
         public HttpResponseMessage SaveFinalOfferLetter([FromBody] OfferLetterTemplateViewModel model)
         {
@@ -420,7 +418,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-application/availment/approval-decision")]
         public HttpResponseMessage ApproveLoanAvailmentDecision([FromBody] LoanAvailmentApprovalViewModel entity)
         {
@@ -447,11 +446,12 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message , message = "An error occured"});
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message, message = "An error occured" });
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-application/availment/approval")]
         public HttpResponseMessage LogApplicationForApprovalDuringAvailment([FromBody] LoanAvailmentApprovalViewModel entity)
         {
@@ -481,7 +481,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-application/offer-letter/approval")]
         public HttpResponseMessage LogApplicationForApprovalDuringOfferLetterGeneration([FromBody] LoanAvailmentApprovalViewModel entity)
         {
@@ -513,7 +514,8 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion Offer Letter & Availment
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("offer-letter/forward-bonds-and-guarantee")]
         public HttpResponseMessage ForwardBondsAndGuarantee([FromBody] ForwardViewModel entity)
         {
@@ -539,7 +541,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("offer-letter/rejection")]
         public HttpResponseMessage OfferLetterRejection([FromBody] ForwardViewModel entity)
         {
@@ -565,7 +568,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/comments/{applicationRefNumber}")]
         public HttpResponseMessage GetCommentOnLoanAvailment([FromUri] string applicationRefNumber)
         {

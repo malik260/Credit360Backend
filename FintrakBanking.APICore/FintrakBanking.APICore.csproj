@@ -397,6 +397,7 @@
     <Compile Include="Controllers\KYCDocumentUploadController.cs" />
     <Compile Include="Controllers\LimitAndMonitoringController.cs" />
     <Compile Include="Controllers\LoanApplicationController.cs" />
+    <Compile Include="Controllers\LoanCamSolController.cs" />
     <Compile Include="Controllers\LoanController.cs" />
     <Compile Include="Controllers\LoanCovenantController.cs" />
     <Compile Include="Controllers\LoanDocumentController.cs" />
@@ -890,10 +891,10 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Web.config">
+    <Content Include="Web_Test.config">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="Web.config_local">
+    <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
     <Content Include="Views\Report\FintrakReport.cshtml" />
@@ -908,24 +909,17 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Web_Test.config" />
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
     <None Include="Web_Test.Debug.config">
       <DependentUpon>Web_Test.config</DependentUpon>
     </None>
     <None Include="Web_Test.Release.config">
       <DependentUpon>Web_Test.config</DependentUpon>
     </None>
-    <None Include="Web.Debug.config_local">
-      <DependentUpon>Web.config_local</DependentUpon>
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Web.Release.config_local">
-      <DependentUpon>Web.config_local</DependentUpon>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1021,6 +1015,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\LoanCamSol\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
