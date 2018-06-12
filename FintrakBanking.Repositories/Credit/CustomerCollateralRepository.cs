@@ -344,6 +344,7 @@ namespace FintrakBanking.Repositories.Credit
                 TEMPCOLLATERALCUSTOMERID = collateralId,
                 NAMEOFSECURITY = entity.securityName,
                 SECURITYVALUE = (decimal)entity.securityValue,
+                NOTE = entity.note,
             });
 
             //if (context.SaveChanges() > 0) // EF will take care of this
@@ -4756,6 +4757,7 @@ namespace FintrakBanking.Repositories.Credit
                 detailId = specifics.TEMPCOLLATERALMISCELLANEOUSID,
                 securityName = specifics.NAMEOFSECURITY,
                 securityValue = specifics.SECURITYVALUE,
+                note = specifics.NOTE,
             };
             details = GetMiscellaneousNotes(details);
             // details = GetTempCollateralInsurancePolicy(details);

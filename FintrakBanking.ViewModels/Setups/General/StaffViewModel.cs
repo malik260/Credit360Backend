@@ -58,7 +58,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool IsUpdate { get; set; }
         public short ApprovalStatusId { get; set; }
         public int OperationId { get; set; }
-
+        public decimal? loanLimit { get; set; }
         public string StaffFullName { get { return this.FirstName + " " + this.MiddleName + " " + this.LastName; } }
 
         public string JobTitleName { get; set; }
