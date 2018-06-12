@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Net;
 using FintrakBanking.APICore.core;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using System.Web;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -401,6 +403,64 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        #region Obligor Limit 
+        [HttpGet]
+        [Route("obligor-limit")]
+        public HttpResponseMessage GetAllObligorLimit()
+        {
+            try
+            {
+                var response = repo.GetAllObligorLimit();
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("obligor-limit")]
+        public HttpResponseMessage AddUpdateObligorLimit([FromBody] ObligorLimitViewModel entity)
+        {
+            try
+            {
+                string createUpdate = "";
+                if (entity.riskRatingId != 0 || entity.riskRatingId > 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                    if (repo.ValidateRiskRating(entity.riskRating))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                               new { success = false, message = "Risk Rating with same Name or Code already exist." });
+                    }
+                }
+                entity.userBranchId = (short)token.GetBranchId;
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = (short)token.GetCompanyId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddUpdateRiskRating(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Changes Saved Successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Saved Changes not Successfull" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error saving this record {e.Message}" });
+            }
+        }
+        #endregion
     }
 } 

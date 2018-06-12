@@ -3,16 +3,17 @@ using FintrakBanking.ViewModels.Customer;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.CreditLimitValidations;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Interfaces.CreditLimitValidations
 {
     public interface ICreditLimitValidationsRepository
     {
         int ValidateBlackList(string customerCode);
-       // int ValidateBlackList(int customerId);
+        // int ValidateBlackList(int customerId);
 
         int ValidateWatchList(int customerId);
-    
+
         int ValidateCamsol(int customerId);
 
         IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode);
@@ -29,5 +30,8 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         CreditLimitValidationsModel ValidateAmountBySegment(short segmentId);
         CreditLimitValidationsModel ValidateNPLBySegment(short segmentId);
 
+        IEnumerable<ObligorLimitViewModel> GetAllObligorLimit();
+        bool ValidateRiskRating(string riskRating);
+        bool AddUpdateRiskRating(ObligorLimitViewModel entity);
     }
 }

@@ -1364,6 +1364,13 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                                          completedInformation = c.ACCOUNTCREATIONCOMPLETE,
                                                      }).ToList()
                         }).FirstOrDefault();
+
+            foreach(var item in data.customerGroupMappings)
+            {
+                item.crdeitBureauCompleted = creditBureau.VerifyCustomerValidCreditBureau(item.customerId);
+            }
+
+
             return data;
         }
         #endregion TBL_CUSTOMER Group Mapping
