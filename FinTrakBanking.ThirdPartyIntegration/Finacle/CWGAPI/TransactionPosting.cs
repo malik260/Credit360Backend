@@ -32,12 +32,8 @@
                 API_URL = configdata.APIURL;
             }
 
-           
-
             private HttpClientHandler handler = new HttpClientHandler();
             private static HttpClient httpClientInstance;
-
-
 
             public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode,
                 string toCurrencyCode, string rateCode)
