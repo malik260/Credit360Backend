@@ -160,6 +160,104 @@ namespace FintrakBanking.Repositories.Credit
             return allCorporate;
         }
 
+        private IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsNoIntegrationByCustomerId(int customerId)
+        {
+            var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == customerId && x.DELETED == false
+                                                                                            && x.COMPANYDIRECTORID == null
+                                                                                            && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30));
+
+            int creditBureauCount = data.Count();
+
+            List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
+            var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
+            var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
+            var customer = from a in context.TBL_CUSTOMER
+                           where a.DELETED == false && a.CUSTOMERID == customerId
+                           select
+                           new CustomerViewModels
+                           {
+                               accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
+                               branchId = a.BRANCHID,
+                               branchName = a.TBL_BRANCH.BRANCHNAME,
+                               createdBy = a.CREATEDBY,
+                               customerCode = a.CUSTOMERCODE,
+                               customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                               //customerTypeId = (short)a.CUSTOMERTYPEID,
+                               dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                               customerId = a.CUSTOMERID,
+                               emailAddress = a.EMAILADDRESS,
+                               firstName = a.FIRSTNAME,
+                               gender = a.GENDER,
+                               lastName = a.LASTNAME,
+                               maidenName = a.MAIDENNAME,
+                               maritalStatus = a.MARITALSTATUS.Value,
+                               title = a.TITLE,
+                               middleName = a.MIDDLENAME,
+                               customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
+                               nationality = a.NATIONALITY,
+                               occupation = a.OCCUPATION,
+                               placeOfBirth = a.PLACEOFBIRTH,
+                               isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                               sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
+                               sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                               subSectorName = a.TBL_SUB_SECTOR.NAME,
+                               taxNumber = a.TAXNUMBER,
+                               riskRatingId = a.RISKRATINGID,
+                               riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                               customerBVN = a.CUSTOMERBVN,
+                               //isCreditBureauUploadCompleted = false,
+                               companyDirectorId = null,
+                               creditBureauCount = creditBureauCount
+                           };
+
+            foreach (var item in customer)
+            {
+                var casa = context.TBL_CASA.Where(x => x.CUSTOMERID == item.customerId).FirstOrDefault();
+                if (casa != null) item.customerAccountNo = casa.PRODUCTACCOUNTNUMBER;
+
+                var phoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == item.customerId).FirstOrDefault();
+                if (phoneContact != null) item.phoneNumber = phoneContact.PHONENUMBER;
+
+                if (customerInfo != null) item.rcNumber = customerInfo.REGISTRATIONNUMBER;
+
+                allCorporate.Add(item);
+            }
+
+
+            if (customerType == (short)CustomerTypeEnum.Corporate)
+            {
+                var shareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).ToList();
+                foreach (var director in shareholders)
+                {
+                    var directorData = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
+                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
+                                                                                     && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30));
+                    int directorCount = directorData.Count();
+                    CustomerViewModels shareholdersData = new CustomerViewModels
+                    {
+                        companyDirectorId = director.COMPANYDIRECTORID,
+                        customerTypeId = director.CUSTOMERTYPEID,
+                        customerTypeName = director.TBL_CUSTOMER_TYPE.NAME,
+                        numberOfShares = director.SHAREHOLDINGPERCENTAGE,
+                        isPoliticallyExposed = director.ISPOLITICALLYEXPOSED,
+                        customerBVN = director.CUSTOMERBVN,
+                        companyDirectorTypeId = director.COMPANYDIRECTORTYPEID,
+                        companyDirectorTypeName = director.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                        address = director.ADDRESS,
+                        phoneNumber = director.PHONENUMBER,
+                        customerId = customerId,
+                        emailAddress = director.EMAILADDRESS,
+                        firstName = director.FIRSTNAME,
+                        lastName = director.SURNAME,
+                        middleName = director.MIDDLENAME,
+                        creditBureauCount = directorCount
+                    };
+                    allCorporate.Add(shareholdersData);
+                }
+            }
+
+            return allCorporate;
+        }
 
         public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
         {
@@ -361,7 +459,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool VerifyCustomerValidCreditBureau(int customerId)
         {
-            var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId);
+            var customers = GetCreditBureauCustomerDetailsNoIntegrationByCustomerId(customerId);
             var creditBureau = GetCreditBureauInformation();
             int creditCount = 0;
             foreach (var customer in customers)
