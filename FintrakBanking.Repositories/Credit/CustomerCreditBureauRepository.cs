@@ -18,8 +18,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Data.Entity; 
-using FinTrakBanking.ThirdPartyIntegration ;
+using System.Data.Entity;
+using FinTrakBanking.ThirdPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -30,7 +30,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IFinanceTransactionRepository financeTransaction;
-        private  IntegrationWithFinacle integration;
+        private IntegrationWithFinacle integration;
         private CreditBureauProcess _creditBureau;
 
         public CustomerCreditBureauRepository(
@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.Credit
             IGeneralSetupRepository _genSetup,
             FinTrakBankingDocumentsContext _docContext,
             FinTrakBankingContext _context,
-            IFinanceTransactionRepository _financials,  IntegrationWithFinacle integration,
+            IFinanceTransactionRepository _financials, IntegrationWithFinacle integration,
             CreditBureauProcess creditBureau)
         {
             this.context = _context;
@@ -84,7 +84,7 @@ namespace FintrakBanking.Repositories.Credit
                                maritalStatus = a.MARITALSTATUS.Value,
                                title = a.TITLE,
                                middleName = a.MIDDLENAME,
-                              customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
+                               customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
                                nationality = a.NATIONALITY,
                                occupation = a.OCCUPATION,
                                placeOfBirth = a.PLACEOFBIRTH,
@@ -113,7 +113,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 allCorporate.Add(item);
             }
-           
+
 
             if (customerType == (short)CustomerTypeEnum.Corporate)
             {
@@ -157,7 +157,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-            
+
 
             return allCorporate;
         }
@@ -339,39 +339,39 @@ namespace FintrakBanking.Repositories.Credit
         {
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
-                                               where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                                && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)
+                                                where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
+                                                 && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)
                                                 //&& (DbFunctions.DiffDays(DbFunctions.TruncateTime(a.DATETIMECREATED), DbFunctions.TruncateTime(DateTime.Now)).Value <= 30 ) 
                                                 select new LoanCreditBereauViewModel
-                                               {
-                                                   companyDirectorId = a.COMPANYDIRECTORID,
-                                                   companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
-                                                   chargeAmount = a.CHARGEAMOUNT,
-                                                   customerId = a.CUSTOMERID,
-                                                   creditBureauId = a.CREDITBUREAUID,
-                                                   isReportOkay = a.ISREPORTOKAY,
-                                                   usedIntegration = a.USEDINTEGRATION,
-                                                   dateCompleted = (DateTime)a.DATECOMPLETED,
-                                                   dateTimeCreated = a.DATETIMECREATED,
-                                                   searchCount = 0,
-                                                   uploadCount = 0,
-                                                   createdBy = a.CREATEDBY,
-                                                   dayAgo = DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value
-                                               }).ToList();
+                                                {
+                                                    companyDirectorId = a.COMPANYDIRECTORID,
+                                                    companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
+                                                    chargeAmount = a.CHARGEAMOUNT,
+                                                    customerId = a.CUSTOMERID,
+                                                    creditBureauId = a.CREDITBUREAUID,
+                                                    isReportOkay = a.ISREPORTOKAY,
+                                                    usedIntegration = a.USEDINTEGRATION,
+                                                    dateCompleted = (DateTime)a.DATECOMPLETED,
+                                                    dateTimeCreated = a.DATETIMECREATED,
+                                                    searchCount = 0,
+                                                    uploadCount = 0,
+                                                    createdBy = a.CREATEDBY,
+                                                    dayAgo = DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value
+                                                }).ToList();
             return customerLoanCreditBureauData;
         }
 
         public bool VerifyCustomerValidCreditBureau(int customerId)
         {
-            var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId,false);
+            var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId, false);
             var creditBureau = GetCreditBureauInformation();
             int creditCount = 0;
             foreach (var customer in customers)
             {
                 var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId);
-                if(customerCreditBureauLog.Count() > 0)
+                if (customerCreditBureauLog.Count() > 0)
                 {
-                    foreach(var cb in creditBureau)
+                    foreach (var cb in creditBureau)
                     {
                         if (customerCreditBureauLog.Where(x => x.creditBureauId == cb.creditBureauId).Any()) creditCount++;
                     }
@@ -379,7 +379,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (creditCount < 3) return false;
                 creditCount = 0;
             };
-            
+
             return true;
 
         }
@@ -389,7 +389,7 @@ namespace FintrakBanking.Repositories.Credit
         #region Integration 
         public List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
-            
+
 
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfoList.creditBureauId);
             if (creditBureau != null)
@@ -399,7 +399,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<string> searchResult = new List<string>();
-            
+
             var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
 
             if (task.Wait(TimeSpan.FromSeconds(640)))
@@ -458,7 +458,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-                    var task = Task.Run(() => searchResponse = _creditBureau .CRCCreditBureauSearch(searchInfo));
+                    var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
                     if (task.Wait(TimeSpan.FromSeconds(640)))
                     {
@@ -503,7 +503,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool saveCrcPdfFile(CRCRequestViewModel searchInfo, SearchInput creditBureauInputs)
         {
-           
+
             CRCSearchResult searchResponse = null;// new CRCSearchResult();
 
             using (var docTrans = docContext.Database.BeginTransaction())
@@ -744,7 +744,7 @@ namespace FintrakBanking.Repositories.Credit
                     CUSTOMERCREDITBUREAUID = customerCreditBureauId,
                     DOCUMENT_TITLE = creditBureau.CREDITBUREAUNAME + " Report Document Upload",
                     FILEEXTENSION = "pdf",
-                   // FILENAME = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault().CUSTOMERCODE + creditBureau.CREDITBUREAUNAME,
+                    // FILENAME = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault().CUSTOMERCODE + creditBureau.CREDITBUREAUNAME,
                     FILEDATA = file,
                     SYSTEMDATETIME = genSetup.GetApplicationDate(),
                     DATETIMECREATED = DateTime.Now,

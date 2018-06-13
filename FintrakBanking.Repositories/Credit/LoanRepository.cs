@@ -2918,19 +2918,20 @@ namespace FintrakBanking.Repositories.Credit
         private IQueryable<LoanViewModel> GetAllLoans()
         {
             var data = (from l in context.TBL_LOAN
-
+                        join cust in context.TBL_CUSTOMER on l.CUSTOMERID equals cust.CUSTOMERID
+                        join loanDetail in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals loanDetail.LOANAPPLICATIONDETAILID
+                        join loanApp in context.TBL_LOAN_APPLICATION on loanDetail.LOANAPPLICATIONID equals loanApp.LOANAPPLICATIONID
                         select new LoanViewModel
                         {
                             loanId = l.TERMLOANID,
                             customerId = l.CUSTOMERID,
-                            customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.LASTNAME,
+                            customerName = cust.FIRSTNAME + " " + cust.LASTNAME,
                             productId = l.PRODUCTID,
                             companyId = l.COMPANYID,
                             casaAccountId = l.CASAACCOUNTID,
                             branchId = l.BRANCHID,
                             branchName = l.TBL_BRANCH.BRANCHNAME,
                             loanReferenceNumber = l.LOANREFERENCENUMBER,
-                            //tenor = (l.MaturityDate - l.EffectiveDate).Days, // returning error
 
                             principalFrequencyTypeId = (short)l.PRINCIPALFREQUENCYTYPEID,
                             pricipalFrequencyTypeName = l.TBL_FREQUENCY_TYPE.DESCRIPTION,
@@ -2941,9 +2942,9 @@ namespace FintrakBanking.Repositories.Credit
                             interestNumberOfInstallment = l.INTERESTNUMBEROFINSTALLMENT,
 
                             relationshipOfficerId = l.RELATIONSHIPOFFICERID,
-                            relationshipOfficerName = l.TBL_STAFF.FIRSTNAME + " " + l.TBL_STAFF.MIDDLENAME + " " + l.TBL_STAFF.LASTNAME,
+                            //  relationshipOfficerName = l.TBL_STAFF.FIRSTNAME + " " + l.TBL_STAFF.MIDDLENAME + " " + l.TBL_STAFF.LASTNAME,
                             relationshipManagerId = l.RELATIONSHIPMANAGERID,
-                            relationshipManagerName = l.TBL_STAFF1.FIRSTNAME + " " + l.TBL_STAFF1.MIDDLENAME + " " + l.TBL_STAFF1.LASTNAME,
+                            // relationshipManagerName = l.TBL_STAFF1.FIRSTNAME + " " + l.TBL_STAFF1.MIDDLENAME + " " + l.TBL_STAFF1.LASTNAME,
                             misCode = l.MISCODE,
                             teamMiscode = l.TEAMMISCODE,
                             interestRate = l.INTERESTRATE,
@@ -2964,18 +2965,18 @@ namespace FintrakBanking.Repositories.Credit
                             disburserComment = l.DISBURSERCOMMENT,
                             disburseDate = l.DISBURSEDATE,
 
-                            approvedAmount = l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                            approvedAmount = loanDetail.APPROVEDAMOUNT,
 
                             //creditAppraisalCompleted = l.CreditAppraisalCompleted,
                             operationId = l.OPERATIONID,
-                            operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == l.OPERATIONID).OPERATIONNAME,
+                            // operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == l.OPERATIONID).OPERATIONNAME,
                             casaAccountNumber = l.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                            productAccountName = l.TBL_PRODUCT.PRODUCTNAME,
+                            // productAccountName = l.TBL_PRODUCT.PRODUCTNAME,
                             subSectorName = l.TBL_SUB_SECTOR.NAME,
                             sectorName = l.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                            customerGroupId = l.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
-                            loanTypeId = l.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
-                            loanTypeName = l.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            customerGroupId = loanApp.CUSTOMERGROUPID,
+                            loanTypeId = loanApp.LOANAPPLICATIONTYPEID,
+                            // loanTypeName = loanApp.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                             equityContribution = l.EQUITYCONTRIBUTION,
                             firstPrincipalPaymentDate = l.FIRSTPRINCIPALPAYMENTDATE ?? DateTime.Now,
                             firstInterestPaymentDate = l.FIRSTINTERESTPAYMENTDATE ?? DateTime.Now,
@@ -2989,8 +2990,8 @@ namespace FintrakBanking.Repositories.Credit
                             //customerSensitivityLevelId = l.CUSTOMERSENSITIVITYLEVELID,
                             createdBy = l.CREATEDBY,
                             dateTimeCreated = l.DATETIMECREATED,
-                            isCamsol = context.TBL_LOAN_CAMSOL.Any(x => x.LOANID == l.TERMLOANID),
-                            productName = l.TBL_PRODUCT.PRODUCTNAME
+                            // isCamsol = context.TBL_LOAN_CAMSOL.Any(x => x.LOANID == l.TERMLOANID),
+                            // productName = l.TBL_PRODUCT.PRODUCTNAME
                         });
             return data;
         }
@@ -3019,6 +3020,19 @@ namespace FintrakBanking.Repositories.Credit
 
             return result;
         }
+
+        //public bool ValidateCamsol(int loanId)
+        //{
+        //    var check = context.tbl_Loan_Camsol.Where(x => x.LoanId == loanId);
+
+        //    if (check.Any())
+        //    {
+        //        return true;
+        //    }
+
+        //    return false;
+        //}
+
 
         /// <summary>
         /// Gets the loan by customer.

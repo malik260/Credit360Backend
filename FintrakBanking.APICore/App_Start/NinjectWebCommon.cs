@@ -211,6 +211,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICustomChartOfAccountRepository>().To<CustomChartOfAccountRepository>();
             kernel.Bind<IProfileSetupRepository>().To<ProfileSetupRepository>();
             kernel.Bind<IFSAccountCreationRepository>().To<FSAccountCreationRepository>();
+            kernel.Bind<ILaonCamSolRepository>().To<LaonCamSolRepository>();
         }
 
     }
