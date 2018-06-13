@@ -2574,17 +2574,27 @@ namespace FintrakBanking.Repositories.Customer
 
                         var targetId = modified.CUSTOMERMODIFICATIONID;
 
-                        var model = new ApprovalViewModel
-                        {
-                            staffId = entity.createdBy,
-                            companyId = entity.companyId,
-                            approvalStatusId = (int) ApprovalStatusEnum.Pending,
-                            targetId = targetId,
-                            operationId = (int) OperationsEnum.CustomerInformationApproval,
-                            BranchId = entity.userBranchId,
-                            externalInitialization = true
-                        };
-                        var response = workflow.LogForApproval(model);
+
+                        workflow.StaffId = entity.staffId;
+                        workflow.CompanyId = entity.companyId;
+                        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                        workflow.TargetId = targetId;
+                        workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                        workflow.ExternalInitialization = true;
+
+                        var response = workflow.LogActivity();
+
+                        //var model = new ApprovalViewModel
+                        //{
+                        //    staffId = entity.createdBy,
+                        //    companyId = entity.companyId,
+                        //    approvalStatusId = (int) ApprovalStatusEnum.Pending,
+                        //    targetId = targetId,
+                        //    operationId = (int) OperationsEnum.CustomerInformationApproval,
+                        //    BranchId = entity.userBranchId,
+                        //    externalInitialization = true
+                        //};
+                        //var response = workflow.LogForApproval(model);
 
                         if (response)
                         {
