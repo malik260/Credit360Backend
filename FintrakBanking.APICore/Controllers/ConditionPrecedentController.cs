@@ -112,6 +112,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("condition-precedent-template/delete/{id}")]
+        public HttpResponseMessage DeleteConditionPrecedentTemplate(int id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
+                bool data = repo.DeleteConditionPrecedentTemplate(user, id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
         #endregion DEFAULT conditions
 
         #region LOS conditions

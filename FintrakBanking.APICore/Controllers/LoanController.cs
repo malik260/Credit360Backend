@@ -23,6 +23,7 @@ using System.Net.Http.Headers;
 using System.IO;
 
 using System.Drawing;
+using System.Net.Sockets;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -299,6 +300,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (BadLogicException be)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{be.Message}" });
+            } 
+            catch (APIErrorException ae)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
             }
             catch (Exception)
             {
@@ -854,12 +859,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 var data = repo.GetLoanByCustomer(customerId);
-
-                if (data != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
-                }
-
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
             catch (ConditionNotMetException ce)

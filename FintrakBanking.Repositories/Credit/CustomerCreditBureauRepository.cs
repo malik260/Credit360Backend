@@ -18,8 +18,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Data.Entity; 
-using FinTrakBanking.ThirdPartyIntegration ;
+using System.Data.Entity;
+using FinTrakBanking.ThirdPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -30,7 +30,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IFinanceTransactionRepository financeTransaction;
-        private  IntegrationWithFinacle integration;
+        private IntegrationWithFinacle integration;
         private CreditBureauProcess _creditBureau;
 
         public CustomerCreditBureauRepository(
@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.Credit
             IGeneralSetupRepository _genSetup,
             FinTrakBankingDocumentsContext _docContext,
             FinTrakBankingContext _context,
-            IFinanceTransactionRepository _financials,  IntegrationWithFinacle integration,
+            IFinanceTransactionRepository _financials, IntegrationWithFinacle integration,
             CreditBureauProcess creditBureau)
         {
             this.context = _context;
@@ -51,116 +51,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region Credit Bureau 
-        public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId)
-        {
-            var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == customerId && x.DELETED == false
-                                                                                            && x.COMPANYDIRECTORID == null
-                                                                                            && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30));
-
-            int creditBureauCount = data.Count();
-
-            List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
-            var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
-            var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
-            var customer = from a in context.TBL_CUSTOMER
-                           where a.DELETED == false && a.CUSTOMERID == customerId
-                           select
-                           new CustomerViewModels
-                           {
-                               accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
-                               branchId = a.BRANCHID,
-                               branchName = a.TBL_BRANCH.BRANCHNAME,
-                               createdBy = a.CREATEDBY,
-                               customerCode = a.CUSTOMERCODE,
-                               customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
-                               //customerTypeId = (short)a.CUSTOMERTYPEID,
-                               dateOfBirth = (DateTime)a.DATEOFBIRTH,
-                               customerId = a.CUSTOMERID,
-                               emailAddress = a.EMAILADDRESS,
-                               firstName = a.FIRSTNAME,
-                               gender = a.GENDER,
-                               lastName = a.LASTNAME,
-                               maidenName = a.MAIDENNAME,
-                               maritalStatus = a.MARITALSTATUS.Value,
-                               title = a.TITLE,
-                               middleName = a.MIDDLENAME,
-                              customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
-                               nationality = a.NATIONALITY,
-                               occupation = a.OCCUPATION,
-                               placeOfBirth = a.PLACEOFBIRTH,
-                               isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
-                               sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
-                               sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                               subSectorName = a.TBL_SUB_SECTOR.NAME,
-                               taxNumber = a.TAXNUMBER,
-                               riskRatingId = a.RISKRATINGID,
-                               riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                               customerBVN = a.CUSTOMERBVN,
-                               //isCreditBureauUploadCompleted = false,
-                               companyDirectorId = null,
-                               creditBureauCount = creditBureauCount
-                           };
-
-            foreach (var item in customer)
-            {
-                var casa = context.TBL_CASA.Where(x => x.CUSTOMERID == item.customerId).FirstOrDefault();
-                if (casa != null) item.customerAccountNo = casa.PRODUCTACCOUNTNUMBER;
-
-                var phoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == item.customerId).FirstOrDefault();
-                if (phoneContact != null) item.phoneNumber = phoneContact.PHONENUMBER;
-
-                if (customerInfo != null) item.rcNumber = customerInfo.REGISTRATIONNUMBER;
-
-                allCorporate.Add(item);
-            }
-           
-
-            if (customerType == (short)CustomerTypeEnum.Corporate)
-            {
-                var shareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).ToList();
-                foreach (var director in shareholders)
-                {
-                    var directorData = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
-                                                                                    && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
-                                                                                     && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30));
-                    int directorCount = directorData.Count();
-                    CustomerViewModels shareholdersData = new CustomerViewModels
-                    {
-                        companyDirectorId = director.COMPANYDIRECTORID,
-                        customerTypeId = director.CUSTOMERTYPEID,
-                        customerTypeName = director.TBL_CUSTOMER_TYPE.NAME,
-                        numberOfShares = director.SHAREHOLDINGPERCENTAGE,
-                        isPoliticallyExposed = director.ISPOLITICALLYEXPOSED,
-                        customerBVN = director.CUSTOMERBVN,
-                        companyDirectorTypeId = director.COMPANYDIRECTORTYPEID,
-                        companyDirectorTypeName = director.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                        address = director.ADDRESS,
-                        phoneNumber = director.PHONENUMBER,
-                        customerId = customerId,
-                        emailAddress = director.EMAILADDRESS,
-                        firstName = director.FIRSTNAME,
-                        lastName = director.SURNAME,
-                        middleName = director.MIDDLENAME,
-                        creditBureauCount = directorCount
-                    };
-                    allCorporate.Add(shareholdersData);
-                }
-            }
-
-            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
-            {
-                foreach (var item in customer)
-                {
-                     
-                    integration.AddCustomerAccounts(item.customerCode);
-                }
-            }
-
-            return allCorporate;
-        }
-
-        private IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsNoIntegrationByCustomerId(int customerId)
+        public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId, bool isExternal)
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == customerId && x.DELETED == false
                                                                                             && x.COMPANYDIRECTORID == null
@@ -255,9 +146,22 @@ namespace FintrakBanking.Repositories.Credit
                     allCorporate.Add(shareholdersData);
                 }
             }
+            if (isExternal)
+            {
+                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    foreach (var item in customer)
+                    {
+                        integration.AddCustomerAccounts(item.customerCode);
+                    }
+                }
+            }
+
 
             return allCorporate;
         }
+
 
         public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
         {
@@ -435,48 +339,47 @@ namespace FintrakBanking.Repositories.Credit
         {
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
-                                               where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                                && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)
+                                                where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
+                                                 && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)
                                                 //&& (DbFunctions.DiffDays(DbFunctions.TruncateTime(a.DATETIMECREATED), DbFunctions.TruncateTime(DateTime.Now)).Value <= 30 ) 
                                                 select new LoanCreditBereauViewModel
-                                               {
-                                                   companyDirectorId = a.COMPANYDIRECTORID,
-                                                   companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
-                                                   chargeAmount = a.CHARGEAMOUNT,
-                                                   customerId = a.CUSTOMERID,
-                                                   creditBureauId = a.CREDITBUREAUID,
-                                                   isReportOkay = a.ISREPORTOKAY,
-                                                   usedIntegration = a.USEDINTEGRATION,
-                                                   dateCompleted = (DateTime)a.DATECOMPLETED,
-                                                   dateTimeCreated = a.DATETIMECREATED,
-                                                   searchCount = 0,
-                                                   uploadCount = 0,
-                                                   createdBy = a.CREATEDBY,
-                                                   dayAgo = DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value
-                                               }).ToList();
+                                                {
+                                                    companyDirectorId = a.COMPANYDIRECTORID,
+                                                    companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
+                                                    chargeAmount = a.CHARGEAMOUNT,
+                                                    customerId = a.CUSTOMERID,
+                                                    creditBureauId = a.CREDITBUREAUID,
+                                                    isReportOkay = a.ISREPORTOKAY,
+                                                    usedIntegration = a.USEDINTEGRATION,
+                                                    dateCompleted = (DateTime)a.DATECOMPLETED,
+                                                    dateTimeCreated = a.DATETIMECREATED,
+                                                    searchCount = 0,
+                                                    uploadCount = 0,
+                                                    createdBy = a.CREATEDBY,
+                                                    dayAgo = DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value
+                                                }).ToList();
             return customerLoanCreditBureauData;
         }
 
         public bool VerifyCustomerValidCreditBureau(int customerId)
         {
-            var customers = GetCreditBureauCustomerDetailsNoIntegrationByCustomerId(customerId);
+            var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId, false);
             var creditBureau = GetCreditBureauInformation();
             int creditCount = 0;
             foreach (var customer in customers)
             {
                 var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId);
-                if(customerCreditBureauLog.Count() > 0)
+                if (customerCreditBureauLog.Count() > 0)
                 {
-                    foreach(var cb in creditBureau)
+                    foreach (var cb in creditBureau)
                     {
-
                         if (customerCreditBureauLog.Where(x => x.creditBureauId == cb.creditBureauId).Any()) creditCount++;
                     }
                 }
                 if (creditCount < 3) return false;
                 creditCount = 0;
             };
-            
+
             return true;
 
         }
@@ -486,7 +389,7 @@ namespace FintrakBanking.Repositories.Credit
         #region Integration 
         public List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
-            
+
 
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfoList.creditBureauId);
             if (creditBureau != null)
@@ -496,7 +399,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<string> searchResult = new List<string>();
-            
+
             var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
 
             if (task.Wait(TimeSpan.FromSeconds(640)))
@@ -555,7 +458,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-                    var task = Task.Run(() => searchResponse = _creditBureau .CRCCreditBureauSearch(searchInfo));
+                    var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
                     if (task.Wait(TimeSpan.FromSeconds(640)))
                     {
@@ -600,7 +503,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool saveCrcPdfFile(CRCRequestViewModel searchInfo, SearchInput creditBureauInputs)
         {
-           
+
             CRCSearchResult searchResponse = null;// new CRCSearchResult();
 
             using (var docTrans = docContext.Database.BeginTransaction())
@@ -841,7 +744,7 @@ namespace FintrakBanking.Repositories.Credit
                     CUSTOMERCREDITBUREAUID = customerCreditBureauId,
                     DOCUMENT_TITLE = creditBureau.CREDITBUREAUNAME + " Report Document Upload",
                     FILEEXTENSION = "pdf",
-                   // FILENAME = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault().CUSTOMERCODE + creditBureau.CREDITBUREAUNAME,
+                    // FILENAME = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault().CUSTOMERCODE + creditBureau.CREDITBUREAUNAME,
                     FILEDATA = file,
                     SYSTEMDATETIME = genSetup.GetApplicationDate(),
                     DATETIMECREATED = DateTime.Now,

@@ -175,5 +175,32 @@ namespace FintrakBanking.Repositories.Credit
             }).ToList();
             return camsolType;
         }
+
+        public LoanCAMSOLViewModel ViewCamSolByType(int id)
+        {
+            var data = from camsol in context.TBL_LOAN_CAMSOL
+                           // join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
+                           // join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
+                           //join l in context.TBL_LOAN on camsol.LOANID equals l.TERMLOANID
+                       where camsol.LOAN_CAMSOLID == id 
+                       select new LoanCAMSOLViewModel
+                       {
+                           accountname = camsol.ACCOUNTNAME,
+                           accountnumber = camsol.ACCOUNTNAME,
+                           balance = camsol.BALANCE,
+                           camsoltypeid = camsol.CAMSOLTYPEID,
+                           cantakeloan = camsol.CANTAKELOAN,
+                           customercode = camsol.CUSTOMERCODE,
+                           customername = camsol.CUSTOMERNAME,
+                           date = camsol.DATE,
+                           interestinsuspense = camsol.INTERESTINSUSPENSE,
+                           loancamsolid = camsol.LOAN_CAMSOLID,
+                           loanid = camsol.LOANID,
+                           principal = camsol.PRINCIPAL,
+                           remark = camsol.REMARK,
+
+                       };
+            return data.FirstOrDefault();
+        }
     }
 }

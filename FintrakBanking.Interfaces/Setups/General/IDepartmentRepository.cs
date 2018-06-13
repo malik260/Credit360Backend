@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Setups.General;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,5 +29,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateDepartment(int departmentId, DepartmentViewModel entity);
 
         bool DeleteDepartment(int departmentId);
+
+        bool DeleteUnit(UserInfo user, int unitId);
     }
 }
