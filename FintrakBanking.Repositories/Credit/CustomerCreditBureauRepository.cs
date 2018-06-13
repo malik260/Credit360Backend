@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using FinTrakBanking.ThirdPartyIntegration;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -153,7 +154,18 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     foreach (var item in customer)
                     {
-                        integration.AddCustomerAccounts(item.customerCode);
+                        try
+                        {
+                            integration.AddCustomerAccounts(item.customerCode);
+                        }
+                        catch(APIErrorException ex)
+                        {
+                            throw new APIErrorException(ex.Message);
+                        }
+                        catch(Exception)
+                        {
+                            throw new Exception("An unexpected error occured.");
+                        }
                     }
                 }
             }
