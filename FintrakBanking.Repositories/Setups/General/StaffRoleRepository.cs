@@ -259,9 +259,13 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var data = (from c in context.TBL_STAFF_ROLE
                       join gr in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP on c.STAFFROLEID equals gr.STAFFROLEID
+                      into cc from gr in cc.DefaultIfEmpty()
+                        join aa in context.TBL_TEMP_PROFILE_STAFF_ROLE_AA on c.STAFFROLEID equals aa.STAFFROLEID
+                       into ca from aa in ca.DefaultIfEmpty()
                         join atrail in context.TBL_APPROVAL_TRAIL on c.STAFFROLEID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                          && gr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && gr.ISCURRENT == true
+                          && (gr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && gr.ISCURRENT == true) ||
+                          (aa.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && aa.ISCURRENT == true)
                               && atrail.RESPONSESTAFFID == null
                               && atrail.OPERATIONID == (int)OperationsEnum.StaffRoleCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new StaffRoleViewModel()
