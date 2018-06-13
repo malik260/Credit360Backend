@@ -1653,7 +1653,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan)
                     {
-                        if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                        if (loanApplication.PRODUCTCLASSID != null && loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                         {
                             if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                             {
