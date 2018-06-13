@@ -157,6 +157,7 @@ namespace FintrakBanking.APICore.Providers
                             "expiry_date", today.Add(duration).ToString("ddd MMM dd yyyy HH':'mm':'ss 'GMT'K")
                         }
                     });
+              
 
                     var ticket = new AuthenticationTicket(currIdentity, props);
 
