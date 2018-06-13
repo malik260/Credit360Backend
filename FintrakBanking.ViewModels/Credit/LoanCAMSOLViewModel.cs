@@ -25,6 +25,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string remark { get; set; }
         public bool cantakeloan { get; set; }
         public string loansystemtype { get; set; }
-        public int camsolType { get; set; }
+        public string camsolType { get; set; }
     }
 }

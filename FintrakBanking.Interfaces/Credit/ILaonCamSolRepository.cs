@@ -9,8 +9,12 @@ namespace FintrakBanking.Interfaces.Credit
 {
    public interface ILaonCamSolRepository
     {
-        List<LoanCAMSOLViewModel> GetCamSol();//string customerName);
+        List<LoanCAMSOLViewModel> GetCamSol();
+        List<LoanCAMSOLViewModel> GetCamSolByType(int customerName);
+        LoanCAMSOLViewModel GetCamSol(string loancamsolid);
 
-        LoanCAMSOLViewModel GetCamSol(int loancamsolid);
+        List<LoanCAMSOLViewModel> GetCamSolType();
+
+
     }
 }

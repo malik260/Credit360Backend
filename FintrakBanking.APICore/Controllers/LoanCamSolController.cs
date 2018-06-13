@@ -39,12 +39,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-camsol/{loancamsolid}")]
-        public HttpResponseMessage GetRunningLoans(int loancamsolid)
+        [Route("loan-camsol/{searchValue}")]
+        public HttpResponseMessage GetLoanCamsolSearch(string searchValue)
         {
             try
             {
-                var data = repo.GetCamSol(loancamsolid);
+                var data = repo.GetCamSol(searchValue);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
@@ -52,5 +52,38 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-camsol/{id}")]
+        public HttpResponseMessage GetLoanCamsolById(int id)
+        {
+            try
+            {
+                var data = repo.GetCamSolByType(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-camsol-type")]
+        public HttpResponseMessage GetLoanCansolType()
+        {
+            try
+            {
+                var data = repo.GetCamSolType();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
     }
 }
