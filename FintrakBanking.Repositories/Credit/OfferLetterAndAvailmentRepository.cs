@@ -200,7 +200,7 @@ namespace FintrakBanking.Repositories.Credit
             IQueryable<CamProcessedLoanViewModel> data = null;
 
             data = context.TBL_LOAN_APPLICATION
-                .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL,//.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
                 .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval && ids.Contains((int)x.TOAPPROVALLEVELID)
                     && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised)),
