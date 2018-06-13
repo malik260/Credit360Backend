@@ -1768,6 +1768,8 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                 APPLICATIONAMOUNT = appl.APPLICATIONAMOUNT,
+                APPROVEDAMOUNT = appl.APPLICATIONAMOUNT,
+                TOTALEXPOSUREAMOUNT = appl.TOTALEXPOSUREAMOUNT,
                 APPLICATIONTENOR = appl.APPLICATIONTENOR,
                 ISINVESTMENTGRADE = appl.ISINVESTMENTGRADE,
                 LOANPRELIMINARYEVALUATIONID = appl.LOANPRELIMINARYEVALUATIONID,
@@ -1811,7 +1813,7 @@ namespace FintrakBanking.Repositories.Credit
                     .Select(x => x.LOANAPPLICATIONDETAILID)
                     .ToArray();
 
-                i = 0;
+                i = 0; // collateral
                 var collats = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
                 foreach (var x in collats)
                 {
@@ -1828,8 +1830,8 @@ namespace FintrakBanking.Repositories.Credit
                     i++;
                 }
 
-                i = 0;
-                var conditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONDETAILID == appl.LOANAPPLICATIONID);
+                i = 0; // conditions
+                var conditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
                 foreach (var x in conditions)
                 {
                     context.TBL_LOAN_CONDITION_PRECEDENT.Add(new TBL_LOAN_CONDITION_PRECEDENT

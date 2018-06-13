@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
                     && ids.Contains((int)x.TOAPPROVALLEVELID)
                     && x.RESPONSESTAFFID == null
-                    && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                    && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                         || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
                         || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
                         )
@@ -135,7 +135,7 @@ namespace FintrakBanking.Repositories.Credit
             data = context.TBL_LOAN_APPLICATION.Where(x => x.BRANCHID == branchId && !exceptIds.Contains(x.LOANAPPLICATIONID))
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
-                .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval 
+                .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
                     && ids.Contains((int)x.TOAPPROVALLEVELID)
                     && x.RESPONSESTAFFID == null
                     && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised)),
