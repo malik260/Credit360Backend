@@ -3600,6 +3600,7 @@ namespace FintrakBanking.Repositories.Credit
                 PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
                 PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
                 VALUATIONAMOUNT = entity.valuationAmount,
+                
             });
 
             workflow.StaffId = entity.createdBy;
@@ -3657,7 +3658,9 @@ namespace FintrakBanking.Repositories.Credit
                 MATURITYAMOUNT = 0,
                 EFFECTIVEDATE = entity.effectiveDate,
                 REMARK = entity.remark,
-                BANK = entity.bank
+                BANK = entity.bank,
+                
+                
             });
 
             workflow.StaffId = entity.createdBy;
@@ -3739,7 +3742,8 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 ACTEDONBY = model.staffId,
-                ISCURRENT = true
+                ISCURRENT = true,
+                
 
             });
 
