@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         List<LoanCAMSOLViewModel> GetCamSol();
         List<LoanCAMSOLViewModel> GetCamSolByType(int customerName);
+        LoanCAMSOLViewModel ViewCamSolByType(int id);
         LoanCAMSOLViewModel GetCamSol(string loancamsolid);
 
         List<LoanCAMSOLViewModel> GetCamSolType();

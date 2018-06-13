@@ -39,7 +39,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-camsol/{searchValue}")]
+        [Route("loan-camsol-search/{searchValue}")]
         public HttpResponseMessage GetLoanCamsolSearch(string searchValue)
         {
             try
@@ -55,12 +55,28 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-camsol/{id}")]
+        [Route("loan-camsol-type/{id}")]
         public HttpResponseMessage GetLoanCamsolById(int id)
         {
             try
             {
                 var data = repo.GetCamSolByType(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("view-loan-camsol-type/{id}")]
+        public HttpResponseMessage ViewLoanCamsolById(int id)
+        {
+            try
+            {
+                var data = repo.ViewCamSolByType(id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
