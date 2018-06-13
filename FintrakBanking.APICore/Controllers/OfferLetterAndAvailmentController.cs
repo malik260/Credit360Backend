@@ -38,7 +38,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = await repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
+                var response = await repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetCompanyId).ToListAsync();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count(), message = "No record found" });
             }
             catch (Exception e)
@@ -46,28 +46,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
-
-
-
-        //[HttpGet]
-        //[Route("loan-application/credit-assessment-memorandum/due-for-bondandguarantees")]
-        //public async Task<HttpResponseMessage> GetApplicationsDueBondAndGuarantees()
-        //{
-        //    try
-        //    {
-        //        var response = await olAvlmentRepo.GetApplicationsDueBondAndGuarantees(token.GetStaffId, token.GetCompanyId).ToListAsync();
-        //        if (!response.Any())
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
-        //        }
-
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
-        //    }
-        //}
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -77,7 +55,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var staffid = token.GetStaffId;
-                var response = await repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
+                var response = await repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
@@ -120,7 +98,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetBranchId, token.GetCompanyId);
+                var response = repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetBranchId, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (Exception e)
@@ -136,7 +114,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = await repo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
+                var response = await repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (Exception e)
@@ -144,28 +122,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
-
-        //[HttpPut] [ClaimsAuthorization]
-        // [Route("loan-application/applicationRef/{applicationRefNumber}/statusId/{applicationStatusId}")]
-        // public HttpResponseMessage UpdateApplicationStatus([FromUri] string applicationRefNumber, [FromUri] short applicationStatusId)
-        // {
-        //     try
-        //     {
-        //         var response = repo.UpdateLoanApplicationStatus(applicationRefNumber.Trim(), applicationStatusId);
-
-        //         if (!response)
-        //         {
-        //             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "record not updated successfully" });
-        //         }
-
-        //         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "record updated successfully" });
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
-        //     }
-        // }
-
 
         [HttpPut]
         [ClaimsAuthorization]
