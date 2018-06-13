@@ -2575,7 +2575,7 @@ namespace FintrakBanking.Repositories.Customer
                         var targetId = modified.CUSTOMERMODIFICATIONID;
 
 
-                        workflow.StaffId = entity.staffId;
+                        workflow.StaffId = entity.createdBy;
                         workflow.CompanyId = entity.companyId;
                         workflow.StatusId = (int)ApprovalStatusEnum.Pending;
                         workflow.TargetId = targetId;
