@@ -41,7 +41,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var test = repo;
-                var data = repo.GetCreditBureauCustomerDetailsByCustomerId(customerId);
+                var data = repo.GetCreditBureauCustomerDetailsByCustomerId(customerId, true);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

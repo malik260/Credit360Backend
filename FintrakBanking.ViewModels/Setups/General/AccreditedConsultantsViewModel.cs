@@ -24,6 +24,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string name { get; set; }
         public string firmName { get; set; }
         public int? accreditedConsultantTypeId { get; set; }
+        public string accreditedConsultantName { get; set; }
         public short? cityId { get; set; }
         public string accountNumber { get; set; }
         public string solicitorBVN { get; set; }

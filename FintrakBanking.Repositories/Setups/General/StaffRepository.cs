@@ -360,6 +360,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.STAFFSIGNATURE = staffModel.StaffSignature;
                 tempStaffToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 tempStaffToUpdate.ISCURRENT = true;
+                tempStaffToUpdate.LOAN_LIMIT = staffModel.loanLimit;
 
             }
             else
@@ -399,6 +400,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CITYID = staffModel.CityId,
                     STAFFSIGNATURE = staffModel.StaffSignature,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    LOAN_LIMIT = staffModel.loanLimit,
                     ISCURRENT = true
                 };
 
@@ -434,17 +436,30 @@ namespace FintrakBanking.Repositories.Setups.General
                         context.TBL_TEMP_PROFILE_USER.Add(user);
                         context.SaveChanges();
                     }
-                    var entity = new ApprovalViewModel
-                    {
-                        staffId = staffModel.createdBy,
-                        companyId = staffModel.companyId,
-                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = targetStaffId,
-                        operationId = (int)OperationsEnum.StaffCreation,
-                        BranchId = staffModel.userBranchId,
-                        externalInitialization = true
-                    };
-                    var response = workflow.LogForApproval(entity);
+
+                    workflow.StaffId = staffModel.createdBy;
+                    workflow.CompanyId = staffModel.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    workflow.TargetId = targetStaffId;
+                    workflow.Comment = "Update Staff Creation";
+                    workflow.OperationId = (int)OperationsEnum.StaffCreation;
+                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+
+                    var response = context.SaveChanges() > 0;
+
+                    //var entity = new ApprovalViewModel
+                    //{
+                    //    staffId = staffModel.createdBy,
+                    //    companyId = staffModel.companyId,
+                    //    approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                    //    targetId = targetStaffId,
+                    //    operationId = (int)OperationsEnum.StaffCreation,
+                    //    BranchId = staffModel.userBranchId,
+                    //    externalInitialization = true
+                    //};
+                    //var response = workflow.LogForApproval(entity);
 
                     if (response)
                     {
@@ -1248,7 +1263,7 @@ namespace FintrakBanking.Repositories.Setups.General
             user.TEMPSTAFFID = staff.TEMPSTAFFID;
             context.TBL_TEMP_PROFILE_USER.Add(user);
 
-
+          
             workflow.StaffId = staffModel.createdBy;
             workflow.CompanyId = staffModel.companyId;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
@@ -1490,6 +1505,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = from st in context.TBL_STAFF
                        where st.COMPANYID == companyId
+                       orderby st.FIRSTNAME, st.MIDDLENAME, st.LASTNAME ascending
                        select new simpleStaffModel
                        {
                            staffId = st.STAFFID,

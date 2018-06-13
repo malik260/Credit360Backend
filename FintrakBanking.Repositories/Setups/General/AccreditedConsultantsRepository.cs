@@ -44,6 +44,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         phoneNumber = m.PHONENUMBER,
                         address = m.ADDRESS,
                         coreCompetence = m.CORECOMPETENCE,
+                        accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTTYPEID).FirstOrDefault().NAME,
                         accreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID).Select(k =>
                            new AccreditedConsultantStateViewModel()
                            {

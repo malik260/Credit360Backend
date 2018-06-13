@@ -2918,12 +2918,12 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         private void LogSLAApprovalNotification(string refNo, string operation, SLANotificationViewModel sla, TBL_STAFF staff)
         {
             var bodyContent = @"
-                      <p>Dear Sir/Ma,</p>
+                      <p>Dear Sir/Ma,</p></br></br>
                       <p>This is to bring to your attention that you have a pending " + operation +
                          @" approval request with a Loan Reference Number : " + refNo;
             var bPart = @" which will be due by " + sla.salDateLine;
-            var cPart = @" Kindly you swift response is needed. <br /><br />Note: Kindly be informed that your suppervisor has been notified of this task. </p>
-                      <p>Thanks,<br>Fintrak Credit 360</br></p>
+            var cPart = @". Kindly you swift response is needed. </ br></ br>Note: Kindly be informed that your suppervisor has been notified of this task. </p>
+                      <p>Thanks,<br>Fintrak Credit 360</p></ br>
                       ";
             var EmailSubject = operation+ "Approval Notification";
 
@@ -2945,16 +2945,16 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         private void LogSupervisorEscalationForSLAApprovalNotification(string staffName, string refNo, string operation, string email, int targetId, int operationId)
         {
                         var bodyContent = @"
-                      <p>Dear Sir/Ma,</p>
-                      <p>Kindly be informed that <b>" + operation + "<b /> approval request has been sent to : <b>" + staffName +
-                           "<b /> who is under your supervision </p><br /><br />" +
+                      <p>Dear Sir/Ma,</p></br></br>
+                      <p>Kindly be informed that <b>" + operation + " approval request has been sent to : <b>" + staffName +
+                           "</b> who is under your supervision </p></br></br>" +
                      " <p>Thanks,<br>Fintrak Credit 360</br></p>";
                         var EmailSubject = operation + "Approval Notification";
 
             string templateUrl = "EmailTemplates\\Monitoring.html";
                         string mailBody = EmailHelpers.PopulateBody(bodyContent, templateUrl);
 
-                        CreateSLAApprovalNotificationMethod(mailBody, EmailSubject, email, targetId, operationId);
+            CreateSLAApprovalNotificationMethod(mailBody, EmailSubject, email, targetId, operationId);
 
         }
     }

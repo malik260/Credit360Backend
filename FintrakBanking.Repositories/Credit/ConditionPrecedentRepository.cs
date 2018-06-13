@@ -192,11 +192,13 @@ namespace FintrakBanking.Repositories.Credit
             return this.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == detailId);
         }
 
+      
+
         #region CP Template
 
         public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentTemplate()
         {
-            return this.context.TBL_CONDITION_PRECEDENT
+            return this.context.TBL_CONDITION_PRECEDENT.Where(x=> x.DELETED == false)
             .Select(c => new ConditionPrecedentViewModel
             {
                 conditionId = c.CONDITIONID,
@@ -412,6 +414,36 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Delete timeline for compliance'{ timelineId }' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteConditionPrecedentTemplate(UserInfo user, int id)
+        {
+            var data = this.context.TBL_CONDITION_PRECEDENT.Find(id);
+            if (data == null)
+            {
+                return false;
+            }
+            data.DELETED = true;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.LASTUPDATEDBY = user.staffId;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Delete Condition Precedent '{ id }' ",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),

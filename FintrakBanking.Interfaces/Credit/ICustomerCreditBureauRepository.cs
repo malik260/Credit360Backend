@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.Credit
     public interface ICustomerCreditBureauRepository
     {
         #region CREDIT BUREAU REPORT
-        IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId);
+        IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId, bool isExternal);
 
         bool VerifyCustomerValidCreditBureau(int customerId);
         int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity);

@@ -740,18 +740,18 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
             {
                 List<GroupCustomerMembersViewModel> lstCustomer = new List<GroupCustomerMembersViewModel>();
 
-                var data = from b in context.TBL_CUSTOMER_GROUP_MAPPING
-
+                var data = (from b in context.TBL_CUSTOMER_GROUP_MAPPING
+                          join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
                            where b.CUSTOMERGROUPID == customerGroupId && b.DELETED == false
-                           && b.TBL_CUSTOMER.COMPANYID == companyId
-                           && b.TBL_CUSTOMER.VALIDATED == true
+                           && c.COMPANYID == companyId
+                          && c.ACCOUNTCREATIONCOMPLETE == true
                            select new GroupCustomerMembersViewModel
                            {
                                customerId = b.CUSTOMERID,
-                               customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
-                               lastName = b.TBL_CUSTOMER.LASTNAME,
-                               firstName = b.TBL_CUSTOMER.FIRSTNAME
-                           };
+                               customerCode = c.CUSTOMERCODE,
+                               lastName = c.LASTNAME,
+                               firstName = c.FIRSTNAME
+                           }).ToList();
 
                 foreach (var item in data)
                 {
@@ -1215,10 +1215,18 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                                              taxIdentificationNumber = c.TAXNUMBER,
                                                              registrationNumber = c.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == c.CUSTOMERID).REGISTRATIONNUMBER,
                                                              completedInformation = c.ACCOUNTCREATIONCOMPLETE,
+                                                             //  crdeitBureauCompleted = creditBureau.VerifyCustomerValidCreditBureau(c.customerId)
                                                          }).ToList()
                             }).Take(10).ToList();
 
-              
+                //foreach (var item in data)
+                //{
+                //    foreach (var ss in item.customerGroupMappings)
+                //    {
+                //        item.crdeitBureauCompleted = creditBureau.VerifyCustomerValidCreditBureau(item.customerId);
+                //    }
+                //}
+
 
                 return data;
             }
@@ -1365,7 +1373,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                                      }).ToList()
                         }).FirstOrDefault();
 
-            foreach(var item in data.customerGroupMappings)
+            foreach (var item in data.customerGroupMappings)
             {
                 item.crdeitBureauCompleted = creditBureau.VerifyCustomerValidCreditBureau(item.customerId);
             }

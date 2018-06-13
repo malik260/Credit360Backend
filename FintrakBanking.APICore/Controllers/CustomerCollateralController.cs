@@ -104,7 +104,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
             }
 
             //try
@@ -922,15 +922,16 @@ namespace FintrakBanking.APICore.Controllers
 
        [HttpPut] [ClaimsAuthorization]
         [Route("collateral-sub-type/{collateralSubTypeId}")]
-        public async Task<HttpResponseMessage> UpdateCollateralSubType(short collateralSubTypeId, [FromBody] CollateralSubTypeViewModel entity)
+        public HttpResponseMessage UpdateCollateralSubType(short collateralSubTypeId, [FromBody] CollateralSubTypeViewModel entity)
         {
             try
             {
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userBranchId = (short)token.GetBranchId;
+                entity.createdBy = token.GetStaffId;
 
-                var response = await type.UpdateCollateralSubTypes(collateralSubTypeId, entity);
+                var response = type.UpdateCollateralSubTypes(collateralSubTypeId, entity);
                 if (!response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

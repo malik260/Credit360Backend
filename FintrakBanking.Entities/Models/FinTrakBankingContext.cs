@@ -210,6 +210,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_BOOKING_REQUEST> TBL_LOAN_BOOKING_REQUEST { get; set; }
         public virtual DbSet<TBL_LOAN_BULK_INTEREST_REVIEW> TBL_LOAN_BULK_INTEREST_REVIEW { get; set; }
         public virtual DbSet<TBL_LOAN_CAMSOL> TBL_LOAN_CAMSOL { get; set; }
+        public virtual DbSet<TBL_LOAN_CAMSOL_TYPE> TBL_LOAN_CAMSOL_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }
         public virtual DbSet<TBL_LOAN_COMMENT> TBL_LOAN_COMMENT { get; set; }
         public virtual DbSet<TBL_LOAN_CONCESSION_TYPE> TBL_LOAN_CONCESSION_TYPE { get; set; }
