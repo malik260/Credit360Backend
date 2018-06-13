@@ -1,5 +1,6 @@
 ﻿namespace FinTrakBanking.ThirdPartyIntegration
 {
+    using FintrakBanking.Common.CustomException;
     using FintrakBanking.Entities.Models;
     using FintrakBanking.ViewModels.CASA;
     using FintrakBanking.ViewModels.Credit;
@@ -32,54 +33,54 @@
                 API_URL = configdata.APIURL;
             }
 
-           
-
             private HttpClientHandler handler = new HttpClientHandler();
             private static HttpClient httpClientInstance;
 
-
-
-            public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode,
-                string toCurrencyCode, string rateCode)
+            public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
             {
-                handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
-                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
-
-                CurrencyExchangeRateViewModel exchangeRateOutput = new CurrencyExchangeRateViewModel();
-                CurrencyExchangeRateIntegrationViewModel exchangeRateAPI =
-                    new CurrencyExchangeRateIntegrationViewModel();
-                ServicePointManager.ServerCertificateValidationCallback +=
-                    (sender, cert, chain, sslPolicyErrors) => true;
-                //HttpResponseMessage response = await client.GetAsync($"api/ExchangeRate/GetExchangeRateProduct?rateProduct.fromCurrencyCode={fromCurrencyCode}&rateProduct.toCurrencyCode={toCurrencyCode}&rateProduct.rateCode={rateCode}");
-                HttpResponseMessage response = await client.GetAsync(
-                    $"api/ExchangeRate/GetExchangeRateProduct?model.fromCurrencyCode={fromCurrencyCode}&model.toCurrencyCode={toCurrencyCode}&model.rateCode={rateCode}");
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    exchangeRateAPI = await response.Content.ReadAsAsync<CurrencyExchangeRateIntegrationViewModel>();
+                    handler.UseDefaultCredentials = true;
+                    HttpClient client = new HttpClient(handler);
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    CurrencyExchangeRateViewModel exchangeRateOutput = new CurrencyExchangeRateViewModel();
+                    CurrencyExchangeRateIntegrationViewModel exchangeRateAPI =
+                        new CurrencyExchangeRateIntegrationViewModel();
+                    ServicePointManager.ServerCertificateValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
+                    //HttpResponseMessage response = await client.GetAsync($"api/ExchangeRate/GetExchangeRateProduct?rateProduct.fromCurrencyCode={fromCurrencyCode}&rateProduct.toCurrencyCode={toCurrencyCode}&rateProduct.rateCode={rateCode}");
+                    HttpResponseMessage response = await client.GetAsync(
+                        $"api/ExchangeRate/GetExchangeRateProduct?model.fromCurrencyCode={fromCurrencyCode}&model.toCurrencyCode={toCurrencyCode}&model.rateCode={rateCode}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        exchangeRateAPI = await response.Content.ReadAsAsync<CurrencyExchangeRateIntegrationViewModel>();
+                    }
+
+                    var currencyId = context.TBL_CURRENCY
+                        .FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
+                    exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
+                    exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
+                    exchangeRateOutput.currencyId = (short)currencyId;
+                    exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
+                    exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
+
+                    handler.Dispose();
+                    client.Dispose();
+
+                    return exchangeRateOutput;
                 }
-
-                var currencyId = context.TBL_CURRENCY
-                    .FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
-                exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
-                exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
-                exchangeRateOutput.currencyId = (short) currencyId;
-                exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
-                exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
-
-                handler.Dispose();
-                client.Dispose();
-
-                return exchangeRateOutput;
-
-
+                catch (Exception)
+                {
+                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                }
             }
            
 
@@ -193,70 +194,71 @@
 
             public async Task<ResponseMessage> ApiPostCrossCurrencyTransactions(List<TransactionPostingViewModel> model)
             {
-
-                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-
-                var dta = context.TBL_SETUP_GLOBAL.ToList();
-
-                handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
-
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
-                client.DefaultRequestHeaders.Authorization = token;
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
-                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-
-                ResponseMessageViewModel responseApi = new ResponseMessageViewModel();
-                ResponseMessage responseMsg = null;
-                bool result = false;
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    result = response.IsSuccessStatusCode;
-                    await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
-                    var res = new ResponseMessageViewModel
-                    {
-                        responseCode = responseApi.responseCode,
-                        webRequestDate = responseApi.webRequestDate,
-                        webRequestStatus = responseApi.webRequestStatus,
-                        serialNumber = responseApi.serialNumber,
-                        message = responseApi.message
-                    };
-                    responseMsg = new ResponseMessage
-                    {
-                        APIResponse = res,
-                        APIStatus = result,
-                        Message = response
-                    };
+                    var dta = context.TBL_SETUP_GLOBAL.ToList();
 
+                    handler.UseDefaultCredentials = true;
+                    HttpClient client = new HttpClient(handler);
+
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
+                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    ResponseMessageViewModel responseApi = new ResponseMessageViewModel();
+                    ResponseMessage responseMsg = null;
+                    bool result = false;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result = response.IsSuccessStatusCode;
+                        await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+
+                        var res = new ResponseMessageViewModel
+                        {
+                            responseCode = responseApi.responseCode,
+                            webRequestDate = responseApi.webRequestDate,
+                            webRequestStatus = responseApi.webRequestStatus,
+                            serialNumber = responseApi.serialNumber,
+                            message = responseApi.message
+                        };
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = res,
+                            APIStatus = result,
+                            Message = response
+                        };
+
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = result,
+                            Message = response
+                        };
+                    }
+                    handler.Dispose();
+                    client.Dispose();
+                    return responseMsg;
                 }
-                else
+                catch (Exception)
                 {
-                    responseMsg = new ResponseMessage
-                    {
-                        APIResponse = null,
-                        APIStatus = result,
-                        Message = response
-                    };
+                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
                 }
-                handler.Dispose();
-                client.Dispose();
-                return responseMsg;
-
-
-
-
-
-
+                
                 //if (responseModel.responseCode == "0")
                 //{
                 //  //  AddCustomTransactions(model);
@@ -276,65 +278,69 @@
 
             public async Task<ResponseMessage> ApiTransactionPosting(List<TransactionPostingViewModel> model)
             {
-
-                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-            
-                var dta = context.TBL_SETUP_GLOBAL.ToList();
-
-                var objData = new JavaScriptSerializer().Serialize(model);
-
-                handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
-
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
-                client.DefaultRequestHeaders.Authorization = token;
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
-                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-
-                TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
-                ResponseMessage responseMsg = null;
-            
-               
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                  
-                    responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
-                    var res = new ResponseMessageViewModel
-                    { 
-                        responseCode = responseApi.responseCode,
-                        webRequestDate = responseApi.webRequestDate,
-                        webRequestStatus = responseApi.webRequestStatus,                     
-                     
-                    };
-                    responseMsg = new ResponseMessage
+                    var dta = context.TBL_SETUP_GLOBAL.ToList();
+
+                    var objData = new JavaScriptSerializer().Serialize(model);
+
+                    handler.UseDefaultCredentials = true;
+                    HttpClient client = new HttpClient(handler);
+
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
+                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
+                    ResponseMessage responseMsg = null;
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        APIResponse = res,
-                        APIStatus = response.IsSuccessStatusCode,
-                        Message = response
-                    };
 
+                        responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+
+                        var res = new ResponseMessageViewModel
+                        {
+                            responseCode = responseApi.responseCode,
+                            webRequestDate = responseApi.webRequestDate,
+                            webRequestStatus = responseApi.webRequestStatus,
+
+                        };
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = res,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    handler.Dispose();
+                    client.Dispose();
+                    return responseMsg;
                 }
-                else
+                catch (Exception)
                 {
-                    responseMsg = new ResponseMessage
-                    {
-                        APIResponse = null,
-                        APIStatus = response.IsSuccessStatusCode,
-                        Message = response
-                    };
+                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator." );
                 }
-                handler.Dispose();
-                client.Dispose();
-                return responseMsg;
             }
 
 
