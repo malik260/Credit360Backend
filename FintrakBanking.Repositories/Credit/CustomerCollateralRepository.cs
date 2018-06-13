@@ -262,6 +262,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempEquipmentCollateral(int collateralId, CollateralViewModel entity)
         {
+          
             context.TBL_TEMP_COLLATERAL_PLANT_EQUP.Add(new TBL_TEMP_COLLATERAL_PLANT_EQUP
             {
                 TEMPCOLLATERALCUSTOMERID = collateralId,
@@ -833,6 +834,10 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddVehicleCollateral(int collateralId, CollateralViewModel entity)
         {
+
+            //if (entity.valuationDate > DateTime.Now || entity.dateOfManufacture > DateTime.Now)
+            //    throw new Exception("Wrong date selected. Transaction aborted");
+
             context.TBL_TEMP_COLLATERAL_VEHICLE.Add(new TBL_TEMP_COLLATERAL_VEHICLE
             {
                 TEMPCOLLATERALCUSTOMERID = collateralId,
@@ -921,6 +926,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempPreciousMetalCollateral(int collateralId, CollateralViewModel entity)
         {
+
             context.TBL_TEMP_COLLATERAL_PREC_METAL.Add(new TBL_TEMP_COLLATERAL_PREC_METAL
             {
                 TEMPCOLLATERALCUSTOMERID = collateralId,
@@ -1021,6 +1027,9 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempGuaranteeCollateral(int collateralId, CollateralViewModel entity)
         {
+            //if (entity.cStartDate > DateTime.Now || entity.endDate  < DateTime.Now )
+            //    throw new Exception("Wrong date selected. Transaction aborted");
+
             context.TBL_TEMP_COLLATERAL_GAURANTEE.Add(new TBL_TEMP_COLLATERAL_GAURANTEE
             {
                 TEMPCOLLATERALCUSTOMERID = collateralId,
@@ -1309,8 +1318,12 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempMarketableSecuritiesCollateral(int collateralId, CollateralViewModel entity)
         {
+            //if (entity.effectiveDate > DateTime.Now || entity.maturityDate < DateTime.Now)
+            //    throw new Exception("Wrong date selected. Transaction aborted");
+
             context.TBL_TEMP_COLLATERAL_MKT_SEC.Add(new TBL_TEMP_COLLATERAL_MKT_SEC
             {
+
                 TEMPCOLLATERALCUSTOMERID = collateralId,
                 SECURITYTYPE = entity.securityType,
                 DEALREFERENCENUMBER = "aa",
@@ -1402,6 +1415,9 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempPolicyCollateral(int collateralId, CollateralViewModel entity)
         {
+            //if (entity.policyStartDate > DateTime.Now || entity.assignDate > DateTime.Now || entity.policyRenewalDate < DateTime.Now)
+            //    throw new Exception("Wrong date selected. Transaction aborted");
+
             context.TBL_TEMP_COLLATERAL_POLICY.Add(new TBL_TEMP_COLLATERAL_POLICY
             {
                 TEMPCOLLATERALCUSTOMERID = collateralId,
@@ -3555,6 +3571,8 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempImmovablePropertyCollateral(int collateralId, CollateralViewModel entity)
         {
+            //if (entity.constructionDate > DateTime.Now || entity.lastValuationDate > DateTime.Now || entity.lastValuationDate > DateTime.Now || entity.dateOfAcquisition>DateTime.Now)
+            //    throw new Exception("Wrong date selected. Transaction aborted"); 
 
             context.TBL_TEMP_COLLATERAL_IMMOV_PROP.Add(new TBL_TEMP_COLLATERAL_IMMOV_PROP
             {
@@ -3582,6 +3600,7 @@ namespace FintrakBanking.Repositories.Credit
                 PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
                 PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
                 VALUATIONAMOUNT = entity.valuationAmount,
+                
             });
 
             workflow.StaffId = entity.createdBy;
@@ -3623,6 +3642,9 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempDepositCollateral(int collateralId, CollateralViewModel entity)
         {
+            //if (entity.maturityDate < DateTime.Now || entity.effectiveDate > DateTime.Now)
+            //    throw new Exception("Wrong date selected. Transaction aborted");
+
             context.TBL_TEMP_COLLATERAL_DEPOSIT.Add(new TBL_TEMP_COLLATERAL_DEPOSIT
             {
                 TEMPCOLLATERALCUSTOMERID = collateralId,
@@ -3636,7 +3658,9 @@ namespace FintrakBanking.Repositories.Credit
                 MATURITYAMOUNT = 0,
                 EFFECTIVEDATE = entity.effectiveDate,
                 REMARK = entity.remark,
-                BANK = entity.bank
+                BANK = entity.bank,
+                
+                
             });
 
             workflow.StaffId = entity.createdBy;
@@ -3718,7 +3742,8 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 ACTEDONBY = model.staffId,
-                ISCURRENT = true
+                ISCURRENT = true,
+                
 
             });
 

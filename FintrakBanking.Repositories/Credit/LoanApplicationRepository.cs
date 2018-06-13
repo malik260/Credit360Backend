@@ -1844,6 +1844,25 @@ namespace FintrakBanking.Repositories.Credit
                     });
                 }
 
+                i = 0; // fees
+                var fees = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                foreach (var x in fees)
+                {
+                    context.TBL_LOAN_APPLICATION_DETL_FEE.Add(new TBL_LOAN_APPLICATION_DETL_FEE
+                    {
+                        LOANAPPLICATIONDETAILID = rejectedDetails[i],
+                        CHARGEFEEID = x.CHARGEFEEID,
+                        HASCONSESSION = x.HASCONSESSION,
+                        CONSESSIONREASON = x.CONSESSIONREASON,
+                        DEFAULT_FEERATEVALUE = x.DEFAULT_FEERATEVALUE,
+                        RECOMMENDED_FEERATEVALUE = x.RECOMMENDED_FEERATEVALUE,
+                        APPROVALSTATUSID = x.APPROVALSTATUSID,
+                        DELETED = false,
+                        DATETIMECREATED = applicationDate,
+                        CREATEDBY = model.createdBy,
+                    });
+                }
+
                 var cam = context.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
                 if (cam != null)
                 {
