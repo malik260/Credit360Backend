@@ -44,7 +44,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 var guidelineList = new TBL_LOAN_PRUDENTIALGUIDELINE()
                 {
                     STATUSNAME = prudentialGuidelineName,
-                 PRUDENTIALGUIDELINETYPEID = (short)guideline.prudentialGuidelineId,
+                    PRUDENTIALGUIDELINETYPEID = (short)guideline.prudentialGuidelineId,
                     INTERNALMINIMUM=guideline.internalMinimun,
                     INTERNALMAXIMUM=guideline.internalMaximun,
                     EXTERNALMINIMUM=guideline.externalMinimun,
@@ -102,11 +102,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                                prudentialGuidelineId = a.PRUDENTIALGUIDELINESTATUSID,
                                statusName= a.STATUSNAME,
                                classification= a.TBL_LOAN_PRUDENT_GUIDE_TYPE.PRUDENTIALGUIDELINETYPENAME,
-                               internalMinimun= a.INTERNALMINIMUM,
-                               internalMaximun= a.INTERNALMAXIMUM,
-                               externalMinimun= a.EXTERNALMINIMUM,
-                               externalMaximun= a.EXTERNALMAXIMUM,
-                               naration= a.NARRATION
+                               internalMinimun= (int)a.INTERNALMINIMUM,
+                               internalMaximun= (int)a.INTERNALMAXIMUM,
+                               externalMinimun= (int)a.EXTERNALMINIMUM,
+                               externalMaximun= (int)a.EXTERNALMAXIMUM,
+                               naration= a.NARRATION,
+                               prudentialGuidelineTypeId = a.PRUDENTIALGUIDELINETYPEID
                             }).ToList();
             return guideline;
         }
@@ -134,7 +135,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                                  internalMaximun = (int)a.INTERNALMAXIMUM,
                                  externalMinimun = (int)a.EXTERNALMINIMUM,
                                  externalMaximun = (int)a.EXTERNALMAXIMUM,
-                                 naration = a.NARRATION
+                                 naration = a.NARRATION,
+                                 prudentialGuidelineTypeId = a.PRUDENTIALGUIDELINETYPEID
                              }).FirstOrDefault();
             return guideline;
         }

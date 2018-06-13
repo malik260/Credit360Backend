@@ -51,6 +51,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? TIMELINEID { get; set; }
 
+        //public bool DELETED { get; set; }
+
+
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
