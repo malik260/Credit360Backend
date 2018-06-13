@@ -37,4 +37,18 @@ namespace FintrakBanking.Common.CustomException
 
         }
     }
+
+    public class APIErrorException : Exception
+    {
+        public APIErrorException()
+        {
+
+        }
+
+        public APIErrorException(string literal)
+        : base(String.Format(literal))
+        {
+
+        }
+    }
 }

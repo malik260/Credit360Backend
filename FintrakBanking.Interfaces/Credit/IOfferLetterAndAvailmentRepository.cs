@@ -10,15 +10,11 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IOfferLetterAndAvailmentRepository
     {
-        bool UpdateLoanApplicationStatus(string applicationRefNumber, short applicationStatusId);
+        IQueryable<CamProcessedLoanViewModel> GetApplicationsAtOfferLetter(int staffId, int companyId);
 
-        IQueryable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int branchId, int companyId);
-
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailmentCheckList(int companyId);
+        IQueryable<CamProcessedLoanViewModel> GetApplicationsAtOfferLetter(int staffId, int branchId, int companyId);
 
         IQueryable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId);
-
-        IQueryable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int staffId, int companyId);
 
         OfferLetterTemplateViewModel GenerateOfferLetterTemplate(string applicationRefNumber);
 
@@ -32,7 +28,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool SaveFinalOfferLetter(OfferLetterTemplateViewModel model);
 
-        bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity );
+        bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity);
 
         IEnumerable<OfferLetterTemplateViewModel> GetAllFinalOfferLetters();
 
@@ -44,8 +40,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity);
 
-        IQueryable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId);
-
         bool ForwardBondsAndGuarantee(ForwardViewModel entity);
 
         bool UpdateFinalOfferLetter(string applicationRef, OfferLetterTemplateViewModel model);
@@ -53,8 +47,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool OfferLetterRejection(ForwardViewModel entity);
 
         IEnumerable<CommentOnLoanAvailmentViewModel> GetCommentOnLoanAvailment(string applicationRefNumber);
-
-        //IEnumerable<LoanApplicationCollateralViewModel> GetLoanCollateral(int loanApplicationDetailId);
 
         Form3800ViewModel GenerateForm3800TemplateLMS(string refNumber);
     }

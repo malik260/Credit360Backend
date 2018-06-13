@@ -162,5 +162,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("credit-template/")]
+        public HttpResponseMessage DeleteCreditTemplate( int creditTemplateId)
+        {
+            try
+            {
+             
+                var data = repo.DeleteCreditTemplate(creditTemplateId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true,  message = "The record has been deleted successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
     }
 }

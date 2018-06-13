@@ -144,6 +144,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                              //State = c.State.StateName
                              CityId = c.CITYID,
+                             loanLimit = c.LOAN_LIMIT,
                          }).ToList();
 
             var department = (from k in context.TBL_DEPARTMENT_UNIT
@@ -203,6 +204,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              //MisInfoCode = c.Misinfo.Misname,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                              //State = c.State.StateName
+                             loanLimit = c.LOAN_LIMIT,
                          }).SingleOrDefault();
             return staff;
         }
@@ -358,6 +360,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.STAFFSIGNATURE = staffModel.StaffSignature;
                 tempStaffToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 tempStaffToUpdate.ISCURRENT = true;
+                tempStaffToUpdate.LOAN_LIMIT = staffModel.loanLimit;
 
             }
             else
@@ -397,6 +400,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CITYID = staffModel.CityId,
                     STAFFSIGNATURE = staffModel.StaffSignature,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    LOAN_LIMIT = staffModel.loanLimit,
                     ISCURRENT = true
                 };
 
@@ -432,17 +436,30 @@ namespace FintrakBanking.Repositories.Setups.General
                         context.TBL_TEMP_PROFILE_USER.Add(user);
                         context.SaveChanges();
                     }
-                    var entity = new ApprovalViewModel
-                    {
-                        staffId = staffModel.createdBy,
-                        companyId = staffModel.companyId,
-                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = targetStaffId,
-                        operationId = (int)OperationsEnum.StaffCreation,
-                        BranchId = staffModel.userBranchId,
-                        externalInitialization = true
-                    };
-                    var response = workflow.LogForApproval(entity);
+
+                    workflow.StaffId = staffModel.createdBy;
+                    workflow.CompanyId = staffModel.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    workflow.TargetId = targetStaffId;
+                    workflow.Comment = "Update Staff Creation";
+                    workflow.OperationId = (int)OperationsEnum.StaffCreation;
+                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+
+                    var response = context.SaveChanges() > 0;
+
+                    //var entity = new ApprovalViewModel
+                    //{
+                    //    staffId = staffModel.createdBy,
+                    //    companyId = staffModel.companyId,
+                    //    approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                    //    targetId = targetStaffId,
+                    //    operationId = (int)OperationsEnum.StaffCreation,
+                    //    BranchId = staffModel.userBranchId,
+                    //    externalInitialization = true
+                    //};
+                    //var response = workflow.LogForApproval(entity);
 
                     if (response)
                     {
@@ -723,12 +740,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.PHONEOFNOK = temp.PHONEOFNOK;
                 entity.STATEID = temp.STATEID;
                 entity.CITYID = temp.CITYID;
+                entity.LOAN_LIMIT = temp.LOAN_LIMIT;
                 entity.DELETED = false;
             }
             else //Insert a new staff record into the real staff table
             {
                 entity = new TBL_STAFF()
                 {
+                    //STAFFID = 3000,
                     FIRSTNAME = temp.FIRSTNAME,
                     MIDDLENAME = temp.MIDDLENAME,
                     COMPANYID = temp.COMPANYID,
@@ -757,8 +776,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     PHONEOFNOK = temp.PHONEOFNOK,
                     STATEID = temp.STATEID,
                     CITYID = temp.CITYID,
-
-                };
+                   LOAN_LIMIT = temp.LOAN_LIMIT,
+            };
                 if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                 context.TBL_STAFF.Add(entity);
             }
@@ -1218,6 +1237,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 PHONEOFNOK = staffModel.PhoneOfNok,
                 STATEID = staffModel.StateId,
                 CITYID = staffModel.CityId,
+                LOAN_LIMIT = staffModel.loanLimit,
                 STAFFSIGNATURE = staffModel.StaffSignature,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 ISCURRENT = true,
@@ -1243,7 +1263,7 @@ namespace FintrakBanking.Repositories.Setups.General
             user.TEMPSTAFFID = staff.TEMPSTAFFID;
             context.TBL_TEMP_PROFILE_USER.Add(user);
 
-
+          
             workflow.StaffId = staffModel.createdBy;
             workflow.CompanyId = staffModel.companyId;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
@@ -1475,6 +1495,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             departmentUnitId = (short)c.DEPARTMENTUNITID,
                             departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
+                            loanLimit = c.LOAN_LIMIT,
                         });
 
             return data;
@@ -1484,6 +1505,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = from st in context.TBL_STAFF
                        where st.COMPANYID == companyId
+                       orderby st.FIRSTNAME, st.MIDDLENAME, st.LASTNAME ascending
                        select new simpleStaffModel
                        {
                            staffId = st.STAFFID,
@@ -1561,7 +1583,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
                     || x.MIDDLENAME.ToLower().Contains(searchQuery)
                     || x.LASTNAME.ToLower().Contains(searchQuery)
-                    || x.STAFFCODE.Contains(searchQuery))
+                    || x.STAFFCODE.ToLower().Contains(searchQuery))
                     .Select(o => new simpleStaffModel
                     {
                         staffId = o.STAFFID,

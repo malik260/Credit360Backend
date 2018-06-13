@@ -12,6 +12,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loancamsolid { get; set; }
         public string customercode { get; set; }
         public int? loanid { get; set; }
+        public string loanRef { get; set; }
         public decimal balance { get; set; }
         public DateTime date { get; set; }
         public int loansystemtypeid { get; set; }
@@ -23,6 +24,7 @@ namespace FintrakBanking.ViewModels.Credit
          public string accountname { get; set; }
         public string remark { get; set; }
         public bool cantakeloan { get; set; }
-
+        public string loansystemtype { get; set; }
+        public string camsolType { get; set; }
     }
 }

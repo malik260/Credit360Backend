@@ -1235,7 +1235,7 @@ namespace FintrakBanking.Repositories.Credit
 
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.LASTUPDATEDBY = (int)model.createdBy;
-            if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Deferred)
+            if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
             {
                 var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
                 deferral.LOANCONDITIONID = data.LOANCONDITIONID;
@@ -1272,18 +1272,15 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
                     {
-                        var approvalModel = new ApprovalViewModel
-                        {
-                            staffId = model.createdBy,
-                            companyId = model.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = data.LOANCONDITIONID,
-                            operationId = (int)OperationsEnum.ChecklistApproval,
-                            BranchId = model.userBranchId,
-                            comment = "Initiation",
-                            externalInitialization = true
-                        };
-                        var response = workFlow.LogForApproval(approvalModel);
+
+                        workFlow.StaffId = model.createdBy;
+                        workFlow.CompanyId = model.companyId;
+                        workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                        workFlow.TargetId = data.LOANCONDITIONID;
+                        workFlow.Comment = "Checklist Approval";
+                        workFlow.OperationId = (int)OperationsEnum.ChecklistApproval;
+                        workFlow.ExternalInitialization = true;
+                        workFlow.LogActivity();
                     }
                     trans.Commit();
                     return output;
@@ -1351,9 +1348,19 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-                    workFlow.LogForApproval(entity);
+                    workFlow.StaffId = entity.staffId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.OperationId = (int)OperationsEnum.ChecklistApproval;
 
-                    if (workFlow.Saved)
+                    workFlow.LogActivity();
+
+
+                    //workFlow.LogForApproval(entity);
+
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = ApproveChecklistDeferral(entity.targetId, entity);
 
@@ -1365,7 +1372,8 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        trans.Rollback();
+                        trans.Commit();
+                       return false;
                     }
 
                 }
@@ -1375,7 +1383,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new Exception(ex.Message);
                 }
             }
-            return false;
+           // return false;
         }
         private bool ApproveChecklistDeferral(int targetId, ApprovalViewModel user)
         {

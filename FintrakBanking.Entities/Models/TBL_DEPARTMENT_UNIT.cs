@@ -28,6 +28,8 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(100)]
         public string EMAIL { get; set; }
+      
+        public bool DELETED { get; set; }
 
         public virtual TBL_DEPARTMENT TBL_DEPARTMENT { get; set; }
 

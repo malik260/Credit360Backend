@@ -5,6 +5,7 @@ using System.Collections.Generic;
 namespace FintrakBanking.Interfaces.Credit
 {
     public interface IConditionPrecedentRepository
+
     {
         IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByDetailId(int detailId);
 
@@ -27,6 +28,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddComplianceTimelineTemplate(ComplianceTimelineViewModel model);
 
         bool UpdateComplianceTimelineTemplate(ComplianceTimelineViewModel model, int timelineId);
+        bool RemoveComplianceTimelineTemplate(UserInfo user, int id);
 
         List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByDetailId(int detailId);
 
@@ -38,5 +40,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<ConditionPrecedentViewModel> AddSelectedConditionPrecedentLms(SelectedIdsViewModel entity);
         bool AddConditionPrecedentLms(ConditionPrecedentViewModel entity);
         IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByDetailIdLms(int detailid);
+        bool DeleteConditionPrecedentTemplate(UserInfo user, int id);
     }
 }

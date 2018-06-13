@@ -44,7 +44,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 var guidelineList = new TBL_LOAN_PRUDENTIALGUIDELINE()
                 {
                     STATUSNAME = prudentialGuidelineName,
-                 PRUDENTIALGUIDELINETYPEID = (short)guideline.prudentialGuidelineId,
+                    PRUDENTIALGUIDELINETYPEID = (short)guideline.prudentialGuidelineId,
                     INTERNALMINIMUM=guideline.internalMinimun,
                     INTERNALMAXIMUM=guideline.internalMaximun,
                     EXTERNALMINIMUM=guideline.externalMinimun,
@@ -106,7 +106,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                                internalMaximun= (int)a.INTERNALMAXIMUM,
                                externalMinimun= (int)a.EXTERNALMINIMUM,
                                externalMaximun= (int)a.EXTERNALMAXIMUM,
-                               naration= a.NARRATION
+                               naration= a.NARRATION,
+                               prudentialGuidelineTypeId = a.PRUDENTIALGUIDELINETYPEID
                             }).ToList();
             return guideline;
         }
@@ -134,7 +135,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                                  internalMaximun = (int)a.INTERNALMAXIMUM,
                                  externalMinimun = (int)a.EXTERNALMINIMUM,
                                  externalMaximun = (int)a.EXTERNALMAXIMUM,
-                                 naration = a.NARRATION
+                                 naration = a.NARRATION,
+                                 prudentialGuidelineTypeId = a.PRUDENTIALGUIDELINETYPEID
                              }).FirstOrDefault();
             return guideline;
         }

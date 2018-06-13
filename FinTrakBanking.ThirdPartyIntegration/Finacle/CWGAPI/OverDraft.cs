@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
-
+    using FintrakBanking.Common.CustomException;
 
     namespace OverDraftTransactions
     {
@@ -41,63 +41,70 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
             public async Task<ResponseMessage> APIOverDraftNormal(OverDraftNormalViewModel model)
             {
-                model.sanctionLevel = "003";
-                model.sanctionAuthorizer = "999";
-
-                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-
-
-                _handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(_handler);
-
-                _httpClientInstance = new HttpClient();
-                _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(60);
-                client.DefaultRequestHeaders.Authorization = token;
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                ServicePointManager.ServerCertificateValidationCallback +=
-                    (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/OverDraft/Normal", new StringContent(
-                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-
-
-                ResponseMessage responseMsg = null;
-
-                ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
-               
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
-                    var res = new ResponseMessageViewModel
-                    {
-                        responseCode = responseAPI.responseCode,
-                        webRequestDate = responseAPI.webRequestDate,
-                        webRequestStatus = responseAPI.webRequestStatus,
-                        serialNumber = responseAPI.serialNumber,
-                        message = responseAPI.message
-                    };
+                    model.sanctionLevel = "003";
+                    model.sanctionAuthorizer = "999";
 
-                    responseMsg = new ResponseMessage
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+
+                    _handler.UseDefaultCredentials = true;
+                    HttpClient client = new HttpClient(_handler);
+
+                    _httpClientInstance = new HttpClient();
+                    _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
+                    HttpResponseMessage response = client.PostAsync("api/OverDraft/Normal", new StringContent(
+                        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+
+                    ResponseMessage responseMsg = null;
+
+                    ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        APIResponse = res,
-                        APIStatus = response.IsSuccessStatusCode,
-                        Message = response
-                    };
+                        responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+                        var res = new ResponseMessageViewModel
+                        {
+                            responseCode = responseAPI.responseCode,
+                            webRequestDate = responseAPI.webRequestDate,
+                            webRequestStatus = responseAPI.webRequestStatus,
+                            serialNumber = responseAPI.serialNumber,
+                            message = responseAPI.message
+                        };
+
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = res,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+
+                    return responseMsg;
                 }
-                else
+                catch (Exception)
                 {
-                    responseMsg = new ResponseMessage
-                    {
-                        APIResponse = null,
-                        APIStatus = response.IsSuccessStatusCode,
-                        Message = response
-                    };
+                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
                 }
-
-                return responseMsg;
             }
 
             public async Task<ResponseMessage> APIOverDraftTopUp(OverDraftTopUpAndRenewViewModel model)

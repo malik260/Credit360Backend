@@ -24,7 +24,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypeByCollateralTypeId(short collateralTypeId);
         Task<bool> AddCollateralSubTypes(CollateralSubTypeViewModel entity);
         Task<bool> DeleteCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity, UserInfo user);
-        Task<bool> UpdateCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity);
+        bool UpdateCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity);
         #endregion End of Collateral SubTypes
 
 

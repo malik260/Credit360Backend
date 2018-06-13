@@ -711,6 +711,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int revaluationDuration { get; set; }
         public bool isLocationBased { get; set; }
         public bool allowSharing { get; set; }
+        public string collateralType { get; set; }
+        public int? visitationCycle { get; set; }
     }
 
     public class CustomerCollateralSearch

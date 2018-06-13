@@ -14,7 +14,7 @@
     using System.Linq;
     using FintrakBanking.ViewModels.Finance;
     using FintrakBanking.Common.Enum;
-
+    using FintrakBanking.Common.CustomException;
 
     namespace CustomerInfo
     {
@@ -99,130 +99,142 @@
             } 
             public async Task<CasaBalanceViewModel> GetCustomerAccountBalance(string customerAccount)
             {
-                handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
-                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Authorization = token;
-
-                client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-                CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
-                CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
-                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = await client.GetAsync($"api/Customer/GetCustomerAccountBalance?accountNumber={customerAccount}");
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    accountAPI = await response.Content.ReadAsAsync<CasaIntegrationViewModel>();
-                
-                var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountAPI.currencyType).CURRENCYID;
-                var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
-                var accountStatusId = account.ACCOUNTSTATUSID;
+                    handler.UseDefaultCredentials = true;
+                    HttpClient client = new HttpClient(handler);
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Authorization = token;
 
-                accountOutput.accountName = accountAPI.accountName;
-                accountOutput.accountNo = accountAPI.accountNumber;
-                accountOutput.availableBalance = accountAPI.balance;
-                accountOutput.productName = accountAPI.productName;
-                accountOutput.currencyId = currencyId;
-                accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
+                    CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    HttpResponseMessage response = await client.GetAsync($"api/Customer/GetCustomerAccountBalance?accountNumber={customerAccount}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        accountAPI = await response.Content.ReadAsAsync<CasaIntegrationViewModel>();
+
+                        var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountAPI.currencyType).CURRENCYID;
+                        var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
+                        var accountStatusId = account.ACCOUNTSTATUSID;
+
+                        accountOutput.accountName = accountAPI.accountName;
+                        accountOutput.accountNo = accountAPI.accountNumber;
+                        accountOutput.availableBalance = accountAPI.balance;
+                        accountOutput.productName = accountAPI.productName;
+                        accountOutput.currencyId = currencyId;
+                        accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
+                    }
+                    handler.Dispose();
+                    client.Dispose();
+
+                    return accountOutput;
                 }
-                handler.Dispose();
-                client.Dispose();
-
-                return accountOutput;
-
-
+                catch (Exception ce)
+                {
+                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                }
             }
 
             public async Task<List<CasaViewModel>> GetCustomerAccountsBalanceByCustomerCode(string customerCode)
             {
-                handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
-                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Authorization = token;
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-
-                CasaViewModel casaViewModels = new CasaViewModel();
-                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = await client.GetAsync($"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}");
-
-                List<CasaViewModel> casa = new List<CasaViewModel>();
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var objData = JsonConvert.DeserializeObject<List<CasaIntegrationViewModel>>(jsonString);
+                    handler.UseDefaultCredentials = true;
+                    HttpClient client = new HttpClient(handler);
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
-                    foreach (var d in objData)
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                    CasaViewModel casaViewModels = new CasaViewModel();
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    HttpResponseMessage response = await client.GetAsync($"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}");
+
+                    List<CasaViewModel> casa = new List<CasaViewModel>();
+
+                    if (response.IsSuccessStatusCode)
                     {
+                        var jsonString = await response.Content.ReadAsStringAsync();
+                        var objData = JsonConvert.DeserializeObject<List<CasaIntegrationViewModel>>(jsonString);
 
-                        casa.Add(new CasaViewModel
+                        foreach (var d in objData)
                         {
-                            productAccountNumber = d.accountNumber,
-                            productAccountName = d.accountName,
-                            productCode = d.productType,
-                            productName = d.productName,
-                            currency = d.currencyType,
-                            branchCode = d.branch,
-                            accountStatusName = d.accountStatus,
-                            //effectiveDate = d.lastTransactionDate,
-                            availableBalance = d.balance,
-                            ledgerBalance = d.balance,
-
-
-                        });
+                            casa.Add(new CasaViewModel
+                            {
+                                productAccountNumber = d.accountNumber,
+                                productAccountName = d.accountName,
+                                productCode = d.productType,
+                                productName = d.productName,
+                                currency = d.currencyType,
+                                branchCode = d.branch,
+                                accountStatusName = d.accountStatus,
+                                //effectiveDate = d.lastTransactionDate,
+                                availableBalance = d.balance,
+                                ledgerBalance = d.balance,
+                            });
+                        }
                     }
+                    handler.Dispose();
+                    client.Dispose();
 
+                    return casa;
                 }
-
-                handler.Dispose();
-                client.Dispose();
-
-                return casa;
+                catch (Exception ce)
+                {
+                    throw new APIErrorException("Could not establish connection to finacle");
+                }
             }
 
             public async Task<string> CheckExposePerson(string customerCode)
             {
-                string result = string.Empty;
-                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-                handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
-
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
-                client.DefaultRequestHeaders.Authorization = token;
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-
-
-                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = await client.GetAsync($"api/ExposePerson/Get?customerCode={customerCode}");
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    result = JsonConvert.DeserializeObject<string>(jsonString);
+                    string result = string.Empty;
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                    handler.UseDefaultCredentials = true;
+                    HttpClient client = new HttpClient(handler);
+
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    HttpResponseMessage response = await client.GetAsync($"api/ExposePerson/Get?customerCode={customerCode}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonString = await response.Content.ReadAsStringAsync();
+                        result = JsonConvert.DeserializeObject<string>(jsonString);
+                    }
+                    handler.Dispose();
+                    client.Dispose();
+                    return result;
                 }
-                handler.Dispose();
-                client.Dispose();
-                return result;
+                catch (Exception)
+                {
+                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                }
             }
 
             public async Task<BVNCustomerDetailsViewModel> BVNCustomerDetails(string customerCode)
@@ -240,8 +252,6 @@
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
-
-
 
                 ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                 HttpResponseMessage response = await client.GetAsync($"api/OfficeAccount/GetGlAccountRecord?customerCode={customerCode}");
@@ -272,11 +282,6 @@
                 client.Dispose();
                 return data;
             }
-
-
-
-
-
         }
     }
 

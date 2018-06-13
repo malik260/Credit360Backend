@@ -235,7 +235,9 @@ namespace FintrakBanking.Common.Enum
         CompanyDirectorAddedUpdated = 211,
         CompanyDirectorDeleted = 212,
         CustomerRelatedPartyAddedUpdated = 213,
-        BulkIntegrationPosting = 215,
+        //BulkIntegrationPosting = 214,
+        ConditionPrecedentDeleted = 215,
+        BulkIntegrationPosting = 216,
 
         OverrideRequest= 214,
 
