@@ -51,7 +51,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region Credit Bureau 
-        public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId)
+        public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId, bool isExternal)
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == customerId && x.DELETED == false
                                                                                             && x.COMPANYDIRECTORID == null
@@ -146,16 +146,18 @@ namespace FintrakBanking.Repositories.Credit
                     allCorporate.Add(shareholdersData);
                 }
             }
-
-            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            if (isExternal)
             {
-                foreach (var item in customer)
+                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
                 {
-                     
-                    integration.AddCustomerAccounts(item.customerCode);
+                    foreach (var item in customer)
+                    {
+                        integration.AddCustomerAccounts(item.customerCode);
+                    }
                 }
             }
+            
 
             return allCorporate;
         }
@@ -361,7 +363,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool VerifyCustomerValidCreditBureau(int customerId)
         {
-            var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId);
+            var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId,false);
             var creditBureau = GetCreditBureauInformation();
             int creditCount = 0;
             foreach (var customer in customers)
@@ -371,7 +373,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     foreach(var cb in creditBureau)
                     {
-
                         if (customerCreditBureauLog.Where(x => x.creditBureauId == cb.creditBureauId).Any()) creditCount++;
                     }
                 }

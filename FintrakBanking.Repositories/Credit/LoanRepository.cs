@@ -29,6 +29,7 @@ using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.Common.CustomException;
+using System.Net.Sockets;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -359,6 +360,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
+                } 
+                catch (APIErrorException ae)
+                {
+                    trans.Rollback();
+                    throw new APIErrorException(ae.Message);
                 }
                 catch (Exception ex)
                 {
@@ -538,6 +544,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
+                }
+                catch (APIErrorException ae)
+                {
+                    trans.Rollback();
+                    throw new APIErrorException(ae.Message);
                 }
                 catch (Exception ex)
                 {
@@ -768,6 +779,11 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
                 }
+                catch (APIErrorException ae)
+                {
+                    trans.Rollback();
+                    throw new APIErrorException(ae.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();
@@ -971,6 +987,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
+                }
+                catch (APIErrorException ae)
+                {
+                    trans.Rollback();
+                    throw new APIErrorException(ae.Message);
                 }
                 catch (Exception ex)
                 {
@@ -1936,6 +1957,11 @@ namespace FintrakBanking.Repositories.Credit
                                 revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                             }
 
+                            /* BUILD FEE MODEL & HANDLE FEE POSTING */
+                            var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.OverdraftFacility);
+                            var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
+                            if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings); }
+
                             revolvingLoanRecord.DATEAPPROVED = DateTime.Now;
                             revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                             revolvingLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
@@ -2002,6 +2028,11 @@ namespace FintrakBanking.Repositories.Credit
 
                                 DebitAccount((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, casa, contingentLoanRecord.CONTINGENTAMOUNT, null, basicPostInputs);
                             }
+
+                            var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
+                            var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
+                            if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings); }
+                               
                             contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             contingentLoanRecord.ISDISBURSED = true;
                             contingentLoanRecord.APPROVEDBY = user.createdBy;
@@ -2071,8 +2102,6 @@ namespace FintrakBanking.Repositories.Credit
                             var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
                             var systemDate = generalSetup.GetApplicationDate();
-
-                            //ProcessAccrualTeamLoansInterestAccrual(systemDate, loanId);
 
                             DisburseLoan(loanDisbursementModel);
 
@@ -2303,6 +2332,36 @@ namespace FintrakBanking.Repositories.Credit
             return scheduleModel;
         }
 
+        private LoanViewModel BuildLoanFeeDisbursementModel(int loanId, short loanSystemTypeId)
+        {
+            //List<TBL_LOAN_FEE> feeRecords = new List<TBL_LOAN_FEE>();
+            var feeRecords = context.TBL_LOAN_FEE.Where(x => x.LOANID == loanId && x.LOANSYSTEMTYPEID == loanSystemTypeId && x.ISPOSTED == false).ToList();
+            LoanViewModel loanModel;
+
+            List<LoanChargeFeeViewModel> loanChargeFeeList = new List<LoanChargeFeeViewModel>();
+            foreach (var fee in feeRecords)
+            {
+                var loanfee = new LoanChargeFeeViewModel
+                {
+                    loanChargeFeeId = fee.LOANCHARGEFEEID,
+                    chargeFeeId = fee.CHARGEFEEID,
+                    loanId = fee.LOANID,
+                    loanSystemTypeId = fee.LOANSYSTEMTYPEID,
+                    feeRateValue = fee.FEERATEVALUE,
+                    feeDependentAmount = fee.FEERATEVALUE,
+                    feeAmount = fee.FEEAMOUNT,
+                    isIntegralFee = fee.ISINTEGRALFEE,
+                    recurring = fee.ISRECURRING,
+                };
+                loanChargeFeeList.Add(loanfee);
+            };
+            loanModel = new LoanViewModel
+            {
+                loanChargeFee = loanChargeFeeList,
+            };
+
+            return loanModel;
+        }
         /// <summary>
         /// Builds the disbursement model.
         /// </summary>

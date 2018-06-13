@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
@@ -1706,9 +1707,9 @@ namespace FintrakBanking.Repositories.Credit
             foreach(var item in loanApplicationDetails)
             {
                 if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
-                    throw new Exception("There are unapproved middle office request.");
+                    throw new ConditionNotMetException("There are unapproved middle office request.");
                 if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
-                    throw new Exception("There are unattended middle office request which must be attended to.");
+                    throw new ConditionNotMetException("There are unattended middle office request which must be attended to.");
             }
             
             //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -1733,8 +1734,6 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplication.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
                 loanApplication.AVAILMENTDATE = DateTime.Now;
 
-               
-                //CHECKING FOR COMMERCIAL LOANS IN LOOP
                 foreach (var record in loanApplicationDetails)
                 {
                     if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper)
@@ -1757,7 +1756,7 @@ namespace FintrakBanking.Repositories.Credit
                             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
                         }
                     }
-                    else if(record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan)
+                    else if(record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
                     {
                         if(loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                         {
