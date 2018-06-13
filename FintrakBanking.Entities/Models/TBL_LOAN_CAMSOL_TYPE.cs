@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
 
         [Key]
         public int CAMSOLTYPEID { get; set; }
-        public int CAMSOLTYPENAME { get; set; }
+        public string CAMSOLTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_CAMSOL> TBL_LOAN_CAMSOL { get; set; }
