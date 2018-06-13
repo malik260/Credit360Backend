@@ -1490,6 +1490,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = from st in context.TBL_STAFF
                        where st.COMPANYID == companyId
+                       orderby st.FIRSTNAME, st.MIDDLENAME, st.LASTNAME ascending
                        select new simpleStaffModel
                        {
                            staffId = st.STAFFID,
