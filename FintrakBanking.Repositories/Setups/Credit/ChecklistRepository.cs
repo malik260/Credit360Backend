@@ -733,8 +733,8 @@ namespace FintrakBanking.Repositories.Credit
                                      deferedDate = cl.DEFEREDDATE,
                                      checkListValidationStatus1 = cl.CHECKLISTSTATUSID2,
                                      checkListValidationStatus2 = cl.CHECKLISTSTATUSID3,
-                                     checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
-                                     checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
+                                   checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                  checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
 
                                  }).ToList();
                 return checkList;
