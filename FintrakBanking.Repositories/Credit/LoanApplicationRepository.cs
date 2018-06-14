@@ -1580,24 +1580,17 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool isHeadOffice = (branchId == 1) ? true : false;
 
-            var staffApprovalLevelIds =
-                context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == classId)
-                .Select(x => x.TBL_APPROVAL_GROUP)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL).Where(l => l.ISACTIVE == true)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId))
-                .Select(x => x.APPROVALLEVELID)
-                .ToList();
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId,operationId).ToList();
 
             var applications = context.TBL_LOAN_APPLICATION
                 .Where(x =>
-                (isHeadOffice || x.BRANCHID == branchId)
-                && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved // <-------------------------------------hard codes!!!
+                x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved // <-------------------------------------hard codes!!!
                 && x.PRODUCTCLASSID == (short?)classId
                 && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BondAndGuaranteesInProgress // <--------hard codes!!!
             )
             .Join(
                 context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
-                && staffApprovalLevelIds.Contains((int)x.TOAPPROVALLEVELID) && x.RESPONSESTAFFID == null
+                && ids.Contains((int)x.TOAPPROVALLEVELID) && x.RESPONSESTAFFID == null
                 ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,
