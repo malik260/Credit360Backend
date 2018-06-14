@@ -217,6 +217,7 @@ namespace FintrakBanking.Repositories.Credit
                     relationshipOfficerId = x.c.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.c.a.RELATIONSHIPMANAGERID,
 
+                    applicationDate = x.c.a.APPLICATIONDATE,
                     newApplicationDate = x.c.a.APPLICATIONDATE,
                     applicationAmount = x.c.a.APPLICATIONAMOUNT,
                     approvedAmount = x.c.a.APPROVEDAMOUNT,
