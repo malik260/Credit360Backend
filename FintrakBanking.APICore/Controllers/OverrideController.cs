@@ -35,6 +35,9 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var responseMessage = string.Empty;
 
+
+
+
                 List<OverrideDetailVeiwModel> model = entity.Select(c => new OverrideDetailVeiwModel
                 {
                     approvedStatusId = c.approvedStatusId,
@@ -42,10 +45,16 @@ namespace FintrakBanking.APICore.Controllers
                     customerCode = c.customerCode,
                     reason = c.reason,
                     overrideItemId = c.overrideItemId,
-                    sourceReferenceNumber = c.sourceReferenceNumber
-                     
-                }).ToList();
-                 
+                    sourceReferenceNumber = c.sourceReferenceNumber,
+
+                    userBranchId = (short)token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,                    
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host,
+
+            }).ToList();
+
                 var response = _override.AddOverRideRequest(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
 
@@ -59,22 +68,19 @@ namespace FintrakBanking.APICore.Controllers
 
          [HttpPost] [ClaimsAuthorization]
         [Route("approve-override-request")]
-        public HttpResponseMessage ApproveOverRideRequest(OverrideDetailVeiwModel entity)
-        {
-            
+        public HttpResponseMessage ApproveOverRideRequest(ApproveOverrideVeiwModel entity)
+        {            
             try
             {
-                //UserInfo user = new UserInfo
-                //{
-                //    BranchId = token.GetBranchId,
-                //    companyId = token.GetCompanyId,
-                //    staffId = token.GetStaffId,
-                //    createdBy = token.GetStaffId,
-                //    applicationUrl = HttpContext.Current.Request.Path,
-                //    userIPAddress = Request.RequestUri.Host
-                //};
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+               
 
-                var response = _override.ApproveOverRideRequest(entity);
+                var response = _override.ApproveOverride(entity);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Approved successfully", result = response });
             }
@@ -197,7 +203,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = _override.GetOverrideAwaitingApproval(token.GetStaffId);
-                if (response != null)
+                if (response == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }

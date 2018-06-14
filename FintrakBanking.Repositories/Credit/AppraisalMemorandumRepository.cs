@@ -478,7 +478,7 @@ namespace FintrakBanking.Repositories.Credit
                         canEscalate = gl.l.CANESCALATE,
                     });
 
-            if (grants.Any() == false) // if no specifics
+            if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
             {
                 grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
                     .Join(context.TBL_APPROVAL_GROUP,

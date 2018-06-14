@@ -1235,7 +1235,7 @@ namespace FintrakBanking.Repositories.Credit
 
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.LASTUPDATEDBY = (int)model.createdBy;
-            if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Deferred)
+            if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
             {
                 var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
                 deferral.LOANCONDITIONID = data.LOANCONDITIONID;

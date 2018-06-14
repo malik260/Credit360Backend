@@ -1196,7 +1196,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Staff Role has been approved successfully" });
+                        new { success = true, message = "Record has been approved successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,

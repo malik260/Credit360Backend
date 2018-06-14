@@ -303,6 +303,7 @@
                                                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
                     TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
+
                     ResponseMessage responseMsg = null;
 
                     if (response.IsSuccessStatusCode)
