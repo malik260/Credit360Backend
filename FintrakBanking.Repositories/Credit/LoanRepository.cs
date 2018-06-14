@@ -3687,9 +3687,9 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var data = AvailedLoanApplicationsDetails(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted
-           && x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
-           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
-           && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
+                           && x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
+                           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
+                           && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
 
                 data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
