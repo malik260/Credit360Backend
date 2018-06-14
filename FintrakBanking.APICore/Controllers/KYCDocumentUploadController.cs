@@ -145,10 +145,10 @@ namespace FintrakBanking.APICore.Controllers
                 var entity = new CheckListDocumentUploadViewModel
                 {
                    
-                    checkListDefinitionId = Convert.ToInt32(provider.FormData["checkListDefinitionId"]),
-                    checkListStatusId = Convert.ToInt32(provider.FormData["checkListStatusId"]),
-                    loanApplicationId = Convert.ToInt32(provider.FormData["loanApplicationId"]),
-                    loanDetailsId = Convert.ToInt32(provider.FormData["loanDetailsId"]),
+                   checkListDefinitionId = Convert.ToInt32(provider.FormData["checkListDefinitionId"]),
+                   checkListStatusId = Convert.ToInt32(provider.FormData["checkListStatusId"]),
+                   loanApplicationId = Convert.ToInt32(provider.FormData["loanApplicationId"]),
+                  loanDetailsId = Convert.ToInt32(provider.FormData["loanDetailsId"]),
                     fileName = provider.FormData["fileName"],
                     fileExtension = provider.FormData["fileExtension"],
                     physicalFileNumber = provider.FormData["physicalFileNumber"],
