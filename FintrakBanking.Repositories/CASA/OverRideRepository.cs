@@ -110,6 +110,7 @@ namespace FintrakBanking.Repositories.CASA
                 {
                     detail.ISUSED = true;
                     detail.SOURCE_REFERENCE_NUMBER = sourceRef;
+                    _context.SaveChanges();
                 }
             }
 
@@ -208,7 +209,7 @@ namespace FintrakBanking.Repositories.CASA
         }
 
 
-        public bool GoForApproval(ApproveOverrideVeiwModel entity)
+        public int GoForApproval(ApproveOverrideVeiwModel entity)
         {
             _workFlow.StaffId = entity.staffId;
             _workFlow.CompanyId = entity.companyId;
@@ -216,42 +217,84 @@ namespace FintrakBanking.Repositories.CASA
             _workFlow.TargetId = entity.overrideDetailId;
             _workFlow.Comment = entity.statusComment;
             _workFlow.OperationId = entity.operationId;
-
+            _workFlow.DeferredExecution = true;
             _workFlow.LogActivity();
-            return _workFlow.Saved;
+            
+            return _workFlow.NewState ;
         }
 
 
         public bool ApproveOverride(ApproveOverrideVeiwModel entity )
         {
-            if (GoForApproval(entity))
+            bool result = false;
+            using (var trans = _context.Database.BeginTransaction())
             {
-                var data = _context.TBL_OVERRIDE_DETAIL.FirstOrDefault(c => c.OVERRIDE_DETAILID == entity.overrideDetailId);
-                if (data != null)
+                try
                 {
-                    data.APPROVALSTATUSID = (short)entity.approvedStatusId;
+
+                    if (GoForApproval(entity) == (int)ApprovalState.Ended)
+                    {
+                        var data = _context.TBL_OVERRIDE_DETAIL.FirstOrDefault(c => c.OVERRIDE_DETAILID == entity.overrideDetailId);
+                        if (data != null)
+                        {
+                            data.APPROVALSTATUSID = (short)entity.approvedStatusId;
+
+                            // Audit Section ---------------------------            
+
+                            var audit1 = new TBL_AUDIT
+                            {
+                                AUDITTYPEID = (short)AuditTypeEnum.ApprovedOverrideRequest,
+                                STAFFID = entity.staffId,
+                                BRANCHID = (short)entity.userBranchId,
+                                DETAIL = $" Override Request approval was effected successfully",
+                                IPADDRESS = entity.userIPAddress,
+                                URL = entity.applicationUrl,
+                                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                                SYSTEMDATETIME = DateTime.Now,
+                                TARGETID = entity.overrideDetailId
+                            };
+                            this._auditTrail.AddAuditTrail(audit1);
+
+                            //end of Audit section -------------------------------
+
+                            result = _context.SaveChanges() > 0;
+                        }
+                    }
+                    else
+                    {
+                        // Audit Section ---------------------------            
+
+                        var audit1 = new TBL_AUDIT
+                        {
+                            AUDITTYPEID = (short)AuditTypeEnum.AttemptedApproveOverrideRequest,
+                            STAFFID = entity.staffId,
+                            BRANCHID = (short)entity.userBranchId,
+                            DETAIL = $" Override Request approval was effected successfully",
+                            IPADDRESS = entity.userIPAddress,
+                            URL = entity.applicationUrl,
+                            APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                            SYSTEMDATETIME = DateTime.Now,
+                            TARGETID = entity.overrideDetailId
+                        };
+                        this._auditTrail.AddAuditTrail(audit1);
+
+                        //end of Audit section -------------------------------
+                        result = _context.SaveChanges() > 0;
+                    }
+                    if(result == true)
+
+                    trans.Commit();
                 }
+                
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw ex;
+                }
+
+
             }
-
-            // Audit Section ---------------------------            
-
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.OverrideRequest,
-                STAFFID = entity.staffId,
-                BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Override Request Initaited",
-                IPADDRESS = entity.userIPAddress,
-                URL = entity.applicationUrl,
-                APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.overrideDetailId
-            };
-            this._auditTrail.AddAuditTrail(audit);
-
-            //end of Audit section -------------------------------
-
-            return _context.SaveChanges() > 0;
+            return result;
         }
 
 
@@ -263,7 +306,7 @@ namespace FintrakBanking.Repositories.CASA
                         join c in _context.TBL_CUSTOMER on o.CUSTOMERCODE equals c.CUSTOMERCODE
                         where a.OPERATIONID == (int)OperationsEnum.OverrideRequest &&
                         (a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                         && ids.Contains((int)a.TOAPPROVALLEVELID)
+                         && ids.Contains((int)a.TOAPPROVALLEVELID)  && a.RESPONSESTAFFID == null
                         select new OverrideDetailVeiwModel()
                         {
                             approvedStatusId = o.APPROVALSTATUSID,

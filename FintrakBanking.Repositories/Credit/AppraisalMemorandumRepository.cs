@@ -648,6 +648,7 @@ namespace FintrakBanking.Repositories.Credit
                     statusId = x.APPROVALSTATUSID,
                     approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                     feeName = x.TBL_CHARGE_FEE.CHARGEFEENAME,
+                    productName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME
                 });
 
             return fees;
