@@ -24,14 +24,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 companyId.Text = Request.QueryString["companyId"];
                 username.Text = Request.QueryString["username"];
 
-                //string tmpPath = @"Content\Icons\firstbank-logo.jpg";
+                string tmpPath = @"Content\Icons\firstbank-logo.jpg";
+                string a = Path.GetFullPath(tmpPath);
+                string ProjectPath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)));
+                var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+                var imagePath = Path.Combine(outPutDirectory, tmpPath);
 
-                //string a = Path.GetFullPath(tmpPath);
-                //string ProjectPath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)));
-                //var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-                //var imagePath = Path.Combine(outPutDirectory, tmpPath);
-
-                var imagePath =@"C:\Users\uuser\Desktop\Fintrak\Credit360\API\FintrakBankingAPI462\FintrakBanking.APICore\Content\icons";
                 this.ReportViewer.LocalReport.EnableExternalImages = true;
                 ReportParameter logo = new ReportParameter("logoPath", imagePath);
                 ReportViewer.LocalReport.SetParameters(logo);

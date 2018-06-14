@@ -740,7 +740,7 @@
           </Textbox>
           <Image Name="logoPath">
             <Source>External</Source>
-            <Value>=</Value>
+            <Value>=Parameters!logoPath.Value</Value>
             <Sizing>FitProportional</Sizing>
             <Top>0.06598in</Top>
             <Left>10.5911in</Left>

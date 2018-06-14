@@ -37,6 +37,14 @@
           <DataField>companyName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="isFinal">
+          <DataField>isFinal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="final">
+          <DataField>final</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="customerGroupName">
           <DataField>customerGroupName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -44,7 +52,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetter</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -136,7 +144,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterDetail</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -160,7 +168,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterConditionPrecident</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -184,7 +192,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterConditionSubsequent</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -205,10 +213,14 @@
           <DataField>rateValue</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="productName">
+          <DataField>productName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterFee</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -232,7 +244,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterSignatory</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -260,7 +272,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterCollateral</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -273,16 +285,8 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="companyName">
-          <DataField>companyName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="customerName">
           <DataField>customerName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="customerAddress">
-          <DataField>customerAddress</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="customerEmailAddress">
@@ -291,6 +295,14 @@
         </Field>
         <Field Name="customerPhoneNumber">
           <DataField>customerPhoneNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="companyName">
+          <DataField>companyName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="customerAddress">
+          <DataField>customerAddress</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="isFinal">
@@ -956,7 +968,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>48.95561cm</Top>
+            <Top>47.68561cm</Top>
             <Left>0.50814cm</Left>
             <Height>2.55044cm</Height>
             <Width>16.7444cm</Width>
@@ -1015,7 +1027,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>39.2227cm</Top>
+            <Top>37.9527cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.7089cm</Width>
@@ -1053,7 +1065,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>36.36239cm</Top>
+            <Top>35.09239cm</Top>
             <Left>0.53907cm</Left>
             <Height>1.90781cm</Height>
             <Width>16.71347cm</Width>
@@ -1091,7 +1103,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>33.79312cm</Top>
+            <Top>32.52312cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.51094cm</Height>
             <Width>16.7089cm</Width>
@@ -1459,7 +1471,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionPrecident</DataSetName>
-            <Top>7.77766in</Top>
+            <Top>7.27766in</Top>
             <Left>0.20181in</Left>
             <Height>0.53124in</Height>
             <Width>5.88335in</Width>
@@ -1603,7 +1615,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>23.5123cm</Top>
+            <Top>22.2423cm</Top>
             <Left>0.51029cm</Left>
             <Height>2.22005cm</Height>
             <Width>16.74225cm</Width>
@@ -1639,7 +1651,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>8.93737in</Top>
+            <Top>8.43737in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -1797,7 +1809,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionSubsequent</DataSetName>
-            <Top>8.37834in</Top>
+            <Top>7.87834in</Top>
             <Left>0.21223in</Left>
             <Height>0.51736in</Height>
             <Width>5.88426in</Width>
@@ -1829,7 +1841,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>10.20029in</Top>
+            <Top>9.70029in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -2065,7 +2077,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>26.72013cm</Top>
+            <Top>25.45013cm</Top>
             <Left>0.51029cm</Left>
             <Height>2.74922cm</Height>
             <Width>16.74225cm</Width>
@@ -2111,7 +2123,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>11.67155in</Top>
+            <Top>11.17155in</Top>
             <Left>0.20006in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -2279,7 +2291,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>30.41703cm</Top>
+            <Top>29.14703cm</Top>
             <Left>0.5126cm</Left>
             <Height>2.27366cm</Height>
             <Width>16.73994cm</Width>
@@ -2448,7 +2460,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -3438,7 +3449,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>3.18607in</Top>
+            <Top>2.68607in</Top>
             <Left>0.20361in</Left>
             <Height>3.25in</Height>
             <Width>6.58873in</Width>
@@ -3470,7 +3481,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>12.98493in</Top>
+            <Top>12.48493in</Top>
             <Left>0.21223in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3506,7 +3517,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>13.95479in</Top>
+            <Top>13.45479in</Top>
             <Left>0.21403in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3562,7 +3573,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>15.12256in</Top>
+            <Top>14.62256in</Top>
             <Left>0.21403in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3598,7 +3609,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>15.94448in</Top>
+            <Top>15.44448in</Top>
             <Left>0.21403in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3636,7 +3647,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>41.31039cm</Top>
+            <Top>40.04039cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.7089cm</Width>
@@ -3672,7 +3683,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>16.7803in</Top>
+            <Top>16.2803in</Top>
             <Left>0.21223in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3731,7 +3742,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>43.43337cm</Top>
+            <Top>42.16337cm</Top>
             <Left>0.53907cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.71347cm</Width>
@@ -3787,7 +3798,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>17.60223in</Top>
+            <Top>17.10223in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3825,7 +3836,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>45.52107cm</Top>
+            <Top>44.25107cm</Top>
             <Left>0.53906cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.74225cm</Width>
@@ -3861,7 +3872,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>18.43805in</Top>
+            <Top>17.93805in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -4286,7 +4297,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>47.64404cm</Top>
+            <Top>46.37404cm</Top>
             <Left>0.51028cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.74226cm</Width>
@@ -4305,10 +4316,13 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>2.76903in</Width>
+                  <Width>1.59586in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>3.8197in</Width>
+                  <Width>2.25045in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.74242in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -4400,12 +4414,48 @@
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="productName1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=StrConv(Fields!productName.Value, vbProperCase)</Value>
+                                  <Style>
+                                    <FontFamily>Garamond</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>productName1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
+                <TablixMember />
                 <TablixMember />
                 <TablixMember />
               </TablixMembers>
@@ -4418,7 +4468,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterFee</DataSetName>
-            <Top>6.60274in</Top>
+            <Top>6.10274in</Top>
             <Left>0.20361in</Left>
             <Height>0.25in</Height>
             <Width>6.58873in</Width>
@@ -4576,7 +4626,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterCollateral</DataSetName>
-            <Top>7.38542in</Top>
+            <Top>6.88542in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>6.61487in</Width>
@@ -4608,7 +4658,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>7.09375in</Top>
+            <Top>6.59375in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -4871,7 +4921,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>1.99836in</Top>
+            <Top>1.84836in</Top>
             <Left>0.22935in</Left>
             <Height>0.75in</Height>
             <Width>6.57831in</Width>
@@ -4883,7 +4933,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>20.74672in</Height>
+        <Height>20.00714in</Height>
         <Style>
           <Border>
             <Style>None</Style>
