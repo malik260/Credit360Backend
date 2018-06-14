@@ -465,7 +465,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     feeId = c.feeId,
                     feeName = c.feeName,
-                    rate = c.rateValue
+                    rate = c.rateValue,
+                   
                 });
         }
 

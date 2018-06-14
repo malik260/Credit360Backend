@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using FintrakBanking.Interfaces.Credit;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -112,7 +113,7 @@ namespace FintrakBanking.Repositories.Finance
             var transactionCount = (inputTransactions.Count()); 
 
             if (transactionCount < 2) //transaction.transactionDetails.Count() < 2
-                throw new Exception("Specify both debit and credit transactions");
+                throw new ConditionNotMetException("Specify both debit and credit transactions");
 
             List<TBL_FINANCE_TRANSACTION> transactions = new List<TBL_FINANCE_TRANSACTION>();
 
@@ -125,7 +126,7 @@ namespace FintrakBanking.Repositories.Finance
 
 
             if (debitSum != creditSum)
-                throw new Exception("Total Debit Amount should equal Total Credit Amount");
+                throw new ConditionNotMetException("Total Debit Amount should equal Total Credit Amount");
 
 
 
@@ -133,13 +134,13 @@ namespace FintrakBanking.Repositories.Finance
             {
                 
                     if (item.debitAmount != 0 && item.creditAmount != 0)
-                        throw new Exception("Debit or Credit Amount should be 0");
+                        throw new ConditionNotMetException("Debit or Credit Amount should be 0");
 
                     if (item.debitAmount < 0)
-                        throw new Exception("Debit Amount should NOT be less than 0");
+                        throw new ConditionNotMetException("Debit Amount should NOT be less than 0");
 
                     if (item.creditAmount < 0)
-                        throw new Exception("Credit Amount should NOT be less than 0");
+                        throw new ConditionNotMetException("Credit Amount should NOT be less than 0");
 
                     var glInfo = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId);
 
@@ -148,7 +149,7 @@ namespace FintrakBanking.Repositories.Finance
                     if (glClass == GLClassEnum.CASA)
                     {
                         if (item.casaAccountId == null)
-                            throw new Exception($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                            throw new ConditionNotMetException($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
 
                         UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
                     }
@@ -160,7 +161,7 @@ namespace FintrakBanking.Repositories.Finance
                         referenceCount = context.TBL_LOAN.Count(x => x.LOANREFERENCENUMBER == item.sourceReferenceNumber);
 
                         if (referenceCount <= 0)
-                            throw new Exception($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                            throw new ConditionNotMetException($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
                     }
                     else
                     { item.casaAccountId = null; }
@@ -227,27 +228,27 @@ namespace FintrakBanking.Repositories.Finance
             var transactionCount = (inputTransactions.Count());
             
             if(transactionCount < 2) //transaction.transactionDetails.Count() < 2
-                throw new Exception("Specify both debit and credit transactions");
+                throw new ConditionNotMetException("Specify both debit and credit transactions");
 
             List<TBL_FINANCE_TRANSACTION> transactions = new List<TBL_FINANCE_TRANSACTION>();
 
             var debitSum = inputTransactions.Sum(x => x.debitAmount); 
             var creditSum = inputTransactions.Sum(x => x.creditAmount);
             if (debitSum != creditSum)
-                throw new Exception("Total Debit Amount should equal Total Credit Amount");
+                throw new ConditionNotMetException("Total Debit Amount should equal Total Credit Amount");
 
             foreach (var item in inputTransactions)
             {
                 item.batchCode = batchCode;
 
                     if (item.debitAmount != 0 && item.creditAmount != 0)
-                        throw new Exception("Debit or Credit Amount should be 0");
+                        throw new ConditionNotMetException("Debit or Credit Amount should be 0");
 
                     if (item.debitAmount < 0)
-                        throw new Exception("Debit Amount should NOT be less than 0");
+                        throw new ConditionNotMetException("Debit Amount should NOT be less than 0");
 
                     if (item.creditAmount < 0)
-                        throw new Exception("Credit Amount should NOT be less than 0");
+                        throw new ConditionNotMetException("Credit Amount should NOT be less than 0");
 
                     var glInfo = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId);
 
@@ -256,7 +257,7 @@ namespace FintrakBanking.Repositories.Finance
                     if (glClass == GLClassEnum.CASA)
                     {
                         if (item.casaAccountId == null)
-                            throw new Exception($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                            throw new ConditionNotMetException($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
 
                         //UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
                         
@@ -264,7 +265,7 @@ namespace FintrakBanking.Repositories.Finance
                         var casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == item.casaAccountId).FirstOrDefault();
 
                         if (casa == null)
-                            throw new Exception($"CASA account number {item.sourceReferenceNumber} does not exist in the CASA table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                            throw new ConditionNotMetException($"CASA account number {item.sourceReferenceNumber} does not exist in the CASA table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
 
                     }
                     else if (glClass == GLClassEnum.LoanSchedule)
@@ -275,7 +276,7 @@ namespace FintrakBanking.Repositories.Finance
                         referenceCount = context.TBL_LOAN.Count(x => x.LOANREFERENCENUMBER == item.sourceReferenceNumber);
 
                         if (referenceCount <= 0)
-                            throw new Exception($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                            throw new ConditionNotMetException($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
                     }
                     //else
                     //{
@@ -515,7 +516,7 @@ namespace FintrakBanking.Repositories.Finance
                                     select x).FirstOrDefault();
 
                     if (rateInfo == null)
-                        throw new Exception($"Exchange rate for {date} is not defined. Define the exchange rate and try again");
+                        throw new ConditionNotMetException($"Exchange rate for {date} is not defined. Define the exchange rate and try again");
 
                     return new CurrencyExchangeRateViewModel
                     {
@@ -1757,26 +1758,26 @@ namespace FintrakBanking.Repositories.Finance
             var transactionCount = (inputTransactions.Count());
 
             if (transactionCount < 2) //transaction.transactionDetails.Count() < 2
-                throw new Exception("Specify both debit and credit transactions");
+                throw new ConditionNotMetException("Specify both debit and credit transactions");
 
             List<TBL_FINANCE_TRANSACTION> transactions = new List<TBL_FINANCE_TRANSACTION>();
 
             var debitSum = inputTransactions.Sum(x => x.debitAmount);
             var creditSum = inputTransactions.Sum(x => x.creditAmount);
             if (debitSum != creditSum)
-                throw new Exception("Total Debit Amount should equal Total Credit Amount");
+                throw new ConditionNotMetException("Total Debit Amount should equal Total Credit Amount");
 
             foreach (var item in inputTransactions)
             {
 
                 if (item.debitAmount != 0 && item.creditAmount != 0)
-                    throw new Exception("Debit or Credit Amount should be 0");
+                    throw new ConditionNotMetException("Debit or Credit Amount should be 0");
 
                 if (item.debitAmount < 0)
-                    throw new Exception("Debit Amount should NOT be less than 0");
+                    throw new ConditionNotMetException("Debit Amount should NOT be less than 0");
 
                 if (item.creditAmount < 0)
-                    throw new Exception("Credit Amount should NOT be less than 0");
+                    throw new ConditionNotMetException("Credit Amount should NOT be less than 0");
 
                 var glInfo = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId);
 
@@ -1785,7 +1786,7 @@ namespace FintrakBanking.Repositories.Finance
                 if (glClass == GLClassEnum.CASA)
                 {
                     if (item.casaAccountId == null)
-                        throw new Exception($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                        throw new ConditionNotMetException($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
 
                     //UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
 
@@ -1793,7 +1794,7 @@ namespace FintrakBanking.Repositories.Finance
                     var casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == item.casaAccountId).FirstOrDefault();
 
                     if (casa == null)
-                        throw new Exception($"CASA account number {item.sourceReferenceNumber} does not exist in the CASA table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                        throw new ConditionNotMetException($"CASA account number {item.sourceReferenceNumber} does not exist in the CASA table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
 
                 }
                 else if (glClass == GLClassEnum.LoanSchedule)
@@ -1804,7 +1805,7 @@ namespace FintrakBanking.Repositories.Finance
                     referenceCount = context.TBL_LOAN.Count(x => x.LOANREFERENCENUMBER == item.sourceReferenceNumber);
 
                     if (referenceCount <= 0)
-                        throw new Exception($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                        throw new ConditionNotMetException($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
                 }
                 //else
                 //{

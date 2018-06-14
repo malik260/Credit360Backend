@@ -148,7 +148,9 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         dateTimeCreated = m.DATETIMECREATED.Date,
                         isLocationBased = m.ISLOCATIONBASED,
                         allowSharing=m.ALLOWSHARING,
-                        createdBy = m.CREATEDBY
+                        createdBy = m.CREATEDBY,
+                        visitationCycle = m.VISITATIONCYCLE,
+                        collateralType = context.TBL_COLLATERAL_TYPE.Where(c => c.COLLATERALTYPEID == m.COLLATERALTYPEID).FirstOrDefault().COLLATERALTYPENAME,
                     }).ToList();
         }
        
@@ -181,7 +183,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         revaluationDuration = m.REVALUATIONDURATION,
                         isLocationBased = m.ISLOCATIONBASED,
                         allowSharing = m.ALLOWSHARING,
-                        collateralTypeName = t.COLLATERALTYPENAME
+                        collateralTypeName = t.COLLATERALTYPENAME,
+                        visitationCycle = m.VISITATIONCYCLE,
                     }).ToList();
         }
         
@@ -191,7 +194,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         }
 
 
-        public async Task<bool> UpdateCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity)
+        public bool UpdateCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity)
         {
             var subType = context.TBL_COLLATERAL_TYPE_SUB.Find(subTypeId);
 
@@ -203,7 +206,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             subType.LASTUPDATEDBY = entity.lastUpdatedBy;
             subType.ISLOCATIONBASED = entity.isLocationBased;
             subType.ALLOWSHARING = entity.allowSharing;
-            var respose = await context.SaveChangesAsync() != 0;
+            subType.VISITATIONCYCLE = entity.visitationCycle;
+            
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -219,7 +223,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             };
 
             this.auditTrail.AddAuditTrail(audit);
-
+            var respose = context.SaveChanges() >= 0;
             //end of Audit section -------------------------------
             return respose;
         }

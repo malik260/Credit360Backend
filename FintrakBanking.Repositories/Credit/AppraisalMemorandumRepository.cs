@@ -399,7 +399,11 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
-            if (workflow.NewState == (int)ApprovalState.Ended) { return workflow.StatusId; }
+            if (workflow.NewState == (int)ApprovalState.Ended)
+            {
+                PassApplicationToOperation(appl.LOANAPPLICATIONID, (int)OperationsEnum.OfferLetterApproval, model.createdBy, "New pproved application");
+                return workflow.StatusId;
+            }
 
             return (int)ApprovalStatusEnum.Processing; // default for now
         }
@@ -474,7 +478,7 @@ namespace FintrakBanking.Repositories.Credit
                         canEscalate = gl.l.CANESCALATE,
                     });
 
-            if (grants.Any() == false) // if no specifics
+            if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
             {
                 grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
                     .Join(context.TBL_APPROVAL_GROUP,
@@ -644,6 +648,7 @@ namespace FintrakBanking.Repositories.Credit
                     statusId = x.APPROVALSTATUSID,
                     approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                     feeName = x.TBL_CHARGE_FEE.CHARGEFEENAME,
+                    productName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME
                 });
 
             return fees;
@@ -866,7 +871,14 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
-            return (context.SaveChanges() > 0) == result;
+            bool response = (context.SaveChanges() > 0) == result;
+
+            if (workflow.NewState == (int)ApprovalState.Ended)
+            {
+                PassApplicationToOperation(appl.LOANAPPLICATIONID, (int)OperationsEnum.OfferLetterApproval, model.createdBy, "New pproved application");
+            }
+
+            return response;
         }
 
         public IQueryable<RegionLoanApplicationViewModel> GetRegionalLoanApplications(int staffId)
@@ -1234,5 +1246,21 @@ namespace FintrakBanking.Repositories.Credit
 
         # endregion LMS APPROVAL
 
+        private void PassApplicationToOperation(int applicationId, int operationId, int staffId, string comment)
+        {
+            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+            var staff = context.TBL_STAFF.Find(staffId);
+            workflow.StaffId = staffId;
+            workflow.CompanyId = staff.COMPANYID;
+            workflow.OperationId = operationId;
+            workflow.TargetId = applicationId;
+            workflow.ProductClassId = null;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.Comment = comment;
+            workflow.ExternalInitialization = true;
+            workflow.DeferredExecution = false;
+            workflow.LogActivity();
+        }
     }
 }

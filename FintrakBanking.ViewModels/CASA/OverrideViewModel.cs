@@ -17,7 +17,7 @@ namespace FintrakBanking.ViewModels.CASA
         public string referenceNumber { get; set; }
     }
 
-    public class OverrideDetailVeiwModel
+    public class OverrideDetailVeiwModel : GeneralEntity
     {
         public string customerCode;
 
@@ -34,5 +34,16 @@ namespace FintrakBanking.ViewModels.CASA
         public string customerName { get; set; }
         public string itemName { get; set; }
         public short itemId { get; set; }
+        public string customerbvn { get; set; }
+        public string staffName { get; set; }
+        public int operationId { get; set; }
+    }
+
+    public class ApproveOverrideVeiwModel : GeneralEntity
+    { 
+        public int overrideDetailId { get; set; }            
+        public string statusComment { get; set; }
+        public int approvedStatusId { get; set; } 
+        public int operationId { get; set; }
     }
 }

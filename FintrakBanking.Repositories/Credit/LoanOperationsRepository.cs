@@ -9604,7 +9604,11 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId)
         {
             //var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.ContractualInterestRateChange);
-            //var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId);
+
+           // var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId);
+
+           // var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
+
             var levelResult = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
             int staffApprovalLevelId = 0;
             if (levelResult != null) staffApprovalLevelId = levelResult.APPROVALLEVELID;

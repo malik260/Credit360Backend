@@ -23,6 +23,7 @@ using System.Net.Http.Headers;
 using System.IO;
 
 using System.Drawing;
+using System.Net.Sockets;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -299,6 +300,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (BadLogicException be)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{be.Message}" });
+            } 
+            catch (APIErrorException ae)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
             }
             catch (Exception)
             {
@@ -474,34 +479,34 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        //[HttpGet]
-        //[Route("loan-application-collateral/{loanApplicationId}")]
-        //public HttpResponseMessage GetLoanBookingAwaitingApproval(int loanApplicationId)
-        //{
-        //    try
-        //    {
-        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
-        //        var data = repo.GetLoanApplicationCollateralsByApplicationId(loanApplicationId);
+        [HttpGet]
+        [Route("loan-application-collateral/{loanApplicationId}")]
+        public HttpResponseMessage GetLoanBookingAwaitingApproval(int loanApplicationId)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetLoanApplicationCollateralsByApplicationId(loanApplicationId);
 
-        //        if (data.Any() == false)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
-        //    }
-        //    catch (ConditionNotMetException ce)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            //}
-            //catch (BadLogicException be)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            //}
-            //catch (Exception )
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            //}
-        //}
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
 
         [HttpGet]
         [Route("number-of-installments/tenor-mode/{tenorModeId}/frequency-type/{frequencyTypeId}/tenor/{tenor}")]
@@ -667,95 +672,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpGet]
-        [Route("loan-booking/term/deffered-fees/awaiting-approval")]
-        public HttpResponseMessage GetDeferredTermLoanFeeAwaitingApproval()
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetDeferredTermLoanFeeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
-
-                if (data.Any() == false)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
-        }
-
-        [HttpGet]
-        [Route("loan-booking/revolving/deffered-fees/awaiting-approval")]
-        public HttpResponseMessage GetDeferredRevolvingLoanFeeAwaitingApproval()
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetDeferredRevolvingLoanFeeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
-
-                if (data.Any() == false)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
-        }
-
-        [HttpGet]
-        [Route("loan-booking/contingent/deffered-fees/awaiting-approval")]
-        public HttpResponseMessage GetDeferredContingentLoanFeeAwaitingApproval()
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetDeferredContingentLoanFeeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
-
-                if (data.Any() == false)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
-        }
-
-
-
          [HttpPost] [ClaimsAuthorization]
         [Route("loan-booking/approval/{loanBookingRequestId}")]
         public HttpResponseMessage ApproveLoanBooking(ApprovalViewModel model, int loanBookingRequestId)
@@ -797,6 +713,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
             }
             catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (APIErrorException be)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
             }
@@ -854,12 +774,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 var data = repo.GetLoanByCustomer(customerId);
-
-                if (data != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
-                }
-
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
             catch (ConditionNotMetException ce)

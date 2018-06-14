@@ -761,7 +761,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     }
                 }
 
-                return lstCustomer;
+                return lstCustomer.OrderBy(x=> x.customerName);
 
 
 
@@ -1215,10 +1215,18 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                                              taxIdentificationNumber = c.TAXNUMBER,
                                                              registrationNumber = c.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == c.CUSTOMERID).REGISTRATIONNUMBER,
                                                              completedInformation = c.ACCOUNTCREATIONCOMPLETE,
+                                                             //  crdeitBureauCompleted = creditBureau.VerifyCustomerValidCreditBureau(c.customerId)
                                                          }).ToList()
                             }).Take(10).ToList();
 
-              
+                //foreach (var item in data)
+                //{
+                //    foreach (var ss in item.customerGroupMappings)
+                //    {
+                //        item.crdeitBureauCompleted = creditBureau.VerifyCustomerValidCreditBureau(item.customerId);
+                //    }
+                //}
+
 
                 return data;
             }

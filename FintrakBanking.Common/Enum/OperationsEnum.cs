@@ -52,7 +52,7 @@ namespace FintrakBanking.Common.Enum
         BondsAndGuarantees = OfferLetterApproval,
         ChecklistApproval = 42,
         CustomerInformationApproval = 44,
-
+        OverrideRequest = 43,
         LoanReviewApprovalApplication = 45,
         LoanReviewApprovalAppraisal = 46,
         LoanReviewApprovalOfferLetter = 47,
@@ -75,6 +75,6 @@ namespace FintrakBanking.Common.Enum
         CommercialPaperLoanBooking = 63,
         LoanRecovery = 64,
         ChecklistOperation = 65,
-        OverrideRequest= 66
+      //  OverrideRequest= 66
     }
 }

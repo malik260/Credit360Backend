@@ -214,6 +214,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool hasConcession { get; set; }
         public string approvalStatus { get; set; }
         public string feeName { get; set; }
+        public string productName { get; set; }
     }
 
     public class MonitoringTriggersViewModel

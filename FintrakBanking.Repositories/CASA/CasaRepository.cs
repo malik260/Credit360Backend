@@ -199,9 +199,9 @@ namespace FintrakBanking.Repositories.CASA
                     }).FirstOrDefault();
         }
 
-        public IEnumerable<dynamic> GetAllCustomerAccount(int customerId, int applicationTypeId, int companyId)
+        public IEnumerable<CustomerCasaAcountsViewModel> GetAllCustomerAccount(int customerId, int applicationTypeId, int companyId)
         {
-            IEnumerable<dynamic> data = null;
+            IEnumerable<CustomerCasaAcountsViewModel> data = null;
             if (applicationTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
                 //data = (from a in  context.TBL_CUSTOMER_GROUP_MAPPING join b in context.TBL_CASA on a.CUSTOMERID equals b.CUSTOMERID 
@@ -217,7 +217,7 @@ namespace FintrakBanking.Repositories.CASA
                 data = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
                         join b in context.TBL_CASA on a.CUSTOMERID equals b.CUSTOMERID
                         where a.CUSTOMERGROUPID == customerId && a.TBL_CUSTOMER.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
-                        select new
+                        select new CustomerCasaAcountsViewModel
                         {
                             casaAccountId = b.CASAACCOUNTID,
                             productAccountNumber = b.PRODUCTACCOUNTNUMBER + "(" + b.PRODUCTACCOUNTNAME + " - " + b.TBL_CURRENCY.CURRENCYCODE + ")",
@@ -249,7 +249,7 @@ namespace FintrakBanking.Repositories.CASA
                 //{
                 data = (from a in context.TBL_CASA
                         where a.CUSTOMERID == customerId && a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
-                        select new
+                        select new CustomerCasaAcountsViewModel
 
                         {
                             casaAccountId = a.CASAACCOUNTID,
@@ -258,12 +258,12 @@ namespace FintrakBanking.Repositories.CASA
                             availableBalance = a.AVAILABLEBALANCE
                         }).Distinct();
                 //}
-                return data;
+                return data.OrderBy(x=> x.productAccountName);
             }
 
 
 
-            return data;
+            return data.OrderBy(x => x.productAccountName); ;
         }
 
         public IEnumerable<CasaViewModel> GetAccountByCustomerId(int customerId)
@@ -622,4 +622,5 @@ namespace FintrakBanking.Repositories.CASA
             return data.ToList();
         }
     }
+  
 }

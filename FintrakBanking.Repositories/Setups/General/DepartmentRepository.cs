@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -162,12 +163,30 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <param name="unitId"></param>
         /// <returns></returns>
         /// 
-        //public bool DeleteUnit(int unitId)
-        //{
-        //    var unit = this.context.TBL_DEPARTMENT_UNIT.Find(unitId);
-        //    unit.DELETED = true;
-        //    return SaveAll();
-        //}
+        public bool DeleteUnit(UserInfo user, int unitId)
+        {
+            DateTime date = _genSetup.GetApplicationDate();
+            var unit = this.context.TBL_DEPARTMENT_UNIT.Find(unitId);
+            unit.DELETED = true;
+            //context.TBL_DEPARTMENT_UNIT.Remove(unit);
+           // return SaveAll();
+
+            // Audit Section ----------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DepartmentUnitDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Delete department unit with Id: {unitId} ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = date,
+                SYSTEMDATETIME = DateTime.Now,
+            };
+
+            auditTrail.AddAuditTrail(audit);
+            return SaveAll();
+        }
 
         /// <summary>
         /// Gets all department.
@@ -239,6 +258,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<DepartmentViewModel> GetAllDepartmentUnits(short departmentId)
         {
             var departmentUnits = (from d in context.TBL_DEPARTMENT_UNIT where d.DEPARTMENTID == departmentId
+                                   && d.DELETED ==false
                                    select new DepartmentViewModel()
                               {
                                   unitId = d.DEPARTMENTUNITID,
@@ -252,7 +272,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<DepartmentViewModel> GetAllUnits(int companyId)
         {
             var departmentUnits = (from d in context.TBL_DEPARTMENT_UNIT
-                                   where d.TBL_DEPARTMENT.COMPANYID == companyId
+                                   where d.TBL_DEPARTMENT.COMPANYID == companyId && d.DELETED == false
                                    select new DepartmentViewModel()
                                    {
                                        unitId = d.DEPARTMENTUNITID,
