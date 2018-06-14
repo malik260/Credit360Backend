@@ -30,7 +30,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         private loanInformationDataTable tableloanInformation;
         
-        private Report_HeaderDataTable tableReport_Header;
+        private CompanyInfoDataTable tableCompanyInfo;
         
         private GroupWorkFlowSetupDataTable tableGroupWorkFlowSetup;
         
@@ -101,8 +101,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 if ((ds.Tables["loanInformation"] != null)) {
                     base.Tables.Add(new loanInformationDataTable(ds.Tables["loanInformation"]));
                 }
-                if ((ds.Tables["Report Header"] != null)) {
-                    base.Tables.Add(new Report_HeaderDataTable(ds.Tables["Report Header"]));
+                if ((ds.Tables["CompanyInfo"] != null)) {
+                    base.Tables.Add(new CompanyInfoDataTable(ds.Tables["CompanyInfo"]));
                 }
                 if ((ds.Tables["GroupWorkFlowSetup"] != null)) {
                     base.Tables.Add(new GroupWorkFlowSetupDataTable(ds.Tables["GroupWorkFlowSetup"]));
@@ -204,9 +204,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public Report_HeaderDataTable Report_Header {
+        public CompanyInfoDataTable CompanyInfo {
             get {
-                return this.tableReport_Header;
+                return this.tableCompanyInfo;
             }
         }
         
@@ -446,8 +446,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 if ((ds.Tables["loanInformation"] != null)) {
                     base.Tables.Add(new loanInformationDataTable(ds.Tables["loanInformation"]));
                 }
-                if ((ds.Tables["Report Header"] != null)) {
-                    base.Tables.Add(new Report_HeaderDataTable(ds.Tables["Report Header"]));
+                if ((ds.Tables["CompanyInfo"] != null)) {
+                    base.Tables.Add(new CompanyInfoDataTable(ds.Tables["CompanyInfo"]));
                 }
                 if ((ds.Tables["GroupWorkFlowSetup"] != null)) {
                     base.Tables.Add(new GroupWorkFlowSetupDataTable(ds.Tables["GroupWorkFlowSetup"]));
@@ -548,10 +548,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
                     this.tableloanInformation.InitVars();
                 }
             }
-            this.tableReport_Header = ((Report_HeaderDataTable)(base.Tables["Report Header"]));
+            this.tableCompanyInfo = ((CompanyInfoDataTable)(base.Tables["CompanyInfo"]));
             if ((initTable == true)) {
-                if ((this.tableReport_Header != null)) {
-                    this.tableReport_Header.InitVars();
+                if ((this.tableCompanyInfo != null)) {
+                    this.tableCompanyInfo.InitVars();
                 }
             }
             this.tableGroupWorkFlowSetup = ((GroupWorkFlowSetupDataTable)(base.Tables["GroupWorkFlowSetup"]));
@@ -666,8 +666,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             base.Tables.Add(this.tableOfferLetter);
             this.tableloanInformation = new loanInformationDataTable();
             base.Tables.Add(this.tableloanInformation);
-            this.tableReport_Header = new Report_HeaderDataTable();
-            base.Tables.Add(this.tableReport_Header);
+            this.tableCompanyInfo = new CompanyInfoDataTable();
+            base.Tables.Add(this.tableCompanyInfo);
             this.tableGroupWorkFlowSetup = new GroupWorkFlowSetupDataTable();
             base.Tables.Add(this.tableGroupWorkFlowSetup);
             this.tableSectorialLimits = new SectorialLimitsDataTable();
@@ -722,7 +722,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        private bool ShouldSerializeReport_Header() {
+        private bool ShouldSerializeCompanyInfo() {
             return false;
         }
         
@@ -887,7 +887,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         public delegate void loanInformationRowChangeEventHandler(object sender, loanInformationRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        public delegate void Report_HeaderRowChangeEventHandler(object sender, Report_HeaderRowChangeEvent e);
+        public delegate void CompanyInfoRowChangeEventHandler(object sender, CompanyInfoRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         public delegate void GroupWorkFlowSetupRowChangeEventHandler(object sender, GroupWorkFlowSetupRowChangeEvent e);
@@ -1229,6 +1229,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columncompanyName;
             
+            private global::System.Data.DataColumn columnisFinal;
+            
+            private global::System.Data.DataColumn columnfinal;
+            
             private global::System.Data.DataColumn columncustomerGroupName;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1306,6 +1310,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn isFinalColumn {
+                get {
+                    return this.columnisFinal;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn finalColumn {
+                get {
+                    return this.columnfinal;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public global::System.Data.DataColumn customerGroupNameColumn {
                 get {
                     return this.columncustomerGroupName;
@@ -1349,7 +1369,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public OfferLetterRow AddOfferLetterRow(string customerName, string customerAddress, string customerId, string applicationDate, string companyName, string customerGroupName) {
+            public OfferLetterRow AddOfferLetterRow(string customerName, string customerAddress, string customerId, string applicationDate, string companyName, string isFinal, string final, string customerGroupName) {
                 OfferLetterRow rowOfferLetterRow = ((OfferLetterRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         customerName,
@@ -1357,6 +1377,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         customerId,
                         applicationDate,
                         companyName,
+                        isFinal,
+                        final,
                         customerGroupName};
                 rowOfferLetterRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowOfferLetterRow);
@@ -1385,6 +1407,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columncustomerId = base.Columns["customerId"];
                 this.columnapplicationDate = base.Columns["applicationDate"];
                 this.columncompanyName = base.Columns["companyName"];
+                this.columnisFinal = base.Columns["isFinal"];
+                this.columnfinal = base.Columns["final"];
                 this.columncustomerGroupName = base.Columns["customerGroupName"];
             }
             
@@ -1401,6 +1425,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnapplicationDate);
                 this.columncompanyName = new global::System.Data.DataColumn("companyName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncompanyName);
+                this.columnisFinal = new global::System.Data.DataColumn("isFinal", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnisFinal);
+                this.columnfinal = new global::System.Data.DataColumn("final", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfinal);
                 this.columncustomerGroupName = new global::System.Data.DataColumn("customerGroupName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncustomerGroupName);
             }
@@ -2194,7 +2222,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class Report_HeaderDataTable : global::System.Data.TypedTableBase<Report_HeaderRow> {
+        public partial class CompanyInfoDataTable : global::System.Data.TypedTableBase<CompanyInfoRow> {
             
             private global::System.Data.DataColumn columnCompanyName;
             
@@ -2202,8 +2230,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public Report_HeaderDataTable() {
-                this.TableName = "Report Header";
+            public CompanyInfoDataTable() {
+                this.TableName = "CompanyInfo";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -2211,7 +2239,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            internal Report_HeaderDataTable(global::System.Data.DataTable table) {
+            internal CompanyInfoDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -2228,7 +2256,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            protected Report_HeaderDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected CompanyInfoDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -2260,46 +2288,46 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public Report_HeaderRow this[int index] {
+            public CompanyInfoRow this[int index] {
                 get {
-                    return ((Report_HeaderRow)(this.Rows[index]));
+                    return ((CompanyInfoRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event Report_HeaderRowChangeEventHandler Report_HeaderRowChanging;
+            public event CompanyInfoRowChangeEventHandler CompanyInfoRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event Report_HeaderRowChangeEventHandler Report_HeaderRowChanged;
+            public event CompanyInfoRowChangeEventHandler CompanyInfoRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event Report_HeaderRowChangeEventHandler Report_HeaderRowDeleting;
+            public event CompanyInfoRowChangeEventHandler CompanyInfoRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event Report_HeaderRowChangeEventHandler Report_HeaderRowDeleted;
+            public event CompanyInfoRowChangeEventHandler CompanyInfoRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void AddReport_HeaderRow(Report_HeaderRow row) {
+            public void AddCompanyInfoRow(CompanyInfoRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public Report_HeaderRow AddReport_HeaderRow(string CompanyName, string companyLogo) {
-                Report_HeaderRow rowReport_HeaderRow = ((Report_HeaderRow)(this.NewRow()));
+            public CompanyInfoRow AddCompanyInfoRow(string CompanyName, string companyLogo) {
+                CompanyInfoRow rowCompanyInfoRow = ((CompanyInfoRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         CompanyName,
                         companyLogo};
-                rowReport_HeaderRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowReport_HeaderRow);
-                return rowReport_HeaderRow;
+                rowCompanyInfoRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowCompanyInfoRow);
+                return rowCompanyInfoRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                Report_HeaderDataTable cln = ((Report_HeaderDataTable)(base.Clone()));
+                CompanyInfoDataTable cln = ((CompanyInfoDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -2307,7 +2335,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new Report_HeaderDataTable();
+                return new CompanyInfoDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2330,28 +2358,28 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public Report_HeaderRow NewReport_HeaderRow() {
-                return ((Report_HeaderRow)(this.NewRow()));
+            public CompanyInfoRow NewCompanyInfoRow() {
+                return ((CompanyInfoRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new Report_HeaderRow(builder);
+                return new CompanyInfoRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(Report_HeaderRow);
+                return typeof(CompanyInfoRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.Report_HeaderRowChanged != null)) {
-                    this.Report_HeaderRowChanged(this, new Report_HeaderRowChangeEvent(((Report_HeaderRow)(e.Row)), e.Action));
+                if ((this.CompanyInfoRowChanged != null)) {
+                    this.CompanyInfoRowChanged(this, new CompanyInfoRowChangeEvent(((CompanyInfoRow)(e.Row)), e.Action));
                 }
             }
             
@@ -2359,8 +2387,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.Report_HeaderRowChanging != null)) {
-                    this.Report_HeaderRowChanging(this, new Report_HeaderRowChangeEvent(((Report_HeaderRow)(e.Row)), e.Action));
+                if ((this.CompanyInfoRowChanging != null)) {
+                    this.CompanyInfoRowChanging(this, new CompanyInfoRowChangeEvent(((CompanyInfoRow)(e.Row)), e.Action));
                 }
             }
             
@@ -2368,8 +2396,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.Report_HeaderRowDeleted != null)) {
-                    this.Report_HeaderRowDeleted(this, new Report_HeaderRowChangeEvent(((Report_HeaderRow)(e.Row)), e.Action));
+                if ((this.CompanyInfoRowDeleted != null)) {
+                    this.CompanyInfoRowDeleted(this, new CompanyInfoRowChangeEvent(((CompanyInfoRow)(e.Row)), e.Action));
                 }
             }
             
@@ -2377,14 +2405,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.Report_HeaderRowDeleting != null)) {
-                    this.Report_HeaderRowDeleting(this, new Report_HeaderRowChangeEvent(((Report_HeaderRow)(e.Row)), e.Action));
+                if ((this.CompanyInfoRowDeleting != null)) {
+                    this.CompanyInfoRowDeleting(this, new CompanyInfoRowChangeEvent(((CompanyInfoRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void RemoveReport_HeaderRow(Report_HeaderRow row) {
+            public void RemoveCompanyInfoRow(CompanyInfoRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -2411,7 +2439,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "Report_HeaderDataTable";
+                attribute2.FixedValue = "CompanyInfoDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -8893,6 +8921,38 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string isFinal {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetter.isFinalColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'isFinal\' in table \'OfferLetter\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetter.isFinalColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string final {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetter.finalColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'final\' in table \'OfferLetter\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetter.finalColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public string customerGroupName {
                 get {
                     try {
@@ -8965,6 +9025,30 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcompanyNameNull() {
                 this[this.tableOfferLetter.companyNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsisFinalNull() {
+                return this.IsNull(this.tableOfferLetter.isFinalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetisFinalNull() {
+                this[this.tableOfferLetter.isFinalColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsfinalNull() {
+                return this.IsNull(this.tableOfferLetter.finalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetfinalNull() {
+                this[this.tableOfferLetter.finalColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -9758,15 +9842,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class Report_HeaderRow : global::System.Data.DataRow {
+        public partial class CompanyInfoRow : global::System.Data.DataRow {
             
-            private Report_HeaderDataTable tableReport_Header;
+            private CompanyInfoDataTable tableCompanyInfo;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            internal Report_HeaderRow(global::System.Data.DataRowBuilder rb) : 
+            internal CompanyInfoRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableReport_Header = ((Report_HeaderDataTable)(this.Table));
+                this.tableCompanyInfo = ((CompanyInfoDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -9774,14 +9858,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string CompanyName {
                 get {
                     try {
-                        return ((string)(this[this.tableReport_Header.CompanyNameColumn]));
+                        return ((string)(this[this.tableCompanyInfo.CompanyNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'CompanyName\' in table \'Report Header\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'CompanyName\' in table \'CompanyInfo\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableReport_Header.CompanyNameColumn] = value;
+                    this[this.tableCompanyInfo.CompanyNameColumn] = value;
                 }
             }
             
@@ -9790,39 +9874,39 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string companyLogo {
                 get {
                     try {
-                        return ((string)(this[this.tableReport_Header.companyLogoColumn]));
+                        return ((string)(this[this.tableCompanyInfo.companyLogoColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'companyLogo\' in table \'Report Header\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'companyLogo\' in table \'CompanyInfo\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableReport_Header.companyLogoColumn] = value;
+                    this[this.tableCompanyInfo.companyLogoColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsCompanyNameNull() {
-                return this.IsNull(this.tableReport_Header.CompanyNameColumn);
+                return this.IsNull(this.tableCompanyInfo.CompanyNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetCompanyNameNull() {
-                this[this.tableReport_Header.CompanyNameColumn] = global::System.Convert.DBNull;
+                this[this.tableCompanyInfo.CompanyNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscompanyLogoNull() {
-                return this.IsNull(this.tableReport_Header.companyLogoColumn);
+                return this.IsNull(this.tableCompanyInfo.companyLogoColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcompanyLogoNull() {
-                this[this.tableReport_Header.companyLogoColumn] = global::System.Convert.DBNull;
+                this[this.tableCompanyInfo.companyLogoColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -14921,22 +15005,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        public class Report_HeaderRowChangeEvent : global::System.EventArgs {
+        public class CompanyInfoRowChangeEvent : global::System.EventArgs {
             
-            private Report_HeaderRow eventRow;
+            private CompanyInfoRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public Report_HeaderRowChangeEvent(Report_HeaderRow row, global::System.Data.DataRowAction action) {
+            public CompanyInfoRowChangeEvent(CompanyInfoRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public Report_HeaderRow Row {
+            public CompanyInfoRow Row {
                 get {
                     return this.eventRow;
                 }

@@ -15,6 +15,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerGroupName { get; set; }
         public string customerEmailAddress { get; set; }
         public string customerPhoneNumber { get; set; }
+        public bool isFinal  { get; set; }
+        public string final { get; set; }
+        public int producyClassProcessId { get; set; }
+
     }
 
     public class OfferLetterDetailViewModel : GeneralEntity
@@ -43,6 +47,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string repaymentTerms { get; set; }
         public string repaymentSchedule { get; set; }
         public string purpose { get; set; }
+        public short currencyId { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity
