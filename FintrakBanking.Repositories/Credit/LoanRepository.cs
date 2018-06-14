@@ -1817,13 +1817,24 @@ namespace FintrakBanking.Repositories.Credit
                         return 0;
                     }
                 }
+                catch (ConditionNotMetException ce)
+                {
+                    throw new ConditionNotMetException(ce.Message);
+                }
+                catch (BadLogicException be)
+                {
+                    throw new BadLogicException(be.Message);
+                }
+                catch (APIErrorException e)
+                {
+                    throw new APIErrorException(e.Message);
+                }
                 catch (Exception e)
                 {
                     //trans.Rollback();
                     throw new ConditionNotMetException("Approval failed. Operation unsuccessful. " + e.Message);
                 }
             }
-
         }
 
         /// <summary>

@@ -303,6 +303,7 @@
                                                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
                     TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
+
                     ResponseMessage responseMsg = null;
 
                     if (response.IsSuccessStatusCode)
@@ -337,7 +338,7 @@
                     client.Dispose();
                     return responseMsg;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator." );
                 }

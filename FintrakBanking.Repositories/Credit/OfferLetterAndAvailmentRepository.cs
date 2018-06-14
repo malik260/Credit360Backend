@@ -235,12 +235,32 @@ namespace FintrakBanking.Repositories.Credit
                     //camDocumentation = d.CAMDOCUMENTATION,
                     approvalDate = x.c.a.APPROVEDDATE,
                     applicationStatusId = x.c.a.APPLICATIONSTATUSID,
+                    isInvestmentGrade = x.c.a.ISINVESTMENTGRADE,
+                    isPoliticallyExposed = x.c.a.ISPOLITICALLYEXPOSED,
+                    isRelatedParty = x.c.a.ISRELATEDPARTY,
+                    submittedForAppraisal = x.c.a.SUBMITTEDFORAPPRAISAL,
+                    loanInformation = x.c.a.LOANINFORMATION,
+                    approvalStatusId = x.d.APPROVALSTATUSID,
                     subSectorId = x.c.b.TBL_SUB_SECTOR.SUBSECTORID,
                     //approvalLevelId = staffApprovalLevelId,
                     operationId = (short)OperationsEnum.LoanAvailment,
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
+                    loanApplicationCollateral = (from r in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID)
+                                                 select new LoanApplicationCollateralViewModel
+                                                 {
+                                                     collateralValue = r.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                     collateralType = r.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                                     collateralCustomerId = r.COLLATERALCUSTOMERID,
+                                                     collateralSubtype = r.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB
+                                                     .Where(p => p.COLLATERALSUBTYPEID == r.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                     collateralReferenceNumber = r.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                                                     haircut = r.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                     valuationCycle = r.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                     allowSharing = r.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                                                     currencyCode = r.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE
+                                                 }).ToList()
                 });
 
             data = data.Where(x =>
@@ -1652,47 +1672,28 @@ namespace FintrakBanking.Repositories.Credit
                             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
                         }
                     }
-                    else if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan)
+                    else if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
                     {
-                        if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                        if(loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
                         {
-                            if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
+                            if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
                             {
-                                var request = new TBL_LOAN_BOOKING_REQUEST
+                                if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                                 {
-                                    AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                                    LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
-                                    DATETIMECREATED = DateTime.Now,
-                                    CREATEDBY = entity.staffId,
-                                };
-                                context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                                    var request = new TBL_LOAN_BOOKING_REQUEST
+                                    {
+                                        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                                        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                                        DATETIMECREATED = DateTime.Now,
+                                        CREATEDBY = entity.staffId,
+                                    };
+                                    context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                                }
                             }
                         }
                     }
                 };
-                //CHECKING FOR PRODUCT BASED LOANS IN LOOP
-                //if (loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
-                //{
-                //    if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
-                //    {
-                //        foreach (var record in loanApplicationDetails)
-                //        {
-                //            if(record.STATUSID == (short)ApprovalStatusEnum.Approved)
-                //            {
-                //                var request = new TBL_LOAN_BOOKING_REQUEST
-                //                {
-                //                    AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                //                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                //                    LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
-                //                    DATETIMECREATED = DateTime.Now,
-                //                    CREATEDBY = entity.staffId,
-                //                };
-                //                context.TBL_LOAN_BOOKING_REQUEST.Add(request);
-                //            }
-                //        };
-                //    }
-                //}               
             }
 
             context.SaveChanges();

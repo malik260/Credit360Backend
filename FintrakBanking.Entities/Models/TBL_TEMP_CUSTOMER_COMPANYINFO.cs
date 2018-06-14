@@ -35,9 +35,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string CORPORATEBUSINESSCATEGORY { get; set; }
 
-        public int? PAIDUPCAPITAL { get; set; }
+        public decimal? PAIDUPCAPITAL { get; set; }
 
-        public int? AUTHORISEDCAPITAL { get; set; }
+        public decimal? AUTHORISEDCAPITAL { get; set; }
 
         //[Column(TypeName = "money")]
         public decimal? SHAREHOLDER_FUND { get; set; }
