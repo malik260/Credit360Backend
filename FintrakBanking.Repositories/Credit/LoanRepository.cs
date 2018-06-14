@@ -1835,7 +1835,6 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("Approval failed. Operation unsuccessful. " + e.Message);
                 }
             }
-
         }
 
         /// <summary>

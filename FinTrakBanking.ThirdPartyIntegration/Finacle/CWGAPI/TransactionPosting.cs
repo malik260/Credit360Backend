@@ -337,7 +337,7 @@
                     client.Dispose();
                     return responseMsg;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator." );
                 }
