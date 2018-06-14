@@ -110,6 +110,7 @@ namespace FintrakBanking.Repositories.CASA
                 {
                     detail.ISUSED = true;
                     detail.SOURCE_REFERENCE_NUMBER = sourceRef;
+                    _context.SaveChanges();
                 }
             }
 
@@ -218,6 +219,7 @@ namespace FintrakBanking.Repositories.CASA
             _workFlow.OperationId = entity.operationId;
 
             _workFlow.LogActivity();
+            
             return _workFlow.Saved;
         }
 
@@ -263,7 +265,7 @@ namespace FintrakBanking.Repositories.CASA
                         join c in _context.TBL_CUSTOMER on o.CUSTOMERCODE equals c.CUSTOMERCODE
                         where a.OPERATIONID == (int)OperationsEnum.OverrideRequest &&
                         (a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                         && ids.Contains((int)a.TOAPPROVALLEVELID)
+                         && ids.Contains((int)a.TOAPPROVALLEVELID)  && a.RESPONSESTAFFID == null
                         select new OverrideDetailVeiwModel()
                         {
                             approvedStatusId = o.APPROVALSTATUSID,
