@@ -14,34 +14,45 @@ namespace FintrakBanking.ReportObjects.Credit
     public class OfferLetterInfo
     {
         public static OfferLetterViewModel GenerateOfferLetter(string applicationRefNumber)
-    {
+        {
             FinTrakBankingContext context = new FinTrakBankingContext();
 
             var offerLetterDetails = (from a in context.TBL_LOAN_APPLICATION
-                                      join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                      join b in context.TBL_CUSTOMER on d.CUSTOMERID equals b.CUSTOMERID into cc
+                                          //join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                      join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID into cc
                                       from b in cc.DefaultIfEmpty()
                                       join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
                                       from c in cg.DefaultIfEmpty()
                                       join e in context.TBL_CUSTOMER_ADDRESS on a.CUSTOMERID equals e.CUSTOMERID into dg
                                       from e in dg.DefaultIfEmpty()
+                                      join g in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals g.CUSTOMERID into gg
+                                      from g in gg.DefaultIfEmpty()
+                                      join h in context.TBL_OFFERLETTER on a.APPLICATIONREFERENCENUMBER equals h.APPLICATIONREFERENCENUMBER into hh
+                                      from h in hh.DefaultIfEmpty()
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
                                       a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       select new OfferLetterViewModel
                                       {
                                           companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
-                                          //customerId = b.CustomerId,
                                           customerName = a.LOANAPPLICATIONTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
-                                          customerGroupName = c.GROUPNAME + " - " + c.GROUPCODE,
-                                          //customerAddress = e.ADDRESS ?? string.Empty, //a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
-                                          applicationDate = a.APPLICATIONDATE
+                                          customerAddress = e.ADDRESS ?? " ",
+                                          customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+                                          customerPhoneNumber = g.PHONENUMBER,
+                                          isFinal = h.ISFINAL,
+                                          producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
+
                                       }).FirstOrDefault();
 
+            if (offerLetterDetails.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
+            {
+                offerLetterDetails.isFinal = true;
+            }
+            
             if (offerLetterDetails != null)
             {
                 return offerLetterDetails;
             }
-           
+
             return new OfferLetterViewModel();
         }
 
@@ -171,6 +182,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        interestRate = b.APPROVEDINTERESTRATE,
                                        loanAmount = b.APPROVEDAMOUNT,
                                        exchangeRate = b.EXCHANGERATE,
+                                       currencyId = b.CURRENCYID,
                                        companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
                                        customerName = a.LOANAPPLICATIONTYPEID != 3 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
                                        customerAddress = e.ADDRESS ?? " ", //a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,

@@ -10,7 +10,8 @@
 namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
     
     
-    public partial class OfferLetterCAMbase {
+    public partial class OfferLetterCAMbase
+    {
         
         /// <summary>
         /// form1 control.
@@ -101,5 +102,14 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ObjectDataSource odsOfferLetterCollateral;
+        
+        /// <summary>
+        /// odsOfferLetterBorrowerDetail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ObjectDataSource odsOfferLetterBorrowerDetail;
     }
 }
