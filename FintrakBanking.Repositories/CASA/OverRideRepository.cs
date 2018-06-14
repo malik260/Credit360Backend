@@ -97,24 +97,24 @@ namespace FintrakBanking.Repositories.CASA
 
         public int EffectOverride(string customerCode, int overrideItemId, string sourceRef)
         {
+            int result = 0;
+
             var data = _context.TBL_OVERRIDE_DETAIL.Where(e => e.ISUSED == false
                                                                && e.CUSTOMERCODE == customerCode
                                                                && e.APPROVALSTATUSID ==
                                                                (int) ApprovalStatusEnum.Approved
-                                                               && e.OVERRIDE_ITEMID == overrideItemId);
-
-            if (data.Any())
+                                                               && e.OVERRIDE_ITEMID == overrideItemId).FirstOrDefault();
+            if (data != null)
             {
-                var detail = data.FirstOrDefault();
-                if (detail != null)
-                {
-                    detail.ISUSED = true;
-                    detail.SOURCE_REFERENCE_NUMBER = sourceRef;
-                    _context.SaveChanges();
-                }
+                data.ISUSED = true;
+                data.SOURCE_REFERENCE_NUMBER = sourceRef;
+                data.DATETIMEUSED = _genSetup.GetApplicationDate();
+                
+               result = _context.SaveChanges();
+               
             }
 
-            return data.Count();
+            return result;
         }
 
          
