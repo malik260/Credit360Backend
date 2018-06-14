@@ -5,6 +5,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.CASA
 {
+
     public class CasaViewModel : GeneralEntity
     {
 
@@ -110,4 +111,14 @@ namespace FintrakBanking.ViewModels.CASA
         public List<CustomerSupplierViewModels> customerSuppliers { get; set; }
         public bool isOnWatchList { get; set; }
     }
+
+    public class CustomerCasaAcountsViewModel
+    {
+        public int customerId { get; set; }
+        public int casaAccountId { get; set; }
+        public string productAccountNumber { get; set; }
+        public string productAccountName { get; set; }
+        public decimal availableBalance { get; set; }
+    }
+
 }

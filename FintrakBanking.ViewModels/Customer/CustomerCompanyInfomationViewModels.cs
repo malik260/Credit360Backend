@@ -14,8 +14,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string corporateBusinessCategory { get; set; }
         public string creditRating { get; set; }
         public string previousCreditRating { get; set; }
-        public int? paidUpCapital { get; set; }
-        public int? authorizedCapital { get; set; }
+        public decimal? paidUpCapital { get; set; }
+        public decimal? authorizedCapital { get; set; }
         public decimal? shareholderFund { get; set; }
         public List<CustomerCompanyDirectorsViewModels> companyDirectors { get; set; }
         public List<CustomerCompanyShareholdersViewModels> companyShareholders { get; set; }

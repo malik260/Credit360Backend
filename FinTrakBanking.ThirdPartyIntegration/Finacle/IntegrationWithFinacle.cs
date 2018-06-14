@@ -318,17 +318,22 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionLst)).GetAwaiter().GetResult();
 
-
-            if (result.APIResponse.responseCode == "0")
+            if (result.APIResponse != null)
             {
-                AddCustomTransactions(transactionLst);
-                return true;
+                if (result.APIResponse.responseCode == "0")
+                {
+                    AddCustomTransactions(transactionLst);
+                    return true;
+                }
+                else
+                {
+                    throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                }
             }
             else
             {
-                throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
             }
-           
 
             //return result.APIStatus;
 
