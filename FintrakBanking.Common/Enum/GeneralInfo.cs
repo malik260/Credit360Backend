@@ -240,7 +240,8 @@ namespace FintrakBanking.Common.Enum
         BulkIntegrationPosting = 216,
 
         OverrideRequest= 214,
-
+        ApprovedOverrideRequest = 217,
+        AttemptedApproveOverrideRequest = 218,
     };
 
 
