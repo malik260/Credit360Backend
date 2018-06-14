@@ -284,30 +284,30 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingTempUser.TBL_TEMP_PROFILE_ADTN_ACTIVITY = userActivities;
                     existingTempUser.TBL_TEMP_PROFILE_USERGROUP = userGroups;
                 }
-                else
+            }
+            else
+            {
+                user = new TBL_TEMP_PROFILE_USER()
                 {
-                    user = new TBL_TEMP_PROFILE_USER()
-                    {
-                        TEMPSTAFFID = staffModel.staffId,
-                        USERNAME = staffModel.user.username,
-                        PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
-                        ISFIRSTLOGINATTEMPT = false,
-                        ISACTIVE = false,
-                        ISLOCKED = true,
-                        FAILEDLOGONATTEMPT = 0,
-                        SECURITYQUESTION = staffModel.user.securityQuestion,
-                        SECURITYANSWER = staffModel.user.securityAnswer,
-                        NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
-                        CREATEDBY = staffModel.createdBy,
-                        LASTUPDATEDBY = staffModel.createdBy,
-                        DATETIMECREATED = DateTime.Now,
-                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                        APPROVALSTATUS = false,
-                        ISCURRENT = true,
-                        TBL_TEMP_PROFILE_ADTN_ACTIVITY = userActivities,
-                        TBL_TEMP_PROFILE_USERGROUP = userGroups
-                    };
-                }
+                    TEMPSTAFFID = staffModel.staffId,
+                    USERNAME = staffModel.user.username,
+                    PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
+                    ISFIRSTLOGINATTEMPT = false,
+                    ISACTIVE = false,
+                    ISLOCKED = true,
+                    FAILEDLOGONATTEMPT = 0,
+                    SECURITYQUESTION = staffModel.user.securityQuestion,
+                    SECURITYANSWER = staffModel.user.securityAnswer,
+                    NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                    CREATEDBY = staffModel.createdBy,
+                    LASTUPDATEDBY = staffModel.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    APPROVALSTATUS = false,
+                    ISCURRENT = true,
+                    TBL_TEMP_PROFILE_ADTN_ACTIVITY = userActivities,
+                    TBL_TEMP_PROFILE_USERGROUP = userGroups
+                };
             }
             var unApprovedStaffEdit = context.TBL_TEMP_STAFF.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending &&
                                                                         x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower());
