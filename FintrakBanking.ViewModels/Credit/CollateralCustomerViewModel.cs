@@ -854,9 +854,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralCustomerId { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
-        public bool legalFeeTaken { get; set; }
+        public bool? legalFeeTaken { get; set; }
         public decimal legalFeeAmount { get; set; }
-        public DateTime legalFeeDate { get; set; }
+        public DateTime? legalFeeDate { get; set; }
         public string collateralTypeName { get; set; }
         public decimal collateralValue { get; set; }
         public double hairCut { get; set; }

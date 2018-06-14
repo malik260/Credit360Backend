@@ -12,7 +12,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
          FinTrakBankingDocumentsContext documentContext = new FinTrakBankingDocumentsContext();
         public byte[] GetCompanyLogoArray(int companyId)
         {
-            return documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(x => x.DOCUMENTID == 1).FirstOrDefault().FILEDATA;
+            var fileData = documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(x => x.DOCUMENTID == 1).FirstOrDefault().FILEDATA;
+            return fileData;
         }
     }
 }
