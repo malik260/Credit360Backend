@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             if (watchlist.Any())
             {
                 string custCode = watchlist.FirstOrDefault().TBL_CUSTOMER.CUSTOMERCODE;
-                watchlistresults = this.customOverride.EffectOverride(custCode, (int)LoanPrudentialStatusEnum.WatchList, custCode);
+                watchlistresults = this.customOverride.EffectOverride(custCode, (int)LoanPrudentialStatusEnum.WatchList, custCode );
             }
 
             return watchlistresults;

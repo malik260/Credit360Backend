@@ -164,7 +164,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"Error: {e.Message}" });
+                   new { success = false, message = $" {e.Message}" });
             }
         }
 
@@ -506,6 +506,7 @@ namespace FintrakBanking.APICore.Controllers
                 //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
+                entity.customerSensitivityLevelId = 1;
                 if (repo.ValidateModifiedCustomerRecord(entity.customerId))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

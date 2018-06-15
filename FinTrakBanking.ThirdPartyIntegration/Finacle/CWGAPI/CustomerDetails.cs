@@ -138,9 +138,9 @@
 
                     return accountOutput;
                 }
-                catch (Exception ce)
+                catch (Exception ex)
                 {
-                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                    throw new APIErrorException(ex.InnerException.Message != null ? "Core Banking API Error - "+ex.InnerException.Message.ToString() : "Core Banking API Error - "+ex.Message.ToString());
                 }
             }
 
@@ -195,39 +195,46 @@
 
                     return casa;
                 }
-                catch (Exception ce)
+                catch (Exception ex)
                 {
-                    throw new APIErrorException("Could not establish connection to finacle");
+                    throw new APIErrorException("Core Banking API Error - " +ex.Message);
                 }
             }
 
             public async Task<string> CheckExposePerson(string customerCode)
             {
-                string result = string.Empty;
-                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-                handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
-
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
-                client.DefaultRequestHeaders.Authorization = token;
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = await client.GetAsync($"api/ExposePerson/Get?customerCode={customerCode}");
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    result = JsonConvert.DeserializeObject<string>(jsonString);
+                    string result = string.Empty;
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                    handler.UseDefaultCredentials = true;
+                    HttpClient client = new HttpClient(handler);
+
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    HttpResponseMessage response = await client.GetAsync($"api/ExposePerson/Get?customerCode={customerCode}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonString = await response.Content.ReadAsStringAsync();
+                        result = JsonConvert.DeserializeObject<string>(jsonString);
+                    }
+                    handler.Dispose();
+                    client.Dispose();
+                    return result;
                 }
-                handler.Dispose();
-                client.Dispose();
-                return result;
+                catch (Exception ex)
+                {
+                    throw new APIErrorException("Core Banking API Error - " + ex.Message);
+                }
             }
 
             public async Task<BVNCustomerDetailsViewModel> BVNCustomerDetails(string customerCode)

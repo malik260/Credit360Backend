@@ -49,5 +49,6 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CommentOnLoanAvailmentViewModel> GetCommentOnLoanAvailment(string applicationRefNumber);
 
         Form3800ViewModel GenerateForm3800TemplateLMS(string refNumber);
+
     }
 }

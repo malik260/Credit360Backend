@@ -10,11 +10,12 @@ using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.Repositories.CASA
 {
 
-   public  class OverRideRepository : IOverRideRepository 
+    public class OverRideRepository : IOverRideRepository
     {
         private readonly FinTrakBankingContext _context;
         private IAuditTrailRepository _auditTrail;
@@ -28,56 +29,95 @@ namespace FintrakBanking.Repositories.CASA
         {
             this._context = context;
             this._auditTrail = auditTrail;
-            this._genSetup = genSetup;          
+            this._genSetup = genSetup;
             this._workFlow = workFlow;
         }
 
         public bool AddOverRideRequest(IEnumerable<OverrideDetailVeiwModel> entity)
         {
-            var data = entity.Select(c => new TBL_OVERRIDE_DETAIL
+            bool status = false;
+
+            foreach (var item in entity)
             {
-                CUSTOMERCODE = c.customerCode,                  
-                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                CREATEDBY = c.createdBy,
-                REASON  = c.reason,
-                DATETIMECREATED = _genSetup.GetApplicationDate(),
-                ISUSED = false,
-                OVERRIDE_ITEMID = c.overrideItemId,
-                SOURCE_REFERENCE_NUMBER = c.sourceReferenceNumber
-            });
-            _context.TBL_OVERRIDE_DETAIL.AddRange(data);
 
-            return _context.SaveChanges() > 0;
+                var data = new TBL_OVERRIDE_DETAIL
+                {
+                    CUSTOMERCODE = item.customerCode,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                    CREATEDBY = item.createdBy,
+                    REASON = item.reason,
+                    DATETIMECREATED = _genSetup.GetApplicationDate(),
+                    ISUSED = false,
+                    OVERRIDE_ITEMID = item.overrideItemId,
+                    SOURCE_REFERENCE_NUMBER = item.sourceReferenceNumber
+                };
+                _context.TBL_OVERRIDE_DETAIL.Add(data);
 
-        }
+                // Audit Section ---------------------------            
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.OverrideRequest,
+                    STAFFID = item.staffId,
+                    BRANCHID = (short)item.userBranchId,
+                    DETAIL = $"Override Request Initaited",
+                    IPADDRESS = item.userIPAddress,
+                    URL = item.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = data.OVERRIDE_DETAILID
+                };
+                this._auditTrail.AddAuditTrail(audit);
+
+                //end of Audit section -------------------------------
+
+                //using (var trans = _context.Database.BeginTransaction())
+                //{
+                    status = _context.SaveChanges() > 0;
+
+                    _workFlow.StaffId = item.createdBy;
+                    _workFlow.CompanyId = item.companyId;
+                    _workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    _workFlow.TargetId = data.OVERRIDE_DETAILID;
+                    _workFlow.Comment = "Initiation";
+                    _workFlow.OperationId = (int)OperationsEnum.OverrideRequest;
+                   // _workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    _workFlow.ExternalInitialization = true;
+
+                    var response = _workFlow.LogActivity();
+
+
+
+                   // status = _context.SaveChanges() > 0;
+                }
+          //  }
+
+            return status;
+        } 
 
         public int EffectOverride(string customerCode, int overrideItemId, string sourceRef)
         {
+            int result = 0;
+
             var data = _context.TBL_OVERRIDE_DETAIL.Where(e => e.ISUSED == false
                                                                && e.CUSTOMERCODE == customerCode
                                                                && e.APPROVALSTATUSID ==
                                                                (int) ApprovalStatusEnum.Approved
-                                                               && e.OVERRIDE_ITEMID == overrideItemId);
-
-            if (data.Any())
+                                                               && e.OVERRIDE_ITEMID == overrideItemId).FirstOrDefault();
+            if (data != null)
             {
-                var detail = data.FirstOrDefault();
-                if (detail != null)
-                {
-                    detail.ISUSED = true;
-                    detail.SOURCE_REFERENCE_NUMBER = sourceRef;
-                }
+                data.ISUSED = true;
+                data.SOURCE_REFERENCE_NUMBER = sourceRef;
+                data.DATETIMEUSED = _genSetup.GetApplicationDate();
+                
+               result = _context.SaveChanges();
+               
             }
 
-            return data.Count();
+            return result;
         }
 
-        public bool ApproveOverRideRequest(OverrideDetailVeiwModel entity)
-        {
-            var data = _context.TBL_OVERRIDE_DETAIL.FirstOrDefault(c => c.OVERRIDE_DETAILID == entity.overrideDetailId);
-            if (data != null) data.OVERRIDE_DETAILID = entity.overrideDetailId;
-            return  _context.SaveChanges() > 0;
-        }
+         
 
         public bool DeleteOverRideRequest(OverrideDetailVeiwModel entity)
         {
@@ -156,7 +196,7 @@ namespace FintrakBanking.Repositories.CASA
             var data = _context.TBL_OVERRIDE_DETAIL.FirstOrDefault(c => c.OVERRIDE_DETAILID == entity.overrideDetailId);
             if (data != null)
             {
-                data.APPROVALSTATUSID = (short) ApprovalStatusEnum.Pending;
+                data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
                 data.CREATEDBY = entity.createdBy;
                 //data.CUSTOMERID = entity.customerId;
                 data.DATETIMECREATED = _genSetup.GetApplicationDate();
@@ -168,31 +208,124 @@ namespace FintrakBanking.Repositories.CASA
             return _context.SaveChanges() > 0;
         }
 
+
+        public int GoForApproval(ApproveOverrideVeiwModel entity)
+        {
+            _workFlow.StaffId = entity.staffId;
+            _workFlow.CompanyId = entity.companyId;
+            _workFlow.StatusId = (int)ApprovalStatusEnum.Processing;
+            _workFlow.TargetId = entity.overrideDetailId;
+            _workFlow.Comment = entity.statusComment;
+            _workFlow.OperationId = entity.operationId;
+            _workFlow.DeferredExecution = true;
+            _workFlow.LogActivity();
+            
+            return _workFlow.NewState ;
+        }
+
+
+        public bool ApproveOverride(ApproveOverrideVeiwModel entity )
+        {
+            bool result = false;
+            using (var trans = _context.Database.BeginTransaction())
+            {
+                try
+                {
+
+                    if (GoForApproval(entity) == (int)ApprovalState.Ended)
+                    {
+                        var data = _context.TBL_OVERRIDE_DETAIL.FirstOrDefault(c => c.OVERRIDE_DETAILID == entity.overrideDetailId);
+                        if (data != null)
+                        {
+                            data.APPROVALSTATUSID = (short)entity.approvedStatusId;
+
+                            // Audit Section ---------------------------            
+
+                            var audit1 = new TBL_AUDIT
+                            {
+                                AUDITTYPEID = (short)AuditTypeEnum.ApprovedOverrideRequest,
+                                STAFFID = entity.staffId,
+                                BRANCHID = (short)entity.userBranchId,
+                                DETAIL = $" Override Request approval was effected successfully",
+                                IPADDRESS = entity.userIPAddress,
+                                URL = entity.applicationUrl,
+                                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                                SYSTEMDATETIME = DateTime.Now,
+                                TARGETID = entity.overrideDetailId
+                            };
+                            this._auditTrail.AddAuditTrail(audit1);
+
+                            //end of Audit section -------------------------------
+
+                            result = _context.SaveChanges() > 0;
+                        }
+                    }
+                    else
+                    {
+                        // Audit Section ---------------------------            
+
+                        var audit1 = new TBL_AUDIT
+                        {
+                            AUDITTYPEID = (short)AuditTypeEnum.AttemptedApproveOverrideRequest,
+                            STAFFID = entity.staffId,
+                            BRANCHID = (short)entity.userBranchId,
+                            DETAIL = $" Override Request approval was effected successfully",
+                            IPADDRESS = entity.userIPAddress,
+                            URL = entity.applicationUrl,
+                            APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                            SYSTEMDATETIME = DateTime.Now,
+                            TARGETID = entity.overrideDetailId
+                        };
+                        this._auditTrail.AddAuditTrail(audit1);
+
+                        //end of Audit section -------------------------------
+                        result = _context.SaveChanges() > 0;
+                    }
+                    if(result == true)
+
+                    trans.Commit();
+                }
+                
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw ex;
+                }
+
+
+            }
+            return result;
+        }
+
+
         public IEnumerable<OverrideDetailVeiwModel> GetOverrideAwaitingApproval(int staffId)
         {
-            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerInformationApproval)
-              .ToList();
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OverrideRequest).ToList();
             var data = (from o in _context.TBL_OVERRIDE_DETAIL
                         join a in _context.TBL_APPROVAL_TRAIL on o.OVERRIDE_DETAILID equals a.TARGETID
                         join c in _context.TBL_CUSTOMER on o.CUSTOMERCODE equals c.CUSTOMERCODE
                         where a.OPERATIONID == (int)OperationsEnum.OverrideRequest &&
                         (a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                         && ids.Contains((int)a.TOAPPROVALLEVELID)
+                         && ids.Contains((int)a.TOAPPROVALLEVELID)  && a.RESPONSESTAFFID == null
                         select new OverrideDetailVeiwModel()
                         {
                             approvedStatusId = o.APPROVALSTATUSID,
                             createdBy = o.CREATEDBY,
                             itemId = o.OVERRIDE_ITEMID,
+                            reason = o.REASON,
+                            customerbvn = c.CUSTOMERBVN,
                             itemName = o.TBL_OVERRIDE_ITEM.OVERIDE_ITEMNAME,
                             approvalStatus = o.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                            customerCode = o.CUSTOMERCODE, 
+                            customerCode = o.CUSTOMERCODE,
                             sourceReferenceNumber = o.SOURCE_REFERENCE_NUMBER,
-                            isUsed = o.ISUSED,  
-                            customerId = c.CUSTOMERID ,
-                             customerName = c.LASTNAME +" "+ c.FIRSTNAME + " " + c.MAIDENNAME,
+                            isUsed = o.ISUSED,
+                            customerId = c.CUSTOMERID,
+                            operationId = a.OPERATIONID,
+                            customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MAIDENNAME,
                             dateTimeCreated = o.DATETIMECREATED,
-                            overrideDetailId = o.OVERRIDE_DETAILID
-                        });         
+                            overrideDetailId = o.OVERRIDE_DETAILID,
+                            staffName = o.TBL_STAFF.LASTNAME + " " + o.TBL_STAFF.FIRSTNAME + " " + o.TBL_STAFF.MIDDLENAME
+                        });      
 
             return data.ToList();
         }
