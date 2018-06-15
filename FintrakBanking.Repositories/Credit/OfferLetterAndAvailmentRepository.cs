@@ -274,6 +274,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailmentCheckList(int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
@@ -1919,7 +1920,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
-
+        
         private void PassApplicationToOperation(int companyId, int staffId, int operationId, int targetId, string comment)
         {
             workflow.StaffId = staffId;
@@ -1933,5 +1934,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.LogActivity();
         }
+
     }
 }

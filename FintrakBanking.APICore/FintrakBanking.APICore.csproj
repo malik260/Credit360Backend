@@ -890,10 +890,10 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <None Include="Web.config_">
+    <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Web.config">
+    <None Include="Web.config___">
       <SubType>Designer</SubType>
     </None>
     <Content Include="Views\Report\FintrakReport.cshtml" />
@@ -910,10 +910,10 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Web_Test.config" />
     <None Include="Web.Debug.config_">
-      <DependentUpon>Web.config_</DependentUpon>
+      <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config_">
-      <DependentUpon>Web.config_</DependentUpon>
+      <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web_Test.Debug.config">
       <DependentUpon>Web_Test.config</DependentUpon>
@@ -921,11 +921,11 @@
     <None Include="Web_Test.Release.config">
       <DependentUpon>Web_Test.config</DependentUpon>
     </None>
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
+    <None Include="Web.Debug.config___">
+      <DependentUpon>Web.config___</DependentUpon>
     </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
+    <None Include="Web.Release.config___">
+      <DependentUpon>Web.config___</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -978,6 +978,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />

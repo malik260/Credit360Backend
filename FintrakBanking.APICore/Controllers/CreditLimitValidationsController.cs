@@ -95,21 +95,21 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("camsol/{customerId}")]
-        public HttpResponseMessage ValidateCamsol(int customerId)
-        {
-            try
-            {
-                var data = repo.ValidateCamsol(customerId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+      //[HttpGet] [ClaimsAuthorization]  
+      //  [Route("camsol/{customerId}")]
+      //  public HttpResponseMessage ValidateCamsol(int customerId)
+      //  {
+      //      try
+      //      {
+      //          var data = repo.ValidateCamsol(customerId);
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+      //      }
+      //      catch (Exception ex)
+      //      {
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+      //      }
 
-        }
+      //  }
 
 
       [HttpGet] [ClaimsAuthorization]  

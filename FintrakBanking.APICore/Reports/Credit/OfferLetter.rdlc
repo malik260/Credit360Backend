@@ -37,14 +37,6 @@
           <DataField>companyName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="isFinal">
-          <DataField>isFinal</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="final">
-          <DataField>final</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="customerGroupName">
           <DataField>customerGroupName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -52,7 +44,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetter</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -144,7 +136,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterDetail</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -168,7 +160,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterConditionPrecident</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -192,7 +184,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterConditionSubsequent</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -213,14 +205,10 @@
           <DataField>rateValue</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="productName">
-          <DataField>productName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>G:\BankingApplication\BankingApplicationTest\BankingApplicationTest\BankingApplicationTest\Reports\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterFee</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -244,7 +232,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterSignatory</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -272,7 +260,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Desktop\Fintrak\Credit 360\api\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterCollateral</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -285,8 +273,16 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
+        <Field Name="companyName">
+          <DataField>companyName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="customerName">
           <DataField>customerName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="customerAddress">
+          <DataField>customerAddress</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="customerEmailAddress">
@@ -295,14 +291,6 @@
         </Field>
         <Field Name="customerPhoneNumber">
           <DataField>customerPhoneNumber</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="companyName">
-          <DataField>companyName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="customerAddress">
-          <DataField>customerAddress</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="isFinal">
@@ -318,6 +306,30 @@
         <rd:DataSetName>Credit</rd:DataSetName>
         <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterBorrowerDetail</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ComanyInfo">
+      <Query>
+        <DataSourceName>Credit</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="CompanyName">
+          <DataField>CompanyName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="companyLogo">
+          <DataField>companyLogo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Credit</rd:DataSetName>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
+        <rd:TableName>CompanyInfo</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />
@@ -968,7 +980,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>47.36811cm</Top>
+            <Top>51.49561cm</Top>
             <Left>0.50814cm</Left>
             <Height>2.55044cm</Height>
             <Width>16.7444cm</Width>
@@ -1027,7 +1039,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>37.6352cm</Top>
+            <Top>41.7627cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.7089cm</Width>
@@ -1065,7 +1077,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>34.77489cm</Top>
+            <Top>38.90239cm</Top>
             <Left>0.53907cm</Left>
             <Height>1.90781cm</Height>
             <Width>16.71347cm</Width>
@@ -1103,7 +1115,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>32.20562cm</Top>
+            <Top>36.33312cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.51094cm</Height>
             <Width>16.7089cm</Width>
@@ -1125,7 +1137,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>We refer to your application for a credit facility </Value>
+                    <Value>We refer to your application for a credit facilities </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -1143,21 +1155,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>=StrConv(First(Fields!productName.Value, "OfferLetterLoanDetail"), vbProperCase)</Value>
-                    <Style>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value xml:space="preserve"> </Value>
-                    <Style>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value>and are pleased to advise approval of same under the following terms and conditions.</Value>
+                    <Value>and are pleased to advise approval of same under the following Terms and Conditions.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -1175,7 +1173,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
             <Top>3.69066cm</Top>
-            <Left>0.48317cm</Left>
+            <Left>0.51492cm</Left>
             <Height>1.01528cm</Height>
             <Width>16.73762cm</Width>
             <ZIndex>4</ZIndex>
@@ -1211,7 +1209,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
             <Top>3.0201cm</Top>
-            <Left>0.48542cm</Left>
+            <Left>0.51717cm</Left>
             <Height>0.67056cm</Height>
             <Width>9.50516cm</Width>
             <ZIndex>5</ZIndex>
@@ -1258,7 +1256,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
             <Top>2.25253cm</Top>
-            <Left>0.48543cm</Left>
+            <Left>0.51718cm</Left>
             <Height>0.5559cm</Height>
             <Width>4.76786cm</Width>
             <ZIndex>6</ZIndex>
@@ -1291,7 +1289,7 @@
             </Paragraphs>
             <rd:DefaultName>Address</rd:DefaultName>
             <Top>1.03825cm</Top>
-            <Left>0.48543cm</Left>
+            <Left>0.51718cm</Left>
             <Height>1.10845cm</Height>
             <Width>4.76786cm</Width>
             <ZIndex>7</ZIndex>
@@ -1328,7 +1326,7 @@
             </Paragraphs>
             <rd:DefaultName>currentDate</rd:DefaultName>
             <Top>0.26186cm</Top>
-            <Left>0.48543cm</Left>
+            <Left>0.51718cm</Left>
             <Height>0.70583cm</Height>
             <Width>5.7897cm</Width>
             <ZIndex>8</ZIndex>
@@ -1485,7 +1483,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionPrecident</DataSetName>
-            <Top>7.15266in</Top>
+            <Top>8.77766in</Top>
             <Left>0.20181in</Left>
             <Height>0.53124in</Height>
             <Width>5.88335in</Width>
@@ -1629,7 +1627,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>21.9248cm</Top>
+            <Top>26.0523cm</Top>
             <Left>0.51029cm</Left>
             <Height>2.22005cm</Height>
             <Width>16.74225cm</Width>
@@ -1665,7 +1663,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>8.31237in</Top>
+            <Top>9.93737in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -1823,7 +1821,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionSubsequent</DataSetName>
-            <Top>7.75334in</Top>
+            <Top>9.37834in</Top>
             <Left>0.21223in</Left>
             <Height>0.51736in</Height>
             <Width>5.88426in</Width>
@@ -1855,7 +1853,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>9.57529in</Top>
+            <Top>11.20029in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -2091,7 +2089,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>25.13263cm</Top>
+            <Top>29.26013cm</Top>
             <Left>0.51029cm</Left>
             <Height>2.74922cm</Height>
             <Width>16.74225cm</Width>
@@ -2137,7 +2135,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>11.04655in</Top>
+            <Top>12.67155in</Top>
             <Left>0.20006in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -2305,7 +2303,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>28.82953cm</Top>
+            <Top>32.95703cm</Top>
             <Left>0.5126cm</Left>
             <Height>2.27366cm</Height>
             <Width>16.73994cm</Width>
@@ -2450,7 +2448,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!currencyName.Value, "OfferLetterLoanDetail") &amp; Format(Fields!loanAmount.Value,"#,#.00")</Value>
+                                  <Value>=Fields!loanAmount.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -2622,14 +2620,14 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=round(Fields!tenor.Value/30)</Value>
+                                  <Value>=Fields!tenor.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value> Months</Value>
+                                  <Value> Days</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -3207,7 +3205,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=round(Fields!tenor.Value/30)</Value>
+                                  <Value>=Fields!tenor.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -3221,15 +3219,7 @@
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>months</Value>
-                                  <Style>
-                                    <FontFamily>Garamond</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value> from set-up</Value>
+                                  <Value>days from set-up</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Garamond</FontFamily>
@@ -3472,8 +3462,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>2.81107in</Top>
-            <Left>0.19111in</Left>
+            <Top>3.43607in</Top>
+            <Left>0.20361in</Left>
             <Height>3.25in</Height>
             <Width>6.58873in</Width>
             <ZIndex>17</ZIndex>
@@ -3504,7 +3494,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>12.35993in</Top>
+            <Top>13.98493in</Top>
             <Left>0.21223in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3540,7 +3530,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>13.32979in</Top>
+            <Top>14.95479in</Top>
             <Left>0.21403in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3596,7 +3586,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>14.49756in</Top>
+            <Top>16.12256in</Top>
             <Left>0.21403in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3632,7 +3622,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>15.31948in</Top>
+            <Top>16.94448in</Top>
             <Left>0.21403in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3670,7 +3660,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>39.72289cm</Top>
+            <Top>43.85039cm</Top>
             <Left>0.54364cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.7089cm</Width>
@@ -3706,7 +3696,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>16.1553in</Top>
+            <Top>17.7803in</Top>
             <Left>0.21223in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3765,7 +3755,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>41.84587cm</Top>
+            <Top>45.97337cm</Top>
             <Left>0.53907cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.71347cm</Width>
@@ -3821,7 +3811,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>16.97723in</Top>
+            <Top>18.60223in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -3859,7 +3849,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>43.93357cm</Top>
+            <Top>48.06107cm</Top>
             <Left>0.53906cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.74225cm</Width>
@@ -3895,7 +3885,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>17.81305in</Top>
+            <Top>19.43805in</Top>
             <Left>0.2009in</Left>
             <Height>0.25in</Height>
             <Width>4.13027in</Width>
@@ -4320,7 +4310,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>46.05654cm</Top>
+            <Top>50.18404cm</Top>
             <Left>0.51028cm</Left>
             <Height>1.13518cm</Height>
             <Width>16.74226cm</Width>
@@ -4335,6 +4325,134 @@
               <PaddingBottom>1pt</PaddingBottom>
             </Style>
           </Textbox>
+          <Tablix Name="Tablix5">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>2.76903in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.8197in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="feeName">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!feeName.Value</Value>
+                                  <Style>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>:</Value>
+                                  <Style>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>feeName</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="rateValue">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!rateValue.Value</Value>
+                                  <Style>
+                                    <FontFamily>Garamond</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <Format>0;(0)</Format>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>% flat of facility amount</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Garamond</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>rateValue</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Details4" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>OfferLetterFee</DataSetName>
+            <Top>7.60274in</Top>
+            <Left>0.20361in</Left>
+            <Height>0.25in</Height>
+            <Width>6.58873in</Width>
+            <ZIndex>29</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
           <Textbox Name="Textbox9">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -4375,7 +4493,7 @@
             <Left>4.84608in</Left>
             <Height>0.25in</Height>
             <Width>1.94626in</Width>
-            <ZIndex>29</ZIndex>
+            <ZIndex>30</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -4482,11 +4600,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterCollateral</DataSetName>
-            <Top>6.76042in</Top>
+            <Top>8.38542in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>6.61487in</Width>
-            <ZIndex>30</ZIndex>
+            <ZIndex>31</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -4514,11 +4632,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>6.46875in</Top>
+            <Top>8.09375in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
-            <ZIndex>31</ZIndex>
+            <ZIndex>32</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -4568,7 +4686,8 @@
                           <rd:DefaultName>Textbox91</rd:DefaultName>
                           <Style>
                             <Border>
-                              <Style>None</Style>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
                             </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -4587,7 +4706,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=StrConv(Fields!companyName.Value, vbProperCase)</Value>
+                                  <Value>=Fields!companyName.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -4600,7 +4719,8 @@
                           <rd:DefaultName>companyName1</rd:DefaultName>
                           <Style>
                             <Border>
-                              <Style>None</Style>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
                             </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -4640,7 +4760,8 @@
                           <rd:DefaultName>Textbox73</rd:DefaultName>
                           <Style>
                             <Border>
-                              <Style>None</Style>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
                             </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -4659,7 +4780,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=StrConv(Fields!customerName.Value, vbProperCase)</Value>
+                                  <Value>=Fields!customerName.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -4672,7 +4793,8 @@
                           <rd:DefaultName>customerName</rd:DefaultName>
                           <Style>
                             <Border>
-                              <Style>None</Style>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
                             </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -4712,7 +4834,8 @@
                           <rd:DefaultName>Textbox68</rd:DefaultName>
                           <Style>
                             <Border>
-                              <Style>None</Style>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
                             </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -4731,7 +4854,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=StrConv(Fields!customerAddress.Value, vbProperCase) &amp; "," &amp; vbCrLf &amp; Fields!customerPhoneNumber.Value &amp; "," &amp; vbCrLf &amp; Fields!customerEmailAddress.Value</Value>
+                                  <Value>=Fields!customerAddress.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -4744,7 +4867,156 @@
                           <rd:DefaultName>customerAddress</rd:DefaultName>
                           <Style>
                             <Border>
-                              <Style>None</Style>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox81">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Telephone:</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox81</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="customerPhoneNumber">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!customerPhoneNumber.Value</Value>
+                                  <Style>
+                                    <FontFamily>Garamond</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>customerPhoneNumber</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox88">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>E-Mail:</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox88</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="customerEmailAddress">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!customerEmailAddress.Value</Value>
+                                  <Style>
+                                    <FontFamily>Garamond</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>customerEmailAddress</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
                             </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -4772,33 +5044,35 @@
                     <TablixMember />
                     <TablixMember />
                     <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
                   </TablixMembers>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterBorrowerDetail</DataSetName>
-            <Top>1.99628in</Top>
-            <Left>0.1763in</Left>
-            <Height>0.75in</Height>
+            <Top>1.95139in</Top>
+            <Left>0.21494in</Left>
+            <Height>1.25in</Height>
             <Width>6.58873in</Width>
-            <ZIndex>32</ZIndex>
+            <ZIndex>33</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
-          <Tablix Name="Tablix5">
+          <Tablix Name="Tablix6">
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.56461in</Width>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.19493in</Width>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.83173in</Width>
+                  <Width>1in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -4807,34 +5081,25 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="feeName">
+                        <Textbox Name="Textbox1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!feeName.Value</Value>
-                                  <Style>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>:</Value>
-                                  <Style>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
+                                  <Value />
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>feeName</rd:DefaultName>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Style>
                             <Border>
-                              <Style>None</Style>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
                             </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -4846,41 +5111,25 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="rateValue">
+                        <Textbox Name="Textbox7">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!rateValue.Value</Value>
-                                  <Style>
-                                    <FontFamily>Garamond</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <Format>0;(0)</Format>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>% flat of facility amount</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Garamond</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
+                                  <Value />
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Left</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>rateValue</rd:DefaultName>
+                          <rd:DefaultName>Textbox7</rd:DefaultName>
                           <Style>
                             <Border>
-                              <Style>None</Style>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
                             </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -4892,29 +5141,25 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="productName1">
+                        <Textbox Name="Textbox20">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=StrConv(Fields!productName.Value, vbProperCase)</Value>
-                                  <Style>
-                                    <FontFamily>Garamond</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                  </Style>
+                                  <Value>Company Name</Value>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Left</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>productName1</rd:DefaultName>
+                          <rd:DefaultName>Textbox20</rd:DefaultName>
                           <Style>
                             <Border>
-                              <Style>None</Style>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
                             </Border>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -4922,6 +5167,102 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox8</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="CompanyName">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!CompanyName.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>CompanyName</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -4938,16 +5279,19 @@
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="Details4" />
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details5" />
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>OfferLetterFee</DataSetName>
-            <Top>6.13378in</Top>
-            <Left>0.17376in</Left>
-            <Height>0.25in</Height>
-            <Width>6.59127in</Width>
-            <ZIndex>33</ZIndex>
+            <DataSetName>ComanyInfo</DataSetName>
+            <Top>0.74306in</Top>
+            <Left>3.37375in</Left>
+            <Height>0.5in</Height>
+            <Width>3in</Width>
+            <ZIndex>34</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -4955,18 +5299,14 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>20.51756in</Height>
+        <Height>22.56964in</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
-          <BackgroundImage>
-            <Source>Embedded</Source>
-            <Value>=IIF(First(Fields!isFinal.Value, "OfferLetterBorrowerDetail")=TRUE, nothing, "Draft")</Value>
-          </BackgroundImage>
         </Style>
       </Body>
-      <Width>6.93625in</Width>
+      <Width>6.91754in</Width>
       <Page>
         <PageHeader>
           <Height>1.14111in</Height>
@@ -4974,13 +5314,14 @@
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
             <Image Name="Image1">
-              <Source>Embedded</Source>
-              <Value>firstbanknewlogo</Value>
+              <Source>Database</Source>
+              <Value>=First(Fields!companyLogo.Value, "ComanyInfo")</Value>
+              <MIMEType>image/jpeg</MIMEType>
               <Sizing>FitProportional</Sizing>
               <Top>0.125in</Top>
-              <Left>6.00056in</Left>
+              <Left>6.02108in</Left>
               <Height>0.78in</Height>
-              <Width>0.80311in</Width>
+              <Width>0.77126in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -5038,10 +5379,10 @@
               <Source>Embedded</Source>
               <Value>firstbanknewlogo</Value>
               <Sizing>FitProportional</Sizing>
-              <Top>0.06944in</Top>
-              <Left>6.41631in</Left>
-              <Height>0.36594in</Height>
-              <Width>0.37603in</Width>
+              <Top>0.19444in</Top>
+              <Left>6.27882in</Left>
+              <Height>0.50135in</Height>
+              <Width>0.51352in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>

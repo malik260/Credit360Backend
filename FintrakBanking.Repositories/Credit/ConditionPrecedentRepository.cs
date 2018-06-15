@@ -468,6 +468,7 @@ namespace FintrakBanking.Repositories.Credit
                 return false;
             }
             context.TBL_LOAN_CONDITION_PRECEDENT.Remove(data);
+          
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -485,6 +486,8 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
+
+           
         }
 
         public bool EditLoanConditionPrecedentLms(int id, ConditionPrecedentViewModel model)
