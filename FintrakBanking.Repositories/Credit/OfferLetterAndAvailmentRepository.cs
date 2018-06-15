@@ -1846,6 +1846,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
+                PassApplicationToOperation(model.companyId, model.createdBy, (int)OperationsEnum.LoanAvailment, model.applicationId, "B&G application for availment...");
             }
 
             return context.SaveChanges() > 0;
@@ -1918,8 +1919,20 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
+        
+        private void PassApplicationToOperation(int companyId, int staffId, int operationId, int targetId, string comment)
+        {
+            workflow.StaffId = staffId;
+            workflow.CompanyId = companyId;
+            workflow.OperationId = operationId;
+            workflow.TargetId = targetId;
+            workflow.ProductClassId = null;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.Comment = comment;
+            workflow.ExternalInitialization = true;
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+        }
 
-
-        //}
     }
 }
