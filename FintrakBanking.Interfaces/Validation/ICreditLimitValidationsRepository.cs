@@ -14,7 +14,9 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
 
         int ValidateWatchList(int customerId);
 
-        int ValidateCamsol(int customerId);
+        //int ValidateCamsol(int customerId);
+
+        //IEnumerable<CustomerEligibilityViewModel> ValidateCamsol(string customerCode);
 
         IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode);
 
