@@ -140,7 +140,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new APIErrorException(ex.InnerException.Message != null ? "Core Banking API Error - "+ex.InnerException.Message.ToString() : "Core Banking API Error - "+ex.Message.ToString());
+                    throw new APIErrorException("API Call: System could not establish connection to remote server. Contact Administrator" );
                 }
             }
 

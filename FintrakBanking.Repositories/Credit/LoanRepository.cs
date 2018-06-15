@@ -704,7 +704,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         int custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, (short)OverrideEnum.TakeFeeAtDisbursement, loanReferenceNumber);
                         if (custFeeOverridable > 0) entity.feeOverride = true;
-                        else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
+                        //else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
                     }
                     // ...........End checking customer balance, and fee override ..........
 
@@ -2445,8 +2445,9 @@ namespace FintrakBanking.Repositories.Credit
                             debit.approvedDateTime = DateTime.Now;
                             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                             debit.companyId = loanDetails.companyId;
+                            
 
-                            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL;
                             debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
                             debit.batchCode = batchCode;
                             debit.casaAccountId = casa.CASAACCOUNTID;
@@ -3753,19 +3754,17 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId, int branchId)
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId)
         {
             var newApplicationDate = generalSetup.GetApplicationDate();
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
-                        join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                         where m.COMPANYID == companyId && d.DELETED == false && s.DELETED == false
                         && d.STATUSID == (short)ApprovalStatusEnum.Approved
-                        && br.BRANCHID == branchId
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
