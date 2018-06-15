@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                           where a.CUSTOMERCODE == customerCode && a.CANTAKELOAN == false
                           select new CustomerEligibilityViewModel()
                              {
-                                camsolType = b.CAMSOLTYPENAME
+                                camsolType = b.CAMSOLTYPENAME.ToUpper()
                              }).ToList();
             return customerEligibility;
         }
