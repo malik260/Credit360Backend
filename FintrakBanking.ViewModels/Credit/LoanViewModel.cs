@@ -47,10 +47,11 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-        public short requestStatusId;
-        public bool requestDeleted;
+        public short requestStatusId { get; set; }
+        public bool requestDeleted { get; set; }
+        public string casaAccountDetails { get; set; }
 
-        //public short loanSystemTypeId;
+        //public short loanSystemTypeId; 
 
         public decimal disbursableAmount { get; set; }
         public string loanStatusName { get; set; }
@@ -240,6 +241,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string casaAccountDetails { get; set; }
+
+        public string casaAccountNumber { get; set; }
+
         public decimal disbursableAmount { get; set; }
         public string loanStatus { get; set; }
         public bool isOverdraft { get; set; }
@@ -343,9 +348,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ContingentLoanViewModel : GeneralEntity
     {
-        public decimal disbursableAmount;
-        public bool isBidbond;
-        public bool isOverdraft;
+        public string casaAccountDetails { get; set; }
+
+        public decimal disbursableAmount { get; set; }
+        public bool isBidbond { get; set; }
+        public bool isOverdraft { get; set; }
+        public string casaAccountNumber { get; set; }
 
         public int loanId { get; set; }
         public int loanApplicationId { get; set; }
