@@ -11,6 +11,7 @@ namespace FintrakBanking.ViewModels.CreditLimitValidations
         public string customerCode { get; set; }
         public DateTime dateBlackListed { get; set; }
         public string reason { get; set; }
-        
+        public string camsolType { get; set; }
+
     }
 }

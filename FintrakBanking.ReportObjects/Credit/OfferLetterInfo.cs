@@ -131,11 +131,13 @@ namespace FintrakBanking.ReportObjects.Credit
                             join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                             join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
                             join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                            join e in context.TBL_PRODUCT on b.PROPOSEDPRODUCTID equals e.PRODUCTID
                             where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
                             select new ProductFeeViewModel()
                             {
                                 feeName = c.CHARGEFEENAME,
-                                rateValue = a.RECOMMENDED_FEERATEVALUE
+                                rateValue = a.RECOMMENDED_FEERATEVALUE,
+                                productName = e.PRODUCTNAME
                             }).ToList();
 
                 if (fees != null)
@@ -170,6 +172,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                    from e in dg.DefaultIfEmpty()
                                    join g in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals g.CUSTOMERID into gg
                                    from g in gg.DefaultIfEmpty()
+                                   join h in context.TBL_CURRENCY on b.CURRENCYID equals h.CURRENCYID into hh
+                                   from h in hh.DefaultIfEmpty()
                                    where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
                                          b.STATUSID == (int)ApprovalStatusEnum.Approved
                                    select new OfferLetterDetailViewModel()
@@ -177,7 +181,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTNAME,
                                        //customerName = c.FIRSTNAME + " " + c.LASTNAME,
                                        //customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
-                                       currencyName = b.TBL_CURRENCY.CURRENCYNAME,
+                                       currencyName = h.CURRENCYCODE,//b.TBL_CURRENCY.CURRENCYNAME,
                                        tenor = b.APPROVEDTENOR,
                                        interestRate = b.APPROVEDINTERESTRATE,
                                        loanAmount = b.APPROVEDAMOUNT,

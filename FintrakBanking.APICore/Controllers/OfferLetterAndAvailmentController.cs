@@ -239,6 +239,35 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpGet]
+        //[Route("loan-application-collateral/{loanApplicationId}")]
+        //public HttpResponseMessage GetLoanBookingAwaitingApproval(int loanApplicationId)
+        //{
+        //    try
+        //    {
+        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        //        var data = repo.GetLoanApplicationCollateralByApplicationId(loanApplicationId);
+
+        //        if (data.Any() == false)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        //    }
+        //    catch (ConditionNotMetException ce)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+        //    }
+        //    catch (BadLogicException be)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+        //    }
+        //}
+
         [HttpPut]
         [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter/{documentId}")]
