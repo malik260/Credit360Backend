@@ -54,29 +54,19 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return watchlistresults;
         }
 
-        public int ValidateCamsol(int customerId)
-        {
-            var camsol = (from a in context.TBL_LOAN_CAMSOL
-                          join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                          where b.CUSTOMERID == customerId
-                          select a);
-            int camsolresults = camsol.Count();
-            if (camsol.Any())
-            {
-                string custCode = camsol.FirstOrDefault().CUSTOMERCODE;
-                camsolresults = this.customOverride.EffectOverride(custCode, (int)OverrideEnum.CAMSOLOverride, custCode);
-            }
-            return camsolresults;
-        }
-        //public int ValidateBlackList(int customerId)
-        //{
-        //    var blacklist = (from a in context.TBL_CUSTOMER_BLACKLIST
-        //                     where a.CUSTOMERID == customerId
-        //                     select a);
-        //    int blacklistresults = blacklist.Count();
 
-        //    return blacklistresults;
-        //}
+        public IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode)
+        {
+            var customerEligibility = (from a in context.TBL_LOAN_CAMSOL
+                          join b in context.TBL_LOAN_CAMSOL_TYPE on a.CAMSOLTYPEID equals b.CAMSOLTYPEID
+                          where a.CUSTOMERCODE == customerCode && a.CANTAKELOAN == false
+                          select new CustomerEligibilityViewModel()
+                             {
+                                camsolType = b.CAMSOLTYPENAME
+                             }).ToList();
+            return customerEligibility;
+        }
+
         public int ValidateBlackList(string customerCode)
         {
             int blacklistresults = 0;
@@ -93,18 +83,18 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return blacklistresults;
         }
 
-        public IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode)
-        {
-            var blacklist = (from a in context.TBL_CUSTOMER_BLACKLIST
-                             where a.CUSTOMERCODE == customerCode
-                             select new CustomerEligibilityViewModel()
-                             {
-                                 customerCode = a.CUSTOMERCODE,
-                                 dateBlackListed = a.DATEBLACKLISTED,
-                                 reason = a.REASON
-                             }).ToList();
-            return blacklist;
-        }
+        //public IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode)
+        //{
+        //    var blacklist = (from a in context.TBL_CUSTOMER_BLACKLIST
+        //                     where a.CUSTOMERCODE == customerCode
+        //                     select new CustomerEligibilityViewModel()
+        //                     {
+        //                         customerCode = a.CUSTOMERCODE,
+        //                         dateBlackListed = a.DATEBLACKLISTED,
+        //                         reason = a.REASON
+        //                     }).ToList();
+        //    return blacklist;
+        //}
 
         public CreditLimitValidationsModel ValidateAmountByBranch(short branchId)
         {
@@ -381,29 +371,6 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return output;
         }
 
-        //public CreditLimitValidationsModel ValidateAmountByCustomer(int customerId)
-        //{
-        //    CreditLimitValidationsModel model = new CreditLimitValidationsModel();
-        //    var outstandingbal = from d in context.TBL_LOAN
-        //                         where d.CUSTOMERID == customerId
-        //                         let sumPrincipalAmount = context.TBL_LOAN.Where(a => a.CUSTOMERID == customerId).Sum(a => a.PRINCIPALAMOUNT)
-        //                         select sumPrincipalAmount;
-
-        //    var limitAmount = from a in context.TBL_LIMIT_DETAIL
-        //                      join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-        //                      where a.LIMITTYPEID == (int)LimitType.Obligor && a.TARGETID == customerId &&
-        //                      b.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount// &&
-        //                                                                        //b.LimitValueTypeId == (int)LimitValueTypeEnum.Amount
-        //                                                                        //let maximumValue = context.tbl_Limit_Detail.Sum(a => a.MaximumValue)
-        //                                                                        //select maximumValue;
-        //                      select a.MAXIMUMVALUE;
-
-        //    model.outstandingBalance = outstandingbal.FirstOrDefault();
-        //    model.limit = limitAmount.FirstOrDefault();
-        //    model.difference = outstandingbal.FirstOrDefault() - limitAmount.FirstOrDefault();
-        //    return model;
-        //}
-
         public CreditLimitValidationsModel ValidateAmountByCustomer(int customerId)
         {
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
@@ -415,39 +382,55 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                        select maximumLimit;
 
             var loanOutstandingBalance = (from d in context.TBL_LOAN
-                                          where d.CUSTOMERID == customerId && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                          join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
+                                          join g in context.TBL_LOAN_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals g.LOANAPPLICATIONDETAILID
+                                          where d.LOANAPPLICATIONDETAILID == g.LOANAPPLICATIONDETAILID && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                          && g.STATUSID == (short)ApprovalStatusEnum.Approved
                                           select new
                                           {
-                                              d.OUTSTANDINGPRINCIPAL
+                                              d.OUTSTANDINGPRINCIPAL,
+                                              d.PRINCIPALAMOUNT,
                                           }).ToList();
             var sumLoanOutstandingBalance = loanOutstandingBalance.Select(c => c.OUTSTANDINGPRINCIPAL).Sum();
+            var sumLoanPrincipalAmount = loanOutstandingBalance.Select(c => c.PRINCIPALAMOUNT).Sum();
 
-            var OverdraftOutstandingBalance = (from d in context.TBL_LOAN_REVOLVING
-                                               where d.CUSTOMERID == customerId && d.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                               select new
-                                               {
-                                                   d.OVERDRAFTLIMIT
-                                               }).ToList();
-            var sumOverdraftOutstandingBalance = OverdraftOutstandingBalance.Select(c => c.OVERDRAFTLIMIT).Sum();
+            var loanApprovedAmount = (from d in context.TBL_LOAN_APPLICATION_DETAIL
+                                      join e in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
+                                      where d.CUSTOMERID == customerId && d.STATUSID == (short)ApprovalStatusEnum.Approved
+                                      && d.LOANAPPLICATIONDETAILID == e.LOANAPPLICATIONDETAILID
+                                      select new
+                                          {
+                                              d.APPROVEDAMOUNT
+                                          }).ToList();
+            var sumLoanApprovedAmount = loanApprovedAmount.Select(c => c.APPROVEDAMOUNT).Sum();
 
-            //var loanApplicationBalance = (from d in context.TBL_LOAN_APPLICATION
-            //                             where d.APPLICATIONSTATUSID == (short)LoanStatusEnum.Active && d.CUSTOMERID == customerId
-            //                             && !context.TBL_LOAN.Any(e => e.CUSTOMERID == d.CUSTOMERID)
-            //                             select new
-            //                             {
-            //                                 d.APPLICATIONAMOUNT
-            //                             }).ToList();
-            //var sumloanApplicationBalance  = loanApplicationBalance.Select(c => c.APPLICATIONAMOUNT ).Sum();
+            var loanTotal = sumLoanApprovedAmount + sumLoanOutstandingBalance - sumLoanPrincipalAmount;
 
-            //var OverDraftApplicationBalance = (from d in context.TBL_LOAN_APPLICATION
-            //                                  where d.APPLICATIONSTATUSID == (short)LoanStatusEnum.Active && d.CUSTOMERID == customerId
-            //                                  && !context.TBL_LOAN_REVOLVING.Any(e => e.CUSTOMERID == d.CUSTOMERID)
-            //                                  select new
-            //                                  {
-            //                                      d.APPLICATIONAMOUNT
-            //                                  }).ToList();
-            //var sumOverDraftApplicationBalance  = OverDraftApplicationBalance.Select(c => c.APPLICATIONAMOUNT).Sum();
-            model.outstandingBalance = (double)(sumLoanOutstandingBalance + sumOverdraftOutstandingBalance);
+
+            var overDraftLimit = (from d in context.TBL_LOAN_REVOLVING
+                                          join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
+                                          join g in context.TBL_LOAN_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals g.LOANAPPLICATIONDETAILID
+                                          where d.LOANAPPLICATIONDETAILID == g.LOANAPPLICATIONDETAILID && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                          && g.STATUSID == (short)ApprovalStatusEnum.Approved
+                                          select new
+                                          {
+                                              d.OVERDRAFTLIMIT,
+                                          }).ToList();
+            var sumOverDraftLimit = overDraftLimit.Select(c => c.OVERDRAFTLIMIT).Sum();
+
+            var oDApprovedAmount = (from d in context.TBL_LOAN_APPLICATION_DETAIL
+                                      join e in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
+                                      where d.CUSTOMERID == customerId && d.STATUSID == (short)ApprovalStatusEnum.Approved
+                                      && d.LOANAPPLICATIONDETAILID == e.LOANAPPLICATIONDETAILID
+                                      select new
+                                      {
+                                          d.APPROVEDAMOUNT
+                                      }).ToList();
+            var sumODApprovedAmount = oDApprovedAmount.Select(c => c.APPROVEDAMOUNT).Sum();
+
+            var oDTotal = sumODApprovedAmount - sumOverDraftLimit;
+
+            model.outstandingBalance = (double)(loanTotal + oDTotal);
             model.limit = data.FirstOrDefault();
             model.difference = model.limit - model.outstandingBalance;
 
@@ -536,17 +519,26 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  let sumPrincipalAmount = context.TBL_LOAN.Where(a => a.RELATIONSHIPOFFICERID == relationshipofficerId).Sum(a => a.PRINCIPALAMOUNT)
                                  select sumPrincipalAmount;
 
-            var limitAmount = 0;
-            //from a in context.TBL_LIMIT_DETAIL
-            //                  join b in context.TBL_LIMIT on a.LIMITID equals b.LIMITID
-            //                  where a.LIMITTYPEID == (int)LimitType.RelationshipManager && a.TARGETID == relationshipofficerId &&
-            //                  b.LIMITMETRICID == (int)LimitMatricEnum.NonPerformingLoan
-            //                  select a.MAXIMUMVALUE;
+            var limitAmount = this.context.TBL_STAFF.Where(a => a.STAFFID == relationshipofficerId).FirstOrDefault().LOAN_LIMIT;
 
             model.outstandingBalance = (double)outstandingbal.FirstOrDefault();
             model.limit = (double)limitAmount;
             model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount;
             return model;
+
+            
+        }
+
+        public CreditLimitValidationsModel ValidateCreditLimitByRMBM(short relationshipofficerId)
+        {
+            CreditLimitValidationsModel model = new CreditLimitValidationsModel();
+
+            var limitAmount = this.context.TBL_STAFF.Where(a => a.STAFFID == relationshipofficerId).FirstOrDefault().LOAN_LIMIT;
+
+            model.limit = (double)limitAmount;
+            return model;
+
+
         }
 
         public IEnumerable<ObligorLimitViewModel> GetAllObligorLimit()
