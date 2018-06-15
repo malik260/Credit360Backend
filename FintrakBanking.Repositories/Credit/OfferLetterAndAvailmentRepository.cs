@@ -274,6 +274,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailmentCheckList(int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
