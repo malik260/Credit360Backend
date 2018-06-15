@@ -8,6 +8,7 @@ using FintrakBanking.APICore.core;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using System.Web;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.CreditLimitValidations;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -461,6 +462,22 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error saving this record {e.Message}" });
             }
         }
+
+        [HttpPost]
+        [Route("update-customer-rating")]
+        public HttpResponseMessage UpdateCustomerRating([FromBody] ObligorLimitViewModel entity)
+        {
+            try
+            {
+                bool data = repo.UpdateCustomerRating(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         #endregion
     }
 } 

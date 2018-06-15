@@ -33,5 +33,6 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         IEnumerable<ObligorLimitViewModel> GetAllObligorLimit();
         bool ValidateRiskRating(string riskRating);
         bool AddUpdateRiskRating(ObligorLimitViewModel entity);
+        bool UpdateCustomerRating(ObligorLimitViewModel entity);
     }
 }
