@@ -64,7 +64,7 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerFSCaptionGroupViewModel> GetCustomerFSCaptionGroup()
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_GROUP
-                                where a.DELETED == false
+                                where a.DELETED == false 
                                 orderby a.POSITION
                                 select new CustomerFSCaptionGroupViewModel
                                 {
