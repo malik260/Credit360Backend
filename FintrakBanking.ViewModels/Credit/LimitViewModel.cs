@@ -71,6 +71,7 @@
 
     public class ObligorLimitViewModel: GeneralEntity
     {
+        public int customerId { get; set; }
         public int riskRatingId { get; set; }
         public string riskRating { get; set; }
         public int companyId { get; set; }

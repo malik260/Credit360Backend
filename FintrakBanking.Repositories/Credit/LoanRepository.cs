@@ -2447,7 +2447,7 @@ namespace FintrakBanking.Repositories.Credit
                             debit.companyId = loanDetails.companyId;
                             
 
-                            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL;
+                            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
                             debit.batchCode = batchCode;
                             debit.casaAccountId = casa.CASAACCOUNTID;
