@@ -608,5 +608,12 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             }
             return false;
         }
+
+        public bool UpdateCustomerRating(ObligorLimitViewModel entity)
+        {
+            var customer = context.TBL_CUSTOMER.Find(entity.customerId);
+            customer.RISKRATINGID = (short?)entity.riskRatingId;
+            return context.SaveChanges() > 0;
+        }
     }
 }
