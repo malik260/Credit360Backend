@@ -380,12 +380,12 @@ namespace FintrakBanking.APICore.Controllers
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("validatecreditlimitnpl/RMBM/{relationshipofficerId}")]
-        public HttpResponseMessage ValidateCreditLimitNPLByRMBM(short relationshipofficerId)
+        public HttpResponseMessage ValidateCreditLimitByRMBM(short relationshipofficerId)
         {
             try
             {
 
-                var data = repo.ValidateCreditLimitNPLByRMBM(relationshipofficerId);
+                var data = repo.ValidateCreditLimitByRMBM(relationshipofficerId);
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
