@@ -421,6 +421,17 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                if(entity.relationshipOfficerId != 0 )
+                {
+                    var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)entity.relationshipOfficerId).limit;
+                    var loanAmt = entity.LoanApplicationDetail.Sum(x => x.proposedTenor);
+                    if (loanAmt > limit)
+                    {
+                        throw new Exception("RM Limit Exceeded.");
+                    }
+
+                }
+
                 //if (entity.customerId.HasValue)
                 //{
                 //    if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
