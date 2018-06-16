@@ -12,9 +12,12 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanCAMSOLViewModel> GetCamSol();
         List<LoanCAMSOLViewModel> GetCamSolByType(int customerName);
         LoanCAMSOLViewModel ViewCamSolByType(int id);
-        LoanCAMSOLViewModel GetCamSol(string loancamsolid);
+        List<LoanCAMSOLViewModel> GetCamSol(string loancamsolid);
 
         List<LoanCAMSOLViewModel> GetCamSolType();
+        List<LoanCAMSOLViewModel> GetCamSolByCustomerCode(string customerCode);
+        bool ApproveCamsol(LoanCAMSOLViewModel option);
+
 
 
     }
