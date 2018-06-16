@@ -249,7 +249,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     departmentList.Add(dept);
                 }
-
             }
 
             return departmentList;
@@ -328,10 +327,11 @@ namespace FintrakBanking.Repositories.Setups.General
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
                 allstaff = SearchDepartments(companyId)
-                    .Where(x => x.firstname.Contains(searchQuery)
-               || x.lastname.Contains(searchQuery)
-               || x.middlename.Contains(searchQuery)
-              // && x.departmentId == departmentId
+                    .Where( x => 
+                            (x.firstname.ToLower().Contains(searchQuery)
+                            || x.lastname.ToLower().Contains(searchQuery)
+                            || x.middlename.ToLower().Contains(searchQuery) )
+                            && x.departmentId == departmentId
                 );
             }
 
