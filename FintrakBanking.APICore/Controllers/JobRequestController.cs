@@ -589,20 +589,16 @@ namespace FintrakBanking.APICore.Controllers
 
                 var receiverStaffId = provider.FormData["receiverStaffId"];
 
-                var requestModel = new JobRequestViewModel
-                {
-                    departmentId = (short)Convert.ToInt32(provider.FormData["departmentId"]),
-                    departmentUnitId = (short)Convert.ToInt32(provider.FormData["departmentUnitId"]),
-                    requestTitle = provider.FormData["requestSubject"],
-                    senderComment = provider.FormData["senderComment"],
-                    isReassigned = Convert.ToBoolean(provider.FormData["isReassigned"]),
-                    isAcknowledged = Convert.ToBoolean(provider.FormData["isAcknowledged"]),
-                    targetId = Convert.ToInt32(provider.FormData["targetId"]),
-                    operationsId = Convert.ToInt32(provider.FormData["operationId"]),
-                    jobTypeId = (short)Convert.ToInt32(provider.FormData["jobTypeId"])
-                };
-
-
+                var requestModel = new JobRequestViewModel();
+                requestModel.departmentId = (short)Convert.ToInt32(provider.FormData["departmentId"]);
+                requestModel.departmentUnitId = (short)Convert.ToInt32(provider.FormData["departmentUnitId"]);
+                requestModel.requestTitle = provider.FormData["requestSubject"];
+                requestModel.senderComment = provider.FormData["senderComment"];
+                requestModel.targetId = Convert.ToInt32(provider.FormData["targetId"]);
+                requestModel.operationsId = Convert.ToInt32(provider.FormData["operationId"]);
+                requestModel.jobTypeId = (short)Convert.ToInt32(provider.FormData["jobTypeId"]);
+                requestModel.isReassigned = provider.FormData["isReassigned"].ToLower() != "undefined" ? Convert.ToBoolean(provider.FormData["isReassigned"]) : false;
+                requestModel.isAcknowledged = provider.FormData["isAcknowledged"] != "undefined" ?Convert.ToBoolean(provider.FormData["isAcknowledged"]) : false;
 
 
                 if (!(receiverStaffId == null || receiverStaffId == string.Empty || receiverStaffId == ""))
