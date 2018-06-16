@@ -1580,10 +1580,11 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool isHeadOffice = (branchId == 1) ? true : false;
 
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId,operationId).ToList();
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
             var applications = context.TBL_LOAN_APPLICATION
                 .Where(x =>
+                //(isHeadOffice || x.BRANCHID == branchId)
                 x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved // <-------------------------------------hard codes!!!
                 && x.PRODUCTCLASSID == (short?)classId
                 && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BondAndGuaranteesInProgress // <--------hard codes!!!
@@ -1642,7 +1643,7 @@ namespace FintrakBanking.Repositories.Credit
             .ThenByDescending(x => x.loanApplicationId)
             ;
 
-            //var test = applications.ToList();
+            var test = applications.ToList();
             return applications;
         }
 

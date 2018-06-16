@@ -276,7 +276,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-
                     // ............. Checking customer balance, and fee override ......
                     decimal AllfeeAmount = 0;
                     foreach (var item in model.loanChargeFee) { AllfeeAmount = AllfeeAmount + item.feeAmount; }
@@ -705,7 +704,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         int custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, (short)OverrideEnum.TakeFeeAtDisbursement, loanReferenceNumber);
                         if (custFeeOverridable > 0) entity.feeOverride = true;
-                        else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
+                        //else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
                     }
                     // ...........End checking customer balance, and fee override ..........
 
@@ -1097,6 +1096,8 @@ namespace FintrakBanking.Repositories.Credit
                                 customerId = ln.CUSTOMERID,
                                 productId = ln.PRODUCTID,
                                 casaAccountId = ln.CASAACCOUNTID,
+                                casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER +" ("+ ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
@@ -1159,7 +1160,6 @@ namespace FintrakBanking.Repositories.Credit
                                 middleName = ln.TBL_CUSTOMER.MIDDLENAME,
                                 lastName = ln.TBL_CUSTOMER.LASTNAME,
                                 customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
-                                casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
                                 productAccountName = ln.TBL_PRODUCT.PRODUCTNAME,
                                 loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                 customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
@@ -1251,6 +1251,8 @@ namespace FintrakBanking.Repositories.Credit
                                 customerId = ln.CUSTOMERID,
                                 productId = ln.PRODUCTID,
                                 casaAccountId = ln.CASAACCOUNTID,
+                                casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
@@ -1382,6 +1384,8 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = ln.CUSTOMERID,
                             productId = ln.PRODUCTID,
                             casaAccountId = ln.CASAACCOUNTID,
+                            casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                             loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                             loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
@@ -2441,6 +2445,7 @@ namespace FintrakBanking.Repositories.Credit
                             debit.approvedDateTime = DateTime.Now;
                             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                             debit.companyId = loanDetails.companyId;
+                            
 
                             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
@@ -3556,7 +3561,7 @@ namespace FintrakBanking.Repositories.Credit
                     }).FirstOrDefault();
         }
 
-        private IEnumerable<CamProcessedLoanViewModel> AvailedLoanApplicationsDetails(int companyId)
+        private IEnumerable<CamProcessedLoanViewModel> AvailedLoanApplicationsDetails(int companyId, int staffId, int branchId)
         {
             try
             {
@@ -3564,7 +3569,9 @@ namespace FintrakBanking.Repositories.Credit
                             join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                             join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                             join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                            join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
                             where m.COMPANYID == companyId && d.DELETED == false && m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted
+                            && m.BRANCHID == branchId
                             orderby m.AVAILMENTDATE descending, m.DATETIMECREATED descending
                             select new CamProcessedLoanViewModel
                             {
@@ -3682,14 +3689,14 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex) { throw; }
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId)
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId)
         {
             try
             {
-                var data = AvailedLoanApplicationsDetails(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted
-           && x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
-           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
-           && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
+                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted
+                           && x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
+                           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
+                           && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
 
                 data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
@@ -3747,7 +3754,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId)
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId)
         {
             var newApplicationDate = generalSetup.GetApplicationDate();
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
@@ -5248,27 +5255,31 @@ namespace FintrakBanking.Repositories.Credit
 
                           {
                               arrivalDate = a.ARRIVALDATE,
-                              responseApprovalLevel = a.TOAPPROVALLEVELID.HasValue ? b.LEVELNAME : "N/A",
+                              responseApprovalLevel = a.TOAPPROVALLEVELID.HasValue ? a.TBL_APPROVAL_LEVEL1.LEVELNAME : "N/A",
                               responseDate = a.SYSTEMRESPONSEDATETIME ?? DateTime.Now,
                               systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                               systemResponseDate = a.SYSTEMRESPONSEDATETIME,
-                              responseStaffName = !a.RESPONSESTAFFID.HasValue ? loggedsStaff.FIRSTNAME + " " + loggedsStaff.LASTNAME : j.FIRSTNAME + " " + j.LASTNAME,
+                              //responseStaffName = !a.RESPONSESTAFFID.HasValue ? loggedsStaff.FIRSTNAME + " " + loggedsStaff.LASTNAME : j.FIRSTNAME + " " + j.LASTNAME,
+                              responseStaffName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
                               comment = a.COMMENT,
                               requestStaffName = i.FIRSTNAME + " " + i.LASTNAME,
-                              requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : b.LEVELNAME,
+                              requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
                               TargetId = a.TARGETID,
                               operationId = e.OPERATIONID,
                               operationName = e.OPERATIONNAME,
                               //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
                               approvalStatus = k.APPROVALSTATUSNAME
                           });
+
+
+            //var response = result.ToList();
             return result;
         }
 
         public async Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId)
         {
             var result = await GetApprovalTrail(companyId, staffId).Where(c => c.TargetId == targetId && c.operationId == operationId).OrderByDescending(c => c.systemArrivalDate).ToListAsync();
-            return result;
+            return result.Distinct();
         }
 
 

@@ -421,33 +421,44 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                if (entity.customerId.HasValue)
+                if(entity.relationshipOfficerId != 0 )
                 {
-                    if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
+                    var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)entity.relationshipOfficerId).limit;
+                    var loanAmt = entity.LoanApplicationDetail.Sum(x => x.proposedTenor);
+                    if (loanAmt > limit)
                     {
-                        throw new Exception("Customer '" + entity.customerName + "' has been CAMSOL");
+                        throw new Exception("RM Limit Exceeded.");
                     }
-
-                    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateWatchList(entity.customerId.Value) > 0)
-                    {
-                        throw new Exception("Customer '" + entity.customerName + "' has been Watchlisted");
-                    }
-
-                    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateBlackList(entity.customerCode) > 0)
-                    {
-                        throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
-                    }
-
-
-                  //var customerLimit =  creditLimitValidationsRepository.ValidateNPLByCustomer((int)entity.customerId.Value);
-                  //  if( (customerLimit.outstandingBalance + (double)entity.LoanApplicationDetail.Sum(c=> c.proposedAmount)) > customerLimit.limit)
-                  //  {
-                  //      throw new Exception("Total amount excides customer Limit");
-                  //  }
-
-
 
                 }
+
+                //if (entity.customerId.HasValue)
+                //{
+                //    if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
+                //    {
+                //        throw new Exception("Customer '" + entity.customerName + "' has been CAMSOL");
+                //    }
+
+                //    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateWatchList(entity.customerId.Value) > 0)
+                //    {
+                //        throw new Exception("Customer '" + entity.customerName + "' has been Watchlisted");
+                //    }
+
+                //    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateBlackList(entity.customerCode) > 0)
+                //    {
+                //        throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
+                //    }
+
+
+                //  //var customerLimit =  creditLimitValidationsRepository.ValidateNPLByCustomer((int)entity.customerId.Value);
+                //  //  if( (customerLimit.outstandingBalance + (double)entity.LoanApplicationDetail.Sum(c=> c.proposedAmount)) > customerLimit.limit)
+                //  //  {
+                //  //      throw new Exception("Total amount excides customer Limit");
+                //  //  }
+
+
+
+                //}
 
                 //var model =  creditLimitValidationsRepository.ValidateAmountByBranch1(entity.branchId).Difference;
 

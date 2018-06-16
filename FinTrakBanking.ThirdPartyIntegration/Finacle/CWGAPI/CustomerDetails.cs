@@ -138,9 +138,9 @@
 
                     return accountOutput;
                 }
-                catch (Exception ce)
+                catch (Exception ex)
                 {
-                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                    throw new APIErrorException("API Call: System could not establish connection to remote server. Contact Administrator" );
                 }
             }
 
@@ -195,9 +195,9 @@
 
                     return casa;
                 }
-                catch (Exception ce)
+                catch (Exception ex)
                 {
-                    throw new APIErrorException("Could not establish connection to finacle");
+                    throw new APIErrorException("Core Banking API Error - " +ex.Message);
                 }
             }
 
@@ -231,9 +231,9 @@
                     client.Dispose();
                     return result;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                    throw new APIErrorException("Core Banking API Error - " + ex.Message);
                 }
             }
 

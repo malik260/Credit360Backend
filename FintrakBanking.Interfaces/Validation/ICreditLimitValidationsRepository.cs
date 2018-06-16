@@ -14,7 +14,9 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
 
         int ValidateWatchList(int customerId);
 
-        int ValidateCamsol(int customerId);
+        //int ValidateCamsol(int customerId);
+
+        //IEnumerable<CustomerEligibilityViewModel> ValidateCamsol(string customerCode);
 
         IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode);
 
@@ -33,5 +35,7 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         IEnumerable<ObligorLimitViewModel> GetAllObligorLimit();
         bool ValidateRiskRating(string riskRating);
         bool AddUpdateRiskRating(ObligorLimitViewModel entity);
+        CreditLimitValidationsModel ValidateCreditLimitByRMBM(short relationshipofficerId);
+        bool UpdateCustomerRating(ObligorLimitViewModel entity);
     }
 }

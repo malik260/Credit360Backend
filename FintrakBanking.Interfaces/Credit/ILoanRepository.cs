@@ -45,9 +45,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
 
-        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId);
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int companyId, int applicationDetailId);
 
