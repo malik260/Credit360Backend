@@ -21,6 +21,7 @@
                 
                 <datasources>
                           <rsweb:ReportDataSource DataSourceId="ObjectDataSourceAudit" Name="Audit" />
+                      <rsweb:ReportDataSource DataSourceId="odsLogo" Name="logo" />
                       </datasources>
             </LocalReport>
         </rsweb:ReportViewer>
@@ -30,9 +31,13 @@
                 <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="username" Name="username" PropertyName="Text" Type="String" />
-          
             </SelectParameters>
         </asp:ObjectDataSource>
+            <asp:ObjectDataSource ID="odsLogo" runat="server" SelectMethod="GetCompanyLogoArray" TypeName="FintrakBanking.ReportObjects.ReportingObjects.CompanyLogo">
+                <SelectParameters>
+                    <asp:Parameter DefaultValue="1" Name="companyId" Type="Int32" />
+                </SelectParameters>
+             </asp:ObjectDataSource>
         </div>
 
          <asp:Label ID="endDate" runat="server" Visible="false" ></asp:Label>

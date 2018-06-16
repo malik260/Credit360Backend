@@ -397,6 +397,7 @@
     <Compile Include="Controllers\KYCDocumentUploadController.cs" />
     <Compile Include="Controllers\LimitAndMonitoringController.cs" />
     <Compile Include="Controllers\LoanApplicationController.cs" />
+    <Compile Include="Controllers\LoanCamSolController.cs" />
     <Compile Include="Controllers\LoanController.cs" />
     <Compile Include="Controllers\LoanCovenantController.cs" />
     <Compile Include="Controllers\LoanDocumentController.cs" />
