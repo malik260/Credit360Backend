@@ -4866,13 +4866,13 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.CUSTOMERCODE)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_LOAN_CAMSOL>()
-                .Property(e => e.AMOUNTAFFECTED)
-                .HasPrecision(38, 2);
+            //modelBuilder.Entity<TBL_LOAN_CAMSOL>()
+            //    .Property(e => e.AMOUNTAFFECTED)
+            //    .HasPrecision(38, 2);
 
-            modelBuilder.Entity<TBL_LOAN_CAMSOL>()
-                .Property(e => e.TYPE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_LOAN_CAMSOL>()
+            //    .Property(e => e.TYPE)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<TBL_LOAN_COMMENT>()
                 .Property(e => e.COMMENTTYPE)

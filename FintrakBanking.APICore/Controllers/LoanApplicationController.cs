@@ -421,16 +421,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                if(entity.relationshipOfficerId != 0 )
-                {
-                    var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)entity.relationshipOfficerId).limit;
-                    var loanAmt = entity.LoanApplicationDetail.Sum(x => x.proposedTenor);
-                    if (loanAmt > limit)
-                    {
-                        throw new Exception("RM Limit Exceeded.");
-                    }
-
-                }
 
                 //if (entity.customerId.HasValue)
                 //{
@@ -479,11 +469,9 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
                 }
-
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception e)
-
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error Occured =>  {e.Message}" });
             }

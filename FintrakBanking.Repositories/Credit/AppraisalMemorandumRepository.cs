@@ -401,8 +401,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
+                var lastStatus = workflow.StatusId;
                 PassApplicationToOperation(appl.LOANAPPLICATIONID, (int)OperationsEnum.OfferLetterApproval, model.createdBy, "New pproved application");
-                return workflow.StatusId;
+                return lastStatus;
             }
 
             return (int)ApprovalStatusEnum.Processing; // default for now

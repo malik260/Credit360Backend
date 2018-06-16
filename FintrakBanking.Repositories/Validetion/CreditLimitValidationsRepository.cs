@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                           where a.CUSTOMERCODE == customerCode && a.CANTAKELOAN == false
                           select new CustomerEligibilityViewModel()
                              {
-                                camsolType = b.CAMSOLTYPENAME
+                                camsolType = b.CAMSOLTYPENAME.ToUpper()
                              }).ToList();
             return customerEligibility;
         }
@@ -430,9 +430,11 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             var oDTotal = sumODApprovedAmount - sumOverDraftLimit;
 
+            var customer = context.TBL_CUSTOMER.Find(customerId);
             model.outstandingBalance = (double)(loanTotal + oDTotal);
             model.limit = data.FirstOrDefault();
             model.difference = model.limit - model.outstandingBalance;
+            // model.riskRatingId = customer == null ? 0 : (short?)customer.RISKRATINGID;
 
             return model;
         }
