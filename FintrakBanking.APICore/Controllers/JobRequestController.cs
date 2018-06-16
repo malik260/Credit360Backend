@@ -417,6 +417,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
 
                 var data = repo.ReplyJobRequest(entity, jobRequestId);
                 if (data)
@@ -434,7 +435,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record." });
             }
@@ -600,7 +601,6 @@ namespace FintrakBanking.APICore.Controllers
                 requestModel.isReassigned = provider.FormData["isReassigned"].ToLower() != "undefined" ? Convert.ToBoolean(provider.FormData["isReassigned"]) : false;
                 requestModel.isAcknowledged = provider.FormData["isAcknowledged"] != "undefined" ?Convert.ToBoolean(provider.FormData["isAcknowledged"]) : false;
 
-
                 if (!(receiverStaffId == null || receiverStaffId == string.Empty || receiverStaffId == ""))
                     requestModel.receiverStaffId = Convert.ToInt32(receiverStaffId);
 
@@ -664,19 +664,16 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
                 }
 
-                var entity = new RequestDocumentViewModel
-                {
-                    //targetId = Convert.ToInt32(provider.FormData["targetId"]),
-                    //targetReferenceNumber = provider.FormData["targetReferenceNumber"],
-                    jobRequestCode = provider.FormData["jobRequestCode"],
-                    documentTitle = provider.FormData["documentTitle"],
-                    documentTypeId = (short)uploadType,
-                    fileName = provider.FormData["fileName"],
-                    fileExtension = provider.FormData["fileExtension"],
-                    physicalFileNumber = provider.FormData["physicalFileNumber"],
-                    physicalLocation = provider.FormData["physicalLocation"],
-                    comment = provider.FormData["comment"],
-                };
+                var entity = new RequestDocumentViewModel();
+                entity.jobRequestCode = provider.FormData["jobRequestCode"];
+                entity.documentTitle = provider.FormData["documentTitle"];
+                entity.documentTypeId = (short)uploadType;
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+                entity.physicalFileNumber = provider.FormData["physicalFileNumber"];
+                entity.physicalLocation = provider.FormData["physicalLocation"];
+                entity.comment = provider.FormData["responseComment"];
+
 
                 if (!provider.FileStreams.Any())
                 {
