@@ -12,15 +12,19 @@ namespace FintrakBanking.Entities.Models
 
         [Key]
         public int LOAN_CAMSOLID { get; set; }
+
         [Required]
         public int COMPANYID { get; set; }
+
         [Required]
         [StringLength(50)]
         public string CUSTOMERCODE { get; set; }
         public int? LOANID { get; set; }
         public decimal BALANCE { get; set; }
+
         [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
+
         public int LOANSYSTEMTYPEID { get; set; }
         public string CUSTOMERNAME { get; set; }
         public decimal PRINCIPAL { get; set; }
@@ -34,11 +38,11 @@ namespace FintrakBanking.Entities.Models
         public int? LASTUPDATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
         public DateTime? DATETIMEUPDATED { get; set; }
-        public DateTime DELETED { get; set; }
+        public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
-        public decimal AMOUNTAFFECTED { get; set; }
-        public string TYPE { get; set; }
+       // public decimal AMOUNTAFFECTED { get; set; }
+       // public string TYPE { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
     }

@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,12 +56,28 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-camsol-type/{id}")]
+        [Route("loan-camsol-type-id/{id}")]
         public HttpResponseMessage GetLoanCamsolById(int id)
         {
             try
             {
                 var data = repo.GetCamSolByType(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-camsol-customer-code/{customercode}")]
+        public HttpResponseMessage GetLoanCamsolByCustomerCode(string  customercode)
+        {
+            try
+            {
+                var data = repo.GetCamSolByCustomerCode(customercode);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
@@ -100,6 +117,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("approve-loan-camsol")]
+        public HttpResponseMessage ApproveCamsol([FromBody] LoanCAMSOLViewModel updateOptions)
+        {
+            try
+            {
+                var data = repo.ApproveCamsol(updateOptions);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
     }
 }
