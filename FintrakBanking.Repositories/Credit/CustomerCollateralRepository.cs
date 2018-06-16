@@ -3716,7 +3716,40 @@ namespace FintrakBanking.Repositories.Credit
 
             return collaterals;
         }
+        public IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId)
+        {
+            var collaterals = (from x in context.TBL_COLLATERAL_CUSTOMER
+                               join c in context.TBL_COLLATERAL_TYPE on x.COLLATERALTYPEID equals c.COLLATERALTYPEID
+                               join a in context.TBL_CUSTOMER on x.CUSTOMERID equals a.CUSTOMERID
+                               let ColSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(c => c.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID).Select(c => c.COLLATERALSUBTYPENAME).FirstOrDefault()
+                               where x.COLLATERALCUSTOMERID == collaterId
+                               orderby x.COLLATERALCUSTOMERID descending
+                               select new CollateralViewModel
+                               {
+                                   collateralId = x.COLLATERALCUSTOMERID,
+                                   collateralTypeId = x.COLLATERALTYPEID,
+                                   collateralSubTypeId = x.COLLATERALSUBTYPEID,
+                                   customerId = x.CUSTOMERID,
+                                   currencyId = x.CURRENCYID,
+                                   currency = x.TBL_CURRENCY.CURRENCYNAME,
+                                   collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                   collateralSubTypeName = ColSubType,
+                                   collateralCode = x.COLLATERALCODE,
+                                   collateralValue = x.COLLATERALVALUE,
+                                   camRefNumber = x.CAMREFNUMBER,
+                                   allowSharing = x.ALLOWSHARING,
+                                   isLocationBased = (bool)x.ISLOCATIONBASED,
+                                   valuationCycle = x.VALUATIONCYCLE,
+                                   haircut = x.HAIRCUT,
+                                   requireInsurancePolicy = c.REQUIREINSURANCEPOLICY,
+                                   dateTimeCreated = x.DATETIMECREATED,
+                                   requireVisitation = c.REQUIREVISITATION,
+                                   customerName = a.FIRSTNAME + " " + a.LASTNAME + " " + a.MAIDENNAME
 
+                               }).ToList();
+
+            return collaterals;
+        }
         private int AddTempCollateralMainForm(CollateralViewModel model)
         {
             if (context.TBL_TEMP_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == model.collateralCode && x.APPROVALSTATUSID != 2).Any() == true)
@@ -5017,6 +5050,23 @@ namespace FintrakBanking.Repositories.Credit
         public List<InsurancePolicies> GetTempCollateralInsurancePolicy(int collateralId)
         {
             var insurance = (context.TBL_TEMP_COLLATERAL_ITEM_POLI.Where(x => x.COLLATERALCUSTOMERID == collateralId)
+                .Select(x => new InsurancePolicies
+                {
+
+                    referenceNumber = x.POLICYREFERENCENUMBER,
+                    insuranceCompany = x.INSURANCECOMPANYNAME,
+                    sumInsured = x.SUMINSURED,
+                    startDate = x.STARTDATE,
+                    expiryDate = x.ENDDATE,
+                    insuranceType = x.INSURANCETYPE,
+                })).ToList();
+
+            return insurance;
+
+        }
+        public List<InsurancePolicies> GetCollateralInsurancePolicy(int collateralId)
+        {
+            var insurance = (context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == collateralId)
                 .Select(x => new InsurancePolicies
                 {
 
