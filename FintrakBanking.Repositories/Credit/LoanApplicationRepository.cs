@@ -4,6 +4,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
@@ -27,7 +28,7 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository genSetup;
         private IWorkflow workflow;
         private ICasaRepository casa;
-
+        private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         private ICustomerCollateralRepository collateral;
         private IFinanceTransactionRepository fina;
 
@@ -44,7 +45,8 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext _context,
             IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
-            IFinanceTransactionRepository fina)
+            IFinanceTransactionRepository fina,
+            ICreditLimitValidationsRepository _creditLimitValidationsRepository)
         {
             this.collateral = _collateral;
             this.fina = fina;
@@ -55,6 +57,7 @@ namespace FintrakBanking.Repositories.Credit
             this.collateral = _collateral;
             approvalLevel = _approvallevel;
             workflow = _workflow;
+            this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
         }
 
         // public
@@ -710,13 +713,29 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+
+                if (loan.relationshipOfficerId != 0)
+                {
+                    var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                    var loanAmt = loan.LoanApplicationDetail.Sum(x => x.proposedAmount);
+
+                    if (limit != 0)
+                    {
+                        if (loanAmt > (decimal)limit)
+                        {
+                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}" );
+                        }
+                    }
+                }
+
+
                 this.data = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber).FirstOrDefault();
 
                 if (loan.isNewApplication)
                 {
                     if (this.data == null)
                     {
-                        AddloanApplication(loan);
+                        AddloanApplicationSub(loan);
                     }
 
                     if (loan.LoanApplicationDetail.Count > 0)
@@ -760,7 +779,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private void AddloanApplication(LoanApplicationViewModel loan)
+        private void AddloanApplicationSub(LoanApplicationViewModel loan)
         {
 
 

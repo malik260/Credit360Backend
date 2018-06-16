@@ -142,6 +142,24 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME
                     });
         }
+        public ProductBehaviourViewModel GetProductBehaviour(int productId)
+        {
+            ProductBehaviourViewModel data;
+            data = context.TBL_PRODUCT_BEHAVIOUR.Where(p => p.PRODUCTID == productId).Select(p => new ProductBehaviourViewModel
+            {
+                allowFundaUsage = p.ALLOWFUNDUSAGE,
+                collateralFcyLimit = p.COLLATERAL_FCY_LIMIT ?? 0,
+                customerLimit = p.CUSTOMER_LIMIT,
+                fcyLimit = p.COLLATERAL_FCY_LIMIT,
+                isInvoiceBased = p.ISINVOICEBASED,
+                isTemporaryOverDraft = p.ISTEMPORARYOVERDRAFT,
+                lcyLimit = p.COLLATERAL_LCY_LIMIT,
+                collateralLcyLimit = p.COLLATERAL_LCY_LIMIT,
+                productLimit = p.PRODUCT_LIMIT,
+                requireCasaAccount = p.REQUIRECASAACCOUNT
+            }).FirstOrDefault();
+            return data;
+        }
 
         public IEnumerable<LookupViewModel> GetAllProductBehaviourTypes()
         {
