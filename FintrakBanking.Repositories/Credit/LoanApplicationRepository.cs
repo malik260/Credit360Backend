@@ -711,8 +711,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            try
-            {
+            //try
+            //{
 
                 if (loan.relationshipOfficerId != 0)
                 {
@@ -748,17 +748,19 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     UpdateLoanApplication(loan);
                 }
-                try
-                {
-                    response = context.SaveChanges();
-                }
-                catch (DbEntityValidationException ex)
-                {
 
-                    //string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                    //throw new DbEntityValidationException(errorMessages);
-                    throw new Exception("Something went wrong");
-                }
+                response = context.SaveChanges();
+                //try
+                //{
+                    
+                //}
+                //catch (DbEntityValidationException ex)
+                //{
+
+                //    //string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                //    //throw new DbEntityValidationException(errorMessages);
+                //    throw new Exception();
+                //}
 
                 var returndate = this.GetLoanApplicationByLoanRefrenceNo(this.data.APPLICATIONREFERENCENUMBER, data.COMPANYID);
 
@@ -771,11 +773,11 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 throw new Exception("Something went wrong");
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+           // }
+            //catch (Exception ex)
+            //{
+            //    throw ex;
+            //}
         }
 
 

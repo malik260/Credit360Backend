@@ -704,7 +704,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         int custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, (short)OverrideEnum.TakeFeeAtDisbursement, loanReferenceNumber);
                         if (custFeeOverridable > 0) entity.feeOverride = true;
-                        //else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
+                        else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
                     }
                     // ...........End checking customer balance, and fee override ..........
 
