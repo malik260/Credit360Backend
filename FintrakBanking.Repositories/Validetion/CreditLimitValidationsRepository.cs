@@ -434,7 +434,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             model.outstandingBalance = (double)(loanTotal + oDTotal);
             model.limit = data.FirstOrDefault();
             model.difference = model.limit - model.outstandingBalance;
-            // model.riskRatingId = customer == null ? 0 : (short?)customer.RISKRATINGID;
+            model.riskRatingId = customer == null ? 0 : (short?)customer.RISKRATINGID;
 
             return model;
         }
