@@ -5237,48 +5237,46 @@ namespace FintrakBanking.Repositories.Credit
             return loanDetails;
         }
 
-        private IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int companyId, int staffId)
+        private IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int companyId, int staffId, int targetId, int operationId)
         {
             var loggedsStaff = context.TBL_STAFF.Find(staffId);
             var result = (from a in context.TBL_APPROVAL_TRAIL
-                          join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
-                          join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
-                          join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
-                          join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
+                         // join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                        //  join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                         // join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                         // join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
 
-                          join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
-                          join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
-                          from j in apprStaff.DefaultIfEmpty()
-                          join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
-                          where a.COMPANYID == companyId
+                         // join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
+                          //join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
+                         // from j in apprStaff.DefaultIfEmpty()
+                         // join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
+                          where a.COMPANYID == companyId where a.TARGETID == targetId && a.OPERATIONID == operationId
                           select new WorkflowTrackerViewModel
-
                           {
                               arrivalDate = a.ARRIVALDATE,
                               responseApprovalLevel = a.TOAPPROVALLEVELID.HasValue ? a.TBL_APPROVAL_LEVEL1.LEVELNAME : "N/A",
                               responseDate = a.SYSTEMRESPONSEDATETIME ?? DateTime.Now,
                               systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                               systemResponseDate = a.SYSTEMRESPONSEDATETIME,
-                              //responseStaffName = !a.RESPONSESTAFFID.HasValue ? loggedsStaff.FIRSTNAME + " " + loggedsStaff.LASTNAME : j.FIRSTNAME + " " + j.LASTNAME,
-                              responseStaffName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                              responseStaffName = !a.TOAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL1.LEVELNAME,
                               comment = a.COMMENT,
-                              requestStaffName = i.FIRSTNAME + " " + i.LASTNAME,
+                              requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
                               requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
                               TargetId = a.TARGETID,
-                              operationId = e.OPERATIONID,
-                              operationName = e.OPERATIONNAME,
+                             // operationId = e.OPERATIONID,
+                             // operationName = e.OPERATIONNAME,
                               //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
-                              approvalStatus = k.APPROVALSTATUSNAME
-                          });
+                              approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME
+                          }).Distinct();
 
 
-            //var response = result.ToList();
+            var response = result.ToList();
             return result;
         }
 
         public async Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId)
         {
-            var result = await GetApprovalTrail(companyId, staffId).Where(c => c.TargetId == targetId && c.operationId == operationId).OrderByDescending(c => c.systemArrivalDate).ToListAsync();
+            var result = await GetApprovalTrail(companyId, staffId, targetId, operationId).ToListAsync();
             return result.Distinct();
         }
 

@@ -674,7 +674,6 @@ namespace FintrakBanking.APICore.Controllers
                 entity.physicalLocation = provider.FormData["physicalLocation"];
                 entity.comment = provider.FormData["responseComment"];
 
-
                 if (!provider.FileStreams.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
