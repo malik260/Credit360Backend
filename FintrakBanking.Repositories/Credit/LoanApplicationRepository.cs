@@ -731,23 +731,33 @@ namespace FintrakBanking.Repositories.Credit
 
                 this.data = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber).FirstOrDefault();
 
-                if (loan.isNewApplication)
+            if (loan.isNewApplication)
+            {
+                if (this.data == null)
                 {
-                    if (this.data == null)
-                    {
-                        AddloanApplicationSub(loan);
-                    }
-
-                    if (loan.LoanApplicationDetail.Count > 0)
-                    {
-                        AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
-                    }
-
+                    AddloanApplicationSub(loan);
                 }
-                else
+
+                if (loan.LoanApplicationDetail.Count > 0)
                 {
-                    UpdateLoanApplication(loan);
+                    AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
                 }
+
+            }
+            else
+            {
+                var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+                var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
+                if (total != 0)
+                {
+                    if (total > (decimal)limit)
+                    {
+                        throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
+                    }
+                }
+                UpdateLoanApplication(loan);
+            }
 
                 response = context.SaveChanges();
                 //try
