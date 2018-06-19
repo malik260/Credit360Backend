@@ -749,13 +749,18 @@ namespace FintrakBanking.Repositories.Credit
                 var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
                 var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
                 var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
-                if (total != 0)
+
+                if (limit != 0)
                 {
-                    if (total > (decimal)limit)
+                    if (total != 0)
                     {
-                        throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
+                        if (total > (decimal)limit)
+                        {
+                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
+                        }
                     }
                 }
+
                 UpdateLoanApplication(loan);
             }
 
@@ -837,8 +842,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCT_CLASS_PROCESSID = productClassProcessId,
                 COMPANYID = loan.companyId,
                 BRANCHID = (short)loan.branchId,
-                RELATIONSHIPOFFICERID = loan.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = loan.relationshipManagerId,
+                RELATIONSHIPOFFICERID = loan.createdBy,
+                RELATIONSHIPMANAGERID = loan.createdBy,
                 MISCODE = loan.misCode,
                 TEAMMISCODE = loan.teamMisCode,
                 INTERESTRATE = loan.interestRate,
