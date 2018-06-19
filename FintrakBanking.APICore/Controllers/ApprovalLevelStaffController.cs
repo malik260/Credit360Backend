@@ -186,6 +186,48 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("work-flow-tracker/approval-status")]
+        public HttpResponseMessage GetAllApprovalStatus()
+        {
+            try
+            {
+                var data = repo.GetAllApprovalStatus();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data  });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("work-flow-tracker/approval-operation")]
+        public HttpResponseMessage GetAllApprovalOperations()
+        {
+            try
+            {
+                var data = repo.GetAllApprovalOperations();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
         #endregion Workflow Tracker
     }
 }

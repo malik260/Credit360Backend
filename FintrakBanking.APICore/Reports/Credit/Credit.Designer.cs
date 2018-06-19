@@ -66,6 +66,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         private OfferLetterBorrowerDetailDataTable tableOfferLetterBorrowerDetail;
         
+        private SLATrackerDataTable tableSLATracker;
+        
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -156,6 +158,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 }
                 if ((ds.Tables["OfferLetterBorrowerDetail"] != null)) {
                     base.Tables.Add(new OfferLetterBorrowerDetailDataTable(ds.Tables["OfferLetterBorrowerDetail"]));
+                }
+                if ((ds.Tables["SLATracker"] != null)) {
+                    base.Tables.Add(new SLATrackerDataTable(ds.Tables["SLATracker"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -387,6 +392,16 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public SLATrackerDataTable SLATracker {
+            get {
+                return this.tableSLATracker;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.BrowsableAttribute(true)]
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Visible)]
         public override global::System.Data.SchemaSerializationMode SchemaSerializationMode {
@@ -514,6 +529,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 }
                 if ((ds.Tables["OfferLetterBorrowerDetail"] != null)) {
                     base.Tables.Add(new OfferLetterBorrowerDetailDataTable(ds.Tables["OfferLetterBorrowerDetail"]));
+                }
+                if ((ds.Tables["SLATracker"] != null)) {
+                    base.Tables.Add(new SLATrackerDataTable(ds.Tables["SLATracker"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -674,6 +692,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
                     this.tableOfferLetterBorrowerDetail.InitVars();
                 }
             }
+            this.tableSLATracker = ((SLATrackerDataTable)(base.Tables["SLATracker"]));
+            if ((initTable == true)) {
+                if ((this.tableSLATracker != null)) {
+                    this.tableSLATracker.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -726,6 +750,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             base.Tables.Add(this.tableOfferLetterCollateral);
             this.tableOfferLetterBorrowerDetail = new OfferLetterBorrowerDetailDataTable();
             base.Tables.Add(this.tableOfferLetterBorrowerDetail);
+            this.tableSLATracker = new SLATrackerDataTable();
+            base.Tables.Add(this.tableSLATracker);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -856,6 +882,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        private bool ShouldSerializeSLATracker() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         private void SchemaChanged(object sender, global::System.ComponentModel.CollectionChangeEventArgs e) {
             if ((e.Action == global::System.ComponentModel.CollectionChangeAction.Remove)) {
                 this.InitVars();
@@ -971,6 +1003,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         public delegate void OfferLetterBorrowerDetailRowChangeEventHandler(object sender, OfferLetterBorrowerDetailRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        public delegate void SLATrackerRowChangeEventHandler(object sender, SLATrackerRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -9107,6 +9142,524 @@ namespace FintrakBanking.APICore.Reports.Credit {
         }
         
         /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class SLATrackerDataTable : global::System.Data.TypedTableBase<SLATrackerRow> {
+            
+            private global::System.Data.DataColumn columnarrivalDate;
+            
+            private global::System.Data.DataColumn columnfromApprovalLevelId;
+            
+            private global::System.Data.DataColumn columnoperationId;
+            
+            private global::System.Data.DataColumn columnrequestStaffId;
+            
+            private global::System.Data.DataColumn columnsalDateLine;
+            
+            private global::System.Data.DataColumn columnslaNotificationDate;
+            
+            private global::System.Data.DataColumn columnsalInterval;
+            
+            private global::System.Data.DataColumn columnsystemArrivalDate;
+            
+            private global::System.Data.DataColumn columnsystemResponseDate;
+            
+            private global::System.Data.DataColumn columntargetId;
+            
+            private global::System.Data.DataColumn columntoApprovalLevelId;
+            
+            private global::System.Data.DataColumn columntoStaffId;
+            
+            private global::System.Data.DataColumn columnoperationName;
+            
+            private global::System.Data.DataColumn columnslaNotificationInterval;
+            
+            private global::System.Data.DataColumn columnrequestTo;
+            
+            private global::System.Data.DataColumn columnrequestFrom;
+            
+            private global::System.Data.DataColumn columnemailFrom;
+            
+            private global::System.Data.DataColumn columncomment;
+            
+            private global::System.Data.DataColumn columnapprovalStatus;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public SLATrackerDataTable() {
+                this.TableName = "SLATracker";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal SLATrackerDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected SLATrackerDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn arrivalDateColumn {
+                get {
+                    return this.columnarrivalDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn fromApprovalLevelIdColumn {
+                get {
+                    return this.columnfromApprovalLevelId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn operationIdColumn {
+                get {
+                    return this.columnoperationId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn requestStaffIdColumn {
+                get {
+                    return this.columnrequestStaffId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn salDateLineColumn {
+                get {
+                    return this.columnsalDateLine;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn slaNotificationDateColumn {
+                get {
+                    return this.columnslaNotificationDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn salIntervalColumn {
+                get {
+                    return this.columnsalInterval;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn systemArrivalDateColumn {
+                get {
+                    return this.columnsystemArrivalDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn systemResponseDateColumn {
+                get {
+                    return this.columnsystemResponseDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn targetIdColumn {
+                get {
+                    return this.columntargetId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn toApprovalLevelIdColumn {
+                get {
+                    return this.columntoApprovalLevelId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn toStaffIdColumn {
+                get {
+                    return this.columntoStaffId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn operationNameColumn {
+                get {
+                    return this.columnoperationName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn slaNotificationIntervalColumn {
+                get {
+                    return this.columnslaNotificationInterval;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn requestToColumn {
+                get {
+                    return this.columnrequestTo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn requestFromColumn {
+                get {
+                    return this.columnrequestFrom;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn emailFromColumn {
+                get {
+                    return this.columnemailFrom;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn commentColumn {
+                get {
+                    return this.columncomment;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn approvalStatusColumn {
+                get {
+                    return this.columnapprovalStatus;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public SLATrackerRow this[int index] {
+                get {
+                    return ((SLATrackerRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event SLATrackerRowChangeEventHandler SLATrackerRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event SLATrackerRowChangeEventHandler SLATrackerRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event SLATrackerRowChangeEventHandler SLATrackerRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event SLATrackerRowChangeEventHandler SLATrackerRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void AddSLATrackerRow(SLATrackerRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public SLATrackerRow AddSLATrackerRow(
+                        string arrivalDate, 
+                        string fromApprovalLevelId, 
+                        string operationId, 
+                        string requestStaffId, 
+                        string salDateLine, 
+                        string slaNotificationDate, 
+                        string salInterval, 
+                        string systemArrivalDate, 
+                        string systemResponseDate, 
+                        string targetId, 
+                        string toApprovalLevelId, 
+                        string toStaffId, 
+                        string operationName, 
+                        string slaNotificationInterval, 
+                        string requestTo, 
+                        string requestFrom, 
+                        string emailFrom, 
+                        string comment, 
+                        string approvalStatus) {
+                SLATrackerRow rowSLATrackerRow = ((SLATrackerRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        arrivalDate,
+                        fromApprovalLevelId,
+                        operationId,
+                        requestStaffId,
+                        salDateLine,
+                        slaNotificationDate,
+                        salInterval,
+                        systemArrivalDate,
+                        systemResponseDate,
+                        targetId,
+                        toApprovalLevelId,
+                        toStaffId,
+                        operationName,
+                        slaNotificationInterval,
+                        requestTo,
+                        requestFrom,
+                        emailFrom,
+                        comment,
+                        approvalStatus};
+                rowSLATrackerRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowSLATrackerRow);
+                return rowSLATrackerRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                SLATrackerDataTable cln = ((SLATrackerDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new SLATrackerDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal void InitVars() {
+                this.columnarrivalDate = base.Columns["arrivalDate"];
+                this.columnfromApprovalLevelId = base.Columns["fromApprovalLevelId"];
+                this.columnoperationId = base.Columns["operationId"];
+                this.columnrequestStaffId = base.Columns["requestStaffId"];
+                this.columnsalDateLine = base.Columns["salDateLine"];
+                this.columnslaNotificationDate = base.Columns["slaNotificationDate"];
+                this.columnsalInterval = base.Columns["salInterval"];
+                this.columnsystemArrivalDate = base.Columns["systemArrivalDate"];
+                this.columnsystemResponseDate = base.Columns["systemResponseDate"];
+                this.columntargetId = base.Columns["targetId"];
+                this.columntoApprovalLevelId = base.Columns["toApprovalLevelId"];
+                this.columntoStaffId = base.Columns["toStaffId"];
+                this.columnoperationName = base.Columns["operationName"];
+                this.columnslaNotificationInterval = base.Columns["slaNotificationInterval"];
+                this.columnrequestTo = base.Columns["requestTo"];
+                this.columnrequestFrom = base.Columns["requestFrom"];
+                this.columnemailFrom = base.Columns["emailFrom"];
+                this.columncomment = base.Columns["comment"];
+                this.columnapprovalStatus = base.Columns["approvalStatus"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            private void InitClass() {
+                this.columnarrivalDate = new global::System.Data.DataColumn("arrivalDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnarrivalDate);
+                this.columnfromApprovalLevelId = new global::System.Data.DataColumn("fromApprovalLevelId", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfromApprovalLevelId);
+                this.columnoperationId = new global::System.Data.DataColumn("operationId", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnoperationId);
+                this.columnrequestStaffId = new global::System.Data.DataColumn("requestStaffId", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrequestStaffId);
+                this.columnsalDateLine = new global::System.Data.DataColumn("salDateLine", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsalDateLine);
+                this.columnslaNotificationDate = new global::System.Data.DataColumn("slaNotificationDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnslaNotificationDate);
+                this.columnsalInterval = new global::System.Data.DataColumn("salInterval", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsalInterval);
+                this.columnsystemArrivalDate = new global::System.Data.DataColumn("systemArrivalDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsystemArrivalDate);
+                this.columnsystemResponseDate = new global::System.Data.DataColumn("systemResponseDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsystemResponseDate);
+                this.columntargetId = new global::System.Data.DataColumn("targetId", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntargetId);
+                this.columntoApprovalLevelId = new global::System.Data.DataColumn("toApprovalLevelId", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntoApprovalLevelId);
+                this.columntoStaffId = new global::System.Data.DataColumn("toStaffId", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntoStaffId);
+                this.columnoperationName = new global::System.Data.DataColumn("operationName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnoperationName);
+                this.columnslaNotificationInterval = new global::System.Data.DataColumn("slaNotificationInterval", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnslaNotificationInterval);
+                this.columnrequestTo = new global::System.Data.DataColumn("requestTo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrequestTo);
+                this.columnrequestFrom = new global::System.Data.DataColumn("requestFrom", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrequestFrom);
+                this.columnemailFrom = new global::System.Data.DataColumn("emailFrom", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnemailFrom);
+                this.columncomment = new global::System.Data.DataColumn("comment", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncomment);
+                this.columnapprovalStatus = new global::System.Data.DataColumn("approvalStatus", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapprovalStatus);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public SLATrackerRow NewSLATrackerRow() {
+                return ((SLATrackerRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new SLATrackerRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(SLATrackerRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.SLATrackerRowChanged != null)) {
+                    this.SLATrackerRowChanged(this, new SLATrackerRowChangeEvent(((SLATrackerRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.SLATrackerRowChanging != null)) {
+                    this.SLATrackerRowChanging(this, new SLATrackerRowChangeEvent(((SLATrackerRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.SLATrackerRowDeleted != null)) {
+                    this.SLATrackerRowDeleted(this, new SLATrackerRowChangeEvent(((SLATrackerRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.SLATrackerRowDeleting != null)) {
+                    this.SLATrackerRowDeleting(this, new SLATrackerRowChangeEvent(((SLATrackerRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void RemoveSLATrackerRow(SLATrackerRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                Credit ds = new Credit();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "SLATrackerDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
         public partial class BranchRow : global::System.Data.DataRow {
@@ -15524,6 +16077,553 @@ namespace FintrakBanking.APICore.Reports.Credit {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class SLATrackerRow : global::System.Data.DataRow {
+            
+            private SLATrackerDataTable tableSLATracker;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal SLATrackerRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableSLATracker = ((SLATrackerDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string arrivalDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.arrivalDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'arrivalDate\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.arrivalDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string fromApprovalLevelId {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.fromApprovalLevelIdColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'fromApprovalLevelId\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.fromApprovalLevelIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string operationId {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.operationIdColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'operationId\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.operationIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string requestStaffId {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.requestStaffIdColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'requestStaffId\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.requestStaffIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string salDateLine {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.salDateLineColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'salDateLine\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.salDateLineColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string slaNotificationDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.slaNotificationDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'slaNotificationDate\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.slaNotificationDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string salInterval {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.salIntervalColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'salInterval\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.salIntervalColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string systemArrivalDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.systemArrivalDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'systemArrivalDate\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.systemArrivalDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string systemResponseDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.systemResponseDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'systemResponseDate\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.systemResponseDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string targetId {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.targetIdColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'targetId\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.targetIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string toApprovalLevelId {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.toApprovalLevelIdColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'toApprovalLevelId\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.toApprovalLevelIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string toStaffId {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.toStaffIdColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'toStaffId\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.toStaffIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string operationName {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.operationNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'operationName\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.operationNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string slaNotificationInterval {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.slaNotificationIntervalColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'slaNotificationInterval\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.slaNotificationIntervalColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string requestTo {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.requestToColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'requestTo\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.requestToColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string requestFrom {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.requestFromColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'requestFrom\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.requestFromColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string emailFrom {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.emailFromColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'emailFrom\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.emailFromColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string comment {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.commentColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'comment\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.commentColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string approvalStatus {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.approvalStatusColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvalStatus\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.approvalStatusColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsarrivalDateNull() {
+                return this.IsNull(this.tableSLATracker.arrivalDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetarrivalDateNull() {
+                this[this.tableSLATracker.arrivalDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsfromApprovalLevelIdNull() {
+                return this.IsNull(this.tableSLATracker.fromApprovalLevelIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetfromApprovalLevelIdNull() {
+                this[this.tableSLATracker.fromApprovalLevelIdColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsoperationIdNull() {
+                return this.IsNull(this.tableSLATracker.operationIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetoperationIdNull() {
+                this[this.tableSLATracker.operationIdColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsrequestStaffIdNull() {
+                return this.IsNull(this.tableSLATracker.requestStaffIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetrequestStaffIdNull() {
+                this[this.tableSLATracker.requestStaffIdColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IssalDateLineNull() {
+                return this.IsNull(this.tableSLATracker.salDateLineColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetsalDateLineNull() {
+                this[this.tableSLATracker.salDateLineColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsslaNotificationDateNull() {
+                return this.IsNull(this.tableSLATracker.slaNotificationDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetslaNotificationDateNull() {
+                this[this.tableSLATracker.slaNotificationDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IssalIntervalNull() {
+                return this.IsNull(this.tableSLATracker.salIntervalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetsalIntervalNull() {
+                this[this.tableSLATracker.salIntervalColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IssystemArrivalDateNull() {
+                return this.IsNull(this.tableSLATracker.systemArrivalDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetsystemArrivalDateNull() {
+                this[this.tableSLATracker.systemArrivalDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IssystemResponseDateNull() {
+                return this.IsNull(this.tableSLATracker.systemResponseDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetsystemResponseDateNull() {
+                this[this.tableSLATracker.systemResponseDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IstargetIdNull() {
+                return this.IsNull(this.tableSLATracker.targetIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SettargetIdNull() {
+                this[this.tableSLATracker.targetIdColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IstoApprovalLevelIdNull() {
+                return this.IsNull(this.tableSLATracker.toApprovalLevelIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SettoApprovalLevelIdNull() {
+                this[this.tableSLATracker.toApprovalLevelIdColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IstoStaffIdNull() {
+                return this.IsNull(this.tableSLATracker.toStaffIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SettoStaffIdNull() {
+                this[this.tableSLATracker.toStaffIdColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsoperationNameNull() {
+                return this.IsNull(this.tableSLATracker.operationNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetoperationNameNull() {
+                this[this.tableSLATracker.operationNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsslaNotificationIntervalNull() {
+                return this.IsNull(this.tableSLATracker.slaNotificationIntervalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetslaNotificationIntervalNull() {
+                this[this.tableSLATracker.slaNotificationIntervalColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsrequestToNull() {
+                return this.IsNull(this.tableSLATracker.requestToColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetrequestToNull() {
+                this[this.tableSLATracker.requestToColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsrequestFromNull() {
+                return this.IsNull(this.tableSLATracker.requestFromColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetrequestFromNull() {
+                this[this.tableSLATracker.requestFromColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsemailFromNull() {
+                return this.IsNull(this.tableSLATracker.emailFromColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetemailFromNull() {
+                this[this.tableSLATracker.emailFromColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IscommentNull() {
+                return this.IsNull(this.tableSLATracker.commentColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetcommentNull() {
+                this[this.tableSLATracker.commentColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsapprovalStatusNull() {
+                return this.IsNull(this.tableSLATracker.approvalStatusColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetapprovalStatusNull() {
+                this[this.tableSLATracker.approvalStatusColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
@@ -16223,6 +17323,40 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public OfferLetterBorrowerDetailRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        public class SLATrackerRowChangeEvent : global::System.EventArgs {
+            
+            private SLATrackerRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public SLATrackerRowChangeEvent(SLATrackerRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public SLATrackerRow Row {
                 get {
                     return this.eventRow;
                 }
