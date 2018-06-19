@@ -29,6 +29,8 @@
                 <asp:ControlParameter ControlID="companyId" DefaultValue="" Name="companyId" PropertyName="Text" Type="Int32" />
                 <asp:ControlParameter ControlID="targetId" DefaultValue="" Name="targetId" PropertyName="Text" Type="Int32" />
           
+                <asp:ControlParameter ControlID="staffId" Name="staffId" PropertyName="Text" Type="Int32" />
+          
             </SelectParameters>
         </asp:ObjectDataSource>
     

@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.AlertMonitoring;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Reports;
 using System;
@@ -553,7 +554,207 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return collaterals;
         }
 
+
+        public IEnumerable<SLANotificationViewModel> SLAMonitoring(DateTime startDate, DateTime endDate, int approvalStatus,int operationId)
+        {
+            var list = new List<SLANotificationViewModel>();
+            var notificationList = from a in context.TBL_APPROVAL_TRAIL
+                                   join b in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals b.APPROVALLEVELID
+                                   join s in context.TBL_STAFF on a.TOSTAFFID equals s.STAFFID
+                                   join o in context.TBL_OPERATIONS on a.OPERATIONID equals o.OPERATIONID
+                                   where a.SYSTEMARRIVALDATETIME >= startDate && a.SYSTEMARRIVALDATETIME <= endDate && ( a.APPROVALSTATUSID == approvalStatus || approvalStatus == 0)
+                                   && (a.OPERATIONID == operationId || operationId ==0)
+                                   
+                                   //&& a.RESPONSESTAFFID == null
+                                   //&& a.TOSTAFFID != null
+                                   //&& b.SLAINTERVAL > 0
+
+                                   select new SLANotificationViewModel
+                                   {
+                                       approvalTrailId = a.APPROVALTRAILID,
+                                       arrivalDate = a.ARRIVALDATE,
+                                       fromApprovalLevelId = a.FROMAPPROVALLEVELID,
+                                       operationId = a.OPERATIONID,
+                                       requestStaffId = a.REQUESTSTAFFID,
+                                       salInterval = b.SLAINTERVAL,
+                                       systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                                       systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                                       targetId = a.TARGETID,
+                                       toApprovalLevelId = a.TOAPPROVALLEVELID,
+                                       toStaffId = a.TOSTAFFID,
+                                       staffEmail = s.EMAIL,
+                                       operationName = o.OPERATIONNAME,
+                                       slaNotificationInterval = b.SLANOTIFICATIONINTERVAL,
+                                       approvalStatusId = a.APPROVALSTATUSID
+                                   };
+
+
+            var data = new SLANotificationViewModel();
+
+            foreach (var x in notificationList)
+            {
+                    data = new SLANotificationViewModel
+                    {
+                        approvalTrailId = x.approvalTrailId,
+                        arrivalDate = x.arrivalDate,
+                        fromApprovalLevelId = x.fromApprovalLevelId,
+                        operationId = x.operationId,
+                        requestStaffId = x.requestStaffId,
+                        salDateLine = x.systemArrivalDate.AddHours(x.salInterval),
+                        slaNotificationDate = x.systemArrivalDate.AddHours(x.slaNotificationInterval),
+                        salInterval = x.salInterval,
+                        systemArrivalDate = x.systemArrivalDate,
+                        systemResponseDate = x.systemResponseDate,
+                        targetId = x.targetId,
+                        toApprovalLevelId = x.toApprovalLevelId,
+                        toStaffId = x.toStaffId,
+                        staffEmail = x.staffEmail,
+                        operationName = x.operationName,
+                        slaNotificationInterval = x.slaNotificationInterval,
+                        requestFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+                        emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.EMAIL).FirstOrDefault(),
+                        requestTo = context.TBL_STAFF.Where(s => s.STAFFID == x.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+                        approvalStatus = context.TBL_APPROVAL_STATUS.Where(p=>p.APPROVALSTATUSID==x.approvalStatusId).Select(p=>p.APPROVALSTATUSNAME).FirstOrDefault()
+                    };
+                    list.Add(data);
+            }
+            return list.ToList();
+        }
+
+        //public IEnumerable<SLANotificationViewModel> StaffSetupBasedApprovalNotification(DateTime startDate, DateTime endDate)
+        //{
+        //    var list = new List<SLANotificationViewModel>();
+
+        //    var notificationList = from a in context.TBL_APPROVAL_TRAIL
+        //                           join b in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals b.APPROVALLEVELID
+        //                           join s in context.TBL_STAFF on a.TOSTAFFID equals s.STAFFID
+        //                           join o in context.TBL_OPERATIONS on a.OPERATIONID equals o.OPERATIONID
+        //                           where a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+        //                           && a.RESPONSESTAFFID == null
+        //                           && a.TOSTAFFID == null
+        //                             && b.SLAINTERVAL > 0
+        //                             && b.STAFFROLEID != null
+        //                           select new SLANotificationViewModel
+        //                           {
+        //                               approvalTrailId = a.APPROVALTRAILID,
+        //                               arrivalDate = a.ARRIVALDATE,
+        //                               fromApprovalLevelId = (int)a.FROMAPPROVALLEVELID,
+        //                               operationId = a.OPERATIONID,
+        //                               requestStaffId = a.REQUESTSTAFFID,
+        //                               salInterval = b.SLAINTERVAL,
+        //                               systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+        //                               systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+        //                               targetId = a.TARGETID,
+        //                               toApprovalLevelId = a.TOAPPROVALLEVELID,
+        //                               toStaffId = a.TOSTAFFID,
+        //                               staffEmail = s.EMAIL,
+        //                               operationName = o.OPERATIONNAME,
+        //                               slaNotificationInterval = b.SLANOTIFICATIONINTERVAL,
+        //                               requestTo = s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME,
+        //                           };
+        //    var data = new SLANotificationViewModel();
+
+        //    foreach (var x in notificationList)
+        //    {
+        //        if (DateTime.Now >= (DateTime)x.systemArrivalDate.AddHours(x.slaNotificationInterval))
+        //        {
+        //            data = new SLANotificationViewModel
+        //            {
+        //                approvalTrailId = x.approvalTrailId,
+        //                arrivalDate = x.arrivalDate,
+        //                fromApprovalLevelId = x.fromApprovalLevelId,
+        //                operationId = x.operationId,
+        //                requestStaffId = x.requestStaffId,
+        //                salDateLine = (DateTime)x.systemArrivalDate.AddHours(x.salInterval),
+        //                slaNotificationDate = (DateTime)x.systemArrivalDate.AddHours(x.slaNotificationInterval),
+        //                salInterval = x.salInterval,
+        //                systemArrivalDate = x.systemArrivalDate,
+        //                systemResponseDate = x.systemResponseDate,
+        //                targetId = x.targetId,
+        //                toApprovalLevelId = x.toApprovalLevelId,
+        //                toStaffId = x.toStaffId,
+        //                staffEmail = x.staffEmail,
+        //                operationName = x.operationName,
+        //                slaNotificationInterval = x.slaNotificationInterval,
+        //                requestFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+        //                emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.EMAIL).FirstOrDefault()
+
+        //            };
+        //            list.Add(data);
+        //        }
+        //    }
+        //    return list.ToList();
+        //}
+
+        //public IEnumerable<SLANotificationViewModel> StaffSpecificBasedApprovalNotification(DateTime startDate, DateTime endDate)
+        //{
+        //    var list = new List<SLANotificationViewModel>();
+
+        //    var notificationList = from a in context.TBL_APPROVAL_TRAIL
+        //                           join b in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals b.APPROVALLEVELID
+        //                           join s in context.TBL_STAFF on a.TOSTAFFID equals s.STAFFID
+        //                           join o in context.TBL_OPERATIONS on a.OPERATIONID equals o.OPERATIONID
+        //                           where a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+        //                           && a.RESPONSESTAFFID == null
+        //                           && a.TOSTAFFID == null
+        //                           && b.STAFFROLEID == null
+        //                           && b.SLAINTERVAL > 0
+        //                           select new SLANotificationViewModel
+        //                           {
+        //                               approvalTrailId = a.APPROVALTRAILID,
+        //                               arrivalDate = a.ARRIVALDATE,
+        //                               fromApprovalLevelId = (int)a.FROMAPPROVALLEVELID,
+        //                               operationId = a.OPERATIONID,
+        //                               requestStaffId = a.REQUESTSTAFFID,
+        //                               salInterval = b.SLAINTERVAL,
+        //                               systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+        //                               systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+        //                               targetId = a.TARGETID,
+        //                               toApprovalLevelId = a.TOAPPROVALLEVELID,
+        //                               toStaffId = a.TOSTAFFID,
+        //                               staffEmail = s.EMAIL,
+        //                               operationName = o.OPERATIONNAME,
+        //                               slaNotificationInterval = b.SLANOTIFICATIONINTERVAL,
+        //                               requestTo = s.FIRSTNAME +" "+s.LASTNAME+" "+s.MIDDLENAME,
+
+        //                           };
+
+        //    var data = new SLANotificationViewModel();
+
+        //    foreach (var x in notificationList)
+        //    {
+        //        if (DateTime.Now >= (DateTime)x.systemArrivalDate.AddHours(x.slaNotificationInterval))
+        //        {
+        //            data = new SLANotificationViewModel
+        //            {
+        //                approvalTrailId = x.approvalTrailId,
+        //                arrivalDate = x.arrivalDate,
+        //                fromApprovalLevelId = x.fromApprovalLevelId,
+        //                operationId = x.operationId,
+        //                requestStaffId = x.requestStaffId,
+        //                salDateLine = (DateTime)x.systemArrivalDate.AddHours(x.salInterval),
+        //                slaNotificationDate = (DateTime)x.systemArrivalDate.AddHours(x.slaNotificationInterval),
+        //                salInterval = x.salInterval,
+        //                systemArrivalDate = x.systemArrivalDate,
+        //                systemResponseDate = x.systemResponseDate,
+        //                targetId = x.targetId,
+        //                toApprovalLevelId = x.toApprovalLevelId,
+        //                toStaffId = x.toStaffId,
+        //                staffEmail = x.staffEmail,
+        //                operationName = x.operationName,
+        //                slaNotificationInterval = x.slaNotificationInterval,
+        //                requestFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+        //                emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.EMAIL).FirstOrDefault()
+        //            };
+        //            list.Add(data);
+        //        }
+        //    }
+        //    return list.ToList();
+        //}
+        //public IEnumerable<SLANotificationViewModel> SLAReport()
+        //{
+        //    return RoleBasedApprovalNotification().Union(StaffSpecificBasedApprovalNotification()).Union(StaffSpecificBasedApprovalNotification());
+        //}
     }
 
-    
 }
