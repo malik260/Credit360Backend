@@ -38,10 +38,15 @@
 
             public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
             {
+                HttpClient client = new HttpClient(handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessageViewModel res = null;
+                string responseMessage = "";
                 try
                 {
                     handler.UseDefaultCredentials = true;
-                    HttpClient client = new HttpClient(handler);
+                  
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -56,9 +61,11 @@
                         new CurrencyExchangeRateIntegrationViewModel();
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
                     //HttpResponseMessage response = await client.GetAsync($"api/ExchangeRate/GetExchangeRateProduct?rateProduct.fromCurrencyCode={fromCurrencyCode}&rateProduct.toCurrencyCode={toCurrencyCode}&rateProduct.rateCode={rateCode}");
-                    HttpResponseMessage response = await client.GetAsync(
+                    response = await client.GetAsync(
                         $"api/ExchangeRate/GetExchangeRateProduct?model.fromCurrencyCode={fromCurrencyCode}&model.toCurrencyCode={toCurrencyCode}&model.rateCode={rateCode}");
+                    responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
                         exchangeRateAPI = await response.Content.ReadAsAsync<CurrencyExchangeRateIntegrationViewModel>();
@@ -77,9 +84,29 @@
 
                     return exchangeRateOutput;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                    // throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                    throw new APIErrorException($"Error" + ex.Message);
+                }
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = $"api/ExchangeRate/GetExchangeRateProduct?model.fromCurrencyCode={fromCurrencyCode}&model.toCurrencyCode={toCurrencyCode}&model.rateCode={rateCode}",
+                        LOGTYPEID = 3,
+                        REFERENCENUMBER = fromCurrencyCode + "--" +   toCurrencyCode + "--" + rateCode,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = fromCurrencyCode + "--" + toCurrencyCode + "--" + rateCode,,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+                    context.TBL_CUSTOM_API_LOGS.Add(logs);
+                    context.SaveChanges();
                 }
             }
            
@@ -194,6 +221,13 @@
 
             public async Task<ResponseMessage> ApiPostCrossCurrencyTransactions(List<TransactionPostingViewModel> model)
             {
+                HttpClient client = new HttpClient(handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessageViewModel responseApi = new ResponseMessageViewModel();
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
                 try
                 {
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -201,7 +235,7 @@
                     var dta = context.TBL_SETUP_GLOBAL.ToList();
 
                     handler.UseDefaultCredentials = true;
-                    HttpClient client = new HttpClient(handler);
+                    
 
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -213,11 +247,12 @@
                     new MediaTypeWithQualityHeaderValue("application/json"));
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                    HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
+                    requestDatetime = DateTime.Now;
+                    response = client.PostAsync("api/Transactions/PostCrossCurrencyTransactions", new StringContent(
                                                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-
-                    ResponseMessageViewModel responseApi = new ResponseMessageViewModel();
-                    ResponseMessage responseMsg = null;
+                    responseDateTime = DateTime.Now;
+                    //ResponseMessageViewModel responseApi = new ResponseMessageViewModel();
+                    //ResponseMessage responseMsg = null;
                     bool result = false;
 
                     if (response.IsSuccessStatusCode)
@@ -250,45 +285,56 @@
                             Message = response
                         };
                     }
+
+                    responseMessage = await response.Content.ReadAsStringAsync();
                     handler.Dispose();
                     client.Dispose();
                     return responseMsg;
                 }
-                catch (Exception)
-                {
-                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                catch (Exception ex)
+                { 
+
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
                 }
-                
-                //if (responseModel.responseCode == "0")
-                //{
-                //  //  AddCustomTransactions(model);
-                //    output = true;
-                //}
-                //else
-                //{
-                //    output = false;
-                //    throw new Exception($"Transaction {responseAPI.webRequestStatus}");
-                //}
-
-                //return output;
-
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = "api/Transactions/PostCrossCurrencyTransactions",
+                        LOGTYPEID = model.FirstOrDefault().operationId,
+                        REFERENCENUMBER = model.FirstOrDefault().referenceNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = objData,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+                    context.TBL_CUSTOM_API_LOGS.Add(logs);
+                    context.SaveChanges();
+                }
 
             }
 
 
             public async Task<ResponseMessage> ApiTransactionPosting(List<TransactionPostingViewModel> model)
             {
+                HttpClient client = new HttpClient(handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
                 try
                 {
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-
                     var dta = context.TBL_SETUP_GLOBAL.ToList();
-
-                    var objData = new JavaScriptSerializer().Serialize(model);
-
                     handler.UseDefaultCredentials = true;
-                    HttpClient client = new HttpClient(handler);
-
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(30);
@@ -299,12 +345,11 @@
                     new MediaTypeWithQualityHeaderValue("application/json"));
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                    HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
-                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                    requestDatetime = DateTime.Now;
+                    response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
+                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;                  
 
-                    TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
-
-                    ResponseMessage responseMsg = null;
+                    responseDateTime = DateTime.Now; 
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -334,20 +379,54 @@
                             Message = response
                         };
                     }
+                    responseMessage = await response.Content.ReadAsStringAsync();
                     handler.Dispose();
                     client.Dispose();
                     return responseMsg;
                 }
                 catch (Exception ex)
                 {
-                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator." );
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
                 }
+
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = "api/Transactions/PostTransactions",
+                        LOGTYPEID = model.FirstOrDefault().operationId,
+                        REFERENCENUMBER = model.FirstOrDefault().referenceNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = objData,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+                    context.TBL_CUSTOM_API_LOGS.Add(logs);
+                    context.SaveChanges();
+                }
+                
+
+
             }
 
 
             public async Task<bool> APIProcessLien(CasaLienViewModel model, string lienType)
             {
                 bool output = false;
+                HttpClient client = new HttpClient(handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                //TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
                 LienProcessViewModel apiModel = new LienProcessViewModel
                 {
                     account = model.productAccountNumber,
@@ -364,7 +443,7 @@
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
+                //HttpClient client = new HttpClient(handler);
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -378,8 +457,10 @@
                 LienProcessViewModel responseModel = new LienProcessViewModel();
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/Lien/ProcessLien", new StringContent(
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync("api/Lien/ProcessLien", new StringContent(
                     new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+                responseDateTime = DateTime.Now;
                 if (response.IsSuccessStatusCode)
                 {
                     responseModel = await response.Content.ReadAsAsync<LienProcessViewModel>();
@@ -391,6 +472,7 @@
                 responseAPI.webRequestStatus = responseModel.webRequestStatus;
                 responseAPI.referenceNumber = responseModel.referenceNumber;
 
+                responseMessage = await response.Content.ReadAsStringAsync();
                 handler.Dispose();
                 client.Dispose();
                 if (responseModel.responseCode == "0")
@@ -401,6 +483,19 @@
                 {
                     output = false;
                 }
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = "api/Lien/ProcessLien",
+                    LOGTYPEID = 2,
+                    REFERENCENUMBER = model.sourceReferenceNumber,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = objData,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+                context.TBL_CUSTOM_API_LOGS.Add(logs);
+                context.SaveChanges();
                 return output;
             }
          

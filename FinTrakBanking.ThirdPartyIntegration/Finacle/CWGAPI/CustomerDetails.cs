@@ -15,6 +15,7 @@
     using FintrakBanking.ViewModels.Finance;
     using FintrakBanking.Common.Enum;
     using FintrakBanking.Common.CustomException;
+    using System.Web.Script.Serialization;
 
     namespace CustomerInfo
     {
@@ -56,6 +57,10 @@
             {
 
                 handler.UseDefaultCredentials = true;
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessageViewModel res = null;
+                string responseMessage = "";
                 HttpClient client = new HttpClient(handler);
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 httpClientInstance = new HttpClient();
@@ -70,10 +75,12 @@
 
                 CustomerIntegrationViewModels customerViewModels = new CustomerIntegrationViewModels();
                 List<CustomerViewModels> customers = new List<CustomerViewModels>();
-                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true; 
-                ServicePointManager.FindServicePoint(client.BaseAddress).ConnectionLeaseTimeout = 60 * 1000;
-                HttpResponseMessage response = await client.GetAsync($"api/Customer/GetCustomerByAccountNumber?accountNumber={customerAccount}");
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
+                requestDatetime = DateTime.Now;
+                //ServicePointManager.FindServicePoint(client.BaseAddress).ConnectionLeaseTimeout = 60 * 1000;
+                response = await client.GetAsync($"api/Customer/GetCustomerByAccountNumber?accountNumber={customerAccount}");
+                responseDateTime = DateTime.Now;
                 if (response.IsSuccessStatusCode)
                 { 
                     customerViewModels = await response.Content.ReadAsAsync<CustomerIntegrationViewModels>();
@@ -90,8 +97,22 @@
                     });
 
                 }
+                responseMessage = await response.Content.ReadAsStringAsync();
                 handler.Dispose();
                 client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = $"api/Customer/GetCustomerByAccountNumber?accountNumber={customerAccount}",
+                    LOGTYPEID = 4,
+                    REFERENCENUMBER = customerAccount,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = customerAccount,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+                context.TBL_CUSTOM_API_LOGS.Add(logs);
+                context.SaveChanges();
 
                 return customers;
 
@@ -99,10 +120,16 @@
             } 
             public async Task<CasaBalanceViewModel> GetCustomerAccountBalance(string customerAccount)
             {
+                HttpClient client = new HttpClient(handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
+                ResponseMessageViewModel res = null;
+                string responseMessage  = "";
                 try
                 {
                     handler.UseDefaultCredentials = true;
-                    HttpClient client = new HttpClient(handler);
+                   
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -115,12 +142,16 @@
                     new MediaTypeWithQualityHeaderValue("application/json"));
 
                     CasaBalanceViewModel accountOutput = new CasaBalanceViewModel();
-                    CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
+                    
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                    HttpResponseMessage response = await client.GetAsync($"api/Customer/GetCustomerAccountBalance?accountNumber={customerAccount}");
+                    requestDatetime = DateTime.Now;
+                    response = await client.GetAsync($"api/Customer/GetCustomerAccountBalance?accountNumber={customerAccount}");
+
+                    responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
                         accountAPI = await response.Content.ReadAsAsync<CasaIntegrationViewModel>();
+                        
 
                         var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountAPI.currencyType).CURRENCYID;
                         var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
@@ -133,6 +164,11 @@
                         accountOutput.currencyId = currencyId;
                         accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
                     }
+
+                    //responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+
+                    responseMessage = await response.Content.ReadAsStringAsync(); //.ReadAsAsync<CasaIntegrationViewModel>();
+
                     handler.Dispose();
                     client.Dispose();
 
@@ -140,16 +176,44 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new APIErrorException(ex.InnerException.Message != null ? "Core Banking API Error - "+ex.InnerException.Message.ToString() : "Core Banking API Error - "+ex.Message.ToString());
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = $"api/Customer/GetCustomerAccountBalance?accountNumber={customerAccount}",
+                        LOGTYPEID = 1,
+                        REFERENCENUMBER = customerAccount,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = customerAccount,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+                    context.TBL_CUSTOM_API_LOGS.Add(logs);
+                    context.SaveChanges();
                 }
             }
 
             public async Task<List<CasaViewModel>> GetCustomerAccountsBalanceByCustomerCode(string customerCode)
             {
+                HttpClient client = new HttpClient(handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessageViewModel res = null;
+                string responseMessage = "";
                 try
+
                 {
                     handler.UseDefaultCredentials = true;
-                    HttpClient client = new HttpClient(handler);
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                     httpClientInstance = new HttpClient();
@@ -164,10 +228,11 @@
 
                     CasaViewModel casaViewModels = new CasaViewModel();
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                    HttpResponseMessage response = await client.GetAsync($"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}");
+                    requestDatetime = DateTime.Now;
+                    response = await client.GetAsync($"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}");
 
                     List<CasaViewModel> casa = new List<CasaViewModel>();
-
+                    responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
                         var jsonString = await response.Content.ReadAsStringAsync();
@@ -192,6 +257,7 @@
                     }
                     handler.Dispose();
                     client.Dispose();
+                    responseMessage = await response.Content.ReadAsStringAsync();
 
                     return casa;
                 }
@@ -199,16 +265,40 @@
                 {
                     throw new APIErrorException("Core Banking API Error - " +ex.Message);
                 }
+
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = $"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}",
+                        LOGTYPEID = 5,
+                        REFERENCENUMBER = responseMessage,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = responseMessage,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+                    context.TBL_CUSTOM_API_LOGS.Add(logs);
+                    context.SaveChanges();
+                }
             }
 
             public async Task<string> CheckExposePerson(string customerCode)
             {
+                HttpClient client = new HttpClient(handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessageViewModel res = null;
+                string responseMessage = "";
                 try
                 {
                     string result = string.Empty;
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                     handler.UseDefaultCredentials = true;
-                    HttpClient client = new HttpClient(handler);
+                    //HttpClient client = new HttpClient(handler);
 
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -220,13 +310,15 @@
                     new MediaTypeWithQualityHeaderValue("application/json"));
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                    HttpResponseMessage response = await client.GetAsync($"api/ExposePerson/Get?customerCode={customerCode}");
-
+                    requestDatetime = DateTime.Now;
+                    response = await client.GetAsync($"api/ExposePerson/Get?customerCode={customerCode}");
+                    responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
                         var jsonString = await response.Content.ReadAsStringAsync();
                         result = JsonConvert.DeserializeObject<string>(jsonString);
                     }
+                    responseMessage = await response.Content.ReadAsStringAsync();
                     handler.Dispose();
                     client.Dispose();
                     return result;
@@ -235,14 +327,38 @@
                 {
                     throw new APIErrorException("Core Banking API Error - " + ex.Message);
                 }
+
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = $"api/ExposePerson/Get?customerCode={customerCode}",
+                        LOGTYPEID = 6,
+                        REFERENCENUMBER = responseMessage,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = responseMessage,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+                    context.TBL_CUSTOM_API_LOGS.Add(logs);
+                    context.SaveChanges();
+                }
             }
 
             public async Task<BVNCustomerDetailsViewModel> BVNCustomerDetails(string customerCode)
             {
+                HttpClient client = new HttpClient(handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessageViewModel res = null;
+                string responseMessage = "";
                 string result = string.Empty;
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(handler);
+                //HttpClient client = new HttpClient(handler);
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -254,7 +370,9 @@
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
                 ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = await client.GetAsync($"api/OfficeAccount/GetGlAccountRecord?customerCode={customerCode}");
+                requestDatetime = DateTime.Now;
+                response = await client.GetAsync($"api/OfficeAccount/GetGlAccountRecord?customerCode={customerCode}");
+                responseDateTime = DateTime.Now;
                 BVNCustomerDetailsViewModel data = null;
                 if (response.IsSuccessStatusCode)
                 {
@@ -278,8 +396,23 @@
                     }
 
                 }
+                responseMessage = await response.Content.ReadAsStringAsync();
                 handler.Dispose();
                 client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = $"api/OfficeAccount/GetGlAccountRecord?customerCode={customerCode}",
+                    LOGTYPEID = 7,
+                    REFERENCENUMBER = responseMessage,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = responseMessage,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+                context.TBL_CUSTOM_API_LOGS.Add(logs);
+                context.SaveChanges();
+
                 return data;
             }
         }
