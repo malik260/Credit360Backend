@@ -208,7 +208,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 AUDITTYPEID = (short)AuditTypeEnum.JobRequestUpdated,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Reply JobRequest '{ model.jobRequestCode }' ",
+                DETAIL = $"Reply JobRequest '{ data.JOBREQUESTCODE }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = applicationDate,

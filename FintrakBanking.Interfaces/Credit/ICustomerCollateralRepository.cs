@@ -33,7 +33,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool ReleaseCollateral(int collateralMappingId, int staffId, GeneralEntity model);
         bool ApproveCollateralRelease(ApprovalViewModel entity, int staffId, GeneralEntity model);
         IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease();
-
+        List<InsurancePolicies> GetCollateralInsurancePolicy(int collateralId);
         IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId);
         //bool AssignCollateral(ActiveCustomerCollateralViewModel entity);
 
@@ -102,5 +102,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<InsurancePolicies> GetTempCollateralInsurancePolicy(int collateralId);
 
         List<CasaLienViewModel> GetAccountLienDetail(string AccountNumber);
+
+        IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId);
     }
 }

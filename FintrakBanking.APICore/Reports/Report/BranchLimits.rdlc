@@ -287,14 +287,14 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Name">
+                        <Textbox Name="sectorName">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Name.Value</Value>
+                                  <Value>=Fields!sectorName.Value</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -304,7 +304,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Name</rd:DefaultName>
+                          <rd:DefaultName>sectorName</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -320,14 +320,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Code">
+                        <Textbox Name="subsectorCode">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Code.Value</Value>
+                                  <Value>=Fields!subsectorCode.Value</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -337,7 +337,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Code</rd:DefaultName>
+                          <rd:DefaultName>subsectorCode</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -353,14 +353,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Limit">
+                        <Textbox Name="limitMaximumValue">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Limit.Value</Value>
+                                  <Value>=Fields!limitMaximumValue.Value</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -371,7 +371,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Limit</rd:DefaultName>
+                          <rd:DefaultName>limitMaximumValue</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -387,14 +387,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Usage">
+                        <Textbox Name="usage">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Usage.Value</Value>
+                                  <Value>=Fields!usage.Value</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -405,7 +405,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Usage</rd:DefaultName>
+                          <rd:DefaultName>usage</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -421,14 +421,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Balance">
+                        <Textbox Name="balance">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Balance.Value</Value>
+                                  <Value>=Fields!balance.Value</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -439,7 +439,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Balance</rd:DefaultName>
+                          <rd:DefaultName>balance</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -528,26 +528,25 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Limit1">
+                        <Textbox Name="Textbox12">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Limit.Value</Value>
+                                  <Value>=Sum(Fields!limitMaximumValue.Value, "Sectors")</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
-                                    <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Limit1</rd:DefaultName>
+                          <rd:DefaultName>Textbox12</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -570,7 +569,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Usage.Value</Value>
+                                  <Value>=Sum(Fields!usage.Value, "Sectors")</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -605,7 +604,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Balance.Value</Value>
+                                  <Value>=Sum(Fields!balance.Value, "Sectors")</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -629,6 +628,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -674,28 +674,28 @@
                 <ChartMember>
                   <Group Name="Chart2_CategoryGroup">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!Name.Value</GroupExpression>
+                      <GroupExpression>=Fields!sectorName.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!Name.Value</Value>
+                      <Value>=Fields!sectorName.Value</Value>
                     </SortExpression>
                   </SortExpressions>
-                  <Label>=Fields!Name.Value</Label>
+                  <Label>=Fields!sectorName.Value</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartCategoryHierarchy>
             <ChartSeriesHierarchy>
               <ChartMembers>
                 <ChartMember>
-                  <Label>Limit</Label>
+                  <Label>limit Maximum Value</Label>
                 </ChartMember>
                 <ChartMember>
-                  <Label>Usage</Label>
+                  <Label>usage</Label>
                 </ChartMember>
                 <ChartMember>
-                  <Label>Balance</Label>
+                  <Label>balance</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartSeriesHierarchy>
@@ -705,7 +705,7 @@
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!Limit.Value)</Y>
+                        <Y>=Count(Fields!limitMaximumValue.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
@@ -738,7 +738,7 @@
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!Usage.Value)</Y>
+                        <Y>=Count(Fields!usage.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
@@ -771,7 +771,7 @@
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!Balance.Value)</Y>
+                        <Y>=Count(Fields!balance.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
@@ -1103,18 +1103,27 @@
             <ChartCategoryHierarchy>
               <ChartMembers>
                 <ChartMember>
-                  <Group Name="ChartGroup1" />
-                  <Label />
+                  <Group Name="Chart5_CategoryGroup">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!sectorName.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!sectorName.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <Label>=Fields!sectorName.Value</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartCategoryHierarchy>
             <ChartSeriesHierarchy>
               <ChartMembers>
                 <ChartMember>
-                  <Label>Limit</Label>
+                  <Label>limit Maximum Value</Label>
                 </ChartMember>
                 <ChartMember>
-                  <Label>Usage</Label>
+                  <Label>usage</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartSeriesHierarchy>
@@ -1124,7 +1133,7 @@
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!Limit.Value)</Y>
+                        <Y>=Count(Fields!limitMaximumValue.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
@@ -1158,7 +1167,7 @@
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!Usage.Value)</Y>
+                        <Y>=Count(Fields!usage.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
@@ -1490,18 +1499,27 @@
             <ChartCategoryHierarchy>
               <ChartMembers>
                 <ChartMember>
-                  <Group Name="ChartGroup2" />
-                  <Label />
+                  <Group Name="Chart6_CategoryGroup">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!sectorName.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!sectorName.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <Label>=Fields!sectorName.Value</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartCategoryHierarchy>
             <ChartSeriesHierarchy>
               <ChartMembers>
                 <ChartMember>
-                  <Label>Usage</Label>
+                  <Label>usage</Label>
                 </ChartMember>
                 <ChartMember>
-                  <Label>Limit</Label>
+                  <Label>limit Maximum Value</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartSeriesHierarchy>
@@ -1511,7 +1529,7 @@
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!Usage.Value)</Y>
+                        <Y>=Count(Fields!usage.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
@@ -1546,7 +1564,7 @@
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!Limit.Value)</Y>
+                        <Y>=Count(Fields!limitMaximumValue.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />

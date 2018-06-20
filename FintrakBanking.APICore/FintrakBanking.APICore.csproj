@@ -397,6 +397,7 @@
     <Compile Include="Controllers\KYCDocumentUploadController.cs" />
     <Compile Include="Controllers\LimitAndMonitoringController.cs" />
     <Compile Include="Controllers\LoanApplicationController.cs" />
+    <Compile Include="Controllers\LoanCamSolController.cs" />
     <Compile Include="Controllers\LoanController.cs" />
     <Compile Include="Controllers\LoanCovenantController.cs" />
     <Compile Include="Controllers\LoanDocumentController.cs" />
@@ -685,6 +686,13 @@
     <Compile Include="Reports\ReportViews\LoanStatement.aspx.designer.cs">
       <DependentUpon>LoanStatement.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\SLAReport.aspx.cs">
+      <DependentUpon>SLAReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SLAReport.aspx.designer.cs">
+      <DependentUpon>SLAReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\TurnOverConvenant.aspx.cs">
       <DependentUpon>TurnOverConvenant.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -772,6 +780,7 @@
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
     <Content Include="Reports\ReportViews\SeftLiquidatingLoans.aspx" />
+    <Content Include="Reports\ReportViews\SLAReport.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
@@ -981,6 +990,7 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralInsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
@@ -1012,6 +1022,7 @@
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
+    <EmbeddedResource Include="Reports\Report\SLAMonitoringReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\TurnoverCovenant.rdlc" />

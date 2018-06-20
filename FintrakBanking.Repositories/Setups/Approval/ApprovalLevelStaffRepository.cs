@@ -350,6 +350,29 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return result;
         }
 
+        public List<WorkflowTrackerViewModel> GetAllApprovalStatus()
+        {
+            var result =from x in context.TBL_APPROVAL_STATUS
+                        select(new WorkflowTrackerViewModel {
+                            approvalStatusId = x.APPROVALSTATUSID,
+                            approvalStatus = x.APPROVALSTATUSNAME
+            });
+
+            return result.ToList();
+        }
+
+        public List<WorkflowTrackerViewModel> GetAllApprovalOperations()
+        {
+            var result = from x in context.TBL_OPERATIONS
+                         select (new WorkflowTrackerViewModel
+                         {
+                            operationId = x.OPERATIONID,
+                            operationName = x.OPERATIONNAME
+                         });
+
+            return result.ToList();
+        }
+
         #endregion ALIEN CODE BLOCKS
     }
 }

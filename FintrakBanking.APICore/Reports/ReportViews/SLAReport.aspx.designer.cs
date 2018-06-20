@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class AuditTrail {
+    public partial class SLAReport {
         
         /// <summary>
         /// form1 control.
@@ -40,13 +40,13 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer;
         
         /// <summary>
-        /// ObjectDataSourceAudit control.
+        /// ObjectDataSourceSLA control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSourceAudit;
+        protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSourceSLA;
         
         /// <summary>
         /// odsLogo control.
@@ -85,12 +85,21 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.WebControls.Label companyId;
         
         /// <summary>
-        /// username control.
+        /// approvalStatus control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label username;
+        protected global::System.Web.UI.WebControls.Label approvalStatus;
+        
+        /// <summary>
+        /// operationId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label operationId;
     }
 }

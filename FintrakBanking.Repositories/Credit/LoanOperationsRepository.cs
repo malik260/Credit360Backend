@@ -8190,9 +8190,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     loanCamsol.LOANID = loanId;
                     loanCamsol.COMPANYID = loanInput.companyId;
-                    loanCamsol.AMOUNTAFFECTED = totalamount;
+                    loanCamsol.BALANCE = totalamount;
                     loanCamsol.DATE = applicationDate;
-                    loanCamsol.TYPE = "Loan Complete Write Off";
+                    //loanCamsol.TYPE = "Loan Complete Write Off";
                     loanCamsol.CUSTOMERCODE = (context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == loanInput.customerId)).CUSTOMERCODE;
 
                     this.context.TBL_LOAN_CAMSOL.Add(loanCamsol); ////change to Temp table
