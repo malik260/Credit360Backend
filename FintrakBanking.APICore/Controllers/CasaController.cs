@@ -70,7 +70,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error: An unexpected exception occured" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error: An unexpected exception  occured" });
             }
         }
 
