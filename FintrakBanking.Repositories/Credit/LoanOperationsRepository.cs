@@ -1475,7 +1475,7 @@ namespace FintrakBanking.Repositories.Credit
             //var refNo = CommonHelpers.GenerateRandomDigitCode(10);
 
             var data = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
-                        where a.AMT_COLLECTED <= a.AMT  && a.FINTRAK_FLG != "Y" //|| a.PSTD_FLG == "P"
+                        where a.AMT_COLLECTED <= a.AMT  && a.FINTRAK_FLG != "Y" && a.AMT_COLLECTED > 0 //|| a.PSTD_FLG == "P"
                         //where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && a.BATCHID == batchCode
                         select new FinanceTransactionStagingViewModel()
                         {
@@ -1537,7 +1537,7 @@ namespace FintrakBanking.Repositories.Credit
 
                
             }
-            output = context.SaveChanges() > 0;           
+            output = stagingContext.SaveChanges() > 0;           
             return output;
         }
 
@@ -7450,7 +7450,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanReversal(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            var result = "";
+            //var result = "";
+            FinanceTransactionResponseViewModel result = new FinanceTransactionResponseViewModel();
             using (var trans = context.Database.BeginTransaction())
             {
                 try
@@ -10002,7 +10003,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public int GoForApproval(ApprovalViewModel entity)
         {
             workFlow.StaffId = entity.staffId;
             workFlow.CompanyId = entity.companyId;
@@ -10019,17 +10020,17 @@ namespace FintrakBanking.Repositories.Credit
                 return ApproveLoanReview(entity.targetId, entity);
             }
 
-            return false;
+            return 0;
            
         }
 
-        private bool ApproveLoanReview(int loanId, ApprovalViewModel user)
+        private int ApproveLoanReview(int loanId, ApprovalViewModel user)
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
                 try
                 {
                     bool output = false;
+                    bool result = false;
+                    int data = 0;
                     var reviewRecord = (from s in context.TBL_LOAN_REVIEW_OPERATION
                                         where s.LOANID == loanId && s.OPERATIONTYPEID == user.operationId
                                        && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
@@ -10038,37 +10039,93 @@ namespace FintrakBanking.Repositories.Credit
                     if (workFlow.NewState != (int)ApprovalState.Ended)
                     {
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                        output = context.SaveChanges() > 0;
+                        //if(output == true)
+                        //{
+                        //trans.Commit();
+                        data = 1;
 
+                        //}
                     }
                     else if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
-                        var result = LoanRephasementProcess((short)reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, user.staffId);
+                        result = LoanRephasementProcess((short)reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, user.staffId);
                         if (result == true)
                         {
                             reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            output = context.SaveChanges() > 0;
+                        }
+
+
+                        if (output == true && result == true)
+                        {
+                            //trans.Commit();
+                            data = 2;
                         }
 
                     }
-                    output = context.SaveChanges() > 0;
-                    if (output == true && workFlow.NewState == (int)ApprovalState.Ended)
-                    {
-                        trans.Commit();
-                        return output;
-                    }
-                    else
-                    {
-                        trans.Commit();
-                    }
-                    return false;
+                    return data;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
-                    return false;
+                    //trans.Rollback();
+                    throw new Exception(ex.Message);
                 }
-            }
-           
+
         }
+
+        //private int ApproveLoanReview(int loanId, ApprovalViewModel user)
+        //{
+        //    using (var trans = context.Database.BeginTransaction())
+        //    {
+        //        try
+        //        {
+        //            bool output = false;
+        //            bool result = false;
+        //            int data = 0;
+        //            var reviewRecord = (from s in context.TBL_LOAN_REVIEW_OPERATION
+        //                                where s.LOANID == loanId && s.OPERATIONTYPEID == user.operationId
+        //                               && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+        //                                && s.OPERATIONCOMPLETED == false
+        //                                select s).FirstOrDefault();
+        //            if (workFlow.NewState != (int)ApprovalState.Ended)
+        //            {
+        //                reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+        //                output = context.SaveChanges() > 0;
+        //                //if(output == true)
+        //                //{
+        //                    trans.Commit();
+        //                    data = 1;
+
+        //                //}
+        //            }
+        //            else if (workFlow.NewState == (int)ApprovalState.Ended)
+        //            {
+        //                 result = LoanRephasementProcess((short)reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, user.staffId);
+        //                if (result == true)
+        //                {
+        //                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+        //                    output = context.SaveChanges() > 0;
+        //                }
+
+
+        //                if (output == true && result == true)
+        //                {
+        //                    trans.Commit();
+        //                    data = 2;
+        //                }
+
+        //            }
+        //            return data;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            trans.Rollback();
+        //            throw new Exception(ex.Message);
+        //        }
+        //    }
+
+        //}
 
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool LoanRephasementProcess(short loanReviewOperationsId, int loanId, int staffId)

@@ -310,7 +310,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return result;
         }
 
-        public bool PostTransactions(List<FinanceTransactionViewModel> model)
+        public ResponseMessage PostTransactions(List<FinanceTransactionViewModel> model)
         {
             ResponseMessage result = null;
 
@@ -318,24 +318,29 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionLst)).GetAwaiter().GetResult();
 
+            result.TransactionIsSuccessfull = false;
+
             if (result.APIResponse != null)
             {
+                result.TransactionMessage = result.APIResponse.webRequestStatus;
+
                 if (result.APIResponse.responseCode == "0")
                 {
                     AddCustomTransactions(transactionLst);
-                    return true;
+                    result.TransactionIsSuccessfull = true;                                        
                 }
-                else
-                {
-                    throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
-                }
+                //else
+                //{
+                //    result.TransactionIsSuccessfull = false; //throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                //}
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
+                //throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
+                result.TransactionMessage = "Core Banking API Error - " + result.Message.ReasonPhrase;
             }
 
-            //return result.APIStatus;
+            return result; // result.APIStatus;
 
         }
 

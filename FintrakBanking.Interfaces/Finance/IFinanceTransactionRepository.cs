@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         //List<FinanceTransactionViewModel> PostCollateralSearch(CasaLienViewModel model);
 
-        string PostTransaction(List<FinanceTransactionViewModel> transaction, bool isBulkPosting = false);
+        FinanceTransactionResponseViewModel PostTransaction(List<FinanceTransactionViewModel> transaction, bool isBulkPosting = false);
 
         CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId);
 

@@ -685,22 +685,27 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var responseId = repo.GoForApproval(model, loanBookingRequestId);
+                var response = repo.GoForApproval(model, loanBookingRequestId);
 
-                if (responseId == 1)
+                if (response.ApprovalStatus == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation successful, request has been routed to the next approving office" });
                 }
-                else if(responseId == 2)
+                else if(response.ApprovalStatus == 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, message = "Loan has been successfully disbursed" });
                 }
-                else if (responseId == 3)
+                else if (response.ApprovalStatus == 3)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, message = "Loan disapproval was successful" });
+                }
+                else if (response.ApprovalStatus == 4)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = false, message = $"Loan not disbursed - {response.TransactionMessage}" });
                 }
                 else
                 {

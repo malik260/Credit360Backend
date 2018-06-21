@@ -221,9 +221,14 @@ namespace FintrakBanking.Repositories.Finance
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false)
+        public FinanceTransactionResponseViewModel PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false)
         {
-           var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            FinanceTransactionResponseViewModel postingResult = new FinanceTransactionResponseViewModel();
+
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+            postingResult.TransactionIsSuccessfull = false;
+            postingResult.BatchCode = batchCode;
 
             var transactionCount = (inputTransactions.Count());
             
@@ -289,28 +294,39 @@ namespace FintrakBanking.Repositories.Finance
 
             if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
             {
-                bool data;
+                //bool data;
 
-                data = integration.PostTransactions(inputTransactions);
+                var data = integration.PostTransactions(inputTransactions);
+                postingResult.TransactionMessage = data.TransactionMessage;
 
-                if (data)
+                if (data.TransactionIsSuccessfull == true)
                 {
                     PostTransactionSub(batchCode, inputTransactions, transactions);
                     UpdateCustomTransactions(batchCode);
+
+                    postingResult.TransactionIsSuccessfull = true;
                 }
                 else
                 {
-                    throw new Exception($"Transaction Failed.");
+                    postingResult.TransactionIsSuccessfull = false;
+                    //throw new Exception($"Transaction Failed.");
                 }
 
             }
             else
+            {
                 PostTransactionSub(batchCode, inputTransactions, transactions);
 
-            this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
-            context.SaveChanges();
+                postingResult.TransactionMessage = "Succesful transaction";
+                postingResult.TransactionIsSuccessfull = true;
+            }
 
-            return batchCode;
+
+            this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
+            var result = context.SaveChanges()> 0;           
+
+
+            return postingResult;
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
@@ -1906,8 +1922,9 @@ namespace FintrakBanking.Repositories.Finance
         public bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model)
 
         {
-
+            model.branchId = 100;
             //var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
+
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             debit.operationId = model.operationId;
             debit.description = model.description;
@@ -1963,24 +1980,24 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.BulkIntegrationPosting,
-                STAFFID = (int)SystemStaff.System,//model.createdBy,
-                BRANCHID = model.branchId,
-                DETAIL = $"{ model.description}: {model.sourceReferenceNumber}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = model.valueDate,//generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.BulkIntegrationPosting,
+            //    STAFFID = (int)SystemStaff.HQ,//model.createdBy,
+            //    BRANCHID = model.branchId,
+            //    DETAIL = $"{ model.description}: {model.sourceReferenceNumber}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = model.valueDate,//generalSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
 
-            this.auditTrail.AddAuditTrail(audit);
+            //this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
             if (batchPost != null)
             {
-                var result = context.SaveChanges() > 0;
+                var result = true;
                 return result;
             }
             return false;

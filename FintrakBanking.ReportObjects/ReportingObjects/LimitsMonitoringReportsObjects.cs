@@ -20,57 +20,28 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             {
                 var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
 
-               // var output = (
+                var output = (
 
-                    //from B in context.TBL_SUB_SECTOR
-                    //select new SectorLimitViewModel()
-                    //{
-                    //    companyLogo = company.LOGOPATH ,
-                    //    companyName = company.NAME,
-                    //    sectorcode = B.CODE,
-                    //    sectorName = B.TBL_SECTOR.NAME,
-                    //    subsectorName = (B.NAME ?? "NOT DEFINED"),
-                    //    subsectorCode = (B.CODE ?? "NOT DEFINED"),
-                    //    limitMaximumValue = ((System.Decimal?)((Int64)((Int16?)B.SUBSECTORID ?? (Int16?)0) > 0 ? (System.Decimal?)
-                    //    ((from D in context.TBL_SUB_SECTOR
-                    //      where D.LIMITTYPEID == 2 && D.TARGETID == (Int32)B.SUBSECTORID
-                    //      select new { D.MAXIMUMVALUE }).FirstOrDefault().MAXIMUMVALUE) : (Int64)((Int16?)B.SUBSECTORID ?? (Int16?)0) == 0 ? (System.Decimal?)0 : null) ?? (System.Decimal?)0),
-                    //    usage = ((System.Decimal?)((Int64)((Int16?)B.SUBSECTORID ?? (Int16?)0) > 0 ? (System.Decimal?)
-                    //    (from C in context.TBL_LOAN
-                    //     where C.SUBSECTORID == B.SUBSECTORID
-                    //     select new
-                    //     { C.OUTSTANDINGPRINCIPAL }).Sum(p => p.OUTSTANDINGPRINCIPAL) : null) ?? (System.Decimal?)0)
-                    //}).ToList();
+                                from Loan in context.TBL_LOAN
+                                join subSector in context.TBL_SUB_SECTOR
+                                on Loan.SUBSECTORID equals subSector.SUBSECTORID into cc
+                                from subSector in cc.DefaultIfEmpty()
+                                join sector in context.TBL_SECTOR on subSector.SECTORID equals sector.SECTORID into dd 
+                                from sector in dd.DefaultIfEmpty()
+                                group Loan by new { sector.CODE, sector.NAME, sector.LOAN_LIMIT, SubSectorCode = subSector.CODE, SubSectorName = subSector.NAME } into groupedQ
+                                select new SectorLimitViewModel()
+                                {
+                                    companyLogo = company.LOGOPATH,
+                                    companyName = company.NAME,
+                                    subsectorName = (groupedQ.Key.SubSectorName ?? "NOT DEFINED"),
+                                    subsectorCode = (groupedQ.Key.SubSectorCode ?? "NOT DEFINED"),
+                                    sectorcode = groupedQ.Key.CODE,
+                                    sectorName = groupedQ.Key.NAME,
+                                    limitMaximumValue = groupedQ.Key.LOAN_LIMIT ?? 0,
+                                    usage = groupedQ.Sum(i => i.OUTSTANDINGPRINCIPAL),
+                                }).ToList(); 
 
-
-                //from Loan in context.tbl_Loan
-                //           join LimitDetail in context.tbl_Limit_Detail
-                //                 on new { SubSectorId = (int)Loan.SubSectorId, LimitTypeId =(int) LimitType.Sector }
-                //             equals new { SubSectorId = LimitDetail.TargetId, LimitDetail.LimitTypeId } into LimitDetail_join
-                //           from LimitDetail in LimitDetail_join.DefaultIfEmpty()
-
-                //           group new { Loan.tbl_Sub_Sector.tbl_Sector, Loan.tbl_Sub_Sector, LimitDetail, Loan } by new
-                //           {
-                //               SectorId = Loan.tbl_Sub_Sector.tbl_Sector.SectorId,
-                //               Sector = Loan.tbl_Sub_Sector.tbl_Sector.Name,
-                //               Subsector = Loan.tbl_Sub_Sector.Name,
-                //               MaximumValue = LimitDetail.MaximumValue,
-                //               CompanyName = Loan.tbl_Company.Name,
-                //               subsectorCode = Loan.tbl_Sub_Sector.Code,
-                //               sectorCode = Loan.tbl_Sub_Sector.tbl_Sector.Code
-                //           } into groupedQ
-                //           select new SectorLimitViewModel()
-                //           {
-                //               companyName = company.Name,
-                //               Id = groupedQ.Key.SectorId,
-                //               Code = groupedQ.Key.sectorCode,
-                //               Name = groupedQ.Key.Sector,
-                //               Limit = (decimal?) groupedQ.Key.MaximumValue ?? 0,
-                //               Usage = (decimal?) groupedQ.Sum(i => i.Loan.OutstandingPrincipal) ?? 0,
-                //              // Balance = groupedQ.Key.MaximumValue - groupedQ.Sum(i => i.Loan.OutstandingPrincipal)
-                //           }).ToList();
-
-                return new List< SectorLimitViewModel>();
+                return output;
             }
         }
 
@@ -79,34 +50,52 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                //    var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
+                var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
 
-                //    var output = (from a in context.TBL_LIMIT_DETAIL
-                //                  join b in context.TBL_BRANCH on a.TARGETID equals b.BRANCHID
-                //                  join c in context.TBL_LOAN on a.TARGETID equals c.BRANCHID
-                //                  where a.LIMITTYPEID == (int)LimitType.Sector && c.LOANSTATUSID == (short)LoanStatusEnum.Active
-                //                      && a.TBL_LIMIT.TBL_LIMIT_METRIC.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount && c.COMPANYID == companyId && c.BRANCHID == branchId
-                //                  group new { a, b, c } by new
-                //                  {
-                //                      a.MAXIMUMVALUE,
-                //                      b.BRANCHNAME,
-                //                      b.BRANCHCODE,
-                //                      b.BRANCHID
-                //                  } into groupedQ
-                //                  select new  SectorLimitViewModel
+                //var output = (from a in context.TBL_LIMIT_DETAIL
+                //              join b in context.TBL_BRANCH on a.TARGETID equals b.BRANCHID
+                //              join c in context.TBL_LOAN on a.TARGETID equals c.BRANCHID
+                //              where a.LIMITTYPEID == (int)LimitType.Sector && c.LOANSTATUSID == (short)LoanStatusEnum.Active
+                //                  && a.TBL_LIMIT.TBL_LIMIT_METRIC.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount && c.COMPANYID == companyId && c.BRANCHID == branchId
+                //              group new { a, b, c } by new
+                //              {
+                //                  a.MAXIMUMVALUE,
+                //                  b.BRANCHNAME,
+                //                  b.BRANCHCODE,
+                //                  b.BRANCHID
+                //              } into groupedQ
+                //              select new SectorLimitViewModel
 
-                //                  {
-                //                      companyName = company.NAME,
-                //                       limitMaximumValue = groupedQ.Key.MAXIMUMVALUE,
-                //                       usage = groupedQ.Sum(p => p.c.OUTSTANDINGPRINCIPAL),
-                //                       sectorName = groupedQ.Key.BRANCHNAME,
-                //                       subsectorCode = groupedQ.Key.BRANCHCODE,
-                //                      // Id = groupedQ.Key.BranchId,
-                //                     // Balance = groupedQ.Key.MaximumValue - groupedQ.Sum(i => i.c.OutstandingPrincipal)
+                //              {
+                //                  companyName = company.NAME,
+                //                  limitMaximumValue = groupedQ.Key.MAXIMUMVALUE,
+                //                  usage = groupedQ.Sum(p => p.c.OUTSTANDINGPRINCIPAL),
+                //                  sectorName = groupedQ.Key.BRANCHNAME,
+                //                  subsectorCode = groupedQ.Key.BRANCHCODE,
+                //                  // Id = groupedQ.Key.BranchId,
+                //                  // Balance = groupedQ.Key.MaximumValue - groupedQ.Sum(i => i.c.OutstandingPrincipal)
 
-                //}).ToList();
+                //              }).ToList();
 
-                return new List<SectorLimitViewModel>();
+                var output = (
+
+                from Loan in context.TBL_LOAN
+                join branch in context.TBL_BRANCH
+                on Loan.BRANCHID equals branch.BRANCHID into cc
+                from branch in cc.DefaultIfEmpty()
+                group Loan by new { branch.BRANCHCODE, branch.BRANCHNAME, branch.NPL_LIMIT} into groupedQ
+                select new SectorLimitViewModel()
+                {
+                    companyLogo = company.LOGOPATH,
+                    companyName = company.NAME,
+
+                    subsectorCode = (groupedQ.Key.BRANCHCODE ?? "NOT DEFINED"),
+                    sectorName = groupedQ.Key.BRANCHNAME,
+                    limitMaximumValue = (decimal?)groupedQ.Key.NPL_LIMIT ?? 0,
+                    usage = groupedQ.Sum(i => i.OUTSTANDINGPRINCIPAL),
+                }).ToList();
+
+                return output;
             }
         }
 
