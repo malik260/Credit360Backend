@@ -910,7 +910,7 @@
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Web.config___">
+    <None Include="Web.config__">
       <SubType>Designer</SubType>
     </None>
     <Content Include="Views\Report\FintrakReport.cshtml" />
@@ -938,11 +938,11 @@
     <None Include="Web_Test.Release.config">
       <DependentUpon>Web_Test.config</DependentUpon>
     </None>
-    <None Include="Web.Debug.config___">
-      <DependentUpon>Web.config___</DependentUpon>
+    <None Include="Web.Debug.config__">
+      <DependentUpon>Web.config__</DependentUpon>
     </None>
-    <None Include="Web.Release.config___">
-      <DependentUpon>Web.config___</DependentUpon>
+    <None Include="Web.Release.config__">
+      <DependentUpon>Web.config__</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
