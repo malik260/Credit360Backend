@@ -17,12 +17,19 @@ namespace FintrakBanking.ViewModels.AlertMonitoring
         public DateTime? systemResponseDate { get; set; }
         public int requestStaffId { get; set; }
         public int? toStaffId { get; set; }
-        public int fromApprovalLevelId { get; set; }
+        public int? fromApprovalLevelId { get; set; }
         public int? toApprovalLevelId { get; set; }
         public int operationId { get; set; }
         public DateTime? slaNotificationDate { get; set; }
         public string staffEmail { get; set; }
         public string operationName { get; set; }
         public int slaNotificationInterval { get; set; }
+        public string requestFrom { get; set; }
+        public string emailFrom { get; set; }
+        public string requestTo { get; set; }
+        public string emailTo { get; set; }
+        public string comment { get; set; }
+        public int approvalStatusId { get; set; }
+        public string approvalStatus { get; set; }
     }
 }

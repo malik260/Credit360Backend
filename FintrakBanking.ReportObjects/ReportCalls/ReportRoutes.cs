@@ -27,6 +27,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/ApprovalTrailWith_SLA.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId +  "&operationId=" + operationId + "&loanApplicationId=" + loanApplicationId.ToString();
             return path;
         }
+        public string GetWorkflowSLAMonitoring(int companyId, DateRange dateRange)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/SLAReport.aspx?companyId=" + companyId.ToString() + "&approvalStatus=" + dateRange.approvalStatus + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate + "&operationId=" + dateRange.operationId;
+            return path;
+        }
 
         public string GetLoanScheduleReport(int tearmLoanId, int companyId, int staffId)
         {
@@ -427,6 +433,13 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         {
             string path = string.Empty;
             path = reportPath + "ReportViews/LoanInterestReceivableAndPayable.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&branchId=" + searchEntity.branchId + "&loanRefNo=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&productClassId=" + searchEntity.productClassId;
+            return path;
+        }
+
+        public string GetBlacklist(ReportSearchEntity searchEntity)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/Blacklist.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&customerCode=" + searchEntity.customerCode;
             return path;
         }
     }

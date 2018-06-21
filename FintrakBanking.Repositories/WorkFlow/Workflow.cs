@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
@@ -644,7 +645,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var productClass = context.TBL_PRODUCT_CLASS.Find(productClassId);
                     productclass = productClass.PRODUCTCLASSNAME;
                 }
-                throw new Exception("There is no approval workflow setup for the OPERATION: " + operarion.OPERATIONNAME + ", PRODUCT CLASS: " + productclass);
+                throw new ConditionNotMetException("There is no approval workflow setup for the OPERATION: " + operarion.OPERATIONNAME + ", PRODUCT CLASS: " + productclass);
             }
 
             var approvalLevels = mappings
