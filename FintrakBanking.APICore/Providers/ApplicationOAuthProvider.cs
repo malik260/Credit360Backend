@@ -181,6 +181,14 @@ namespace FintrakBanking.APICore.Providers
                     context.SetError("invalid_grant", str);
                     return;
                 }
+                else
+                {
+                    string innerException = string.Empty;
+                    if (ex.InnerException != null) innerException = ex.InnerException.Message;
+                    string str = ex.Message + " : " + innerException;
+                    context.SetError("invalid_grant", str);
+                    return;
+                }
 
 
             }

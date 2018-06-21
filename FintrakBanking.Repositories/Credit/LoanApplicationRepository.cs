@@ -711,8 +711,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            //try
-            //{
+            try
+            {
 
                 if (loan.relationshipOfficerId != 0)
                 {
@@ -723,7 +723,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (loanAmt > (decimal)limit)
                         {
-                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}" );
+                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
                         }
                     }
                 }
@@ -746,21 +746,23 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
+
+                    var allLoans = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+                    var totalSum = allLoans.Sum(x => x.PROPOSEDAMOUNT);
+
+                    var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+
+                    if (totalSum > (decimal)limit)
+                    {
+                        throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
+                    }
+
+
                     UpdateLoanApplication(loan);
                 }
 
                 response = context.SaveChanges();
-                //try
-                //{
-                    
-                //}
-                //catch (DbEntityValidationException ex)
-                //{
 
-                //    //string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                //    //throw new DbEntityValidationException(errorMessages);
-                //    throw new Exception();
-                //}
 
                 var returndate = this.GetLoanApplicationByLoanRefrenceNo(this.data.APPLICATIONREFERENCENUMBER, data.COMPANYID);
 
@@ -771,13 +773,11 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 return returndate;
 
-
-                throw new Exception("Something went wrong");
-           // }
-            //catch (Exception ex)
-            //{
-            //    throw ex;
-            //}
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 
