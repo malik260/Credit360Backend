@@ -123,6 +123,7 @@ namespace FintrakBanking.ViewModels.Reports
         public int pageSize { get; set; }
         public string searchParamemter { get; set; }
         public int? productClassId { get; set; }
+        public string customerCode { get; set; }
     }
 
     public class AllLoanViewModel

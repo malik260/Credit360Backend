@@ -36,6 +36,7 @@ namespace FintrakBanking.Repositories.Credit
         private IFinanceTransactionRepository repo;
         private IApprovalLevelStaffRepository level;
         private ICasaLienRepository lien;
+        private ICasaRepository casa;
 
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
@@ -48,7 +49,8 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingDocumentsContext _documentContext,
             IFinanceTransactionRepository _repo,
             IApprovalLevelStaffRepository _level,
-            ICasaLienRepository _lien
+            ICasaLienRepository _lien,
+            ICasaRepository _casa
             )
         {
             this.context = _context;
@@ -63,6 +65,7 @@ namespace FintrakBanking.Repositories.Credit
             this.repo = _repo;
             this.level = _level;
             this.lien = _lien;
+            this.casa = _casa;
         }
 
 
@@ -3061,15 +3064,15 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CollateralValuersViewModel> GetCollateralValuer(int companyId)
         {
-            return (from m in context.TBL_COLLATERAL_VALUER
-                    where m.COMPANYID == companyId
+            return (from m in context.TBL_ACCREDITEDCONSULTANT
+                    where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTTYPEID ==2
                     select new CollateralValuersViewModel
                     {
-                        collateralValuerId = m.COLLATERALVALUERID,
+                        collateralValuerId = (short)m.ACCREDITEDCONSULTANTID,
                         cityId = m.CITYID,
-                        name = m.NAME,
-                        valuerLicenceNumber = m.VALUERLICENCENUMBER,
-                        valuerTypeId = m.VALUERTYPEID,
+                        name = m.FIRMNAME,
+                        valuerLicenceNumber = m.PHONENUMBER,
+                        valuerTypeId = (short)m.ACCREDITEDCONSULTANTTYPEID,
                         countryId = m.COUNTRYID,
                         //accountNumber = m.nu,
                         //valuerBVN = m.,
@@ -3617,6 +3620,9 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempCasaCollateral(int collateralId, CollateralViewModel entity)
         {
+            if (casa.GetCASABalance(entity.collateralCode, entity.companyId) == null)
+                throw new Exception("Invalid Account Number");
+
             context.TBL_TEMP_COLLATERAL_CASA.Add(new TBL_TEMP_COLLATERAL_CASA
             {
                 TEMPCOLLATERALCUSTOMERID = collateralId,
@@ -3878,7 +3884,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     CasaLienViewModel model = new CasaLienViewModel
                     {
-                        productAccountNumber = tempCasa.ACCOUNTNUMBER,
+                        productAccountNumber = mainCollateral.COLLATERALCODE,
                         lienAmount = tempCasa.SECURITYVALUE,
                         description = "CASA callateral creation",
                         lienTypeId = (int)LienTypeEnum.CollateralCreation,
@@ -3910,7 +3916,7 @@ namespace FintrakBanking.Repositories.Credit
                     var tempDeposit = context.TBL_TEMP_COLLATERAL_DEPOSIT.Where(x => x.TEMPCOLLATERALCUSTOMERID == mainCollateral.TEMPCOLLATERALCUSTOMERID).FirstOrDefault();
                     CasaLienViewModel model = new CasaLienViewModel
                     {
-                        productAccountNumber = tempDeposit.ACCOUNTNUMBER,
+                        productAccountNumber = mainCollateral.COLLATERALCODE,
                         lienAmount = tempDeposit.SECURITYVALUE,
                         description = "Term deposit callateral creation",
                         lienTypeId = (int)LienTypeEnum.CollateralCreation,
@@ -5082,7 +5088,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public List<CasaLienViewModel> GetAccountLienDetail(string AccountNumber)
+        public CasaLienViewModel GetAccountLienDetail(string AccountNumber)
         {
             return (context.TBL_CASA_LIEN.Where(x => x.PRODUCTACCOUNTNUMBER == AccountNumber)
                 .Select(x => new CasaLienViewModel
@@ -5092,7 +5098,7 @@ namespace FintrakBanking.Repositories.Credit
                     lienAmount = x.LIENAMOUNT,
                     dateTimeCreated = x.DATETIMECREATED
 
-                })).ToList();
+                })).FirstOrDefault();
         }
 
     }
