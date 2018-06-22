@@ -544,6 +544,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
                                    customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
 
+                                   customerTypeId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
+
                                    productPriceIndexId = data.PRODUCTPRICEINDEXID,
                                    productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
                                    productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
@@ -755,10 +757,10 @@ namespace FintrakBanking.Repositories.Setups.General
             return ProductSearch(companyId).Where(c => c.productGroupId == (int)ProductGroupEnum.LoansAndAdvances);
         }
 
-        public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId)
+        public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId, int customerTypeId)
         {
-            var productData = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
-         var product =   productData.Where(c => c.productClassId == productClassId && (c.productGroupId == 1)).ToList();
+            //var productData = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
+            var product = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1) && c.customerTypeId== customerTypeId).ToList();
             foreach (var item in product)
             {
                 var ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
@@ -786,7 +788,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
 
 
-            return productData;
+            return product;
 
             //return AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
         }

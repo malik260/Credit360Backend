@@ -23,6 +23,7 @@ using FintrakBanking.Common;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using System.Net.Http.Formatting;
+using FintrakBanking.Interfaces.CASA;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -35,18 +36,22 @@ namespace FintrakBanking.APICore.Controllers
         private ICustomerCollateralRepository repo;
         private ICollateralDocumentRepository document;
         private ICollateralTypeRepository type;
+        private ICasaRepository casa;
+
        // private IGuaranteeCollateralRepository guaratee;
 
         public CustomerCollateralController(
             ICustomerCollateralRepository repo,
             ICollateralTypeRepository type,
-            ICollateralDocumentRepository document
+            ICollateralDocumentRepository document,
+            ICasaRepository _casa
            // IGuaranteeCollateralRepository guaratee
             )
         {
             this.repo = repo;
             this.type = type;
             this.document = document;
+            this.casa = _casa;
           //  this.guaratee = guaratee;
         }
 

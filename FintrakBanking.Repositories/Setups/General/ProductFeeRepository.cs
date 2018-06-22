@@ -278,6 +278,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productId = data.PRODUCTID,
                         feeId = data.CHARGEFEEID,
                         feeName = data.TBL_CHARGE_FEE.CHARGEFEENAME,
+                        feeTypeId = data.TBL_CHARGE_FEE.FEETYPEID,
                         feeIntervalName = data.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
                         feeTargetName = data.TBL_CHARGE_FEE.TBL_FEE_TARGET.FEETARGETNAME,
                         feeTypeName = data.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,
@@ -466,7 +467,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     feeId = c.feeId,
                     feeName = c.feeName,
                     rate = c.rateValue,
-                   
+                    feeTypeId= c.feeTypeId
                 });
         }
 

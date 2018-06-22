@@ -711,8 +711,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            //try
-            //{
+            try
+            {
 
                 if (loan.relationshipOfficerId != 0)
                 {
@@ -723,7 +723,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (loanAmt > (decimal)limit)
                         {
-                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}" );
+                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
                         }
                     }
                 }
@@ -731,36 +731,41 @@ namespace FintrakBanking.Repositories.Credit
 
                 this.data = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber).FirstOrDefault();
 
-                if (loan.isNewApplication)
+            if (loan.isNewApplication)
+            {
+                if (this.data == null)
                 {
-                    if (this.data == null)
-                    {
-                        AddloanApplicationSub(loan);
-                    }
-
-                    if (loan.LoanApplicationDetail.Count > 0)
-                    {
-                        AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
-                    }
-
+                    AddloanApplicationSub(loan);
                 }
-                else
+
+                if (loan.LoanApplicationDetail.Count > 0)
                 {
-                    UpdateLoanApplication(loan);
+                    AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
                 }
+
+            }
+            else
+            {
+                var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+                var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
+
+                if (limit != 0)
+                {
+                    if (total != 0)
+                    {
+                        if (total > (decimal)limit)
+                        {
+                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
+                        }
+                    }
+                }
+
+                UpdateLoanApplication(loan);
+            }
 
                 response = context.SaveChanges();
-                //try
-                //{
-                    
-                //}
-                //catch (DbEntityValidationException ex)
-                //{
 
-                //    //string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                //    //throw new DbEntityValidationException(errorMessages);
-                //    throw new Exception();
-                //}
 
                 var returndate = this.GetLoanApplicationByLoanRefrenceNo(this.data.APPLICATIONREFERENCENUMBER, data.COMPANYID);
 
@@ -771,13 +776,11 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 return returndate;
 
-
-                throw new Exception("Something went wrong");
-           // }
-            //catch (Exception ex)
-            //{
-            //    throw ex;
-            //}
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 
@@ -827,8 +830,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCT_CLASS_PROCESSID = productClassProcessId,
                 COMPANYID = loan.companyId,
                 BRANCHID = (short)loan.branchId,
-                RELATIONSHIPOFFICERID = loan.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = loan.relationshipManagerId,
+                RELATIONSHIPOFFICERID = loan.createdBy,
+                RELATIONSHIPMANAGERID = loan.createdBy,
                 MISCODE = loan.misCode,
                 TEAMMISCODE = loan.teamMisCode,
                 INTERESTRATE = loan.interestRate,

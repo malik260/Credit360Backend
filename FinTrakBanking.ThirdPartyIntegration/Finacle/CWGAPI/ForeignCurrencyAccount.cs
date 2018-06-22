@@ -36,6 +36,13 @@
 
             public async Task<AccountCreationRespones> CreateAccount(CreateAccountViewModel entity)
             {
+               // HttpClient client = new HttpClient(handler);
+                var objData = new JavaScriptSerializer().Serialize(entity);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                AccountCreationRespones responseMsg = null;
+                string responseMessage = "";
+
                 ResponseMessageViewModel responseModel = new ResponseMessageViewModel();
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY); ;
                 _handler.UseDefaultCredentials = true;
@@ -50,12 +57,13 @@
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/TemporaryOverDraft/Single", new StringContent(
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync("api/TemporaryOverDraft/Single", new StringContent(
                                                 new JavaScriptSerializer().Serialize(entity), Encoding.UTF8, "application/json")).Result;
-
+                responseDateTime = DateTime.Now;
                 AccountCreationResponseMessageViewModel responseAPI = new AccountCreationResponseMessageViewModel();
 
-                AccountCreationRespones responseMsg = null;
+                //responseMsg = null;
                 bool result = false;
                 result = response.IsSuccessStatusCode;
                 if (result)
@@ -92,8 +100,23 @@
                         Message = response
                     };
                 }
+
+                responseMessage = await response.Content.ReadAsStringAsync();
                 _handler.Dispose();
                 client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = "api/TemporaryOverDraft/Single",
+                    LOGTYPEID = 10,
+                    REFERENCENUMBER = objData,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = objData,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+                _context.TBL_CUSTOM_API_LOGS.Add(logs);
+                _context.SaveChanges();
                 return responseMsg;
             }
 

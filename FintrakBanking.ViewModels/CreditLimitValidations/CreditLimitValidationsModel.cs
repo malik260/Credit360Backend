@@ -6,5 +6,6 @@
         public double limit { get; set; }
         public double difference { get; set; }
         public short? riskRatingId { get; set; }
+
     }
 }

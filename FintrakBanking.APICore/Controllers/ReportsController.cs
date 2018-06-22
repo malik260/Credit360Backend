@@ -52,7 +52,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("workflow/sla-monitoring")]
+        public HttpResponseMessage GetSLAMonitoring(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetWorkflowSLAMonitoring( token.GetCompanyId, dateRange);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet] [ClaimsAuthorization]  
         [Route("loans/loanschedule/{loanid}")]
         public HttpResponseMessage GetLoanScheduleReport(int loanid)
         {
@@ -856,6 +878,28 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetLoanInterestReceivableAndPayable(reportSearchEntity, token.GetCompanyId, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("camsol/blacklist")]
+        public HttpResponseMessage Blacklist(ReportSearchEntity reportSearchEntity)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetBlacklist(reportSearchEntity);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

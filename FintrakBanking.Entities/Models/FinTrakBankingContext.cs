@@ -385,6 +385,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LMSR_APPLICATION_COLLATRL2> TBL_LMSR_APPLICATION_COLLATRL2 { get; set; }
         public virtual DbSet<TBL_LMSR_CONDITION_PRECEDENT> TBL_LMSR_CONDITION_PRECEDENT { get; set; }
         public virtual DbSet<TBL_LMSR_TRANSACTION_DYNAMICS> TBL_LMSR_TRANSACTION_DYNAMICS { get; set; }
+        public virtual DbSet<TBL_CUSTOM_API_LOGS> TBL_CUSTOM_API_LOGS { get; set; }
+        
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

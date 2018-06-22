@@ -2885,30 +2885,30 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             {
                 if (slaAlert.operationId == (int)OperationsEnum.LoanApplication || slaAlert.operationId == (int)OperationsEnum.CAM || slaAlert.operationId == (int)OperationsEnum.OfferLetterApproval )
                 {
-                  var loanRef =  context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == slaAlert.targetId).FirstOrDefault();
+                  var applicationaReferenceNumber =  context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == slaAlert.targetId).Select(x=>x.APPLICATIONREFERENCENUMBER).FirstOrDefault();
 
-                    var operationName = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)slaAlert.operationId).FirstOrDefault();
+                    var operationName = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)slaAlert.operationId).Select(x=>x.OPERATIONNAME).FirstOrDefault();
 
                     var staffDetail = context.TBL_STAFF.Where(x => x.STAFFID == slaAlert.toStaffId).FirstOrDefault();
 
-                    if (loanRef!=null && operationName!=null)
+                    if (applicationaReferenceNumber != null && operationName!=null)
                     {
-                        LogSLAApprovalNotification(loanRef.APPLICATIONREFERENCENUMBER, operationName.OPERATIONNAME, slaAlert, staffDetail);
+                        LogSLAApprovalNotification(applicationaReferenceNumber, operationName, slaAlert, staffDetail);
                     }
                    
                 }
 
                 if (slaAlert.operationId == (int)OperationsEnum.ItemPolicyApproval || slaAlert.operationId == (int)OperationsEnum.CollateralMaintenance || slaAlert.operationId == (int)OperationsEnum.CollateralApproval)
                 {
-                    var loanRef = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == slaAlert.targetId).FirstOrDefault();
+                    var collateralCode = context.TBL_TEMP_COLLATERAL_CUSTOMER.Where(x => x.TEMPCOLLATERALCUSTOMERID == slaAlert.targetId).Select(x=>x.COLLATERALCODE).FirstOrDefault();
 
-                    var operationName = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)slaAlert.operationId).FirstOrDefault();
+                    var operationName = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)slaAlert.operationId).Select(x => x.OPERATIONNAME).FirstOrDefault();
 
                     var staffDetail = context.TBL_STAFF.Where(x => x.STAFFID == slaAlert.toStaffId).FirstOrDefault();
 
-                    if (loanRef != null && operationName != null)
+                    if (collateralCode != null && operationName != null)
                     {
-                        LogSLAApprovalNotification(loanRef.APPLICATIONREFERENCENUMBER, operationName.OPERATIONNAME, slaAlert, staffDetail);
+                        LogSLAApprovalNotification(collateralCode, operationName, slaAlert, staffDetail);
                     }
 
                 }

@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId);
         bool DoesOperationExist(int loanId, int operationTypeId);
-        bool GoForApproval(ApprovalViewModel entity);
+        int GoForApproval(ApprovalViewModel entity);
         bool AddCollateralSearchLien(CasaLienViewModel model);
         decimal GetCollateralSearchChargeAmount(int stateId);
         bool AddOperationReview(LoanReviewOperationViewModel model);
