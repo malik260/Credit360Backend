@@ -148,9 +148,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
         #region Offer Letter & Availment
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application/prepared-offer-letter-template/{applicationRefNumber}")]
@@ -448,36 +447,36 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("loan-application/availment/approval")]
-        public HttpResponseMessage LogApplicationForApprovalDuringAvailment([FromBody] LoanAvailmentApprovalViewModel entity)
-        {
-            try
-            {
-                entity.BranchId = token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.userIPAddress = Request.RequestUri.Host;
-                entity.createdBy = token.GetStaffId;
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("loan-application/availment/approval")]
+        //public HttpResponseMessage LogApplicationForApprovalDuringAvailment([FromBody] LoanAvailmentApprovalViewModel entity)
+        //{
+        //    try
+        //    {
+        //        entity.BranchId = token.GetBranchId;
+        //        entity.companyId = token.GetCompanyId;
+        //        entity.staffId = token.GetStaffId;
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
+        //        entity.userIPAddress = Request.RequestUri.Host;
+        //        entity.createdBy = token.GetStaffId;
 
-                var data = repo.LogApplicationForApprovalDuringAvailment(entity);
+        //        var data = repo.LogApplicationForApprovalDuringAvailment(entity);
 
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation not successfull" });
-            }
-            catch (System.Exception ex)
-            {
-                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
-            }
-        }
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, message = "Operation not successfull" });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
+        //    }
+        //}
 
         [HttpPost]
         [ClaimsAuthorization]

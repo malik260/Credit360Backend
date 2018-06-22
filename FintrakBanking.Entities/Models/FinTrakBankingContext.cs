@@ -187,6 +187,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_KYC_DOCUMENTTYPE> TBL_KYC_DOCUMENTTYPE { get; set; }
         public virtual DbSet<TBL_KYC_ITEM> TBL_KYC_ITEM { get; set; }
         public virtual DbSet<TBL_LANGUAGE> TBL_LANGUAGE { get; set; }
+        public virtual DbSet<TBL_LMSR_APPLICATION> TBL_LMSR_APPLICATION { get; set; }
+        public virtual DbSet<TBL_LMSR_APPLICATION_DETAIL> TBL_LMSR_APPLICATION_DETAIL { get; set; }
         public virtual DbSet<TBL_LOAN> TBL_LOAN { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_ARCHIVE> TBL_LOAN_APPLICATION_ARCHIVE { get; set; }
@@ -378,7 +380,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_TRANSACTION_BULK> TBL_CUSTOM_TRANSACTION_BULK { get; set; }
         public virtual DbSet<TBL_STAFF_EXTENDED> TBL_STAFF_EXTENDED { get; set; }
         public virtual DbSet<TBL_LOAN_DISBURSEMENT> TBL_LOAN_DISBURSEMENT { get; set; }
-
+        public virtual DbSet<TBL_LMSR_APPLICATION_COVENANT> TBL_LMSR_APPLICATION_COVENANT { get; set; }
+        public virtual DbSet<TBL_LMSR_APPLICATN_DETL_MTRIG> TBL_LMSR_APPLICATN_DETL_MTRIG { get; set; }
+        public virtual DbSet<TBL_LMSR_APPLICATION_COLLATRL2> TBL_LMSR_APPLICATION_COLLATRL2 { get; set; }
+        public virtual DbSet<TBL_LMSR_CONDITION_PRECEDENT> TBL_LMSR_CONDITION_PRECEDENT { get; set; }
+        public virtual DbSet<TBL_LMSR_TRANSACTION_DYNAMICS> TBL_LMSR_TRANSACTION_DYNAMICS { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -6379,7 +6385,7 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_OPERATIONS>()
-                .HasMany(e => e.TBL_LOAN_REVIEW_APPLICATION)
+                .HasMany(e => e.TBL_LMSR_APPLICATION_DETAIL)
                 .WithRequired(e => e.TBL_OPERATIONS)
                 .WillCascadeOnDelete(false);
 
@@ -8620,6 +8626,47 @@ namespace FintrakBanking.Entities.Models
             //modelBuilder.Entity<TBL_APPROVAL_TRAIL2>()
             //    .Property(e => e.COMMENT_)
             //    .IsUnicode(false);
+
+            modelBuilder.Entity<TBL_LMSR_APPLICATION>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION_DETAIL)
+                .WithRequired(e => e.TBL_LMSR_APPLICATION)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_APPROVAL_STATUS>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION)
+                .WithRequired(e => e.TBL_APPROVAL_STATUS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION_DETAIL)
+                .WithRequired(e => e.TBL_LOAN_SYSTEM_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LMSR_APPLICATION_DETAIL>()
+                .HasMany(e => e.TBL_LMSR_CONDITION_PRECEDENT)
+                .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LMSR_APPLICATION_DETAIL>()
+                .HasMany(e => e.TBL_LMSR_TRANSACTION_DYNAMICS)
+                .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LMSR_APPLICATION_DETAIL>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION_COLLATRL2)
+                .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LMSR_APPLICATION_DETAIL>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION_COVENANT)
+                .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LMSR_APPLICATION_DETAIL>()
+                .HasMany(e => e.TBL_LMSR_APPLICATN_DETL_MTRIG)
+                .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
+                .WillCascadeOnDelete(false);
+
         }
     }
 }

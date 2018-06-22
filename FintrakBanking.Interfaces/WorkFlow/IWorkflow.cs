@@ -36,7 +36,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
         float? InterestRateConcession { set; }
         float? FeeRateConcession { set; }
 
+        void NextProcess(int companyId, int staffId, int operationId, int targetId, int? productClassId, string comment, bool external, bool deferred);
+
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!
-        bool ForcefullyEndProcess { set; } // <------------ this property is deprecated!!!
     }
 }

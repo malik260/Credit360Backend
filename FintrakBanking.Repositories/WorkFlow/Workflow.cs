@@ -191,6 +191,30 @@ namespace FintrakBanking.Repositories.WorkFlow
             throw new Exception("Unknown Process Flow Error! Unable to save workflow records!");
         }
 
+        public void NextProcess(
+            int companyId, 
+            int staffId, 
+            int operationId, 
+            int targetId, 
+            int? productClassId = null, 
+            string comment = "NIL", 
+            bool external = true, 
+            bool deferred = true
+            )
+        {
+            InitializeOperation();
+            this.staffId = staffId;
+            this.companyId = companyId;
+            this.operationId = operationId;
+            this.targetId = targetId; 
+            this.productClassId = productClassId;
+            this.comment = comment;
+            this.statusId = (int)ApprovalStatusEnum.Pending;
+            this.externalInitialization = external;
+            this.deferredExecution = deferred;
+            LogActivity();
+        }
+
         private void InitializeOperation()
         {
             // CAREFUL NOT TO OVERRIDE SUPPLIED values!!!!!!!!

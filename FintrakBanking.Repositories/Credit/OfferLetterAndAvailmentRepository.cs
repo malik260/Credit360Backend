@@ -1784,32 +1784,32 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool LogApplicationForApprovalDuringAvailment(LoanAvailmentApprovalViewModel model)
-        {
-            try
-            {
-                var target = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+        //public bool LogApplicationForApprovalDuringAvailment(LoanAvailmentApprovalViewModel model)
+        //{
+        //    try
+        //    {
+        //        var target = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
 
-                var entity = new ApprovalViewModel
-                {
-                    staffId = model.createdBy,
-                    companyId = model.companyId,
-                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                    targetId = target.LOANAPPLICATIONID,
-                    operationId = model.operationId,
-                    comment = model.comment,
-                    amount = model.amount,
-                    BranchId = model.BranchId,
-                    externalInitialization = false
-                };
+        //        var entity = new ApprovalViewModel
+        //        {
+        //            staffId = model.createdBy,
+        //            companyId = model.companyId,
+        //            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+        //            targetId = target.LOANAPPLICATIONID,
+        //            operationId = model.operationId,
+        //            comment = model.comment,
+        //            amount = model.amount,
+        //            BranchId = model.BranchId,
+        //            externalInitialization = false
+        //        };
 
-                return workflow.LogForApproval(entity);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //        return workflow.LogForApproval(entity);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
         //public IQueryable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId)
         //{
