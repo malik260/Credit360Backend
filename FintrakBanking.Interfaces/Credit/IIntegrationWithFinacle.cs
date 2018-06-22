@@ -25,7 +25,7 @@ namespace FintrakBanking.Interfaces.Credit
         BVNCustomerDetailsViewModel BVNCustomerDetails(string customerCode);
         GLAccountDetailsViewModel ValidateGLNumber(string glNumber);
         TDAccountRecordViewModel ValidateTDAccountNumber(string teamDepositAccountNumber);
-        ResponseMessage PostTransactions(List<FinanceTransactionViewModel> model);
+        bool PostTransactions(List<FinanceTransactionViewModel> model);
 
         CasaBalanceViewModel GetCustomerAccountBalance(string customerAccoun);
         List<CustomerViewModels> GetCustomerByAccountsNumber(string customerAccount);

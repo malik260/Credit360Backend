@@ -75,20 +75,6 @@ namespace FintrakBanking.ViewModels.Finance
 
     }
 
-    public class FinanceTransactionResponseViewModel
-    {
-        public string BatchCode { get; set; }
-        public bool TransactionIsSuccessfull { get; set; }
-        public bool IsApproved { get; set; }
-        public string TransactionMessage { get; set; }
-    }
-
-    public class DisbursementApprovalResponseViewModel
-    {
-        public int ApprovalStatus { get; set; }
-        public string TransactionMessage { get; set; }
-    }
-
     public class CasaBalanceViewModel
     {
         public string accountNumber;

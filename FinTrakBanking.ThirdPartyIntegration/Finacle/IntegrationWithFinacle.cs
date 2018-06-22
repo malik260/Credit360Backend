@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
-using FintrakBanking.ViewModels.ThridPartyIntegration; 
-using  Newtonsoft.Json;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
+using Newtonsoft.Json;
 namespace FinTrakBanking.ThirdPartyIntegration
 {
     using CustomerInfo;
@@ -18,12 +18,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using AccountInformation;
     using FintrakBanking.Common.CustomException;
 
-    public   class IntegrationWithFinacle : IIntegrationWithFinacle
+    public class IntegrationWithFinacle : IIntegrationWithFinacle
     {
         private FinTrakBankingContext context;
         private TransactionPosting transaction;
         private OverDraft overDraft;
-        private ForeignCurrencyAccount  account;
+        private ForeignCurrencyAccount account;
         private CustomerDetails customer;
         private AccountDetail accountDetail;
 
@@ -46,7 +46,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
 
             ResponseMessage result = null;
-            if(LogOverDraftExtend(model))
+            if (LogOverDraftExtend(model))
                 Task.Run(async () => result = await overDraft.APIOverDraftExtend(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
@@ -71,12 +71,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model)
         {
             ResponseMessage result = null;
-           // if( LogOverDraftNormal(model))
-                Task.Run(async () => result = await overDraft.APIOverDraftNormal(model)).GetAwaiter().GetResult();
-          
+            // if( LogOverDraftNormal(model))
+            Task.Run(async () => result = await overDraft.APIOverDraftNormal(model)).GetAwaiter().GetResult();
+
             if (result.Message.IsSuccessStatusCode)
             {
-                if( result.APIResponse.webRequestStatus.Replace(":","") == "FAILURE")
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
                     throw new Exception(result.APIResponse.message);
                 }
@@ -87,11 +87,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 }
             }
             else
-            {                 
+            {
                 throw new Exception(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
-            
-           
+
+
         }
 
         public ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model)
@@ -179,10 +179,10 @@ namespace FinTrakBanking.ThirdPartyIntegration
             model.APIUrl = @"api/TemporaryOverDraft/Running";
             ResponseMessage result = null;
 
-            if (LogTemporaryOverDraft(model))  
-                Task.Run(async () => result = await overDraft.APITemporaryOverDraftRunning(model)).GetAwaiter().GetResult();            
-           
-          
+            if (LogTemporaryOverDraft(model))
+                Task.Run(async () => result = await overDraft.APITemporaryOverDraftRunning(model)).GetAwaiter().GetResult();
+
+
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -193,7 +193,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 else
                 {
                     LogTemporaryOverDraft(model);
-                    return  result.APIResponse;
+                    return result.APIResponse;
                 }
             }
             else
@@ -205,15 +205,15 @@ namespace FinTrakBanking.ThirdPartyIntegration
             //{
             //    throw new Exception("Logging Finaco transaction failed, operation is truncated.");
             //}
-            
+
         }
 
         public ResponseMessageViewModel TemporaryOverDraftSingle(TemporaryOverDraftViewModel model)
         {
             model.APIUrl = @"api/TemporaryOverDraft/Single";
             ResponseMessage result = null;
-            if(LogTemporaryOverDraft(model))
-                Task.Run(async () => result = await overDraft.APITemporaryOverDraftSingle(model)).GetAwaiter().GetResult();            
+            if (LogTemporaryOverDraft(model))
+                Task.Run(async () => result = await overDraft.APITemporaryOverDraftSingle(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -244,7 +244,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             Task.Run(async () => { data = await transaction.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode); }).GetAwaiter().GetResult();
             return new CurrencyExchangeRateViewModel
             {
-               // baseCurrencyId = baseCurrency,
+                // baseCurrencyId = baseCurrency,
                 currencyId = data.currencyId,
                 buyingRate = data.buyingRate,
                 sellingRate = data.sellingRate,
@@ -256,24 +256,24 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public bool GetExposePersonStatus(string customerCode)
         {
             bool result = false;
-            string  data = string.Empty;
+            string data = string.Empty;
 
             Task.Run(async () => data = await customer.CheckExposePerson(customerCode)).GetAwaiter().GetResult();
 
-            if(data == "" || data == "NO-MATCH" || data == "NOT AVAIABLE")
-                result = false ;
-            if (data == "Match" )
-                result =  true;
+            if (data == "" || data == "NO-MATCH" || data == "NOT AVAIABLE")
+                result = false;
+            if (data == "Match")
+                result = true;
 
-           return result;
+            return result;
 
         }
 
-        public  BVNCustomerDetailsViewModel BVNCustomerDetails(string customerCode)
-        {        
-            BVNCustomerDetailsViewModel data =  null;
+        public BVNCustomerDetailsViewModel BVNCustomerDetails(string customerCode)
+        {
+            BVNCustomerDetailsViewModel data = null;
             Task.Run(async () => data = await customer.BVNCustomerDetails(customerCode)).GetAwaiter().GetResult();
-            if(data != null)
+            if (data != null)
                 return data;
             throw new Exception("Not Found ");
 
@@ -289,7 +289,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             return result;
         }
-        
+
         public TDAccountRecordViewModel ValidateTDAccountNumber(string teamDepositAccountNumber)
         {
             TDAccountRecordViewModel result = null;
@@ -310,7 +310,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return result;
         }
 
-        public ResponseMessage PostTransactions(List<FinanceTransactionViewModel> model)
+        public bool PostTransactions(List<FinanceTransactionViewModel> model)
         {
             ResponseMessage result = null;
 
@@ -318,29 +318,24 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionLst)).GetAwaiter().GetResult();
 
-            result.TransactionIsSuccessfull = false;
-
             if (result.APIResponse != null)
             {
-                result.TransactionMessage = result.APIResponse.webRequestStatus;
-
                 if (result.APIResponse.responseCode == "0")
                 {
                     AddCustomTransactions(transactionLst);
-                    result.TransactionIsSuccessfull = true;                                        
+                    return true;
                 }
-                //else
-                //{
-                //    result.TransactionIsSuccessfull = false; //throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
-                //}
+                else
+                {
+                    throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                }
             }
             else
             {
-                //throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
-                result.TransactionMessage = "Core Banking API Error - " + result.Message.ReasonPhrase;
+                throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
             }
 
-            return result; // result.APIStatus;
+            //return result.APIStatus;
 
         }
 
@@ -444,12 +439,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
         public CasaBalanceViewModel GetCustomerAccountBalance(string customerAccount)
-        { 
+        {
             CasaBalanceViewModel accountOutput = null;
 
             Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
                 .GetResult();
-          
+
             return accountOutput;
         }
 
@@ -486,12 +481,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 context.TBL_CUSTOM_OVERDRAFTEXTEND.Add(data);
                 result = context.SaveChanges() > 0;
                 model.overdraftExtendId = data.OVERDRAFTEXTENDID;
-           
+
             }
             return result;
         }
 
-        private bool LogOverDraftNormal(OverDraftNormalViewModel model )
+        private bool LogOverDraftNormal(OverDraftNormalViewModel model)
         {
             bool result = false;
             var modify = context.TBL_CUSTOM_OVERDRAFTNORMAL.Find(model.overdraftNormalId);
@@ -521,7 +516,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 //};
                 //context.TBL_CUSTOM_OVERDRAFTNORMAL.Add(data);
                 //result = context.SaveChanges() > 0;
-               // model.overdraftNormalId = data.OVERDRAFTNORMALID;
+                // model.overdraftNormalId = data.OVERDRAFTNORMALID;
             }
             return result;
         }
@@ -584,7 +579,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return result;
         }
 
-     
+
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
             var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
@@ -606,7 +601,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             foreach (var item in model)
             {
 
-            //    var account ;
+                //    var account ;
 
                 var transPosting = new TransactionPostingViewModel();
                 //accounts = item.casaAccountId != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
@@ -615,18 +610,18 @@ namespace FinTrakBanking.ThirdPartyIntegration
                    ?.CURRENCYCODE;
                 transPosting.accounts = item.casaAccountId != null
                 ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
-                .PRODUCTACCOUNTNUMBER: GetGlAccountCode(item.glAccountId, item.currencyId, item.sourceBranchId);
+                .PRODUCTACCOUNTNUMBER : GetGlAccountCode(item.glAccountId, item.currencyId, item.sourceBranchId);
                 transPosting.amounts = item.creditAmount > 0
                     ? "C" + String.Format("{0:0.00}", item.creditAmount)
-                    : "D" + String.Format("{0:0.00}", item.debitAmount) ;
+                    : "D" + String.Format("{0:0.00}", item.debitAmount);
                 //amounts = item.sourceReferenceNumber,
                 transPosting.narration = item.description;
                 transPosting.referenceNumber = item.batchCode;
-                
+
                 transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
 
-                
-               
+
+
                 transPosting.operationId = item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
 
 
@@ -635,7 +630,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             return transactionLst;
         }
-        
+
         private bool AddCustomTransactions(List<TransactionPostingViewModel> entity)
         {
             List<TBL_CUSTOM_FIANCE_TRANSACTION> lstData = new List<TBL_CUSTOM_FIANCE_TRANSACTION>();
@@ -654,7 +649,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     data.NARRATION = item.narration;
                     data.OPERATIONID = item.operationId;
                 }
-               lstData.Add(data);
+                lstData.Add(data);
             };
             context.TBL_CUSTOM_FIANCE_TRANSACTION.AddRange(lstData);
             context.SaveChanges();

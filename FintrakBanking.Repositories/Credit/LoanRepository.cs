@@ -359,7 +359,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
-                } 
+                }
                 catch (APIErrorException ae)
                 {
                     trans.Rollback();
@@ -1028,24 +1028,21 @@ namespace FintrakBanking.Repositories.Credit
         /// Disburses the loan.
         /// </summary>
         /// <param name="entity">The entity.</param>
-        private FinanceTransactionResponseViewModel DisburseLoan(LoanViewModel entity)
+        private void DisburseLoan(LoanViewModel entity)
         {
             //PostLoanDisbursment(entity);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));
+            inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));            
 
             var feePostings = BuildLoanChargeFeesPosting(entity);
 
+            //if fee has not been taken from the customer account due to override
             if (feePostings.Count() > 0)
-              inputTransactions.AddRange(feePostings);
+                inputTransactions.AddRange(feePostings);
 
-            var response = financeTransaction.PostTransaction(inputTransactions);
-
-            return response;
-
-            //var feePostings = BuildLoanChargeFeesPosting(entity);
-
+            financeTransaction.PostTransaction(inputTransactions);
+            
             //if (feePostings.Count() > 0)
             //    financeTransaction.PostTransaction(feePostings);
         }
@@ -1102,7 +1099,7 @@ namespace FintrakBanking.Repositories.Credit
                                 productId = ln.PRODUCTID,
                                 casaAccountId = ln.CASAACCOUNTID,
                                 casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER +" ("+ ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
+                                casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
@@ -1583,10 +1580,8 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="staffId">The staff identifier.</param>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        public DisbursementApprovalResponseViewModel GoForApproval(ApprovalViewModel entity, int loanBookingRequestId)
+        public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId)
         {
-            //DisbursementApprovalResponseViewModel outputDetails = new DisbursementApprovalResponseViewModel();
-
             using (var trans = context.Database.BeginTransaction())
             {
                 try
@@ -1604,35 +1599,24 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.SaveChanges();
 
-                    var output = ApproveLoanBooking(entity.targetId, loanBookingRequestId, (short) workflow.StatusId, entity);
-
-                    //output.
-
-                    if (output.IsApproved == true)
+                    if (ApproveLoanBooking(entity.targetId, loanBookingRequestId, (short)workflow.StatusId, entity))
                     {
                         trans.Commit();
                         if (workflow.NewState != (int)ApprovalState.Ended)
                         {
-                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved)
-                                return new DisbursementApprovalResponseViewModel { ApprovalStatus = 1, TransactionMessage = output.TransactionMessage } ;
-                            else
-                                return new DisbursementApprovalResponseViewModel { ApprovalStatus = 3, TransactionMessage = output.TransactionMessage };
+                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 1;
+                            else return 3;
                         }
                         else
                         {
-                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved)
-                                if (output.TransactionIsSuccessfull == true)
-                                    return new DisbursementApprovalResponseViewModel { ApprovalStatus = 2, TransactionMessage = output.TransactionMessage };
-                                else
-                                    return new DisbursementApprovalResponseViewModel { ApprovalStatus = 4, TransactionMessage = output.TransactionMessage };
-                            else
-                                return new DisbursementApprovalResponseViewModel { ApprovalStatus = 3, TransactionMessage = output.TransactionMessage };
+                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 2;
+                            else return 3;
                         }
                     }
                     else
                     {
                         trans.Rollback();
-                        return new DisbursementApprovalResponseViewModel { ApprovalStatus = 0, TransactionMessage = output.TransactionMessage };
+                        return 0;
                     }
                 }
                 catch (ConditionNotMetException ce)
@@ -1662,16 +1646,12 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="approvalStatusId">The approval status identifier.</param>
         /// <param name="user">The user.</param>
         /// <returns></returns>
-        private FinanceTransactionResponseViewModel ApproveLoanBooking(int loanId, int loanBookingRequestId, short approvalStatusId, ApprovalViewModel user)
+        private bool ApproveLoanBooking(int loanId, int loanBookingRequestId, short approvalStatusId, ApprovalViewModel user)
         {
             var loanRecord = context.TBL_LOAN.Find(loanId);
             var revolvingLoanRecord = context.TBL_LOAN_REVOLVING.Find(loanId);
             var contingentLoanRecord = context.TBL_LOAN_CONTINGENT.Find(loanId);
             var loanReferenceNumber = string.Empty;
-
-            FinanceTransactionResponseViewModel output = new FinanceTransactionResponseViewModel();
-            output.IsApproved = false;
-            output.TransactionMessage = "";
 
             /* HANDLING APPROVAL THAT ARE STILL IN PROCESSING STATE */
             if (workflow.NewState != (int)ApprovalState.Ended)
@@ -1692,8 +1672,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                             context.SaveChanges();
-                            output.IsApproved = true;
-                            return output;
+                            return true;
                         }
                         break;
                     case (int)OperationsEnum.CommercialPaperLoanBooking:
@@ -1710,8 +1689,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                             context.SaveChanges();
-                            output.IsApproved = true;
-                            return output;
+                            return true;
                         }
                         break;
                     case (int)OperationsEnum.ContigentLoanBooking:
@@ -1728,8 +1706,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                             context.SaveChanges();
-                            output.IsApproved = true;
-                            return output;
+                            return true;
                         }
                         break;
                     case (int)OperationsEnum.RevolvingLoanBooking:
@@ -1746,8 +1723,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                             context.SaveChanges();
-                            output.IsApproved = true;
-                            return output;
+                            return true;
                         }
                         break;
                 }
@@ -1786,8 +1762,8 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                                     reviewedDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
                                     sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                                    sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT), 
-                                    sanctionReferenceNumber =  revolvingLoanRecord.LOANREFERENCENUMBER
+                                    sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                                    sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
                                 };
 
                                 ResponseMessageViewModel res = finacle.OverDraftNormal(model);
@@ -1869,7 +1845,7 @@ namespace FintrakBanking.Repositories.Credit
                             var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
                             var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
                             if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings); }
-                               
+
                             contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             contingentLoanRecord.ISDISBURSED = true;
                             contingentLoanRecord.APPROVEDBY = user.createdBy;
@@ -1886,6 +1862,9 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else
                         {
+                            loanRecord.DATEAPPROVED = DateTime.Now;
+                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
                             totalBookedAmount = (from a in context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.PRINCIPALAMOUNT);
                             if (totalBookedAmount >= loanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
                             {
@@ -1901,20 +1880,14 @@ namespace FintrakBanking.Repositories.Credit
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
                             var systemDate = generalSetup.GetApplicationDate();
 
-                            output = DisburseLoan(loanDisbursementModel);
+                            DisburseLoan(loanDisbursementModel);
 
-                            if (output.TransactionIsSuccessfull)
-                            {
-                                loanRecord.DATEAPPROVED = DateTime.Now;
-                                loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-
-                                loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
-                                loanRecord.ISDISBURSED = true;
-                                loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
-                                loanRecord.DISBURSEDBY = user.createdBy;
-                                loanRecord.APPROVEDBY = user.createdBy;
-                                loanRecord.APPROVERCOMMENT = user.comment;
-                            }
+                            loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
+                            loanRecord.ISDISBURSED = true;
+                            loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
+                            loanRecord.DISBURSEDBY = user.createdBy;
+                            loanRecord.APPROVEDBY = user.createdBy;
+                            loanRecord.APPROVERCOMMENT = user.comment;
                         }
                         break;
                     case (int)OperationsEnum.CommercialPaperLoanBooking:
@@ -1927,6 +1900,9 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else
                         {
+                            loanRecord.DATEAPPROVED = DateTime.Now;
+                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
                             totalBookedAmount = (from a in context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.PRINCIPALAMOUNT);
                             if (totalBookedAmount >= loanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
                             {
@@ -1940,19 +1916,14 @@ namespace FintrakBanking.Repositories.Credit
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
                             var systemDate = generalSetup.GetApplicationDate();
 
-                            output = DisburseLoan(loanDisbursementModel);
-                            if (output.TransactionIsSuccessfull)
-                            {
-                                loanRecord.DATEAPPROVED = DateTime.Now;
-                                loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            DisburseLoan(loanDisbursementModel);
 
-                                loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
-                                loanRecord.ISDISBURSED = true;
-                                loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
-                                loanRecord.DISBURSEDBY = user.createdBy;
-                                loanRecord.APPROVEDBY = user.createdBy;
-                                loanRecord.APPROVERCOMMENT = user.comment;
-                            }
+                            loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
+                            loanRecord.ISDISBURSED = true;
+                            loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
+                            loanRecord.DISBURSEDBY = user.createdBy;
+                            loanRecord.APPROVEDBY = user.createdBy;
+                            loanRecord.APPROVERCOMMENT = user.comment;
                         }
                         break;
                 }
@@ -1978,12 +1949,7 @@ namespace FintrakBanking.Repositories.Credit
                     request.DELETED = true;
                 //===================================================
             }
-
-            var isSaved = this.context.SaveChanges() > 0;
-            
-            output.IsApproved = isSaved;
-
-            return  output;
+            return this.context.SaveChanges() > 0;
         }
 
         /// <summary>
@@ -2481,7 +2447,7 @@ namespace FintrakBanking.Repositories.Credit
                             debit.approvedDateTime = DateTime.Now;
                             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                             debit.companyId = loanDetails.companyId;
-                            
+
 
                             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
@@ -5277,16 +5243,17 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loggedsStaff = context.TBL_STAFF.Find(staffId);
             var result = (from a in context.TBL_APPROVAL_TRAIL
-                         // join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
-                        //  join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
-                         // join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
-                         // join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
+                              // join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                              //  join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                              // join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                              // join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
 
-                         // join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
-                          //join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
-                         // from j in apprStaff.DefaultIfEmpty()
-                         // join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
-                          where a.COMPANYID == companyId where a.TARGETID == targetId && a.OPERATIONID == operationId
+                              // join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
+                              //join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
+                              // from j in apprStaff.DefaultIfEmpty()
+                              // join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
+                          where a.COMPANYID == companyId
+                          where a.TARGETID == targetId && a.OPERATIONID == operationId
                           select new WorkflowTrackerViewModel
                           {
                               arrivalDate = a.ARRIVALDATE,
@@ -5299,8 +5266,8 @@ namespace FintrakBanking.Repositories.Credit
                               requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
                               requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
                               TargetId = a.TARGETID,
-                             // operationId = e.OPERATIONID,
-                             // operationName = e.OPERATIONNAME,
+                              // operationId = e.OPERATIONID,
+                              // operationName = e.OPERATIONNAME,
                               //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
                               approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME
                           }).Distinct();

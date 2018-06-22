@@ -97,6 +97,7 @@
                     handler.Dispose();
                     client.Dispose();
 
+                    
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
@@ -108,8 +109,12 @@
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
-                    context.TBL_CUSTOM_API_LOGS.Add(logs);
-                    context.SaveChanges();
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
                 }
             }
            
@@ -320,8 +325,12 @@
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
-                    context.TBL_CUSTOM_API_LOGS.Add(logs);
-                    context.SaveChanges();
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
                 }
 
             }
@@ -420,8 +429,12 @@
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseJson,
                     };
-                    context.TBL_CUSTOM_API_LOGS.Add(logs);
-                   var yes = context.SaveChanges()>0;
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
                 }
 
 
@@ -529,8 +542,11 @@
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
-                    context.TBL_CUSTOM_API_LOGS.Add(logs);
-                    context.SaveChanges();
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
                 }
 
                 
