@@ -308,7 +308,7 @@ namespace FintrakBanking.Repositories.Finance
                 PostTransactionSub(batchCode, inputTransactions, transactions);
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
-            context.SaveChanges();
+            var result = context.SaveChanges()> 0;
 
             return batchCode;
         }
@@ -1906,8 +1906,9 @@ namespace FintrakBanking.Repositories.Finance
         public bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model)
 
         {
-
+            model.branchId = 100;
             //var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
+
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             debit.operationId = model.operationId;
             debit.description = model.description;
@@ -1963,24 +1964,24 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.BulkIntegrationPosting,
-                STAFFID = (int)SystemStaff.System,//model.createdBy,
-                BRANCHID = model.branchId,
-                DETAIL = $"{ model.description}: {model.sourceReferenceNumber}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = model.valueDate,//generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.BulkIntegrationPosting,
+            //    STAFFID = (int)SystemStaff.HQ,//model.createdBy,
+            //    BRANCHID = model.branchId,
+            //    DETAIL = $"{ model.description}: {model.sourceReferenceNumber}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = model.valueDate,//generalSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
 
-            this.auditTrail.AddAuditTrail(audit);
+            //this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
             if (batchPost != null)
             {
-                var result = context.SaveChanges() > 0;
+                var result = true;
                 return result;
             }
             return false;

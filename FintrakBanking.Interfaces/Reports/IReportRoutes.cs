@@ -49,6 +49,6 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCollateralInsuranceReport(DateRange dateRange, int companyId, int staffId);
         string GetTurnoverCovenantReport(DateRange dateRange, int companyId, int staffId);
         string GetWorkflowSLAMonitoring(int companyId, DateRange dateRange);
-
+        string GetBlacklist(ReportSearchEntity searchEntity);
     }
 }

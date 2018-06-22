@@ -6,7 +6,8 @@ namespace FintrakBanking.Common.Enum
 {
     public enum SystemStaff
     {
-        System  = -1
+        System  = -1,
+        HQ = 1
 
     }
 }
