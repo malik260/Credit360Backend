@@ -278,27 +278,27 @@
 
             public async Task<ResponseMessage> ApiTransactionPosting(List<TransactionPostingViewModel> model)
             {
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+                var dta = context.TBL_SETUP_GLOBAL.ToList();
+
+                var objData = new JavaScriptSerializer().Serialize(model);
+
+                handler.UseDefaultCredentials = true;
+                HttpClient client = new HttpClient(handler);
+
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.Authorization = token;
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                 try
                 {
-                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-
-                    var dta = context.TBL_SETUP_GLOBAL.ToList();
-
-                    var objData = new JavaScriptSerializer().Serialize(model);
-
-                    handler.UseDefaultCredentials = true;
-                    HttpClient client = new HttpClient(handler);
-
-                    httpClientInstance = new HttpClient();
-                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(30);
-                    client.DefaultRequestHeaders.Authorization = token;
-                    client.BaseAddress = new Uri(API_URL);
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
                                                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
@@ -340,7 +340,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator." );
+                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
                 }
             }
 

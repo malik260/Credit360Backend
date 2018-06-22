@@ -394,12 +394,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId, int branchId)
         {
-            //var allstaff = this.context.TBL_STAFF.Select(s => new //OperationStaffViewModel
-            //{
-            //    id = s.STAFFID,
-            //    name = s.LASTNAME + " " + s.FIRSTNAME
-            //});
-
             var thisStaff = this.context.TBL_STAFF.Find(staffId);
             var unitId = thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID;
 
@@ -442,7 +436,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                          //from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
                          // fromBranchName = context.TBL_BRANCH.Where(c=>c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
                          to = x.TBL_STAFF1.FIRSTNAME == null ? "n/a" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
-                         assignee = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.MIDDLENAME + " " + x.TBL_STAFF2.LASTNAME,
+                         assignee = x.TBL_STAFF2.FIRSTNAME == null ? "Assign" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.MIDDLENAME + " " + x.TBL_STAFF2.LASTNAME,
                          // assignee = allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO).name,
                          //  toBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.RECEIVERSTAFFID).FirstOrDefault().BRANCHNAME,
                          //from = allstaff.GetStaffName(s => s.id == x.SenderStaffId),
