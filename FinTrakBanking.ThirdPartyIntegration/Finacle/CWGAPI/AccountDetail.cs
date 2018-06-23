@@ -24,6 +24,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             private HttpClientHandler handler = new HttpClientHandler();
             private static HttpClient _httpClientInstance;
 
+
             public AccountDetail(FinTrakBankingContext _context)
             {
                 this.context = _context;
@@ -88,14 +89,17 @@ namespace FinTrakBanking.ThirdPartyIntegration
                         {
                             APIURL = $"api/OfficeAccount/GetGeneralLedgerAccountRecord?accountNumber={glNumber}",
                             LOGTYPEID = 8,
-                            REFERENCENUMBER = responseMessage,
+                            REFERENCENUMBER = glNumber,
                             REQUESTDATETIME = requestDatetime,
-                            REQUESTMESSAGE = responseMessage,
+                            REQUESTMESSAGE = glNumber,
                             RESPONSEDATETIME = responseDateTime,
                             RESPONSEMESSAGE = responseMessage,
                         };
-                        context.TBL_CUSTOM_API_LOGS.Add(logs);
-                        context.SaveChanges();
+                        FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                        logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                        logContext.SaveChanges();
                         return result;
                     }
                     else throw new ConditionNotMetException("Account number not found on finacle");
@@ -159,14 +163,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     {
                         APIURL = $"api/OfficeAccount/GetTermDepositAccountRecord?accountNumber={teamDepositAccountNumber}",
                         LOGTYPEID = 9,
-                        REFERENCENUMBER = responseMessage,
+                        REFERENCENUMBER = teamDepositAccountNumber,
                         REQUESTDATETIME = requestDatetime,
-                        REQUESTMESSAGE = responseMessage,
+                        REQUESTMESSAGE = teamDepositAccountNumber,
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
-                    context.TBL_CUSTOM_API_LOGS.Add(logs);
-                    context.SaveChanges();
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
                     return result;
                 }
 

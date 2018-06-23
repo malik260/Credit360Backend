@@ -111,8 +111,11 @@
                     RESPONSEDATETIME = responseDateTime,
                     RESPONSEMESSAGE = responseMessage,
                 };
-                context.TBL_CUSTOM_API_LOGS.Add(logs);
-                context.SaveChanges();
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
 
                 return customers;
 
@@ -198,8 +201,11 @@
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
-                    context.TBL_CUSTOM_API_LOGS.Add(logs);
-                    context.SaveChanges();
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
                 }
             }
 
@@ -275,14 +281,17 @@
                     {
                         APIURL = $"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}",
                         LOGTYPEID = 5,
-                        REFERENCENUMBER = responseMessage,
+                        REFERENCENUMBER = customerCode,
                         REQUESTDATETIME = requestDatetime,
-                        REQUESTMESSAGE = responseMessage,
+                        REQUESTMESSAGE = customerCode,
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
-                    context.TBL_CUSTOM_API_LOGS.Add(logs);
-                    context.SaveChanges();
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
                 }
             }
 
@@ -337,14 +346,17 @@
                     {
                         APIURL = $"api/ExposePerson/Get?customerCode={customerCode}",
                         LOGTYPEID = 6,
-                        REFERENCENUMBER = responseMessage,
+                        REFERENCENUMBER = customerCode,
                         REQUESTDATETIME = requestDatetime,
-                        REQUESTMESSAGE = responseMessage,
+                        REQUESTMESSAGE = customerCode,
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
-                    context.TBL_CUSTOM_API_LOGS.Add(logs);
-                    context.SaveChanges();
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
                 }
             }
 
@@ -404,14 +416,17 @@
                 {
                     APIURL = $"api/OfficeAccount/GetGlAccountRecord?customerCode={customerCode}",
                     LOGTYPEID = 7,
-                    REFERENCENUMBER = responseMessage,
+                    REFERENCENUMBER = customerCode,
                     REQUESTDATETIME = requestDatetime,
-                    REQUESTMESSAGE = responseMessage,
+                    REQUESTMESSAGE = customerCode,
                     RESPONSEDATETIME = responseDateTime,
                     RESPONSEMESSAGE = responseMessage,
                 };
-                context.TBL_CUSTOM_API_LOGS.Add(logs);
-                context.SaveChanges();
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
 
                 return data;
             }

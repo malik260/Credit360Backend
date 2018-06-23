@@ -109,14 +109,17 @@
                 {
                     APIURL = "api/TemporaryOverDraft/Single",
                     LOGTYPEID = 10,
-                    REFERENCENUMBER = objData,
+                    REFERENCENUMBER = entity.customerCode,
                     REQUESTDATETIME = requestDatetime,
                     REQUESTMESSAGE = objData,
                     RESPONSEDATETIME = responseDateTime,
                     RESPONSEMESSAGE = responseMessage,
                 };
-                _context.TBL_CUSTOM_API_LOGS.Add(logs);
-                _context.SaveChanges();
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
                 return responseMsg;
             }
 
