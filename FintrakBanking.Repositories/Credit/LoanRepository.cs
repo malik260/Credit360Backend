@@ -2741,6 +2741,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = l.CUSTOMERID,
                             customerName = cust.FIRSTNAME + " " + cust.LASTNAME,
                             productId = l.PRODUCTID,
+
                             companyId = l.COMPANYID,
                             casaAccountId = l.CASAACCOUNTID,
                             branchId = l.BRANCHID,
@@ -2805,7 +2806,7 @@ namespace FintrakBanking.Repositories.Credit
                             createdBy = l.CREATEDBY,
                             dateTimeCreated = l.DATETIMECREATED,
                             // isCamsol = context.TBL_LOAN_CAMSOL.Any(x => x.LOANID == l.TERMLOANID),
-                            // productName = l.TBL_PRODUCT.PRODUCTNAME
+                            productName = l.TBL_PRODUCT.PRODUCTNAME
                         });
             return data;
         }
@@ -2855,7 +2856,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId)
         {
-            var data = GetAllLoans().Where(l => l.customerId == customerId).GroupBy(x => x.loanId).Select(g => g.FirstOrDefault());
+            var data = GetAllLoans().Where(l => l.customerId == customerId && l.loanStatusId == (short)LoanStatusEnum.Active).GroupBy(x => x.loanId).Select(g => g.FirstOrDefault());
             return data;
 
         }

@@ -446,7 +446,7 @@
             {
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
-
+                LienProcessViewModel responseModel = new LienProcessViewModel();
                 bool output = false;
                 HttpClient client = new HttpClient(handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
@@ -486,7 +486,7 @@
                     // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Authorization = token;
 
-                    LienProcessViewModel responseModel = new LienProcessViewModel();
+                   
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
@@ -570,7 +570,7 @@
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = objData,
                         RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = responseMessage,
+                        RESPONSEMESSAGE = responseModel.webRequestStatus,
                     };
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
 
