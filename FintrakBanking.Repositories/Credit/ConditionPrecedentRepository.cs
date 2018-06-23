@@ -86,16 +86,15 @@ namespace FintrakBanking.Repositories.Credit
         public List<ConditionPrecedentViewModel> AddSelectedConditionPrecedent(SelectedIdsViewModel entity)
         {
             var loanconditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.CONDITIONID != null
-                && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == entity.id
+                && x.LOANAPPLICATIONDETAILID == entity.detailId
             );
-            var deletableIds = loanconditions.Where(x => x.CONDITIONID != null && !entity.selectedIds.Contains((int)x.CONDITIONID)).Select(x => x.LOANCONDITIONID);
 
             var conditions = context.TBL_CONDITION_PRECEDENT.Where(x => entity.selectedIds.Contains(x.CONDITIONID)).ToList();
             foreach (var c in conditions)
             {
                 if (!loanconditions.Any(x => x.CONDITIONID == (int)c.CONDITIONID))
                 {
-                    var data = new TBL_LOAN_CONDITION_PRECEDENT
+                    context.TBL_LOAN_CONDITION_PRECEDENT.Add(new TBL_LOAN_CONDITION_PRECEDENT
                     {
                         CONDITION = c.CONDITION,
                         CONDITIONID = c.CONDITIONID,
@@ -106,11 +105,12 @@ namespace FintrakBanking.Repositories.Credit
                         LOANAPPLICATIONDETAILID = entity.detailId,
                         RESPONSE_TYPEID = c.RESPONSE_TYPEID,
                         DATETIMECREATED = general.GetApplicationDate(),
-                    };
-                    context.TBL_LOAN_CONDITION_PRECEDENT.Add(data);
+                    });
                 }
             }
+            context.SaveChanges();
 
+            var deletableIds = loanconditions.Where(x => x.CONDITIONID != null && !entity.selectedIds.Contains((int)x.CONDITIONID)).Select(x => x.LOANCONDITIONID);
             context.TBL_LOAN_CONDITION_DEFERRAL.RemoveRange(
                 context.TBL_LOAN_CONDITION_DEFERRAL.Where(x => deletableIds.Contains((int)x.LOANCONDITIONID))
             );
@@ -456,7 +456,6 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion Timeline for Compliance
-
 
         #region LMS approval process
 

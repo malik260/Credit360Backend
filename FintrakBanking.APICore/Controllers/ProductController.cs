@@ -571,13 +571,13 @@ namespace FintrakBanking.APICore.Controllers
         #region Product Region
 
       [HttpGet] [ClaimsAuthorization]  
-        [Route("product-by-productclass/{id}")]
-        public HttpResponseMessage GetAllProduct(int id)
+        [Route("product-by-productclass/{id}/customerType/{cid}")]
+        public HttpResponseMessage GetAllProduct(int id, int cid)
         {
             try
             {
 
-                var data = repo.GetAllProductByProductClass(id).ToList();
+                var data = repo.GetAllProductByProductClass(id, cid).ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

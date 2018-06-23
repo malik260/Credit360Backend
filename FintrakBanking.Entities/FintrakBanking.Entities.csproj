@@ -269,6 +269,13 @@
     <Compile Include="Models\TBL_KYC_DOCUMENTTYPE.cs" />
     <Compile Include="Models\TBL_KYC_ITEM.cs" />
     <Compile Include="Models\TBL_LANGUAGE.cs" />
+    <Compile Include="Models\TBL_LMSR_APPLICATION.cs" />
+    <Compile Include="Models\TBL_LMSR_APPLICATION_COLLATRL2.cs" />
+    <Compile Include="Models\TBL_LMSR_APPLICATION_COVENANT.cs" />
+    <Compile Include="Models\TBL_LMSR_APPLICATION_DETAIL.cs" />
+    <Compile Include="Models\TBL_LMSR_APPLICATN_DETL_MTRIG.cs" />
+    <Compile Include="Models\TBL_LMSR_CONDITION_PRECEDENT.cs" />
+    <Compile Include="Models\TBL_LMSR_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\TBL_LOAN.cs" />
     <Compile Include="Models\TBL_LOANAPPLICATION_COLTRL_MAP.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION.cs" />

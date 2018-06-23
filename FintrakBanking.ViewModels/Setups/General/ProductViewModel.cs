@@ -115,7 +115,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public ProductBehaviourViewModel ProductBehaviour { get;set;}
         public short productClassProcessId { get; set; }
-
+        public short customerTypeId { get; set; }
     }
 
 

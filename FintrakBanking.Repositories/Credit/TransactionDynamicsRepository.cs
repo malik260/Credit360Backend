@@ -279,31 +279,30 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<TransactionDynamicsViewModel> AddSelectedTransactionDynamicsLms(SelectedIdsViewModel entity)
         {
-            var dynamics = context.TBL_TRANSACTION_DYNAMICS.Where(x => entity.selectedIds.Contains(x.DYNAMICSID)).ToList();
-
-            var loandynamics = context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x =>
-                x.DYNAMICSID != null
-                && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == entity.id
+            var loanconditions = context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => x.DYNAMICSID != null
+                && x.LOANAPPLICATIONDETAILID == entity.detailId
             );
 
-            foreach (var c in dynamics)
+            var conditions = context.TBL_TRANSACTION_DYNAMICS.Where(x => entity.selectedIds.Contains(x.DYNAMICSID)).ToList();
+            foreach (var c in conditions)
             {
-                if (!loandynamics.Any(x => x.DYNAMICSID == (int)c.DYNAMICSID))
+                if (!loanconditions.Any(x => x.DYNAMICSID == (int)c.DYNAMICSID))
                 {
-                    var data = new TBL_LOAN_TRANSACTION_DYNAMICS
+                    context.TBL_LOAN_TRANSACTION_DYNAMICS.Add(new TBL_LOAN_TRANSACTION_DYNAMICS
                     {
                         DYNAMICS = c.DYNAMICS,
                         DYNAMICSID = c.DYNAMICSID,
                         CREATEDBY = c.CREATEDBY,
                         LOANAPPLICATIONDETAILID = entity.detailId,
                         DATETIMECREATED = general.GetApplicationDate(),
-                    };
-                    context.TBL_LOAN_TRANSACTION_DYNAMICS.Add(data);
+                    });
                 }
             }
+            context.SaveChanges();
 
+            var deletableIds = loanconditions.Where(x => x.DYNAMICSID != null && !entity.selectedIds.Contains((int)x.DYNAMICSID)).Select(x => x.LOANDYNAMICSID);
             context.TBL_LOAN_TRANSACTION_DYNAMICS.RemoveRange(
-                context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => x.DYNAMICSID != null && entity.selectedIds.Contains((int)x.DYNAMICSID) == false)
+                context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => deletableIds.Contains((int)x.LOANDYNAMICSID))
             );
             context.SaveChanges();
 
