@@ -628,7 +628,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1955,7 +1954,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox35</rd:DefaultName>
-              <Top>0.43278in</Top>
+              <Top>0.41889in</Top>
               <Height>0.25in</Height>
               <Width>4.12917in</Width>
               <ZIndex>1</ZIndex>

@@ -86,7 +86,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<ConditionPrecedentViewModel> AddSelectedConditionPrecedent(SelectedIdsViewModel entity)
         {
             var loanconditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.CONDITIONID != null
-                && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == entity.id
+                && x.LOANAPPLICATIONDETAILID == entity.detailId
             );
             var deletableIds = loanconditions.Where(x => x.CONDITIONID != null && !entity.selectedIds.Contains((int)x.CONDITIONID)).Select(x => x.LOANCONDITIONID);
 
@@ -456,7 +456,6 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion Timeline for Compliance
-
 
         #region LMS approval process
 

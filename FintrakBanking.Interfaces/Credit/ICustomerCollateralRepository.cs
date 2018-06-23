@@ -101,7 +101,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<CollateralDocumentViewModel> GetPropertyVistation(int collateralId);
         List<InsurancePolicies> GetTempCollateralInsurancePolicy(int collateralId);
 
-        List<CasaLienViewModel> GetAccountLienDetail(string AccountNumber);
+        CasaLienViewModel GetAccountLienDetail(string AccountNumber);
 
         IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId);
     }

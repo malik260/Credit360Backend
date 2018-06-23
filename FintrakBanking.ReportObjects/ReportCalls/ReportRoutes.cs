@@ -435,6 +435,13 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/LoanInterestReceivableAndPayable.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&branchId=" + searchEntity.branchId + "&loanRefNo=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&productClassId=" + searchEntity.productClassId;
             return path;
         }
+
+        public string GetBlacklist(ReportSearchEntity searchEntity)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/Blacklist.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&customerCode=" + searchEntity.customerCode;
+            return path;
+        }
     }
 
 }

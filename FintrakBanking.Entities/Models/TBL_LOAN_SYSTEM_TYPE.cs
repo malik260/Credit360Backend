@@ -22,6 +22,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_MONITORING_TRIGGER = new HashSet<TBL_LOAN_MONITORING_TRIGGER>();
             TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN_REVOLVING_ARCHIVE = new HashSet<TBL_LOAN_REVOLVING_ARCHIVE>();
+            TBL_LMSR_APPLICATION_DETAIL = new HashSet<TBL_LMSR_APPLICATION_DETAIL>();
         }
 
         [Key]
@@ -63,5 +64,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_REVOLVING_ARCHIVE> TBL_LOAN_REVOLVING_ARCHIVE { get; set; }
 
         public virtual ICollection<TBL_LOAN_FEE_ARCHIVE> TBL_LOAN_FEE_ARCHIVE { get; set; }
+
+        public virtual ICollection<TBL_LMSR_APPLICATION_DETAIL> TBL_LMSR_APPLICATION_DETAIL { get; set; }
     }
 }

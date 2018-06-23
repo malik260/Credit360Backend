@@ -427,12 +427,24 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="ExceptionLogger\Logger.cs" />
     <Compile Include="Filters\AuthorizeActivity.cs" />
+    <Compile Include="Reports\Credit\Credit1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Credit.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.cs">
       <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.designer.cs">
       <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\Blacklist.aspx.cs">
+      <DependentUpon>Blacklist.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\Blacklist.aspx.designer.cs">
+      <DependentUpon>Blacklist.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\BondAndGuarantee.aspx.cs">
       <DependentUpon>BondAndGuarantee.aspx</DependentUpon>
@@ -530,11 +542,6 @@
     </Compile>
     <Compile Include="Reports\Collateral\ScheduledCollateralReport.aspx.designer.cs">
       <DependentUpon>ScheduledCollateralReport.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\Credit\Credit.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Credit.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx.cs">
       <DependentUpon>OfferLetterCAMbase.aspx</DependentUpon>
@@ -753,6 +760,7 @@
     <Content Include="Reports\Credit\TestReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
+    <Content Include="Reports\ReportViews\Blacklist.aspx" />
     <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
     <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
     <Content Include="Reports\ReportViews\CollateralInsurance.aspx" />
@@ -820,6 +828,17 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <Content Include="Reports\Credit\Credit.xss">
+      <DependentUpon>Credit.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\Credit\Credit.xsc">
+      <DependentUpon>Credit.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\Credit\Credit.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Reports\ReportDataset\CollateralDataSet.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>
@@ -838,17 +857,6 @@
     </Content>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <Content Include="Reports\Credit\Credit.xsc">
-      <DependentUpon>Credit.xsd</DependentUpon>
-    </Content>
-    <None Include="Reports\Credit\Credit.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>Credit.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Reports\Credit\Credit.xss">
-      <DependentUpon>Credit.xsd</DependentUpon>
-    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -990,6 +998,7 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Blacklist.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralInsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
