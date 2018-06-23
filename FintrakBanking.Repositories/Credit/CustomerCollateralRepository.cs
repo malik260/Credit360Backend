@@ -3621,27 +3621,31 @@ namespace FintrakBanking.Repositories.Credit
         private void AddTempCasaCollateral(int collateralId, CollateralViewModel entity)
         {
             if (casa.GetCASABalance(entity.collateralCode, entity.companyId) == null)
-                throw new Exception("Invalid Account Number");
-
-            context.TBL_TEMP_COLLATERAL_CASA.Add(new TBL_TEMP_COLLATERAL_CASA
             {
-                TEMPCOLLATERALCUSTOMERID = collateralId,
-                ACCOUNTNUMBER = entity.collateralCode,
-                AVAILABLEBALANCE = entity.availableBalance,
-                LIENAMOUNT = entity.lienAmount,
-                SECURITYVALUE = (decimal)entity.securityValue,
-                REMARK = entity.remark,
-            });
+                throw new Exception(entity.customerCode + " is not a valid CASA account Number");
+            }
+            else
+            {
+                context.TBL_TEMP_COLLATERAL_CASA.Add(new TBL_TEMP_COLLATERAL_CASA
+                {
+                    TEMPCOLLATERALCUSTOMERID = collateralId,
+                    ACCOUNTNUMBER = entity.collateralCode,
+                    AVAILABLEBALANCE = entity.availableBalance,
+                    LIENAMOUNT = entity.lienAmount,
+                    SECURITYVALUE = (decimal)entity.securityValue,
+                    REMARK = entity.remark,
+                });
 
-            workflow.StaffId = entity.createdBy;
-            workflow.CompanyId = entity.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = collateralId;
-            workflow.Comment = "Request for property collateral approval";
-            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
-            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
+                workflow.StaffId = entity.createdBy;
+                workflow.CompanyId = entity.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = collateralId;
+                workflow.Comment = "Request for property collateral approval";
+                workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+            }
         }
 
         // FIX DEPOSIT collateral
