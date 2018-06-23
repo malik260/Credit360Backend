@@ -214,20 +214,7 @@ namespace WinApp
 
             //Task.Run(async () => { data = await transaction.APITransactionPosting(tran); }).GetAwaiter().GetResult();
             //financeTransaction.UpdateCustomTransactions(tran[0].batchCode);
-            _integration.GetCustomerAccountBalance("1000398191");
-
-            //var logs = new TBL_CUSTOM_API_LOGS
-            //{
-            //    APIURL = "api/Transactions/PostTransactions",
-            //    LOGTYPEID = 1,//model.FirstOrDefault().operationId,
-            //    REFERENCENUMBER = "ffffffffff",//model.FirstOrDefault().referenceNumber,
-            //    REQUESTDATETIME = DateTime.Now,
-            //    REQUESTMESSAGE = "jjjjj",
-            //    RESPONSEDATETIME = DateTime.Now,
-            //    RESPONSEMESSAGE = "uuuuuuu",
-            //};
-            //context.TBL_CUSTOM_API_LOGS.Add(logs);
-            //context.SaveChanges();
+            _integration.GetCustomerAccountBalance("10003981910000");
             MessageBox.Show("Successful", "Fintrak");
         }
 
