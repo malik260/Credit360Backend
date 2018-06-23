@@ -231,6 +231,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public ResponseMessageViewModel APIResponse { get; set; }
         public bool APIStatus { get; set; }
         public HttpResponseMessage Message { get; set; }
+        public bool TransactionIsSuccessfull { get; set; }
+        public string TransactionMessage { get; set; }
     }
 
     public class AccountCreationRespones

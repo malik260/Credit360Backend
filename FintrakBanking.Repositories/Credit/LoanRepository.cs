@@ -359,7 +359,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
-                } 
+                }
                 catch (APIErrorException ae)
                 {
                     trans.Rollback();
@@ -1033,16 +1033,18 @@ namespace FintrakBanking.Repositories.Credit
             //PostLoanDisbursment(entity);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));
-
-            //inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
-
-            financeTransaction.PostTransaction(inputTransactions);
+            inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));            
 
             var feePostings = BuildLoanChargeFeesPosting(entity);
 
+            //if fee has not been taken from the customer account due to override
             if (feePostings.Count() > 0)
-                financeTransaction.PostTransaction(feePostings);
+                inputTransactions.AddRange(feePostings);
+
+            financeTransaction.PostTransaction(inputTransactions);
+            
+            //if (feePostings.Count() > 0)
+            //    financeTransaction.PostTransaction(feePostings);
         }
 
         public void PostLoanFees(LoanViewModel entity)
@@ -1097,7 +1099,7 @@ namespace FintrakBanking.Repositories.Credit
                                 productId = ln.PRODUCTID,
                                 casaAccountId = ln.CASAACCOUNTID,
                                 casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER +" ("+ ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
+                                casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
@@ -1760,8 +1762,8 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                                     reviewedDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
                                     sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                                    sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT), 
-                                    sanctionReferenceNumber =  revolvingLoanRecord.LOANREFERENCENUMBER
+                                    sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                                    sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
                                 };
 
                                 ResponseMessageViewModel res = finacle.OverDraftNormal(model);
@@ -1843,7 +1845,7 @@ namespace FintrakBanking.Repositories.Credit
                             var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
                             var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
                             if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings); }
-                               
+
                             contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             contingentLoanRecord.ISDISBURSED = true;
                             contingentLoanRecord.APPROVEDBY = user.createdBy;
@@ -2445,7 +2447,7 @@ namespace FintrakBanking.Repositories.Credit
                             debit.approvedDateTime = DateTime.Now;
                             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                             debit.companyId = loanDetails.companyId;
-                            
+
 
                             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
@@ -5241,16 +5243,17 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loggedsStaff = context.TBL_STAFF.Find(staffId);
             var result = (from a in context.TBL_APPROVAL_TRAIL
-                         // join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
-                        //  join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
-                         // join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
-                         // join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
+                              // join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                              //  join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                              // join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                              // join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
 
-                         // join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
-                          //join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
-                         // from j in apprStaff.DefaultIfEmpty()
-                         // join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
-                          where a.COMPANYID == companyId where a.TARGETID == targetId && a.OPERATIONID == operationId
+                              // join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
+                              //join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
+                              // from j in apprStaff.DefaultIfEmpty()
+                              // join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
+                          where a.COMPANYID == companyId
+                          where a.TARGETID == targetId && a.OPERATIONID == operationId
                           select new WorkflowTrackerViewModel
                           {
                               arrivalDate = a.ARRIVALDATE,
@@ -5263,8 +5266,8 @@ namespace FintrakBanking.Repositories.Credit
                               requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
                               requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
                               TargetId = a.TARGETID,
-                             // operationId = e.OPERATIONID,
-                             // operationName = e.OPERATIONNAME,
+                              // operationId = e.OPERATIONID,
+                              // operationName = e.OPERATIONNAME,
                               //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
                               approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME
                           }).Distinct();
