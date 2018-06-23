@@ -32,7 +32,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 }
             }
 
-            FinTrakBankingContext logContext = new FinTrakBankingContext();
+            //FinTrakBankingContext logContext = new FinTrakBankingContext();
             private HttpClientHandler _handler = new HttpClientHandler();
             private static HttpClient _httpClientInstance;
 
@@ -136,7 +136,9 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
-                    
+
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
 
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
@@ -216,7 +218,10 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     RESPONSEDATETIME = responseDateTime,
                     RESPONSEMESSAGE = responseMessage,
                 };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
                 logContext.SaveChanges();
                 return responseMsg;
 
@@ -293,7 +298,10 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     RESPONSEDATETIME = responseDateTime,
                     RESPONSEMESSAGE = responseMessage,
                 };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
                 logContext.SaveChanges();
                 return responseMsg;
 
@@ -372,7 +380,10 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     RESPONSEDATETIME = responseDateTime,
                     RESPONSEMESSAGE = responseMessage,
                 };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
                 logContext.SaveChanges();
                 return responseMsg;
 
@@ -455,7 +466,10 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     RESPONSEDATETIME = responseDateTime,
                     RESPONSEMESSAGE = responseMessage,
                 };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
                 logContext.SaveChanges();
                 return responseMsg;
 
@@ -535,7 +549,10 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     RESPONSEDATETIME = responseDateTime,
                     RESPONSEMESSAGE = responseMessage,
                 };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
                 logContext.SaveChanges();
                 return responseMsg;
 
@@ -617,7 +634,10 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     RESPONSEDATETIME = responseDateTime,
                     RESPONSEMESSAGE = responseMessage,
                 };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
                 logContext.SaveChanges();
                 return responseMsg;
             }
