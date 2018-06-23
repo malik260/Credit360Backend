@@ -442,7 +442,7 @@
             }
 
 
-            public async Task<bool> APIProcessLien(CasaLienViewModel model, string lienType)
+            public async Task<ResponseMessage> APIProcessLien(CasaLienViewModel model, string lienType)
             {
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
@@ -458,13 +458,14 @@
 
                 try
                 {
-                    LienProcessViewModel apiModel = new LienProcessViewModel
+                    //var leinAmountString = String.Format("{0:0.00}", model.lienAmount)
+                    LienAPIProcessViewModel apiModel = new LienAPIProcessViewModel
                     {
                         account = model.productAccountNumber,
                         lienProcessType = lienType, //"PLACE" or LIFTLIEN
                         lienReasonCode = "VIA",
                         lienReason = model.description,
-                        lienAmount = model.lienAmount,
+                        lienAmount = String.Format("{0:0.00}", model.lienAmount), //model.lienAmount,  //
                         lienUniqueReferenceNumber = model.lienReferenceNumber,
                         lienAccountCurrency = context.TBL_CASA.FirstOrDefault(x =>
                                 x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId)
@@ -492,32 +493,61 @@
                     response = client.PostAsync("api/Lien/ProcessLien", new StringContent(
                         new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
                     responseDateTime = DateTime.Now;
-                    if (response.IsSuccessStatusCode)
-                    {
-                        responseModel = await response.Content.ReadAsAsync<LienProcessViewModel>();
-                    }
+                    //if (response.IsSuccessStatusCode)
+                    //{
+                    //    responseModel = await response.Content.ReadAsAsync<LienProcessViewModel>();
+                    //}
 
-                    ResponseViewModel responseAPI = new ResponseViewModel();
-                    responseAPI.responseCode = responseModel.responseCode;
-                    responseAPI.webRequestDate = responseModel.webRequestDate;
-                    responseAPI.webRequestStatus = responseModel.webRequestStatus;
-                    responseAPI.referenceNumber = responseModel.referenceNumber;
+                    //ResponseViewModel responseAPI = new ResponseViewModel();
+                    //responseAPI.responseCode = responseModel.responseCode;
+                    //responseAPI.webRequestDate = responseModel.webRequestDate;
+                    //responseAPI.webRequestStatus = responseModel.webRequestStatus;
+                    //responseAPI.referenceNumber = responseModel.referenceNumber;
 
-                    responseMessage = await response.Content.ReadAsStringAsync();
+                    //responseMessage = await response.Content.ReadAsStringAsync();
 
                     //handler.Dispose();
                     //client.Dispose();
 
-                    if (responseModel.responseCode == "0")
+                    //if (responseModel.responseCode == "0")
+                    //{
+                    //    output = true;
+                    //}
+                    //else
+                    //{
+                    //    output = false;
+                    //}
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        output = true;
+
+                        responseModel = await response.Content.ReadAsAsync<LienProcessViewModel>();
+
+                        var res = new ResponseMessageViewModel
+                        {
+                            responseCode = responseModel.responseCode,
+                            webRequestDate = responseModel.webRequestDate,
+                            webRequestStatus = responseModel.webRequestStatus,
+
+                        };
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = res,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
                     }
                     else
                     {
-                        output = false;
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
                     }
 
-                    return output;
+                    return responseMsg;
                 }
                 catch (Exception ex)
                 {
