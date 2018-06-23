@@ -170,7 +170,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-
             return allCorporate;
         }
 

@@ -315,7 +315,7 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <param name="searchQuery">The search query.</param>
         /// <param name="departmentId">The department identifier.</param>
         /// <returns></returns>
-        public IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery , int departmentId)
+        public IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery , int departmentUnitId)
         {
             IQueryable<DepartmentCustomersViewModel> allstaff = null;
 
@@ -331,7 +331,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             (x.firstname.ToLower().Contains(searchQuery)
                             || x.lastname.ToLower().Contains(searchQuery)
                             || x.middlename.ToLower().Contains(searchQuery) )
-                            && x.departmentId == departmentId
+                            && x.departmentUnitId == departmentUnitId
                 );
             }
 

@@ -221,12 +221,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
       [HttpGet] [ClaimsAuthorization]  
-        [Route("department-staff/{departmentId}/")]
-        public HttpResponseMessage SearchForDepartmentbyStaffId(string searchQuery, int departmentId)
+        [Route("department-staff/{departmentUnitId}/")]
+        public HttpResponseMessage SearchForDepartmentbyStaffId(string searchQuery, int departmentUnitId)
         {
             try
             {
-                var data = repo.SearchForDepartmentStaff(token.GetCompanyId, searchQuery, departmentId);
+                var data = repo.SearchForDepartmentStaff(token.GetCompanyId, searchQuery, departmentUnitId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
