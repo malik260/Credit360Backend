@@ -406,7 +406,7 @@
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = objData,
                         RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = responseMessage,
+                        RESPONSEMESSAGE = objData,
                     };
                     context.TBL_CUSTOM_API_LOGS.Add(logs);
                     context.SaveChanges();

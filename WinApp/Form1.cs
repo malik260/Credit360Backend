@@ -214,7 +214,7 @@ namespace WinApp
 
             //Task.Run(async () => { data = await transaction.APITransactionPosting(tran); }).GetAwaiter().GetResult();
             //financeTransaction.UpdateCustomTransactions(tran[0].batchCode);
-            _integration.GetCustomerAccountBalance("1000398191");
+            _integration.GetCustomerAccountBalance("10003981910000");
             MessageBox.Show("Successful", "Fintrak");
         }
 
