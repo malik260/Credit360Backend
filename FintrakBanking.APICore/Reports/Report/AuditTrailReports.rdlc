@@ -773,22 +773,6 @@
               </Border>
             </Style>
           </Image>
-          <Image Name="logo">
-            <Source>Database</Source>
-            <Value>=First(Fields!fileData.Value, "logo")</Value>
-            <MIMEType>image/jpeg</MIMEType>
-            <Sizing>FitProportional</Sizing>
-            <Top>0.14806in</Top>
-            <Left>1.13417in</Left>
-            <Height>0.625in</Height>
-            <Width>1.69792in</Width>
-            <ZIndex>3</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Image>
         </ReportItems>
         <Height>2in</Height>
         <Style />

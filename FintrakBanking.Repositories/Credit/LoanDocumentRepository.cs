@@ -153,7 +153,7 @@ namespace FintrakBanking.Repositories.Credit
                     physicalFileNumber = x.PHYSICALFILENUMBER,
                     physicalLocation = x.PHYSICALLOCATION,
                     isPrimaryDocument = x.ISPRIMARYDOCUMENT,
-                    dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
+                    databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
                 }).ToList();
         }
 
@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.Credit
                             physicalFileNumber = x.PHYSICALFILENUMBER,
                             physicalLocation = x.PHYSICALLOCATION,
                             isPrimaryDocument = x.ISPRIMARYDOCUMENT,
-                            dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
+                            databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
                         });
 
             return data.FirstOrDefault();
@@ -223,7 +223,7 @@ namespace FintrakBanking.Repositories.Credit
                             physicalFileNumber = x.PHYSICALFILENUMBER,
                             physicalLocation = x.PHYSICALLOCATION,
                             isPrimaryDocument = x.ISPRIMARYDOCUMENT,
-                            dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
+                            databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
                         });
 
             result = data.FirstOrDefault();
@@ -262,7 +262,7 @@ namespace FintrakBanking.Repositories.Credit
                     physicalFileNumber = x.PHYSICALFILENUMBER,
                     physicalLocation = x.PHYSICALLOCATION,
                     isPrimaryDocument = x.ISPRIMARYDOCUMENT,
-                    dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
+                    databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
                 }).FirstOrDefault();
             return media;
         }
@@ -401,7 +401,7 @@ namespace FintrakBanking.Repositories.Credit
                 systemDateTime = x.SYSTEMDATETIME,
                 physicalFileNumber = x.PHYSICALFILENUMBER,
                 physicalLocation = x.PHYSICALLOCATION,
-                dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES
+                databaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES
 
             }).ToList();
         }
@@ -425,7 +425,7 @@ namespace FintrakBanking.Repositories.Credit
                 systemDateTime = data.SYSTEMDATETIME,
                 physicalFileNumber = data.PHYSICALFILENUMBER,
                 physicalLocation = data.PHYSICALLOCATION,
-                dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES
+                databaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES
             };
         }
         public void GetCommitteeDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
@@ -445,7 +445,7 @@ namespace FintrakBanking.Repositories.Credit
                 systemDateTime = x.SYSTEMDATETIME,
                 physicalFileNumber = x.PHYSICALFILENUMBER,
                 physicalLocation = x.PHYSICALLOCATION,
-                dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES
+                databaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES
             }).FirstOrDefault();
 
             result = data;
@@ -479,7 +479,7 @@ namespace FintrakBanking.Repositories.Credit
                             fileName = x.FILENAME,
                             fileExtension = x.FILEEXTENSION,
                             systemDateTime = x.SYSTEMDATETIME,
-                            dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU
+                            databaseTable = (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU
                         });
 
             return data.ToList();
@@ -497,7 +497,7 @@ namespace FintrakBanking.Repositories.Credit
                             fileName = x.FILENAME,
                             fileExtension = x.FILEEXTENSION,
                             systemDateTime = x.SYSTEMDATETIME,
-                            dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU
+                            databaseTable = (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU
                         });
 
             result = data.ToList();
@@ -691,7 +691,7 @@ namespace FintrakBanking.Repositories.Credit
                         physicalLocation = x.PHYSICALLOCATION,
                         createdBy = x.CREATEDBY,
                         fileData=x.FILEDATA,
-                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS
+                        databaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS
                     }));
 
                 result= record.FirstOrDefault();
@@ -735,7 +735,7 @@ namespace FintrakBanking.Repositories.Credit
                            physicalFileNumber = x.PHYSICALFILENUMBER,
                            physicalLocation = x.PHYSICALLOCATION,
                            createdBy = x.CREATEDBY,
-                           dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS
+                           databaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS
                        }));
 
                 return record.ToList();
@@ -760,7 +760,7 @@ namespace FintrakBanking.Repositories.Credit
                            physicalFileNumber = x.PHYSICALFILENUMBER,
                            physicalLocation = x.PHYSICALLOCATION,
                            createdBy = x.CREATEDBY,
-                           dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS
+                           databaseTable = (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS
                        }));
 
                 result= record.ToList();
@@ -881,7 +881,7 @@ namespace FintrakBanking.Repositories.Credit
                         physicalLocation = x.PHYSICALLOCATION,
                         checkListDefinitionId = x.CHECKLISTDEFINITIONID,
                         loanDetailId = x.LOANDETAILSID,
-                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS
+                        databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS
                     });
 
                 result= record.FirstOrDefault();
@@ -929,7 +929,7 @@ namespace FintrakBanking.Repositories.Credit
                        physicalLocation = x.PHYSICALLOCATION,
                        checkListDefinitionId = x.CHECKLISTDEFINITIONID,
                        loanDetailId = x.LOANDETAILSID,
-                       dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS
+                       databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS
                    });
 
                 result= record.ToList();
@@ -1043,7 +1043,7 @@ namespace FintrakBanking.Repositories.Credit
                           fileName = x.FILENAME,
                           fileExtension = x.FILEEXTENSION,
                           documentCode = x.DOCUMENTCODE,
-                          dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS
+                          databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS
                       });
                 result= record.FirstOrDefault();
 
@@ -1087,7 +1087,7 @@ namespace FintrakBanking.Repositories.Credit
                           fileName = x.FILENAME,
                           fileExtension = x.FILEEXTENSION,
                           documentCode = x.DOCUMENTCODE,
-                          dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS
+                          databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS
                       });
                 result= record.ToList();
             }
@@ -1211,7 +1211,7 @@ namespace FintrakBanking.Repositories.Credit
                         jobRequestCode = x.JOBREQUESTCODE,
                         physicalFileNumber = x.PHYSICALFILENUMBER,
                         physicalLocation = x.PHYSICALLOCATION,
-                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT
+                        databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT
                     });
 
                 return record.FirstOrDefault();
@@ -1241,7 +1241,7 @@ namespace FintrakBanking.Repositories.Credit
                         jobRequestCode = x.JOBREQUESTCODE,
                         physicalFileNumber = x.PHYSICALFILENUMBER,
                         physicalLocation = x.PHYSICALLOCATION,
-                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT
+                        databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT
                     });
 
                 result = record.FirstOrDefault();
@@ -1294,7 +1294,7 @@ namespace FintrakBanking.Repositories.Credit
                        jobRequestCode = x.JOBREQUESTCODE,
                        physicalFileNumber = x.PHYSICALFILENUMBER,
                        physicalLocation = x.PHYSICALLOCATION,
-                       dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT
+                       databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT
                    });
 
                 result = record.ToList();
@@ -1425,7 +1425,7 @@ namespace FintrakBanking.Repositories.Credit
                         physicalLocation = x.PHYSICALLOCATION,
                         customerCode = x.CUSTOMERCODE,
                         customerId = x.CUSTOMERID,
-                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS
+                        databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS
                     });
 
                 result= record.FirstOrDefault();
@@ -1479,7 +1479,7 @@ namespace FintrakBanking.Repositories.Credit
                          physicalLocation = x.PHYSICALLOCATION,
                          customerCode = x.CUSTOMERCODE,
                          customerId = x.CUSTOMERID,
-                         dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS
+                         databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS
                      });
 
                 result= record.ToList();
@@ -1621,7 +1621,7 @@ namespace FintrakBanking.Repositories.Credit
                         documentTitle = x.DOCUMENT_TITLE,
                         staffCode = x.STAFFCODE,
 
-                        dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_PICTURE
+                        databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_PICTURE
                     });
 
                 result = record.FirstOrDefault();
@@ -1822,7 +1822,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool uploadDocument(LoanDocumentViewModel model, byte[] file)
         {
             //Check for file size here
-            switch (model.dababaseTable)
+            switch (model.databaseTable)
             {
                 case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: AddLoanDocument(model, file); return true;
                 case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: AddCommitteeDocument(model, file); return true;
@@ -1844,7 +1844,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanDocumentViewModel getUploadedDocument(LoanDocumentViewModel model)
         {
             var result = new LoanDocumentViewModel();
-            switch (model.dababaseTable)
+            switch (model.databaseTable)
             {
                 case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: GetApplicationLoanDocument(model, out result); return result;
                 case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: GetCommitteeDocument(model, out result); return result;
@@ -1864,7 +1864,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanDocumentViewModel> getListOfUploadedDocument(LoanDocumentViewModel model)
         {
             var result = new List<LoanDocumentViewModel>();
-            switch (model.dababaseTable)
+            switch (model.databaseTable)
             {
                 case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: GetAllLoanDocument( model, out result); return result;
                 case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: GetCommitteeDocument(model, out result); return result;
@@ -1886,7 +1886,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = 0;
 
-            switch (model.dababaseTable)
+            switch (model.databaseTable)
             {
                 case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: DeleteApplicationLoanDocument(model, out result); return result;
                 case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: DeleteCommitteeDocument(model, out result); return result;
@@ -1918,7 +1918,7 @@ namespace FintrakBanking.Repositories.Credit
                             fileExtension = x.FILEEXTENSION,
                             systemDateTime = x.SYSTEMDATETIME,
                             fileData = x.FILEDATA,
-                            dababaseTable = (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU
+                            databaseTable = (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU
                         });
 
             result= data.FirstOrDefault();
@@ -1944,7 +1944,7 @@ namespace FintrakBanking.Repositories.Credit
         //public void getUploadedDocument(LoanDocumentViewModel model, byte[] file)
         //{
         //    //Check for file size here
-        //    switch (model.dababaseTable)
+        //    switch (model.databaseTable)
         //    {
         //        case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: GetAllLoanDocument(); break;
         //        case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: AddCommitteeDocument(model, file); break;

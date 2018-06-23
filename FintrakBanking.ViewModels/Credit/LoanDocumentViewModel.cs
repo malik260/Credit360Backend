@@ -17,7 +17,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string physicalFileNumber { get; set; }
         public string physicalLocation { get; set; }
         public int? SourceId { get; set; }
-        public int? dababaseTable { get; set; }
+        public int? databaseTable { get; set; }
         public int? conditionId { get; set; }
         public int? loanApplicationId { get; set; }
         public int? checkListDefinitionId { get; set; }
