@@ -312,6 +312,8 @@ namespace FintrakBanking.Repositories.Credit
                     var detail = items.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == changed.detailId);
                     if (detail != null)
                     {
+                        if (changed.amount == 0) throw new Exception("ZERO! => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
+
                         detail.APPROVEDPRODUCTID = (short)changed.productId;
                         detail.APPROVEDAMOUNT = changed.amount;
                         detail.APPROVEDINTERESTRATE = changed.interestRate;
@@ -401,8 +403,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
+                var lastStatus = workflow.StatusId;
                 PassApplicationToOperation(appl.LOANAPPLICATIONID, (int)OperationsEnum.OfferLetterApproval, model.createdBy, "New pproved application");
-                return workflow.StatusId;
+                return lastStatus;
             }
 
             return (int)ApprovalStatusEnum.Processing; // default for now
@@ -1113,7 +1116,7 @@ namespace FintrakBanking.Repositories.Credit
                     collateralDetail = x.COLLATERALDETAIL,
                     collateralValue = x.COLLATERALVALUE,
                     stampedToCoverAmount = x.STAMPEDTOCOVERAMOUNT,
-                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    applicationDetailId = (int)x.LOANAPPLICATIONDETAILID,
                     productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
                 })
                 .ToList();
@@ -1146,35 +1149,35 @@ namespace FintrakBanking.Repositories.Credit
             return GetRecommendedCollateral(entity.applicationId);
         }
 
-        # region LMS APPROVAL
+        #region LMS APPROVAL
 
         public IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersLms(int applicationId)
         {
-            return context.TBL_LOAN_APPLICATN_DETL_MTRIG
-                .Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
+            return context.TBL_LMSR_APPLICATN_DETL_MTRIG
+                .Where(x => x.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
                 .Select(x => new MonitoringTriggersViewModel
                 {
-                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    applicationDetailId = x.LOANREVIEWAPPLICATIONID,
                     monitoringTriggerId = x.MONITORING_TRIGGERID,
                     monitoringTrigger = x.MONITORING_TRIGGER,
-                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+                    productCustomerName = x.TBL_LMSR_APPLICATION_DETAIL.TBL_OPERATIONS.OPERATIONNAME
                 })
                 .ToList();
         }
 
         public IEnumerable<MonitoringTriggersViewModel> SaveApplicationMonitoringTriggersLms(int applicationId, List<MonitoringTriggersViewModel> items, int staffId)
         {
-            context.TBL_LOAN_APPLICATN_DETL_MTRIG
+            context.TBL_LMSR_APPLICATN_DETL_MTRIG
                 .RemoveRange(
-                    context.TBL_LOAN_APPLICATN_DETL_MTRIG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
+                    context.TBL_LMSR_APPLICATN_DETL_MTRIG.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
                 );
             context.SaveChanges();
 
             foreach (var o in items)
             {
-                context.TBL_LOAN_APPLICATN_DETL_MTRIG.Add(new TBL_LOAN_APPLICATN_DETL_MTRIG
+                context.TBL_LMSR_APPLICATN_DETL_MTRIG.Add(new TBL_LMSR_APPLICATN_DETL_MTRIG
                 {
-                    LOANAPPLICATIONDETAILID = o.applicationDetailId,
+                    LOANREVIEWAPPLICATIONID = o.applicationDetailId,
                     MONITORING_TRIGGERID = o.monitoringTriggerId,
                     MONITORING_TRIGGER = o.monitoringTrigger,
                     CREATEDBY = staffId,
@@ -1188,24 +1191,24 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTermsLms(RepaymentScheduleTermsViewModel entity)
         {
-            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
+            var detail = context.TBL_LMSR_APPLICATION_DETAIL.Find(entity.applicationDetailId);
             detail.REPAYMENTTERMS = entity.terms;
             detail.REPAYMENTSCHEDULE = entity.schedule;
             context.SaveChanges();
-            return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID)
+            return context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID)
                 .Select(x => new RepaymentScheduleTermsViewModel
                 {
-                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    applicationDetailId = x.LOANREVIEWAPPLICATIONID,
                     terms = x.REPAYMENTTERMS,
                     schedule = x.REPAYMENTSCHEDULE,
-                    productCustomerName = x.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME
+                    productCustomerName = x.TBL_OPERATIONS.OPERATIONNAME
                 }).ToList();
         }
 
         public List<RecommendedCollateralViewModel> UpdateRecommendedCollateralLms(RecommendedCollateralViewModel entity)
         {
-            var recommendation = context.TBL_LOAN_APPLICATION_COLLATRL2.Find(entity.id);
-            recommendation.LOANAPPLICATIONDETAILID = entity.applicationDetailId;
+            var recommendation = context.TBL_LMSR_APPLICATION_COLLATRL2.Find(entity.id);
+            recommendation.LOANREVIEWAPPLICATIONID = entity.applicationDetailId;
             recommendation.COLLATERALDETAIL = entity.collateralDetail;
             recommendation.COLLATERALVALUE = entity.collateralValue;
             recommendation.STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount;
@@ -1215,10 +1218,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<RecommendedCollateralViewModel> AddRecommendedCollateralLms(RecommendedCollateralViewModel entity)
         {
-            context.TBL_LOAN_APPLICATION_COLLATRL2.Add(new TBL_LOAN_APPLICATION_COLLATRL2
+            context.TBL_LMSR_APPLICATION_COLLATRL2.Add(new TBL_LMSR_APPLICATION_COLLATRL2
             {
                 LOANAPPLICATIONID = entity.applicationId,
-                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                LOANREVIEWAPPLICATIONID = entity.applicationDetailId,
                 COLLATERALDETAIL = entity.collateralDetail,
                 COLLATERALVALUE = entity.collateralValue,
                 STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
@@ -1231,15 +1234,15 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<RecommendedCollateralViewModel> GetRecommendedCollateralLms(int applicationId)
         {
-            return context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONID == applicationId)
+            return context.TBL_LMSR_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x => new RecommendedCollateralViewModel
                 {
                     id = x.COLLATERALBASICDETAILID,
                     collateralDetail = x.COLLATERALDETAIL,
                     collateralValue = x.COLLATERALVALUE,
                     stampedToCoverAmount = x.STAMPEDTOCOVERAMOUNT,
-                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
-                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+                    applicationDetailId = x.LOANREVIEWAPPLICATIONID,
+                    productCustomerName = x.TBL_LMSR_APPLICATION_DETAIL.TBL_OPERATIONS.OPERATIONNAME
                 })
                 .ToList();
         }

@@ -1,0 +1,124 @@
+﻿namespace FintrakBanking.Entities.Models
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("credit.TBL_LMSR_APPLICATION")]
+    public partial class TBL_LMSR_APPLICATION
+    {
+        public TBL_LMSR_APPLICATION()
+        {
+            TBL_LMSR_APPLICATION_DETAIL = new HashSet<TBL_LMSR_APPLICATION_DETAIL>();
+        }
+
+        [Key]
+        public int LOANAPPLICATIONID { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string APPLICATIONREFERENCENUMBER { get; set; }
+
+        [StringLength(50)]
+        public string RELATEDREFERENCENUMBER { get; set; }
+
+        public int COMPANYID { get; set; }
+
+        public int? CUSTOMERID { get; set; }
+
+        public short BRANCHID { get; set; }
+
+        public int? CUSTOMERGROUPID { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime APPLICATIONDATE { get; set; }
+
+        public int CREATEDBY { get; set; }
+
+        public DateTime DATETIMECREATED { get; set; }
+
+        public int? LASTUPDATEDBY { get; set; }
+
+        public DateTime? DATETIMEUPDATED { get; set; }
+
+        public bool DELETED { get; set; }
+
+        public int? DELETEDBY { get; set; }
+
+        public DateTime? DATETIMEDELETED { get; set; }
+
+        public DateTime SYSTEMDATETIME { get; set; }
+
+        public short APPROVALSTATUSID { get; set; }
+
+        public short APPLICATIONSTATUSID { get; set; }
+
+        public int? FINALAPPROVAL_LEVELID { get; set; }
+
+        public short? NEXTAPPLICATIONSTATUSID { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? APPROVEDDATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? AVAILMENTDATE { get; set; }
+
+        public bool DISPUTED { get; set; }
+
+        public bool REQUIRECOLLATERAL { get; set; }
+
+        // public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
+
+        // public virtual TBL_BRANCH TBL_BRANCH { get; set; }
+
+        // public virtual TBL_CASA TBL_CASA { get; set; }
+
+        // public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+
+        // public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
+
+        // public virtual TBL_CUSTOMER_GROUP TBL_CUSTOMER_GROUP { get; set; }
+
+        // public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
+
+        // public virtual TBL_PRODUCT_CLASS TBL_PRODUCT_CLASS { get; set; }
+
+        // public virtual TBL_PRODUCT_CLASS_PROCESS TBL_PRODUCT_CLASS_PROCESS { get; set; }
+
+        // public virtual TBL_STAFF TBL_STAFF { get; set; }
+
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
+
+        public virtual ICollection<TBL_LMSR_APPLICATION_DETAIL> TBL_LMSR_APPLICATION_DETAIL { get; set; }
+
+    }
+}
+/*DESC TBL_LMSR_APPLICATION
+Name                       Null     Type              
+-------------------------- -------- ----------------- 
+LOANAPPLICATIONID          NOT NULL NUMBER(10)        
+APPLICATIONREFERENCENUMBER NOT NULL VARCHAR2(50 CHAR) 
+RELATEDREFERENCENUMBER              VARCHAR2(50 CHAR) 
+COMPANYID                  NOT NULL NUMBER(10)        
+CUSTOMERID                          NUMBER(10)        
+BRANCHID                   NOT NULL NUMBER(10)        
+CUSTOMERGROUPID                     NUMBER(10)        
+CREATEDBY                  NOT NULL NUMBER(10)        
+DATETIMECREATED            NOT NULL DATE              
+LASTUPDATEDBY                       NUMBER(10)        
+DATETIMEUPDATED                     DATE              
+DELETED                    NOT NULL NUMBER(10)        
+DELETEDBY                           NUMBER(10)        
+DATETIMEDELETED                     DATE              
+SYSTEMDATETIME             NOT NULL DATE              
+APPROVALSTATUSID           NOT NULL NUMBER(10)        
+APPLICATIONSTATUSID        NOT NULL NUMBER(10)        
+FINALAPPROVAL_LEVELID               NUMBER(10)        
+NEXTAPPLICATIONSTATUSID             NUMBER(10)        
+DISPUTED                   NOT NULL NUMBER(10)        
+REQUIRECOLLATERAL          NOT NULL NUMBER(10)        
+AVAILMENTDATE                       DATE              
+APPROVEDDATE                        DATE              
+APPLICATIONDATE                     DATE  */

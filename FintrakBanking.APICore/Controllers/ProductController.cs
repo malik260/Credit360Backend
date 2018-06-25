@@ -70,7 +70,28 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-behaviour/{productId}")]
+        public HttpResponseMessage GetAllProductBehaviour(int productId)
+        {
+            try
+            {
+                var data = repo.GetProductBehaviour(productId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet] [ClaimsAuthorization]  
         [Route("currency-by-product/{id}")]
         public HttpResponseMessage GetProductCurrency(int id)
         {
@@ -550,13 +571,13 @@ namespace FintrakBanking.APICore.Controllers
         #region Product Region
 
       [HttpGet] [ClaimsAuthorization]  
-        [Route("product-by-productclass/{id}")]
-        public HttpResponseMessage GetAllProduct(int id)
+        [Route("product-by-productclass/{id}/customerType/{cid}")]
+        public HttpResponseMessage GetAllProduct(int id, int cid)
         {
             try
             {
 
-                var data = repo.GetAllProductByProductClass(id).ToList();
+                var data = repo.GetAllProductByProductClass(id, cid).ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

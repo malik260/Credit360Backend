@@ -417,6 +417,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
 
                 var data = repo.ReplyJobRequest(entity, jobRequestId);
                 if (data)
@@ -434,7 +435,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record." });
             }
@@ -453,7 +454,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ReassignJobRequest(entity, jobRequestId);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job been assigned successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
@@ -589,21 +590,16 @@ namespace FintrakBanking.APICore.Controllers
 
                 var receiverStaffId = provider.FormData["receiverStaffId"];
 
-                var requestModel = new JobRequestViewModel
-                {
-                    departmentId = (short)Convert.ToInt32(provider.FormData["departmentId"]),
-                    departmentUnitId = (short)Convert.ToInt32(provider.FormData["departmentUnitId"]),
-                    requestTitle = provider.FormData["requestSubject"],
-                    senderComment = provider.FormData["senderComment"],
-                    isReassigned = Convert.ToBoolean(provider.FormData["isReassigned"]),
-                    isAcknowledged = Convert.ToBoolean(provider.FormData["isAcknowledged"]),
-                    targetId = Convert.ToInt32(provider.FormData["targetId"]),
-                    operationsId = Convert.ToInt32(provider.FormData["operationId"]),
-                    jobTypeId = (short)Convert.ToInt32(provider.FormData["jobTypeId"])
-                };
-
-
-
+                var requestModel = new JobRequestViewModel();
+                requestModel.departmentId = (short)Convert.ToInt32(provider.FormData["departmentId"]);
+                requestModel.departmentUnitId = (short)Convert.ToInt32(provider.FormData["departmentUnitId"]);
+                requestModel.requestTitle = provider.FormData["requestSubject"];
+                requestModel.senderComment = provider.FormData["senderComment"];
+                requestModel.targetId = Convert.ToInt32(provider.FormData["targetId"]);
+                requestModel.operationsId = Convert.ToInt32(provider.FormData["operationId"]);
+                requestModel.jobTypeId = (short)Convert.ToInt32(provider.FormData["jobTypeId"]);
+                requestModel.isReassigned = provider.FormData["isReassigned"].ToLower() != "undefined" ? Convert.ToBoolean(provider.FormData["isReassigned"]) : false;
+                requestModel.isAcknowledged = provider.FormData["isAcknowledged"] != "undefined" ?Convert.ToBoolean(provider.FormData["isAcknowledged"]) : false;
 
                 if (!(receiverStaffId == null || receiverStaffId == string.Empty || receiverStaffId == ""))
                     requestModel.receiverStaffId = Convert.ToInt32(receiverStaffId);
@@ -668,19 +664,15 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
                 }
 
-                var entity = new RequestDocumentViewModel
-                {
-                    //targetId = Convert.ToInt32(provider.FormData["targetId"]),
-                    //targetReferenceNumber = provider.FormData["targetReferenceNumber"],
-                    jobRequestCode = provider.FormData["jobRequestCode"],
-                    documentTitle = provider.FormData["documentTitle"],
-                    documentTypeId = (short)uploadType,
-                    fileName = provider.FormData["fileName"],
-                    fileExtension = provider.FormData["fileExtension"],
-                    physicalFileNumber = provider.FormData["physicalFileNumber"],
-                    physicalLocation = provider.FormData["physicalLocation"],
-                    comment = provider.FormData["comment"],
-                };
+                var entity = new RequestDocumentViewModel();
+                entity.jobRequestCode = provider.FormData["jobRequestCode"];
+                entity.documentTitle = provider.FormData["documentTitle"];
+                entity.documentTypeId = (short)uploadType;
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+                entity.physicalFileNumber = provider.FormData["physicalFileNumber"];
+                entity.physicalLocation = provider.FormData["physicalLocation"];
+                entity.comment = provider.FormData["responseComment"];
 
                 if (!provider.FileStreams.Any())
                 {

@@ -3,7 +3,8 @@
   <configSections>
     <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, 
 PublicKeyToken=b77a5c561934e089" requirePermission="false"/>
-    <!--<section name="Oracle.ManagedDataAccess.Client" type="OracleInternal.Common.ODPMSectionHandler, Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, 
+    <!--<section name="Oracle.ManagedDataAccess.Client" type="OracleInternal.Common.ODPMSectionHandler, Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, 
+
 PublicKeyToken=89b483f429c47342" />-->
     <section name="oracle.manageddataaccess.client" type="OracleInternal.Common.ODPMSectionHandler, Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, 
 PublicKeyToken=89b483f429c47342"/>
@@ -15,9 +16,11 @@ PublicKeyToken=89b483f429c47342"/>
 
 
 
-    <!--<add name="FinTrakBankingContext" connectionString="DATA SOURCE=FTTRAK360;PASSWORD=sqluser10$;PERSIST SECURITY INFO=True;USER ID=FINTRAKBANKING" 
+    <!--<add name="FinTrakBankingContext" connectionString="DATA SOURCE=FTTRAK360;PASSWORD=sqluser10$;PERSIST SECURITY INFO=True;USER ID=FINTRAKBANKING" 
+
 providerName="Oracle.ManagedDataAccess.Client"/>
-    <add name="FinTrakBankingDocumentsContext" connectionString="DATA SOURCE=FTTRAK360;PASSWORD=sqluser10$;PERSIST SECURITY INFO=True;USER ID=FINTRAKBANKINGDOCUMENTS" 
+    <add name="FinTrakBankingDocumentsContext" connectionString="DATA SOURCE=FTTRAK360;PASSWORD=sqluser10$;PERSIST SECURITY INFO=True;USER ID=FINTRAKBANKINGDOCUMENTS" 
+
 providerName="Oracle.ManagedDataAccess.Client"/>
    -->
     <add name="OracleDbContext" providerName="Oracle.ManagedDataAccess.Client" connectionString="User Id=oracle_user;Password=oracle_user_password;Data 
@@ -240,14 +243,24 @@ bindingConfiguration="XDSNigeriaWebServiceSoap" contract="XDSWebService.XDSNiger
       </dependentAssembly>
     </assemblyBinding>
   </runtime>
-
+  <system.codedom>
+    <compilers>
+      <compiler language="c#;cs;csharp" extension=".cs" type="Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider, 
+Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" warningLevel="4" 
+compilerOptions="/langversion:default /nowarn:1659;1699;1701"/>
+      <compiler language="vb;vbs;visualbasic;vbscript" extension=".vb" type="Microsoft.CodeDom.Providers.DotNetCompilerPlatform.VBCodeProvider, 
+Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" warningLevel="4" 
+compilerOptions="/langversion:default /nowarn:41008 /define:_MYTYPE=\&quot;Web\&quot; /optionInfer+"/>
+    </compilers>
+  </system.codedom>
   <!--<oracle.manageddataaccess.client>
     <version number="*">
       <dataSources>
         -->
   <!--<dataSource alias="SampleDataSource" descriptor="(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORCL))) " />-->
   <!--
-        <dataSource alias="FinTrakBankingDataSource" descriptor="(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=192.168.10.8)(PORT=1521))(CONNECT_DATA=
+        <dataSource alias="FinTrakBankingDataSource" descriptor="(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=192.168.10.8)(PORT=1521))(CONNECT_DATA=
+
 (SERVICE_NAME=pdb01))) "/>
       </dataSources>
     </version>

@@ -516,14 +516,20 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = Request.RequestUri.Host;
                 var data = repo.GoForApproval(entity);
 
-                if (data)
+                if (data == 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation has been approved successfully" });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
+                else if(data == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+                }
             }
             catch (System.Exception e)
             {

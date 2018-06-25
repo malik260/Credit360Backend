@@ -421,36 +421,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                //if (entity.customerId.HasValue)
-                //{
-                //    if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
-                //    {
-                //        throw new Exception("Customer '" + entity.customerName + "' has been CAMSOL");
-                //    }
-
-                //    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateWatchList(entity.customerId.Value) > 0)
-                //    {
-                //        throw new Exception("Customer '" + entity.customerName + "' has been Watchlisted");
-                //    }
-
-                //    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateBlackList(entity.customerCode) > 0)
-                //    {
-                //        throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
-                //    }
-
-
-                //  //var customerLimit =  creditLimitValidationsRepository.ValidateNPLByCustomer((int)entity.customerId.Value);
-                //  //  if( (customerLimit.outstandingBalance + (double)entity.LoanApplicationDetail.Sum(c=> c.proposedAmount)) > customerLimit.limit)
-                //  //  {
-                //  //      throw new Exception("Total amount excides customer Limit");
-                //  //  }
-
-
-
-                //}
-
-                //var model =  creditLimitValidationsRepository.ValidateAmountByBranch1(entity.branchId).Difference;
-
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
@@ -468,13 +438,11 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
                 }
-
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception e)
-
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error Occured =>  {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
             }
         }
 

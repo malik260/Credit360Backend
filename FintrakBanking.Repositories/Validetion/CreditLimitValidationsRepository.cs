@@ -249,10 +249,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         //    return diff;
         //}
 
-        public CreditLimitValidationsModel ValidateAmountBySector(int subSectorId)
+        public CreditLimitValidationsModel ValidateAmountBySector(int sectorId )
         {
             //int sectorId = 1;
-            int sectorId = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == subSectorId).FirstOrDefault().SECTORID.Value;
+           // int sectorId = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == subSectorId).FirstOrDefault().SECTORID.Value;
             //var sectorDetail = context.TBL_SUB_SECTOR.FirstOrDefault(a => a.SUBSECTORID == subSectorId);
             //int sectorId = sectorDetail.SECTORID.Value;
             var data = from a in context.TBL_SECTOR
@@ -260,13 +260,13 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                        let maximumLimit = a.LOAN_LIMIT
                        select maximumLimit;
 
-            var sector = context.TBL_SECTOR.Where(a => a.SECTORID == sectorId).FirstOrDefault();
+           // var sector = context.TBL_SECTOR.Where(a => a.SECTORID == sectorId).FirstOrDefault();
 
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
 
             var loanOutstandingBalance = (from d in context.TBL_LOAN
-                                          join f in context.TBL_SUB_SECTOR on d.SUBSECTORID equals f.TBL_SECTOR.SECTORID
-                                          where d.TBL_SUB_SECTOR.SECTORID == sectorId && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                          join f in context.TBL_SUB_SECTOR on d.SUBSECTORID equals f.SUBSECTORID
+                                          where f.SECTORID == sectorId && d.LOANSTATUSID == (short)LoanStatusEnum.Active
                                           select new
                                           {
                                               d.OUTSTANDINGPRINCIPAL
@@ -430,9 +430,11 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             var oDTotal = sumODApprovedAmount - sumOverDraftLimit;
 
+            var customer = context.TBL_CUSTOMER.Find(customerId);
             model.outstandingBalance = (double)(loanTotal + oDTotal);
             model.limit = data.FirstOrDefault();
             model.difference = model.limit - model.outstandingBalance;
+            model.riskRatingId = customer == null ? 0 : (short?)customer.RISKRATINGID;
 
             return model;
         }
@@ -607,6 +609,13 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 return true;
             }
             return false;
+        }
+
+        public bool UpdateCustomerRating(ObligorLimitViewModel entity)
+        {
+            var customer = context.TBL_CUSTOMER.Find(entity.customerId);
+            customer.RISKRATINGID = (short?)entity.riskRatingId;
+            return context.SaveChanges() > 0;
         }
     }
 }

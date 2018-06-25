@@ -23,6 +23,7 @@ using FintrakBanking.Common;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using System.Net.Http.Formatting;
+using FintrakBanking.Interfaces.CASA;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -35,18 +36,22 @@ namespace FintrakBanking.APICore.Controllers
         private ICustomerCollateralRepository repo;
         private ICollateralDocumentRepository document;
         private ICollateralTypeRepository type;
+        private ICasaRepository casa;
+
        // private IGuaranteeCollateralRepository guaratee;
 
         public CustomerCollateralController(
             ICustomerCollateralRepository repo,
             ICollateralTypeRepository type,
-            ICollateralDocumentRepository document
+            ICollateralDocumentRepository document,
+            ICasaRepository _casa
            // IGuaranteeCollateralRepository guaratee
             )
         {
             this.repo = repo;
             this.type = type;
             this.document = document;
+            this.casa = _casa;
           //  this.guaratee = guaratee;
         }
 
@@ -104,7 +109,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
 
             //try
@@ -235,6 +240,21 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+        [HttpPost, Route("customer-collateral-by-collateralId")]
+        public HttpResponseMessage GetCustomerCollateral([FromBody]int collateralId)
+        {
+            try
+            {
+                var response = repo.GetCustomerCollateralByCollateralId(token.GetCompanyId, collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
         [HttpGet, Route("temp-item-policy")]
         public HttpResponseMessage GetItemPolicyCollateral()
         {
@@ -261,6 +281,19 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+        [HttpGet, Route("item-policy/{collateralId}")]
+        public HttpResponseMessage GetPolicyCollateralList(int collateralId)
+        {
+            try
+            {
+                var response = repo.GetCollateralInsurancePolicy(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
 
         [HttpPost, Route("temp/customer-collateral-approval")]
         public HttpResponseMessage PostCustomerCollateralApproval([FromBody]ApprovalViewModel model)
@@ -269,6 +302,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                model.BranchId = token.GetBranchId;
 
                 var response = repo.GoForApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message ="Approved Successfully"});
@@ -286,6 +320,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                model.BranchId = token.GetBranchId;
 
                 var response = repo.GoForPolicyApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
@@ -1166,9 +1201,9 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
-        [Route("get-casa-lien-amount")]
-        public HttpResponseMessage GetLienAmountForCASA([FromBody]string accountNumber)
+         [HttpGet] [ClaimsAuthorization]
+        [Route("get-casa-lien-amount/{accountNumber}")]
+        public HttpResponseMessage GetLienAmountForCASA(string accountNumber)
         {
             try
             {

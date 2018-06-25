@@ -17,6 +17,7 @@ using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Repositories.Credit;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -208,7 +209,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 AUDITTYPEID = (short)AuditTypeEnum.JobRequestUpdated,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Reply JobRequest '{ model.jobRequestCode }' ",
+                DETAIL = $"Reply JobRequest '{ data.JOBREQUESTCODE }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = applicationDate,
@@ -394,12 +395,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId, int branchId)
         {
-            //var allstaff = this.context.TBL_STAFF.Select(s => new //OperationStaffViewModel
-            //{
-            //    id = s.STAFFID,
-            //    name = s.LASTNAME + " " + s.FIRSTNAME
-            //});
-
             var thisStaff = this.context.TBL_STAFF.Find(staffId);
             var unitId = thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID;
 
@@ -417,6 +412,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                          jobTypeName = x.TBL_JOB_TYPE.JOBTYPENAME,
                          senderStaffId = x.SENDERSTAFFID,
                          senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                         departmentUnitId = x.DEPARTMENTUNITID,
+                         departmentId = x.DEPARTMENTID,
                          //senderUnit = context.TBL_DEPARTMENT_UNIT.Where(c=>c.DEPARTMENTUNITID == context.TBL_STAFF.Where(z=>z.STAFFID == x.SENDERSTAFFID).FirstOrDefault().DEPARTMENTUNITID).FirstOrDefault().DEPARTMENTUNITNAME, // +"(" + x.TBL_DEPARTMENT.DEPARTMENTNAME +")",
                          //senderDepartment =  x.TBL_DEPARTMENT.DEPARTMENTNAME,
                          receiverStaffId = (int)x.RECEIVERSTAFFID,
@@ -442,7 +439,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                          //from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
                          // fromBranchName = context.TBL_BRANCH.Where(c=>c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
                          to = x.TBL_STAFF1.FIRSTNAME == null ? "n/a" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
-                         assignee = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.MIDDLENAME + " " + x.TBL_STAFF2.LASTNAME,
+                         assignee = x.TBL_STAFF2.FIRSTNAME == null ? "Assign" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.MIDDLENAME + " " + x.TBL_STAFF2.LASTNAME,
                          // assignee = allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO).name,
                          //  toBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.RECEIVERSTAFFID).FirstOrDefault().BRANCHNAME,
                          //from = allstaff.GetStaffName(s => s.id == x.SenderStaffId),
@@ -913,10 +910,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<JobTypeViewModel> GetAllJobType()
         {
-            return this.context.TBL_JOB_TYPE.Select(x => new JobTypeViewModel
+           return this.context.TBL_JOB_TYPE.Select(x => new JobTypeViewModel
             {
                 jobTypeId = x.JOBTYPEID,
                 jobTypeName = x.JOBTYPENAME,
+                inUse = x.INUSE
             });
         }
 
@@ -927,7 +925,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeId = x.JOBTYPEID,
                 jobSubTypeName = x.JOB_SUB_TYPE_NAME,
                 jobSubTypeId = x.JOB_SUB_TYPEID
-            }).Where(x => x.jobTypeId == jobId);
+            }).Where(x => x.jobTypeId == jobId );
         }
 
         #endregion job-type

@@ -24,6 +24,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             private HttpClientHandler handler = new HttpClientHandler();
             private static HttpClient _httpClientInstance;
 
+
             public AccountDetail(FinTrakBankingContext _context)
             {
                 this.context = _context;
@@ -33,8 +34,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             public async Task<GLAccountDetailsViewModel> APIOfficeAccountGetGeneralLedgerAccountRecord(string glNumber)
             {
-                handler.UseDefaultCredentials = true;
                 HttpClient client = new HttpClient(handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessageViewModel res = null;
+                string responseMessage = "";
+                handler.UseDefaultCredentials = true;
+               // HttpClient client = new HttpClient(handler);
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 _httpClientInstance = new HttpClient();
                 _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -48,9 +54,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response =
-                    await client.GetAsync($"api/OfficeAccount/GetGeneralLedgerAccountRecord?accountNumber={glNumber}");
-
+                requestDatetime = DateTime.Now;
+                response = await client.GetAsync($"api/OfficeAccount/GetGeneralLedgerAccountRecord?accountNumber={glNumber}");
+                responseDateTime = DateTime.Now;
                 GLAccountDetailsViewModel result = null;
                 if (response.IsSuccessStatusCode)
                 {
@@ -73,8 +79,27 @@ namespace FinTrakBanking.ThirdPartyIntegration
                             systemAccountFlag = data.systemAccountFlag,
                             response = response,
                         };
+
+                        responseMessage = await response.Content.ReadAsStringAsync();
                         handler.Dispose();
                         client.Dispose();
+
+
+                        var logs = new TBL_CUSTOM_API_LOGS
+                        {
+                            APIURL = $"api/OfficeAccount/GetGeneralLedgerAccountRecord?accountNumber={glNumber}",
+                            LOGTYPEID = 8,
+                            REFERENCENUMBER = glNumber,
+                            REQUESTDATETIME = requestDatetime,
+                            REQUESTMESSAGE = glNumber,
+                            RESPONSEDATETIME = responseDateTime,
+                            RESPONSEMESSAGE = responseMessage,
+                        };
+                        FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                        logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                        logContext.SaveChanges();
                         return result;
                     }
                     else throw new ConditionNotMetException("Account number not found on finacle");
@@ -89,8 +114,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
             public async Task<TDAccountRecordViewModel> APIOfficeAccountGetTermDepositAccountRecord(
                 string teamDepositAccountNumber)
             {
-                handler.UseDefaultCredentials = true;
                 HttpClient client = new HttpClient(handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessageViewModel res = null;
+                string responseMessage = "";
+                handler.UseDefaultCredentials = true;
+                //HttpClient client = new HttpClient(handler);
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 _httpClientInstance = new HttpClient();
                 _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -103,9 +133,10 @@ namespace FinTrakBanking.ThirdPartyIntegration
                  
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = await client.GetAsync(
+                requestDatetime = DateTime.Now;
+                response = await client.GetAsync(
                     $"api/OfficeAccount/GetTermDepositAccountRecord?accountNumber={teamDepositAccountNumber}");
-
+                responseDateTime = DateTime.Now;
                 TDAccountRecordViewModel result = null;
                 if (response.IsSuccessStatusCode)
                 {
@@ -124,8 +155,24 @@ namespace FinTrakBanking.ThirdPartyIntegration
                         productCode = data.productCode,
                         response = response,
                     };
+                    responseMessage = await response.Content.ReadAsStringAsync();
                     handler.Dispose();
                     client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = $"api/OfficeAccount/GetTermDepositAccountRecord?accountNumber={teamDepositAccountNumber}",
+                        LOGTYPEID = 9,
+                        REFERENCENUMBER = teamDepositAccountNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = teamDepositAccountNumber,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
                     return result;
                 }
 

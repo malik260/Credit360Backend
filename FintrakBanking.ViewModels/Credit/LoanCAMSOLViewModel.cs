@@ -26,5 +26,23 @@ namespace FintrakBanking.ViewModels.Credit
         public bool cantakeloan { get; set; }
         public string loansystemtype { get; set; }
         public string camsolType { get; set; }
+        public bool updateOption { get; set; }
+    }
+
+    public class Blacklist
+    {
+        public string accountName { get; set; }
+        public string accountNumber { get; set; }
+        public decimal balance { get; set; }
+        public bool canTakeLoan { get; set; }
+        public string customerCode { get; set; }
+        public string customerName { get; set; }
+        public DateTime date { get; set; }
+        public decimal InterestInSuspense { get; set; }
+        public decimal principal { get; set; }
+        public string remark { get; set; }
+        public string camsolType { get; set; }
+        public string loanSystemType { get; set; }
+
     }
 }

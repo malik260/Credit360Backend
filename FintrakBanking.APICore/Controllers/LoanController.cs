@@ -35,7 +35,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         private ICustomerRepository repoCustomer;
         private ILoanScheduleRepository scheduleRepo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
-      private  ExportDataTableToExcel export = new ExportDataTableToExcel();
+        private ExportDataTableToExcel export = new ExportDataTableToExcel();
 
         //private IHostingEnvironment _hostingEnvironment;
         //private IHostingEnvironment _hostingEnvironment;
@@ -56,7 +56,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         #region Loan
 
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("current-exposure/customer")]
         public HttpResponseMessage GetCurrentCustomerExposure([FromBody] List<CustomerExposure> customer)
         {
@@ -271,9 +272,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-booking")]
-        public  HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
+        public HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
         {
             try
             {
@@ -285,7 +287,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data =  repo.AddLoanBooking(entity);
+                var data = repo.AddLoanBooking(entity);
                 if (data != "")
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The Loan booking was successful and and is waiting for approval.\r\n Loan Reference Number: " + data });
@@ -300,7 +302,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (BadLogicException be)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{be.Message}" });
-            } 
+            }
             catch (APIErrorException ae)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
@@ -340,9 +342,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("gaurantor/product-type/{productTypeId}/application/{applicationReferenceNumber}")]
-        public HttpResponseMessage AddLoanGuarantor( [FromBody] LoanGuarantorViewModel entity, short productTypeId, int applicationReferenceNumber)
+        public HttpResponseMessage AddLoanGuarantor([FromBody] LoanGuarantorViewModel entity, short productTypeId, int applicationReferenceNumber)
         {
             try
             {
@@ -672,7 +675,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-booking/approval/{loanBookingRequestId}")]
         public HttpResponseMessage ApproveLoanBooking(ApprovalViewModel model, int loanBookingRequestId)
         {
@@ -692,7 +696,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation successful, request has been routed to the next approving office" });
                 }
-                else if(responseId == 2)
+                else if (responseId == 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, message = "Loan has been successfully disbursed" });
@@ -726,7 +730,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-booking/fee-override/approval")]
         public HttpResponseMessage ApproveLoaFeeOverride(ApprovalViewModel model)
         {
@@ -853,7 +858,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-search")]
         public HttpResponseMessage SearchLoan([FromBody] LoanSearchViewModel searchModel)
         {
@@ -905,7 +911,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("periodic-schedule")]
         public HttpResponseMessage GeneratePeriodicLoanSchedule([FromBody] LoanPaymentScheduleInputViewModel loanInput)
         {
@@ -934,7 +941,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("daily-schedule")]
         public HttpResponseMessage GenerateDailyLoanSchedule([FromBody] LoanPaymentScheduleInputViewModel loanInput)
         {
@@ -1045,7 +1053,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-schedule")]
         public HttpResponseMessage GetBookedLoanDetailsForReport(ReportSearchParamViewModel param)
         {
@@ -1134,7 +1143,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 var fileBytes = scheduleRepo.GenerateLoanScheduleExport(model);
 
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
             }
             catch (ConditionNotMetException ce)
             {
@@ -1181,7 +1190,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repo.GetAvailedLoanApplicationsDueForInitiateBooking(token.GetCompanyId,token.GetStaffId,token.GetBranchId);
+                var response = repo.GetAvailedLoanApplicationsDueForInitiateBooking(token.GetCompanyId, token.GetStaffId, token.GetBranchId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -1226,7 +1235,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
             }
-            catch (Exception )
+            catch (Exception)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
@@ -1239,7 +1248,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repo.GetAvailedLoanApplicationsReadyForBooking(token.GetCompanyId,token.GetStaffId, token.GetBranchId);
+                var response = repo.GetAvailedLoanApplicationsReadyForBooking(token.GetCompanyId, token.GetStaffId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -1320,7 +1329,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-application/request-booking/{applicationId}")]
         public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] LoanBookingRequestViewModel entity)
         {

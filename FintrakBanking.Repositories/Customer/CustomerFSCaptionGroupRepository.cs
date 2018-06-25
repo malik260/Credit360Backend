@@ -91,7 +91,7 @@ namespace FintrakBanking.Repositories.Customer
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).ToList();
-            return data;
+            return data.GroupBy(c=> c.fsCaptionGroupId).Select(x=>x.FirstOrDefault());
         }
 
         public CustomerFSCaptionGroupViewModel GetCustomerFSCaptionGroupById(short fsCaptionGroupId)

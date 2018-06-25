@@ -139,7 +139,7 @@ namespace FintrakBanking.APICore.Controllers
                 physicalFileNumber = provider.FormData["physicalFileNumber"],
                 physicalLocation = provider.FormData["physicalLocation"],
                 SourceId = Convert.ToInt32( provider.FormData["SourceId"]),
-                dababaseTable = Convert.ToInt32(provider.FormData["dababaseTable"]),
+                databaseTable = Convert.ToInt32(provider.FormData["databaseTable"]),
                 conditionId = Convert.ToInt32(provider.FormData["conditionId"]),
                 loanApplicationId = Convert.ToInt32(provider.FormData["loanApplicationId"]),
                 checkListDefinitionId = Convert.ToInt32(provider.FormData["checkListDefinitionId"]),

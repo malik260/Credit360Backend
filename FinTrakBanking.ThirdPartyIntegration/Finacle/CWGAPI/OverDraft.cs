@@ -32,7 +32,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 }
             }
 
-
+            //FinTrakBankingContext logContext = new FinTrakBankingContext();
             private HttpClientHandler _handler = new HttpClientHandler();
             private static HttpClient _httpClientInstance;
 
@@ -41,6 +41,20 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
             public async Task<ResponseMessage> APIOverDraftNormal(OverDraftNormalViewModel model)
             {
+                //HttpClientHandler handler = new HttpClientHandler();
+
+                _handler.UseDefaultCredentials = true;
+                HttpClient client = new HttpClient(_handler);
+
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+
+                // HttpClient client = new HttpClient(_handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                //DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
+
                 try
                 {
                     model.sanctionLevel = "003";
@@ -48,12 +62,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
-
-                    _handler.UseDefaultCredentials = true;
-                    HttpClient client = new HttpClient(_handler);
-
-                    _httpClientInstance = new HttpClient();
-                    _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client = new HttpClient();
+                    client.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(60);
                     client.DefaultRequestHeaders.Authorization = token;
                     client.BaseAddress = new Uri(API_URL);
@@ -62,11 +72,12 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
-                    HttpResponseMessage response = client.PostAsync("api/OverDraft/Normal", new StringContent(
+                    requestDatetime = DateTime.Now;
+                    response = client.PostAsync("api/OverDraft/Normal", new StringContent(
                         new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
-
-                    ResponseMessage responseMsg = null;
+                    responseDateTime = DateTime.Now;
+                    responseMsg = null;
 
                     ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
 
@@ -98,22 +109,55 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                             Message = response
                         };
                     }
-
+                    responseMessage = await response.Content.ReadAsStringAsync();
                     return responseMsg;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                    //throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                }
+                finally
+                {
+                    _handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = "api/OverDraft/Normal",
+                        LOGTYPEID = 11,
+                        REFERENCENUMBER = model.sanctionReferenceNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = objData,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
                 }
             }
 
             public async Task<ResponseMessage> APIOverDraftTopUp(OverDraftTopUpAndRenewViewModel model)
             {
-
+                HttpClient client = new HttpClient(_handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(_handler);
+
 
                 _httpClientInstance = new HttpClient();
                 _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -126,19 +170,20 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/OverDraft/TopUp", new StringContent(
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync("api/OverDraft/TopUp", new StringContent(
                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
-                ResponseMessage responseMsg = null;
-                 
-               bool result = response.IsSuccessStatusCode;
+                responseMsg = null;
+                responseDateTime = DateTime.Now;
+                bool result = response.IsSuccessStatusCode;
                 if (result)
                 {
 
                     responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
                     var res = new ResponseMessageViewModel
                     {
-                       
+
                         responseCode = responseAPI.responseCode,
                         webRequestDate = responseAPI.webRequestDate,
                         webRequestStatus = responseAPI.webRequestStatus,
@@ -162,19 +207,39 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                         Message = response
                     };
                 }
+                responseMessage = await response.Content.ReadAsStringAsync();
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = "api/OverDraft/TopUp",
+                    LOGTYPEID = 12,
+                    REFERENCENUMBER = model.sanctionReferenceNumber,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = objData,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
 
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
                 return responseMsg;
 
             }
 
             public async Task<ResponseMessage> APIOverDraftRenew(OverDraftTopUpAndRenewViewModel model)
             {
-
+                HttpClient client = new HttpClient(_handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
 
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(_handler);
+
 
                 _httpClientInstance = new HttpClient();
                 _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -187,9 +252,11 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/OverDraft/Renew ", new StringContent(
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync("api/OverDraft/Renew", new StringContent(
                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-                ResponseMessage responseMsg = null;
+                responseMsg = null;
+                responseDateTime = DateTime.Now;
                 bool result = response.IsSuccessStatusCode;
                 if (result)
                 {
@@ -220,17 +287,39 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                         Message = response
                     };
                 }
+                responseMessage = await response.Content.ReadAsStringAsync();
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = "api/OverDraft/Renew",
+                    LOGTYPEID = 13,
+                    REFERENCENUMBER = model.sanctionReferenceNumber,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = objData,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
 
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
                 return responseMsg;
 
             }
 
             public async Task<ResponseMessage> APIOverDraftExtend(OverDraftExtendViewModel model)
             {
+
+                HttpClient client = new HttpClient(_handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(_handler);
+                //HttpClient client = new HttpClient(_handler);
 
                 _httpClientInstance = new HttpClient();
                 _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -243,12 +332,13 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/OverDraft/Extend", new StringContent(
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync("api/OverDraft/Extend", new StringContent(
                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-
+                responseDateTime = DateTime.Now;
                 ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
-                ResponseMessage responseMsg = null;
-               
+                responseMsg = null;
+
                 if (response.IsSuccessStatusCode)
                 {
 
@@ -270,7 +360,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     };
                 }
                 else
-                {   
+                {
                     responseMsg = new ResponseMessage
                     {
                         APIResponse = null,
@@ -279,6 +369,22 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     };
                 }
 
+                responseMessage = await response.Content.ReadAsStringAsync();
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = "api/OverDraft/Extend",
+                    LOGTYPEID = 14,
+                    REFERENCENUMBER = model.sanctionReferenceNumber,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = objData,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
                 return responseMsg;
 
             }
@@ -289,10 +395,16 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
             //----------------------------------- TemporaryOverDraft----------------------------------------
             public async Task<ResponseMessage> APITemporaryOverDraftNormal(TemporaryOverDraftViewModel model)
             {
+                HttpClient client = new HttpClient(_handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(_handler);
+                // HttpClient client = new HttpClient(_handler);
 
                 _httpClientInstance = new HttpClient();
                 _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -305,11 +417,12 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/TemporaryOverDraft/Normal", new StringContent(
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync("api/TemporaryOverDraft/Normal", new StringContent(
                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-
+                responseDateTime = DateTime.Now;
                 ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
-                ResponseMessage responseMsg = null;
+                responseMsg = null;
                 bool result = false;
                 result = response.IsSuccessStatusCode;
                 if (result)
@@ -342,6 +455,22 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     };
                 }
 
+                responseMessage = await response.Content.ReadAsStringAsync();
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = "api/TemporaryOverDraft/Normal",
+                    LOGTYPEID = 15,
+                    REFERENCENUMBER = model.TemporaryOverDraftNaration,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = objData,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
                 return responseMsg;
 
 
@@ -349,13 +478,18 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
             public async Task<ResponseMessage> APITemporaryOverDraftRunning(TemporaryOverDraftViewModel model)
             {
-
+                HttpClient client = new HttpClient(_handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
 
 
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(_handler);
+                // HttpClient client = new HttpClient(_handler);
 
                 _httpClientInstance = new HttpClient();
                 _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -368,9 +502,11 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/TemporaryOverDraft/Running", new StringContent(
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync("api/TemporaryOverDraft/Running", new StringContent(
                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-                ResponseMessage responseMsg = null;
+                responseDateTime = DateTime.Now;
+                responseMsg = null;
                 bool result = false;
                 result = response.IsSuccessStatusCode;
                 if (result)
@@ -402,7 +538,22 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                         Message = response
                     };
                 }
+                responseMessage = await response.Content.ReadAsStringAsync();
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = "api/TemporaryOverDraft/Running",
+                    LOGTYPEID = 16,
+                    REFERENCENUMBER = model.TemporaryOverDraftNaration,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = objData,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
 
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
                 return responseMsg;
 
 
@@ -410,12 +561,17 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
             public async Task<ResponseMessage> APITemporaryOverDraftSingle(TemporaryOverDraftViewModel model)
             {
-
+                HttpClient client = new HttpClient(_handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
 
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 ;
                 _handler.UseDefaultCredentials = true;
-                HttpClient client = new HttpClient(_handler);
+                //HttpClient client = new HttpClient(_handler);
 
                 _httpClientInstance = new HttpClient();
                 _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -427,9 +583,11 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
-                HttpResponseMessage response = client.PostAsync("api/TemporaryOverDraft/Single", new StringContent(
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync("api/TemporaryOverDraft/Single", new StringContent(
                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-                ResponseMessage responseMsg = null;
+                responseDateTime = DateTime.Now;
+                responseMsg = null;
                 bool result = false;
                 result = response.IsSuccessStatusCode;
                 if (result)
@@ -464,8 +622,385 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                 _handler.Dispose();
                 client.Dispose();
+
+                responseMessage = await response.Content.ReadAsStringAsync();
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = "api/TemporaryOverDraft/Single",
+                    LOGTYPEID = 17,
+                    REFERENCENUMBER = model.TemporaryOverDraftNaration,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = objData,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
                 return responseMsg;
             }
+
+            //public async Task<ResponseMessage> APIOverDraftTopUp(OverDraftTopUpAndRenewViewModel model)
+            //{
+
+            //    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+            //    _handler.UseDefaultCredentials = true;
+            //    HttpClient client = new HttpClient(_handler);
+
+            //    _httpClientInstance = new HttpClient();
+            //    _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            //    client.Timeout = TimeSpan.FromSeconds(60);
+            //    client.DefaultRequestHeaders.Authorization = token;
+            //    client.BaseAddress = new Uri(API_URL);
+            //    client.DefaultRequestHeaders.Accept.Clear();
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+            //    ServicePointManager.ServerCertificateValidationCallback +=
+            //        (sender, cert, chain, sslPolicyErrors) => true;
+            //    HttpResponseMessage response = client.PostAsync("api/OverDraft/TopUp", new StringContent(
+            //        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+            //    ResponseMessage responseMsg = null;
+
+            //   bool result = response.IsSuccessStatusCode;
+            //    if (result)
+            //    {
+
+            //        responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+            //        var res = new ResponseMessageViewModel
+            //        {
+
+            //            responseCode = responseAPI.responseCode,
+            //            webRequestDate = responseAPI.webRequestDate,
+            //            webRequestStatus = responseAPI.webRequestStatus,
+            //            serialNumber = responseAPI.serialNumber,
+            //            message = responseAPI.message
+            //        };
+
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = res,
+            //            APIStatus = result,
+            //            Message = response
+            //        };
+            //    }
+            //    else
+            //    {
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = null,
+            //            APIStatus = result,
+            //            Message = response
+            //        };
+            //    }
+
+            //    return responseMsg;
+
+            //}
+
+            //public async Task<ResponseMessage> APIOverDraftRenew(OverDraftTopUpAndRenewViewModel model)
+            //{
+
+
+            //    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+            //    _handler.UseDefaultCredentials = true;
+            //    HttpClient client = new HttpClient(_handler);
+
+            //    _httpClientInstance = new HttpClient();
+            //    _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            //    client.Timeout = TimeSpan.FromSeconds(60);
+            //    client.DefaultRequestHeaders.Authorization = token;
+            //    client.BaseAddress = new Uri(API_URL);
+            //    client.DefaultRequestHeaders.Accept.Clear();
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+            //    ServicePointManager.ServerCertificateValidationCallback +=
+            //        (sender, cert, chain, sslPolicyErrors) => true;
+            //    HttpResponseMessage response = client.PostAsync("api/OverDraft/Renew ", new StringContent(
+            //        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+            //    ResponseMessage responseMsg = null;
+            //    bool result = response.IsSuccessStatusCode;
+            //    if (result)
+            //    {
+
+            //        responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+            //        var res = new ResponseMessageViewModel
+            //        {
+            //            responseCode = responseAPI.responseCode,
+            //            webRequestDate = responseAPI.webRequestDate,
+            //            webRequestStatus = responseAPI.webRequestStatus,
+            //            serialNumber = responseAPI.serialNumber,
+            //            message = responseAPI.message
+            //        };
+
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = res,
+            //            APIStatus = result,
+            //            Message = response
+            //        };
+            //    }
+            //    else
+            //    {
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = null,
+            //            APIStatus = result,
+            //            Message = response
+            //        };
+            //    }
+
+            //    return responseMsg;
+
+            //}
+
+            //public async Task<ResponseMessage> APIOverDraftExtend(OverDraftExtendViewModel model)
+            //{
+            //    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+            //    _handler.UseDefaultCredentials = true;
+            //    HttpClient client = new HttpClient(_handler);
+
+            //    _httpClientInstance = new HttpClient();
+            //    _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            //    client.Timeout = TimeSpan.FromSeconds(60);
+            //    client.DefaultRequestHeaders.Authorization = token;
+            //    client.BaseAddress = new Uri(API_URL);
+            //    client.DefaultRequestHeaders.Accept.Clear();
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+            //    ServicePointManager.ServerCertificateValidationCallback +=
+            //        (sender, cert, chain, sslPolicyErrors) => true;
+            //    HttpResponseMessage response = client.PostAsync("api/OverDraft/Extend", new StringContent(
+            //        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+            //    ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
+            //    ResponseMessage responseMsg = null;
+
+            //    if (response.IsSuccessStatusCode)
+            //    {
+
+            //        responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+            //        var res = new ResponseMessageViewModel
+            //        {
+            //            responseCode = responseAPI.responseCode,
+            //            webRequestDate = responseAPI.webRequestDate,
+            //            webRequestStatus = responseAPI.webRequestStatus,
+            //            serialNumber = responseAPI.serialNumber,
+            //            message = responseAPI.message
+            //        };
+
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = res,
+            //            APIStatus = response.IsSuccessStatusCode,
+            //            Message = response
+            //        };
+            //    }
+            //    else
+            //    {   
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = null,
+            //            APIStatus = response.IsSuccessStatusCode,
+            //            Message = response
+            //        };
+            //    }
+
+            //    return responseMsg;
+
+            //}
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////
+
+            //----------------------------------- TemporaryOverDraft----------------------------------------
+            //public async Task<ResponseMessage> APITemporaryOverDraftNormal(TemporaryOverDraftViewModel model)
+            //{
+            //    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+            //    _handler.UseDefaultCredentials = true;
+            //    HttpClient client = new HttpClient(_handler);
+
+            //    _httpClientInstance = new HttpClient();
+            //    _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            //    client.Timeout = TimeSpan.FromSeconds(60);
+            //    client.DefaultRequestHeaders.Authorization = token;
+            //    client.BaseAddress = new Uri(API_URL);
+            //    client.DefaultRequestHeaders.Accept.Clear();
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+            //    ServicePointManager.ServerCertificateValidationCallback +=
+            //        (sender, cert, chain, sslPolicyErrors) => true;
+            //    HttpResponseMessage response = client.PostAsync("api/TemporaryOverDraft/Normal", new StringContent(
+            //        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+            //    ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
+            //    ResponseMessage responseMsg = null;
+            //    bool result = false;
+            //    result = response.IsSuccessStatusCode;
+            //    if (result)
+            //    {
+
+            //        responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+            //        var res = new ResponseMessageViewModel
+            //        {
+            //            responseCode = responseAPI.responseCode,
+            //            webRequestDate = responseAPI.webRequestDate,
+            //            webRequestStatus = responseAPI.webRequestStatus,
+            //            serialNumber = responseAPI.serialNumber,
+            //            message = responseAPI.message
+            //        };
+
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = res,
+            //            APIStatus = result,
+            //            Message = response
+            //        };
+            //    }
+            //    else
+            //    {
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = null,
+            //            APIStatus = result,
+            //            Message = response
+            //        };
+            //    }
+
+            //    return responseMsg;
+
+
+            //}
+
+            //public async Task<ResponseMessage> APITemporaryOverDraftRunning(TemporaryOverDraftViewModel model)
+            //{
+
+
+
+            //    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+            //    _handler.UseDefaultCredentials = true;
+            //    HttpClient client = new HttpClient(_handler);
+
+            //    _httpClientInstance = new HttpClient();
+            //    _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            //    client.Timeout = TimeSpan.FromSeconds(60);
+            //    client.DefaultRequestHeaders.Authorization = token;
+            //    client.BaseAddress = new Uri(API_URL);
+            //    client.DefaultRequestHeaders.Accept.Clear();
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+            //    ServicePointManager.ServerCertificateValidationCallback +=
+            //        (sender, cert, chain, sslPolicyErrors) => true;
+            //    HttpResponseMessage response = client.PostAsync("api/TemporaryOverDraft/Running", new StringContent(
+            //        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+            //    ResponseMessage responseMsg = null;
+            //    bool result = false;
+            //    result = response.IsSuccessStatusCode;
+            //    if (result)
+            //    {
+
+            //        responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+            //        var res = new ResponseMessageViewModel
+            //        {
+            //            responseCode = responseAPI.responseCode,
+            //            webRequestDate = responseAPI.webRequestDate,
+            //            webRequestStatus = responseAPI.webRequestStatus,
+            //            serialNumber = responseAPI.serialNumber,
+            //            message = responseAPI.message
+            //        };
+
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = res,
+            //            APIStatus = result,
+            //            Message = response
+            //        };
+            //    }
+            //    else
+            //    {
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = null,
+            //            APIStatus = result,
+            //            Message = response
+            //        };
+            //    }
+
+            //    return responseMsg;
+
+
+            //}
+
+            //public async Task<ResponseMessage> APITemporaryOverDraftSingle(TemporaryOverDraftViewModel model)
+            //{
+
+
+            //    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+            //    ;
+            //    _handler.UseDefaultCredentials = true;
+            //    HttpClient client = new HttpClient(_handler);
+
+            //    _httpClientInstance = new HttpClient();
+            //    _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            //    client.Timeout = TimeSpan.FromSeconds(60);
+            //    client.DefaultRequestHeaders.Authorization = token;
+            //    client.BaseAddress = new Uri(API_URL);
+            //    client.DefaultRequestHeaders.Accept.Clear();
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            //    ServicePointManager.ServerCertificateValidationCallback +=
+            //        (sender, cert, chain, sslPolicyErrors) => true;
+            //    HttpResponseMessage response = client.PostAsync("api/TemporaryOverDraft/Single", new StringContent(
+            //        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+            //    ResponseMessage responseMsg = null;
+            //    bool result = false;
+            //    result = response.IsSuccessStatusCode;
+            //    if (result)
+            //    {
+
+            //        responseAPI = await response.Content.ReadAsAsync<ResponseMessageViewModel>();
+            //        var res = new ResponseMessageViewModel
+            //        {
+            //            responseCode = responseAPI.responseCode,
+            //            webRequestDate = responseAPI.webRequestDate,
+            //            webRequestStatus = responseAPI.webRequestStatus,
+            //            serialNumber = responseAPI.serialNumber,
+            //            message = responseAPI.message
+            //        };
+
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = res,
+            //            APIStatus = result,
+            //            Message = response
+            //        };
+            //    }
+            //    else
+            //    {
+            //        responseMsg = new ResponseMessage
+            //        {
+            //            APIResponse = null,
+            //            APIStatus = result,
+            //            Message = response
+            //        };
+            //    }
+
+            //    _handler.Dispose();
+            //    client.Dispose();
+            //    return responseMsg;
+            //}
 
         }
     }

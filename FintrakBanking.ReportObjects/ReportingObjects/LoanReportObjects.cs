@@ -70,7 +70,7 @@ namespace FintrakBanking.ReportObjects
                         where a.COMPANYID == companyId && a.TERMLOANID == tearmLoanId && c.CUSTOMERSENSITIVITYLEVELID <= staffSensitivityLevelId
                         select new LoanInformation()
                         {
-                            accountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == a.CASAACCOUNTID).PRODUCTACCOUNTNUMBER,
+                            accountNumber = context.TBL_CASA.Where(c => c.CASAACCOUNTID == a.CASAACCOUNTID).Select(c=>c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                             customerId = a.CUSTOMERID,
                             tearmLoanId = a.TERMLOANID,
                             branchName = a.TBL_BRANCH.BRANCHNAME,

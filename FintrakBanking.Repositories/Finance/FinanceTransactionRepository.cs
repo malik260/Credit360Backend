@@ -39,7 +39,7 @@ namespace FintrakBanking.Repositories.Finance
             this.integration = _integration;
             //this.creditOperations = _creditOperations;
             var global = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (global != null)  USE_THIRD_PARTY_INTEGRATION = global.USE_THIRD_PARTY_INTEGRATION;
+            if (global != null) USE_THIRD_PARTY_INTEGRATION = global.USE_THIRD_PARTY_INTEGRATION;
         }
 
         private void UpdateCASABalances(int casaAccountId, decimal debitAmount, decimal creditAmount)
@@ -54,15 +54,15 @@ namespace FintrakBanking.Repositories.Finance
             else
             {
                 account.LEDGERBALANCE = account.LEDGERBALANCE + creditAmount;
-                account.AVAILABLEBALANCE = account.AVAILABLEBALANCE +  creditAmount;
+                account.AVAILABLEBALANCE = account.AVAILABLEBALANCE + creditAmount;
             }
         }
 
         public CasaBalanceViewModel GetCASABalance(int casaAccountId)
         {
-          
+
             var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
-            var data = new CasaBalanceViewModel(); 
+            var data = new CasaBalanceViewModel();
             if (USE_THIRD_PARTY_INTEGRATION)
             {
                 data = integration.GetCustomerAccountBalance(account.PRODUCTACCOUNTNUMBER);
@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Finance
             }
             else
             {
-                return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID,currencyId = account.CURRENCYID,accountNo = account.PRODUCTACCOUNTNUMBER,accountName= account.PRODUCTACCOUNTNAME };
+                return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID, currencyId = account.CURRENCYID, accountNo = account.PRODUCTACCOUNTNUMBER, accountName = account.PRODUCTACCOUNTNAME };
             }
 
         }
@@ -95,10 +95,10 @@ namespace FintrakBanking.Repositories.Finance
         }
 
         public decimal GetLienBalance(string productAccountNumber)
-        {            
+        {
             var balance = (from data in context.TBL_CASA_LIEN
-                         where data.PRODUCTACCOUNTNUMBER == productAccountNumber
-                         select data.LIENAMOUNT).Sum();
+                           where data.PRODUCTACCOUNTNUMBER == productAccountNumber
+                           select data.LIENAMOUNT).Sum();
 
             return balance;
         }
@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Finance
 
             //transaction.batchCode = batchCode;
 
-            var transactionCount = (inputTransactions.Count()); 
+            var transactionCount = (inputTransactions.Count());
 
             if (transactionCount < 2) //transaction.transactionDetails.Count() < 2
                 throw new ConditionNotMetException("Specify both debit and credit transactions");
@@ -120,7 +120,7 @@ namespace FintrakBanking.Repositories.Finance
             var debitSum = inputTransactions.Sum(x => x.debitAmount);
 
             //transaction.transactionDetails.Sum(x => x.debitAmount);
-            var creditSum = inputTransactions.Sum(x => x.creditAmount);  
+            var creditSum = inputTransactions.Sum(x => x.creditAmount);
             //transaction.transactionDetails.Sum(x => x.creditAmount);
             //var sumDebit = debitSum.FirstOrDefault();
 
@@ -132,70 +132,70 @@ namespace FintrakBanking.Repositories.Finance
 
             foreach (var item in inputTransactions)
             {
-                
-                    if (item.debitAmount != 0 && item.creditAmount != 0)
-                        throw new ConditionNotMetException("Debit or Credit Amount should be 0");
 
-                    if (item.debitAmount < 0)
-                        throw new ConditionNotMetException("Debit Amount should NOT be less than 0");
+                if (item.debitAmount != 0 && item.creditAmount != 0)
+                    throw new ConditionNotMetException("Debit or Credit Amount should be 0");
 
-                    if (item.creditAmount < 0)
-                        throw new ConditionNotMetException("Credit Amount should NOT be less than 0");
+                if (item.debitAmount < 0)
+                    throw new ConditionNotMetException("Debit Amount should NOT be less than 0");
 
-                    var glInfo = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId);
+                if (item.creditAmount < 0)
+                    throw new ConditionNotMetException("Credit Amount should NOT be less than 0");
 
-                    GLClassEnum glClass = (GLClassEnum)glInfo.GLCLASSID;
+                var glInfo = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId);
 
-                    if (glClass == GLClassEnum.CASA)
-                    {
-                        if (item.casaAccountId == null)
-                            throw new ConditionNotMetException($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                GLClassEnum glClass = (GLClassEnum)glInfo.GLCLASSID;
 
-                        UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
-                    }
-                    else if (glClass == GLClassEnum.LoanSchedule)
-                    {
-                        item.casaAccountId = null;
-                        int referenceCount = 0;
+                if (glClass == GLClassEnum.CASA)
+                {
+                    if (item.casaAccountId == null)
+                        throw new ConditionNotMetException($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
 
-                        referenceCount = context.TBL_LOAN.Count(x => x.LOANREFERENCENUMBER == item.sourceReferenceNumber);
+                    UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
+                }
+                else if (glClass == GLClassEnum.LoanSchedule)
+                {
+                    item.casaAccountId = null;
+                    int referenceCount = 0;
 
-                        if (referenceCount <= 0)
-                            throw new ConditionNotMetException($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
-                    }
-                    else
-                    { item.casaAccountId = null; }
+                    referenceCount = context.TBL_LOAN.Count(x => x.LOANREFERENCENUMBER == item.sourceReferenceNumber);
 
-                    TBL_FINANCE_TRANSACTION trans = new TBL_FINANCE_TRANSACTION();
+                    if (referenceCount <= 0)
+                        throw new ConditionNotMetException($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                }
+                else
+                { item.casaAccountId = null; }
 
-                    trans.BATCHCODE = batchCode;
-                    //trans.OPERATIONID = mainItem.operationId;
-                    trans.OPERATIONID = (int)item.operationId;
-                    trans.DESCRIPTION = item.description;
-                    trans.VALUEDATE = item.valueDate;
-                    trans.POSTEDDATE = item.transactionDate;
-                    trans.CURRENCYID = item.currencyId;
-                    trans.CURRENCYRATE = item.currencyRate;
-                    trans.POSTEDDATETIME = DateTime.Now;
-                    trans.ISAPPROVED = item.isApproved;
-                    trans.POSTEDBY = item.postedBy;
-                    trans.APPROVEDBY = item.approvedBy;
-                    trans.APPROVEDDATE = item.approvedDate;
-                    trans.APPROVEDDATETIME = item.approvedDateTime;
-                    trans.SOURCEAPPLICATIONID = item.sourceApplicationId;
-                    trans.COMPANYID = item.companyId;
+                TBL_FINANCE_TRANSACTION trans = new TBL_FINANCE_TRANSACTION();
+
+                trans.BATCHCODE = batchCode;
+                //trans.OPERATIONID = mainItem.operationId;
+                trans.OPERATIONID = (int)item.operationId;
+                trans.DESCRIPTION = item.description;
+                trans.VALUEDATE = item.valueDate;
+                trans.POSTEDDATE = item.transactionDate;
+                trans.CURRENCYID = item.currencyId;
+                trans.CURRENCYRATE = item.currencyRate;
+                trans.POSTEDDATETIME = DateTime.Now;
+                trans.ISAPPROVED = item.isApproved;
+                trans.POSTEDBY = item.postedBy;
+                trans.APPROVEDBY = item.approvedBy;
+                trans.APPROVEDDATE = item.approvedDate;
+                trans.APPROVEDDATETIME = item.approvedDateTime;
+                trans.SOURCEAPPLICATIONID = item.sourceApplicationId;
+                trans.COMPANYID = item.companyId;
 
 
-                    trans.GLACCOUNTID = item.glAccountId;
-                    trans.SOURCEREFERENCENUMBER = item.sourceReferenceNumber;
-                    trans.CASAACCOUNTID = item.casaAccountId;
-                    trans.DEBITAMOUNT = item.debitAmount;
-                    trans.CREDITAMOUNT = item.creditAmount;
-                    trans.SOURCEBRANCHID = item.sourceBranchId;
-                    trans.DESTINATIONBRANCHID = item.destinationBranchId;
+                trans.GLACCOUNTID = item.glAccountId;
+                trans.SOURCEREFERENCENUMBER = item.sourceReferenceNumber;
+                trans.CASAACCOUNTID = item.casaAccountId;
+                trans.DEBITAMOUNT = item.debitAmount;
+                trans.CREDITAMOUNT = item.creditAmount;
+                trans.SOURCEBRANCHID = item.sourceBranchId;
+                trans.DESTINATIONBRANCHID = item.destinationBranchId;
 
-                    transactions.Add(trans);
-                
+                transactions.Add(trans);
+
             }
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
@@ -213,7 +213,7 @@ namespace FintrakBanking.Repositories.Finance
             //                  {
 
             //                  });
-            var result = context.TBL_CUSTOM_FIANCE_TRANSACTION.Where(x => x.CONSUMED == false && x.DATETIMECONSUMED == null &&  x.BATCHCODE.Contains(batchCode)).ToList();
+            var result = context.TBL_CUSTOM_FIANCE_TRANSACTION.Where(x => x.CONSUMED == false && x.DATETIMECONSUMED == null && x.BATCHCODE.Contains(batchCode)).ToList();
             result.ForEach(a => a.CONSUMED = true);
             result.ForEach(a => a.DATETIMECONSUMED = DateTime.Now);
 
@@ -223,16 +223,16 @@ namespace FintrakBanking.Repositories.Finance
         [OperationBehavior(TransactionScopeRequired = true)]
         public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false)
         {
-           var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
 
             var transactionCount = (inputTransactions.Count());
-            
-            if(transactionCount < 2) //transaction.transactionDetails.Count() < 2
+
+            if (transactionCount < 2) //transaction.transactionDetails.Count() < 2
                 throw new ConditionNotMetException("Specify both debit and credit transactions");
 
             List<TBL_FINANCE_TRANSACTION> transactions = new List<TBL_FINANCE_TRANSACTION>();
 
-            var debitSum = inputTransactions.Sum(x => x.debitAmount); 
+            var debitSum = inputTransactions.Sum(x => x.debitAmount);
             var creditSum = inputTransactions.Sum(x => x.creditAmount);
             if (debitSum != creditSum)
                 throw new ConditionNotMetException("Total Debit Amount should equal Total Credit Amount");
@@ -241,48 +241,48 @@ namespace FintrakBanking.Repositories.Finance
             {
                 item.batchCode = batchCode;
 
-                    if (item.debitAmount != 0 && item.creditAmount != 0)
-                        throw new ConditionNotMetException("Debit or Credit Amount should be 0");
+                if (item.debitAmount != 0 && item.creditAmount != 0)
+                    throw new ConditionNotMetException("Debit or Credit Amount should be 0");
 
-                    if (item.debitAmount < 0)
-                        throw new ConditionNotMetException("Debit Amount should NOT be less than 0");
+                if (item.debitAmount < 0)
+                    throw new ConditionNotMetException("Debit Amount should NOT be less than 0");
 
-                    if (item.creditAmount < 0)
-                        throw new ConditionNotMetException("Credit Amount should NOT be less than 0");
+                if (item.creditAmount < 0)
+                    throw new ConditionNotMetException("Credit Amount should NOT be less than 0");
 
-                    var glInfo = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId);
+                var glInfo = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId);
 
-                    GLClassEnum glClass = (GLClassEnum)glInfo.GLCLASSID;
+                GLClassEnum glClass = (GLClassEnum)glInfo.GLCLASSID;
 
-                    if (glClass == GLClassEnum.CASA)
-                    {
-                        if (item.casaAccountId == null)
-                            throw new ConditionNotMetException($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                if (glClass == GLClassEnum.CASA)
+                {
+                    if (item.casaAccountId == null)
+                        throw new ConditionNotMetException($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
 
-                        //UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
-                        
+                    //UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
 
-                        var casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == item.casaAccountId).FirstOrDefault();
 
-                        if (casa == null)
-                            throw new ConditionNotMetException($"CASA account number {item.sourceReferenceNumber} does not exist in the CASA table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                    var casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == item.casaAccountId).FirstOrDefault();
 
-                    }
-                    else if (glClass == GLClassEnum.LoanSchedule)
-                    {
-                        item.casaAccountId = null;
-                        int referenceCount = 0;
+                    if (casa == null)
+                        throw new ConditionNotMetException($"CASA account number {item.sourceReferenceNumber} does not exist in the CASA table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
 
-                        referenceCount = context.TBL_LOAN.Count(x => x.LOANREFERENCENUMBER == item.sourceReferenceNumber);
+                }
+                else if (glClass == GLClassEnum.LoanSchedule)
+                {
+                    item.casaAccountId = null;
+                    int referenceCount = 0;
 
-                        if (referenceCount <= 0)
-                            throw new ConditionNotMetException($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
-                    }
-                    //else
-                    //{
-                    //    item.casaAccountId = null;
-                    //}
-                
+                    referenceCount = context.TBL_LOAN.Count(x => x.LOANREFERENCENUMBER == item.sourceReferenceNumber);
+
+                    if (referenceCount <= 0)
+                        throw new ConditionNotMetException($"Loan reference number {item.sourceReferenceNumber} does not exist in the loan table for this transaction for GL Code {glInfo.ACCOUNTCODE}");
+                }
+                //else
+                //{
+                //    item.casaAccountId = null;
+                //}
+
             }
 
             //api call
@@ -308,7 +308,7 @@ namespace FintrakBanking.Repositories.Finance
                 PostTransactionSub(batchCode, inputTransactions, transactions);
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
-            context.SaveChanges();
+            var result = context.SaveChanges() > 0;
 
             return batchCode;
         }
@@ -318,56 +318,56 @@ namespace FintrakBanking.Repositories.Finance
         {
             foreach (var item in inputTransactions)
             {
- 
-                    var glInfo = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId);
 
-                    GLClassEnum glClass = (GLClassEnum)glInfo.GLCLASSID;
+                var glInfo = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId);
 
-                    if (glClass == GLClassEnum.CASA)
-                    {
+                GLClassEnum glClass = (GLClassEnum)glInfo.GLCLASSID;
 
-                        UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
-                    }
-                    else if (glClass == GLClassEnum.LoanSchedule)
-                    {
-                        item.casaAccountId = null;
-                        int referenceCount = 0;
+                if (glClass == GLClassEnum.CASA)
+                {
 
-                        referenceCount = context.TBL_LOAN.Count(x => x.LOANREFERENCENUMBER == item.sourceReferenceNumber);
-                    }
-                    else
-                    { item.casaAccountId = null; }
+                    UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
+                }
+                else if (glClass == GLClassEnum.LoanSchedule)
+                {
+                    item.casaAccountId = null;
+                    int referenceCount = 0;
 
-                    TBL_FINANCE_TRANSACTION trans = new TBL_FINANCE_TRANSACTION();
+                    referenceCount = context.TBL_LOAN.Count(x => x.LOANREFERENCENUMBER == item.sourceReferenceNumber);
+                }
+                else
+                { item.casaAccountId = null; }
 
-                    trans.BATCHCODE = batchCode;
-                    //trans.OPERATIONID = mainItem.operationId;
-                    trans.OPERATIONID = (int)item.operationId;
-                    trans.DESCRIPTION = item.description;
-                    trans.VALUEDATE = item.valueDate;
-                    trans.POSTEDDATE = item.transactionDate;
-                    trans.CURRENCYID = item.currencyId;
-                    trans.CURRENCYRATE = item.currencyRate;
-                    trans.POSTEDDATETIME = DateTime.Now;
-                    trans.ISAPPROVED = item.isApproved;
-                    trans.POSTEDBY = item.postedBy;
-                    trans.APPROVEDBY = item.approvedBy;
-                    trans.APPROVEDDATE = item.approvedDate;
-                    trans.APPROVEDDATETIME = item.approvedDateTime;
-                    trans.SOURCEAPPLICATIONID = item.sourceApplicationId;
-                    trans.COMPANYID = item.companyId;
+                TBL_FINANCE_TRANSACTION trans = new TBL_FINANCE_TRANSACTION();
+
+                trans.BATCHCODE = batchCode;
+                //trans.OPERATIONID = mainItem.operationId;
+                trans.OPERATIONID = (int)item.operationId;
+                trans.DESCRIPTION = item.description;
+                trans.VALUEDATE = item.valueDate;
+                trans.POSTEDDATE = item.transactionDate;
+                trans.CURRENCYID = item.currencyId;
+                trans.CURRENCYRATE = item.currencyRate;
+                trans.POSTEDDATETIME = DateTime.Now;
+                trans.ISAPPROVED = item.isApproved;
+                trans.POSTEDBY = item.postedBy;
+                trans.APPROVEDBY = item.approvedBy;
+                trans.APPROVEDDATE = item.approvedDate;
+                trans.APPROVEDDATETIME = item.approvedDateTime;
+                trans.SOURCEAPPLICATIONID = item.sourceApplicationId;
+                trans.COMPANYID = item.companyId;
 
 
-                    trans.GLACCOUNTID = item.glAccountId;
-                    trans.SOURCEREFERENCENUMBER = item.sourceReferenceNumber;
-                    trans.CASAACCOUNTID = item.casaAccountId;
-                    trans.DEBITAMOUNT = item.debitAmount;
-                    trans.CREDITAMOUNT = item.creditAmount;
-                    trans.SOURCEBRANCHID = item.sourceBranchId;
-                    trans.DESTINATIONBRANCHID = item.destinationBranchId;
+                trans.GLACCOUNTID = item.glAccountId;
+                trans.SOURCEREFERENCENUMBER = item.sourceReferenceNumber;
+                trans.CASAACCOUNTID = item.casaAccountId;
+                trans.DEBITAMOUNT = item.debitAmount;
+                trans.CREDITAMOUNT = item.creditAmount;
+                trans.SOURCEBRANCHID = item.sourceBranchId;
+                trans.DESTINATIONBRANCHID = item.destinationBranchId;
 
-                    transactions.Add(trans);
-                
+                transactions.Add(trans);
+
             }
         }
 
@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.Finance
         //    debit.sourceBranchId = model.branchId;
         //    debit.destinationBranchId = casa.BRANCHID;
 
-            
+
         //    FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
         //    credit.operationId = (int)OperationsEnum.CollateralSearch;
         //    credit.description = "Customer Collateral Search Charge";
@@ -473,11 +473,11 @@ namespace FintrakBanking.Repositories.Finance
 
         //}
 
-        public CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId,   int companyId)
+        public CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId)
         {
             var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
-             
-      
+
+
             if (USE_THIRD_PARTY_INTEGRATION)
             {
 
@@ -494,7 +494,7 @@ namespace FintrakBanking.Repositories.Finance
                     // integration.
                     return integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
                 }
- 
+
                 //return data;
             }
             else
@@ -531,7 +531,7 @@ namespace FintrakBanking.Repositories.Finance
             }
 
 
-            
+
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
@@ -576,7 +576,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
-            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; 
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value;
 
             credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
@@ -588,7 +588,7 @@ namespace FintrakBanking.Repositories.Finance
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
-            
+
             var batchPost = PostTransaction(inputTransactions);
 
             // Audit Section ---------------------------            
@@ -608,13 +608,13 @@ namespace FintrakBanking.Repositories.Finance
             this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
-            if (batchPost!= null)
+            if (batchPost != null)
             {
                 var result = context.SaveChanges() > 0;
                 return result;
             }
             return false;
-            
+
         }
 
         public FinanceTransactionViewModel PostDailyFeeAccrual(DailyInterestAccrualViewModel model)
@@ -714,7 +714,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.companyId = model.companyId;
 
             var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
-           
+
             debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
             debit.sourceReferenceNumber = product.PRODUCTCODE;
             debit.casaAccountId = null;
@@ -737,7 +737,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
-            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; 
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value;
             credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
@@ -794,7 +794,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.companyId = model.companyId;
 
             var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
-            
+
             debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
             debit.sourceReferenceNumber = product.PRODUCTCODE;
             debit.casaAccountId = null;
@@ -874,7 +874,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.companyId = model.companyId;
 
             var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
-           
+
             debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
             debit.sourceReferenceNumber = product.PRODUCTCODE;
             debit.casaAccountId = null;
@@ -954,7 +954,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.companyId = model.companyId;
 
             var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
-          
+
             debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
             debit.sourceReferenceNumber = product.PRODUCTCODE;
             debit.casaAccountId = null;
@@ -977,7 +977,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
-            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; 
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value;
             credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
@@ -1015,7 +1015,7 @@ namespace FintrakBanking.Repositories.Finance
 
         public FinanceTransactionViewModel PostBuildLoanRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description)
         {
-           // FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
+            // FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
 
             var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
@@ -1032,7 +1032,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.approvedDate = debit.transactionDate;
             debit.approvedDateTime = DateTime.Now;
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-            debit.companyId = model.companyId;            
+            debit.companyId = model.companyId;
             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = model.loanRefNo;
             debit.casaAccountId = casa.CASAACCOUNTID;
@@ -1050,7 +1050,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.currencyId = casa.CURRENCYID;
             credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
             credit.isApproved = true;
-            credit.postedBy = (int)SystemStaff.System; 
+            credit.postedBy = (int)SystemStaff.System;
             credit.approvedBy = (int)SystemStaff.System;
             credit.approvedDate = credit.transactionDate;
             credit.approvedDateTime = DateTime.Now;
@@ -1154,13 +1154,13 @@ namespace FintrakBanking.Repositories.Finance
                 {
                     FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
                     decimal debitAmount = 0;
-                    if( debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                    if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
                         debitAmount = (decimal)model.totalAmount * (decimal)(debits.VALUE / 100.0);
                     else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
-                        debitAmount = (decimal)debits.VALUE ;
+                        debitAmount = (decimal)debits.VALUE;
 
                     debit.operationId = (int)OperationsEnum.TermLoanBooking;//// to be change 
-                    debit.description = $"Fee charge on {debits.DESCRIPTION}" ;
+                    debit.description = $"Fee charge on {debits.DESCRIPTION}";
                     debit.valueDate = generalSetup.GetApplicationDate();
                     debit.transactionDate = debit.valueDate;
                     debit.currencyId = casa.CURRENCYID;
@@ -1219,7 +1219,7 @@ namespace FintrakBanking.Repositories.Finance
                 }
             }
 
-            
+
             var batchPost = PostTransaction(inputTransactions);
 
             // Audit Section ---------------------------            
@@ -1251,7 +1251,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting (LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -1272,7 +1272,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.approvedDate = debit.transactionDate;
             debit.approvedDateTime = DateTime.Now;
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-            debit.companyId = model.companyId;        
+            debit.companyId = model.companyId;
             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
             debit.casaAccountId = casa.CASAACCOUNTID;
@@ -1556,7 +1556,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.approvedDate = debit.transactionDate;
             debit.approvedDateTime = DateTime.Now;
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-            debit.companyId = model.companyId;         
+            debit.companyId = model.companyId;
             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = casa.LOANREFERENCENUMBER;
             debit.casaAccountId = casa.CASAACCOUNTID;
@@ -1604,9 +1604,9 @@ namespace FintrakBanking.Repositories.Finance
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model , decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
-            var loanData  = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
+            var loanData = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
 
             //FinanceTransactionViewModel terminateAndRebookTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -1627,7 +1627,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             debit.companyId = model.companyId;
 
-            
+
             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
             debit.casaAccountId = casa.CASAACCOUNTID;
@@ -1657,7 +1657,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
-            credit.creditAmount = postedAmount; 
+            credit.creditAmount = postedAmount;
             credit.sourceBranchId = casa.BRANCHID;
             credit.destinationBranchId = casa.BRANCHID;
 
@@ -1689,7 +1689,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.approvedDateTime = applicationDate;
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             debit.companyId = model.companyId;
-            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);       
+            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
             debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
             debit.sourceReferenceNumber = model.referenceNumber;
             debit.casaAccountId = null;
@@ -1836,7 +1836,7 @@ namespace FintrakBanking.Repositories.Finance
 
             //}
             //else
-                TempPostTransactionSub(batchCode, inputTransactions, transactions);
+            TempPostTransactionSub(batchCode, inputTransactions, transactions);
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
             context.SaveChanges();
@@ -1906,8 +1906,9 @@ namespace FintrakBanking.Repositories.Finance
         public bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model)
 
         {
-
+            model.branchId = 100;
             //var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
+
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             debit.operationId = model.operationId;
             debit.description = model.description;
@@ -1959,28 +1960,28 @@ namespace FintrakBanking.Repositories.Finance
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
 
-            var batchPost = PostTransaction(inputTransactions,true);
+            var batchPost = PostTransaction(inputTransactions, true);
 
             // Audit Section ---------------------------            
 
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.BulkIntegrationPosting,
-                STAFFID = (int)SystemStaff.System,//model.createdBy,
-                BRANCHID = model.branchId,
-                DETAIL = $"{ model.description}: {model.sourceReferenceNumber}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = model.valueDate,//generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.BulkIntegrationPosting,
+            //    STAFFID = (int)SystemStaff.HQ,//model.createdBy,
+            //    BRANCHID = model.branchId,
+            //    DETAIL = $"{ model.description}: {model.sourceReferenceNumber}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = model.valueDate,//generalSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
 
-            this.auditTrail.AddAuditTrail(audit);
+            //this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
             if (batchPost != null)
             {
-                var result = context.SaveChanges() > 0;
+                var result = true;
                 return result;
             }
             return false;

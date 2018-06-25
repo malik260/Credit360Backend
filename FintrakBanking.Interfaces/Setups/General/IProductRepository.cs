@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId);
         IEnumerable<LookupViewModel> GetAllProductClass();
         IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId);
-
+        ProductBehaviourViewModel GetProductBehaviour(int productId);
         IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId);
         #region Product
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
@@ -34,7 +34,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetAllProductBehaviourTypes();
         //bool DeleteProduct(int productId);
         IEnumerable<ProductSearchViewModel> GetAllLoanProduct(int companyId);
-        IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId);
+        //IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId);
+        IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId, int customerTypeId);
         IEnumerable<LookupViewModel> GetProductCurrency(int productId);
         #endregion Product
 

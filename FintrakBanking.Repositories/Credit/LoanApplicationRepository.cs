@@ -4,6 +4,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
@@ -27,7 +28,7 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository genSetup;
         private IWorkflow workflow;
         private ICasaRepository casa;
-
+        private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         private ICustomerCollateralRepository collateral;
         private IFinanceTransactionRepository fina;
 
@@ -44,7 +45,8 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext _context,
             IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
-            IFinanceTransactionRepository fina)
+            IFinanceTransactionRepository fina,
+            ICreditLimitValidationsRepository _creditLimitValidationsRepository)
         {
             this.collateral = _collateral;
             this.fina = fina;
@@ -55,6 +57,7 @@ namespace FintrakBanking.Repositories.Credit
             this.collateral = _collateral;
             approvalLevel = _approvallevel;
             workflow = _workflow;
+            this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
         }
 
         // public
@@ -655,8 +658,8 @@ namespace FintrakBanking.Repositories.Credit
                         if (ab.Any())
                         {
                             isCheckListDone = false;
-                            str = str + "One or More item(s) did not meet up with the condition." + Environment.NewLine
-                                + " Please Check your response to confirm." + Environment.NewLine;
+                            str = str + "One or more item(s) did not meet up with the condition." + Environment.NewLine
+                                + " Please check your response to confirm." + Environment.NewLine;
                             checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
                         }
                     }
@@ -710,36 +713,59 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+
+                if (loan.relationshipOfficerId != 0)
+                {
+                    var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                    var loanAmt = loan.LoanApplicationDetail.Sum(x => x.proposedAmount);
+
+                    if (limit != 0)
+                    {
+                        if (loanAmt > (decimal)limit)
+                        {
+                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
+                        }
+                    }
+                }
+
+
                 this.data = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber).FirstOrDefault();
 
-                if (loan.isNewApplication)
+            if (loan.isNewApplication)
+            {
+                if (this.data == null)
                 {
-                    if (this.data == null)
+                    AddloanApplicationSub(loan);
+                }
+
+                if (loan.LoanApplicationDetail.Count > 0)
+                {
+                    AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
+                }
+
+            }
+            else
+            {
+                var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+                var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
+
+                if (limit != 0)
+                {
+                    if (total != 0)
                     {
-                        AddloanApplication(loan);
+                        if (total > (decimal)limit)
+                        {
+                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
+                        }
                     }
+                }
 
-                    if (loan.LoanApplicationDetail.Count > 0)
-                    {
-                        AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
-                    }
+                UpdateLoanApplication(loan);
+            }
 
-                }
-                else
-                {
-                    UpdateLoanApplication(loan);
-                }
-                try
-                {
-                    response = context.SaveChanges();
-                }
-                catch (DbEntityValidationException ex)
-                {
+                response = context.SaveChanges();
 
-                    //string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                    //throw new DbEntityValidationException(errorMessages);
-                    throw new Exception("Something went wrong");
-                }
 
                 var returndate = this.GetLoanApplicationByLoanRefrenceNo(this.data.APPLICATIONREFERENCENUMBER, data.COMPANYID);
 
@@ -750,8 +776,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 return returndate;
 
-
-                throw new Exception("Something went wrong");
             }
             catch (Exception ex)
             {
@@ -760,7 +784,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private void AddloanApplication(LoanApplicationViewModel loan)
+        private void AddloanApplicationSub(LoanApplicationViewModel loan)
         {
 
 
@@ -806,8 +830,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCT_CLASS_PROCESSID = productClassProcessId,
                 COMPANYID = loan.companyId,
                 BRANCHID = (short)loan.branchId,
-                RELATIONSHIPOFFICERID = loan.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = loan.relationshipManagerId,
+                RELATIONSHIPOFFICERID = loan.createdBy,
+                RELATIONSHIPMANAGERID = loan.createdBy,
                 MISCODE = loan.misCode,
                 TEAMMISCODE = loan.teamMisCode,
                 INTERESTRATE = loan.interestRate,
@@ -1010,7 +1034,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("NO FEE is defined for this product(s)");
+                    throw new Exception("No fee is defined for this product(s)");
                 }
 
 
@@ -1111,22 +1135,22 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_LOAN_APPLICATION_DETL_FEE.RemoveRange(fees);
                 }
 
-                if (context.TBL_LOAN_APPLICATION_DETL_EDU.Any())
+                if (data.TBL_LOAN_APPLICATION_DETL_EDU.Any())
                 {
                     context.TBL_LOAN_APPLICATION_DETL_EDU.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_EDU);
                 }
 
-                if (context.TBL_LOAN_APPLICATION_DETL_BG.Any())
+                if (data.TBL_LOAN_APPLICATION_DETL_BG.Any())
                 {
                     context.TBL_LOAN_APPLICATION_DETL_BG.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_BG);
                 }
 
-                if (context.TBL_LOAN_APPLICATION_DETL_INV.Any())
+                if (data.TBL_LOAN_APPLICATION_DETL_INV.Any())
                 {
                     context.TBL_LOAN_APPLICATION_DETL_INV.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_INV);
                 }
 
-                if (context.TBL_LOAN_APPLICATION_DETL_TRA.Any())
+                if (data.TBL_LOAN_APPLICATION_DETL_TRA.Any())
                 {
                     context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_TRA);
                 }
@@ -1135,8 +1159,8 @@ namespace FintrakBanking.Repositories.Credit
                 context.TBL_LOAN_APPLICATION_DETAIL.Remove(data);
                 loanApplicationId = data.LOANAPPLICATIONID;
 
-                var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationDetailId);
-                if (loan.Count() <= 1)
+                var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationDetailId).ToList();
+                if (loan.Count() == 1)
                 {
                     var loanApp = context.TBL_LOAN_APPLICATION.Where(la => la.LOANAPPLICATIONID == loanApplicationId);
                     context.TBL_LOAN_APPLICATION.Remove(loanApp.FirstOrDefault());
@@ -1581,10 +1605,11 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool isHeadOffice = (branchId == 1) ? true : false;
 
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId,operationId).ToList();
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
             var applications = context.TBL_LOAN_APPLICATION
                 .Where(x =>
+                //(isHeadOffice || x.BRANCHID == branchId)
                 x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved // <-------------------------------------hard codes!!!
                 && x.PRODUCTCLASSID == (short?)classId
                 && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BondAndGuaranteesInProgress // <--------hard codes!!!
@@ -1643,7 +1668,7 @@ namespace FintrakBanking.Repositories.Credit
             .ThenByDescending(x => x.loanApplicationId)
             ;
 
-            //var test = applications.ToList();
+            var test = applications.ToList();
             return applications;
         }
 

@@ -77,6 +77,23 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
     }
 
+    public class LienAPIProcessViewModel //: GeneralEntity
+    {
+        public string account { get; set; }
+        public string lienProcessType { get; set; }
+        public string lienReasonCode { get; set; }
+        public string lienReason { get; set; }
+        public string lienAmount { get; set; }
+        public string lienAccountCurrency { get; set; }
+        public string lienUniqueReferenceNumber { get; set; }
+        public string webRequestStatus { get; set; }
+        public DateTime webRequestDate { get; set; }
+        public string responseCode { get; set; }
+        public string referenceNumber { get; set; }
+
+
+    }
+
     public class ResponseViewModel  : GeneralEntity
     {
         public string webRequestStatus { get; set; }
@@ -231,6 +248,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public ResponseMessageViewModel APIResponse { get; set; }
         public bool APIStatus { get; set; }
         public HttpResponseMessage Message { get; set; }
+        public bool TransactionIsSuccessfull { get; set; }
+        public string TransactionMessage { get; set; }
     }
 
     public class AccountCreationRespones

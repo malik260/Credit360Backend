@@ -162,14 +162,13 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             throw new APIErrorException(ex.Message);
                         }
-                        catch(Exception)
+                        catch(Exception ex)
                         {
-                            throw new Exception("An unexpected error occured.");
+                            throw ex; // new Exception(ex.Message);
                         }
                     }
                 }
             }
-
 
             return allCorporate;
         }

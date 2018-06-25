@@ -20,6 +20,13 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string branch { get; set; }
         public string accountStatus  { get; set; }
         public string lastTransactionDate { get; set; }
+        public string webRequestStatus { get; set; }
+        public DateTime webRequestDate { get; set; }
+        public string responseCode { get; set; }
+        public string error { get; set; }
+        public string field { get; set; }
+        public string errorDescription { get; set; }
+
 
     }
 

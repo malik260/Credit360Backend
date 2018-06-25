@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
@@ -189,6 +190,30 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.saved) return true;
 
             throw new Exception("Unknown Process Flow Error! Unable to save workflow records!");
+        }
+
+        public void NextProcess(
+            int companyId, 
+            int staffId, 
+            int operationId, 
+            int targetId, 
+            int? productClassId = null, 
+            string comment = "NIL", 
+            bool external = true, 
+            bool deferred = true
+            )
+        {
+            InitializeOperation();
+            this.staffId = staffId;
+            this.companyId = companyId;
+            this.operationId = operationId;
+            this.targetId = targetId; 
+            this.productClassId = productClassId;
+            this.comment = comment;
+            this.statusId = (int)ApprovalStatusEnum.Pending;
+            this.externalInitialization = external;
+            this.deferredExecution = deferred;
+            LogActivity();
         }
 
         private void InitializeOperation()
@@ -644,7 +669,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var productClass = context.TBL_PRODUCT_CLASS.Find(productClassId);
                     productclass = productClass.PRODUCTCLASSNAME;
                 }
-                throw new Exception("There is no approval workflow setup for the OPERATION: " + operarion.OPERATIONNAME + ", PRODUCT CLASS: " + productclass);
+                throw new ConditionNotMetException("There is no approval workflow setup for the OPERATION: " + operarion.OPERATIONNAME + ", PRODUCT CLASS: " + productclass);
             }
 
             var approvalLevels = mappings

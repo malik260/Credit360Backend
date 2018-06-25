@@ -359,7 +359,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
-                } 
+                }
                 catch (APIErrorException ae)
                 {
                     trans.Rollback();
@@ -1033,16 +1033,18 @@ namespace FintrakBanking.Repositories.Credit
             //PostLoanDisbursment(entity);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));
-
-            //inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
-
-            financeTransaction.PostTransaction(inputTransactions);
+            inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));            
 
             var feePostings = BuildLoanChargeFeesPosting(entity);
 
+            //if fee has not been taken from the customer account due to override
             if (feePostings.Count() > 0)
-                financeTransaction.PostTransaction(feePostings);
+                inputTransactions.AddRange(feePostings);
+
+            financeTransaction.PostTransaction(inputTransactions);
+            
+            //if (feePostings.Count() > 0)
+            //    financeTransaction.PostTransaction(feePostings);
         }
 
         public void PostLoanFees(LoanViewModel entity)
@@ -1097,7 +1099,7 @@ namespace FintrakBanking.Repositories.Credit
                                 productId = ln.PRODUCTID,
                                 casaAccountId = ln.CASAACCOUNTID,
                                 casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER +" ("+ ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
+                                casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
@@ -1760,8 +1762,8 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                                     reviewedDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
                                     sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                                    sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT), 
-                                    sanctionReferenceNumber =  revolvingLoanRecord.LOANREFERENCENUMBER
+                                    sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                                    sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
                                 };
 
                                 ResponseMessageViewModel res = finacle.OverDraftNormal(model);
@@ -1843,7 +1845,7 @@ namespace FintrakBanking.Repositories.Credit
                             var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
                             var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
                             if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings); }
-                               
+
                             contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             contingentLoanRecord.ISDISBURSED = true;
                             contingentLoanRecord.APPROVEDBY = user.createdBy;
@@ -2446,6 +2448,7 @@ namespace FintrakBanking.Repositories.Credit
                             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                             debit.companyId = loanDetails.companyId;
 
+
                             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
                             debit.batchCode = batchCode;
@@ -2738,6 +2741,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = l.CUSTOMERID,
                             customerName = cust.FIRSTNAME + " " + cust.LASTNAME,
                             productId = l.PRODUCTID,
+
                             companyId = l.COMPANYID,
                             casaAccountId = l.CASAACCOUNTID,
                             branchId = l.BRANCHID,
@@ -2802,7 +2806,7 @@ namespace FintrakBanking.Repositories.Credit
                             createdBy = l.CREATEDBY,
                             dateTimeCreated = l.DATETIMECREATED,
                             // isCamsol = context.TBL_LOAN_CAMSOL.Any(x => x.LOANID == l.TERMLOANID),
-                            // productName = l.TBL_PRODUCT.PRODUCTNAME
+                            productName = l.TBL_PRODUCT.PRODUCTNAME
                         });
             return data;
         }
@@ -2852,7 +2856,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId)
         {
-            var data = GetAllLoans().Where(l => l.customerId == customerId).GroupBy(x => x.loanId).Select(g => g.FirstOrDefault());
+            var data = GetAllLoans().Where(l => l.customerId == customerId && l.loanStatusId == (short)LoanStatusEnum.Active).GroupBy(x => x.loanId).Select(g => g.FirstOrDefault());
             return data;
 
         }
@@ -3753,19 +3757,17 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId, int branchId)
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId)
         {
             var newApplicationDate = generalSetup.GetApplicationDate();
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
-                        join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                         where m.COMPANYID == companyId && d.DELETED == false && s.DELETED == false
                         && d.STATUSID == (short)ApprovalStatusEnum.Approved
-                        && br.BRANCHID == branchId
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
@@ -5238,48 +5240,47 @@ namespace FintrakBanking.Repositories.Credit
             return loanDetails;
         }
 
-        private IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int companyId, int staffId)
+        private IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int companyId, int staffId, int targetId, int operationId)
         {
             var loggedsStaff = context.TBL_STAFF.Find(staffId);
             var result = (from a in context.TBL_APPROVAL_TRAIL
-                          join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
-                          join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
-                          join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
-                          join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
+                              // join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                              //  join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                              // join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                              // join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
 
-                          join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
-                          join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
-                          from j in apprStaff.DefaultIfEmpty()
-                          join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
+                              // join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
+                              //join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
+                              // from j in apprStaff.DefaultIfEmpty()
+                              // join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
                           where a.COMPANYID == companyId
+                          where a.TARGETID == targetId && a.OPERATIONID == operationId
                           select new WorkflowTrackerViewModel
-
                           {
                               arrivalDate = a.ARRIVALDATE,
                               responseApprovalLevel = a.TOAPPROVALLEVELID.HasValue ? a.TBL_APPROVAL_LEVEL1.LEVELNAME : "N/A",
                               responseDate = a.SYSTEMRESPONSEDATETIME ?? DateTime.Now,
                               systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                               systemResponseDate = a.SYSTEMRESPONSEDATETIME,
-                              //responseStaffName = !a.RESPONSESTAFFID.HasValue ? loggedsStaff.FIRSTNAME + " " + loggedsStaff.LASTNAME : j.FIRSTNAME + " " + j.LASTNAME,
-                              responseStaffName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                              responseStaffName = !a.TOAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL1.LEVELNAME,
                               comment = a.COMMENT,
-                              requestStaffName = i.FIRSTNAME + " " + i.LASTNAME,
+                              requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
                               requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
                               TargetId = a.TARGETID,
-                              operationId = e.OPERATIONID,
-                              operationName = e.OPERATIONNAME,
+                              // operationId = e.OPERATIONID,
+                              // operationName = e.OPERATIONNAME,
                               //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
-                              approvalStatus = k.APPROVALSTATUSNAME
-                          });
+                              approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME
+                          }).Distinct();
 
 
-            //var response = result.ToList();
+            var response = result.ToList();
             return result;
         }
 
         public async Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId)
         {
-            var result = await GetApprovalTrail(companyId, staffId).Where(c => c.TargetId == targetId && c.operationId == operationId).OrderByDescending(c => c.systemArrivalDate).ToListAsync();
+            var result = await GetApprovalTrail(companyId, staffId, targetId, operationId).ToListAsync();
             return result.Distinct();
         }
 
