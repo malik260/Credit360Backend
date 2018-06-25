@@ -19,6 +19,7 @@ using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Finance;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -3620,17 +3621,17 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempCasaCollateral(int collateralId, CollateralViewModel entity)
         {
-            if (casa.GetCASABalance(entity.collateralCode, entity.companyId) == null)
+            CasaBalanceViewModel casaDetail;
+
+            try
             {
-                throw new Exception(entity.customerCode + " is not a valid CASA account Number");
-            }
-            else
-            {
+                casaDetail = (casa.GetCASABalance(entity.collateralCode, entity.companyId));
+
                 context.TBL_TEMP_COLLATERAL_CASA.Add(new TBL_TEMP_COLLATERAL_CASA
                 {
                     TEMPCOLLATERALCUSTOMERID = collateralId,
                     ACCOUNTNUMBER = entity.collateralCode,
-                    AVAILABLEBALANCE = entity.availableBalance,
+                    AVAILABLEBALANCE = casaDetail.availableBalance,
                     LIENAMOUNT = entity.lienAmount,
                     SECURITYVALUE = (decimal)entity.securityValue,
                     REMARK = entity.remark,
@@ -3646,6 +3647,12 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.ExternalInitialization = true;
                 workflow.LogActivity();
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            
         }
 
         // FIX DEPOSIT collateral
@@ -3829,7 +3836,7 @@ namespace FintrakBanking.Repositories.Credit
                     transaction.Rollback();
 
 
-                    throw new Exception("Error has occured while approving this collateral, kindly try again");
+                    throw ex;
                 }
                 //return false;
             }
@@ -3896,6 +3903,7 @@ namespace FintrakBanking.Repositories.Credit
                         dateTimeCreated = DateTime.Now,
                         createdBy = ApprovalModel.createdBy,
                         companyId = ApprovalModel.companyId,
+                        branchId = (short)ApprovalModel.BranchId
                     };
 
                     //place lien
