@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Crypto;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Reports;
@@ -10,6 +11,8 @@ namespace FintrakBanking.ReportObjects.ReportCalls
     public class ReportRoutes : IReportRoutes
     {
         string reportPath = CommonHelpers.ReportPath;
+        Protection crypto = new Protection();
+       string cryptoKey = "sqluser10$";
         private IQueryable<TBL_LOAN_APPLICATION> LoanApplication(int companyId, int staffId)
         {
             IQueryable<TBL_LOAN_APPLICATION> data;
@@ -433,13 +436,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         {
             string path = string.Empty;
             path = reportPath + "ReportViews/LoanInterestReceivableAndPayable.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&branchId=" + searchEntity.branchId + "&loanRefNo=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&productClassId=" + searchEntity.productClassId;
+          //  path = crypto.OpenSSLEncrypt(pathLink, cryptoKey);
             return path;
         }
 
         public string GetBlacklist(ReportSearchEntity searchEntity)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/Blacklist.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&customerCode=" + searchEntity.customerCode;
+            var   pathLink = reportPath + "ReportViews/Blacklist.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&customerCode=" + searchEntity.customerCode;
+            path = crypto.OpenSSLEncrypt(pathLink, cryptoKey);
             return path;
         }
     }

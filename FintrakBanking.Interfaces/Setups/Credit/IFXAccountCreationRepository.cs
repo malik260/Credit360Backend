@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.Credit
 {
-    public interface IFSAccountCreationRepository
+   public interface IFXAccountCreationRepository
     {
-        FSAccountCreationListViewModel GetListOfFSCode();
+        FXAccountCreationListViewModel GetListOfFSCode();
     }
 }
