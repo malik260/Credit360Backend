@@ -17,6 +17,7 @@ using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Repositories.Credit;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -411,6 +412,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                          jobTypeName = x.TBL_JOB_TYPE.JOBTYPENAME,
                          senderStaffId = x.SENDERSTAFFID,
                          senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                         departmentUnitId = x.DEPARTMENTUNITID,
+                         departmentId = x.DEPARTMENTID,
                          //senderUnit = context.TBL_DEPARTMENT_UNIT.Where(c=>c.DEPARTMENTUNITID == context.TBL_STAFF.Where(z=>z.STAFFID == x.SENDERSTAFFID).FirstOrDefault().DEPARTMENTUNITID).FirstOrDefault().DEPARTMENTUNITNAME, // +"(" + x.TBL_DEPARTMENT.DEPARTMENTNAME +")",
                          //senderDepartment =  x.TBL_DEPARTMENT.DEPARTMENTNAME,
                          receiverStaffId = (int)x.RECEIVERSTAFFID,
@@ -907,10 +910,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<JobTypeViewModel> GetAllJobType()
         {
-            return this.context.TBL_JOB_TYPE.Select(x => new JobTypeViewModel
+           return this.context.TBL_JOB_TYPE.Select(x => new JobTypeViewModel
             {
                 jobTypeId = x.JOBTYPEID,
                 jobTypeName = x.JOBTYPENAME,
+                inUse = x.INUSE
             });
         }
 
@@ -921,7 +925,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeId = x.JOBTYPEID,
                 jobSubTypeName = x.JOB_SUB_TYPE_NAME,
                 jobSubTypeId = x.JOB_SUB_TYPEID
-            }).Where(x => x.jobTypeId == jobId);
+            }).Where(x => x.jobTypeId == jobId );
         }
 
         #endregion job-type

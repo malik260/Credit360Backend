@@ -247,10 +247,9 @@ namespace FintrakBanking.Repositories.Credit
                                      }).ToList();
             return checkListTypeList;
         }
-        public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId)
+        public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId, int productClassProcessId)
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
-           
             var checkType = (from a in context.TBL_CHECKLIST_TYPE
                              join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
                              where ids.Contains((int)b.APPROVALLEVELID)
@@ -262,6 +261,12 @@ namespace FintrakBanking.Repositories.Credit
                                  canValidateChecklist = b.CANVALIDATE
                              });
             var debug = checkType.ToList();
+
+            if (productClassProcessId != 0 && productClassProcessId == (int)ProductClassProcessEnum.CAMBased)
+            {
+              return  checkType.Where(x => x.isproductbased != true).GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
+            }
+
             return checkType.GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
         }
         public IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId)

@@ -13,6 +13,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -45,19 +47,25 @@ namespace FintrakBanking.Repositories.CASA
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             if (setup.USE_THIRD_PARTY_INTEGRATION)
             {
-                 
-                bool dataModel = false;
 
-                Task.Run(async () => { dataModel = await tran.APIProcessLien(model, "PLACE"); }).GetAwaiter().GetResult();
+                ResponseMessage result = null;
 
-                if (dataModel == true)
+                Task.Run(async () => { result = await tran.APIProcessLien(model, "PLACE"); }).GetAwaiter().GetResult();
+
+                if (result.APIResponse != null)
                 {
-                    PlaceLienSub(model);
+                    if (result.APIResponse.responseCode == "0")
+                    {
+                        PlaceLienSub(model);
+                    }
+                    else
+                    {
+                        throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                    }
                 }
                 else
                 {
-                    //display message
-                    throw new Exception($" Lien Placement Failed.");
+                    throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
                 }
 
             }
@@ -133,20 +141,20 @@ namespace FintrakBanking.Repositories.CASA
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             if (setup.USE_THIRD_PARTY_INTEGRATION)
             {
-              
-                bool dataModel = false;
 
-                Task.Run(async () => { dataModel = await tran.APIProcessLien(model, "LIFTLIEN"); }).GetAwaiter().GetResult();
+                ResponseMessage result = null;
 
-                if (dataModel == true)
-                {
-                    ReleaseLienSub(model, existingLien);
-                }
-                else
-                {
-                    //display message
-                    throw new Exception($" Lien Lift Failed.");
-                }
+                Task.Run(async () => { result = await tran.APIProcessLien(model, "LIFTLIEN"); }).GetAwaiter().GetResult();
+
+                if (result.APIResponse != null)
+                    if (result.APIResponse.responseCode == "0")
+                    {
+                        ReleaseLienSub(model, existingLien);
+                    }
+                    else
+                    {
+                        throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                    }
 
             }
             else

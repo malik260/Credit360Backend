@@ -146,6 +146,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
     {
         public short jobTypeId { get; set; }
         public string jobTypeName { get; set; }
+        public bool inUse { get; set; }
     }
 
     public class JobSubTypeViewModel : JobTypeViewModel

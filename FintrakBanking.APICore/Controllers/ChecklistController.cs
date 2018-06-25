@@ -199,11 +199,11 @@ namespace FintrakBanking.APICore.Controllers
         }
       [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-type-byapprovallevel")]
-        public HttpResponseMessage GetChecklistTypeByApprovalLevel(int operationId)
+        public HttpResponseMessage GetChecklistTypeByApprovalLevel(int operationId, int productClassProcessId)
         {
             try
             {
-                var data = repo.GetChecklistTypeByApprovalLevel(token.GetStaffId, token.GetCompanyId, operationId);
+                var data = repo.GetChecklistTypeByApprovalLevel(token.GetStaffId, token.GetCompanyId, operationId, productClassProcessId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

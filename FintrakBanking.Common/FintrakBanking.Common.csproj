@@ -82,6 +82,7 @@
     <Compile Include="AlertMonitoring\AlertMessageEnum.cs" />
     <Compile Include="CommonHelpers.cs" />
     <Compile Include="CreditBureauHelp.cs" />
+    <Compile Include="Crypto\Protection.cs" />
     <Compile Include="CustomException\Exceptions.cs" />
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />

@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
@@ -1622,9 +1623,9 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var item in loanApplicationDetails)
             {
                 if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
-                    throw new Exception("There are unapproved middle office request.");
+                    throw new ConditionNotMetException("There are unapproved middle office request.");
                 if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
-                    throw new Exception("There are unattended middle office request which must be attended to.");
+                    throw new ConditionNotMetException("There are unattended middle office request which must be attended to.");
             }
 
             //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;

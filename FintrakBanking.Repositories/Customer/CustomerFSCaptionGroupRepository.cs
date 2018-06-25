@@ -64,7 +64,7 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerFSCaptionGroupViewModel> GetCustomerFSCaptionGroup()
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_GROUP
-                                where a.DELETED == false
+                                where a.DELETED == false  
                                 orderby a.POSITION
                                 select new CustomerFSCaptionGroupViewModel
                                 {
@@ -75,6 +75,23 @@ namespace FintrakBanking.Repositories.Customer
                                     createdBy = a.CREATEDBY
                                 }).ToList();
             return data;
+        }
+
+        public IEnumerable<CustomerFSCaptionGroupViewModel> GetCustomerFSCaptionGroupWithoutRatio()
+        {
+            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_GROUP
+                        join b in context.TBL_CUSTOMER_FS_CAPTION on a.FSCAPTIONGROUPID equals b.FSCAPTIONGROUPID
+                        where a.DELETED == false && b.ISRATIO == false
+                        orderby a.POSITION
+                        select new CustomerFSCaptionGroupViewModel
+                        {
+                            fsCaptionGroupId = (short)a.FSCAPTIONGROUPID,
+                            fsCaptionGroupName = a.FSCAPTIONGROUPNAME,
+                            position = a.POSITION,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
+                        }).ToList();
+            return data.GroupBy(c=> c.fsCaptionGroupId).Select(x=>x.FirstOrDefault());
         }
 
         public CustomerFSCaptionGroupViewModel GetCustomerFSCaptionGroupById(short fsCaptionGroupId)

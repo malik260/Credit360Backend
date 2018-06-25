@@ -454,7 +454,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ReassignJobRequest(entity, jobRequestId);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job been assigned successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
