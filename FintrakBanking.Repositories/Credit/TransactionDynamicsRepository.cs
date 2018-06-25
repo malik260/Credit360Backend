@@ -278,8 +278,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<TransactionDynamicsViewModel> AddSelectedTransactionDynamicsLms(SelectedIdsViewModel entity)
         {
-            var loanconditions = context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => x.DYNAMICSID != null
-                && x.LOANAPPLICATIONDETAILID == entity.detailId
+            var loanconditions = context.TBL_LMSR_TRANSACTION_DYNAMICS.Where(x => x.DYNAMICSID != null
+                && x.LOANREVIEWAPPLICATIONID == entity.detailId
             );
 
             var conditions = context.TBL_TRANSACTION_DYNAMICS.Where(x => entity.selectedIds.Contains(x.DYNAMICSID)).ToList();
@@ -287,12 +287,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (!loanconditions.Any(x => x.DYNAMICSID == (int)c.DYNAMICSID))
                 {
-                    context.TBL_LOAN_TRANSACTION_DYNAMICS.Add(new TBL_LOAN_TRANSACTION_DYNAMICS
+                    context.TBL_LMSR_TRANSACTION_DYNAMICS.Add(new TBL_LMSR_TRANSACTION_DYNAMICS
                     {
                         DYNAMICS = c.DYNAMICS,
                         DYNAMICSID = c.DYNAMICSID,
                         CREATEDBY = c.CREATEDBY,
-                        LOANAPPLICATIONDETAILID = entity.detailId,
+                        LOANREVIEWAPPLICATIONID = entity.detailId,
                         DATETIMECREATED = general.GetApplicationDate(),
                     });
                 }
@@ -300,12 +300,12 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
 
             var deletableIds = loanconditions.Where(x => x.DYNAMICSID != null && !entity.selectedIds.Contains((int)x.DYNAMICSID)).Select(x => x.LOANDYNAMICSID);
-            context.TBL_LOAN_TRANSACTION_DYNAMICS.RemoveRange(
-                context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(x => deletableIds.Contains((int)x.LOANDYNAMICSID))
+            context.TBL_LMSR_TRANSACTION_DYNAMICS.RemoveRange(
+                context.TBL_LMSR_TRANSACTION_DYNAMICS.Where(x => deletableIds.Contains((int)x.LOANDYNAMICSID))
             );
             context.SaveChanges();
 
-            return GetTransactionDynamicsByDetailId(entity.detailId).ToList();
+            return GetTransactionDynamicsByDetailIdLms(entity.detailId).ToList();
         }
 
         public bool RemoveLoanTransactionDynamicsLms(int id, UserInfo model)
