@@ -225,6 +225,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short? productClassId { get; set; }
 
+        public short? productClassProcessId { get; set; }
+
         public string loanPurpose { get; set; }
 
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }

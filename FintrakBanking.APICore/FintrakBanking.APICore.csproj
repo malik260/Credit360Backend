@@ -390,6 +390,7 @@
     <Compile Include="Controllers\CustomFieldsController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\FileUploadController.cs" />
+    <Compile Include="Controllers\FXAccountController.cs" />
     <Compile Include="Controllers\GeneralSetupController.cs" />
     <Compile Include="Controllers\GenericDocumentUploadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

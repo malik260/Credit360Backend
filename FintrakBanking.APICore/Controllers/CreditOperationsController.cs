@@ -379,7 +379,7 @@ namespace FintrakBanking.APICore.Controllers
         }
       [HttpGet] [ClaimsAuthorization]  
         [Route("loan-operation/awaiting-approval")]
-        public HttpResponseMessage GetLoanBookingAwaitingApproval()
+        public HttpResponseMessage GetLoanOperationAwaitingApproval()
         {
             try
             {

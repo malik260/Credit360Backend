@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.Credit
 {
-    public class FSAccountCreationRepository : IFSAccountCreationRepository
+    public class FXAccountCreationRepository : IFXAccountCreationRepository
     {
         private FinTrakBankingStagingContext context;
 
-        public FSAccountCreationRepository(FinTrakBankingStagingContext _context)
+        public FXAccountCreationRepository(FinTrakBankingStagingContext _context)
         {
             context = _context;
         }
-        public List<FSAccountCreationViewModel> GetAllFreeCode1()
+        public List<FXAccountCreationViewModel> GetAllFreeCode1()
         {
             var freecode1 = (from a in context.STG_FREECODE1
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE1,
                                  ref_Desc = a.REF_DESC,
@@ -30,11 +30,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllFreeCode4()
+        public List<FXAccountCreationViewModel> GetAllFreeCode4()
         {
             var freecode1 = (from a in context.STG_FREECODE4
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE4,
                                  ref_Desc = a.REF_DESC,
@@ -43,11 +43,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllFreeCode5()
+        public List<FXAccountCreationViewModel> GetAllFreeCode5()
         {
             var freecode1 = (from a in context.STG_FREECODE5
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE5,
                                  ref_Desc = a.REF_DESC,
@@ -56,11 +56,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllFreeCode6()
+        public List<FXAccountCreationViewModel> GetAllFreeCode6()
         {
             var freecode1 = (from a in context.STG_FREECODE6
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE6,
                                  ref_Desc = a.REF_DESC,
@@ -69,11 +69,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllFreeCode7()
+        public List<FXAccountCreationViewModel> GetAllFreeCode7()
         {
             var freecode1 = (from a in context.STG_FREECODE7
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE7,
                                  ref_Desc = a.REF_DESC,
@@ -82,11 +82,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllFreeCode8()
+        public List<FXAccountCreationViewModel> GetAllFreeCode8()
         {
             var freecode1 = (from a in context.STG_FREECODE8
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE8,
                                  ref_Desc = a.REF_DESC,
@@ -95,11 +95,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllFreeCode9()
+        public List<FXAccountCreationViewModel> GetAllFreeCode9()
         {
             var freecode1 = (from a in context.STG_FREECODE9
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE9,
                                  ref_Desc = a.REF_DESC,
@@ -108,11 +108,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllFreeCode10()
+        public List<FXAccountCreationViewModel> GetAllFreeCode10()
         {
             var freecode1 = (from a in context.STG_FREECODE10
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE10,
                                  ref_Desc = a.REF_DESC,
@@ -121,11 +121,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllModeOfAdvance()
+        public List<FXAccountCreationViewModel> GetAllModeOfAdvance()
         {
             var freecode1 = (from a in context.STG_MODE_OF_ADV
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.MODE_OF_ADVANCE,
                                  ref_Desc = a.REF_DESC,
@@ -134,11 +134,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllNatureOfAdvance()
+        public List<FXAccountCreationViewModel> GetAllNatureOfAdvance()
         {
             var freecode1 = (from a in context.STG_NAT_OF_ADV
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.NATURE_OF_ADVANCE,
                                  ref_Desc = a.REF_DESC,
@@ -147,11 +147,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllOccupationCode()
+        public List<FXAccountCreationViewModel> GetAllOccupationCode()
         {
             var freecode1 = (from a in context.STG_OCCUPATION_CODE
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.OCCUPATION_CODE,
                                  ref_Desc = a.REF_DESC,
@@ -160,11 +160,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllPurposeOfAdvance()
+        public List<FXAccountCreationViewModel> GetAllPurposeOfAdvance()
         {
             var freecode1 = (from a in context.STG_PURPOSE_OF_ADV
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.PURPOSE_OF_ADVANCE,
                                  ref_Desc = a.REF_DESC,
@@ -173,11 +173,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1; 
         }
-        public List<FSAccountCreationViewModel> GetAllSanctionAuthority()
+        public List<FXAccountCreationViewModel> GetAllSanctionAuthority()
         {
             var freecode1 = (from a in context.STG_SANCTION_AUTH
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.SANCTION_AUTHORITY,
                                  ref_Desc = a.REF_DESC,
@@ -186,11 +186,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1; 
         }
-        public List<FSAccountCreationViewModel> GetAllSanctionLevel()
+        public List<FXAccountCreationViewModel> GetAllSanctionLevel()
         {
             var freecode1 = (from a in context.STG_SANCTION_LEVEL
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.SANCTION_LEVEL,
                                  ref_Desc = a.REF_DESC,
@@ -199,11 +199,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllSubSector()
+        public List<FXAccountCreationViewModel> GetAllSubSector()
         {
             var freecode1 = (from a in context.STG_SUB_SECTOR
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.SUB_SECTOR,
                                  ref_Desc = a.REF_DESC,
@@ -212,11 +212,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public List<FSAccountCreationViewModel> GetAllSector()
+        public List<FXAccountCreationViewModel> GetAllSector()
         {
             var freecode1 = (from a in context.STG_SECTOR_CODE
                              where a.DEL_FLG == "N"
-                             select new FSAccountCreationViewModel
+                             select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.SECTOR_CODE,
                                  ref_Desc = a.REF_DESC,
@@ -225,9 +225,9 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              }).ToList();
             return freecode1;
         }
-        public FSAccountCreationListViewModel GetListOfFSCode()
+        public FXAccountCreationListViewModel GetListOfFSCode()
         {
-            var list = new FSAccountCreationListViewModel();
+            var list = new FXAccountCreationListViewModel();
             list.freeCode1 = GetAllFreeCode1();
             list.freeCode4 = GetAllFreeCode4();
             list.freeCode5 = GetAllFreeCode5();
@@ -240,8 +240,10 @@ namespace FintrakBanking.Repositories.Setups.Credit
             list.natureOfAdvance = GetAllNatureOfAdvance();
             list.sectorCode = GetAllSector();
             list.sub_sector = GetAllSubSector();
+
             list.sanctionAuthority = GetAllSanctionAuthority();
             list.sanctionLevel = GetAllSanctionLevel();
+
             list.occupationCode = GetAllOccupationCode();
             list.purposeOfAdvance = GetAllPurposeOfAdvance();
             return list;

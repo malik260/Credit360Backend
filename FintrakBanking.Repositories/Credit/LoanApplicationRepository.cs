@@ -1379,6 +1379,7 @@ namespace FintrakBanking.Repositories.Credit
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedAmount = b.PROPOSEDAMOUNT,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
                             productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             // LoanCreditBereauReport = GetCustomerLoanCreditBureauReportChargesByApplicationId(b.CUSTOMERID, a.LOANAPPLICATIONID).ToList()

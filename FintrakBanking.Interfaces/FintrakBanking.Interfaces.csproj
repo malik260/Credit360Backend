@@ -77,7 +77,7 @@
     <Compile Include="CASA\ICasaRepository.cs" />
     <Compile Include="CASA\IOverRideRepository.cs" />
     <Compile Include="Credit\ILaonCamSolRepository.cs" />
-    <Compile Include="Setups\Credit\IFSAccountCreationRepository.cs" />
+    <Compile Include="Setups\Credit\IFXAccountCreationRepository.cs" />
     <Compile Include="Setups\Finance\ICustomChartOfAccountRepository.cs" />
     <Compile Include="Validation\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IIntegrationWithFinacle.cs" />
