@@ -160,7 +160,8 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         catch(APIErrorException ex)
                         {
-                            throw new APIErrorException(ex.Message);
+                            return allCorporate;
+                            //throw new APIErrorException(ex.Message);
                         }
                         catch(Exception ex)
                         {
