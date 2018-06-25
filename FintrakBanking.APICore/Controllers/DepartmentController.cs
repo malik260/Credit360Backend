@@ -222,11 +222,12 @@ namespace FintrakBanking.APICore.Controllers
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("department-staff/{departmentUnitId}/")]
-        public HttpResponseMessage SearchForDepartmentbyStaffId(string searchQuery, int departmentUnitId)
+        public HttpResponseMessage SearchForDepartmentStaffByUnitId(string searchQuery, int departmentUnitId)
         {
             try
             {
-                var data = repo.SearchForDepartmentStaff(token.GetCompanyId, searchQuery, departmentUnitId);
+                if (searchQuery == "undefined") searchQuery = null;
+                var data = repo.SearchForDepartmentStaffByUnitId(token.GetCompanyId, searchQuery, departmentUnitId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -240,7 +241,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });
             }
-
         }
 
       [HttpGet] [ClaimsAuthorization]  

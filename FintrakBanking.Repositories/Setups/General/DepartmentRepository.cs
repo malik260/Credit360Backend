@@ -287,16 +287,31 @@ namespace FintrakBanking.Repositories.Setups.General
         private IQueryable<DepartmentCustomersViewModel> SearchDepartments(int companyId) 
         {
             var department = (from d in context.TBL_DEPARTMENT
-                              join c in context.TBL_STAFF on d.DEPARTMENTID equals c.TBL_DEPARTMENT_UNIT.DEPARTMENTID
-                              where c.COMPANYID ==  companyId
+                              where d.COMPANYID ==  companyId
+                              select new DepartmentCustomersViewModel()
+                              {
+                                  createdBy = d.CREATEDBY.Value,
+                                  departmentName = d.DEPARTMENTNAME,
+                                  departmentCode = d.DEPARTMENTCODE,
+                                  description = d.DESCRIPTION,
+                                  departmentId = d.DEPARTMENTID,
+                              });
+            return department;
+        }
+        private IQueryable<DepartmentCustomersViewModel> SearchDepartmentStaffByUnits(int companyId, int departmentUnitId)
+        {
+            var department = (from d in context.TBL_DEPARTMENT
+                              join u in context.TBL_DEPARTMENT_UNIT on d.DEPARTMENTID equals u.DEPARTMENTID
+                              join c in context.TBL_STAFF on u.DEPARTMENTUNITID equals c.DEPARTMENTUNITID
+                              where c.COMPANYID == companyId && u.DEPARTMENTUNITID == departmentUnitId
                               select new DepartmentCustomersViewModel()
                               {
                                   createdBy = d.CREATEDBY.Value,
                                   branchName = c.TBL_BRANCH_REGION.Any() ? c.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.Any() ? c.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : null : null,
                                   departmentName = d.DEPARTMENTNAME,
                                   departmentCode = d.DEPARTMENTCODE,
-                                  departmentUnitName = d.TBL_DEPARTMENT_UNIT.Any() ? d.TBL_DEPARTMENT_UNIT.FirstOrDefault().DEPARTMENTUNITNAME : "n/a",
-                                  departmentUnitId = d.TBL_DEPARTMENT_UNIT.Any() ? d.TBL_DEPARTMENT_UNIT.FirstOrDefault().DEPARTMENTUNITID : (short) 0,
+                                  departmentUnitName = u.DEPARTMENTUNITNAME,
+                                  departmentUnitId = u.DEPARTMENTUNITID,
                                   description = d.DESCRIPTION,
                                   departmentId = d.DEPARTMENTID,
                                   firstname = c.FIRSTNAME,
@@ -315,10 +330,10 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <param name="searchQuery">The search query.</param>
         /// <param name="departmentId">The department identifier.</param>
         /// <returns></returns>
-        public IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery , int departmentUnitId)
+        public IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaffByUnitId(int companyId, string searchQuery, int departmentUnitId)
         {
-            IQueryable<DepartmentCustomersViewModel> allstaff = null;
-
+                    IQueryable<DepartmentCustomersViewModel> allstaff = null;
+            
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 searchQuery = searchQuery.ToLower();
@@ -326,17 +341,17 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
-                allstaff = SearchDepartments(companyId)
-                    .Where( x => 
-                            (x.firstname.ToLower().Contains(searchQuery)
-                            || x.lastname.ToLower().Contains(searchQuery)
-                            || x.middlename.ToLower().Contains(searchQuery) )
-                            && x.departmentUnitId == departmentUnitId
+                allstaff = SearchDepartmentStaffByUnits(companyId, departmentUnitId)
+                    .Where(x =>
+                           (x.firstname.ToLower().Contains(searchQuery)
+                           || x.lastname.ToLower().Contains(searchQuery)
+                           || x.middlename.ToLower().Contains(searchQuery))
                 );
             }
 
             return allstaff;
         }
+
         /// <summary>
         /// Searches for department staff.
         /// </summary>

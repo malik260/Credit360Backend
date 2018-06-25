@@ -658,8 +658,8 @@ namespace FintrakBanking.Repositories.Credit
                         if (ab.Any())
                         {
                             isCheckListDone = false;
-                            str = str + "One or More item(s) did not meet up with the condition." + Environment.NewLine
-                                + " Please Check your response to confirm." + Environment.NewLine;
+                            str = str + "One or more item(s) did not meet up with the condition." + Environment.NewLine
+                                + " Please check your response to confirm." + Environment.NewLine;
                             checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
                         }
                     }
@@ -1034,7 +1034,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("NO FEE is defined for this product(s)");
+                    throw new Exception("No fee is defined for this product(s)");
                 }
 
 
