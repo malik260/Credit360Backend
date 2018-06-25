@@ -498,7 +498,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value xml:space="preserve">                                                             </Value>
+                    <Value xml:space="preserve">                         </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -529,7 +529,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Relationship Manager                                                                                    Business Manager</Value>
+                    <Value>Relationship Manager                                                                     Business Manager</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -550,7 +550,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Signature:                                                                                                      Signature:</Value>
+                    <Value>Signature:                                                                                       Signature:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -571,7 +571,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Date:                                                                                                             Date:</Value>
+                    <Value>Date:                                                                                              Date:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -3308,24 +3308,33 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox83">
+                        <Textbox Name="interestRate1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>=Fields!interestRate.Value</Value>
+                                  <Style>
+                                    <FontFamily>Garamond</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>%</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox83</rd:DefaultName>
+                          <rd:DefaultName>interestRate1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>

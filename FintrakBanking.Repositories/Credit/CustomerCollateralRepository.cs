@@ -19,6 +19,7 @@ using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Finance;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -37,6 +38,7 @@ namespace FintrakBanking.Repositories.Credit
         private IApprovalLevelStaffRepository level;
         private ICasaLienRepository lien;
         private ICasaRepository casa;
+        private IIntegrationWithFinacle finacle;
 
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
@@ -50,7 +52,8 @@ namespace FintrakBanking.Repositories.Credit
             IFinanceTransactionRepository _repo,
             IApprovalLevelStaffRepository _level,
             ICasaLienRepository _lien,
-            ICasaRepository _casa
+            ICasaRepository _casa,
+            IIntegrationWithFinacle _finacle
             )
         {
             this.context = _context;
@@ -66,6 +69,7 @@ namespace FintrakBanking.Repositories.Credit
             this.level = _level;
             this.lien = _lien;
             this.casa = _casa;
+            this.finacle = _finacle;
         }
 
 
@@ -3620,68 +3624,94 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempCasaCollateral(int collateralId, CollateralViewModel entity)
         {
-            if (casa.GetCASABalance(entity.collateralCode, entity.companyId) == null)
-            {
-                throw new Exception(entity.customerCode + " is not a valid CASA account Number");
-            }
-            else
-            {
-                context.TBL_TEMP_COLLATERAL_CASA.Add(new TBL_TEMP_COLLATERAL_CASA
-                {
-                    TEMPCOLLATERALCUSTOMERID = collateralId,
-                    ACCOUNTNUMBER = entity.collateralCode,
-                    AVAILABLEBALANCE = entity.availableBalance,
-                    LIENAMOUNT = entity.lienAmount,
-                    SECURITYVALUE = (decimal)entity.securityValue,
-                    REMARK = entity.remark,
-                });
+            CasaBalanceViewModel casaDetail;
 
-                workflow.StaffId = entity.createdBy;
-                workflow.CompanyId = entity.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = collateralId;
-                workflow.Comment = "Request for property collateral approval";
-                workflow.OperationId = (int)OperationsEnum.CollateralApproval;
-                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                workflow.ExternalInitialization = true;
-                workflow.LogActivity();
+            try
+            {
+                casaDetail = (casa.GetCASABalance(entity.collateralCode, entity.companyId));
+
+                if (casaDetail.accountNo == null)
+                {
+                    throw new Exception(entity.collateralCode + " is not a valid CASA account number");
+                }
+                else
+                {
+                    context.TBL_TEMP_COLLATERAL_CASA.Add(new TBL_TEMP_COLLATERAL_CASA
+                    {
+                        TEMPCOLLATERALCUSTOMERID = collateralId,
+                        ACCOUNTNUMBER = entity.collateralCode,
+                        AVAILABLEBALANCE = casaDetail.availableBalance,
+                        LIENAMOUNT = entity.lienAmount,
+                        SECURITYVALUE = (decimal)entity.securityValue,
+                        REMARK = entity.remark,
+                    });
+
+                    workflow.StaffId = entity.createdBy;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = collateralId;
+                    workflow.Comment = "Request for property collateral approval";
+                    workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+                }
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            
         }
 
         // FIX DEPOSIT collateral
 
         private void AddTempDepositCollateral(int collateralId, CollateralViewModel entity)
         {
-            //if (entity.maturityDate < DateTime.Now || entity.effectiveDate > DateTime.Now)
-            //    throw new Exception("Wrong date selected. Transaction aborted");
+            CasaBalanceViewModel finacleBalance;
 
-            context.TBL_TEMP_COLLATERAL_DEPOSIT.Add(new TBL_TEMP_COLLATERAL_DEPOSIT
+            try
             {
-                TEMPCOLLATERALCUSTOMERID = collateralId,
-                DEALREFERENCENUMBER = entity.dealReferenceNumber,
-                ACCOUNTNUMBER = "0",
-                EXISTINGLIENAMOUNT = 0,
-                LIENAMOUNT = entity.lienAmount,
-                AVAILABLEBALANCE = entity.availableBalance,
-                SECURITYVALUE = (decimal)entity.securityValue,
-                MATURITYDATE = entity.maturityDate,
-                MATURITYAMOUNT = 0,
-                EFFECTIVEDATE = entity.effectiveDate,
-                REMARK = entity.remark,
-                BANK = entity.bank,
-                
-                
-            });
+                finacleBalance = finacle.GetCustomerAccountBalance(entity.collateralCode);
 
-            workflow.StaffId = entity.createdBy;
-            workflow.CompanyId = entity.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = collateralId;
-            workflow.Comment = "Request for FD collateral approval";
-            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
-            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
+                if (finacleBalance.accountNo == null)
+                {
+                    throw new Exception(entity.collateralCode + " is not a valid fixed depposit account number");
+                }
+                else
+                {
+                    context.TBL_TEMP_COLLATERAL_DEPOSIT.Add(new TBL_TEMP_COLLATERAL_DEPOSIT
+                    {
+                        TEMPCOLLATERALCUSTOMERID = collateralId,
+                        DEALREFERENCENUMBER = entity.dealReferenceNumber,
+                        ACCOUNTNUMBER = entity.collateralCode,
+                        EXISTINGLIENAMOUNT = 0,
+                        LIENAMOUNT = entity.lienAmount,
+                        AVAILABLEBALANCE = finacleBalance.availableBalance,
+                        SECURITYVALUE = (decimal)entity.securityValue,
+                        MATURITYDATE = entity.maturityDate,
+                        MATURITYAMOUNT = 0,
+                        EFFECTIVEDATE = entity.effectiveDate,
+                        REMARK = entity.remark,
+                        BANK = entity.bank,
+                    });
+
+                    workflow.StaffId = entity.createdBy;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = collateralId;
+                    workflow.Comment = "Request for FD collateral approval";
+                    workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+                }
+            }catch(Exception ex)
+            {
+                throw ex;
+            }
+            
         }
         public IEnumerable<CollateralViewModel> GetTempCustomerCollateralForApproval(int companyId, int staffId)
         {
@@ -3829,7 +3859,7 @@ namespace FintrakBanking.Repositories.Credit
                     transaction.Rollback();
 
 
-                    throw new Exception("Error has occured while approving this collateral, kindly try again");
+                    throw ex;
                 }
                 //return false;
             }
@@ -3896,6 +3926,7 @@ namespace FintrakBanking.Repositories.Credit
                         dateTimeCreated = DateTime.Now,
                         createdBy = ApprovalModel.createdBy,
                         companyId = ApprovalModel.companyId,
+                        branchId = (short)ApprovalModel.BranchId
                     };
 
                     //place lien

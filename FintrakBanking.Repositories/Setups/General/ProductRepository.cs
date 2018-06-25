@@ -105,6 +105,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId)
         {
+            if(customerTypeId == 0)
+            {
+                customerTypeId = 2;
+            }
             return (from data in context.TBL_PRODUCT_CLASS
                     where data.CUSTOMERTYPEID == customerTypeId && data.PRODUCT_CLASS_PROCESSID == processId
                     //where data.OperationTypeId == operationTypeId
@@ -759,6 +763,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId, int customerTypeId)
         {
+            if (customerTypeId == 0)
+            {
+                customerTypeId = 2;
+            }
             //var productData = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
             var product = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1) && c.customerTypeId== customerTypeId).ToList();
             foreach (var item in product)

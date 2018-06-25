@@ -302,6 +302,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                model.BranchId = token.GetBranchId;
 
                 var response = repo.GoForApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message ="Approved Successfully"});
@@ -319,6 +320,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                model.BranchId = token.GetBranchId;
 
                 var response = repo.GoForPolicyApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
@@ -1199,9 +1201,9 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
-        [Route("get-casa-lien-amount")]
-        public HttpResponseMessage GetLienAmountForCASA([FromBody]string accountNumber)
+         [HttpGet] [ClaimsAuthorization]
+        [Route("get-casa-lien-amount/{accountNumber}")]
+        public HttpResponseMessage GetLienAmountForCASA(string accountNumber)
         {
             try
             {
