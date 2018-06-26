@@ -10,5 +10,6 @@ namespace FintrakBanking.Interfaces.Setups.Credit
    public interface IFXAccountCreationRepository
     {
         FXAccountCreationListViewModel GetListOfFSCode();
+        List<FXAccountCreationViewModel> GetAllGLSubHead(string schemeCode);
     }
 }

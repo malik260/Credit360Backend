@@ -1421,49 +1421,50 @@ namespace FintrakBanking.Repositories.Credit
             searchString = searchString.Trim().ToLower();
 
             var applications = context.TBL_LOAN_APPLICATION
-                    .Join(context.TBL_LOAN_APPLICATION_DETAIL,
-                        a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
-                    .Join(context.TBL_CUSTOMER,
-                        g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
-                    .Join(context.TBL_CASA,
-                        o => o.c.CUSTOMERID, s => s.CUSTOMERID, (o, s) => new { o, s })
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
+                    .Join(context.TBL_CUSTOMER, g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
+                    .Join(context.TBL_CASA, o => o.c.CUSTOMERID, s => s.CUSTOMERID, (o, s) => new { o, s })
+                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended), q => q.o.g.a.LOANAPPLICATIONID, t => t.TARGETID, (q, t) => new { q, t })
                     .Select(x => new LoanApplicationViewModel
                     {
-                        firstName = x.o.c.FIRSTNAME,
-                        middleName = x.o.c.MIDDLENAME,
-                        lastName = x.o.c.LASTNAME,
-                        customerCode = x.o.c.CUSTOMERCODE,
-                        applicationReferenceNumber = x.o.g.a.APPLICATIONREFERENCENUMBER,
+                        firstName = x.q.o.c.FIRSTNAME,
+                        middleName = x.q.o.c.MIDDLENAME,
+                        lastName = x.q.o.c.LASTNAME,
+                        customerCode = x.q.o.c.CUSTOMERCODE,
+                        applicationReferenceNumber = x.q.o.g.a.APPLICATIONREFERENCENUMBER,
 
-                        loanApplicationId = x.o.g.a.LOANAPPLICATIONID,
-                        customerId = x.o.g.a.CUSTOMERID,
-                        branchId = x.o.g.a.BRANCHID,
-                        customerGroupId = x.o.g.a.CUSTOMERGROUPID,
-                        loanTypeId = x.o.g.a.LOANAPPLICATIONTYPEID,
-                        relationshipOfficerId = x.o.g.a.RELATIONSHIPOFFICERID,
-                        relationshipManagerId = x.o.g.a.RELATIONSHIPMANAGERID,
-                        applicationDate = x.o.g.a.APPLICATIONDATE,
-                        applicationAmount = x.o.g.a.APPLICATIONAMOUNT,
-                        approvedAmount = x.o.g.a.APPROVEDAMOUNT,
-                        interestRate = x.o.g.a.INTERESTRATE,
-                        applicationTenor = x.o.g.a.APPLICATIONTENOR,
-                        //loanInformation = x.o.g.a.LOANINFORMATION, // THROWS EXCEPTION
-                        submittedForAppraisal = x.o.g.a.SUBMITTEDFORAPPRAISAL,
-                        customerInfoValidated = x.o.g.a.CUSTOMERINFOVALIDATED,
-                        isRelatedParty = x.o.g.a.ISRELATEDPARTY,
-                        isPoliticallyExposed = x.o.g.a.ISPOLITICALLYEXPOSED,
-                        approvalStatusId = (short)x.o.g.a.APPROVALSTATUSID,
-                        applicationStatusId = x.o.g.a.APPLICATIONSTATUSID,
-                        branchName = x.o.g.a.TBL_BRANCH.BRANCHNAME,
-                        relationshipOfficerName = x.o.g.a.TBL_STAFF.FIRSTNAME + " " + x.o.g.a.TBL_STAFF.MIDDLENAME + " " + x.o.g.a.TBL_STAFF.LASTNAME,
-                        relationshipManagerName = x.o.g.a.TBL_STAFF1.FIRSTNAME + " " + x.o.g.a.TBL_STAFF1.MIDDLENAME + " " + x.o.g.a.TBL_STAFF1.LASTNAME,
-                        misCode = x.o.g.a.MISCODE,
-                        customerGroupName = x.o.g.a.CUSTOMERGROUPID.HasValue ? x.o.g.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                        loanTypeName = x.o.g.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                        createdBy = x.o.g.a.CREATEDBY,
-                        loanPreliminaryEvaluationId = x.o.g.a.LOANPRELIMINARYEVALUATIONID,
-                        operationId = x.o.g.a.OPERATIONID,
-                        accountNumber = x.s.PRODUCTACCOUNTNUMBER,
+                        loanApplicationId = x.q.o.g.a.LOANAPPLICATIONID,
+                        customerId = x.q.o.g.a.CUSTOMERID,
+                        branchId = x.q.o.g.a.BRANCHID,
+                        customerGroupId = x.q.o.g.a.CUSTOMERGROUPID,
+                        loanTypeId = x.q.o.g.a.LOANAPPLICATIONTYPEID,
+                        relationshipOfficerId = x.q.o.g.a.RELATIONSHIPOFFICERID,
+                        relationshipManagerId = x.q.o.g.a.RELATIONSHIPMANAGERID,
+                        applicationDate = x.q.o.g.a.APPLICATIONDATE,
+                        applicationAmount = x.q.o.g.a.APPLICATIONAMOUNT,
+                        approvedAmount = x.q.o.g.a.APPROVEDAMOUNT,
+                        interestRate = x.q.o.g.a.INTERESTRATE,
+                        applicationTenor = x.q.o.g.a.APPLICATIONTENOR,
+                        //loanInformation = x.q.o.g.a.LOANINFORMATION, // THROWS EXCEPTION
+                        submittedForAppraisal = x.q.o.g.a.SUBMITTEDFORAPPRAISAL,
+                        customerInfoValidated = x.q.o.g.a.CUSTOMERINFOVALIDATED,
+                        isRelatedParty = x.q.o.g.a.ISRELATEDPARTY,
+                        isPoliticallyExposed = x.q.o.g.a.ISPOLITICALLYEXPOSED,
+                        approvalStatusId = (short)x.q.o.g.a.APPROVALSTATUSID,
+                        //approvalStatus = "no"+ x.q.o.g.a.APPROVALSTATUSID,//context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.q.o.g.a.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                        currentApprovalLevel = x.t.TBL_APPROVAL_LEVEL.LEVELNAME,
+                        responsiblePerson = x.t.TOSTAFFID == null ? "n/a" : x.t.TBL_STAFF1.STAFFCODE + " - " + x.t.TBL_STAFF1.FIRSTNAME + " " + x.t.TBL_STAFF1.MIDDLENAME + " " + x.t.TBL_STAFF1.LASTNAME,
+                        applicationStatusId = x.q.o.g.a.APPLICATIONSTATUSID,
+                        branchName = x.q.o.g.a.TBL_BRANCH.BRANCHNAME,
+                        relationshipOfficerName = x.q.o.g.a.TBL_STAFF.FIRSTNAME + " " + x.q.o.g.a.TBL_STAFF.MIDDLENAME + " " + x.q.o.g.a.TBL_STAFF.LASTNAME,
+                        relationshipManagerName = x.q.o.g.a.TBL_STAFF1.FIRSTNAME + " " + x.q.o.g.a.TBL_STAFF1.MIDDLENAME + " " + x.q.o.g.a.TBL_STAFF1.LASTNAME,
+                        misCode = x.q.o.g.a.MISCODE,
+                        customerGroupName = x.q.o.g.a.CUSTOMERGROUPID.HasValue ? x.q.o.g.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                        loanTypeName = x.q.o.g.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                        createdBy = x.q.o.g.a.CREATEDBY,
+                        loanPreliminaryEvaluationId = x.q.o.g.a.LOANPRELIMINARYEVALUATIONID,
+                        operationId = x.q.o.g.a.OPERATIONID,
+                        accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
                     })
                     .Where(x => x.applicationReferenceNumber == searchString
                         || x.firstName.ToLower() == searchString
