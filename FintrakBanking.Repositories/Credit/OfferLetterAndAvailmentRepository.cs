@@ -74,7 +74,8 @@ namespace FintrakBanking.Repositories.Credit
                     loanApplicationId = x.c.a.LOANAPPLICATIONID,
                     applicationReferenceNumber = x.c.a.APPLICATIONREFERENCENUMBER,
                     customerCode = x.c.a.TBL_CUSTOMER.CUSTOMERCODE,
-                    customerName = x.c.a.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? x.c.a.TBL_CUSTOMER_GROUP.GROUPNAME : x.c.a.TBL_CUSTOMER.FIRSTNAME + " " + x.c.a.TBL_CUSTOMER.MIDDLENAME + " " + x.c.a.TBL_CUSTOMER.LASTNAME,
+                    //customerName = x.c.a.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? x.c.a.TBL_CUSTOMER_GROUP.GROUPNAME : x.c.a.TBL_CUSTOMER.FIRSTNAME + " " + x.c.a.TBL_CUSTOMER.MIDDLENAME + " " + x.c.a.TBL_CUSTOMER.LASTNAME,
+                    customerName = x.c.b.TBL_CUSTOMER.FIRSTNAME + " " + x.c.b.TBL_CUSTOMER.MIDDLENAME + " " + x.c.b.TBL_CUSTOMER.LASTNAME,
                     customerId = x.c.a.CUSTOMERID,
                     customerGroupName = x.c.a.TBL_CUSTOMER_GROUP.GROUPNAME,
                     customerGroupCode = x.c.a.TBL_CUSTOMER_GROUP.GROUPCODE,
@@ -393,19 +394,20 @@ namespace FintrakBanking.Repositories.Credit
 
             var transactionDynamicsDetails = (from a in context.TBL_LOAN_TRANSACTION_DYNAMICS
                                               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                              join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                               //join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
                                               //from c in cc.DefaultIfEmpty()
                                               //join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
                                               //from d in cg.DefaultIfEmpty()
-                                              where b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                              where c.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                               select new TransactionDynamicsViewModel()
                                               {
                                                   dynamics = a.DYNAMICS,
                                               }).ToList();
 
             var loanCollaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
-                                       //join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
-                                   where x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                   join y in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                                   where y.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                    select new LoanApplicationCollateralViewModel()
                                    {
                                        collateralDetail = x.COLLATERALDETAIL,
@@ -416,7 +418,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var loanMonitoringTriggers = (from x in context.TBL_LOAN_APPLICATN_DETL_MTRIG
                                           join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals y.LOANAPPLICATIONDETAILID
-                                          where y.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                          join z in context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONID equals z.LOANAPPLICATIONID
+                                          where z.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                           select new MonitoringTriggersViewModel()
                                           {
                                               monitoringTrigger = x.MONITORING_TRIGGER,
@@ -779,10 +782,18 @@ namespace FintrakBanking.Repositories.Credit
             transactionDynamics += loanTransactionDynamics;
 
             var transactionDynamicsData = $"{transactionDynamics}";
-
+            var customer = "";
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
-
-            var customer = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_CUSTOMER.FIRSTNAME;
+            var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).CUSTOMERID;
+            if(customerExist != null)
+            {
+                customer = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_CUSTOMER.FIRSTNAME;
+            }
+            else
+            {
+                customer = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_CUSTOMER_GROUP.GROUPNAME;
+            }
+            
             var branch = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_BRANCH.BRANCHNAME;
             //var info = data;
 
