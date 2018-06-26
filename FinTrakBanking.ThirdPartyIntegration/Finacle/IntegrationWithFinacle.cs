@@ -301,13 +301,15 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return result;
         }
 
-        public AccountCreationRespones CreateForeignAccount(CreateAccountViewModel entity)
+        public AccountCreationResponseMessageViewModel CreateForeignAccount(CreateAccountViewModel entity)
         {
+            AccountCreationResponseMessageViewModel module = null;
             AccountCreationRespones result = null;
             Task.Run(async () => result = await account.CreateAccount(entity)).GetAwaiter().GetResult();
             if (result.Message.ReasonPhrase == "OK")
-                return result;
-            return result;
+                if (result.APIResponse.webRequestStatus == "SUCCESS")
+                    module = result.APIResponse;
+            return module;
         }
 
         public bool PostTransactions(List<FinanceTransactionViewModel> model)
@@ -456,6 +458,23 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return casa;
         }
 
+        public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
+        {
+            var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
+
+            var accountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+                               join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
+                               join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
+                               where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
+                               select gl.ACCOUNTID).FirstOrDefault();
+
+            var glAccountCode = branchCode + accountCode; //"100" + accountCode;
+
+            return glAccountCode;
+        }
+
+        public List<AccountCreationResponseMessageViewModel> CreateAccountForeign
+
         #region  private
         private bool LogOverDraftExtend(OverDraftExtendViewModel model)
         {
@@ -580,20 +599,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
 
-        public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
-        {
-            var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
-
-            var accountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
-                               join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
-                               join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
-                               where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
-                               select gl.ACCOUNTID).FirstOrDefault();
-
-            var glAccountCode = branchCode + accountCode; //"100" + accountCode;
-
-            return glAccountCode;
-        }
+     
 
         private List<TransactionPostingViewModel> TransactionData(List<FinanceTransactionViewModel> model)
         {
