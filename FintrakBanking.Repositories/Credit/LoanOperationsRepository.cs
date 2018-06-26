@@ -443,7 +443,7 @@ namespace FintrakBanking.Repositories.Credit
                     bool result = false;
                     var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
-                    var data = (from a in context.TBL_LOAN_FEE
+                            var data = (from a in context.TBL_LOAN_FEE
                                 join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                                 join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
                                 where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate

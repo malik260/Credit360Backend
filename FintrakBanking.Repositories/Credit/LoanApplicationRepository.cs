@@ -797,7 +797,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 isGroupLoan = true;
             }
-            int casaAccountId = -1;
+            int? casaAccountId = null;
             string refNumber = GenerateLoanReference(loan.customerId.Value);
             if (loan.customerAccount != "N/A")
             {
@@ -1403,6 +1403,7 @@ namespace FintrakBanking.Repositories.Credit
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedAmount = b.PROPOSEDAMOUNT,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
                             productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             // LoanCreditBereauReport = GetCustomerLoanCreditBureauReportChargesByApplicationId(b.CUSTOMERID, a.LOANAPPLICATIONID).ToList()
@@ -2025,26 +2026,28 @@ namespace FintrakBanking.Repositories.Credit
                 decimal totalAmount = 0; // (GetCustomerTotalOutstandingBalance(loanDetails.CUSTOMERID) - propusedAmount) + entity.proposedAmount;
                 loan.APPLICATIONAMOUNT = newAmount + entity.proposedAmount;
                 loan.TOTALEXPOSUREAMOUNT = newAmount + entity.proposedAmount;
-
+                loanDetails.PROPOSEDTENOR = entity.proposedTenor;
+                loanDetails.APPROVEDTENOR = entity.proposedTenor;
                 loanDetails.PROPOSEDAMOUNT = entity.proposedAmount;
                 loanDetails.APPROVEDAMOUNT = entity.proposedAmount;
                 loanDetails.LOANPURPOSE = loanDetails.LOANPURPOSE;
             }
             // Audit Section ---------------------------
-            //var audit = new TBL_AUDIT
-            //{
-            //    AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationUpdate,
-            //    STAFFID = user.createdBy,
-            //    BRANCHID = (short)user.BranchId,
-            //    DETAIL = $"Updated loan application with reference Number: {loan.APPLICATIONREFERENCENUMBER}",
-            //    IPADDRESS = user.userIPAddress,
-            //    URL = user.applicationUrl,
-            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
-            //    SYSTEMDATETIME = DateTime.Now,
-            //    TARGETID = entity.applicationDetailedId
-            //};
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationUpdate,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Updated loan application with reference Number: {loan.APPLICATIONREFERENCENUMBER}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.applicationDetailedId
+            };
 
-            // this.auditTrail.AddAuditTrail(audit);
+            this.auditTrail.AddAuditTrail(audit);
+
             //end of Audit section -------------------------------
             return context.SaveChanges() > 0;
         }

@@ -9,6 +9,7 @@ namespace FintrakBanking.Interfaces.Customer
     public interface ICustomerFSCaptionGroupRepository
     {
         IEnumerable<CustomerFSCaptionGroupViewModel> GetCustomerFSCaptionGroup();
+        IEnumerable<CustomerFSCaptionGroupViewModel> GetCustomerFSCaptionGroupWithoutRatio();
         CustomerFSCaptionGroupViewModel GetCustomerFSCaptionGroupById(short fsCaptionGroupId);
         bool AddCustomerFSCaptionGroup(CustomerFSCaptionGroupViewModel entity);       
         bool UpdateCustomerFSCaptionGroup(short groupId, CustomerFSCaptionGroupViewModel entity);
