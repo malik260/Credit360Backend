@@ -266,7 +266,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             data.REASSIGNEDTO = (int)model.reassignedTo;
             data.ISREASSIGNED = true;
             data.ISACKNOWLEDGED = true;
-            data.REQUESTSTATUSID = (short)JobRequestStatusEnum.approved;
+            data.REQUESTSTATUSID = (short)JobRequestStatusEnum.processing;
             data.REASSIGNEDDATE = applicationDate;
             data.SYSTEMREASSIGNEDDATE = DateTime.Now;
 
