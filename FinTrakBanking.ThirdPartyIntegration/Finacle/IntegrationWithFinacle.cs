@@ -473,8 +473,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return glAccountCode;
         }
 
-        public List<AccountCreationResponseMessageViewModel> CreateAccountForeign
-
+        
         #region  private
         private bool LogOverDraftExtend(OverDraftExtendViewModel model)
         {
