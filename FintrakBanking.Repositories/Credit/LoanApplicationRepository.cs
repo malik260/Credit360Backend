@@ -797,7 +797,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 isGroupLoan = true;
             }
-            int casaAccountId = -1;
+            int? casaAccountId = null;
             string refNumber = GenerateLoanReference(loan.customerId.Value);
             if (loan.customerAccount != "N/A")
             {
