@@ -459,13 +459,13 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
             }
-            catch (ConditionNotMetException ce)
+            catch (ConditionNotMetException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-            catch (BadLogicException be)
+            catch (BadLogicException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -473,6 +473,36 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        public HttpResponseMessage AcknowledgeJob([FromBody] JobRequestViewModel entity, int jobRequestId)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.AcknowledgeJob(entity, jobRequestId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Job Acknowledged." });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
+            }
+        }
         #region Middle Office Request
         [HttpPut, Route("job-request/invoice-status")]
         public HttpResponseMessage UpdateInvoiceStatus([FromBody] JobRequestInvoiceViewModel entity)
