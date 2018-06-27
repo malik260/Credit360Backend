@@ -768,7 +768,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 customerTypeId = 2;
             }
             //var productData = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
-            var product = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1) && c.customerTypeId== customerTypeId).ToList();
+            var product = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1)).ToList();
             foreach (var item in product)
             {
                 var ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()

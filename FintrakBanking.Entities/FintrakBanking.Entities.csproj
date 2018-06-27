@@ -469,10 +469,13 @@
     <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
     <Compile Include="StagingModels\FINTRAK_TRAN_PROC_DETAILS.cs" />
     <Compile Include="StagingModels\FINTRAK_TRAN_PROC_MAIN.cs" />
+    <Compile Include="StagingModels\STG_ADVANCE_TYPE.cs" />
+    <Compile Include="StagingModels\STG_BORROWER_CAT.cs" />
     <Compile Include="StagingModels\STG_BRANCH.cs" />
     <Compile Include="StagingModels\STG_CASA_BALANCE.cs" />
     <Compile Include="StagingModels\STG_CASA_DAILY_BALANCE.cs" />
     <Compile Include="StagingModels\STG_CURRENCY_EXCHANGERATE.cs" />
+    <Compile Include="StagingModels\STG_CURRENCY_TBL.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER_CLIENT.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER_DIRECTOR.cs" />
@@ -487,6 +490,7 @@
     <Compile Include="StagingModels\STG_FREECODE7.cs" />
     <Compile Include="StagingModels\STG_FREECODE8.cs" />
     <Compile Include="StagingModels\STG_FREECODE9.cs" />
+    <Compile Include="StagingModels\STG_GL_SUBHEAD_TBL.cs" />
     <Compile Include="StagingModels\STG_LOAN_MART.cs" />
     <Compile Include="StagingModels\STG_LOAN_WATCHLIST.cs" />
     <Compile Include="StagingModels\STG_MODE_OF_ADV.cs" />
@@ -496,7 +500,9 @@
     <Compile Include="StagingModels\STG_PURPOSE_OF_ADV.cs" />
     <Compile Include="StagingModels\STG_SANCTION_AUTH.cs" />
     <Compile Include="StagingModels\STG_SANCTION_LEVEL.cs" />
+    <Compile Include="StagingModels\STG_SCHEMECODE_TBL.cs" />
     <Compile Include="StagingModels\STG_SECTOR_CODE.cs" />
+    <Compile Include="StagingModels\STG_SOL_TBL.cs" />
     <Compile Include="StagingModels\STG_STAFF.cs" />
     <Compile Include="StagingModels\STG_STAFFMIS.cs" />
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />

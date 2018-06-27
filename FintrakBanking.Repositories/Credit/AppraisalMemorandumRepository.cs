@@ -331,7 +331,7 @@ namespace FintrakBanking.Repositories.Credit
                             detail.PROPOSEDTENOR = changed.tenor;
                         }
 
-                        context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG // LOG CHANGES
+                        /*context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG // LOG CHANGES
                         {
                             LOANAPPLICATIONDETAILID = changed.detailId,
                             APPROVEDPRODUCTID = (short)changed.productId,
@@ -343,7 +343,7 @@ namespace FintrakBanking.Repositories.Credit
                             CREATEDBY = model.createdBy,
                             DATETIMECREATED = applicationDate,
                             SYSTEMDATETIME = DateTime.Now,
-                        });
+                        });*/
                     }
                 }
             }
@@ -400,6 +400,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.comment == "debug_test") throw new Exception("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
             context.SaveChanges();
+            LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate); // LOG CHANGES
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
@@ -409,6 +410,28 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return (int)ApprovalStatusEnum.Processing; // default for now
+        }
+
+        private void LogApplicationDetailChanges(int applicationId,int staffId,DateTime date)
+        {
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId);
+            foreach (var detail in details)
+            {
+                context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG // LOG CHANGES
+                {
+                    LOANAPPLICATIONDETAILID = detail.LOANAPPLICATIONDETAILID,
+                    APPROVEDPRODUCTID = (short)detail.APPROVEDPRODUCTID,
+                    APPROVEDTENOR = detail.APPROVEDTENOR,
+                    APPROVEDINTERESTRATE = detail.APPROVEDINTERESTRATE,
+                    APPROVEDAMOUNT = detail.APPROVEDAMOUNT,
+                    EXCHANGERATE = detail.EXCHANGERATE,
+                    STATUSID = detail.STATUSID,
+                    CREATEDBY = staffId,
+                    DATETIMECREATED = date,
+                    SYSTEMDATETIME = DateTime.Now,
+                });
+            }
+            context.SaveChanges();
         }
 
         private string LineItemChanges(List<RecommendedChangesViewModel> recommendedChanges)
@@ -602,33 +625,44 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId)
         {
-            var details = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
-                .SelectMany(x => x.TBL_LOAN_APPLICATION_DETAIL)
-                .Select(x => new ApprovedLoanDetailViewModel
-                {
-                    loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
-                    applicationId = x.LOANAPPLICATIONID,
-                    customerId = x.TBL_CUSTOMER.CUSTOMERID,
-                    obligorName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME,
-                    currencyCode = x.TBL_CURRENCY.CURRENCYCODE,
+            //var details = context.TBL_LOAN_APPLICATION
+            //    .Where(x => x.LOANAPPLICATIONID == applicationId)
+            //    .SelectMany(x => x.TBL_LOAN_APPLICATION_DETAIL)
+            //from a in context.TBL_LOAN_FEE
+            //join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+            var details = (from a in context.TBL_LOAN_APPLICATION
+                          join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                          join c in context.TBL_PRODUCT on b.PROPOSEDPRODUCTID equals c.PRODUCTID
+                          join d in context.TBL_PRODUCT on b.APPROVEDPRODUCTID equals d.PRODUCTID
+                          join e in context.TBL_CUSTOMER on b.CUSTOMERID equals e.CUSTOMERID
+                          join f in context.TBL_CURRENCY on b.CURRENCYID equals f.CURRENCYID
+                          where a.LOANAPPLICATIONID == applicationId
+                          
+                          select new ApprovedLoanDetailViewModel
+                   {
+                    loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                    applicationId = b.LOANAPPLICATIONID,
+                    customerId = e.CUSTOMERID,
+                    obligorName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME,
+                    currencyCode = f.CURRENCYCODE,
 
-                    proposedProductName = x.TBL_PRODUCT.PRODUCTNAME,
-                    proposedTenor = x.PROPOSEDTENOR,
-                    proposedRate = x.PROPOSEDINTERESTRATE,
-                    proposedAmount = x.PROPOSEDAMOUNT,
-                    proposedProductId = x.PROPOSEDPRODUCTID,
+                    proposedProductName = c.PRODUCTNAME,
+                    proposedTenor = b.PROPOSEDTENOR,
+                    proposedRate = b.PROPOSEDINTERESTRATE,
+                    proposedAmount = b.PROPOSEDAMOUNT,
+                    proposedProductId = b.PROPOSEDPRODUCTID,
 
-                    approvedProductName = x.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
-                    approvedTenor = x.APPROVEDTENOR,
-                    approvedRate = x.APPROVEDINTERESTRATE,
-                    approvedAmount = x.APPROVEDAMOUNT,
+                    approvedProductName = d.PRODUCTNAME, // <----------take note of 1
+                    approvedTenor = b.APPROVEDTENOR,
+                    approvedRate = b.APPROVEDINTERESTRATE,
+                    approvedAmount = b.APPROVEDAMOUNT,
                     //convertedApprovedAmount = x.ApprovedAmount * Convert.ToDecimal(x.ExchangeRate),
-                    approvedProductId = x.APPROVEDPRODUCTID,
+                    approvedProductId = b.APPROVEDPRODUCTID,
 
-                    statusId = x.STATUSID,
-                    exchangeRate = x.EXCHANGERATE,
-                    terms = x.REPAYMENTTERMS,
-                    schedule = x.REPAYMENTSCHEDULE
+                    statusId = b.STATUSID,
+                    exchangeRate = b.EXCHANGERATE,
+                    terms = b.REPAYMENTTERMS,
+                    schedule = b.REPAYMENTSCHEDULE
                 });
 
             return details;

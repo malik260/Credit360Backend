@@ -117,15 +117,18 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
+            //var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
 
             var application = context.TBL_LMSR_APPLICATION.Add(new TBL_LMSR_APPLICATION
             {
-                APPLICATIONREFERENCENUMBER = GenerateReferenceNumber(),
+                APPLICATIONREFERENCENUMBER = "0000012457896325874512",
                 COMPANYID = model.companyId,
                 CUSTOMERID = model.customerId,
                 BRANCHID = model.branchId,
                 // CUSTOMERGROUPID = null,
+                DISPUTED = false,
+                REQUIRECOLLATERAL = false,
                 APPLICATIONDATE = applicationDate,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = applicationDate,

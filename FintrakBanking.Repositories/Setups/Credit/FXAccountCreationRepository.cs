@@ -1,0 +1,323 @@
+﻿using FintrakBanking.Entities.StagingModels;
+using FintrakBanking.Interfaces.Setups.Credit;
+using FintrakBanking.ViewModels.Setups.Credit;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FintrakBanking.Repositories.Setups.Credit
+{
+    public class FXAccountCreationRepository : IFXAccountCreationRepository
+    {
+        private FinTrakBankingStagingContext context;
+
+        public FXAccountCreationRepository(FinTrakBankingStagingContext _context)
+        {
+            context = _context;
+        }
+        public List<FXAccountCreationViewModel> GetAllFreeCode1()
+        {
+            var freecode1 = (from a in context.STG_FREECODE1
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.FREECODE1,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllFreeCode4()
+        {
+            var freecode1 = (from a in context.STG_FREECODE4
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.FREECODE4,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllFreeCode5()
+        {
+            var freecode1 = (from a in context.STG_FREECODE5
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.FREECODE5,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllFreeCode6()
+        {
+            var freecode1 = (from a in context.STG_FREECODE6
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.FREECODE6,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllFreeCode7()
+        {
+            var freecode1 = (from a in context.STG_FREECODE7
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.FREECODE7,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllFreeCode8()
+        {
+            var freecode1 = (from a in context.STG_FREECODE8
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.FREECODE8,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllFreeCode9()
+        {
+            var freecode1 = (from a in context.STG_FREECODE9
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.FREECODE9,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllFreeCode10()
+        {
+            var freecode1 = (from a in context.STG_FREECODE10
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.FREECODE10,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllModeOfAdvance()
+        {
+            var freecode1 = (from a in context.STG_MODE_OF_ADV
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.MODE_OF_ADVANCE,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllNatureOfAdvance()
+        {
+            var freecode1 = (from a in context.STG_NAT_OF_ADV
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.NATURE_OF_ADVANCE,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllOccupationCode()
+        {
+            var freecode1 = (from a in context.STG_OCCUPATION_CODE
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.OCCUPATION_CODE,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllPurposeOfAdvance()
+        {
+            var freecode1 = (from a in context.STG_PURPOSE_OF_ADV
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.PURPOSE_OF_ADVANCE,
+                                 ref_Desc = a.REF_DESC,
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllAdvanceType()
+        {
+            var freecode1 = (from a in context.STG_ADVANCE_TYPE
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.ADVANCE_TYPE,
+                                 ref_Desc = a.REF_DESC,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllBorrowerCategory()
+        {
+            var freecode1 = (from a in context.STG_BORROWER_CAT
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.BORROWER_CATEGORY,
+                                 ref_Desc = a.REF_DESC,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllSubSector()
+        {
+            var freecode1 = (from a in context.STG_SUB_SECTOR
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.SUB_SECTOR,
+                                 ref_Desc = a.REF_DESC,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllSector()
+        {
+            var freecode1 = (from a in context.STG_SECTOR_CODE
+                             where a.DEL_FLG == "N"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.SECTOR_CODE,
+                                 ref_Desc = a.REF_DESC,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllCurrencyCode()
+        {
+            var freecode1 = (from a in context.STG_CURRENCY_TBL
+                             where a.ENTITY_CRE_FLAG == "Y"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.CURRENCY,
+                                 ref_Desc = a.CURRENCY_NAME,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllSchemeCode()
+        {
+            var freecode1 = (from a in context.STG_SCHEMECODE_TBL
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.SCHEME_CODE,
+                                 ref_Desc = a.SCHEME_DESCRIPTION,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllSolId()
+        {
+            var freecode1 = (from a in context.STG_SOL_TBL
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.SOL_ID,
+                                 ref_Desc = a.BRANCH_NAME,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllGLSubHead()
+        {
+            var freecode1 = (from a in context.STG_GL_SUBHEAD_TBL
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.GL_SUB_HEAD_CODE,
+                                 ref_Desc = a.SCHM_CODE,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllGLSubHead(string schemeCode)
+        {
+            var freecode1 = (from a in context.STG_GL_SUBHEAD_TBL
+                             where a.SCHM_CODE.ToLower().Trim() == schemeCode.ToLower().Trim()
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.GL_SUB_HEAD_CODE,
+                                 ref_Desc = a.SCHM_CODE,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+
+
+
+        public FXAccountCreationListViewModel GetListOfFSCode()
+        {
+            var list = new FXAccountCreationListViewModel();
+            list.freeCode1 = GetAllFreeCode1();
+            list.freeCode4 = GetAllFreeCode4();
+            list.freeCode5 = GetAllFreeCode5();
+            list.freeCode6 = GetAllFreeCode6();
+            list.freeCode7 = GetAllFreeCode7();
+            list.freeCode8 = GetAllFreeCode8();
+            list.freeCode9 = GetAllFreeCode9();
+            list.freeCode10 = GetAllFreeCode10();
+
+            list.modeOfAdvance = GetAllModeOfAdvance();
+            list.natureOfAdvance = GetAllNatureOfAdvance();
+            list.purposeOfAdvance = GetAllPurposeOfAdvance();
+            list.advanceType = GetAllAdvanceType();
+
+            list.sectorCode = GetAllSector();
+            list.sub_sector = GetAllSubSector();
+
+            list.borrowerCategoryCode = GetAllBorrowerCategory();
+            list.occupationCode = GetAllOccupationCode();
+
+            list.currencyCode = GetAllCurrencyCode();
+            list.schemeCode = GetAllSchemeCode();
+            list.sol_Ids = GetAllSolId();
+           list.glSubHeadCode = GetAllGLSubHead();
+            return list;
+        }
+    }
+}

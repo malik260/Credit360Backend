@@ -6,7 +6,6 @@
     using FintrakBanking.ViewModels.Credit;
     using FintrakBanking.ViewModels.Finance;
     using FintrakBanking.ViewModels.ThridPartyIntegration;
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Linq;

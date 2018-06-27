@@ -17,26 +17,40 @@ namespace FintrakBanking.ReportObjects.Credit
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
 
-            var offerLetterDetails = (from a in context.TBL_LOAN_APPLICATION
-                                          //join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                      join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID into cc
+            var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).CUSTOMERID;
+            //if (customerExist != null)
+            //{
+
+            //}
+            //else
+            //{
+
+            //}
+
+                var offerLetterDetails = (from a in context.TBL_LOAN_APPLICATION
+                                         join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                      join b in context.TBL_CUSTOMER on d.CUSTOMERID equals b.CUSTOMERID into cc
                                       from b in cc.DefaultIfEmpty()
                                       join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
                                       from c in cg.DefaultIfEmpty()
-                                      join e in context.TBL_CUSTOMER_ADDRESS on a.CUSTOMERID equals e.CUSTOMERID into dg
+                                      join e in context.TBL_CUSTOMER_ADDRESS on d.CUSTOMERID equals e.CUSTOMERID into dg
                                       from e in dg.DefaultIfEmpty()
-                                      join g in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals g.CUSTOMERID into gg
+                                      join g in context.TBL_CUSTOMER_PHONECONTACT on d.CUSTOMERID equals g.CUSTOMERID into gg
                                       from g in gg.DefaultIfEmpty()
                                       join h in context.TBL_OFFERLETTER on a.APPLICATIONREFERENCENUMBER equals h.APPLICATIONREFERENCENUMBER into hh
                                       from h in hh.DefaultIfEmpty()
-                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
+                                      //join i in context.TBL_CUSTOMER_GROUP_MAPPING on b.CUSTOMERID equals i.CUSTOMERID into ii
+                                      //from i in ii.DefaultIfEmpty()
+                                      //join j in context.TBL_CUSTOMER_GROUP_MAPPING on c.CUSTOMERGROUPID equals j.CUSTOMERGROUPID into jj
+                                      //from j in jj.DefaultIfEmpty()
+                                          where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
                                       a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       select new OfferLetterViewModel
                                       {
                                           companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
-                                          customerName = a.LOANAPPLICATIONTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
+                                          customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
                                           customerAddress = e.ADDRESS ?? " ",
-                                          customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+                                          customerEmailAddress = b.EMAILADDRESS,
                                           customerPhoneNumber = g.PHONENUMBER,
                                           isFinal = h.ISFINAL,
                                           producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,

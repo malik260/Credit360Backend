@@ -17,6 +17,8 @@ using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Repositories.Credit;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -222,18 +224,49 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool ReassignJobRequest(JobRequestViewModel model, int jobRequestId)
         {
-            var data = this.context.TBL_JOB_REQUEST.Find(jobRequestId);
+            var data = context.TBL_JOB_REQUEST.Find(jobRequestId);
             if (data == null)
             {
                 return false;
             }
+
+            if (data.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved)
+                throw new BadLogicException("You cannot assign/reassign this job. Job has already been responded and/or closed.");
+
+            var toStaffData = context.TBL_STAFF.Find(model.reassignedTo);
+            var toStaffCode = string.Empty;
+
+            TBL_STAFF fromStaffData = new TBL_STAFF();
+            if (data.REASSIGNEDTO != null)
+            {
+                fromStaffData = context.TBL_STAFF.Find(data.REASSIGNEDTO);
+            }
+            else if(data.RECEIVERSTAFFID != null)
+            {
+                fromStaffData = context.TBL_STAFF.Find(data.RECEIVERSTAFFID);
+            }
+
+            var fromStaffName = string.Empty;
+            var info = string.Empty;
+
+            if (toStaffData != null)
+                toStaffCode = toStaffData.STAFFCODE;
+
+            if (fromStaffData != null){
+                if (toStaffCode == fromStaffData.STAFFCODE)
+                    throw new ConditionNotMetException("This job is currently assigned to the selected staff. Choose another staff staff to reassign.");
+
+                info = $"Reassigned JobRequest with code '{ model.jobRequestCode }' from staff with code '{fromStaffData.STAFFCODE}' to staff with code '{toStaffCode}'";
+            }
+            else { info = $"Assigned JobRequest with code '{ model.jobRequestCode }' to staff with code '{toStaffCode}'"; }
+                
 
             var applicationDate = general.GetApplicationDate();
 
             data.REASSIGNEDTO = (int)model.reassignedTo;
             data.ISREASSIGNED = true;
             data.ISACKNOWLEDGED = true;
-            data.REQUESTSTATUSID = 2;
+            data.REQUESTSTATUSID = (short)JobRequestStatusEnum.processing;
             data.REASSIGNEDDATE = applicationDate;
             data.SYSTEMREASSIGNEDDATE = DateTime.Now;
 
@@ -243,7 +276,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 AUDITTYPEID = (short)AuditTypeEnum.JobRequestUpdated,
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Reassigned JobRequest '{ model.jobRequestCode }' ",
+                DETAIL = info,
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = applicationDate,
@@ -254,6 +287,24 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return context.SaveChanges() != 0;
         }
+
+        public bool AcknowledgeJob(JobRequestViewModel entity, int jobRequestId)
+        {
+            var data = context.TBL_JOB_REQUEST.Find(jobRequestId);
+            if (data == null)
+                return false;
+
+            if (data.ISACKNOWLEDGED )
+                throw new BadLogicException("Job already ackowledged.");
+
+            var applicationDate = general.GetApplicationDate();
+
+            data.ISACKNOWLEDGED = true;
+            data.ACKNOWLEDGEMENTDATE = DateTime.Now;
+
+            return context.SaveChanges() != 0;
+        }
+
 
         public IEnumerable<ApplicationJobRequest> GetLoanApplicationJobsById(int loanApplicationId, int companyId)
         {
@@ -411,6 +462,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                          jobTypeName = x.TBL_JOB_TYPE.JOBTYPENAME,
                          senderStaffId = x.SENDERSTAFFID,
                          senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                         departmentUnitId = x.DEPARTMENTUNITID,
+                         departmentId = x.DEPARTMENTID,
                          //senderUnit = context.TBL_DEPARTMENT_UNIT.Where(c=>c.DEPARTMENTUNITID == context.TBL_STAFF.Where(z=>z.STAFFID == x.SENDERSTAFFID).FirstOrDefault().DEPARTMENTUNITID).FirstOrDefault().DEPARTMENTUNITNAME, // +"(" + x.TBL_DEPARTMENT.DEPARTMENTNAME +")",
                          //senderDepartment =  x.TBL_DEPARTMENT.DEPARTMENTNAME,
                          receiverStaffId = (int)x.RECEIVERSTAFFID,
@@ -435,8 +488,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                          fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
                          //from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
                          // fromBranchName = context.TBL_BRANCH.Where(c=>c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
-                         to = x.TBL_STAFF1.FIRSTNAME == null ? "n/a" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
-                         assignee = x.TBL_STAFF2.FIRSTNAME == null ? "Assign" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.MIDDLENAME + " " + x.TBL_STAFF2.LASTNAME,
+                         to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.MIDDLENAME + " " + x.TBL_STAFF2.LASTNAME,
+                         assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
                          // assignee = allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO).name,
                          //  toBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.RECEIVERSTAFFID).FirstOrDefault().BRANCHNAME,
                          //from = allstaff.GetStaffName(s => s.id == x.SenderStaffId),
@@ -645,7 +698,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                             jobRequestId = x.JOBREQUESTID,
                             message = x.MESSAGE,
                             staffId = x.STAFFID,
-                            staffName = x.TBL_STAFF.FIRSTNAME
+                            staffName = x.TBL_STAFF.FIRSTNAME,
+                            datetimeSent = x.DATE_TIME_SENT
                         }).Take(200);
 
             return data;
@@ -907,10 +961,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<JobTypeViewModel> GetAllJobType()
         {
-            return this.context.TBL_JOB_TYPE.Select(x => new JobTypeViewModel
+           return this.context.TBL_JOB_TYPE.Select(x => new JobTypeViewModel
             {
                 jobTypeId = x.JOBTYPEID,
                 jobTypeName = x.JOBTYPENAME,
+                inUse = x.INUSE
             });
         }
 
@@ -921,7 +976,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeId = x.JOBTYPEID,
                 jobSubTypeName = x.JOB_SUB_TYPE_NAME,
                 jobSubTypeId = x.JOB_SUB_TYPEID
-            }).Where(x => x.jobTypeId == jobId);
+            }).Where(x => x.jobTypeId == jobId );
         }
 
         #endregion job-type
