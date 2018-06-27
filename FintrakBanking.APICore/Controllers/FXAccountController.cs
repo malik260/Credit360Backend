@@ -41,5 +41,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-gl-subhead-code")]
+        public HttpResponseMessage GetAllGLSubHead(string schemeCode)
+        {
+            try
+            {
+                var data = repo.GetAllGLSubHead(schemeCode);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }

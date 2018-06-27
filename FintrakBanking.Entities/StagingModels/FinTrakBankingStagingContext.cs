@@ -51,7 +51,13 @@ namespace FintrakBanking.Entities.StagingModels
         public virtual DbSet<STG_SANCTION_LEVEL> STG_SANCTION_LEVEL { get; set; }
         public virtual DbSet<STG_SUB_SECTOR> STG_SUB_SECTOR { get; set; }
         public virtual DbSet<STG_SECTOR_CODE> STG_SECTOR_CODE { get; set; }
-        
+        public virtual DbSet<STG_ADVANCE_TYPE> STG_ADVANCE_TYPE { get; set; }
+        public virtual DbSet<STG_BORROWER_CAT> STG_BORROWER_CAT { get; set; }
+        public virtual DbSet<STG_SOL_TBL> STG_SOL_TBL { get; set; }
+        public virtual DbSet<STG_CURRENCY_TBL> STG_CURRENCY_TBL { get; set; }
+        public virtual DbSet<STG_SCHEMECODE_TBL> STG_SCHEMECODE_TBL { get; set; }
+        public virtual DbSet<STG_GL_SUBHEAD_TBL> STG_GL_SUBHEAD_TBL { get; set; }
+       
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
