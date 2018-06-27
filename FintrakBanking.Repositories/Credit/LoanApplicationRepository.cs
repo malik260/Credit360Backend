@@ -363,8 +363,6 @@ namespace FintrakBanking.Repositories.Credit
                             currencyName = a.TBL_CURRENCY.CURRENCYNAME,
                             currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
                             casaAccountId = a.TBL_LOAN_APPLICATION.CASAACCOUNTID,
-                            //accountNumber = casaAcct != 0 || casaAcct != null ? casa.PRODUCTACCOUNTNUMBER : "NA",
-                            //customerAccount = casaAcct != 0 || casaAcct != null ? casa.PRODUCTACCOUNTNAME : "NA",
                             accountNumber = productNumber,
                             customerAccount = productName,
                             misCode = a.TBL_LOAN_APPLICATION.MISCODE,
@@ -391,93 +389,93 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPOFFICERID,
                             relationshipManagerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPMANAGERID,
                             customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                        //    invoiceDiscountDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
-                        //                             select new LoanApplicationDetailInvoiceViewModel
-                        //                             {
-                        //                                 approvalComment = i.APPROVAL_COMMENT,
-                        //                                 contractNumber = i.CONTRACTNO,
-                        //                                 contractEndDate = i.CONTRACT_ENDDATE,
-                        //                                 contractStartDate = i.CONTRACT_STARTDATE,
-                        //                                 purchaseOrderNumber = i.PURCHASEORDERNUMBER,
-                        //                                 invoiceAmount = i.INVOICE_AMOUNT,
-                        //                                 invoiceNo = i.INVOICENO,
-                        //                                 invoiceDate = i.INVOICE_DATE,
-                        //                                 invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
-                        //                                 approvaStatusId = i.APPROVALSTATUSID,
-                        //                                 approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
-                        //                                 principalName = i.TBL_LOAN_PRINCIPAL.NAME,
-                        //                                 principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
-                        //                                 principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
-                        //                                 principalId = i.PRINCIPALID,
-                        //                                 // purchaseOrderNumber = i.PURCHASEORDERNUMBER
-                        //                             }).ToList(),
-                        //    firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
-                        //                             select new EducationLoanViewModel
-                        //                             {
-                        //                                 educationId = i.EDUCATIONID,
-                        //                                 loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
-                        //                                 numberOfStudent = i.NUMBER_OF_STUDENTS,
-                        //                                 averageSchoolFees = i.AVERAGE_SCHOOL_FEES,
-                        //                                 totalPreviousTermSchoolFees = i.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
-                        //                                 productClassId = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == i.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSID,
-                        //                                 productClassName = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == i.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSNAME,
-                        //                             }).ToList(),
-                        //    firstTradderDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_TRA.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
-                        //                          select new TraderLoanViewModel
-                        //                          {
-                        //                              tradderId = i.TRADDERID,
-                        //                              marketId = i.MARKETID,
-                        //                              soldItems = i.SOLDITEMS,
-                        //                              marketName = i.TBL_LOAN_MARKET.MARKETNAME,
-                        //                              averageMonthlyTurnover = i.AVERAGE_MONTHLY_TURNOVER,
-                        //                              loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
-                        //                              //productClassId = i.
-                        //                          }).ToList(),
-                        //    loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
-                        //                      select new CollateralViewModel
-                        //                      {
-                        //                          collateralId = i.COLLATERALBASICDETAILID, // COLLATERALCUSTOMERID,
-                        //                          collateralCustomerId = (int)i.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,//.CUSTOMERID, //COLLATERALCUSTOMERID,
-                        //                                                                                               // allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                        //                          collateralDetail = i.COLLATERALDETAIL,
-                        //                          //collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                        //                          collateralValue = i.COLLATERALVALUE,
+                            invoiceDiscountDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                                     select new LoanApplicationDetailInvoiceViewModel
+                                                     {
+                                                         approvalComment = i.APPROVAL_COMMENT,
+                                                         contractNumber = i.CONTRACTNO,
+                                                         contractEndDate = i.CONTRACT_ENDDATE,
+                                                         contractStartDate = i.CONTRACT_STARTDATE,
+                                                         purchaseOrderNumber = i.PURCHASEORDERNUMBER,
+                                                         invoiceAmount = i.INVOICE_AMOUNT,
+                                                         invoiceNo = i.INVOICENO,
+                                                         invoiceDate = i.INVOICE_DATE,
+                                                         invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
+                                                         approvaStatusId = i.APPROVALSTATUSID,
+                                                         approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
+                                                         principalName = i.TBL_LOAN_PRINCIPAL.NAME,
+                                                         principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
+                                                         principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
+                                                         principalId = i.PRINCIPALID,
+                                                         // purchaseOrderNumber = i.PURCHASEORDERNUMBER
+                                                     }).ToList(),
+                            firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                                     select new EducationLoanViewModel
+                                                     {
+                                                         educationId = i.EDUCATIONID,
+                                                         loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
+                                                         numberOfStudent = i.NUMBER_OF_STUDENTS,
+                                                         averageSchoolFees = i.AVERAGE_SCHOOL_FEES,
+                                                         totalPreviousTermSchoolFees = i.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
+                                                         productClassId = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == i.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSID,
+                                                         productClassName = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == i.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSNAME,
+                                                     }).ToList(),
+                            firstTradderDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_TRA.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                                  select new TraderLoanViewModel
+                                                  {
+                                                      tradderId = i.TRADDERID,
+                                                      marketId = i.MARKETID,
+                                                      soldItems = i.SOLDITEMS,
+                                                      marketName = i.TBL_LOAN_MARKET.MARKETNAME,
+                                                      averageMonthlyTurnover = i.AVERAGE_MONTHLY_TURNOVER,
+                                                      loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
+                                                      //productClassId = i.
+                                                  }).ToList(),
+                            //    loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                            //                      select new CollateralViewModel
+                            //                      {
+                            //                          collateralId = i.COLLATERALBASICDETAILID, // COLLATERALCUSTOMERID,
+                            //                          collateralCustomerId = (int)i.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,//.CUSTOMERID, //COLLATERALCUSTOMERID,
+                            //                                                                                               // allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                            //                          collateralDetail = i.COLLATERALDETAIL,
+                            //                          //collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                            //                          collateralValue = i.COLLATERALVALUE,
 
-                        //                          stampToCoverAmount = i.STAMPEDTOCOVERAMOUNT,
-                        //                          //collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                        //                          //collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
-                        //                          //collateralSubTypeId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.
-                        //                          //currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
-                        //                          //valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                        //                          //haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                        //                          customerName = i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME
-                        //                         + " " + i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
-                        //                          //collateralSearchAmount = context.TBL_STATE.Where(x=>x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
-                        //                          //chartingAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.LastOrDefault().TBL_CITY.STATEID).LastOrDefault().CHARTINGAMOUNT,
-                        //                          //verificationAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
-                        //                          //cityId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().CITYID,
-                        //                          // legalFeeTaken = i.LEGAL_FEE_TAKEN,
-                        //                      }).ToList(),
-                        //    bondsAndGaurantees = (from i in context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
-                        //                          select new BondsAndGauranteeViewModel
-                        //                          {
-                        //                              bondId = i.BONDID,
-                        //                              loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
-                        //                              principalId = i.PRINCIPALID,
-                        //                              amount = i.AMOUNT,
-                        //                              currencyId = i.CURRENCYID,
-                        //                              contractStartDate = i.CONTRACT_STARTDATE,
-                        //                              contractEndDate = i.CONTRACT_ENDDATE,
-                        //                              isTenored = i.ISTENORED,
-                        //                              isBankFormat = i.ISBANKFORMAT,
-                        //                              approvalStatusId = i.APPROVALSTATUSID,
-                        //                              approvalComment = i.APPROVAL_COMMENT,
-                        //                              approvedBy = i.APPROVEDBY,
-                        //                              approvedDateTime = i.APPROVEDDATETIME,
-                        //                              principalName = i.TBL_LOAN_PRINCIPAL.NAME,
-                        //                              invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
-                        //                              approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
-                        //                          }).ToList(),
+                            //                          stampToCoverAmount = i.STAMPEDTOCOVERAMOUNT,
+                            //                          //collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                            //                          //collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
+                            //                          //collateralSubTypeId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.
+                            //                          //currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                            //                          //valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                            //                          //haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                            //                          customerName = i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME
+                            //                         + " " + i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
+                            //                          //collateralSearchAmount = context.TBL_STATE.Where(x=>x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
+                            //                          //chartingAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.LastOrDefault().TBL_CITY.STATEID).LastOrDefault().CHARTINGAMOUNT,
+                            //                          //verificationAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
+                            //                          //cityId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().CITYID,
+                            //                          // legalFeeTaken = i.LEGAL_FEE_TAKEN,
+                            //                      }).ToList(),
+                            bondsAndGaurantees = (from i in context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                                  select new BondsAndGauranteeViewModel
+                                                  {
+                                                      bondId = i.BONDID,
+                                                      loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
+                                                      principalId = i.PRINCIPALID,
+                                                      amount = i.AMOUNT,
+                                                      currencyId = i.CURRENCYID,
+                                                      contractStartDate = i.CONTRACT_STARTDATE,
+                                                      contractEndDate = i.CONTRACT_ENDDATE,
+                                                      isTenored = i.ISTENORED,
+                                                      isBankFormat = i.ISBANKFORMAT,
+                                                      approvalStatusId = i.APPROVALSTATUSID,
+                                                      approvalComment = i.APPROVAL_COMMENT,
+                                                      approvedBy = i.APPROVEDBY,
+                                                      approvedDateTime = i.APPROVEDDATETIME,
+                                                      principalName = i.TBL_LOAN_PRINCIPAL.NAME,
+                                                      invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
+                                                      approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
+                                                  }).ToList(),
 
                         }).ToList();
             }
