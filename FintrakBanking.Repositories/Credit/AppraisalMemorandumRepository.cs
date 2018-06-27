@@ -331,7 +331,7 @@ namespace FintrakBanking.Repositories.Credit
                             detail.PROPOSEDTENOR = changed.tenor;
                         }
 
-                        context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG // LOG CHANGES
+                        /*context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG // LOG CHANGES
                         {
                             LOANAPPLICATIONDETAILID = changed.detailId,
                             APPROVEDPRODUCTID = (short)changed.productId,
@@ -343,7 +343,7 @@ namespace FintrakBanking.Repositories.Credit
                             CREATEDBY = model.createdBy,
                             DATETIMECREATED = applicationDate,
                             SYSTEMDATETIME = DateTime.Now,
-                        });
+                        });*/
                     }
                 }
             }
@@ -400,6 +400,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.comment == "debug_test") throw new Exception("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
             context.SaveChanges();
+            LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate); // LOG CHANGES
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
@@ -409,6 +410,28 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return (int)ApprovalStatusEnum.Processing; // default for now
+        }
+
+        private void LogApplicationDetailChanges(int applicationId,int staffId,DateTime date)
+        {
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId);
+            foreach (var detail in details)
+            {
+                context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG // LOG CHANGES
+                {
+                    LOANAPPLICATIONDETAILID = detail.LOANAPPLICATIONDETAILID,
+                    APPROVEDPRODUCTID = (short)detail.APPROVEDPRODUCTID,
+                    APPROVEDTENOR = detail.APPROVEDTENOR,
+                    APPROVEDINTERESTRATE = detail.APPROVEDINTERESTRATE,
+                    APPROVEDAMOUNT = detail.APPROVEDAMOUNT,
+                    EXCHANGERATE = detail.EXCHANGERATE,
+                    STATUSID = detail.STATUSID,
+                    CREATEDBY = staffId,
+                    DATETIMECREATED = date,
+                    SYSTEMDATETIME = DateTime.Now,
+                });
+            }
+            context.SaveChanges();
         }
 
         private string LineItemChanges(List<RecommendedChangesViewModel> recommendedChanges)
