@@ -25,8 +25,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.FREECODE1,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -38,8 +38,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.FREECODE4,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -51,8 +51,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.FREECODE5,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -64,8 +64,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.FREECODE6,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -77,8 +77,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.FREECODE7,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -90,8 +90,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.FREECODE8,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -103,8 +103,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.FREECODE9,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -116,8 +116,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.FREECODE10,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -129,8 +129,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.MODE_OF_ADVANCE,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -142,8 +142,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.NATURE_OF_ADVANCE,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -155,8 +155,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.OCCUPATION_CODE,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -168,34 +168,34 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.PURPOSE_OF_ADVANCE,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 //  del_Flg = a.DEL_FLG,
+                                 //  bank_Id = a.BANK_ID
                              }).ToList();
-            return freecode1; 
+            return freecode1;
         }
-        public List<FXAccountCreationViewModel> GetAllSanctionAuthority()
+        public List<FXAccountCreationViewModel> GetAllAdvanceType()
         {
-            var freecode1 = (from a in context.STG_SANCTION_AUTH
+            var freecode1 = (from a in context.STG_ADVANCE_TYPE
                              where a.DEL_FLG == "N"
                              select new FXAccountCreationViewModel
                              {
-                                 fx_Code = a.SANCTION_AUTHORITY,
+                                 fx_Code = a.ADVANCE_TYPE,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
                              }).ToList();
-            return freecode1; 
+            return freecode1;
         }
-        public List<FXAccountCreationViewModel> GetAllSanctionLevel()
+        public List<FXAccountCreationViewModel> GetAllBorrowerCategory()
         {
-            var freecode1 = (from a in context.STG_SANCTION_LEVEL
+            var freecode1 = (from a in context.STG_BORROWER_CAT
                              where a.DEL_FLG == "N"
                              select new FXAccountCreationViewModel
                              {
-                                 fx_Code = a.SANCTION_LEVEL,
+                                 fx_Code = a.BORROWER_CATEGORY,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -207,8 +207,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.SUB_SECTOR,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
@@ -220,11 +220,76 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              {
                                  fx_Code = a.SECTOR_CODE,
                                  ref_Desc = a.REF_DESC,
-                                 del_Flg = a.DEL_FLG,
-                                 bank_Id = a.BANK_ID
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
                              }).ToList();
             return freecode1;
         }
+        public List<FXAccountCreationViewModel> GetAllCurrencyCode()
+        {
+            var freecode1 = (from a in context.STG_CURRENCY_TBL
+                             where a.ENTITY_CRE_FLAG == "Y"
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.CURRENCY,
+                                 ref_Desc = a.CURRENCY_NAME,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllSchemeCode()
+        {
+            var freecode1 = (from a in context.STG_SCHEMECODE_TBL
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.SCHEME_CODE,
+                                 ref_Desc = a.SCHEME_DESCRIPTION,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllSolId()
+        {
+            var freecode1 = (from a in context.STG_SOL_TBL
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.SOL_ID,
+                                 ref_Desc = a.BRANCH_NAME,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllGLSubHead()
+        {
+            var freecode1 = (from a in context.STG_GL_SUBHEAD_TBL
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.GL_SUB_HEAD_CODE,
+                                 ref_Desc = a.SCHM_CODE,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+        public List<FXAccountCreationViewModel> GetAllGLSubHead(string schemeCode)
+        {
+            var freecode1 = (from a in context.STG_GL_SUBHEAD_TBL
+                             where a.SCHM_CODE.ToLower().Trim() == schemeCode.ToLower().Trim()
+                             select new FXAccountCreationViewModel
+                             {
+                                 fx_Code = a.GL_SUB_HEAD_CODE,
+                                 ref_Desc = a.SCHM_CODE,
+                                 // del_Flg = a.DEL_FLG,
+                                 // bank_Id = a.BANK_ID
+                             }).ToList();
+            return freecode1;
+        }
+
+
+
         public FXAccountCreationListViewModel GetListOfFSCode()
         {
             var list = new FXAccountCreationListViewModel();
@@ -236,16 +301,22 @@ namespace FintrakBanking.Repositories.Setups.Credit
             list.freeCode8 = GetAllFreeCode8();
             list.freeCode9 = GetAllFreeCode9();
             list.freeCode10 = GetAllFreeCode10();
+
             list.modeOfAdvance = GetAllModeOfAdvance();
             list.natureOfAdvance = GetAllNatureOfAdvance();
+            list.purposeOfAdvance = GetAllPurposeOfAdvance();
+            list.advanceType = GetAllAdvanceType();
+
             list.sectorCode = GetAllSector();
             list.sub_sector = GetAllSubSector();
 
-            list.sanctionAuthority = GetAllSanctionAuthority();
-            list.sanctionLevel = GetAllSanctionLevel();
-
+            list.borrowerCategoryCode = GetAllBorrowerCategory();
             list.occupationCode = GetAllOccupationCode();
-            list.purposeOfAdvance = GetAllPurposeOfAdvance();
+
+            list.currencyCode = GetAllCurrencyCode();
+            list.schemeCode = GetAllSchemeCode();
+            list.sol_Ids = GetAllSolId();
+           list.glSubHeadCode = GetAllGLSubHead();
             return list;
         }
     }
