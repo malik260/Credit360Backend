@@ -631,7 +631,7 @@ namespace FintrakBanking.APICore.Controllers
                 requestModel.isReassigned = provider.FormData["isReassigned"].ToLower() != "undefined" ? Convert.ToBoolean(provider.FormData["isReassigned"]) : false;
                 requestModel.isAcknowledged = provider.FormData["isAcknowledged"] != "undefined" ?Convert.ToBoolean(provider.FormData["isAcknowledged"]) : false;
 
-                if (!(receiverStaffId == null || receiverStaffId == string.Empty || receiverStaffId == ""))
+                if (receiverStaffId != null && receiverStaffId != string.Empty && receiverStaffId != "" && receiverStaffId != "undefined" && receiverStaffId != "null")
                     requestModel.receiverStaffId = Convert.ToInt32(receiverStaffId);
 
                 if (!provider.FileStreams.Any())
