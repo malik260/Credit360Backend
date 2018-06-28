@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.APICore.App_Start;
 using FintrakBanking.APICore.ExceptionLogger.SeriLogger;
 using FintrakBanking.APICore.Filters;
+using FintrakBanking.APICore.Providers;
 using Serilog;
 using System.Security;
 using System.Web;
@@ -13,6 +14,7 @@ namespace FintrakBanking.APICore.core
     [JWTAuthorize]
     //[EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
+    [SimpleRefreshTokenProvider]
     public class ApiControllerBase : ApiController
     {
         protected void ValidateAuthorizedUser(string userRequested)

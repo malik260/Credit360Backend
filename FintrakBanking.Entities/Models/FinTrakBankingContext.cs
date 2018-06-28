@@ -6486,7 +6486,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN)
                 .WithRequired(e => e.TBL_PRODUCT)
                 .WillCascadeOnDelete(false);
-
+            
             modelBuilder.Entity<TBL_PRODUCT>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WithRequired(e => e.TBL_PRODUCT)

@@ -418,7 +418,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
                 requestDatetime = DateTime.Now;
-                response = client.PostAsync("api/TemporaryOverDraft/Normal", new StringContent(
+                response = client.PostAsync("api/TemporaryOverDraft/TemporaryNormal", new StringContent(
                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
                 responseDateTime = DateTime.Now;
                 ResponseMessageViewModel responseAPI = new ResponseMessageViewModel();
