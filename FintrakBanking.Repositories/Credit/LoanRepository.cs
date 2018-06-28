@@ -3786,7 +3786,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             customerId = d.CUSTOMERID,
                             customerCode = cust.CUSTOMERCODE,
-                            customerName = m.CUSTOMERID.HasValue ? m.TBL_CUSTOMER.FIRSTNAME + " " + m.TBL_CUSTOMER.MIDDLENAME + " " + m.TBL_CUSTOMER.LASTNAME : "",
+                            customerName =  d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME ,
                             customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                             customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
