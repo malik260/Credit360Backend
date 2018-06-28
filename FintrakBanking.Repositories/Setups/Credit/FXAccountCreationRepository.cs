@@ -1,6 +1,12 @@
-﻿using FintrakBanking.Entities.StagingModels;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Entities.StagingModels;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.Credit;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.Credit;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +18,24 @@ namespace FintrakBanking.Repositories.Setups.Credit
     public class FXAccountCreationRepository : IFXAccountCreationRepository
     {
         private FinTrakBankingStagingContext context;
+        private FinTrakBankingContext bankingContext;
+        private IIntegrationWithFinacle finacle;
+        private IAuditTrailRepository auditTrail;
+        bool USE_THIRD_PARTY_INTEGRATION = false;
 
-        public FXAccountCreationRepository(FinTrakBankingStagingContext _context)
+        public short AuditType { get; private set; }
+
+        public FXAccountCreationRepository(FinTrakBankingStagingContext _context,
+            FinTrakBankingContext _bankingContext,
+            IIntegrationWithFinacle _finacle,
+            IAuditTrailRepository _auditTrail)
         {
+            bankingContext = _bankingContext;
             context = _context;
+            finacle = _finacle;
+            auditTrail = _auditTrail;
+            var globalSetting = bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
+            USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
         }
         public List<FXAccountCreationViewModel> GetAllFreeCode1()
         {
@@ -316,8 +336,61 @@ namespace FintrakBanking.Repositories.Setups.Credit
             list.currencyCode = GetAllCurrencyCode();
             list.schemeCode = GetAllSchemeCode();
             list.sol_Ids = GetAllSolId();
-           list.glSubHeadCode = GetAllGLSubHead();
+            list.glSubHeadCode = GetAllGLSubHead();
             return list;
+        }
+        public string ForeignCurrencyAccountCreation(CreateAccountViewModel entity, UserInfo user)
+        {
+            string accountNumber = null;
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                var customerInfo = bankingContext.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERCODE == entity.customerCode);
+                var accountInfo = finacle.CreateForeignAccount(entity);
+                if (accountInfo != null)
+                {
+                    accountNumber = accountInfo.accountNumber;
+                    var customerExist = (from a in bankingContext.TBL_CASA where a.PRODUCTACCOUNTNUMBER == accountInfo.accountNumber select a).Any();
+                    if (!customerExist)
+                    {
+                        TBL_CASA addCustomerAcct = new TBL_CASA();
+                        addCustomerAcct.CUSTOMERID = customerInfo.CUSTOMERID;
+                        addCustomerAcct.AVAILABLEBALANCE = 0;
+                        addCustomerAcct.LEDGERBALANCE = 0;
+                        addCustomerAcct.PRODUCTACCOUNTNAME = "Foreign Account";
+                        addCustomerAcct.PRODUCTACCOUNTNUMBER = accountInfo.accountNumber;
+                        addCustomerAcct.PRODUCTID = 1;
+                        addCustomerAcct.COMPANYID = user.companyId;
+                        addCustomerAcct.BRANCHID = (short)user.BranchId;
+                        addCustomerAcct.CURRENCYID = 1;
+                        addCustomerAcct.ISCURRENTACCOUNT = true;
+                        addCustomerAcct.ACCOUNTSTATUSID = 1;
+                        addCustomerAcct.LIENAMOUNT = 0;
+                        addCustomerAcct.HASLIEN = false;
+                        addCustomerAcct.POSTNOSTATUSID = 1;
+                        addCustomerAcct.DELETED = false;
+                        bankingContext.TBL_CASA.Add(addCustomerAcct);
+                    }
+                }
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ForeignAccountCreation,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Added New Foreign Loan Account for {accountInfo.customerName} with account number {accountInfo.accountNumber} ",
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = DateTime.Now,
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                auditTrail.AddAuditTrail(audit);
+                //end of Audit section -------------------------------
+            }
+            var output = context.SaveChanges() > 0;
+            if (output == true)
+            {
+                return accountNumber;
+            }
+            return null;
         }
     }
 }
