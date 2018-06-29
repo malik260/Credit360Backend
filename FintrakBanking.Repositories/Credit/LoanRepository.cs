@@ -1754,13 +1754,14 @@ namespace FintrakBanking.Repositories.Credit
 
                             if (USE_THIRD_PARTY_INTEGRATION)
                             {
+                                var reviewDate = revolvingLoanRecord.BOOKINGDATE.AddMonths(1);
                                 var model = new OverDraftNormalViewModel
                                 {
                                     accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
                                     applicationDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
                                     documentDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
                                     expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                                    reviewedDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
+                                    reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
                                     sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                                     sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
                                     sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER

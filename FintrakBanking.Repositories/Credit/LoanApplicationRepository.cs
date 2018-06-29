@@ -1591,9 +1591,7 @@ namespace FintrakBanking.Repositories.Credit
                     .Join(context.TBL_LOAN_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
                     .Join(context.TBL_CUSTOMER, g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
                     .Join(context.TBL_CASA, o => o.c.CUSTOMERID, s => s.CUSTOMERID, (o, s) => new { o, s })
-                    .Join(context.TBL_APPROVAL_TRAIL
-                    .Where(t => t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended)
-                    , q => q.o.g.a.LOANAPPLICATIONID, t => t.TARGETID, (q, t) => new { q, t })
+                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended), q => q.o.g.a.LOANAPPLICATIONID, t => t.TARGETID, (q, t) => new { q, t })
                     .Select(x => new LoanApplicationViewModel
                     {
                         firstName = x.q.o.c.FIRSTNAME,
@@ -1622,6 +1620,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvalStatusId = (short)x.q.o.g.a.APPROVALSTATUSID,
                         //approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.q.o.g.a.APPROVALSTATUSID).APPROVALSTATUSNAME,
                         currentApprovalLevel = x.t.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                        approvalTrailId = x.t.APPROVALTRAILID,
                         responsiblePerson = x.t.TOSTAFFID == null ? "n/a" : x.t.TBL_STAFF1.STAFFCODE + " - " + x.t.TBL_STAFF1.FIRSTNAME + " " + x.t.TBL_STAFF1.MIDDLENAME + " " + x.t.TBL_STAFF1.LASTNAME,
                         applicationStatusId = x.q.o.g.a.APPLICATIONSTATUSID,
                         branchName = x.q.o.g.a.TBL_BRANCH.BRANCHNAME,
@@ -1641,8 +1640,12 @@ namespace FintrakBanking.Repositories.Credit
                         || x.middleName.ToLower() == searchString
                         || x.customerCode.ToLower() == searchString)
                     ;
-            var ttt = applications.ToList();
-            return applications;//.ToList().GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
+
+            //var list = applications.ToList();
+            applications = applications.OrderByDescending(x => x.approvalTrailId).GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
+            //var filteredList = applications.ToList();
+            return applications;
+
         }
 
         public dynamic GetLoanApplicationDetailsProductProgram(int loanApplicationDetailId)
