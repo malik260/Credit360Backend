@@ -341,56 +341,74 @@ namespace FintrakBanking.Repositories.Setups.Credit
         }
         public string ForeignCurrencyAccountCreation(CreateAccountViewModel entity, UserInfo user)
         {
-            string accountNumber = null;
-            if (USE_THIRD_PARTY_INTEGRATION)
-            {
-                var customerInfo = bankingContext.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERCODE == entity.customerCode);
-                var accountInfo = finacle.CreateForeignAccount(entity);
-                if (accountInfo != null)
+       //     try
+       //     {
+                string accountNumber = null;
+                if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    accountNumber = accountInfo.accountNumber;
-                    var customerExist = (from a in bankingContext.TBL_CASA where a.PRODUCTACCOUNTNUMBER == accountInfo.accountNumber select a).Any();
-                    if (!customerExist)
+                    var customerInfo = bankingContext.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERCODE == entity.customerCode);
+                    var accountInfo = finacle.CreateForeignAccount(entity);
+                    if (accountInfo != null)
                     {
-                        TBL_CASA addCustomerAcct = new TBL_CASA();
-                        addCustomerAcct.CUSTOMERID = customerInfo.CUSTOMERID;
-                        addCustomerAcct.AVAILABLEBALANCE = 0;
-                        addCustomerAcct.LEDGERBALANCE = 0;
-                        addCustomerAcct.PRODUCTACCOUNTNAME = "Foreign Account";
-                        addCustomerAcct.PRODUCTACCOUNTNUMBER = accountInfo.accountNumber;
-                        addCustomerAcct.PRODUCTID = 1;
-                        addCustomerAcct.COMPANYID = user.companyId;
-                        addCustomerAcct.BRANCHID = (short)user.BranchId;
-                        addCustomerAcct.CURRENCYID = 1;
-                        addCustomerAcct.ISCURRENTACCOUNT = true;
-                        addCustomerAcct.ACCOUNTSTATUSID = 1;
-                        addCustomerAcct.LIENAMOUNT = 0;
-                        addCustomerAcct.HASLIEN = false;
-                        addCustomerAcct.POSTNOSTATUSID = 1;
-                        addCustomerAcct.DELETED = false;
-                        bankingContext.TBL_CASA.Add(addCustomerAcct);
+                        accountNumber = accountInfo.accountNumber;
+                        var customerExist = (from a in bankingContext.TBL_CASA where a.PRODUCTACCOUNTNUMBER == accountInfo.accountNumber select a).Any();
+                        if (!customerExist)
+                        {
+                            TBL_CASA addCustomerAcct = new TBL_CASA();
+                            addCustomerAcct.CUSTOMERID = 123;
+                            addCustomerAcct.AVAILABLEBALANCE = 0;
+                            addCustomerAcct.LEDGERBALANCE = 0;
+                            addCustomerAcct.PRODUCTACCOUNTNAME = "Foreign Account";
+                            addCustomerAcct.PRODUCTACCOUNTNUMBER = accountInfo.accountNumber;
+                            addCustomerAcct.PRODUCTID = 1;
+                            addCustomerAcct.COMPANYID = user.companyId;
+                            addCustomerAcct.BRANCHID = (short)user.BranchId;
+                            addCustomerAcct.CURRENCYID = 1;
+                            addCustomerAcct.ISCURRENTACCOUNT = true;
+                            addCustomerAcct.ACCOUNTSTATUSID = 1;
+                            addCustomerAcct.LIENAMOUNT = 0;
+                            addCustomerAcct.HASLIEN = false;
+                            addCustomerAcct.POSTNOSTATUSID = 1;
+                            addCustomerAcct.DELETED = false;
+                            bankingContext.TBL_CASA.Add(addCustomerAcct);
+                        }
                     }
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.ForeignAccountCreation,
+                        STAFFID = user.staffId,
+                        BRANCHID = (short)user.BranchId,
+                        DETAIL = $"Added New Foreign Loan Account for {accountInfo.customerName} with account number {accountInfo.accountNumber} ",
+                        IPADDRESS = user.userIPAddress,
+                        URL = user.applicationUrl,
+                        APPLICATIONDATE = DateTime.Now,
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------
                 }
-                var audit = new TBL_AUDIT
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.ForeignAccountCreation,
-                    STAFFID = user.staffId,
-                    BRANCHID = (short)user.BranchId,
-                    DETAIL = $"Added New Foreign Loan Account for {accountInfo.customerName} with account number {accountInfo.accountNumber} ",
-                    IPADDRESS = user.userIPAddress,
-                    URL = user.applicationUrl,
-                    APPLICATIONDATE = DateTime.Now,
-                    SYSTEMDATETIME = DateTime.Now
-                };
-                auditTrail.AddAuditTrail(audit);
-                //end of Audit section -------------------------------
-            }
-            var output = context.SaveChanges() > 0;
-            if (output == true)
+            try
             {
-                return accountNumber;
+                var output = bankingContext.SaveChanges() > 0;
+                if (output == true)
+                {
+                    return accountNumber;
+                }
             }
-            return null;
+            catch(Exception ex)
+            {
+
+            }
+                
+          
+                return null;
+            //}
+            //catch (Exception ex)
+            //{
+            //    return null;
+            //    throw new Exception(ex.Message);
+            //}
+          
         }
     }
 }

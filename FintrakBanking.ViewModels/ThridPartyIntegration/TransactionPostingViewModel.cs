@@ -46,8 +46,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string modeOfAdavance  {get; set;}
         public string typeOfAdavance  {get; set;}
         public string freeCodeOne  {get; set;}
-        public string freeCodeTwo  {get; set;}
-        public string freeCodeThree  {get; set;}
+        //public string freeCodeTwo  {get; set;}
+        //public string freeCodeThree  {get; set;}
         public string freeCodeFour  {get; set;}
         public string freeCodeFive  {get; set;}
         public string freeCodeSix  {get; set;}
