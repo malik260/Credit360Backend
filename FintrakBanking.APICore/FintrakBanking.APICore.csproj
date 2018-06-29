@@ -429,6 +429,7 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="ExceptionLogger\Logger.cs" />
     <Compile Include="Filters\AuthorizeActivity.cs" />
+    <Compile Include="Providers\SimpleRefreshTokenProvider.cs" />
     <Compile Include="Reports\Credit\Credit1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

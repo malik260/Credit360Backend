@@ -1618,8 +1618,9 @@ namespace FintrakBanking.Repositories.Credit
                         isRelatedParty = x.q.o.g.a.ISRELATEDPARTY,
                         isPoliticallyExposed = x.q.o.g.a.ISPOLITICALLYEXPOSED,
                         approvalStatusId = (short)x.q.o.g.a.APPROVALSTATUSID,
-                        //approvalStatus = "no"+ x.q.o.g.a.APPROVALSTATUSID,//context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.q.o.g.a.APPROVALSTATUSID).APPROVALSTATUSNAME,
-                        currentApprovalLevel = x.t.TBL_APPROVAL_LEVEL.LEVELNAME,
+                        //approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.q.o.g.a.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                        currentApprovalLevel = x.t.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                        approvalTrailId = x.t.APPROVALTRAILID,
                         responsiblePerson = x.t.TOSTAFFID == null ? "n/a" : x.t.TBL_STAFF1.STAFFCODE + " - " + x.t.TBL_STAFF1.FIRSTNAME + " " + x.t.TBL_STAFF1.MIDDLENAME + " " + x.t.TBL_STAFF1.LASTNAME,
                         applicationStatusId = x.q.o.g.a.APPLICATIONSTATUSID,
                         branchName = x.q.o.g.a.TBL_BRANCH.BRANCHNAME,
@@ -1640,7 +1641,11 @@ namespace FintrakBanking.Repositories.Credit
                         || x.customerCode.ToLower() == searchString)
                     ;
 
-            return applications.ToList().GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
+            //var list = applications.ToList();
+            applications = applications.OrderByDescending(x => x.approvalTrailId).GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
+            //var filteredList = applications.ToList();
+            return applications;
+
         }
 
         public dynamic GetLoanApplicationDetailsProductProgram(int loanApplicationDetailId)
