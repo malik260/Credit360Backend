@@ -303,7 +303,6 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-
             return fileBytes;
         }
         private int GetDaysInAYear(DayCountConventionEnum dayCountId)
