@@ -1,6 +1,7 @@
 ﻿namespace FinTrakBanking.ThirdPartyIntegration
 {
     using FintrakBanking.Common;
+    using FintrakBanking.Common.CustomException;
     using FintrakBanking.Common.Enum;
     using FintrakBanking.Interfaces.Credit;
     using FintrakBanking.ViewModels.ThridPartyIntegration;
@@ -24,34 +25,45 @@
 
             public string XDSSearchCreditBureau(CreditBureauSearchViewModel searchInfo)
             {
-                var xds = new XDSService();
-
-                if (!xds.IsticketActive(searchInfo.userName))
+                try
                 {
-                    xds.Login(searchInfo.userName, searchInfo.password);
-                }
+                    var xds = new XDSService();
 
-                if (searchInfo.creditBureauId == (short) CreditBureauEnum.XDSCreditBureau)
-                {
-                    if (searchInfo.searchType == (int) CreditBureauTypeEnum.CommercialSearch)
+                    if (!xds.IsticketActive(searchInfo.userName))
                     {
-                        var ticketState = xds.IsticketActive(searchInfo.userName);
-
-                        return DoXDSCommercialSearch(searchInfo);
+                        xds.Login(searchInfo.userName, searchInfo.password);
                     }
 
-                    if (searchInfo.searchType == (int) CreditBureauTypeEnum.ConsumerSearch)
+                    if (searchInfo.creditBureauId == (short)CreditBureauEnum.XDSCreditBureau)
                     {
-                        return DoXDSIndividualSearch(searchInfo);
+                        if (searchInfo.searchType == (int)CreditBureauTypeEnum.CommercialSearch)
+                        {
+                            var ticketState = xds.IsticketActive(searchInfo.userName);
+
+                            return DoXDSCommercialSearch(searchInfo);
+                        }
+
+                        if (searchInfo.searchType == (int)CreditBureauTypeEnum.ConsumerSearch)
+                        {
+                            return DoXDSIndividualSearch(searchInfo);
+                        }
                     }
-                }
 
-                if (searchInfo.creditBureauId == (short) CreditBureauEnum.CRCCreditBureau)
+                    if (searchInfo.creditBureauId == (short)CreditBureauEnum.CRCCreditBureau)
+                    {
+
+                    }
+
+                    return "";
+                }
+                catch (Exception ex)
                 {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
 
+                    throw new APIErrorException($"Core Banking Credit Bureau API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
                 }
-
-                return "";
             }
 
             public List<dynamic> GetApprovedSearchReasons()
