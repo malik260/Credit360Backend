@@ -3,12 +3,9 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.Repositories.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
@@ -74,7 +71,7 @@ namespace FintrakBanking.Repositories.Credit
                                createdBy = a.CREATEDBY,
                                customerCode = a.CUSTOMERCODE,
                                customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
-                               //customerTypeId = (short)a.CUSTOMERTYPEID,
+                               customerTypeId = (short)a.CUSTOMERTYPEID,
                                dateOfBirth = (DateTime)a.DATEOFBIRTH,
                                customerId = a.CUSTOMERID,
                                emailAddress = a.EMAILADDRESS,
@@ -142,7 +139,7 @@ namespace FintrakBanking.Repositories.Credit
                         firstName = director.FIRSTNAME,
                         lastName = director.SURNAME,
                         middleName = director.MIDDLENAME,
-                        creditBureauCount = directorCount
+                        creditBureauCount = directorCount,
                     };
                     allCorporate.Add(shareholdersData);
                 }
@@ -409,18 +406,37 @@ namespace FintrakBanking.Repositories.Credit
                 searchInfoList.userName = creditBureau.USERNAME;
                 searchInfoList.password = creditBureau.PASSWORD;
             }
+            else
+                throw new ConditionNotMetException("Could not resolve the selected Credit Bureau entity. Contact admin.");
 
             List<string> searchResult = new List<string>();
-
-            var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
-
-            if (task.Wait(TimeSpan.FromSeconds(640)))
+            try
             {
-                return searchResult;
+                var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
+                if (task.Wait(TimeSpan.FromSeconds(1000)))
+                {
+                    return searchResult;
+                }
+                else
+                {
+                    throw new APIErrorException("Credit Bureau search time out");
+                }
             }
-            else
+            catch (ConditionNotMetException ex)
             {
-                throw new Exception("Timed out");
+                throw new ConditionNotMetException(ex.Message);
+            }
+            catch (BadLogicException ex)
+            {
+                throw new ConditionNotMetException(ex.Message);
+            }
+            catch (APIErrorException ex)
+            {
+                throw new ConditionNotMetException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 
@@ -595,7 +611,7 @@ namespace FintrakBanking.Repositories.Credit
             debit.sourceApplicationId = creditBureauInputs.creditBureauId;
             debit.companyId = creditBureauInputs.companyId;
             debit.batchCode = transactionCode;
-            debit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
+            debit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL; 
             debit.sourceReferenceNumber = transactionCode;
             debit.casaAccountId = casa.CASAACCOUNTID;
             debit.debitAmount = chargeAmount;

@@ -309,6 +309,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
             if (result.Message.ReasonPhrase == "OK")
                 if (result.APIResponse.webRequestStatus == "SUCCESS")
                     module = result.APIResponse;
+            if (result.APIResponse.webRequestStatus == "FAILURE")
+                throw new Exception(result.APIResponse.errorMessage);
             return module;
         }
 
