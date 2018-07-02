@@ -227,7 +227,7 @@ namespace FintrakBanking.Repositories.Customer
                             multiplier = a.MULTIPLIER,
                             fscaptionId = a.FSCAPTIONID,
                             ratioCaptionName = b.FSCAPTIONNAME,
-                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
+                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION1.FSCAPTIONNAME,
                             valueTypeName = a.TBL_CUSTOMER_FS_RATIO_VALUETYP.VALUETYPENAME,
                             divisorTypeName = a.TBL_CUSTOMER_FS_RATIO_DIVI_TYP.DIVISORTYPENAME,
                             dateTimeCreated = a.DATETIMECREATED,

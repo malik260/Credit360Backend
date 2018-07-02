@@ -93,8 +93,32 @@ namespace FintrakBanking.APICore.Controllers
                     new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+    
+                [HttpGet][ClaimsAuthorization]
+        [Route("customer-fs-caption-group-without-ratio")]
+        public HttpResponseMessage GetCustomerFSCaptionGroupWithoutRatio()
+        {
+            try
+            {
+                var data = _fsGroupRepo.GetCustomerFSCaptionGroupWithoutRatio();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
 
-      [HttpGet] [ClaimsAuthorization]  
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption-group/{fsCaptionGroupId}")]
         public HttpResponseMessage GetCustomerFsCaptionGroupById(short fsCaptionGroupId)
         {
@@ -228,11 +252,12 @@ namespace FintrakBanking.APICore.Controllers
         //[HttpGet("customer-fs-caption/unmapped/{fsCaptionGroupId}/customer/{customerId}/date/{fsDate}")]
       [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption/customer/unmapped")]
-        public HttpResponseMessage GetUnmappedCustomerFsCaption(short fsCaptionGroupId, int customerId, DateTime fsDate)
+        public HttpResponseMessage GetUnmappedCustomerFsCaption(short fsCaptionGroupId, int customerId, string fsDate)
         {
             try
             {
-                var data = _fsCaptionRepo.GetUnmappedCustomerFSCaption(fsCaptionGroupId, customerId, fsDate);
+                var fsDateConverted = Convert.ToDateTime(fsDate); //DateTime.ParseExact(fsDate, "yy/mm/dd", System.Globalization.CultureInfo.InvariantCulture); // DateTime.Parse(fsDate); // 
+                var data = _fsCaptionRepo.GetUnmappedCustomerFSCaption(fsCaptionGroupId, customerId, fsDateConverted);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -451,11 +476,12 @@ namespace FintrakBanking.APICore.Controllers
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption-detail/customer/")]
-        public HttpResponseMessage GetMappedCustomerFsCaptionDetail(short fsCaptionGroupId, int customerId, DateTime fsDate)
+        public HttpResponseMessage GetMappedCustomerFsCaptionDetail(short fsCaptionGroupId, int customerId, string fsDate)
         {
             try
             {
-                var data = _fsDetailRepo.GetMappedCustomerFsCaptionDetail(customerId, fsCaptionGroupId, fsDate);
+                var fsDateConverted = Convert.ToDateTime(fsDate); //DateTime.ParseExact(fsDate, "yy/mm/dd", System.Globalization.CultureInfo.InvariantCulture);  //DateTime.Parse(fsDate); //
+                var data = _fsDetailRepo.GetMappedCustomerFsCaptionDetail(customerId, fsCaptionGroupId, fsDateConverted);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

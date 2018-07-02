@@ -71,9 +71,8 @@ namespace FintrakBanking.APICore
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
                 // AccessTokenExpireTimeSpan = TimeSpan.FromHours(exipredHr),
                 AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(exipredMin),
-                 
-            // In production mode set AllowInsecureHttp = false
-            AllowInsecureHttp = true
+                AllowInsecureHttp = true,
+                RefreshTokenProvider = new SimpleRefreshTokenProvider()
             };
 
             // Enable the application to use bearer tokens to authenticate users

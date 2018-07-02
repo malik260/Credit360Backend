@@ -55,6 +55,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<RequestDocumentViewModel> GetJobRequestDocuments(string jobRequestCode);
         IEnumerable<RequestDocumentViewModel> GetJobRequestDocumentById(int documentId);
 
+        bool AcknowledgeJob(JobRequestViewModel entity, int jobRequestId);
+
         #region Job Request Feedback
         IEnumerable<LookupViewModel> GetJobRequestStatus();
         IEnumerable<JobRequestStatusFeedbackViewModel> GetAllJobRequestStatusFeedback();

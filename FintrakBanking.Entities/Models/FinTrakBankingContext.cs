@@ -6486,7 +6486,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN)
                 .WithRequired(e => e.TBL_PRODUCT)
                 .WillCascadeOnDelete(false);
-
+            
             modelBuilder.Entity<TBL_PRODUCT>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WithRequired(e => e.TBL_PRODUCT)
@@ -8637,6 +8637,16 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_APPROVAL_STATUS>()
                 .HasMany(e => e.TBL_LMSR_APPLICATION)
                 .WithRequired(e => e.TBL_APPROVAL_STATUS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION)
+                .WithRequired(e => e.TBL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_OPERATIONS>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION)
+                .WithRequired(e => e.TBL_OPERATIONS)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()

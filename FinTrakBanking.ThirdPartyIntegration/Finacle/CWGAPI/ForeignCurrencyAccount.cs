@@ -58,7 +58,7 @@
 
                 ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                 requestDatetime = DateTime.Now;
-                response = client.PostAsync("api/TemporaryOverDraft/Single", new StringContent(
+                response = client.PostAsync("api/ForeignCurrencyAccount/CreateAccount", new StringContent(
                                                 new JavaScriptSerializer().Serialize(entity), Encoding.UTF8, "application/json")).Result;
                 responseDateTime = DateTime.Now;
                 AccountCreationResponseMessageViewModel responseAPI = new AccountCreationResponseMessageViewModel();
@@ -85,10 +85,10 @@
 
                     responseMsg = new AccountCreationRespones
                     {
-                         APIResponse = res,
+                        APIResponse = res,
                         APIStatus = result,
-                        Message = response, 
-                        
+                        Message = response,
+
                     };
                 }
                 else
@@ -107,7 +107,7 @@
 
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
-                    APIURL = "api/TemporaryOverDraft/Single",
+                    APIURL = "api/ForeignCurrencyAccount/CreateAccount",
                     LOGTYPEID = 10,
                     REFERENCENUMBER = entity.customerCode,
                     REQUESTDATETIME = requestDatetime,
