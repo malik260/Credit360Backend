@@ -78,7 +78,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             {
                 List<TransactionViewModel> data = (from a in context.TBL_FINANCE_TRANSACTION
                                                    where a.POSTEDDATE >= startDate && a.POSTEDDATE <= endDate
-                                                    && a.OPERATIONID ==(int)OperationsEnum.LoanRepayment
+                                                    && a.OPERATIONID ==(int)OperationsEnum.LoanPrepayment
                                                     orderby a.POSTEDDATE, a.TRANSACTIONID descending
 
                                                          select new TransactionViewModel()
