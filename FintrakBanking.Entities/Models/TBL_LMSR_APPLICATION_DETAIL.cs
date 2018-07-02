@@ -55,7 +55,7 @@
 
         // public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
 
-        // public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
+        //public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
 
         public virtual TBL_LMSR_APPLICATION TBL_LMSR_APPLICATION { get; set; }
 

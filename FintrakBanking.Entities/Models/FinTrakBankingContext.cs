@@ -8644,10 +8644,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_OPERATIONS>()
-                .HasMany(e => e.TBL_LMSR_APPLICATION)
-                .WithRequired(e => e.TBL_OPERATIONS)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_OPERATIONS>()
+            //    .HasMany(e => e.TBL_LMSR_APPLICATION)
+            //    .WithRequired(e => e.TBL_OPERATIONS)
+            //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_SYSTEM_TYPE>()
                 .HasMany(e => e.TBL_LMSR_APPLICATION_DETAIL)
@@ -8678,6 +8678,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LMSR_APPLICATN_DETL_MTRIG)
                 .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
                 .WillCascadeOnDelete(false);
+
+            //modelBuilder.Entity<TBL_LMSR_APPLICATION_DETAIL>()
+            //    .HasMany(e => e.TBL_LOAN)
+            //    .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
+            //    .WillCascadeOnDelete(false);
 
         }
     }

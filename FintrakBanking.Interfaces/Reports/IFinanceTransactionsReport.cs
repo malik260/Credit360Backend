@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Reports;
+﻿using FintrakBanking.Finance.ViewModels;
+using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace FintrakBanking.Interfaces.Reports
     {
         IEnumerable<dynamic> PostTransactionsByStaffByDate(DateRange dateItem, int companyId);
         IEnumerable<dynamic> PostTransactionsByBranchByDate(DateRange dateItem, int companyId);
+        List<DailyAccrualViewModel> GetAllDailyAccrualCategories();
+        List<DailyAccrualViewModel> GetAllLoanTransactionType();
     }
 }
