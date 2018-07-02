@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.Finance.ViewModels;
 using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Reports;
@@ -72,6 +73,45 @@ namespace FintrakBanking.Repositories.Reports
 
         }
 
+        public List<DailyAccrualViewModel> GetAllLoanTransactionType()
+        {
+            try
+            {
+                var data = from a in context.TBL_LOAN_TRANSACTION_TYPE
+                           
+                           select new DailyAccrualViewModel
+                           {
+                               transactionTypeId = a.TRANSACTIONTYPEID,
+                               transactionTypeName = a.TRANSACTIONTYPENAME
+                           };
+                return data.ToList();
+            }
+            catch (Exception ex)
+            {
 
+                throw;
+            }
+        }
+        public List<DailyAccrualViewModel> GetAllDailyAccrualCategories()
+        {
+            try
+            {
+                var data = from a in context.TBL_DAILY_ACCRUAL_CATEGORY
+
+                           select new DailyAccrualViewModel
+                           {
+                               categoryId = a.CATEGORYID,
+                               categoryName = a.CATEGORYNAME
+                           };
+                return data.ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+
+        }
     }
 }

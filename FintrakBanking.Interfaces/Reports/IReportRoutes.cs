@@ -50,5 +50,8 @@ namespace FintrakBanking.Interfaces.Reports
         string GetTurnoverCovenantReport(DateRange dateRange, int companyId, int staffId);
         string GetWorkflowSLAMonitoring(int companyId, DateRange dateRange);
         string GetBlacklist(ReportSearchEntity searchEntity);
+        string GetDailyAccrual(ReportSearchEntity searchEntity);
+        string GetRepayment(ReportSearchEntity searchEntity);
+        string GetCustomeFacilityRepayment(ReportSearchEntity searchEntity);
     }
 }

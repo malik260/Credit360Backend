@@ -20,6 +20,7 @@ using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -3669,13 +3670,13 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempDepositCollateral(int collateralId, CollateralViewModel entity)
         {
-            CasaBalanceViewModel finacleBalance;
+            TDAccountRecordViewModel finacleBalance;
 
             try
             {
-                finacleBalance = finacle.GetCustomerAccountBalance(entity.collateralCode);
+                finacleBalance = finacle.ValidateTDAccountNumber(entity.collateralCode);
 
-                if (finacleBalance.accountNo == null)
+                if (finacleBalance.accountNumber == null)
                 {
                     throw new Exception(entity.collateralCode + " is not a valid fixed depposit account number");
                 }
@@ -3688,7 +3689,7 @@ namespace FintrakBanking.Repositories.Credit
                         ACCOUNTNUMBER = entity.collateralCode,
                         EXISTINGLIENAMOUNT = 0,
                         LIENAMOUNT = entity.lienAmount,
-                        AVAILABLEBALANCE = finacleBalance.availableBalance,
+                        AVAILABLEBALANCE = finacleBalance.balance,
                         SECURITYVALUE = (decimal)entity.securityValue,
                         MATURITYDATE = entity.maturityDate,
                         MATURITYAMOUNT = 0,
