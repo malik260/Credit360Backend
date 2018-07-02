@@ -1754,13 +1754,14 @@ namespace FintrakBanking.Repositories.Credit
 
                             if (USE_THIRD_PARTY_INTEGRATION)
                             {
+                                var reviewDate = revolvingLoanRecord.BOOKINGDATE.AddMonths(1);
                                 var model = new OverDraftNormalViewModel
                                 {
                                     accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
                                     applicationDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
                                     documentDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
                                     expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                                    reviewedDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
+                                    reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
                                     sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                                     sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
                                     sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
@@ -3786,7 +3787,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             customerId = d.CUSTOMERID,
                             customerCode = cust.CUSTOMERCODE,
-                            customerName = m.CUSTOMERID.HasValue ? m.TBL_CUSTOMER.FIRSTNAME + " " + m.TBL_CUSTOMER.MIDDLENAME + " " + m.TBL_CUSTOMER.LASTNAME : "",
+                            customerName =  d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME ,
                             customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                             customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
@@ -4393,9 +4394,12 @@ namespace FintrakBanking.Repositories.Credit
                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
                                existingLimit = a.PRINCIPALAMOUNT,
                                proposedLimit = a.OUTSTANDINGPRINCIPAL,
+                               recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
-                               reviewDate = DateTime.Now
+                               reviewDate = DateTime.Now,
+                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                               loanStatus = "Running"
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
@@ -4407,12 +4411,33 @@ namespace FintrakBanking.Repositories.Credit
                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
                                existingLimit = a.OVERDRAFTLIMIT,
                                proposedLimit = a.OVERDRAFTLIMIT,
+                               recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
-                               reviewDate = DateTime.Now
+                               reviewDate = DateTime.Now,
+                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                               loanStatus = "Running"
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+                exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
+                           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int) ApprovalStatusEnum.Disapproved)
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                               existingLimit = 0,
+                               proposedLimit = a.PROPOSEDAMOUNT,
+                               recommendedLimit = a.APPROVEDAMOUNT,
+                               PastDueObligationsInterest = 0,
+                               PastDueObligationsPrincipal = 0,
+                               reviewDate = DateTime.Now,
+                               prudentialGuideline = "Processing",
+                               loanStatus = "Processing"
+                           };
+
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
+
             }
 
             exposures.Add(new CurrentCustomerExposure
@@ -4420,6 +4445,7 @@ namespace FintrakBanking.Repositories.Credit
                 facilityType = "TOTAL",
                 existingLimit = exposures.Sum(t => t.existingLimit),
                 proposedLimit = exposures.Sum(t => t.proposedLimit),
+                recommendedLimit = exposure.Sum(t=> t.recommendedLimit),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
                 PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
                 reviewDate = DateTime.Now,

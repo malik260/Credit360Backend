@@ -3830,7 +3830,6 @@ namespace FintrakBanking.Repositories.Credit
                     var tax = this.context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == chargeDetails.INTERESTFREQUENCYTYPEID);
                     decimal NewTaxRate = (decimal)tax.FirstOrDefault().VALUE;
 
-
                     int DateDiff = 0;
                     decimal DailyAccruedFee = 0;
                     decimal AccruedFeeToDate = 0;

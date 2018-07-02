@@ -43,6 +43,8 @@ namespace FintrakBanking.Repositories.Credit
             // get approval levels 
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
 
+            var ids = levelIds.ToList();
+
             // query
             applications = context.TBL_LMSR_APPLICATION
             .Join(context.TBL_BRANCH, a => a.BRANCHID, b => b.BRANCHID, (a, b) => new { a, b })
@@ -63,6 +65,7 @@ namespace FintrakBanking.Repositories.Credit
                 currentApprovalLevelId = trail == null ? 0 : trail.TOAPPROVALLEVELID,
                 lastComment = trail == null ? "" : trail.COMMENT,
                 toStaffId = trail == null ? 0 : trail.TOSTAFFID,
+
                 applicationDate = x.application.APPLICATIONDATE,
                 approvalStatus = x.application.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 approvalStatusId = x.application.APPROVALSTATUSID,
@@ -73,7 +76,7 @@ namespace FintrakBanking.Repositories.Credit
                 branchName = x.branch.BRANCHNAME,
                 customerId = x.customer.CUSTOMERID,
                 customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
-                currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
+                // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 
                 applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Select(d => new applicationDetails
                 {
@@ -81,17 +84,18 @@ namespace FintrakBanking.Repositories.Credit
                     reviewDetails = d.REVIEWDETAILS,
                     operationTypeId = d.LOANSYSTEMTYPEID,
                     operationType = d.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
-                    loanId = d.LOANID, 
+                    loanId = d.LOANID,
                 })
                 .ToList()
             })
             .GroupBy(d => d.loanReviewApplicationId)
             .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
             .OrderByDescending(x => x.applicationDate)
-            .ThenByDescending(x => x.loanReviewApplicationId);
+            .ThenByDescending(x => x.loanReviewApplicationId)
+            ;
 
-            //var list = applications.ToList();
-            //var count = applications.Count();
+            var list = applications.ToList();
+            var count = applications.Count();
 
             if (screenCanViewAll) { return applications; };
 
@@ -117,21 +121,24 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
+            var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
 
             var application = context.TBL_LMSR_APPLICATION.Add(new TBL_LMSR_APPLICATION
             {
-                APPLICATIONREFERENCENUMBER = GenerateReferenceNumber(),
+                APPLICATIONREFERENCENUMBER = referenceNumber,
                 COMPANYID = model.companyId,
                 CUSTOMERID = model.customerId,
                 BRANCHID = model.branchId,
                 // CUSTOMERGROUPID = null,
+                DISPUTED = false,
+                REQUIRECOLLATERAL = false,
                 APPLICATIONDATE = applicationDate,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = applicationDate,
                 SYSTEMDATETIME = DateTime.Now,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                APPLICATIONSTATUSID = 1, // -------------------------------------------------- REMOVE COLUMN!!
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                APPLICATIONSTATUSID = (short)1, // -------------------------------------------------- REMOVE COLUMN!!
             });
 
             foreach (var detail in model.applicationDetails)
@@ -147,8 +154,9 @@ namespace FintrakBanking.Repositories.Credit
                     REPAYMENTSCHEDULE = String.Empty,
                     CUSTOMERID = model.customerId,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending, // REMOVE DUPLICATE [STATUSID]
+                    //STATUSID = (int)ApprovalStatusEnum.Pending, // REMOVE DUPLICATE [STATUSID]
                     CREATEDBY = model.createdBy,
-                    BRANCHID = model.branchId,
+                    //BRANCHID = model.branchId,
                     DATECREATED = applicationDate,
                 });
             }
