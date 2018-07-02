@@ -1,7 +1,9 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Finance.ViewModels;
 using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
@@ -112,6 +114,28 @@ namespace FintrakBanking.Repositories.Reports
             }
 
 
+        }
+        public List<LoanOperationTypeViewModel> Operations()
+        {
+            List<LoanOperationTypeViewModel> operationList = new List<LoanOperationTypeViewModel>();
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var operations = (from x in context.TBL_OPERATIONS
+                                  select x).ToList();
+               foreach(var x in operations)
+                {
+                    if (x.OPERATIONID== (int)OperationsEnum.ItemPolicyApproval || x.OPERATIONID==(int)OperationsEnum.InterestPastDueLoanRepayment || x.OPERATIONID==(int)OperationsEnum.PrincipalLoanRepayment || x.OPERATIONID== (int)OperationsEnum.PrincipalPastDueLoanRepayment)
+                    {
+                        operationList.Add(new LoanOperationTypeViewModel {
+                            operationTypeId = x.OPERATIONID,
+                            operationTypeName = x.OPERATIONNAME
+                        });
+                    }
+                }
+                
+                return operationList;
+            }
         }
     }
 }

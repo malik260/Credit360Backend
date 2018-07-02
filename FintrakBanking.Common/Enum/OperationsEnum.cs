@@ -75,6 +75,8 @@ namespace FintrakBanking.Common.Enum
         CommercialPaperLoanBooking = 63,
         LoanRecovery = 64,
         ChecklistOperation = 65,
-      //  OverrideRequest= 66
+        PrincipalLoanRepayment = 66,
+        InterestPastDueLoanRepayment = 67,
+        PrincipalPastDueLoanRepayment =68
     }
 }
