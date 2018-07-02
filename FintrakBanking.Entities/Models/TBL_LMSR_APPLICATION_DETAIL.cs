@@ -6,7 +6,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LMSR_APPLICATION_DETAIL")]
+    [Table("TBL_LMSR_APPLICATION_DETAIL")]
     public partial class TBL_LMSR_APPLICATION_DETAIL
     {
         public TBL_LMSR_APPLICATION_DETAIL()
@@ -19,14 +19,14 @@
 
         public int LOANAPPLICATIONID { get; set; }
         public int LOANID { get; set; }
-        public int BRANCHID { get; set; }
+        //public int BRANCHID { get; set; }
         public int OPERATIONID { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
-        public int LOANSYSTEMTYPEID { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
         public int CUSTOMERID { get; set; }
 
-        public short STATUSID { get; set; }
+        //public short STATUSID { get; set; }
 
         [StringLength(2000)]
         public string REVIEWDETAILS { get; set; }
