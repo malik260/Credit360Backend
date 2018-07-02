@@ -258,4 +258,11 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public bool APIStatus { get; set; }
         public HttpResponseMessage Message { get; set; }
     }
+
+    public class ItemValue
+    {
+        public string valueCode { get; set; }
+        public string valueName { get; set; }
+        
+    }
 }

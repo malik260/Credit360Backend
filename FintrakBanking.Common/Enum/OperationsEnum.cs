@@ -24,7 +24,7 @@ namespace FintrakBanking.Common.Enum
         ContigentLoanBooking = 14,
         DailyInterestAccural = 15,
 
-        LoanRepayment = 16,
+        InterestLoanRepayment = 16,
         ChargeReversal = 17,
         LoanPrepayment = 18,
         ContractualInterestRateChange = 19,
@@ -75,6 +75,9 @@ namespace FintrakBanking.Common.Enum
         CommercialPaperLoanBooking = 63,
         LoanRecovery = 64,
         ChecklistOperation = 65,
-      //  OverrideRequest= 66
+        PrincipalLoanRepayment = 66,
+        InterestPastDueLoanRepayment = 67,
+        PrincipalPastDueLoanRepayment = 68,
+        PenalFee = 69,
     }
 }

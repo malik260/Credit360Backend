@@ -390,6 +390,7 @@ namespace FintrakBanking.Repositories.Credit
                                    interestRate = b.APPROVEDINTERESTRATE,
                                    purpose = b.LOANPURPOSE,
                                    applicationDate = applDate,
+                                   approvedAmount = b.APPROVEDAMOUNT,
                                }).ToList();
 
             var transactionDynamicsDetails = (from a in context.TBL_LOAN_TRANSACTION_DYNAMICS
@@ -658,6 +659,8 @@ namespace FintrakBanking.Repositories.Credit
                     $"<strong> Tenor </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
                     $"<strong> Interest </strong></p></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
+                    $"<strong> Amount </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
                     $"<strong> Review Date </strong></td></tr>";
 
@@ -671,6 +674,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmount}</p> % p.a </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate}</p></td>" +
                     $"</tr>";
             }

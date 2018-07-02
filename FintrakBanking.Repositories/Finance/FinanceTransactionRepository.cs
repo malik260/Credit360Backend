@@ -1013,14 +1013,14 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel PostBuildLoanRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description,int operationId)
         {
             // FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
 
             var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
 
-            debit.operationId = (int)OperationsEnum.LoanRepayment;
+            debit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
             debit.description = description; // "Loan Disbursment Amount";
             debit.valueDate = model.paymentDate;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
@@ -1043,7 +1043,7 @@ namespace FintrakBanking.Repositories.Finance
 
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.LoanRepayment;
+            credit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
             credit.description = description; // "Loan Disbursment Amount";
             credit.valueDate = model.paymentDate;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
@@ -1073,12 +1073,12 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildAuthorisedOverdraftRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel PostBuildAuthorisedOverdraftRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description,int operationId)
         {
             var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            debit.operationId = (int)OperationsEnum.LoanRepayment;
+            debit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
             debit.description = description; // "Loan Disbursment Amount";
             debit.valueDate = model.paymentDate;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
@@ -1102,7 +1102,7 @@ namespace FintrakBanking.Repositories.Finance
 
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.LoanRepayment;
+            credit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
             credit.description = description; // "Loan Disbursment Amount";
             credit.valueDate = model.paymentDate;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
@@ -1251,7 +1251,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId)
         {
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -1260,7 +1260,7 @@ namespace FintrakBanking.Repositories.Finance
 
             var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
 
-            debit.operationId = (int)OperationsEnum.LoanRepayment;
+            debit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
             debit.description = description; // "Loan Disbursment Amount";
             debit.valueDate = generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
@@ -1283,7 +1283,7 @@ namespace FintrakBanking.Repositories.Finance
 
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.LoanRepayment;
+            credit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
             credit.description = description; // "Loan Disbursment Amount";
             credit.valueDate = generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
@@ -1319,7 +1319,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanPrepaymentFeePosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int chargeFeeId, string description)
+        public FinanceTransactionViewModel PostBuildLoanPrepaymentFeePosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int chargeFeeId, string description,int operationId)
         {
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
@@ -1347,7 +1347,7 @@ namespace FintrakBanking.Repositories.Finance
 
                     FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
 
-                    debit.operationId = (int)OperationsEnum.LoanRepayment;
+                    debit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
                     debit.description = description; // "Loan Disbursment Amount";
                     debit.valueDate = generalSetup.GetApplicationDate();
                     debit.transactionDate = debit.valueDate;
@@ -1380,7 +1380,7 @@ namespace FintrakBanking.Repositories.Finance
                         creditAmount = (decimal)credits.VALUE;
 
                     FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-                    credit.operationId = (int)OperationsEnum.LoanRepayment;
+                    credit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
                     credit.description = description; // "Loan Disbursment Amount";
                     credit.valueDate = generalSetup.GetApplicationDate();
                     credit.transactionDate = credit.valueDate;
@@ -1538,13 +1538,13 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId)
         {
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
 
             var casa = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId && x.COMPANYID == model.companyId);
-            debit.operationId = (int)OperationsEnum.LoanRepayment;
+            debit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
             debit.description = description; // "Loan Disbursment Amount";
             debit.valueDate = model.date;//generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
@@ -1567,7 +1567,7 @@ namespace FintrakBanking.Repositories.Finance
 
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.LoanRepayment;
+            credit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
             credit.description = description; // "Loan Disbursment Amount";
             credit.valueDate = model.date;//generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
