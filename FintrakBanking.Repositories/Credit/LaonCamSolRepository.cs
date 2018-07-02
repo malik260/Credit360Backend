@@ -59,7 +59,9 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanCAMSOLViewModel> GetCamSol(string loancamsolid)
         {
             var data = from camsol in context.TBL_LOAN_CAMSOL
-                       where camsol.CUSTOMERNAME.StartsWith(loancamsolid) || camsol.CUSTOMERCODE.StartsWith(loancamsolid)
+                       join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
+                       join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
+                       where camsol.CUSTOMERNAME.StartsWith(loancamsolid.ToUpper()) || camsol.CUSTOMERCODE ==loancamsolid
                        select new LoanCAMSOLViewModel
                        {
                            accountname = camsol.ACCOUNTNAME,
@@ -69,6 +71,8 @@ namespace FintrakBanking.Repositories.Credit
                            cantakeloan = camsol.CANTAKELOAN,
                            customercode = camsol.CUSTOMERCODE,
                            customername = camsol.CUSTOMERNAME,
+                           camsolType = c.CAMSOLTYPENAME,
+                           loansystemtype = a.LOANSYSTEMTYPENAME,
                            date = camsol.DATE,
                            interestinsuspense = camsol.INTERESTINSUSPENSE,
                            loancamsolid = camsol.LOAN_CAMSOLID,

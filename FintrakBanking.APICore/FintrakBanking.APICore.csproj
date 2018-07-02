@@ -432,6 +432,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Credit.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\TransactionDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TransactionDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.cs">
       <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -481,6 +486,20 @@
     <Compile Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx.designer.cs">
       <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CustomeFacilityRepayment.aspx.cs">
+      <DependentUpon>CustomeFacilityRepayment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CustomeFacilityRepayment.aspx.designer.cs">
+      <DependentUpon>CustomeFacilityRepayment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DailyAccrualReport.aspx.cs">
+      <DependentUpon>DailyAccrualReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DailyAccrualReport.aspx.designer.cs">
+      <DependentUpon>DailyAccrualReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx.cs">
       <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -515,6 +534,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\OverDraft.aspx.designer.cs">
       <DependentUpon>OverDraft.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\Repayment.aspx.cs">
+      <DependentUpon>Repayment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\Repayment.aspx.designer.cs">
+      <DependentUpon>Repayment.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\SeftLiquidatingLoans.aspx.cs">
       <DependentUpon>SeftLiquidatingLoans.aspx</DependentUpon>
@@ -767,12 +793,15 @@
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
+    <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
+    <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
+    <Content Include="Reports\ReportViews\Repayment.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
     <Content Include="Reports\ReportViews\FacilityApprovedNotUntilized.aspx" />
@@ -873,6 +902,17 @@
     <Content Include="Scripts\bootstrap.js.map" />
     <Content Include="Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <Content Include="Reports\ReportDataset\TransactionDataSet.xsc">
+      <DependentUpon>TransactionDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\TransactionDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>TransactionDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\TransactionDataSet.xss">
+      <DependentUpon>TransactionDataSet.xsd</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -1004,8 +1044,11 @@
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc">
@@ -1027,6 +1070,7 @@
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Repayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />

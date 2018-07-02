@@ -68,7 +68,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         private SLATrackerDataTable tableSLATracker;
         
-        private CusotmerBlackListDataTable tableCusotmerBlackList;
+        private bListDataTable tablebList;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -164,8 +164,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 if ((ds.Tables["SLATracker"] != null)) {
                     base.Tables.Add(new SLATrackerDataTable(ds.Tables["SLATracker"]));
                 }
-                if ((ds.Tables["CusotmerBlackList"] != null)) {
-                    base.Tables.Add(new CusotmerBlackListDataTable(ds.Tables["CusotmerBlackList"]));
+                if ((ds.Tables["bList"] != null)) {
+                    base.Tables.Add(new bListDataTable(ds.Tables["bList"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -409,9 +409,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public CusotmerBlackListDataTable CusotmerBlackList {
+        public bListDataTable bList {
             get {
-                return this.tableCusotmerBlackList;
+                return this.tablebList;
             }
         }
         
@@ -548,8 +548,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 if ((ds.Tables["SLATracker"] != null)) {
                     base.Tables.Add(new SLATrackerDataTable(ds.Tables["SLATracker"]));
                 }
-                if ((ds.Tables["CusotmerBlackList"] != null)) {
-                    base.Tables.Add(new CusotmerBlackListDataTable(ds.Tables["CusotmerBlackList"]));
+                if ((ds.Tables["bList"] != null)) {
+                    base.Tables.Add(new bListDataTable(ds.Tables["bList"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -716,10 +716,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
                     this.tableSLATracker.InitVars();
                 }
             }
-            this.tableCusotmerBlackList = ((CusotmerBlackListDataTable)(base.Tables["CusotmerBlackList"]));
+            this.tablebList = ((bListDataTable)(base.Tables["bList"]));
             if ((initTable == true)) {
-                if ((this.tableCusotmerBlackList != null)) {
-                    this.tableCusotmerBlackList.InitVars();
+                if ((this.tablebList != null)) {
+                    this.tablebList.InitVars();
                 }
             }
         }
@@ -776,8 +776,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             base.Tables.Add(this.tableOfferLetterBorrowerDetail);
             this.tableSLATracker = new SLATrackerDataTable();
             base.Tables.Add(this.tableSLATracker);
-            this.tableCusotmerBlackList = new CusotmerBlackListDataTable();
-            base.Tables.Add(this.tableCusotmerBlackList);
+            this.tablebList = new bListDataTable();
+            base.Tables.Add(this.tablebList);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -914,7 +914,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        private bool ShouldSerializeCusotmerBlackList() {
+        private bool ShouldSerializebList() {
             return false;
         }
         
@@ -1040,7 +1040,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         public delegate void SLATrackerRowChangeEventHandler(object sender, SLATrackerRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        public delegate void CusotmerBlackListRowChangeEventHandler(object sender, CusotmerBlackListRowChangeEvent e);
+        public delegate void bListRowChangeEventHandler(object sender, bListRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -9699,7 +9699,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class CusotmerBlackListDataTable : global::System.Data.TypedTableBase<CusotmerBlackListRow> {
+        public partial class bListDataTable : global::System.Data.TypedTableBase<bListRow> {
             
             private global::System.Data.DataColumn columnaccountName;
             
@@ -9715,20 +9715,20 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columndate;
             
+            private global::System.Data.DataColumn columncamsolType;
+            
+            private global::System.Data.DataColumn columnloanSystemType;
+            
             private global::System.Data.DataColumn columnInterestInSuspense;
             
             private global::System.Data.DataColumn columnprincipal;
             
             private global::System.Data.DataColumn columnremark;
             
-            private global::System.Data.DataColumn columncamsolType;
-            
-            private global::System.Data.DataColumn columnloanSystemType;
-            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public CusotmerBlackListDataTable() {
-                this.TableName = "CusotmerBlackList";
+            public bListDataTable() {
+                this.TableName = "bList";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -9736,7 +9736,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            internal CusotmerBlackListDataTable(global::System.Data.DataTable table) {
+            internal bListDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -9753,7 +9753,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            protected CusotmerBlackListDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected bListDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -9816,6 +9816,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn camsolTypeColumn {
+                get {
+                    return this.columncamsolType;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn loanSystemTypeColumn {
+                get {
+                    return this.columnloanSystemType;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public global::System.Data.DataColumn InterestInSuspenseColumn {
                 get {
                     return this.columnInterestInSuspense;
@@ -9840,22 +9856,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn camsolTypeColumn {
-                get {
-                    return this.columncamsolType;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn loanSystemTypeColumn {
-                get {
-                    return this.columnloanSystemType;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -9865,34 +9865,34 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public CusotmerBlackListRow this[int index] {
+            public bListRow this[int index] {
                 get {
-                    return ((CusotmerBlackListRow)(this.Rows[index]));
+                    return ((bListRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event CusotmerBlackListRowChangeEventHandler CusotmerBlackListRowChanging;
+            public event bListRowChangeEventHandler bListRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event CusotmerBlackListRowChangeEventHandler CusotmerBlackListRowChanged;
+            public event bListRowChangeEventHandler bListRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event CusotmerBlackListRowChangeEventHandler CusotmerBlackListRowDeleting;
+            public event bListRowChangeEventHandler bListRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event CusotmerBlackListRowChangeEventHandler CusotmerBlackListRowDeleted;
+            public event bListRowChangeEventHandler bListRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void AddCusotmerBlackListRow(CusotmerBlackListRow row) {
+            public void AddbListRow(bListRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public CusotmerBlackListRow AddCusotmerBlackListRow(string accountName, string accountNumber, string balance, string canTakeLoan, string customerCode, string customerName, string date, string InterestInSuspense, string principal, string remark, string camsolType, string loanSystemType) {
-                CusotmerBlackListRow rowCusotmerBlackListRow = ((CusotmerBlackListRow)(this.NewRow()));
+            public bListRow AddbListRow(string accountName, string accountNumber, string balance, string canTakeLoan, string customerCode, string customerName, string date, string camsolType, string loanSystemType, string InterestInSuspense, string principal, string remark) {
+                bListRow rowbListRow = ((bListRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         accountName,
                         accountNumber,
@@ -9901,20 +9901,20 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         customerCode,
                         customerName,
                         date,
+                        camsolType,
+                        loanSystemType,
                         InterestInSuspense,
                         principal,
-                        remark,
-                        camsolType,
-                        loanSystemType};
-                rowCusotmerBlackListRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowCusotmerBlackListRow);
-                return rowCusotmerBlackListRow;
+                        remark};
+                rowbListRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowbListRow);
+                return rowbListRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                CusotmerBlackListDataTable cln = ((CusotmerBlackListDataTable)(base.Clone()));
+                bListDataTable cln = ((bListDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -9922,7 +9922,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new CusotmerBlackListDataTable();
+                return new bListDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -9935,11 +9935,11 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columncustomerCode = base.Columns["customerCode"];
                 this.columncustomerName = base.Columns["customerName"];
                 this.columndate = base.Columns["date"];
+                this.columncamsolType = base.Columns["camsolType"];
+                this.columnloanSystemType = base.Columns["loanSystemType"];
                 this.columnInterestInSuspense = base.Columns["InterestInSuspense"];
                 this.columnprincipal = base.Columns["principal"];
                 this.columnremark = base.Columns["remark"];
-                this.columncamsolType = base.Columns["camsolType"];
-                this.columnloanSystemType = base.Columns["loanSystemType"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -9959,42 +9959,42 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columncustomerName);
                 this.columndate = new global::System.Data.DataColumn("date", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columndate);
+                this.columncamsolType = new global::System.Data.DataColumn("camsolType", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncamsolType);
+                this.columnloanSystemType = new global::System.Data.DataColumn("loanSystemType", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnloanSystemType);
                 this.columnInterestInSuspense = new global::System.Data.DataColumn("InterestInSuspense", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnInterestInSuspense);
                 this.columnprincipal = new global::System.Data.DataColumn("principal", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnprincipal);
                 this.columnremark = new global::System.Data.DataColumn("remark", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnremark);
-                this.columncamsolType = new global::System.Data.DataColumn("camsolType", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncamsolType);
-                this.columnloanSystemType = new global::System.Data.DataColumn("loanSystemType", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnloanSystemType);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public CusotmerBlackListRow NewCusotmerBlackListRow() {
-                return ((CusotmerBlackListRow)(this.NewRow()));
+            public bListRow NewbListRow() {
+                return ((bListRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new CusotmerBlackListRow(builder);
+                return new bListRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(CusotmerBlackListRow);
+                return typeof(bListRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.CusotmerBlackListRowChanged != null)) {
-                    this.CusotmerBlackListRowChanged(this, new CusotmerBlackListRowChangeEvent(((CusotmerBlackListRow)(e.Row)), e.Action));
+                if ((this.bListRowChanged != null)) {
+                    this.bListRowChanged(this, new bListRowChangeEvent(((bListRow)(e.Row)), e.Action));
                 }
             }
             
@@ -10002,8 +10002,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.CusotmerBlackListRowChanging != null)) {
-                    this.CusotmerBlackListRowChanging(this, new CusotmerBlackListRowChangeEvent(((CusotmerBlackListRow)(e.Row)), e.Action));
+                if ((this.bListRowChanging != null)) {
+                    this.bListRowChanging(this, new bListRowChangeEvent(((bListRow)(e.Row)), e.Action));
                 }
             }
             
@@ -10011,8 +10011,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.CusotmerBlackListRowDeleted != null)) {
-                    this.CusotmerBlackListRowDeleted(this, new CusotmerBlackListRowChangeEvent(((CusotmerBlackListRow)(e.Row)), e.Action));
+                if ((this.bListRowDeleted != null)) {
+                    this.bListRowDeleted(this, new bListRowChangeEvent(((bListRow)(e.Row)), e.Action));
                 }
             }
             
@@ -10020,14 +10020,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.CusotmerBlackListRowDeleting != null)) {
-                    this.CusotmerBlackListRowDeleting(this, new CusotmerBlackListRowChangeEvent(((CusotmerBlackListRow)(e.Row)), e.Action));
+                if ((this.bListRowDeleting != null)) {
+                    this.bListRowDeleting(this, new bListRowChangeEvent(((bListRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void RemoveCusotmerBlackListRow(CusotmerBlackListRow row) {
+            public void RemovebListRow(bListRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -10054,7 +10054,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "CusotmerBlackListDataTable";
+                attribute2.FixedValue = "bListDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -17062,15 +17062,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class CusotmerBlackListRow : global::System.Data.DataRow {
+        public partial class bListRow : global::System.Data.DataRow {
             
-            private CusotmerBlackListDataTable tableCusotmerBlackList;
+            private bListDataTable tablebList;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            internal CusotmerBlackListRow(global::System.Data.DataRowBuilder rb) : 
+            internal bListRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableCusotmerBlackList = ((CusotmerBlackListDataTable)(this.Table));
+                this.tablebList = ((bListDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -17078,14 +17078,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string accountName {
                 get {
                     try {
-                        return ((string)(this[this.tableCusotmerBlackList.accountNameColumn]));
+                        return ((string)(this[this.tablebList.accountNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'accountName\' in table \'CusotmerBlackList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'accountName\' in table \'bList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableCusotmerBlackList.accountNameColumn] = value;
+                    this[this.tablebList.accountNameColumn] = value;
                 }
             }
             
@@ -17094,14 +17094,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string accountNumber {
                 get {
                     try {
-                        return ((string)(this[this.tableCusotmerBlackList.accountNumberColumn]));
+                        return ((string)(this[this.tablebList.accountNumberColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'accountNumber\' in table \'CusotmerBlackList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'accountNumber\' in table \'bList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableCusotmerBlackList.accountNumberColumn] = value;
+                    this[this.tablebList.accountNumberColumn] = value;
                 }
             }
             
@@ -17110,14 +17110,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string balance {
                 get {
                     try {
-                        return ((string)(this[this.tableCusotmerBlackList.balanceColumn]));
+                        return ((string)(this[this.tablebList.balanceColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'balance\' in table \'CusotmerBlackList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'balance\' in table \'bList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableCusotmerBlackList.balanceColumn] = value;
+                    this[this.tablebList.balanceColumn] = value;
                 }
             }
             
@@ -17126,14 +17126,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string canTakeLoan {
                 get {
                     try {
-                        return ((string)(this[this.tableCusotmerBlackList.canTakeLoanColumn]));
+                        return ((string)(this[this.tablebList.canTakeLoanColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'canTakeLoan\' in table \'CusotmerBlackList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'canTakeLoan\' in table \'bList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableCusotmerBlackList.canTakeLoanColumn] = value;
+                    this[this.tablebList.canTakeLoanColumn] = value;
                 }
             }
             
@@ -17142,14 +17142,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string customerCode {
                 get {
                     try {
-                        return ((string)(this[this.tableCusotmerBlackList.customerCodeColumn]));
+                        return ((string)(this[this.tablebList.customerCodeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'customerCode\' in table \'CusotmerBlackList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerCode\' in table \'bList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableCusotmerBlackList.customerCodeColumn] = value;
+                    this[this.tablebList.customerCodeColumn] = value;
                 }
             }
             
@@ -17158,14 +17158,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string customerName {
                 get {
                     try {
-                        return ((string)(this[this.tableCusotmerBlackList.customerNameColumn]));
+                        return ((string)(this[this.tablebList.customerNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'CusotmerBlackList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'bList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableCusotmerBlackList.customerNameColumn] = value;
+                    this[this.tablebList.customerNameColumn] = value;
                 }
             }
             
@@ -17174,63 +17174,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string date {
                 get {
                     try {
-                        return ((string)(this[this.tableCusotmerBlackList.dateColumn]));
+                        return ((string)(this[this.tablebList.dateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'date\' in table \'CusotmerBlackList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'date\' in table \'bList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableCusotmerBlackList.dateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string InterestInSuspense {
-                get {
-                    try {
-                        return ((string)(this[this.tableCusotmerBlackList.InterestInSuspenseColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'InterestInSuspense\' in table \'CusotmerBlackList\' is DBNull." +
-                                "", e);
-                    }
-                }
-                set {
-                    this[this.tableCusotmerBlackList.InterestInSuspenseColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string principal {
-                get {
-                    try {
-                        return ((string)(this[this.tableCusotmerBlackList.principalColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'principal\' in table \'CusotmerBlackList\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCusotmerBlackList.principalColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string remark {
-                get {
-                    try {
-                        return ((string)(this[this.tableCusotmerBlackList.remarkColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'remark\' in table \'CusotmerBlackList\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCusotmerBlackList.remarkColumn] = value;
+                    this[this.tablebList.dateColumn] = value;
                 }
             }
             
@@ -17239,14 +17190,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string camsolType {
                 get {
                     try {
-                        return ((string)(this[this.tableCusotmerBlackList.camsolTypeColumn]));
+                        return ((string)(this[this.tablebList.camsolTypeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'camsolType\' in table \'CusotmerBlackList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'camsolType\' in table \'bList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableCusotmerBlackList.camsolTypeColumn] = value;
+                    this[this.tablebList.camsolTypeColumn] = value;
                 }
             }
             
@@ -17255,159 +17206,207 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string loanSystemType {
                 get {
                     try {
-                        return ((string)(this[this.tableCusotmerBlackList.loanSystemTypeColumn]));
+                        return ((string)(this[this.tablebList.loanSystemTypeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'loanSystemType\' in table \'CusotmerBlackList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'loanSystemType\' in table \'bList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableCusotmerBlackList.loanSystemTypeColumn] = value;
+                    this[this.tablebList.loanSystemTypeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string InterestInSuspense {
+                get {
+                    try {
+                        return ((string)(this[this.tablebList.InterestInSuspenseColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'InterestInSuspense\' in table \'bList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablebList.InterestInSuspenseColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string principal {
+                get {
+                    try {
+                        return ((string)(this[this.tablebList.principalColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'principal\' in table \'bList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablebList.principalColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string remark {
+                get {
+                    try {
+                        return ((string)(this[this.tablebList.remarkColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'remark\' in table \'bList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablebList.remarkColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsaccountNameNull() {
-                return this.IsNull(this.tableCusotmerBlackList.accountNameColumn);
+                return this.IsNull(this.tablebList.accountNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetaccountNameNull() {
-                this[this.tableCusotmerBlackList.accountNameColumn] = global::System.Convert.DBNull;
+                this[this.tablebList.accountNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsaccountNumberNull() {
-                return this.IsNull(this.tableCusotmerBlackList.accountNumberColumn);
+                return this.IsNull(this.tablebList.accountNumberColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetaccountNumberNull() {
-                this[this.tableCusotmerBlackList.accountNumberColumn] = global::System.Convert.DBNull;
+                this[this.tablebList.accountNumberColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsbalanceNull() {
-                return this.IsNull(this.tableCusotmerBlackList.balanceColumn);
+                return this.IsNull(this.tablebList.balanceColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetbalanceNull() {
-                this[this.tableCusotmerBlackList.balanceColumn] = global::System.Convert.DBNull;
+                this[this.tablebList.balanceColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscanTakeLoanNull() {
-                return this.IsNull(this.tableCusotmerBlackList.canTakeLoanColumn);
+                return this.IsNull(this.tablebList.canTakeLoanColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcanTakeLoanNull() {
-                this[this.tableCusotmerBlackList.canTakeLoanColumn] = global::System.Convert.DBNull;
+                this[this.tablebList.canTakeLoanColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscustomerCodeNull() {
-                return this.IsNull(this.tableCusotmerBlackList.customerCodeColumn);
+                return this.IsNull(this.tablebList.customerCodeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcustomerCodeNull() {
-                this[this.tableCusotmerBlackList.customerCodeColumn] = global::System.Convert.DBNull;
+                this[this.tablebList.customerCodeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscustomerNameNull() {
-                return this.IsNull(this.tableCusotmerBlackList.customerNameColumn);
+                return this.IsNull(this.tablebList.customerNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcustomerNameNull() {
-                this[this.tableCusotmerBlackList.customerNameColumn] = global::System.Convert.DBNull;
+                this[this.tablebList.customerNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsdateNull() {
-                return this.IsNull(this.tableCusotmerBlackList.dateColumn);
+                return this.IsNull(this.tablebList.dateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetdateNull() {
-                this[this.tableCusotmerBlackList.dateColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsInterestInSuspenseNull() {
-                return this.IsNull(this.tableCusotmerBlackList.InterestInSuspenseColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetInterestInSuspenseNull() {
-                this[this.tableCusotmerBlackList.InterestInSuspenseColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsprincipalNull() {
-                return this.IsNull(this.tableCusotmerBlackList.principalColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetprincipalNull() {
-                this[this.tableCusotmerBlackList.principalColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsremarkNull() {
-                return this.IsNull(this.tableCusotmerBlackList.remarkColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetremarkNull() {
-                this[this.tableCusotmerBlackList.remarkColumn] = global::System.Convert.DBNull;
+                this[this.tablebList.dateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscamsolTypeNull() {
-                return this.IsNull(this.tableCusotmerBlackList.camsolTypeColumn);
+                return this.IsNull(this.tablebList.camsolTypeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcamsolTypeNull() {
-                this[this.tableCusotmerBlackList.camsolTypeColumn] = global::System.Convert.DBNull;
+                this[this.tablebList.camsolTypeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsloanSystemTypeNull() {
-                return this.IsNull(this.tableCusotmerBlackList.loanSystemTypeColumn);
+                return this.IsNull(this.tablebList.loanSystemTypeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetloanSystemTypeNull() {
-                this[this.tableCusotmerBlackList.loanSystemTypeColumn] = global::System.Convert.DBNull;
+                this[this.tablebList.loanSystemTypeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsInterestInSuspenseNull() {
+                return this.IsNull(this.tablebList.InterestInSuspenseColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetInterestInSuspenseNull() {
+                this[this.tablebList.InterestInSuspenseColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsprincipalNull() {
+                return this.IsNull(this.tablebList.principalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetprincipalNull() {
+                this[this.tablebList.principalColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsremarkNull() {
+                return this.IsNull(this.tablebList.remarkColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetremarkNull() {
+                this[this.tablebList.remarkColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -18163,22 +18162,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        public class CusotmerBlackListRowChangeEvent : global::System.EventArgs {
+        public class bListRowChangeEvent : global::System.EventArgs {
             
-            private CusotmerBlackListRow eventRow;
+            private bListRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public CusotmerBlackListRowChangeEvent(CusotmerBlackListRow row, global::System.Data.DataRowAction action) {
+            public bListRowChangeEvent(bListRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public CusotmerBlackListRow Row {
+            public bListRow Row {
                 get {
                     return this.eventRow;
                 }
