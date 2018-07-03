@@ -27,8 +27,12 @@ namespace FintrakBanking.Repositories.Credit
         public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByDetailId(int detailId)
         {
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId);
+            return GetConditionPrecedentDefaultByProductId(applicationDetail.APPROVEDPRODUCTID);
+        }
 
-            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => applicationDetail.APPROVEDPRODUCTID == x.PRODUCTID || x.PRODUCTID == null)
+        public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByProductId(int? productId)
+        {
+            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => x.PRODUCTID == productId || x.PRODUCTID == null)
             .Select(c => new ConditionPrecedentViewModel
             {
                 conditionId = c.CONDITIONID,

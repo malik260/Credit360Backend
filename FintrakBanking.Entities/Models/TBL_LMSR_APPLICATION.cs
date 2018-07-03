@@ -81,7 +81,7 @@
 
         // public virtual TBL_CUSTOMER_GROUP TBL_CUSTOMER_GROUP { get; set; }
 
-        public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
+        // public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
         // public virtual TBL_PRODUCT_CLASS TBL_PRODUCT_CLASS { get; set; }
 

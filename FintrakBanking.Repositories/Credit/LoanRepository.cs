@@ -5534,6 +5534,9 @@ namespace FintrakBanking.Repositories.Credit
                         allFilteredLoan = SearchContigentLoan(searchQuery);
                     }
                 }
+
+                //var x = allFilteredLoan.ToList();
+
                 return allFilteredLoan;
             }
             catch (Exception ex)
