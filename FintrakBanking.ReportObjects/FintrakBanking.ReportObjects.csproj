@@ -93,6 +93,10 @@
       <Project>{2853B1D8-AF5F-4691-A513-9EB63A45DD4D}</Project>
       <Name>FintrakBanking.Repositories</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FinTrakBanking.ThirdPartyIntegration\FinTrakBanking.ThirdPartyIntegration.csproj">
+      <Project>{81C64D5D-3674-499E-B718-257AA862B1B2}</Project>
+      <Name>FinTrakBanking.ThirdPartyIntegration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
       <Project>{53A300F2-B78D-4708-BFB4-2B86DE64EC7D}</Project>
       <Name>FintrakBanking.ViewModels</Name>

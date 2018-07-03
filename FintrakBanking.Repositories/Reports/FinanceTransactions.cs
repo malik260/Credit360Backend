@@ -125,7 +125,7 @@ namespace FintrakBanking.Repositories.Reports
                                   select x).ToList();
                foreach(var x in operations)
                 {
-                    if (x.OPERATIONID== (int)OperationsEnum.ItemPolicyApproval || x.OPERATIONID==(int)OperationsEnum.InterestPastDueLoanRepayment || x.OPERATIONID==(int)OperationsEnum.PrincipalLoanRepayment || x.OPERATIONID== (int)OperationsEnum.PrincipalPastDueLoanRepayment)
+                    if (x.OPERATIONID== (int)OperationsEnum.InterestLoanRepayment || x.OPERATIONID==(int)OperationsEnum.InterestPastDueLoanRepayment || x.OPERATIONID==(int)OperationsEnum.PrincipalLoanRepayment || x.OPERATIONID== (int)OperationsEnum.PrincipalPastDueLoanRepayment)
                     {
                         operationList.Add(new LoanOperationTypeViewModel {
                             operationTypeId = x.OPERATIONID,

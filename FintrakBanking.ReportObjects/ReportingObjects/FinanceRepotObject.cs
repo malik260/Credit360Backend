@@ -2,6 +2,8 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Finance.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +80,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             {
                 List<TransactionViewModel> data = (from a in context.TBL_FINANCE_TRANSACTION
                                                    where a.POSTEDDATE >= startDate && a.POSTEDDATE <= endDate
-                                                   // && (a.OPERATIONID == operationId || operationId ==0 || operationId==null)
+                                                   && (a.OPERATIONID == operationId || operationId ==0 || operationId==null)
                                                    orderby a.POSTEDDATE, a.TRANSACTIONID descending
 
                                                    select new TransactionViewModel()
@@ -134,16 +136,14 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
             return data;
         }
-        public List<BulkTransactionViewModel> CustomeFacilityRepayment(DateTime endDate, DateTime startDate, int companyId)
+        public List<BulkTransactionViewModel> CustomeFacilityRepayment(DateTime endDate, DateTime startDate, int companyId,string valueCode)
         {
             List<BulkTransactionViewModel> data;
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 data = (from a in context.TBL_CUSTOM_TRANSACTION_BULK
                         where a.POSTEDDATE >= startDate && a.POSTEDDATE <= endDate
-                        // && a.POSTEDDATE >= startDate && a.POSTEDDATE <= endDate
-                        // && a.FLOWTYPE =="fff"
-                        // && a.DEBITACCOUNT==null
+                        && (a.FLOWTYPE == valueCode || valueCode==null || valueCode=="") 
                         orderby a.BULKTRANSACTIONID descending
                         select new BulkTransactionViewModel()
                         {
@@ -175,7 +175,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return data;
         }
 
-       
+
 
     }
 }

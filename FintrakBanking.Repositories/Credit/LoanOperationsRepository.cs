@@ -23,6 +23,7 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.ServiceModel;
 using FintrakBanking.Common.CustomException;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 
 namespace FintrakBanking.Repositories.Credit
 
@@ -109,8 +110,8 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTeamLoansInterestAccrual(DateTime applicationDate)
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
 
                 {
@@ -213,84 +214,94 @@ namespace FintrakBanking.Repositories.Credit
                                  }).ToList();
 
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                    int count = 0;
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
+
+                    result = bulkPosting.WriteBulkDailyTermLoanInterestAccuralToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+
+                    //var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                    //int count = 0;
+                    //foreach (var item in model)
+                    //{
+                    //    item.date = applicationDate;
+
+                    //    var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
+
+                    //    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+
+                    //    count++;
+
+                    //    addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
+                    //    addStaging.FLOWTYPE = "fff";
+                    //    addStaging.FORCEDEBITACCOUNT = "Y";
+                    //    addStaging.VALUEDATENUMBER = 1;
+                    //    addStaging.BATCHID = batchCode;
+                    //    addStaging.BATCHREFID = count;
+                    //    addStaging.SID = count;
+                    //    addStaging.COMPANYID = item.companyId;
+                    //    addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);//context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE; // GetGLAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId)  product.INTERESTINCOMEEXPENSEGL.Value;
+                    //    addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                    //    addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
+                    //    addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                    //    addStaging.DESCRIPTION = "Loan Daily Interest Accrual Posting";
+                    //    addStaging.DESTINATIONBRANCHID = item.branchId;
+                    //    addStaging.ISPOSTED = false;
+                    //    addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
+                    //    addStaging.POSTEDBY = "SYSTEM";
+                    //    addStaging.POSTEDDATE = item.date;
+                    //    addStaging.SOURCEBRANCHID = item.branchId;
+                    //    addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                    //    addStaging.VALUEDATE = item.date;
+                    //    addStaging.TRANSACTIONTYPE = "BP";
+                    //    addStaging.BANKID = "01";
+                    //    addStaging.PRODUCTID = product.PRODUCTID;
+                    //    addStaging.CURRENCYID = item.currencyId;
+                    //    addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
+                    //    addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                    //    addStaging.CREDITCASAACCOUNTID = null;
+                    //    addStaging.DEBITCASAACCOUNTID = null;
+
+                    //    addStaging.SYSTEMDATETIME = item.date;
+                    //    this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+                    //    context.SaveChanges();                        
+
+                    //}
+
+
+                    //result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+
+                }
+                else
+                {
                     foreach (var item in model)
                     {
                         item.date = applicationDate;
 
-                        var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
-
-                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
-
-                        count++;
-
-                        addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
-                        addStaging.FLOWTYPE = "fff";
-                        addStaging.FORCEDEBITACCOUNT = "Y";
-                        addStaging.VALUEDATENUMBER = 1;
-                        addStaging.BATCHID = batchCode;
-                        addStaging.BATCHREFID = count;
-                        addStaging.SID = count;
-                        addStaging.COMPANYID = item.companyId;
-                        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);//context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE; // GetGLAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId)  product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                        addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
-                        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-                        addStaging.DESCRIPTION = "Loan Daily Interest Accrual Posting";
-                        addStaging.DESTINATIONBRANCHID = item.branchId;
-                        addStaging.ISPOSTED = false;
-                        addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
-                        addStaging.POSTEDBY = "SYSTEM";
-                        addStaging.POSTEDDATE = item.date;
-                        addStaging.SOURCEBRANCHID = item.branchId;
-                        addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
-                        addStaging.VALUEDATE = item.date;
-                        addStaging.TRANSACTIONTYPE = "BP";
-                        addStaging.BANKID = "01";
-                        addStaging.PRODUCTID = product.PRODUCTID;
-                        addStaging.CURRENCYID = item.currencyId;
-                        addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
-                        addStaging.CREDITCASAACCOUNTID = null;
-                        addStaging.DEBITCASAACCOUNTID = null;
-
-
-                        addStaging.SYSTEMDATETIME = item.date;
-                        this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
-                        context.SaveChanges();
-                        if (setup.USE_THIRD_PARTY_INTEGRATION == false)
-                        {
-                            result = financeTransaction.PostDailyLoansInterestAccrual(item);
-                        }
-
+                        result = financeTransaction.PostDailyLoansInterestAccrual(item);
                     }
-                    if (setup.USE_THIRD_PARTY_INTEGRATION)
-                        result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+                }
 
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-            }
-
-
 
         }
 
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyFeeAccrual(DateTime applicationDate)
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     bool result = false;
@@ -417,27 +428,25 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
 
-
-            }
         }
 
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTaxAccrual(DateTime applicationDate)
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     bool result = false;
@@ -563,27 +572,24 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-
-            }
         }
 
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyAuthorisedOverdraftInterestAccrual(DateTime applicationDate)
 
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+        //    using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     bool result = false;
@@ -712,26 +718,24 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
         }
 
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyUnauthorisedOverdraftInterestAccrual(DateTime applicationDate)
 
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+        //    using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     bool result = false;
@@ -863,19 +867,17 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
 
         }
 
@@ -883,8 +885,8 @@ namespace FintrakBanking.Repositories.Credit
 
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+        //    using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     bool result = false;
@@ -1015,26 +1017,24 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                      //  trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
         }
 
         public IEnumerable<DailyInterestAccrualViewModel> ProcessDailyPastDuePrincipalAccrual(DateTime applicationDate)
 
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+        //    using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
 
@@ -1165,25 +1165,24 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-            }
         }
 
         public IEnumerable<LoanClassificationViewModel> CalculateLoanClassification(DateTime applicationDate)
 
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+        //    using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -1266,26 +1265,24 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         return data;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
         }
 
         public IEnumerable<LoanClassificationViewModel> CalculateOverdraftClassification(DateTime applicationDate)
 
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+        //    using (var trans = context.Database.BeginTransaction())
+           // {
                 try
                 {
                     var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -1368,27 +1365,24 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         return data;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-
-            }
         }
 
         public IEnumerable<CleanUpViewModel> OverdraftCleanUp(DateTime applicationDate)
 
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+        //    using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -1446,21 +1440,17 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return data;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-
-
-            }
         }
 
         public decimal DailyAccruedInterest(DateTime startDate, DateTime endDate, decimal Amount)
@@ -1643,8 +1633,8 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate)
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
@@ -1685,9 +1675,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                             financeTransaction.PostTransaction(inputTransactions);
 
@@ -1717,9 +1707,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "partial principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "partial principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                             financeTransaction.PostTransaction(inputTransactions);
 
@@ -1759,9 +1749,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                             financeTransaction.PostTransaction(inputTransactions);
 
@@ -1799,9 +1789,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                             financeTransaction.PostTransaction(inputTransactions);
 
@@ -1814,27 +1804,25 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
         }
 
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate)
 
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
@@ -1900,7 +1888,7 @@ namespace FintrakBanking.Repositories.Credit
                             addStagingInterest.DESCRIPTION = "Interest Repayment";
                             addStagingInterest.DESTINATIONBRANCHID = item.branchId;
                             addStagingInterest.ISPOSTED = false;
-                            addStagingInterest.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;///change to periodInterestAmount
+                            addStagingInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;///change to periodInterestAmount
                             addStagingInterest.POSTEDBY = "SYSTEM";
                             addStagingInterest.POSTEDDATE = applicationDate;
                             addStagingInterest.SOURCEBRANCHID = item.branchId;
@@ -1915,7 +1903,7 @@ namespace FintrakBanking.Repositories.Credit
                             addStagingInterest.CREDITCASAACCOUNTID = null;
                             addStagingInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                             this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
-                            context.SaveChanges();
+                            //context.SaveChanges();
 
                             //WriteBulkPostingToStaging(applicationDate, "BL");
                             var addStagingPrincipal = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -1937,7 +1925,7 @@ namespace FintrakBanking.Repositories.Credit
                             addStagingPrincipal.DESCRIPTION = "Principal Repayment";
                             addStagingPrincipal.DESTINATIONBRANCHID = item.branchId;
                             addStagingPrincipal.ISPOSTED = false;
-                            addStagingPrincipal.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;//change to periodPrincipalAmount
+                            addStagingPrincipal.OPERATIONID = (int)OperationsEnum.PrincipalLoanRepayment;//change to periodPrincipalAmount
                             addStagingPrincipal.POSTEDBY = "SYSTEM";
                             addStagingPrincipal.POSTEDDATE = applicationDate;
                             addStagingPrincipal.SOURCEBRANCHID = item.branchId;
@@ -1952,7 +1940,7 @@ namespace FintrakBanking.Repositories.Credit
                             addStagingPrincipal.CREDITCASAACCOUNTID = null;
                             addStagingPrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                             this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPrincipal);
-                            context.SaveChanges();
+                            //var ttt = context.SaveChanges()>0;
                             WriteBulkPostingToStaging(applicationDate, "BL", batchCode);
                         }
 
@@ -1963,9 +1951,9 @@ namespace FintrakBanking.Repositories.Credit
 
                                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
+                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                                 updateloanTablePrincipal(item.loanId, item.periodPrincipalAmount);
                                 updateloanTableInterest(item.loanId, item.periodInterestAmount);
@@ -1989,13 +1977,13 @@ namespace FintrakBanking.Repositories.Credit
                                 pastDue.PRODUCTTYPEID = product.PRODUCTTYPEID;
 
                                 transPastDue.Add(pastDue);
-                                context.SaveChanges();
+                                //context.SaveChanges();
                                 updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
 
                                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
-                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialPrincipalAmountCollected, product.PRINCIPALBALANCEGL.Value, "partial principal repayment"));
+                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
+                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialPrincipalAmountCollected, product.PRINCIPALBALANCEGL.Value, "partial principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                                 updateloanTableInterest(item.loanId, item.periodInterestAmount);
                                 updateloanTablePrincipal(item.loanId, partialPrincipalAmountCollected);
@@ -2034,7 +2022,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 casaLien.PlaceLien(lien);
 
-                                context.SaveChanges();
+                                //context.SaveChanges();
 
                             }
                             else if (casabalance < item.periodInterestAmount && casabalance > 0)
@@ -2055,7 +2043,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 transPastDue.Add(pastDueInterest);
 
-                                context.SaveChanges();
+                                //context.SaveChanges();
 
                                 updateloanTablePastDueInterest(pastDueInterest.LOANID, pastDueInterest.DEBITAMOUNT);
 
@@ -2073,13 +2061,13 @@ namespace FintrakBanking.Repositories.Credit
 
                                 transPastDue.Add(pastDuePrincipal);
 
-                                context.SaveChanges();
+                                //context.SaveChanges();
 
                                 updateloanTablePastDuePrincipal(pastDuePrincipal.LOANID, pastDuePrincipal.DEBITAMOUNT);
 
                                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialInterestAmountCollected, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
+                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialInterestAmountCollected, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
                                 updateloanTableInterest(item.loanId, partialInterestAmountCollected);
 
@@ -2115,7 +2103,7 @@ namespace FintrakBanking.Repositories.Credit
                                 lien.description = "lien placed due to Account not swinging to positive";
 
                                 var lienReference = casaLien.PlaceLien(lien);
-                                context.SaveChanges();
+                                //context.SaveChanges();
 
                                 //var dataP = new TBL_CASA_LIEN
                                 //{
@@ -2147,7 +2135,7 @@ namespace FintrakBanking.Repositories.Credit
                                 lienPrincipal.description = "lien placed due to Account not funded at Anniversary Date";
 
                                 lienReference = casaLien.PlaceLien(lienPrincipal);
-                                context.SaveChanges();
+                                //context.SaveChanges();
                             }
                             else if (casabalance <= 0)
                             {
@@ -2164,7 +2152,7 @@ namespace FintrakBanking.Repositories.Credit
                                 pastDueInterest.PRODUCTTYPEID = product.PRODUCTTYPEID;
 
                                 transPastDue.Add(pastDueInterest);
-                                context.SaveChanges();
+                                //context.SaveChanges();
                                 updateloanTablePastDueInterest(pastDueInterest.LOANID, pastDueInterest.DEBITAMOUNT);
 
                                 TBL_LOAN_PAST_DUE pastDuePrincipal = new TBL_LOAN_PAST_DUE();
@@ -2180,7 +2168,7 @@ namespace FintrakBanking.Repositories.Credit
                                 pastDuePrincipal.PRODUCTTYPEID = product.PRODUCTTYPEID;
 
                                 transPastDue.Add(pastDuePrincipal);
-                                context.SaveChanges();
+                                //context.SaveChanges();
                                 updateloanTablePastDuePrincipal(pastDuePrincipal.LOANID, pastDuePrincipal.DEBITAMOUNT);
                                 //var data = new TBL_CASA_LIEN
                                 //{
@@ -2212,7 +2200,7 @@ namespace FintrakBanking.Repositories.Credit
                                 lien.description = "lien placed due to Account not funded at Anniversary Date";
 
                                 var lienReference = casaLien.PlaceLien(lien);
-                                context.SaveChanges();
+                                //context.SaveChanges();
                                 //var dataP = new TBL_CASA_LIEN
                                 //{
                                 //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
@@ -2243,7 +2231,7 @@ namespace FintrakBanking.Repositories.Credit
                                 lienPrincipal.description = "lien placed due to Account not funded at Anniversary Date";
 
                                 lienReference = casaLien.PlaceLien(lienPrincipal);
-                                context.SaveChanges();
+                                //context.SaveChanges();
 
                             }
                         }
@@ -2254,26 +2242,24 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
         }
 
         public IEnumerable<LoanRepaymentViewModel> ProcessAuthorisedOverdraftRepaymentPostingForceDebit(DateTime applicationDate)
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var firstDayOfMonth = new DateTime(applicationDate.Year, applicationDate.Month, 1);
@@ -2327,7 +2313,7 @@ namespace FintrakBanking.Repositories.Credit
                         //{
                         List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                        inputTransactions.Add(financeTransaction.PostBuildAuthorisedOverdraftRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                        inputTransactions.Add(financeTransaction.PostBuildAuthorisedOverdraftRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
                         financeTransaction.PostTransaction(inputTransactions);
                         // }
@@ -2338,26 +2324,24 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
         }
 
         public IEnumerable<LoanRepaymentViewModel> ProcessUnauthorisedOverdraftRepaymentPostingForceDebit(DateTime applicationDate)
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var firstDayOfMonth = new DateTime(applicationDate.Year, applicationDate.Month, 1);
@@ -2401,7 +2385,7 @@ namespace FintrakBanking.Repositories.Credit
                         //{
                         List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                        inputTransactions.Add(financeTransaction.PostBuildAuthorisedOverdraftRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                        inputTransactions.Add(financeTransaction.PostBuildAuthorisedOverdraftRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
                         financeTransaction.PostTransaction(inputTransactions);
                         //}
@@ -2412,27 +2396,24 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
-
         }
 
         public IEnumerable<LoanPastDueViewModel> ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(DateTime applicationDate)
 
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var firstDayOfMonth = new DateTime(applicationDate.Year, applicationDate.Month, 1);
@@ -2479,18 +2460,17 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-            }
 
         }
 
@@ -2498,8 +2478,8 @@ namespace FintrakBanking.Repositories.Credit
 
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var firstDayOfMonth = new DateTime(applicationDate.Year, applicationDate.Month, 1);
@@ -2546,26 +2526,26 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-            }
+
 
         }
 
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebitForInterestReview(DateTime applicationDate, int loanId)
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -2609,9 +2589,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                             financeTransaction.PostTransaction(inputTransactions);
 
@@ -2641,9 +2621,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "partial principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "partial principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                             financeTransaction.PostTransaction(inputTransactions);
 
@@ -2683,9 +2663,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                             financeTransaction.PostTransaction(inputTransactions);
 
@@ -2723,9 +2703,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                             financeTransaction.PostTransaction(inputTransactions);
 
@@ -2738,26 +2718,24 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
         }
 
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForInterestReview(DateTime applicationDate, int loanId)
 
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -2810,9 +2788,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                             financeTransaction.PostTransaction(inputTransactions);
                         }
@@ -2834,8 +2812,8 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDue.DEBITAMOUNT, product.PRINCIPALBALANCEGL.Value, "partial principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDue.DEBITAMOUNT, product.PRINCIPALBALANCEGL.Value, "partial principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
                             // place lien on the customer account on partial principal
                             financeTransaction.PostTransaction(inputTransactions);
 
@@ -2901,7 +2879,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDueInterest.DEBITAMOUNT, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDueInterest.DEBITAMOUNT, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment", (int)OperationsEnum.InterestLoanRepayment));
                             financeTransaction.PostTransaction(inputTransactions);
 
                             //var data = new TBL_CASA_LIEN
@@ -3068,27 +3046,25 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
         }
 
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForBulkInterestReview(DateTime applicationDate)
 
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -3141,9 +3117,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
 
                             financeTransaction.PostTransaction(inputTransactions);
                         }
@@ -3165,8 +3141,8 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment"));
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDue.DEBITAMOUNT, product.PRINCIPALBALANCEGL.Value, "partial principal repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDue.DEBITAMOUNT, product.PRINCIPALBALANCEGL.Value, "partial principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
                             // place lien on the customer account on partial principal
                             financeTransaction.PostTransaction(inputTransactions);
 
@@ -3232,7 +3208,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDueInterest.DEBITAMOUNT, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment"));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, pastDueInterest.DEBITAMOUNT, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment", (int)OperationsEnum.InterestLoanRepayment));
                             financeTransaction.PostTransaction(inputTransactions);
 
                             //var data = new TBL_CASA_LIEN
@@ -3398,19 +3374,17 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-            }
         }
 
         #endregion
@@ -3419,8 +3393,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanViewModel> ProcessIntervalFeeandCommissionPosting(DateTime applicationDate)
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
 
@@ -3517,18 +3491,17 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-            }
         }
 
         public IEnumerable<LimitSuspensionViewModel> ProcessNPLByBranchSuspension()
@@ -3844,8 +3817,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool ProcessChargeReversal(int loanId, int operationId, int staffId)
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     bool output = false;
@@ -4023,19 +3996,17 @@ namespace FintrakBanking.Repositories.Credit
                     //return output;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true; ;
                     }
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return false;
 
                 }
-
-            }
 
         }
 
@@ -4098,8 +4069,8 @@ namespace FintrakBanking.Repositories.Credit
         public void OverdraftTopUp(int loanId, decimal amount)
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 bool output = false;
                 try
                 {
@@ -4237,27 +4208,25 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-
-            }
 
         }
 
         public void OverdraftRenewal(int loanId, decimal amount)
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 bool output = false;
                 try
                 {
@@ -4390,24 +4359,23 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-            }
         }
 
         public void OverdraftExtension(int loanId, decimal amount)
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 bool output = false;
                 try
                 {
@@ -4539,20 +4507,17 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-
-
-            }
 
 
         }
@@ -4560,8 +4525,8 @@ namespace FintrakBanking.Repositories.Credit
         public void ChangeOperativeAccount(int casaAccountId, int newCasaAccountId)
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 bool output = false;
                 try
                 {
@@ -4576,24 +4541,23 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-            }
         }
 
         public void SubAllocation(int loanId, decimal amount, DateTime applicationDate, int staffId)
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 bool output = false;
                 try
                 {
@@ -4723,21 +4687,17 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-
-
-
-            }
         }
 
         #endregion
@@ -5946,8 +5906,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool InterestRateReview(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
 
                 try
                 {
@@ -6068,27 +6028,25 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                   // trans.Rollback();
                     output = false;
 
                 }
-                //output = false;
-            }
             return output;
         }
 
         public IEnumerable<LoanViewModel> LoanHistory()
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -6267,27 +6225,24 @@ namespace FintrakBanking.Repositories.Credit
                     //return model;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     return null;
 
                 }
-
-
-            }
 
         }
 
         public IEnumerable<RevolvingLoanViewModel> OverDraftHistory()
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -6408,19 +6363,18 @@ namespace FintrakBanking.Repositories.Credit
                     // return model;
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         return model;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                   // trans.Rollback();
                     return null;
 
                 }
 
-            }
         }
 
         //---------------------------------- Rate Revision End-------------------------------------
@@ -6892,8 +6846,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateLoanPrepaymentSchedule(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 bool output = false;
                 try
 
@@ -6916,26 +6870,26 @@ namespace FintrakBanking.Repositories.Credit
                     List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
                     if (loanInput.payAmount >= (double)(totalamount + accruedInterest))
                     {
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalGL, "Penal Charge"));///change to charge GL
+                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalGL, "Penal Charge", (int)OperationsEnum.PenalFee));///change to charge GL
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest", (int)OperationsEnum.InterestLoanRepayment));
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Principal Amount"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Principal Amount", (int)OperationsEnum.PrincipalLoanRepayment));
 
                         financeTransaction.PostTransaction(inputTransactions);
                         updateloanTableStatus(loanInput.loanId);
                     }
                     else
                     {
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalGL, "Penal Charge"));///change to charge GL
+                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalGL, "Penal Charge", (int)OperationsEnum.PenalFee));///change to charge GL
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest", (int)OperationsEnum.InterestLoanRepayment));
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, partPayment, product.PRINCIPALBALANCEGL.Value, "Principal Amount"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, partPayment, product.PRINCIPALBALANCEGL.Value, "Principal Amount", (int)OperationsEnum.PrincipalLoanRepayment));
 
                         financeTransaction.PostTransaction(inputTransactions);
                         updateloanTableStatus(loanInput.loanId);
@@ -7095,27 +7049,26 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
                 return output;
-            }
 
         }
 
         public bool PaymentFrequencyChange(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -7263,28 +7216,26 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
 
                 return output;
-
-            }
         }
 
         public bool PaymentDateChange(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
 
@@ -7430,19 +7381,18 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         output = true;
                     }
                     output = true;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = true;
 
                 }
 
-            }
             return output;
         }
 
@@ -7450,8 +7400,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool output = false;
             var result = "";
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var pastDueRate = 5;//change to pastdueRate
@@ -7714,49 +7664,47 @@ namespace FintrakBanking.Repositories.Credit
                     else if (Count < 1 && applicationDate <= systemDate)
                     {
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", 1)); //change later));
 
                         result = financeTransaction.PostTransaction(inputTransactions);
                     }
                     else
                     {
-                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal",2));
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, periodicInterestDiff, product.PRINCIPALBALANCEGL.Value, "Interest Reversal"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, periodicInterestDiff, product.PRINCIPALBALANCEGL.Value, "Interest Reversal",3));
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, periodicPrincipalDiff, product.PRINCIPALBALANCEGL.Value, "Principal Reversal"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, periodicPrincipalDiff, product.PRINCIPALBALANCEGL.Value, "Principal Reversal",4));
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, pastDueInterestDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Interest Reversal"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, pastDueInterestDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Interest Reversal",5));
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, pastDuePrincipalDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Principal Reversal"));
+                        inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, pastDuePrincipalDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Principal Reversal",6));
 
                         result = financeTransaction.PostTransaction(inputTransactions);
                     }
                     //var result = context.SaveChanges()>0;
                     if (result != null)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
 
-
-            }
             return output;
         }
 
         public bool RegenerateSchedule(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
 
@@ -7898,20 +7846,17 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-
-
-            }
             return output;
 
         }
@@ -7920,8 +7865,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool output = false;
 
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -7958,20 +7903,17 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                   // trans.Rollback();
                     output = false;
 
                 }
-
-            }
-
 
             return output;
 
@@ -8149,8 +8091,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool CompleteWriteOff(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
 
@@ -8216,19 +8158,17 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-
-            }
             return output;
 
         }
@@ -8236,8 +8176,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanCancellation(int loanId, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -8252,26 +8192,25 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-            }
             return output;
         }
 
         public bool LoanWorkOut(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -8424,20 +8363,17 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = true;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = true;
 
                 }
-
-            }
-
             return output;
 
         }
@@ -8545,8 +8481,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanSales(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
 
@@ -8599,26 +8535,25 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-            }
             return output;
         }
 
         public bool TenorExtension(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
 
@@ -8762,14 +8697,14 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
@@ -8777,15 +8712,14 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 //-------------------------------------------------------
-            }
             return output;
         }
 
         public bool Restructured(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -8933,27 +8867,25 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-
-            }
             return output;
         }
 
         public bool LoanTermination(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
 
@@ -8989,26 +8921,25 @@ namespace FintrakBanking.Repositories.Credit
                     ///call disturbs loan method and posting
                     if (result)
                     {
-                        trans.Commit();
+                       // trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
                 return output;
-            }
         }
 
         public bool LoanRecovery(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 try
                 {
                     var systemDate = generalSetup.GetApplicationDate();
@@ -9164,20 +9095,17 @@ namespace FintrakBanking.Repositories.Credit
                     var result = context.SaveChanges() > 0;
                     if (result)
                     {
-                        trans.Commit();
+                        //trans.Commit();
                         output = true;
                     }
                     output = false;
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback();
+                    //trans.Rollback();
                     output = false;
 
                 }
-
-            }
-
 
             return output;
 
@@ -10679,9 +10607,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment Debt as a result of Defer Document"));
+                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment Debt as a result of Defer Document", (int)OperationsEnum.InterestLoanRepayment));
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment Debt as a result of Defer Document"));
+                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment Debt as a result of Defer Document", (int)OperationsEnum.PrincipalLoanRepayment));
 
                 financeTransaction.PostTransaction(inputTransactions);
 
@@ -12551,5 +12479,13 @@ namespace FintrakBanking.Repositories.Credit
         #endregion END OF COMMERCIAL PAPER
 
 
+
+        #region Flow Type For Custom Facility Repayment Report (isah)
+        public List<ItemValue> FlowTypes()
+        {
+            BulkTransactionPosting flow = new BulkTransactionPosting();
+            return flow.GetFlowTypes();
+        }
+        #endregion
     }
 }
