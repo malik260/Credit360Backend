@@ -227,6 +227,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
 
+        //public virtual TBL_LMSR_APPLICATION_DETAIL TBL_LMSR_APPLICATION_DETAIL { get; set; }
+
         public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE { get; set; }
 
         public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE1 { get; set; }

@@ -330,7 +330,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             productClassName = a.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             relationshipOfficerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPOFFICERID,
                             relationshipManagerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPMANAGERID,
-
+                            dateTimeCreated = a.TBL_LOAN_APPLICATION.APPLICATIONDATE
                         }).ToList();
             foreach (var i in data)
             {
