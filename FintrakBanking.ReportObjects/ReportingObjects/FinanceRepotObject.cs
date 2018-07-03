@@ -174,8 +174,5 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
             return data;
         }
-
-
-
     }
 }
