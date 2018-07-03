@@ -272,7 +272,7 @@ namespace FintrakBanking.Repositories.Customer
             //                       where a.CUSTOMERID == customerId                                   
             //                       select a.FSCAPTIONID);
 
-            var lastFourDates = customerFSDates.Take(4).ToList();
+            var lastFourDates = customerFSDates.OrderBy(x => x).Take(4).ToList();
 
             int count = lastFourDates.Count;
 
@@ -299,7 +299,11 @@ namespace FintrakBanking.Repositories.Customer
                 value.ratioValue3 = count >= 2 ? GetCustomerFSRatio(item.ISRATIO, customerId, (short)item.FSCAPTIONID, lastFourDates[count - 2]) : "0.00";
                 value.ratioValue4 = count >= 1 ? GetCustomerFSRatio(item.ISRATIO, customerId, (short)item.FSCAPTIONID, lastFourDates[count - 1]) : "0.00";
 
-                output.Add(value);
+                if( Convert.ToDecimal(value.ratioValue1) > 0 || Convert.ToDecimal(value.ratioValue2) > 0 ||
+                    Convert.ToDecimal(value.ratioValue3) > 0 || Convert.ToDecimal(value.ratioValue4) > 0)
+                {
+                    output.Add(value);
+                }
             }
 
             return output;
