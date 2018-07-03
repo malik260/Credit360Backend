@@ -124,6 +124,9 @@ namespace FintrakBanking.ViewModels.Reports
         public string searchParamemter { get; set; }
         public int? productClassId { get; set; }
         public string customerCode { get; set; }
+        public int categoryId { get; set; }
+        public int transactionTypeId { get; set; }
+        public int operationId { get; set; }
     }
 
     public class AllLoanViewModel

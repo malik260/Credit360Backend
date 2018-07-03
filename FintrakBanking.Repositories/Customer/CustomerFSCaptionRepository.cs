@@ -113,14 +113,15 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerFSCaptionViewModel> GetCustomerFSCaptionByGroupId(short fsCaptionGroupId)
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION
-                        where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false 
+                        where   a.DELETED == false && a.ISRATIO == false //&& a.FSCAPTIONGROUPID == fsCaptionGroupId 
+                        orderby a.FSCAPTIONGROUPID, a.POSITION
                         select new CustomerFSCaptionViewModel
                         {
-                            fsCaptionId = a.FSCAPTIONID,
-                            fsCaptionName = a.FSCAPTIONNAME,
+                            fsCaptionId = a.FSCAPTIONID,                            
                             fsCaptionGroupId = a.FSCAPTIONGROUPID,
                             position = a.POSITION,
                             fsCaptionGroupName = a.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME,
+                            fsCaptionName = a.FSCAPTIONNAME + " - " + a.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME,
                             isRatio = a.ISRATIO,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
