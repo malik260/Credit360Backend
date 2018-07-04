@@ -32,5 +32,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool EditLoanTransactionDynamicsLms(int id, TransactionDynamicsViewModel entity);
         bool AddTransactionDynamicsLms(TransactionDynamicsViewModel entity);
         IEnumerable<TransactionDynamicsViewModel> GetTransactionDynamicsByDetailIdLms(int detailId);
+        List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByDetailIdLms(int detailId);
     }
 }

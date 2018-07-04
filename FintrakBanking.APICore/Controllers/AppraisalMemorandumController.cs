@@ -257,12 +257,15 @@ namespace FintrakBanking.APICore.Controllers
                 IQueryable<LoanApplicationViewModel> items;
                 items = repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
 
+
                 if (!String.IsNullOrEmpty(searchString))
                 {
+                    searchString = searchString.Trim().ToLower();
                     items = items.Where(x =>
                         x.applicationReferenceNumber.Contains(searchString)
                         //|| x.applicationAmount.ToString().Contains(searchString)
-                        || x.customerName.Contains(searchString)
+                        || x.customerName.ToLower().Contains(searchString)
+                        || x.customerGroupName.ToLower().Contains(searchString)
                         ).Take(itemsPerPage);
                 }
 
@@ -324,15 +327,27 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("regional-loan-application")]
-        public HttpResponseMessage GetRegionalLoanApplications([FromUri] int page, [FromUri] int itemsPerPage)
+        public HttpResponseMessage GetRegionalLoanApplications([FromUri] int page, [FromUri] int itemsPerPage, [FromUri] string searchString)
         {
             try
             {
                 var items = repo.GetRegionalLoanApplications(token.GetStaffId);
 
-                var data = items.OrderByDescending(x => x.applicationDate)
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    searchString = searchString.Trim().ToLower();
+                    items = items.Where(x =>
+                        x.applicationReferenceNumber.Contains(searchString)
+                        || x.customerName.ToLower().Contains(searchString)
+                        || x.customerGroupName.ToLower().Contains(searchString)
+                        ).Take(itemsPerPage);
+                }
+
+                var data = items
+                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
                     .ThenByDescending(x => x.loanApplicationId)
-                    .Skip(page).Take(itemsPerPage)
+                    .Skip(page)
+                    .Take(itemsPerPage)
                     .ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });

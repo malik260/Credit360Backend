@@ -272,6 +272,26 @@ namespace FintrakBanking.Repositories.Credit
             return dynamics.ToList();
         }
 
+        public List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByDetailIdLms(int detailId)
+        {
+            var ids = context.TBL_LMSR_APPLICATION_DETAIL
+                .Where(x => x.LOANREVIEWAPPLICATIONID == detailId)
+                .Select(x => x.PRODUCTID)
+                .Distinct();
+
+            var dynamics = this.context.TBL_TRANSACTION_DYNAMICS.Where(x => ids.Contains((short)x.PRODUCTID))
+            .Select(c => new TransactionDynamicsViewModel
+            {
+                dynamicsId = c.DYNAMICSID,
+                dynamics = c.DYNAMICS,
+                loanApplicationDetailId = c.PRODUCTID,
+                dateTimeCreated = c.DATETIMECREATED,
+                dateTimeUpdated = c.DATETIMEUPDATED,
+            });
+
+            return dynamics.ToList();
+        }
+
         #endregion CP Template
 
         #region LMS approval process
