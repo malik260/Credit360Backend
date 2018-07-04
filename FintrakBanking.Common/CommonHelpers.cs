@@ -381,9 +381,14 @@ namespace FintrakBanking.Common
 
         public static int GetLoanReferanceNumber()
         {
+            //var salt = GetUniqueKey(4).ToUpper();
+
             TimeSpan epochTicks = new TimeSpan(new DateTime(1980, 1, 1).Ticks);
             TimeSpan unixTicks = new TimeSpan(DateTime.UtcNow.Ticks) - epochTicks;
             double unixTime = unixTicks.TotalSeconds;
+
+            //var output = salt + unixTime.ToString();
+
             return (int)unixTime;
         }
 
