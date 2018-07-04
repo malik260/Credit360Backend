@@ -402,10 +402,11 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
             LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate); // LOG CHANGES
 
-            if (workflow.NewState == (int)ApprovalState.Ended)
+            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
                 var lastStatus = workflow.StatusId;
-                PassApplicationToOperation(appl.LOANAPPLICATIONID, (int)OperationsEnum.OfferLetterApproval, model.createdBy, "New pproved application");
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, appl.PRODUCTCLASSID, "New pproved application", true, false);
                 return lastStatus;
             }
 
@@ -910,9 +911,10 @@ namespace FintrakBanking.Repositories.Credit
 
             bool response = (context.SaveChanges() > 0) == result;
 
-            if (workflow.NewState == (int)ApprovalState.Ended)
+            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
-                PassApplicationToOperation(appl.LOANAPPLICATIONID, (int)OperationsEnum.OfferLetterApproval, model.createdBy, "New pproved application");
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, appl.PRODUCTCLASSID, "New pproved application", true, false);
             }
 
             return response;
@@ -1287,21 +1289,21 @@ namespace FintrakBanking.Repositories.Credit
 
         # endregion LMS APPROVAL
 
-        private void PassApplicationToOperation(int applicationId, int operationId, int staffId, string comment)
-        {
-            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-            var staff = context.TBL_STAFF.Find(staffId);
-            workflow.StaffId = staffId;
-            workflow.CompanyId = staff.COMPANYID;
-            workflow.OperationId = operationId;
-            workflow.TargetId = applicationId;
-            workflow.ProductClassId = null;
-            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-            workflow.Comment = comment;
-            workflow.ExternalInitialization = true;
-            workflow.DeferredExecution = false;
-            workflow.LogActivity();
-        }
+        //private void PassApplicationToOperation(int applicationId, int operationId, int staffId, string comment)
+        //{
+        //    var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+        //    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+        //    var staff = context.TBL_STAFF.Find(staffId);
+        //    workflow.StaffId = staffId;
+        //    workflow.CompanyId = staff.COMPANYID;
+        //    workflow.OperationId = operationId;
+        //    workflow.TargetId = applicationId;
+        //    workflow.ProductClassId = null;
+        //    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+        //    workflow.Comment = comment;
+        //    workflow.ExternalInitialization = true;
+        //    workflow.DeferredExecution = false;
+        //    workflow.LogActivity();
+        //}
     }
 }
