@@ -877,13 +877,10 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public string GetRefrenceNumber()
-        {
-            string refnumber = CommonHelpers.GetLoanReferanceNumber().ToString();
-            var data = context.TBL_LOAN_APPLICATION.Where(l => l.APPLICATIONREFERENCENUMBER == refnumber).ToList();
-            if (data.Any())
-            {
-                GetRefrenceNumber();
-            }
+        {           
+           var millisecond = DateTime.Now.Millisecond;
+            string refnumber = CommonHelpers.GetLoanReferanceNumber().ToString() 
+                + "-" + CommonHelpers.AppendZeroString(millisecond, 3);
             return refnumber.ToString();
         }
 
