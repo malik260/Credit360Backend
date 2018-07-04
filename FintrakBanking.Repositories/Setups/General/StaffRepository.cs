@@ -1648,7 +1648,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             ExcelFile ef = ExcelFile.Load(ms,LoadOptions.XlsxDefault);
 
-            ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+            //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+            ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
 
             CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
             var jobTitle = context.TBL_STAFF_JOBTITLE.FirstOrDefault();

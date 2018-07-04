@@ -55,7 +55,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     });
         }
 
-        public int GetLoanApplicationRef()
+        public int  GetLoanApplicationRef()
         {
             return CommonHelpers.GetLoanReferanceNumber();
         }

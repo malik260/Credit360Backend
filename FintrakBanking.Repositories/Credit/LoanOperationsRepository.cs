@@ -376,57 +376,73 @@ namespace FintrakBanking.Repositories.Credit
                                      dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                                  }).ToList();
 
-                    var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                    int count = 0;
+                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
+                    result = bulkPosting.WriteBulkDailyFeeAccuralToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+
+                }
+                else
+                {
                     foreach (var item in model)
                     {
                         item.date = applicationDate;
 
-                        var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
-
-                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
-
-                        count++;
-
-                        addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
-                        addStaging.FLOWTYPE = "fff";
-                        addStaging.FORCEDEBITACCOUNT = "Y";
-                        addStaging.VALUEDATENUMBER = 1;
-                        addStaging.BATCHID = batchCode;
-                        addStaging.BATCHREFID = count;
-                        addStaging.SID = count;
-                        addStaging.COMPANYID = item.companyId;
-                        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                        addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
-                        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-                        addStaging.DESCRIPTION = "Fee Daily Interest Accrual Posting";
-                        addStaging.DESTINATIONBRANCHID = item.branchId;
-                        addStaging.ISPOSTED = false;
-                        addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
-                        addStaging.POSTEDBY = "SYSTEM";
-                        addStaging.POSTEDDATE = item.date;
-                        addStaging.SOURCEBRANCHID = item.branchId;
-                        addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
-                        addStaging.VALUEDATE = item.date;
-                        addStaging.TRANSACTIONTYPE = "BP";
-                        addStaging.BANKID = "01";
-                        this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
-                        context.SaveChanges();
-                        if (setup.USE_THIRD_PARTY_INTEGRATION == false)
-                        {
-                            result = financeTransaction.PostDailyLoansInterestAccrual(item);
-                        }
-
-                        //financeTransaction.PostDailyLoansInterestAccrual(item);/// change to Daily Fee Accrued 
-
+                        result = financeTransaction.PostDailyLoansInterestAccrual(item);
                     }
-                    if (setup.USE_THIRD_PARTY_INTEGRATION)
-                        result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+                }
+                //var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                //int count = 0;
 
-                    if (result)
+                //foreach (var item in model)
+                //{
+                //    item.date = applicationDate;
+
+                //    var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
+
+                //    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+
+                //    count++;
+
+                //    //addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
+                //    //addStaging.FLOWTYPE = "fff";
+                //    //addStaging.FORCEDEBITACCOUNT = "Y";
+                //    //addStaging.VALUEDATENUMBER = 1;
+                //    //addStaging.BATCHID = batchCode;
+                //    //addStaging.BATCHREFID = count;
+                //    //addStaging.SID = count;
+                //    //addStaging.COMPANYID = item.companyId;
+                //    //addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                //    //addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                //    //addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
+                //    //addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                //    //addStaging.DESCRIPTION = "Fee Daily Interest Accrual Posting";
+                //    //addStaging.DESTINATIONBRANCHID = item.branchId;
+                //    //addStaging.ISPOSTED = false;
+                //    //addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
+                //    //addStaging.POSTEDBY = "SYSTEM";
+                //    //addStaging.POSTEDDATE = item.date;
+                //    //addStaging.SOURCEBRANCHID = item.branchId;
+                //    //addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                //    //addStaging.VALUEDATE = item.date;
+                //    //addStaging.TRANSACTIONTYPE = "BP";
+                //    //addStaging.BANKID = "01";
+                //    //this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+                //    //context.SaveChanges();
+                //    if (setup.USE_THIRD_PARTY_INTEGRATION == false)
+                //    {
+                //        result = financeTransaction.PostDailyLoansInterestAccrual(item);
+                //    }
+
+                //    //financeTransaction.PostDailyLoansInterestAccrual(item);/// change to Daily Fee Accrued 
+
+                //}
+                //if (setup.USE_THIRD_PARTY_INTEGRATION)
+                //    result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+
+                if (result)
                     {
                         //trans.Commit();
                         return model;
@@ -521,56 +537,72 @@ namespace FintrakBanking.Repositories.Credit
                                      dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                                  }).ToList();
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                    int count = 0;
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
+                    result = bulkPosting.WriteBulkDailyTaxAccuralToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
 
+                }
+                else
+                {
                     foreach (var item in model)
                     {
                         item.date = applicationDate;
 
-                        var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
-
-                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
-
-                        count++;
-
-                        addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
-                        addStaging.FLOWTYPE = "fff";
-                        addStaging.FORCEDEBITACCOUNT = "Y";
-                        addStaging.VALUEDATENUMBER = 1;
-                        addStaging.BATCHID = batchCode;
-                        addStaging.BATCHREFID = count;
-                        addStaging.SID = count;
-                        addStaging.COMPANYID = item.companyId;
-                        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                        addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
-                        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-                        addStaging.DESCRIPTION = "Tax Daily Interest Accrual Posting";
-                        addStaging.DESTINATIONBRANCHID = item.branchId;
-                        addStaging.ISPOSTED = false;
-                        addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
-                        addStaging.POSTEDBY = "SYSTEM";
-                        addStaging.POSTEDDATE = item.date;
-                        addStaging.SOURCEBRANCHID = item.branchId;
-                        addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
-                        addStaging.VALUEDATE = item.date;
-                        addStaging.TRANSACTIONTYPE = "BP";
-                        addStaging.BANKID = "01";
-                        this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
-                        context.SaveChanges();
-                        if (setup.USE_THIRD_PARTY_INTEGRATION == false)
-                        {
-                            result = financeTransaction.PostDailyLoansInterestAccrual(item);
-                        }
-                        //financeTransaction.PostDailyLoansInterestAccrual(item);/// change to Daily Tax Accrued 
-
+                        result = financeTransaction.PostDailyLoansInterestAccrual(item);
                     }
-                    if (setup.USE_THIRD_PARTY_INTEGRATION)
-                        result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+                }
+                //var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                //int count = 0;
 
-                    if (result)
+
+                //foreach (var item in model)
+                //{
+                //    item.date = applicationDate;
+
+                //    var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
+
+                //    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+
+                //    count++;
+
+                //    addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
+                //    addStaging.FLOWTYPE = "fff";
+                //    addStaging.FORCEDEBITACCOUNT = "Y";
+                //    addStaging.VALUEDATENUMBER = 1;
+                //    addStaging.BATCHID = batchCode;
+                //    addStaging.BATCHREFID = count;
+                //    addStaging.SID = count;
+                //    addStaging.COMPANYID = item.companyId;
+                //    addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                //    addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                //    addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
+                //    addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                //    addStaging.DESCRIPTION = "Tax Daily Interest Accrual Posting";
+                //    addStaging.DESTINATIONBRANCHID = item.branchId;
+                //    addStaging.ISPOSTED = false;
+                //    addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
+                //    addStaging.POSTEDBY = "SYSTEM";
+                //    addStaging.POSTEDDATE = item.date;
+                //    addStaging.SOURCEBRANCHID = item.branchId;
+                //    addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                //    addStaging.VALUEDATE = item.date;
+                //    addStaging.TRANSACTIONTYPE = "BP";
+                //    addStaging.BANKID = "01";
+                //    this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+                //    context.SaveChanges();
+                //    if (setup.USE_THIRD_PARTY_INTEGRATION == false)
+                //    {
+                //        result = financeTransaction.PostDailyLoansInterestAccrual(item);
+                //    }
+                //    //financeTransaction.PostDailyLoansInterestAccrual(item);/// change to Daily Tax Accrued 
+
+                //}
+                //if (setup.USE_THIRD_PARTY_INTEGRATION)
+                //    result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+
+                if (result)
                     {
                         //trans.Commit();
                         return model;
@@ -666,57 +698,73 @@ namespace FintrakBanking.Repositories.Credit
                                      //exchangeRate = groupedQ.Key.EXCHANGERATE,
                                      //referenceNumber = groupedQ.Key.REFERENCENUMBER,
                                      dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
-                                 });
+                                 }).ToList();
 
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                    int count = 0;
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
+                    result = bulkPosting.WriteBulkDailyAuthorisedOverdraftInterestAccuralToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+
+                }
+                else
+                {
                     foreach (var item in model)
                     {
                         item.date = applicationDate;
 
-                        var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
-
-                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
-
-                        count++;
-
-                        addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
-                        addStaging.FLOWTYPE = "fff";
-                        addStaging.FORCEDEBITACCOUNT = "Y";
-                        addStaging.VALUEDATENUMBER = 1;
-                        addStaging.BATCHID = batchCode;
-                        addStaging.BATCHREFID = count;
-                        addStaging.SID = count;
-                        addStaging.COMPANYID = item.companyId;
-                        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                        addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
-                        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-                        addStaging.DESCRIPTION = "Authorised Overdraft Daily Interest Accrual Posting";
-                        addStaging.DESTINATIONBRANCHID = item.branchId;
-                        addStaging.ISPOSTED = false;
-                        addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
-                        addStaging.POSTEDBY = "SYSTEM";
-                        addStaging.POSTEDDATE = item.date;
-                        addStaging.SOURCEBRANCHID = item.branchId;
-                        addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
-                        addStaging.VALUEDATE = item.date;
-                        addStaging.TRANSACTIONTYPE = "BP";
-                        addStaging.BANKID = "01";
-                        this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
-                        context.SaveChanges();
-                        if (setup.USE_THIRD_PARTY_INTEGRATION == false)
-                        {
-                            result = financeTransaction.PostDailyLoansInterestAccrual(item);
-                        }
-                        // financeTransaction.PostDailyAuthorisedOverdraftInterestAccrual(item);
+                        result = financeTransaction.PostDailyLoansInterestAccrual(item);
                     }
-                    if (setup.USE_THIRD_PARTY_INTEGRATION)
-                        result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+                }
+                //var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                //int count = 0;
 
-                    if (result)
+                //foreach (var item in model)
+                //{
+                //    item.date = applicationDate;
+
+                //    var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
+
+                //    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+
+                //    count++;
+
+                //    addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
+                //    addStaging.FLOWTYPE = "fff";
+                //    addStaging.FORCEDEBITACCOUNT = "Y";
+                //    addStaging.VALUEDATENUMBER = 1;
+                //    addStaging.BATCHID = batchCode;
+                //    addStaging.BATCHREFID = count;
+                //    addStaging.SID = count;
+                //    addStaging.COMPANYID = item.companyId;
+                //    addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                //    addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                //    addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
+                //    addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                //    addStaging.DESCRIPTION = "Authorised Overdraft Daily Interest Accrual Posting";
+                //    addStaging.DESTINATIONBRANCHID = item.branchId;
+                //    addStaging.ISPOSTED = false;
+                //    addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
+                //    addStaging.POSTEDBY = "SYSTEM";
+                //    addStaging.POSTEDDATE = item.date;
+                //    addStaging.SOURCEBRANCHID = item.branchId;
+                //    addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                //    addStaging.VALUEDATE = item.date;
+                //    addStaging.TRANSACTIONTYPE = "BP";
+                //    addStaging.BANKID = "01";
+                //    this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+                //    context.SaveChanges();
+                //    if (setup.USE_THIRD_PARTY_INTEGRATION == false)
+                //    {
+                //        result = financeTransaction.PostDailyLoansInterestAccrual(item);
+                //    }
+                //    // financeTransaction.PostDailyAuthorisedOverdraftInterestAccrual(item);
+                //}
+                //if (setup.USE_THIRD_PARTY_INTEGRATION)
+                //    result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+
+                if (result)
                     {
                         //trans.Commit();
                         return model;
@@ -817,55 +865,71 @@ namespace FintrakBanking.Repositories.Credit
                                  }).ToList();
 
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                    int count = 0;
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
+                    result = bulkPosting.WriteBulkDailyUnauthorisedOverdraftInterestAccuralToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+
+                }
+                else
+                {
                     foreach (var item in model)
                     {
                         item.date = applicationDate;
 
-                        var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
-
-                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
-
-                        count++;
-
-                        addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
-                        addStaging.FLOWTYPE = "fff";
-                        addStaging.FORCEDEBITACCOUNT = "Y";
-                        addStaging.VALUEDATENUMBER = 1;
-                        addStaging.BATCHID = batchCode;
-                        addStaging.BATCHREFID = count;
-                        addStaging.SID = count;
-                        addStaging.COMPANYID = item.companyId;
-                        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                        addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
-                        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-                        addStaging.DESCRIPTION = "Unauthorised Overdraft Daily Interest Accrual Posting";
-                        addStaging.DESTINATIONBRANCHID = item.branchId;
-                        addStaging.ISPOSTED = false;
-                        addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
-                        addStaging.POSTEDBY = "SYSTEM";
-                        addStaging.POSTEDDATE = item.date;
-                        addStaging.SOURCEBRANCHID = item.branchId;
-                        addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
-                        addStaging.VALUEDATE = item.date;
-                        addStaging.TRANSACTIONTYPE = "BP";
-                        addStaging.BANKID = "01";
-                        this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
-                        context.SaveChanges();
-                        if (setup.USE_THIRD_PARTY_INTEGRATION == false)
-                        {
-                            result = financeTransaction.PostDailyLoansInterestAccrual(item);
-                        }
-                        //financeTransaction.PostDailyUnauthorisedOverdraftInterestAccrual(item);
+                        result = financeTransaction.PostDailyLoansInterestAccrual(item);
                     }
+                }
+                //var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                //int count = 0;
 
-                    if (setup.USE_THIRD_PARTY_INTEGRATION)
-                        result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+                //foreach (var item in model)
+                //{
+                //    item.date = applicationDate;
 
-                    if (result)
+                //    var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
+
+                //    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+
+                //    count++;
+
+                //    addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
+                //    addStaging.FLOWTYPE = "fff";
+                //    addStaging.FORCEDEBITACCOUNT = "Y";
+                //    addStaging.VALUEDATENUMBER = 1;
+                //    addStaging.BATCHID = batchCode;
+                //    addStaging.BATCHREFID = count;
+                //    addStaging.SID = count;
+                //    addStaging.COMPANYID = item.companyId;
+                //    addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                //    addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                //    addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
+                //    addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                //    addStaging.DESCRIPTION = "Unauthorised Overdraft Daily Interest Accrual Posting";
+                //    addStaging.DESTINATIONBRANCHID = item.branchId;
+                //    addStaging.ISPOSTED = false;
+                //    addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
+                //    addStaging.POSTEDBY = "SYSTEM";
+                //    addStaging.POSTEDDATE = item.date;
+                //    addStaging.SOURCEBRANCHID = item.branchId;
+                //    addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                //    addStaging.VALUEDATE = item.date;
+                //    addStaging.TRANSACTIONTYPE = "BP";
+                //    addStaging.BANKID = "01";
+                //    this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+                //    context.SaveChanges();
+                //    if (setup.USE_THIRD_PARTY_INTEGRATION == false)
+                //    {
+                //        result = financeTransaction.PostDailyLoansInterestAccrual(item);
+                //    }
+                //    //financeTransaction.PostDailyUnauthorisedOverdraftInterestAccrual(item);
+                //}
+
+                //if (setup.USE_THIRD_PARTY_INTEGRATION)
+                //    result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+
+                if (result)
                     {
                         //trans.Commit();
                         return model;
@@ -968,54 +1032,70 @@ namespace FintrakBanking.Repositories.Credit
                                  }).ToList();
 
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                    int count = 0;
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
+                    result = bulkPosting.WriteBulkDailyPastDueInterestAccrualToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+
+                }
+                else
+                {
                     foreach (var item in model)
                     {
                         item.date = applicationDate;
 
-                        var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
-
-                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
-
-                        count++;
-
-                        addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
-                        addStaging.FLOWTYPE = "fff";
-                        addStaging.FORCEDEBITACCOUNT = "Y";
-                        addStaging.VALUEDATENUMBER = 1;
-                        addStaging.BATCHID = batchCode;
-                        addStaging.BATCHREFID = count;
-                        addStaging.SID = count;
-                        addStaging.COMPANYID = item.companyId;
-                        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                        addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
-                        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-                        addStaging.DESCRIPTION = "Past Due Daily Interest Accrual Posting";
-                        addStaging.DESTINATIONBRANCHID = item.branchId;
-                        addStaging.ISPOSTED = false;
-                        addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
-                        addStaging.POSTEDBY = "SYSTEM";
-                        addStaging.POSTEDDATE = item.date;
-                        addStaging.SOURCEBRANCHID = item.branchId;
-                        addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
-                        addStaging.VALUEDATE = item.date;
-                        addStaging.TRANSACTIONTYPE = "BP";
-                        addStaging.BANKID = "01";
-                        this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
-                        context.SaveChanges();
-                        if (setup.USE_THIRD_PARTY_INTEGRATION == false)
-                        {
-                            result = financeTransaction.PostDailyLoansInterestAccrual(item);
-                        }
-                        //financeTransaction.PostDailyPastDueInterestAccrual(item);
+                        result = financeTransaction.PostDailyLoansInterestAccrual(item);
                     }
-                    if (setup.USE_THIRD_PARTY_INTEGRATION)
-                        result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+                }
+                //var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                //int count = 0;
 
-                    if (result)
+                //foreach (var item in model)
+                //{
+                //    item.date = applicationDate;
+
+                //    var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
+
+                //    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+
+                //    count++;
+
+                //    addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
+                //    addStaging.FLOWTYPE = "fff";
+                //    addStaging.FORCEDEBITACCOUNT = "Y";
+                //    addStaging.VALUEDATENUMBER = 1;
+                //    addStaging.BATCHID = batchCode;
+                //    addStaging.BATCHREFID = count;
+                //    addStaging.SID = count;
+                //    addStaging.COMPANYID = item.companyId;
+                //    addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                //    addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                //    addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
+                //    addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                //    addStaging.DESCRIPTION = "Past Due Daily Interest Accrual Posting";
+                //    addStaging.DESTINATIONBRANCHID = item.branchId;
+                //    addStaging.ISPOSTED = false;
+                //    addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
+                //    addStaging.POSTEDBY = "SYSTEM";
+                //    addStaging.POSTEDDATE = item.date;
+                //    addStaging.SOURCEBRANCHID = item.branchId;
+                //    addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                //    addStaging.VALUEDATE = item.date;
+                //    addStaging.TRANSACTIONTYPE = "BP";
+                //    addStaging.BANKID = "01";
+                //    this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+                //    context.SaveChanges();
+                //    if (setup.USE_THIRD_PARTY_INTEGRATION == false)
+                //    {
+                //        result = financeTransaction.PostDailyLoansInterestAccrual(item);
+                //    }
+                //    //financeTransaction.PostDailyPastDueInterestAccrual(item);
+                //}
+                //if (setup.USE_THIRD_PARTY_INTEGRATION)
+                //    result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+
+                if (result)
                     {
                       //  trans.Commit();
                         return model;
@@ -1116,54 +1196,70 @@ namespace FintrakBanking.Repositories.Credit
                                  }).ToList();
 
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                    int count = 0;
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
+                    result = bulkPosting.WriteBulkDailyPastDueInterestAccrualToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+
+                }
+                else
+                {
                     foreach (var item in model)
                     {
                         item.date = applicationDate;
 
-                        var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
-
-                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
-
-                        count++;
-
-                        addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
-                        addStaging.FLOWTYPE = "fff";
-                        addStaging.FORCEDEBITACCOUNT = "Y";
-                        addStaging.VALUEDATENUMBER = 1;
-                        addStaging.BATCHID = batchCode;
-                        addStaging.BATCHREFID = count;
-                        addStaging.SID = count;
-                        addStaging.COMPANYID = item.companyId;
-                        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                        addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
-                        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-                        addStaging.DESCRIPTION = "Past Due Daily Interest Accrual Posting";
-                        addStaging.DESTINATIONBRANCHID = item.branchId;
-                        addStaging.ISPOSTED = false;
-                        addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
-                        addStaging.POSTEDBY = "SYSTEM";
-                        addStaging.POSTEDDATE = item.date;
-                        addStaging.SOURCEBRANCHID = item.branchId;
-                        addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
-                        addStaging.VALUEDATE = item.date;
-                        addStaging.TRANSACTIONTYPE = "BP";
-                        addStaging.BANKID = "01";
-                        this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
-                        context.SaveChanges();
-                        if (setup.USE_THIRD_PARTY_INTEGRATION == false)
-                        {
-                            result = financeTransaction.PostDailyLoansInterestAccrual(item);
-                        }
-                        //financeTransaction.PostDailyPastDuePrincipalAccrual(item);
+                        result = financeTransaction.PostDailyLoansInterestAccrual(item);
                     }
-                    if (setup.USE_THIRD_PARTY_INTEGRATION)
-                        result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+                }
+                //var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                //int count = 0;
 
-                    if (result)
+                //foreach (var item in model)
+                //{
+                //    item.date = applicationDate;
+
+                //    var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
+
+                //    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+
+                //    count++;
+
+                //    addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
+                //    addStaging.FLOWTYPE = "fff";
+                //    addStaging.FORCEDEBITACCOUNT = "Y";
+                //    addStaging.VALUEDATENUMBER = 1;
+                //    addStaging.BATCHID = batchCode;
+                //    addStaging.BATCHREFID = count;
+                //    addStaging.SID = count;
+                //    addStaging.COMPANYID = item.companyId;
+                //    addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                //    addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                //    addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
+                //    addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                //    addStaging.DESCRIPTION = "Past Due Daily Interest Accrual Posting";
+                //    addStaging.DESTINATIONBRANCHID = item.branchId;
+                //    addStaging.ISPOSTED = false;
+                //    addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
+                //    addStaging.POSTEDBY = "SYSTEM";
+                //    addStaging.POSTEDDATE = item.date;
+                //    addStaging.SOURCEBRANCHID = item.branchId;
+                //    addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                //    addStaging.VALUEDATE = item.date;
+                //    addStaging.TRANSACTIONTYPE = "BP";
+                //    addStaging.BANKID = "01";
+                //    this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+                //    context.SaveChanges();
+                //    if (setup.USE_THIRD_PARTY_INTEGRATION == false)
+                //    {
+                //        result = financeTransaction.PostDailyLoansInterestAccrual(item);
+                //    }
+                //    //financeTransaction.PostDailyPastDuePrincipalAccrual(item);
+                //}
+                //if (setup.USE_THIRD_PARTY_INTEGRATION)
+                //    result = WriteBulkPostingToStaging(applicationDate, "BP", batchCode);
+
+                if (result)
                     {
                         //trans.Commit();
                         return model;
@@ -1823,9 +1919,12 @@ namespace FintrakBanking.Repositories.Credit
 
             //using (var trans = context.Database.BeginTransaction())
             //{
-                try
+            
+            try
+
                 {
-                    var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
+                bool result = false;
+                var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
                                  join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                                  where a.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
                                  && b.ALLOWFORCEDEBITREPAYMENT == false && a.PERIODPRINCIPALAMOUNT != 0 && a.PERIODINTERESTAMOUNT != 0
@@ -1850,16 +1949,24 @@ namespace FintrakBanking.Repositories.Credit
 
 
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                    //var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                    int count = 0;
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
                     foreach (var item in model)
                     {
-                        var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+                        BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
+                        result = bulkPosting.WriteBulkLoanRepaymentPostingPastDueToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+                    }
+
+                }
+                else
+                {
+                    
+                    foreach (var item in model)
+                    {
                         var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
-                        var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId && x.COMPANYID == item.companyId);
-                        //var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
+                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+                        var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId && x.COMPANYID == item.companyId);
                         var casabalance = casa.AVAILABLEBALANCE;
                         decimal principalAmountNotCollected = 0;
                         //decimal balanceAfterInterestAmountCollection = 0;
@@ -1867,379 +1974,300 @@ namespace FintrakBanking.Repositories.Credit
                         decimal partialInterestAmountCollected = 0;
                         decimal interestAmountNotCollected = 0;
 
-                        if (setup.USE_THIRD_PARTY_INTEGRATION)
+                        if (casabalance >= item.totalAmount)
                         {
-                            var addStagingInterest = new TBL_CUSTOM_TRANSACTION_BULK();
 
-                            count++;
+                            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                            addStagingInterest.AMOUNT = (decimal)item.periodInterestAmount;
-                            addStagingInterest.FLOWTYPE = "BIF";
-                            addStagingInterest.FORCEDEBITACCOUNT = "Y";
-                            addStagingInterest.VALUEDATENUMBER = 1;
-                            addStagingInterest.BATCHID = batchCode;
-                            addStagingInterest.BATCHREFID = count;
-                            addStagingInterest.SID = count;
-                            addStagingInterest.COMPANYID = item.companyId;
-                            addStagingInterest.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                            addStagingInterest.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                            addStagingInterest.CURRENCYRATE = financeTransaction.GetExchangeRate(applicationDate, item.currencyId, item.companyId).sellingRate;
-                            addStagingInterest.DEBITACCOUNT = casa.PRODUCTACCOUNTNUMBER;//context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).ACCOUNTCODE;
-                            addStagingInterest.DESCRIPTION = "Interest Repayment";
-                            addStagingInterest.DESTINATIONBRANCHID = item.branchId;
-                            addStagingInterest.ISPOSTED = false;
-                            addStagingInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;///change to periodInterestAmount
-                            addStagingInterest.POSTEDBY = "SYSTEM";
-                            addStagingInterest.POSTEDDATE = applicationDate;
-                            addStagingInterest.SOURCEBRANCHID = item.branchId;
-                            addStagingInterest.SOURCEREFERENCENUMBER = item.loanRefNo;
-                            addStagingInterest.VALUEDATE = applicationDate;
-                            addStagingInterest.TRANSACTIONTYPE = "BL";
-                            addStagingInterest.BANKID = "01";
-                            addStagingInterest.PRODUCTID = product.PRODUCTID;
-                            addStagingInterest.CURRENCYID = item.currencyId;
-                            addStagingInterest.CREDITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
-                            addStagingInterest.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;//product.INTERESTRECEIVABLEPAYABLEGL.Value;
-                            addStagingInterest.CREDITCASAACCOUNTID = null;
-                            addStagingInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
-                            this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
+
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
+
+                            updateloanTablePrincipal(item.loanId, item.periodPrincipalAmount);
+                            updateloanTableInterest(item.loanId, item.periodInterestAmount);
+                            //financeTransaction.PostTransaction(inputTransactions);
+                        }
+                        else if (casabalance > item.periodInterestAmount && casabalance < item.totalAmount)
+                        {
+                            partialPrincipalAmountCollected = casabalance - item.periodInterestAmount; ;
+                            principalAmountNotCollected = item.periodPrincipalAmount - partialPrincipalAmountCollected;
+                            TBL_LOAN_PAST_DUE pastDue = new TBL_LOAN_PAST_DUE();
+
+
+                            pastDue.LOANID = item.loanId;
+                            pastDue.PARENT_PASTDUECODE = PastDueCode;
+                            pastDue.CREDITAMOUNT = 0;
+                            pastDue.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
+                            pastDue.DEBITAMOUNT = Math.Abs(principalAmountNotCollected);
+                            pastDue.DATE = item.paymentDate;
+                            pastDue.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
+                            pastDue.PARENT_PASTDUECODE = item.loanRefNo;
+                            pastDue.PRODUCTTYPEID = product.PRODUCTTYPEID;
+
+                            transPastDue.Add(pastDue);
+                            //context.SaveChanges();
+                            updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+
+                            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialPrincipalAmountCollected, product.PRINCIPALBALANCEGL.Value, "partial principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
+
+                            updateloanTableInterest(item.loanId, item.periodInterestAmount);
+                            updateloanTablePrincipal(item.loanId, partialPrincipalAmountCollected);
+
+                            // place lien on the customer account on partial principal
+                            //financeTransaction.PostTransaction(inputTransactions);
+
+                            //var data = new TBL_CASA_LIEN
+                            //{
+                            //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                            //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                            //    SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
+                            //    BRANCHID = item.branchId,
+                            //    COMPANYID = item.companyId,
+                            //    LIENCREDITAMOUNT = pastDue.DEBITAMOUNT,
+                            //    LIENDEBITAMOUNT = 0,
+                            //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                            //    CREATEDBY = (int)SystemStaff.System,
+                            //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
+                            //    DATECREATED = generalSetup.GetApplicationDate()
+
+                            //};
+
+                            //context.TBL_CASA_LIEN.Add(data);
+
+                            CasaLienViewModel lien = new CasaLienViewModel();
+
+                            lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                            lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
+                            lien.lienAmount = pastDue.DEBITAMOUNT;
+                            lien.branchId = item.branchId;
+                            lien.companyId = item.companyId;
+                            lien.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                            lien.createdBy = (int)SystemStaff.System;
+                            lien.description = "lien placed due to Account not funded at Anniversary Date";
+
+                            casaLien.PlaceLien(lien);
+
                             //context.SaveChanges();
 
-                            //WriteBulkPostingToStaging(applicationDate, "BL");
-                            var addStagingPrincipal = new TBL_CUSTOM_TRANSACTION_BULK();
-
-                            count++;
-
-                            addStagingPrincipal.AMOUNT = (decimal)item.periodPrincipalAmount;
-                            addStagingPrincipal.FLOWTYPE = "BPP";
-                            addStagingPrincipal.FORCEDEBITACCOUNT = "Y";
-                            addStagingPrincipal.VALUEDATENUMBER = 1;
-                            addStagingPrincipal.BATCHID = batchCode;
-                            addStagingPrincipal.BATCHREFID = count;
-                            addStagingPrincipal.SID = count;
-                            addStagingPrincipal.COMPANYID = item.companyId;
-                            addStagingPrincipal.CREDITACCOUNT = finacle.GetGlAccountCode(product.PRINCIPALBALANCEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                            addStagingPrincipal.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                            addStagingPrincipal.CURRENCYRATE = financeTransaction.GetExchangeRate(applicationDate, item.currencyId, item.companyId).sellingRate;
-                            addStagingPrincipal.DEBITACCOUNT = casa.PRODUCTACCOUNTNUMBER;//context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).ACCOUNTCODE;
-                            addStagingPrincipal.DESCRIPTION = "Principal Repayment";
-                            addStagingPrincipal.DESTINATIONBRANCHID = item.branchId;
-                            addStagingPrincipal.ISPOSTED = false;
-                            addStagingPrincipal.OPERATIONID = (int)OperationsEnum.PrincipalLoanRepayment;//change to periodPrincipalAmount
-                            addStagingPrincipal.POSTEDBY = "SYSTEM";
-                            addStagingPrincipal.POSTEDDATE = applicationDate;
-                            addStagingPrincipal.SOURCEBRANCHID = item.branchId;
-                            addStagingPrincipal.SOURCEREFERENCENUMBER = item.loanRefNo;
-                            addStagingPrincipal.VALUEDATE = applicationDate;
-                            addStagingPrincipal.TRANSACTIONTYPE = "BL";
-                            addStagingPrincipal.BANKID = "01";
-                            addStagingPrincipal.PRODUCTID = product.PRODUCTID;
-                            addStagingPrincipal.CURRENCYID = item.currencyId;
-                            addStagingPrincipal.CREDITGLACCOUNTID = product.PRINCIPALBALANCEGL.Value;
-                            addStagingPrincipal.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;// product.INTERESTRECEIVABLEPAYABLEGL.Value;
-                            addStagingPrincipal.CREDITCASAACCOUNTID = null;
-                            addStagingPrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
-                            this.context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPrincipal);
-                            //var ttt = context.SaveChanges()>0;
-                            WriteBulkPostingToStaging(applicationDate, "BL", batchCode);
                         }
-
-                        else
+                        else if (casabalance < item.periodInterestAmount && casabalance > 0)
                         {
-                            if (casabalance >= item.totalAmount)
-                            {
+                            partialInterestAmountCollected = casabalance;
+                            interestAmountNotCollected = item.periodInterestAmount - partialInterestAmountCollected;
+                            TBL_LOAN_PAST_DUE pastDueInterest = new TBL_LOAN_PAST_DUE();
 
-                                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                            pastDueInterest.LOANID = item.loanId;
+                            pastDueInterest.PASTDUECODE = PastDueCode;
+                            pastDueInterest.CREDITAMOUNT = 0;
+                            pastDueInterest.DESCRIPTION = "Past Due Entries on Interest as a result of Account not funded";
+                            pastDueInterest.DEBITAMOUNT = Math.Abs(interestAmountNotCollected);
+                            pastDueInterest.DATE = item.paymentDate;
+                            pastDueInterest.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Interest;
+                            pastDueInterest.PARENT_PASTDUECODE = item.loanRefNo;
+                            pastDueInterest.PRODUCTTYPEID = product.PRODUCTTYPEID;
 
-                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
+                            transPastDue.Add(pastDueInterest);
 
-                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
+                            //context.SaveChanges();
 
-                                updateloanTablePrincipal(item.loanId, item.periodPrincipalAmount);
-                                updateloanTableInterest(item.loanId, item.periodInterestAmount);
-                                //financeTransaction.PostTransaction(inputTransactions);
-                            }
-                            else if (casabalance > item.periodInterestAmount && casabalance < item.totalAmount)
-                            {
-                                partialPrincipalAmountCollected = casabalance - item.periodInterestAmount; ;
-                                principalAmountNotCollected = item.periodPrincipalAmount - partialPrincipalAmountCollected;
-                                TBL_LOAN_PAST_DUE pastDue = new TBL_LOAN_PAST_DUE();
+                            updateloanTablePastDueInterest(pastDueInterest.LOANID, pastDueInterest.DEBITAMOUNT);
 
+                            TBL_LOAN_PAST_DUE pastDuePrincipal = new TBL_LOAN_PAST_DUE();
 
-                                pastDue.LOANID = item.loanId;
-                                pastDue.PARENT_PASTDUECODE = PastDueCode;
-                                pastDue.CREDITAMOUNT = 0;
-                                pastDue.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
-                                pastDue.DEBITAMOUNT = Math.Abs(principalAmountNotCollected);
-                                pastDue.DATE = item.paymentDate;
-                                pastDue.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
-                                pastDue.PARENT_PASTDUECODE = item.loanRefNo;
-                                pastDue.PRODUCTTYPEID = product.PRODUCTTYPEID;
+                            pastDuePrincipal.LOANID = item.loanId;
+                            pastDuePrincipal.PASTDUECODE = PastDueCode;
+                            pastDuePrincipal.CREDITAMOUNT = 0;
+                            pastDuePrincipal.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
+                            pastDuePrincipal.DEBITAMOUNT = item.periodPrincipalAmount;
+                            pastDuePrincipal.DATE = item.paymentDate;
+                            pastDuePrincipal.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
+                            pastDuePrincipal.PARENT_PASTDUECODE = item.loanRefNo;
+                            pastDuePrincipal.PRODUCTTYPEID = product.PRODUCTTYPEID;
 
-                                transPastDue.Add(pastDue);
-                                //context.SaveChanges();
-                                updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+                            transPastDue.Add(pastDuePrincipal);
 
-                                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                            //context.SaveChanges();
 
-                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment", (int)OperationsEnum.InterestLoanRepayment));
-                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialPrincipalAmountCollected, product.PRINCIPALBALANCEGL.Value, "partial principal repayment", (int)OperationsEnum.PrincipalLoanRepayment));
+                            updateloanTablePastDuePrincipal(pastDuePrincipal.LOANID, pastDuePrincipal.DEBITAMOUNT);
 
-                                updateloanTableInterest(item.loanId, item.periodInterestAmount);
-                                updateloanTablePrincipal(item.loanId, partialPrincipalAmountCollected);
+                            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                                // place lien on the customer account on partial principal
-                                //financeTransaction.PostTransaction(inputTransactions);
+                            inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialInterestAmountCollected, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment", (int)OperationsEnum.InterestLoanRepayment));
 
-                                //var data = new TBL_CASA_LIEN
-                                //{
-                                //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                                //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                                //    SOURCEREFERENCENUMBER = pastDue.PARENT_PASTDUECODE,
-                                //    BRANCHID = item.branchId,
-                                //    COMPANYID = item.companyId,
-                                //    LIENCREDITAMOUNT = pastDue.DEBITAMOUNT,
-                                //    LIENDEBITAMOUNT = 0,
-                                //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                                //    CREATEDBY = (int)SystemStaff.System,
-                                //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                                //    DATECREATED = generalSetup.GetApplicationDate()
+                            updateloanTableInterest(item.loanId, partialInterestAmountCollected);
 
-                                //};
+                            //financeTransaction.PostTransaction(inputTransactions);
 
-                                //context.TBL_CASA_LIEN.Add(data);
+                            //var data = new TBL_CASA_LIEN
+                            //{
+                            //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                            //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                            //    SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
+                            //    BRANCHID = item.branchId,
+                            //    COMPANYID = item.companyId,
+                            //    LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
+                            //    LIENDEBITAMOUNT = 0,
+                            //    LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
+                            //    CREATEDBY = (int)SystemStaff.System,
+                            //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
+                            //    DATECREATED = generalSetup.GetApplicationDate()
 
-                                CasaLienViewModel lien = new CasaLienViewModel();
+                            //};
 
-                                lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
-                                lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
-                                lien.lienAmount = pastDue.DEBITAMOUNT;
-                                lien.branchId = item.branchId;
-                                lien.companyId = item.companyId;
-                                lien.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
-                                lien.createdBy = (int)SystemStaff.System;
-                                lien.description = "lien placed due to Account not funded at Anniversary Date";
+                            //context.TBL_CASA_LIEN.Add(data);
 
-                                casaLien.PlaceLien(lien);
+                            CasaLienViewModel lien = new CasaLienViewModel();
 
-                                //context.SaveChanges();
+                            lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                            lien.sourceReferenceNumber = pastDueInterest.PARENT_PASTDUECODE;
+                            lien.lienAmount = pastDueInterest.DEBITAMOUNT;
+                            lien.branchId = item.branchId;
+                            lien.companyId = item.companyId;
+                            lien.lienTypeId = (short)LienTypeEnum.InterestRepayment;
+                            lien.createdBy = (int)SystemStaff.System;
+                            lien.description = "lien placed due to Account not swinging to positive";
 
-                            }
-                            else if (casabalance < item.periodInterestAmount && casabalance > 0)
-                            {
-                                partialInterestAmountCollected = casabalance;
-                                interestAmountNotCollected = item.periodInterestAmount - partialInterestAmountCollected;
-                                TBL_LOAN_PAST_DUE pastDueInterest = new TBL_LOAN_PAST_DUE();
+                            var lienReference = casaLien.PlaceLien(lien);
+                            //context.SaveChanges();
 
-                                pastDueInterest.LOANID = item.loanId;
-                                pastDueInterest.PASTDUECODE = PastDueCode;
-                                pastDueInterest.CREDITAMOUNT = 0;
-                                pastDueInterest.DESCRIPTION = "Past Due Entries on Interest as a result of Account not funded";
-                                pastDueInterest.DEBITAMOUNT = Math.Abs(interestAmountNotCollected);
-                                pastDueInterest.DATE = item.paymentDate;
-                                pastDueInterest.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Interest;
-                                pastDueInterest.PARENT_PASTDUECODE = item.loanRefNo;
-                                pastDueInterest.PRODUCTTYPEID = product.PRODUCTTYPEID;
+                            //var dataP = new TBL_CASA_LIEN
+                            //{
+                            //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                            //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                            //    SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
+                            //    BRANCHID = item.branchId,
+                            //    COMPANYID = item.companyId,
+                            //    LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                            //    LIENDEBITAMOUNT = 0,
+                            //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                            //    CREATEDBY = (int)SystemStaff.System,
+                            //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
+                            //    DATECREATED = generalSetup.GetApplicationDate()
 
-                                transPastDue.Add(pastDueInterest);
+                            //};
 
-                                //context.SaveChanges();
+                            //context.TBL_CASA_LIEN.Add(dataP);
 
-                                updateloanTablePastDueInterest(pastDueInterest.LOANID, pastDueInterest.DEBITAMOUNT);
+                            CasaLienViewModel lienPrincipal = new CasaLienViewModel();
 
-                                TBL_LOAN_PAST_DUE pastDuePrincipal = new TBL_LOAN_PAST_DUE();
+                            lienPrincipal.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                            lienPrincipal.sourceReferenceNumber = pastDuePrincipal.PARENT_PASTDUECODE;
+                            lienPrincipal.lienAmount = pastDuePrincipal.DEBITAMOUNT;
+                            lienPrincipal.branchId = item.branchId;
+                            lienPrincipal.companyId = item.companyId;
+                            lienPrincipal.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                            lienPrincipal.createdBy = (int)SystemStaff.System;
+                            lienPrincipal.description = "lien placed due to Account not funded at Anniversary Date";
 
-                                pastDuePrincipal.LOANID = item.loanId;
-                                pastDuePrincipal.PASTDUECODE = PastDueCode;
-                                pastDuePrincipal.CREDITAMOUNT = 0;
-                                pastDuePrincipal.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
-                                pastDuePrincipal.DEBITAMOUNT = item.periodPrincipalAmount;
-                                pastDuePrincipal.DATE = item.paymentDate;
-                                pastDuePrincipal.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
-                                pastDuePrincipal.PARENT_PASTDUECODE = item.loanRefNo;
-                                pastDuePrincipal.PRODUCTTYPEID = product.PRODUCTTYPEID;
+                            lienReference = casaLien.PlaceLien(lienPrincipal);
+                            //context.SaveChanges();
+                        }
+                        else if (casabalance <= 0)
+                        {
+                            TBL_LOAN_PAST_DUE pastDueInterest = new TBL_LOAN_PAST_DUE();
 
-                                transPastDue.Add(pastDuePrincipal);
+                            pastDueInterest.LOANID = item.loanId;
+                            pastDueInterest.PASTDUECODE = PastDueCode;
+                            pastDueInterest.CREDITAMOUNT = 0;
+                            pastDueInterest.DESCRIPTION = "Past Due Entries on Interest as a result of Account not funded";
+                            pastDueInterest.DEBITAMOUNT = Math.Abs(item.periodInterestAmount);
+                            pastDueInterest.DATE = item.paymentDate;
+                            pastDueInterest.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Interest;
+                            pastDueInterest.PARENT_PASTDUECODE = item.loanRefNo;
+                            pastDueInterest.PRODUCTTYPEID = product.PRODUCTTYPEID;
 
-                                //context.SaveChanges();
+                            transPastDue.Add(pastDueInterest);
+                            //context.SaveChanges();
+                            updateloanTablePastDueInterest(pastDueInterest.LOANID, pastDueInterest.DEBITAMOUNT);
 
-                                updateloanTablePastDuePrincipal(pastDuePrincipal.LOANID, pastDuePrincipal.DEBITAMOUNT);
+                            TBL_LOAN_PAST_DUE pastDuePrincipal = new TBL_LOAN_PAST_DUE();
 
-                                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                            pastDuePrincipal.LOANID = item.loanId;
+                            pastDuePrincipal.PASTDUECODE = PastDueCode;
+                            pastDuePrincipal.CREDITAMOUNT = 0;
+                            pastDuePrincipal.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
+                            pastDuePrincipal.DEBITAMOUNT = Math.Abs(item.periodPrincipalAmount);
+                            pastDuePrincipal.DATE = item.paymentDate;
+                            pastDuePrincipal.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
+                            pastDuePrincipal.PARENT_PASTDUECODE = item.loanRefNo;
+                            pastDuePrincipal.PRODUCTTYPEID = product.PRODUCTTYPEID;
 
-                                inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, partialInterestAmountCollected, product.INTERESTRECEIVABLEPAYABLEGL.Value, "partial interest repayment", (int)OperationsEnum.InterestLoanRepayment));
+                            transPastDue.Add(pastDuePrincipal);
+                            //context.SaveChanges();
+                            updateloanTablePastDuePrincipal(pastDuePrincipal.LOANID, pastDuePrincipal.DEBITAMOUNT);
+                            //var data = new TBL_CASA_LIEN
+                            //{
+                            //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                            //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                            //    SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
+                            //    BRANCHID = item.branchId,
+                            //    COMPANYID = item.companyId,
+                            //    LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
+                            //    LIENDEBITAMOUNT = 0,
+                            //    LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
+                            //    CREATEDBY = (int)SystemStaff.System,
+                            //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
+                            //    DATECREATED = generalSetup.GetApplicationDate()
 
-                                updateloanTableInterest(item.loanId, partialInterestAmountCollected);
+                            //};
 
-                                //financeTransaction.PostTransaction(inputTransactions);
+                            //context.TBL_CASA_LIEN.Add(data);
 
-                                //var data = new TBL_CASA_LIEN
-                                //{
-                                //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                                //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                                //    SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
-                                //    BRANCHID = item.branchId,
-                                //    COMPANYID = item.companyId,
-                                //    LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
-                                //    LIENDEBITAMOUNT = 0,
-                                //    LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
-                                //    CREATEDBY = (int)SystemStaff.System,
-                                //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                                //    DATECREATED = generalSetup.GetApplicationDate()
+                            CasaLienViewModel lien = new CasaLienViewModel();
 
-                                //};
+                            lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                            lien.sourceReferenceNumber = pastDueInterest.PARENT_PASTDUECODE;
+                            lien.lienAmount = pastDueInterest.DEBITAMOUNT;
+                            lien.branchId = item.branchId;
+                            lien.companyId = item.companyId;
+                            lien.lienTypeId = (short)LienTypeEnum.InterestRepayment;
+                            lien.createdBy = (int)SystemStaff.System;
+                            lien.description = "lien placed due to Account not funded at Anniversary Date";
 
-                                //context.TBL_CASA_LIEN.Add(data);
+                            var lienReference = casaLien.PlaceLien(lien);
+                            //context.SaveChanges();
+                            //var dataP = new TBL_CASA_LIEN
+                            //{
+                            //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
+                            //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                            //    SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
+                            //    BRANCHID = item.branchId,
+                            //    COMPANYID = item.companyId,
+                            //    LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
+                            //    LIENDEBITAMOUNT = 0,
+                            //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
+                            //    CREATEDBY = (int)SystemStaff.System,
+                            //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
+                            //    DATECREATED = generalSetup.GetApplicationDate()
 
-                                CasaLienViewModel lien = new CasaLienViewModel();
+                            //};
 
-                                lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
-                                lien.sourceReferenceNumber = pastDueInterest.PARENT_PASTDUECODE;
-                                lien.lienAmount = pastDueInterest.DEBITAMOUNT;
-                                lien.branchId = item.branchId;
-                                lien.companyId = item.companyId;
-                                lien.lienTypeId = (short)LienTypeEnum.InterestRepayment;
-                                lien.createdBy = (int)SystemStaff.System;
-                                lien.description = "lien placed due to Account not swinging to positive";
+                            //context.TBL_CASA_LIEN.Add(dataP);
 
-                                var lienReference = casaLien.PlaceLien(lien);
-                                //context.SaveChanges();
+                            CasaLienViewModel lienPrincipal = new CasaLienViewModel();
 
-                                //var dataP = new TBL_CASA_LIEN
-                                //{
-                                //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                                //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                                //    SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
-                                //    BRANCHID = item.branchId,
-                                //    COMPANYID = item.companyId,
-                                //    LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                                //    LIENDEBITAMOUNT = 0,
-                                //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                                //    CREATEDBY = (int)SystemStaff.System,
-                                //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                                //    DATECREATED = generalSetup.GetApplicationDate()
+                            lienPrincipal.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                            lienPrincipal.sourceReferenceNumber = pastDuePrincipal.PARENT_PASTDUECODE;
+                            lienPrincipal.lienAmount = pastDuePrincipal.DEBITAMOUNT;
+                            lienPrincipal.branchId = item.branchId;
+                            lienPrincipal.companyId = item.companyId;
+                            lienPrincipal.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
+                            lienPrincipal.createdBy = (int)SystemStaff.System;
+                            lienPrincipal.description = "lien placed due to Account not funded at Anniversary Date";
 
-                                //};
+                            lienReference = casaLien.PlaceLien(lienPrincipal);
+                            //context.SaveChanges();
 
-                                //context.TBL_CASA_LIEN.Add(dataP);
-
-                                CasaLienViewModel lienPrincipal = new CasaLienViewModel();
-
-                                lienPrincipal.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
-                                lienPrincipal.sourceReferenceNumber = pastDuePrincipal.PARENT_PASTDUECODE;
-                                lienPrincipal.lienAmount = pastDuePrincipal.DEBITAMOUNT;
-                                lienPrincipal.branchId = item.branchId;
-                                lienPrincipal.companyId = item.companyId;
-                                lienPrincipal.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
-                                lienPrincipal.createdBy = (int)SystemStaff.System;
-                                lienPrincipal.description = "lien placed due to Account not funded at Anniversary Date";
-
-                                lienReference = casaLien.PlaceLien(lienPrincipal);
-                                //context.SaveChanges();
-                            }
-                            else if (casabalance <= 0)
-                            {
-                                TBL_LOAN_PAST_DUE pastDueInterest = new TBL_LOAN_PAST_DUE();
-
-                                pastDueInterest.LOANID = item.loanId;
-                                pastDueInterest.PASTDUECODE = PastDueCode;
-                                pastDueInterest.CREDITAMOUNT = 0;
-                                pastDueInterest.DESCRIPTION = "Past Due Entries on Interest as a result of Account not funded";
-                                pastDueInterest.DEBITAMOUNT = Math.Abs(item.periodInterestAmount);
-                                pastDueInterest.DATE = item.paymentDate;
-                                pastDueInterest.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Interest;
-                                pastDueInterest.PARENT_PASTDUECODE = item.loanRefNo;
-                                pastDueInterest.PRODUCTTYPEID = product.PRODUCTTYPEID;
-
-                                transPastDue.Add(pastDueInterest);
-                                //context.SaveChanges();
-                                updateloanTablePastDueInterest(pastDueInterest.LOANID, pastDueInterest.DEBITAMOUNT);
-
-                                TBL_LOAN_PAST_DUE pastDuePrincipal = new TBL_LOAN_PAST_DUE();
-
-                                pastDuePrincipal.LOANID = item.loanId;
-                                pastDuePrincipal.PASTDUECODE = PastDueCode;
-                                pastDuePrincipal.CREDITAMOUNT = 0;
-                                pastDuePrincipal.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
-                                pastDuePrincipal.DEBITAMOUNT = Math.Abs(item.periodPrincipalAmount);
-                                pastDuePrincipal.DATE = item.paymentDate;
-                                pastDuePrincipal.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Principal;
-                                pastDuePrincipal.PARENT_PASTDUECODE = item.loanRefNo;
-                                pastDuePrincipal.PRODUCTTYPEID = product.PRODUCTTYPEID;
-
-                                transPastDue.Add(pastDuePrincipal);
-                                //context.SaveChanges();
-                                updateloanTablePastDuePrincipal(pastDuePrincipal.LOANID, pastDuePrincipal.DEBITAMOUNT);
-                                //var data = new TBL_CASA_LIEN
-                                //{
-                                //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                                //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                                //    SOURCEREFERENCENUMBER = pastDueInterest.PARENT_PASTDUECODE,
-                                //    BRANCHID = item.branchId,
-                                //    COMPANYID = item.companyId,
-                                //    LIENCREDITAMOUNT = pastDueInterest.DEBITAMOUNT,
-                                //    LIENDEBITAMOUNT = 0,
-                                //    LIENTYPEID = (short)LienTypeEnum.InterestRepayment,
-                                //    CREATEDBY = (int)SystemStaff.System,
-                                //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                                //    DATECREATED = generalSetup.GetApplicationDate()
-
-                                //};
-
-                                //context.TBL_CASA_LIEN.Add(data);
-
-                                CasaLienViewModel lien = new CasaLienViewModel();
-
-                                lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
-                                lien.sourceReferenceNumber = pastDueInterest.PARENT_PASTDUECODE;
-                                lien.lienAmount = pastDueInterest.DEBITAMOUNT;
-                                lien.branchId = item.branchId;
-                                lien.companyId = item.companyId;
-                                lien.lienTypeId = (short)LienTypeEnum.InterestRepayment;
-                                lien.createdBy = (int)SystemStaff.System;
-                                lien.description = "lien placed due to Account not funded at Anniversary Date";
-
-                                var lienReference = casaLien.PlaceLien(lien);
-                                //context.SaveChanges();
-                                //var dataP = new TBL_CASA_LIEN
-                                //{
-                                //    PRODUCTACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER,
-                                //    LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
-                                //    SOURCEREFERENCENUMBER = pastDuePrincipal.PARENT_PASTDUECODE,
-                                //    BRANCHID = item.branchId,
-                                //    COMPANYID = item.companyId,
-                                //    LIENCREDITAMOUNT = pastDuePrincipal.DEBITAMOUNT,
-                                //    LIENDEBITAMOUNT = 0,
-                                //    LIENTYPEID = (short)LienTypeEnum.PrincipalRepayment,
-                                //    CREATEDBY = (int)SystemStaff.System,
-                                //    DESCRIPTION = "lien placed due to Account not funded at Anniversary Date", // model.description,
-                                //    DATECREATED = generalSetup.GetApplicationDate()
-
-                                //};
-
-                                //context.TBL_CASA_LIEN.Add(dataP);
-
-                                CasaLienViewModel lienPrincipal = new CasaLienViewModel();
-
-                                lienPrincipal.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
-                                lienPrincipal.sourceReferenceNumber = pastDuePrincipal.PARENT_PASTDUECODE;
-                                lienPrincipal.lienAmount = pastDuePrincipal.DEBITAMOUNT;
-                                lienPrincipal.branchId = item.branchId;
-                                lienPrincipal.companyId = item.companyId;
-                                lienPrincipal.lienTypeId = (short)LienTypeEnum.PrincipalRepayment;
-                                lienPrincipal.createdBy = (int)SystemStaff.System;
-                                lienPrincipal.description = "lien placed due to Account not funded at Anniversary Date";
-
-                                lienReference = casaLien.PlaceLien(lienPrincipal);
-                                //context.SaveChanges();
-
-                            }
                         }
                     }
+                }
 
                     this.context.TBL_LOAN_PAST_DUE.AddRange(transPastDue);
 
-                    var result = context.SaveChanges() > 0;
+                    result = context.SaveChanges() > 0;
                     if (result)
                     {
                         //trans.Commit();
@@ -12479,5 +12507,13 @@ namespace FintrakBanking.Repositories.Credit
         #endregion END OF COMMERCIAL PAPER
 
 
+
+        #region Flow Type For Custom Facility Repayment Report (isah)
+        public List<ItemValue> FlowTypes()
+        {
+            BulkTransactionPosting flow = new BulkTransactionPosting();
+            return flow.GetFlowTypes();
+        }
+        #endregion
     }
 }
