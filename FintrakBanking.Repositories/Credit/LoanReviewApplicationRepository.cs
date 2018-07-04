@@ -152,8 +152,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     LOANAPPLICATIONID = application.LOANAPPLICATIONID,
                     LOANID = model.loanId,
-                    LOANSYSTEMTYPEID = model.productTypeId,/*Term/Disbursed Facility..Overdraft Facility..Contingent Liability*/
-                    OPERATIONID = detail.operationTypeId, // refactor to operationId from ui!
+                    LOANSYSTEMTYPEID = model.loanSystemTypeId,/*Term/Disbursed Facility..Overdraft Facility..Contingent Liability*/
+                    OPERATIONID = detail.operationId, // refactor to operationId from ui!
                     REVIEWDETAILS = detail.reviewDetails,
                     PRODUCTID = detail.productId,
                     REPAYMENTTERMS = String.Empty,
