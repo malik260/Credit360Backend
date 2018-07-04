@@ -12508,7 +12508,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-        #region Flow Type For Custom Facility Repayment Report (isah)
+        #region Flow Type For Custom Facility Repayment Report
         public List<ItemValue> FlowTypes()
         {
             BulkTransactionPosting flow = new BulkTransactionPosting();

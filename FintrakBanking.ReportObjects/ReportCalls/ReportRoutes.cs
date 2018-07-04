@@ -400,11 +400,10 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetAccountWithLein(int staffId, short? branchId, string customerName, int companyId)
+        public string AccountWithLein(ReportSearchEntity searchEntity)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/LoanCASAaccountWithLein.aspx?companyId=" + companyId.ToString() + "&branchId=" + branchId + "&customerName=" + customerName
-                + "&staffId=" + staffId;
+            path = reportPath + "ReportViews/Lein.aspx?companyId=" + searchEntity.companyId.ToString() + "&searchParamemter=" + searchEntity.searchParamemter + "&startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate;
             return path;
         }
 
@@ -452,19 +451,19 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         {
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/DailyAccrualReport.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&categoryId=" + searchEntity.categoryId + "&transactionTypeId=" + searchEntity.transactionTypeId;
+            path = reportPath + "ReportViews/DailyAccrualReport.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&categoryId=" + searchEntity.categoryId + "&transactionTypeId=" + searchEntity.transactionTypeId + "&companyId=" + searchEntity.companyId;
             return path;
         }
         public string GetRepayment(ReportSearchEntity searchEntity)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/Repayment.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&operationId=" + searchEntity.operationId ;
+            path = reportPath + "ReportViews/Repayment.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&operationId=" + searchEntity.operationId + "&companyId=" + searchEntity.companyId;
             return path;
         }
         public string GetCustomeFacilityRepayment(ReportSearchEntity searchEntity)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/CustomeFacilityRepayment.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&valueCode=" + searchEntity.valueCode; 
+            path = reportPath + "ReportViews/CustomeFacilityRepayment.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&valueCode=" + searchEntity.valueCode + "&companyId=" + searchEntity.companyId; 
             return path;
         }
     }

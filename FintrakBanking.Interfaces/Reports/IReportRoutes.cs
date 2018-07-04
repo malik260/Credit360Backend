@@ -39,7 +39,6 @@ namespace FintrakBanking.Interfaces.Reports
         string GetTeamAndRevolving(DateRange dateRange, int companyId, int staffId);
         string GetEarnedUnearnedInterest(DateRange dateRange, int companyId, int staffId);
         string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
-        string GetAccountWithLein(int staffId, short? branchId, string customerName, int companyId);
         string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId, int staffId);
         string GetAuditTrail(DateRange dateRange, int companyId, int staffId);
         string GetFacilityApprovedNotUtilized(ReportSearchEntity searchEntity, int companyId, int staffId);
@@ -53,5 +52,6 @@ namespace FintrakBanking.Interfaces.Reports
         string GetDailyAccrual(ReportSearchEntity searchEntity);
         string GetRepayment(ReportSearchEntity searchEntity);
         string GetCustomeFacilityRepayment(ReportSearchEntity searchEntity);
+        string AccountWithLein(ReportSearchEntity searchEntity);
     }
 }

@@ -31,8 +31,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 var imagePath = Path.Combine(outPutDirectory, tmpPath);
 
                 this.ReportViewer.LocalReport.EnableExternalImages = true;
-                ReportParameter logo = new ReportParameter("logoPath", imagePath);
-                ReportViewer.LocalReport.SetParameters(logo);
+               // ReportParameter logo = new ReportParameter("logoPath", imagePath);
+               // ReportViewer.LocalReport.SetParameters(logo);
                 ReportViewer.LocalReport.Refresh();
             }
 
