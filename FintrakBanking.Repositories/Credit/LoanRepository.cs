@@ -4682,7 +4682,7 @@ namespace FintrakBanking.Repositories.Credit
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                        where a.ISDISBURSED == true && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility &&
                                        e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                       orderby b.DATECREATED descending
+                                       //orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
                                            loanId = a.REVOLVINGLOANID,
@@ -4831,7 +4831,7 @@ namespace FintrakBanking.Repositories.Credit
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
                                       && d.DATE == DbFunctions.TruncateTime(applicationDate)
-                                       orderby b.DATECREATED descending
+                                       //orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
                                            loanId = a.TERMLOANID,
@@ -4935,7 +4935,7 @@ namespace FintrakBanking.Repositories.Credit
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
                                       && d.DATE == DbFunctions.TruncateTime(applicationDate)
-                                       orderby b.DATECREATED descending
+                                       //orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
 
