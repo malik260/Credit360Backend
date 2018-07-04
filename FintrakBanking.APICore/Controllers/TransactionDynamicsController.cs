@@ -46,6 +46,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lms-transaction-dynamics-template/application-detail/{detailId}")]
+        public HttpResponseMessage GetTransactionDynamicsDefaultByDetailIdLms(int detailId)
+        {
+            try
+            {
+                List<TransactionDynamicsViewModel> data = repo.GetTransactionDynamicsDefaultByDetailIdLms(detailId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("transaction-dynamics-template")]
         public HttpResponseMessage GetTransactionDynamicsTemplate()
         {

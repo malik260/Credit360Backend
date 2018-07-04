@@ -52,7 +52,5 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<int> GetStaffApprovalLevelIds(int staffId, int operationId);
 
-        IEnumerable<int> GetStaffApprovalLevelIdByStaffId(int staffId, int operationId);
-
     }
 }

@@ -46,6 +46,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lms-condition-precedent-template/application-detail/{detailId}")]
+        public HttpResponseMessage GetConditionPrecedentDefaultByApplicationIdLms(int detailId)
+        {
+            try
+            {
+                List<ConditionPrecedentViewModel> data = repo.GetConditionPrecedentDefaultByDetailIdLms(detailId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("condition-precedent-template")]
         public HttpResponseMessage GetConditionPrecedentTemplate()
         {
