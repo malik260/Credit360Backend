@@ -858,7 +858,7 @@ namespace FintrakBanking.Repositories.Credit
                                            conditionPrecident = b.CONDITION,
                                            loanApplicationId = b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                            isExternal = b.ISEXTERNAL,
-                                           //productName = c.TBL_PRODUCT.PRODUCTNAME
+                                           productName = c.TBL_PRODUCT.PRODUCTNAME
                                        }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
             var conditionSubsequents = (from a in context.TBL_LMSR_APPLICATION
@@ -870,7 +870,7 @@ namespace FintrakBanking.Repositories.Credit
                                             conditionPrecident = b.CONDITION,
                                             loanApplicationId = b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                             isExternal = b.ISEXTERNAL,
-                                            //productName = c.TBL_PRODUCT.PRODUCTNAME
+                                            productName = c.TBL_PRODUCT.PRODUCTNAME
                                         }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
             var products = (from a in context.TBL_LMSR_APPLICATION
@@ -878,10 +878,10 @@ namespace FintrakBanking.Repositories.Credit
                             where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
                             select new ProductViewModel()
                             {
-                                //productId = c.TBL_PRODUCT.PRODUCTID,
-                                //productName = c.TBL_PRODUCT.PRODUCTNAME,
-                                //productClassId = a.PRODUCTCLASSID,
-                                ////productClassProcessId = productClassProcess.PRODUCT_CLASS_PROCESSID //a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID
+                                productId = c.TBL_PRODUCT.PRODUCTID,
+                                productName = c.TBL_PRODUCT.PRODUCTNAME,
+                                productClassId = c.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSID,//a.PRODUCTCLASSID,
+                                //productClassProcessId = productClassProcess.PRODUCT_CLASS_PROCESSID //a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID
                             }).ToList();
 
 
@@ -900,18 +900,18 @@ namespace FintrakBanking.Repositories.Credit
                                join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                                join e in context.TBL_LOAN on b.LOANID equals e.TERMLOANID
                                join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID 
-                               //into cc from c in cc.DefaultIfEmpty()
+                               into cc from c in cc.DefaultIfEmpty()
                                join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID 
                                into cg from d in cg.DefaultIfEmpty()
                                where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower() &&
-                               b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                                //b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                               //b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                                b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new CamProcessedLoanViewModel()
                                {
                                    productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == e.PRODUCTID).PRODUCTNAME,
-                                   //tenor = (int)(e.MATURITYDATE - e.EFFECTIVEDATE).TotalDays,
+                                   tenor = b.APPROVEDTENOR,//(int)(e.MATURITYDATE - e.EFFECTIVEDATE).TotalDays,
                                    interestRate = e.INTERESTRATE,
-                                   //purpose = b.LOANPURPOSE,
+                                   purpose = b.REVIEWDETAILS,
                                    applicationDate = applDate,
                                }).ToList();
 
@@ -938,9 +938,9 @@ namespace FintrakBanking.Repositories.Credit
                                    }).ToList();
 
 
-            var loanMonitoringTriggers = (from x in context.TBL_LOAN_APPLICATN_DETL_MTRIG
-                                          join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals y.LOANAPPLICATIONDETAILID
-                                          where y.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
+            var loanMonitoringTriggers = (from x in context.TBL_LMSR_APPLICATN_DETL_MTRIG
+                                          join y in context.TBL_LMSR_APPLICATION_DETAIL on x.LOANREVIEWAPPLICATIONID equals y.LOANREVIEWAPPLICATIONID
+                                          where y.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
                                           select new MonitoringTriggersViewModel()
                                           {
                                               monitoringTrigger = x.MONITORING_TRIGGER,
