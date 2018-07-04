@@ -77,7 +77,7 @@ namespace FintrakBanking.Common.Enum
         ChecklistOperation = 65,
         PrincipalLoanRepayment = 66,
         InterestPastDueLoanRepayment = 67,
-        PrincipalPastDueLoanRepayment = 68,
-        PenalFee = 69,
+        PrincipalPastDueLoanRepayment =68,
+        PenalFee=69
     }
 }

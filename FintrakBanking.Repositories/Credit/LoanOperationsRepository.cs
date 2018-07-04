@@ -12507,5 +12507,13 @@ namespace FintrakBanking.Repositories.Credit
         #endregion END OF COMMERCIAL PAPER
 
 
+
+        #region Flow Type For Custom Facility Repayment Report (isah)
+        public List<ItemValue> FlowTypes()
+        {
+            BulkTransactionPosting flow = new BulkTransactionPosting();
+            return flow.GetFlowTypes();
+        }
+        #endregion
     }
 }

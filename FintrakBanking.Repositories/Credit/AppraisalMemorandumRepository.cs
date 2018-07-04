@@ -282,7 +282,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            workflow.Disputed = appl.DISPUTED;
+            // workflow.Disputed = appl.DISPUTED; // buggy
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.receiverLevelId;
@@ -955,6 +955,10 @@ namespace FintrakBanking.Repositories.Credit
                         operationId = x.a.OPERATIONID,
                         timeIn = y.SYSTEMARRIVALDATETIME,
                         timeOut = y.SYSTEMRESPONSEDATETIME,
+                        currentApprovalLevelId = y.TOAPPROVALLEVELID,
+                        currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                        customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                        customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                         responsiblePerson = context.TBL_STAFF
                                                 .Where(s => s.STAFFID == y.TOSTAFFID)
                                                 .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })

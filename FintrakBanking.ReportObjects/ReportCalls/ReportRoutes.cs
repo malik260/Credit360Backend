@@ -464,7 +464,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         public string GetCustomeFacilityRepayment(ReportSearchEntity searchEntity)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/CustomeFacilityRepayment.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate ;
+            path = reportPath + "ReportViews/CustomeFacilityRepayment.aspx?startDate=" + searchEntity.startDate + "&endDate=" + searchEntity.endDate + "&valueCode=" + searchEntity.valueCode; 
             return path;
         }
     }

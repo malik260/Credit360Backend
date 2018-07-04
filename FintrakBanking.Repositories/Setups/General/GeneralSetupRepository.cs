@@ -55,7 +55,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     });
         }
 
-        public int GetLoanApplicationRef()
+        public int  GetLoanApplicationRef()
         {
             return CommonHelpers.GetLoanReferanceNumber();
         }
@@ -389,11 +389,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             //return staffLevels.Union(roleLevelIds); // without relief code
             return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
-        }
-
-        public IEnumerable<int> GetStaffApprovalLevelIdByStaffId(int staffId, int operationId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

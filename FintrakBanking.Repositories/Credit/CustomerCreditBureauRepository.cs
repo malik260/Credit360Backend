@@ -60,6 +60,8 @@ namespace FintrakBanking.Repositories.Credit
             List<CustomerViewModels> allCorporate = new List<CustomerViewModels>();
             var customerInfo = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
             var customerType = context.TBL_CUSTOMER.Find(customerId).TBL_CUSTOMER_TYPE.CUSTOMERTYPEID;
+            var customerContact = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customerId && x.ACTIVE == true).FirstOrDefault();
+            var phoneNumber = customerContact != null ? customerContact.PHONENUMBER : null;
             var customer = from a in context.TBL_CUSTOMER
                            where a.DELETED == false && a.CUSTOMERID == customerId
                            select
@@ -73,6 +75,7 @@ namespace FintrakBanking.Repositories.Credit
                                customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                                customerTypeId = (short)a.CUSTOMERTYPEID,
                                dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                               phoneNumber = phoneNumber,
                                customerId = a.CUSTOMERID,
                                emailAddress = a.EMAILADDRESS,
                                firstName = a.FIRSTNAME,
@@ -399,7 +402,8 @@ namespace FintrakBanking.Repositories.Credit
         public List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
 
-
+            var dateOfBirth = Convert.ToDateTime(searchInfoList.dateOfBirth);
+            searchInfoList.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfoList.creditBureauId);
             if (creditBureau != null)
             {
@@ -445,6 +449,10 @@ namespace FintrakBanking.Repositories.Credit
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
             searchInfo.userName = creditBureau.USERNAME;
             searchInfo.password = creditBureau.PASSWORD;
+
+            var dateOfBirth = Convert.ToDateTime(searchInfo.dateOfBirth);
+            searchInfo.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
+            //var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == searchInfo.currencyCode);
 
             var creditBureauInputs = new SearchInput()
             {

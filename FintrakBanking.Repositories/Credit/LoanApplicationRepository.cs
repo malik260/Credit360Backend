@@ -896,21 +896,22 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
-                this.data = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber).FirstOrDefault();
+            this.data = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber).FirstOrDefault();
 
             if (loan.isNewApplication)
             {
-                if (this.data == null)
-                {
-                    AddloanApplicationSub(loan);
-                }
+                    if (this.data == null)
+                    {
+                        loan.applicationReferenceNumber = CommonHelpers.GetLoanReferanceNumber().ToString();
+                        AddloanApplicationSub(loan);
+                    }                    
 
-                if (loan.LoanApplicationDetail.Count > 0)
-                {
-                    AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
-                }
+                    if (loan.LoanApplicationDetail.Count > 0)
+                    {
+                        AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
+                    }
 
-            }
+                }
             else
             {
                 var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
@@ -1635,9 +1636,9 @@ namespace FintrakBanking.Repositories.Credit
                         accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
                     })
                     .Where(x => x.applicationReferenceNumber == searchString
-                        || x.firstName.ToLower() == searchString
-                        || x.lastName.ToLower() == searchString
-                        || x.middleName.ToLower() == searchString
+                        || x.firstName.ToLower().Contains(searchString)
+                        || x.lastName.ToLower().Contains(searchString)
+                        || x.middleName.ToLower().Contains(searchString)
                         || x.customerCode.ToLower() == searchString)
                     ;
 
