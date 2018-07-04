@@ -282,6 +282,7 @@ namespace FintrakBanking.ViewModels.Credit
         //public string loanSystemType { get; set; }
         public string loanSystemTypeName { get; set; }
         public string operationName { get; set; }
+        public int productId { get; set; }
     }
 
     public class SelectListViewModel

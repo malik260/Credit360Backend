@@ -147,6 +147,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 ResolveLevelMultipleApproval();
             }
 
+            ValidateDestinationConfiguration();
+
             CheckApprovalLimits();
 
             SetState();
@@ -259,6 +261,16 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 this.toStaffId = referrerId;
                 this.nextLevelId = fromId;
+            }
+        }
+
+        private void ValidateDestinationConfiguration()
+        {
+            bool valid = true;
+            if (this.toStaffId > 0 && this.nextLevelId > 0)
+            {
+                valid = general.GetStaffApprovalLevelIds((int)this.toStaffId, this.operationId).ToList().Contains((int)this.nextLevelId);
+                if (valid == false) throw new Exception("Target Staff is NOT in the destination approval level");
             }
         }
 
@@ -502,11 +514,12 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool OrganogramRouting() // if workflow is forced to use organogram
         {
-            if (this.externalInitialization == true) { return true; }
-            var position = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
-            if (position == null) { return false; }
 
-            var lineManager = context.TBL_STAFF.Where(x => x.STAFFID == position.SUPERVISOR_STAFFID).FirstOrDefault();
+            if (this.externalInitialization == true) { return true; }
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
+            if (staff == null) { return false; }
+
+            var lineManager = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).FirstOrDefault();
             if (lineManager != null && next != null)
             {
                 if (lineManager.STAFFROLEID == next.DefaultRoleId) this.toStaffId = lineManager.STAFFID;

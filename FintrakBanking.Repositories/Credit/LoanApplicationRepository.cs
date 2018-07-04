@@ -1635,9 +1635,9 @@ namespace FintrakBanking.Repositories.Credit
                         accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
                     })
                     .Where(x => x.applicationReferenceNumber == searchString
-                        || x.firstName.ToLower() == searchString
-                        || x.lastName.ToLower() == searchString
-                        || x.middleName.ToLower() == searchString
+                        || x.firstName.ToLower().Contains(searchString)
+                        || x.lastName.ToLower().Contains(searchString)
+                        || x.middleName.ToLower().Contains(searchString)
                         || x.customerCode.ToLower() == searchString)
                     ;
 
