@@ -19,7 +19,7 @@
 
         public int LOANAPPLICATIONID { get; set; }
         public int LOANID { get; set; }
-        public int PRODUCTID { get; set; }
+        public short PRODUCTID { get; set; }
         public int OPERATIONID { get; set; }
 
         public int APPROVALSTATUSID { get; set; }

@@ -1561,7 +1561,7 @@ namespace FintrakBanking.Repositories.Credit
             //var refNo = CommonHelpers.GenerateRandomDigitCode(10);
 
             var data = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
-                        where a.AMT_COLLECTED <= a.AMT && a.FINTRAK_FLG != "Y" && a.AMT_COLLECTED > 0 //|| a.PSTD_FLG == "P"
+                        where a.AMT_COLLECTED < a.AMT && a.FINTRAK_FLG != "Y" && a.AMT_COLLECTED > 0 //|| a.PSTD_FLG == "P"
                         //where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && a.BATCHID == batchCode
                         select new FinanceTransactionStagingViewModel()
                         {
@@ -2267,7 +2267,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     this.context.TBL_LOAN_PAST_DUE.AddRange(transPastDue);
 
-                    result = context.SaveChanges() > 0;
+                    //result = context.SaveChanges() > 0;
                     if (result)
                     {
                         //trans.Commit();
