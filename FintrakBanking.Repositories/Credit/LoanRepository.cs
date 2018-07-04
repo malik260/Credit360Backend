@@ -4677,10 +4677,11 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
-                                       join b in context.TBL_LOAN_REVIEW_APPLICATION on a.REVOLVINGLOANID equals b.LOANID
+                                       join b in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals b.LOANID
+                                       join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                       where a.ISDISBURSED == true && b.PRODUCTTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility &&
-                                       b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                       where a.ISDISBURSED == true && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility &&
+                                       e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                        orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
@@ -4823,16 +4824,16 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var applicationDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = (from a in context.TBL_LOAN
-                                       join b in context.TBL_LOAN_REVIEW_APPLICATION on a.TERMLOANID equals b.LOANID
+                                       join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
+                                       join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                        join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
-                                       where a.ISDISBURSED == true && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                       where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
                                       && d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
-
                                            loanId = a.TERMLOANID,
                                            customerId = a.CUSTOMERID,
                                            customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
@@ -4853,12 +4854,10 @@ namespace FintrakBanking.Repositories.Credit
                                            productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                                            principalNumberOfInstallment = a.PRINCIPALNUMBEROFINSTALLMENT,
                                            interestNumberOfInstallment = a.INTERESTNUMBEROFINSTALLMENT,
-
                                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                            relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
                                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
                                            relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
-
                                            misCode = a.MISCODE,
                                            teamMiscode = a.TEAMMISCODE,
                                            interestRate = a.INTERESTRATE,
@@ -4929,10 +4928,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var applicationDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = (from a in context.TBL_LOAN
-                                       join b in context.TBL_LOAN_REVIEW_APPLICATION on a.TERMLOANID equals b.LOANID
+                                       join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
+                                       join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                       where a.ISDISBURSED == true && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
+                                       join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
+                                       where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
+                                      && d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
