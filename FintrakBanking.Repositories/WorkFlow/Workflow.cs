@@ -483,6 +483,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.newStateId = (int)ApprovalState.Ended;
             this.nextLevelId = null; // even if there are other higher level which have been resolve prior
             this.keepPending = false;
+            this.toStaffId = null;
         }
 
         private int ResolveLastStatus(int statusId)
