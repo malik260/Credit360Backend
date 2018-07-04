@@ -123,7 +123,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                                 subSectorId = b.SUBSECTORID,
                                 sectorName = b.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "/" + b.TBL_SUB_SECTOR.NAME,
-
+                                applicationRefNo = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 loanApplicationId = b.LOANAPPLICATIONID,
                                 proposedAmount = b.PROPOSEDAMOUNT,
                                 proposedInterestRate = b.PROPOSEDINTERESTRATE,
@@ -876,6 +876,17 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.LogActivity();
         }
 
+        public string GetRefrenceNumber()
+        {
+            string refnumber = CommonHelpers.GetLoanReferanceNumber().ToString();
+            var data = context.TBL_LOAN_APPLICATION.Where(l => l.APPLICATIONREFERENCENUMBER == refnumber).ToList();
+            if (data.Any())
+            {
+                GetRefrenceNumber();
+            }
+            return refnumber.ToString();
+        }
+
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
             try
@@ -896,13 +907,14 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
-            this.data = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber).FirstOrDefault();
+            this.data = context.TBL_LOAN_APPLICATION.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).FirstOrDefault();
 
             if (loan.isNewApplication)
             {
                     if (this.data == null)
                     {
-                        loan.applicationReferenceNumber = CommonHelpers.GetLoanReferanceNumber().ToString();
+                        loan.applicationReferenceNumber = GetRefrenceNumber();// CommonHelpers.GetLoanReferanceNumber().ToString();
+
                         AddloanApplicationSub(loan);
                     }                    
 
@@ -915,7 +927,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+                var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
                 var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
 
                 if (limit != 0)
@@ -1057,7 +1069,7 @@ namespace FintrakBanking.Repositories.Credit
         private void UpdateLoanApplication(LoanApplicationViewModel loan)
         {
            
-            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
 
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a=> a.PROPOSEDAMOUNT);
 
