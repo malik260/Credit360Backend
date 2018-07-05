@@ -98,8 +98,8 @@ namespace FintrakBanking.Repositories.Credit
             .ThenByDescending(x => x.loanReviewApplicationId)
             ;
 
-            var list = applications.ToList();
-            var count = applications.Count();
+            //var list = applications.ToList();
+            //var count = applications.Count();
 
             if (screenCanViewAll) { return applications; };
 
@@ -177,6 +177,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (context.SaveChanges() == 0) return false; // this save is necessary to grab targetid
 
+            workflow.ToStaffId = model.createdBy;
             workflow.NextProcess(model.companyId, model.createdBy, (int)OperationsEnum.LoanReviewApprovalAppraisal, application.LOANAPPLICATIONID, null, "NIL", true, true);
 
             return context.SaveChanges() > 0;

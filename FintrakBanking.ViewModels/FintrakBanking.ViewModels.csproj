@@ -220,6 +220,7 @@
     <Compile Include="ThridPartyIntegration\CasaIntegrationViewModel.cs" />
     <Compile Include="UserInfo.cs" />
     <Compile Include="WorkFlow\ApprovalTrailViewModel.cs" />
+    <Compile Include="WorkFlow\WorkflowResponseViewModel.cs" />
     <Compile Include="WorkFlow\ApprovalViewModel.cs" />
     <Compile Include="WorkFlow\JobRequestViewModel.cs" />
     <Compile Include="WorkFlow\WorkflowTrackerViewModel.cs" />

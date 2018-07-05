@@ -852,6 +852,7 @@ namespace FintrakBanking.Repositories.Credit
             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
 
             workflow.StaffId = staffId;
+            workflow.ToStaffId = staffId;
             workflow.OperationId = (int)OperationsEnum.CAM;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
