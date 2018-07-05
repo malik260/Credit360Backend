@@ -50,21 +50,21 @@ namespace FintrakBanking.APICore.Controllers
         }
 
       [HttpGet] [ClaimsAuthorization]  
-        [Route("job-request-detail/legal")]
+        [Route("job-request-detail/legal-details")]
         public HttpResponseMessage GetJobRequestLegalJobDetails()
         {
             try
             {
-                var data = repo.GetJobRequestLegalJobDetails();
+                var data = repo.GetJobRequestLegalJobDetail();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (ConditionNotMetException ce)
+            catch (ConditionNotMetException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
-            catch (BadLogicException be)
+            catch (BadLogicException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
             catch (Exception)
             {
