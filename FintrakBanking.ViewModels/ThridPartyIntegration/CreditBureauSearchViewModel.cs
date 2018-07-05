@@ -92,9 +92,12 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
     public class CRCRequestViewModel : GeneralEntity
     {
-        public string productId;
+        public string productId { get; set; }
         public int casaAccountId { get; set; }
-        public short searchType;
+        public short searchType { get; set; }
+        public int customerId { get; set; }
+        public int? companyDirectorId { get; set; }
+
         //public int accountId { get; set; }
 
         public string userName { get; set; }
@@ -198,5 +201,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
         public int SearchCompleted { get; set; }
         public string SearchResult { get; set; }
+        public bool fileSaved { get; set; }
+        public byte[] file { get; set; }
+        public bool errorOccured { get; set; }
     }
 }
