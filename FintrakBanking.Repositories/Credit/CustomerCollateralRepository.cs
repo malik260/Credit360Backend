@@ -20,6 +20,7 @@ using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -3669,13 +3670,13 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempDepositCollateral(int collateralId, CollateralViewModel entity)
         {
-            CasaBalanceViewModel finacleBalance;
+            TDAccountRecordViewModel finacleBalance;
 
             try
             {
-                finacleBalance = finacle.GetCustomerAccountBalance(entity.collateralCode);
+                finacleBalance = finacle.ValidateTDAccountNumber(entity.collateralCode);
 
-                if (finacleBalance.accountNo == null)
+                if (finacleBalance.accountNumber == null)
                 {
                     throw new Exception(entity.collateralCode + " is not a valid fixed depposit account number");
                 }
@@ -3688,7 +3689,7 @@ namespace FintrakBanking.Repositories.Credit
                         ACCOUNTNUMBER = entity.collateralCode,
                         EXISTINGLIENAMOUNT = 0,
                         LIENAMOUNT = entity.lienAmount,
-                        AVAILABLEBALANCE = finacleBalance.availableBalance,
+                        AVAILABLEBALANCE = finacleBalance.balance,
                         SECURITYVALUE = (decimal)entity.securityValue,
                         MATURITYDATE = entity.maturityDate,
                         MATURITYAMOUNT = 0,
@@ -3827,8 +3828,9 @@ namespace FintrakBanking.Repositories.Credit
 
             return 0;
         }
-        public bool GoForApproval(ApprovalViewModel model)
+        public int GoForApproval(ApprovalViewModel model)
         {
+            int responce = 0;
             using (var transaction = context.Database.BeginTransaction())
             {
                 workflow.StaffId = model.createdBy;
@@ -3843,15 +3845,20 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
-
-                        UpdateCutomerCollateralApprovalStatus(model, (short)workflow.StatusId);
+                        if (model.approvalStatusId!=(int)ApprovalStatusEnum.Disapproved)
+                        {
+                            UpdateCutomerCollateralApprovalStatus(model, (short)workflow.StatusId);
+                        }
                     }
 
-                    int responce = context.SaveChanges();
+                    responce = context.SaveChanges();
                     transaction.Commit();
 
-                    return responce > 0;
-
+                    if (responce > 0)
+                    {
+                        return model.approvalStatusId;
+                    }
+                    return 0;
                 }
                 catch (Exception ex)
                 {
@@ -3865,7 +3872,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public bool GoForPolicyApproval(ApprovalViewModel model)
+        public int GoForPolicyApproval(ApprovalViewModel model)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -3881,14 +3888,21 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
-                        TBL_TEMP_COLLATERAL_ITEM_POLI data = context.TBL_TEMP_COLLATERAL_ITEM_POLI.Where(x => x.TEMPPOLICYID == model.targetId).FirstOrDefault();
-                        UpdateItemPolicyApproval(data);
+                        if (model.approvalStatusId != (int)ApprovalStatusEnum.Disapproved)
+                        {
+                            TBL_TEMP_COLLATERAL_ITEM_POLI data = context.TBL_TEMP_COLLATERAL_ITEM_POLI.Where(x => x.TEMPPOLICYID == model.targetId).FirstOrDefault();
+                            UpdateItemPolicyApproval(data);
+                        }
                     }
 
                     int responce = context.SaveChanges();
                     transaction.Commit();
 
-                    return responce > 0;
+                    if (responce > 0)
+                    {
+                        return model.approvalStatusId;
+                    }
+                    return 0;
 
                 }
                 catch (Exception ex)
@@ -4915,10 +4929,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             var details = (from x in context.TBL_TEMP_COLLATERAL_IMMOV_PROP
                            where x.TEMPCOLLATERALCUSTOMERID == collateralId
-                           join c in context.TBL_COUNTRY on x.COUNTRYID equals c.COUNTRYID
-                           join v in context.TBL_COLLATERAL_VALUER on x.VALUERID equals v.COLLATERALVALUERID
-                           join p in context.TBL_COLLATERAL_VALUEBASE_TYPE on x.PROPERTYVALUEBASETYPEID equals p.COLLATERALVALUEBASETYPEID
-                           join t in context.TBL_COLLATERAL_PERFECTN_STAT on x.PERFECTIONSTATUSID equals t.PERFECTIONSTATUSID
                            select new CollateralViewModel
                            {
                                collateralId = x.TEMPCOLLATERALCUSTOMERID,
@@ -4948,10 +4958,10 @@ namespace FintrakBanking.Repositories.Credit
                                perfectionStatusReason = x.PERFECTIONSTATUSREASON,
                                valuationAmount = x.VALUATIONAMOUNT,
                                cityName = x.TBL_CITY.CITYNAME,
-                               countryName = c.NAME,
-                               collateralValuer = v.NAME,
-                               propertyBaseType = p.VALUEBASETYPENAME,
-                               perfectionStatusName = t.PERFECTIONSTATUSNAME
+                               countryName = context.TBL_COUNTRY.Where(a=>a.COUNTRYID==x.COUNTRYID).Select(a=>a.NAME).FirstOrDefault(),
+                               collateralValuer = context.TBL_COLLATERAL_VALUER.Where(a=>a.COLLATERALVALUERID==x.VALUERID).Select(a=>a.NAME).FirstOrDefault(),
+                               propertyBaseType = context.TBL_COLLATERAL_VALUEBASE_TYPE.Where(a=>a.COLLATERALVALUEBASETYPEID== x.PROPERTYVALUEBASETYPEID).Select(a=>a.VALUEBASETYPENAME).FirstOrDefault(),
+                               perfectionStatusName = context.TBL_COLLATERAL_PERFECTN_STAT.Where(a=>a.PERFECTIONSTATUSID== x.PERFECTIONSTATUSID).Select(a=>a.PERFECTIONSTATUSNAME).FirstOrDefault()
 
                            }).FirstOrDefault();
             //details = GetPropertyVistation(details

@@ -230,7 +230,32 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-fs-caption/group")]
+        public HttpResponseMessage GetCustomerFsCaptions()
+        {
+            try
+            {
+                var data = _fsCaptionRepo.GetCustomerFSCaptions();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption/{fsCaptionId}")]
         public HttpResponseMessage GetCustomerFsCaptionById(short fsCaptionId)
         {

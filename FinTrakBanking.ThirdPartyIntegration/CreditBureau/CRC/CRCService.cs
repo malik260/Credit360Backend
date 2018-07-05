@@ -27,7 +27,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
                 {
                     case 0: xml = CRCCorperateRequestXML0(request); break;
 
-                    case 1:
+                    case 3:
                         xml = CRCCorperateRequestXML1(request); break;
                 }
             }
@@ -130,7 +130,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
             return new XElement("REQUEST", new XAttribute("REQUEST_ID", 1),
                             new XElement("REQUEST_PARAMETERS",
                                     new XElement("REPORT_PARAMETERS", new XAttribute("RESPONSE_TYPE", request.responseType),
-                                    new XAttribute("SUBJECT_TYPE", 1), new XAttribute("REPORT_ID", request.reportID)),
+                                    new XAttribute("SUBJECT_TYPE", 0), new XAttribute("REPORT_ID", request.reportID)),
                                     new XElement("INQUIRY_REASON", new XAttribute("CODE", request.enquiryReason)),
                                     new XElement("APPLICATION", new XAttribute("CURRENCY", request.currencyCode),
                                     new XAttribute("AMOUNT", request.amount), new XAttribute("NUMBER", request.number),
@@ -146,19 +146,18 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
             return new XElement("REQUEST", new XAttribute("REQUEST_ID", 1),
                             new XElement("REQUEST_PARAMETERS",
                                     new XElement("REPORT_PARAMETERS", new XAttribute("RESPONSE_TYPE", request.responseType),
-                                    new XAttribute("SUBJECT_TYPE", 1), new XAttribute("REPORT_ID", request.reportID)),
-                                    new XElement("INQUIRY_REASON", new XAttribute("CODE", request.enquiryReason)),
+                                    new XAttribute("SUBJECT_TYPE", 0), new XAttribute("REPORT_ID", request.reportID)),
+                                    new XElement("INQUIRY_REASON", new XAttribute("CODE",  request.enquiryReason)),
                                     new XElement("APPLICATION", new XAttribute("CURRENCY", request.currencyCode),
-                                    new XAttribute("AMOUNT", request.amount), new XAttribute("NUMBER", request.number),
+                                    new XAttribute("AMOUNT", request.amount), new XAttribute("NUMBER",request.number),
                                     new XAttribute("PRODUCT", request.productCode)
                                     )),
-                                    new XElement("SEARCH_PARAMETERS", new XAttribute("SEARCH-TYPE", 0),
-                                    new XElement("NAME", request.customerName),
-                                    new XElement("ACCOUNT", new XAttribute("NUMBER", request.accountOrRegistrationNumber),
-                                    new XAttribute("BRANCH", request.branchCode))
+                                    new XElement("SEARCH_PARAMETERS", new XAttribute("SEARCH-TYPE", 3),
+                                    new XElement("BUSINESS_REG_NO", request.accountOrRegistrationNumber)
                                      ));
 
         }
+
 
         private XElement CRCRequestXML0(CRCRequestViewModel request)
         {

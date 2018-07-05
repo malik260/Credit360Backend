@@ -105,6 +105,7 @@ namespace FintrakBanking.ViewModels.Reports
         public int classification { get; set; }
         public int approvalStatus { get; set; }
        public int operationId { get; set; }
+        public int auditTypeId { get; set; }
     }
 
     public class ReportSearchEntity
@@ -124,6 +125,11 @@ namespace FintrakBanking.ViewModels.Reports
         public string searchParamemter { get; set; }
         public int? productClassId { get; set; }
         public string customerCode { get; set; }
+        public int categoryId { get; set; }
+        public int transactionTypeId { get; set; }
+        public int operationId { get; set; }
+        public string valueCode { get; set; }
+        public int companyId { get; set; }
     }
 
     public class AllLoanViewModel

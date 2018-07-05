@@ -111,7 +111,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                // List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
+                //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
                 var data = loanRepo.SearchForLoanAndRevolvingLoan(search.productTypeId, search.searchString);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }

@@ -6,7 +6,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LMSR_APPLICATION_DETAIL")]
+    [Table("TBL_LMSR_APPLICATION_DETAIL")]
     public partial class TBL_LMSR_APPLICATION_DETAIL
     {
         public TBL_LMSR_APPLICATION_DETAIL()
@@ -19,14 +19,14 @@
 
         public int LOANAPPLICATIONID { get; set; }
         public int LOANID { get; set; }
-        public int BRANCHID { get; set; }
+        public short PRODUCTID { get; set; }
         public int OPERATIONID { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
-        public int LOANSYSTEMTYPEID { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
         public int CUSTOMERID { get; set; }
 
-        public short STATUSID { get; set; }
+        //public short STATUSID { get; set; }
 
         [StringLength(2000)]
         public string REVIEWDETAILS { get; set; }
@@ -39,7 +39,21 @@
 
         public int CREATEDBY { get; set; }
 
-        public DateTime DATECREATED { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
+
+        public int PROPOSEDTENOR { get; set; }
+
+        public double PROPOSEDINTERESTRATE { get; set; }
+
+        public decimal PROPOSEDAMOUNT { get; set; }
+
+        public int APPROVEDTENOR { get; set; }
+
+        public double APPROVEDINTERESTRATE { get; set; }
+
+        public decimal APPROVEDAMOUNT { get; set; }
+
+        public bool OPERATIONPERFORMED { get; set; }
 
         // public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
@@ -49,13 +63,13 @@
 
         // public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        // public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
+        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 
         public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
         // public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
 
-        // public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
+        //public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
 
         public virtual TBL_LMSR_APPLICATION TBL_LMSR_APPLICATION { get; set; }
 

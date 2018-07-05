@@ -40,6 +40,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<ConditionPrecedentViewModel> AddSelectedConditionPrecedentLms(SelectedIdsViewModel entity);
         bool AddConditionPrecedentLms(ConditionPrecedentViewModel entity);
         IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByDetailIdLms(int detailid);
+        List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByDetailIdLms(int detailId);
         bool DeleteConditionPrecedentTemplate(UserInfo user, int id);
     }
 }

@@ -1,4 +1,6 @@
-﻿using FintrakBanking.ViewModels.Reports;
+﻿using FintrakBanking.Finance.ViewModels;
+using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +41,6 @@ namespace FintrakBanking.Interfaces.Reports
         string GetTeamAndRevolving(DateRange dateRange, int companyId, int staffId);
         string GetEarnedUnearnedInterest(DateRange dateRange, int companyId, int staffId);
         string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
-        string GetAccountWithLein(int staffId, short? branchId, string customerName, int companyId);
         string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId, int staffId);
         string GetAuditTrail(DateRange dateRange, int companyId, int staffId);
         string GetFacilityApprovedNotUtilized(ReportSearchEntity searchEntity, int companyId, int staffId);
@@ -50,5 +51,11 @@ namespace FintrakBanking.Interfaces.Reports
         string GetTurnoverCovenantReport(DateRange dateRange, int companyId, int staffId);
         string GetWorkflowSLAMonitoring(int companyId, DateRange dateRange);
         string GetBlacklist(ReportSearchEntity searchEntity);
+        string GetDailyAccrual(ReportSearchEntity searchEntity);
+        string GetRepayment(ReportSearchEntity searchEntity);
+        string GetCustomeFacilityRepayment(ReportSearchEntity searchEntity);
+        string AccountWithLein(ReportSearchEntity searchEntity);
+        IEnumerable<AuditViewModel> AuditType(string searchValue);
+        List<TransactionViewModel> GLAccount(string searchValue);
     }
 }

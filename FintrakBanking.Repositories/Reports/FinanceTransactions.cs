@@ -1,6 +1,9 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Finance.ViewModels;
 using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
@@ -72,6 +75,67 @@ namespace FintrakBanking.Repositories.Reports
 
         }
 
+        public List<DailyAccrualViewModel> GetAllLoanTransactionType()
+        {
+            try
+            {
+                var data = from a in context.TBL_LOAN_TRANSACTION_TYPE
+                           
+                           select new DailyAccrualViewModel
+                           {
+                               transactionTypeId = a.TRANSACTIONTYPEID,
+                               transactionTypeName = a.TRANSACTIONTYPENAME
+                           };
+                return data.ToList();
+            }
+            catch (Exception ex)
+            {
 
+                throw;
+            }
+        }
+        public List<DailyAccrualViewModel> GetAllDailyAccrualCategories()
+        {
+            try
+            {
+                var data = from a in context.TBL_DAILY_ACCRUAL_CATEGORY
+
+                           select new DailyAccrualViewModel
+                           {
+                               categoryId = a.CATEGORYID,
+                               categoryName = a.CATEGORYNAME
+                           };
+                return data.ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+
+        }
+        public List<LoanOperationTypeViewModel> Operations()
+        {
+            List<LoanOperationTypeViewModel> operationList = new List<LoanOperationTypeViewModel>();
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var operations = (from x in context.TBL_OPERATIONS
+                                  select x).ToList();
+               foreach(var x in operations)
+                {
+                    if (x.OPERATIONID== (int)OperationsEnum.InterestLoanRepayment || x.OPERATIONID==(int)OperationsEnum.InterestPastDueLoanRepayment || x.OPERATIONID==(int)OperationsEnum.PrincipalLoanRepayment || x.OPERATIONID== (int)OperationsEnum.PrincipalPastDueLoanRepayment)
+                    {
+                        operationList.Add(new LoanOperationTypeViewModel {
+                            operationTypeId = x.OPERATIONID,
+                            operationTypeName = x.OPERATIONNAME
+                        });
+                    }
+                }
+                
+                return operationList;
+            }
+        }
     }
 }

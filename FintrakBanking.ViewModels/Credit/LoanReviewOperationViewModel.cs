@@ -225,7 +225,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int loanReviewApplicationId { get; set; }
         public int loanId { get; set; }
-        public int productTypeId { get; set; }
+        public short productTypeId { get; set; }
 
         public int operationTypeId { get; set; }
         public string reviewDetails { get; set; }
@@ -268,15 +268,22 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public string branchName { get; set; }
         public string approvalState { get; set; }
+        public short loanSystemTypeId { get; set; }
     }
 
     public class applicationDetails
     {
-        public int operationTypeId { get; set; }
+        public int operationTypeId { get; set; } // remove after refactor
         public string reviewDetails { get; set; }
-        public string operationType { get; set; } // not relevant
-        public object loanId { get; set; }
+        //public string operationType { get; set; } // not relevant
+        public int loanId { get; set; }
         public int detailId { get; set; }
+        public int loanSystemTypeId { get; set; }
+        public int operationId { get; set; }
+        //public string loanSystemType { get; set; }
+        public string loanSystemTypeName { get; set; }
+        public string operationName { get; set; }
+        public short productId { get; set; }
     }
 
     public class SelectListViewModel

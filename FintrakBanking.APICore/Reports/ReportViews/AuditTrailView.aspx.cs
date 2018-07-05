@@ -23,6 +23,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 endDate.Text = Request.QueryString["endDate"];
                 companyId.Text = Request.QueryString["companyId"];
                 username.Text = Request.QueryString["username"];
+                auditTypeId.Text = Request.QueryString["auditTypeId"];
 
                 string tmpPath = @"Content\Icons\firstbank-logo.jpg";
                 string a = Path.GetFullPath(tmpPath);
@@ -31,8 +32,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 var imagePath = Path.Combine(outPutDirectory, tmpPath);
 
                 this.ReportViewer.LocalReport.EnableExternalImages = true;
-                ReportParameter logo = new ReportParameter("logoPath", imagePath);
-                ReportViewer.LocalReport.SetParameters(logo);
+               // ReportParameter logo = new ReportParameter("logoPath", imagePath);
+               // ReportViewer.LocalReport.SetParameters(logo);
                 ReportViewer.LocalReport.Refresh();
             }
 

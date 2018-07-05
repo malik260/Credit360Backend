@@ -123,7 +123,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                                 subSectorId = b.SUBSECTORID,
                                 sectorName = b.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "/" + b.TBL_SUB_SECTOR.NAME,
-
+                                applicationRefNo = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 loanApplicationId = b.LOANAPPLICATIONID,
                                 proposedAmount = b.PROPOSEDAMOUNT,
                                 proposedInterestRate = b.PROPOSEDINTERESTRATE,
@@ -434,27 +434,13 @@ namespace FintrakBanking.Repositories.Credit
                             //    loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                             //                      select new CollateralViewModel
                             //                      {
-                            //                          collateralId = i.COLLATERALBASICDETAILID, // COLLATERALCUSTOMERID,
-                            //                          collateralCustomerId = (int)i.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,//.CUSTOMERID, //COLLATERALCUSTOMERID,
-                            //                                                                                               // allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                            //                          collateralId = i.COLLATERALBASICDETAILID, 
+                            //                          collateralCustomerId = (int)i.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,
                             //                          collateralDetail = i.COLLATERALDETAIL,
-                            //                          //collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                             //                          collateralValue = i.COLLATERALVALUE,
-
                             //                          stampToCoverAmount = i.STAMPEDTOCOVERAMOUNT,
-                            //                          //collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                            //                          //collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
-                            //                          //collateralSubTypeId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.
-                            //                          //currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
-                            //                          //valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                            //                          //haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                             //                          customerName = i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME
                             //                         + " " + i.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
-                            //                          //collateralSearchAmount = context.TBL_STATE.Where(x=>x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
-                            //                          //chartingAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.LastOrDefault().TBL_CITY.STATEID).LastOrDefault().CHARTINGAMOUNT,
-                            //                          //verificationAmount = context.TBL_STATE.Where(x => x.STATEID == i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().TBL_CITY.STATEID).FirstOrDefault().COLLATERALSEARCHCHARGEAMOUNT,
-                            //                          //cityId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault().CITYID,
-                            //                          // legalFeeTaken = i.LEGAL_FEE_TAKEN,
                             //                      }).ToList(),
                             bondsAndGaurantees = (from i in context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                   select new BondsAndGauranteeViewModel
@@ -866,6 +852,7 @@ namespace FintrakBanking.Repositories.Credit
             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
 
             workflow.StaffId = staffId;
+            workflow.ToStaffId = staffId;
             workflow.OperationId = (int)OperationsEnum.CAM;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
@@ -874,6 +861,14 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Comment = "New loan application";
             workflow.ExternalInitialization = true;
             return workflow.LogActivity();
+        }
+
+        public string GetRefrenceNumber()
+        {           
+           var millisecond = DateTime.Now.Millisecond;
+            string refnumber = CommonHelpers.GetLoanReferanceNumber().ToString() 
+                + "-" + CommonHelpers.AppendZeroString(millisecond, 3);
+            return refnumber.ToString();
         }
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
@@ -896,25 +891,27 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
-                this.data = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber).FirstOrDefault();
+            this.data = context.TBL_LOAN_APPLICATION.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).FirstOrDefault();
 
             if (loan.isNewApplication)
             {
-                if (this.data == null)
-                {
-                    AddloanApplicationSub(loan);
-                }
+                    if (this.data == null)
+                    {
+                        loan.applicationReferenceNumber = GetRefrenceNumber();// CommonHelpers.GetLoanReferanceNumber().ToString();
 
-                if (loan.LoanApplicationDetail.Count > 0)
-                {
-                    AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
-                }
+                        AddloanApplicationSub(loan);
+                    }                    
 
-            }
+                    if (loan.LoanApplicationDetail.Count > 0)
+                    {
+                        AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
+                    }
+
+                }
             else
             {
                 var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+                var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
                 var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
 
                 if (limit != 0)
@@ -1056,7 +1053,7 @@ namespace FintrakBanking.Repositories.Credit
         private void UpdateLoanApplication(LoanApplicationViewModel loan)
         {
            
-            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
 
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a=> a.PROPOSEDAMOUNT);
 
@@ -1591,9 +1588,7 @@ namespace FintrakBanking.Repositories.Credit
                     .Join(context.TBL_LOAN_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
                     .Join(context.TBL_CUSTOMER, g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
                     .Join(context.TBL_CASA, o => o.c.CUSTOMERID, s => s.CUSTOMERID, (o, s) => new { o, s })
-                    .Join(context.TBL_APPROVAL_TRAIL
-                    .Where(t => t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended)
-                    , q => q.o.g.a.LOANAPPLICATIONID, t => t.TARGETID, (q, t) => new { q, t })
+                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended), q => q.o.g.a.LOANAPPLICATIONID, t => t.TARGETID, (q, t) => new { q, t })
                     .Select(x => new LoanApplicationViewModel
                     {
                         firstName = x.q.o.c.FIRSTNAME,
@@ -1622,6 +1617,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvalStatusId = (short)x.q.o.g.a.APPROVALSTATUSID,
                         //approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.q.o.g.a.APPROVALSTATUSID).APPROVALSTATUSNAME,
                         currentApprovalLevel = x.t.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                        approvalTrailId = x.t.APPROVALTRAILID,
                         responsiblePerson = x.t.TOSTAFFID == null ? "n/a" : x.t.TBL_STAFF1.STAFFCODE + " - " + x.t.TBL_STAFF1.FIRSTNAME + " " + x.t.TBL_STAFF1.MIDDLENAME + " " + x.t.TBL_STAFF1.LASTNAME,
                         applicationStatusId = x.q.o.g.a.APPLICATIONSTATUSID,
                         branchName = x.q.o.g.a.TBL_BRANCH.BRANCHNAME,
@@ -1636,13 +1632,17 @@ namespace FintrakBanking.Repositories.Credit
                         accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
                     })
                     .Where(x => x.applicationReferenceNumber == searchString
-                        || x.firstName.ToLower() == searchString
-                        || x.lastName.ToLower() == searchString
-                        || x.middleName.ToLower() == searchString
+                        || x.firstName.ToLower().Contains(searchString)
+                        || x.lastName.ToLower().Contains(searchString)
+                        || x.middleName.ToLower().Contains(searchString)
                         || x.customerCode.ToLower() == searchString)
                     ;
-            var ttt = applications.ToList();
-            return applications;//.ToList().GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
+
+            //var list = applications.ToList();
+            applications = applications.OrderByDescending(x => x.approvalTrailId).GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
+            //var filteredList = applications.ToList();
+            return applications;
+
         }
 
         public dynamic GetLoanApplicationDetailsProductProgram(int loanApplicationDetailId)

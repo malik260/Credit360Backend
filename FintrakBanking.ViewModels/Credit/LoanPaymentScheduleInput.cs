@@ -162,6 +162,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int loanApplicationNumberId { get; set; }
         public int checklistId { get; set; }
+        public short operationId { get; set; }
 
     }
 
