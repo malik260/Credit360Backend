@@ -14,37 +14,33 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 {
     public partial class FinanceRepotObject
     {
-        public List<TransactionViewModel> FinanceTransaction(DateTime endDate, DateTime startDate, int? staffId, int companyId, int? branchId, bool excludeSystem)
+        public List<TransactionViewModel> FinanceTransaction(DateTime startDate, DateTime endDate,  int? staffId, int companyId, int? branchId, bool excludeSystem)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var staffSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
                 IQueryable<TransactionViewModel> data = (from a in context.TBL_FINANCE_TRANSACTION
                                                          where a.COMPANYID == companyId
                                                          && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)
-                                                         && a.TBL_CASA.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID == staffSensitivityLevelId
-                                                         && branchId == 0
-                                                         || a.COMPANYID == companyId
-                                                         && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)
-                                                         && a.TBL_CASA.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID == staffSensitivityLevelId
-                                                         && a.TBL_BRANCH.BRANCHID == branchId
+                                                         && (branchId == null || branchId==0 || a.TBL_BRANCH.BRANCHID==branchId)
                                                          orderby a.POSTEDDATE, a.TRANSACTIONID descending
                                                          select new TransactionViewModel()
                                                          {
                                                              postedByStaffId = a.POSTEDBY,
                                                              branchId = a.SOURCEBRANCHID,
                                                              branch = a.TBL_BRANCH.BRANCHNAME,
+                                                             branchCode = a.TBL_BRANCH.BRANCHCODE,
                                                              batchNo = a.BATCHCODE,
+                                                             batchNo2 = a.BATCHCODE2,
                                                              companyName = a.TBL_COMPANY.NAME,
                                                              creditAmount = a.CREDITAMOUNT,
                                                              debitAmount = a.DEBITAMOUNT,
-                                                             accountName = a.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME + "(" + a.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE + ")",
+                                                             accountName = context.TBL_CHART_OF_ACCOUNT.Where(x=>x.GLACCOUNTID==a.GLACCOUNTID).Select(x=>x.ACCOUNTNAME).FirstOrDefault(),
+                                                             GLAccountCode = context.TBL_CHART_OF_ACCOUNT.Where(x=>x.GLACCOUNTID==a.GLACCOUNTID).Select(x=>x.ACCOUNTCODE).FirstOrDefault(),
                                                              description = a.DESCRIPTION,
                                                              valueDate = a.VALUEDATE,
                                                              postedDate = a.POSTEDDATE,
                                                              postedTime = a.POSTEDDATETIME,
-                                                             postedBy = a.POSTEDBY == -1 ? SystemStaff.System.ToString() : a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.FIRSTNAME,
-                                                             approvedBy = a.POSTEDBY == -1 ? SystemStaff.System.ToString() : a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                                                             postedBy = context.TBL_STAFF.Where(x => x.STAFFID == a.POSTEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),// ? SystemStaff.System.ToString() : a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.FIRSTNAME,
                                                              postCurrency = a.TBL_CURRENCY.CURRENCYNAME,
                                                              currencyRate = a.CURRENCYRATE,
                                                              approvedDate = a.APPROVEDDATE,
@@ -53,33 +49,24 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                          });
 
 
-                if (branchId != null && branchId != 0)
-                {
-                    data = data.Where(c => c.branchId == branchId);
-                }
-
-                if (excludeSystem)
-                {
-                    data = data.Where(c => c.postedByStaffId != -1);
-
-                }
-
-
-                if (staffId != null && staffId != 0)
-                {
-                    data = data.Where(c => c.postedByStaffId == staffId);
-                }
-
                 return data.ToList();
-            }
+                }
 
         }
-        public List<TransactionViewModel> Repayment(DateTime endDate, DateTime startDate, int? operationId, int companyId)
+        public List<TransactionViewModel> LoanRepayment(DateTime endDate, DateTime startDate, int? operationId, int companyId)
         {
+            int[] operations = { (int)OperationsEnum.InterestLoanRepayment, (int)OperationsEnum.PrincipalPastDueLoanRepayment, (int)OperationsEnum.InterestPastDueLoanRepayment, (int)OperationsEnum.PrincipalLoanRepayment, (int)OperationsEnum.TermLoanBooking };
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 List<TransactionViewModel> data = (from a in context.TBL_FINANCE_TRANSACTION
+                                                   join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.LOANREFERENCENUMBER
+                                                   join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
+                                                   join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                                                    where a.POSTEDDATE >= startDate && a.POSTEDDATE <= endDate
+                                                   && a.COMPANYID == companyId
+                                                   && a.CREDITAMOUNT == 0
+                                                   && a.DEBITAMOUNT > 0
+                                                  && operations.Contains(a.OPERATIONID)
                                                    && (a.OPERATIONID == operationId || operationId ==0 || operationId==null)
                                                    orderby a.POSTEDDATE, a.TRANSACTIONID descending
 
@@ -103,6 +90,12 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                        baseCurrency = a.TBL_COMPANY.TBL_CURRENCY.CURRENCYNAME,
                                                        casaAccountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == a.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                                        branchName = context.TBL_BRANCH.Where(x => x.BRANCHID == a.SOURCEBRANCHID).Select(x => x.BRANCHNAME).FirstOrDefault(),
+                                                       productCode = p.PRODUCTCODE,
+                                                       productName = p.PRODUCTNAME,
+                                                       customerCode = c.CUSTOMERCODE,
+                                                       customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                                                       branchCode = context.TBL_BRANCH.Where(x => x.BRANCHID == l.BRANCHID).Select(x => x.BRANCHCODE).FirstOrDefault(),
+                                                       sourceReferenceNumber = a.SOURCEREFERENCENUMBER
                                                    }).ToList();
                 return data;
             }
@@ -114,9 +107,12 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 data = (from a in context.TBL_DAILY_ACCRUAL
+                        join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
+                        join l in context.TBL_LOAN on a.REFERENCENUMBER equals l.LOANREFERENCENUMBER
+                        join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                         where a.DATE >= startDate && a.DATE <= endDate
+                         && a.COMPANYID == companyId
                         && (a.CATEGORYID == categoryId || categoryId == null || categoryId == 0)
-                        // && (a.TRANSACTIONTYPEID == transactionTypeId || transactionTypeId==null || transactionTypeId == 0)
                         orderby a.DAILYACCURALID descending
                         select new DailyAccrualViewModel()
                         {
@@ -132,6 +128,11 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                             referenceNumber = a.REFERENCENUMBER,
                             repaymentPostedStatus = a.REPAYMENTPOSTEDSTATUS,
                             transactionTypeName = context.TBL_LOAN_TRANSACTION_TYPE.Where(x => x.TRANSACTIONTYPEID == a.TRANSACTIONTYPEID).Select(x => x.TRANSACTIONTYPENAME).FirstOrDefault(),
+                            productCode = p.PRODUCTCODE,
+                            productName =p.PRODUCTNAME,
+                            customerCode = c.CUSTOMERCODE,
+                            customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                            branchCode = context.TBL_BRANCH.Where(x => x.BRANCHID == a.BRANCHID).Select(x => x.BRANCHCODE).FirstOrDefault(),
                         }).ToList();
             }
             return data;
@@ -142,7 +143,11 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 data = (from a in context.TBL_CUSTOM_TRANSACTION_BULK
+                        join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.LOANREFERENCENUMBER
+                        join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
+                        join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                         where a.POSTEDDATE >= startDate && a.POSTEDDATE <= endDate
+                        && a.COMPANYID == companyId
                         && (a.FLOWTYPE == valueCode || valueCode==null || valueCode=="") 
                         orderby a.BULKTRANSACTIONID descending
                         select new BulkTransactionViewModel()
@@ -169,7 +174,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                             sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
                             syetemDateTime = a.SYSTEMDATETIME,
                             transactionType = a.TRANSACTIONTYPE,
-                            valueDate = a.VALUEDATE
+                            valueDate = a.VALUEDATE,
+                            productCode = p.PRODUCTCODE,
+                            productName = p.PRODUCTNAME,
+                            customerCode = c.CUSTOMERCODE,
+                            customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                            branchCode = context.TBL_BRANCH.Where(x => x.BRANCHID == l.BRANCHID).Select(x => x.BRANCHCODE).FirstOrDefault(),
+                            branchName = context.TBL_BRANCH.Where(x => x.BRANCHID == l.BRANCHID).Select(x => x.BRANCHNAME).FirstOrDefault(),
                         }).ToList();
             }
             return data;

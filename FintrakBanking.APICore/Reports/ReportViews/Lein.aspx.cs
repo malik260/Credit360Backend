@@ -15,9 +15,9 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             if (!IsPostBack)
             {
                 companyId.Text = Request.QueryString["companyId"];
-                branchId.Text = Request.QueryString["branchId"];
-                customerName.Text = Request.QueryString["customerName"];
-                staffId.Text = Request.QueryString["staffId"];
+                startDate.Text = Request.QueryString["startDate"];
+                endDate.Text = Request.QueryString["endDate"];
+                searchParamemter.Text = Request.QueryString["searchParamemter"];
                 ReportViewer.LocalReport.Refresh();
             }
         }

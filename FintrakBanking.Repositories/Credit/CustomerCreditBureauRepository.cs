@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using FinTrakBanking.ThirdPartyIntegration;
 using FintrakBanking.Common.CustomException;
+using System.Text;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -177,7 +178,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
         {
-            var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId, entity.companyDirectorId);
+            var customerId = entity.customerId;
+            var companyDirectorId = entity.companyDirectorId;
+            var previousSearch = this.GetCustomerCreditBureauReportLog(customerId, companyDirectorId);
+
             bool hascrms = false;
             foreach (var i in previousSearch)
             {
@@ -451,7 +455,7 @@ namespace FintrakBanking.Repositories.Credit
             searchInfo.password = creditBureau.PASSWORD;
 
             //var dateOfBirth = Convert.ToDateTime(searchInfo.dateOfBirth);
-           // searchInfo.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
+            // searchInfo.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
             //var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == searchInfo.currencyCode);
 
             var creditBureauInputs = new SearchInput()
@@ -465,6 +469,16 @@ namespace FintrakBanking.Repositories.Credit
                 creditBureauId = searchInfo.creditBureauId,
                 userName = searchInfo.userName,
                 password = searchInfo.password,
+                customerCreditBureauUploadDetails = new LoanCreditBereauViewModel
+                {
+                    creditBureauId = searchInfo.creditBureauId,
+                    companyDirectorId = searchInfo.companyDirectorId,
+                    isReportOkay = true,
+                    customerId = searchInfo.customerId,
+                    chargeAmount = searchInfo.amount,
+                    usedIntegration = true,
+                    dateCompleted = DateTime.Now
+                }
                 
             };
 
@@ -499,16 +513,23 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (task.Wait(TimeSpan.FromSeconds(640)))
                     {
-                        if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete) return searchResponse;
-
+                        if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
+                        {
+                            return searchResponse;
+                        }
                         else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
                         {
-                            //byte file = System.Text.Encoding.ASCII.GetByteCount(searchResult.SearchResult)
-                            byte file = Convert.ToByte(searchResponse.SearchResult);
-                            byte[] fileArray = new byte[file];
+                            byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult);
+
                             var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
-                            if (!SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
+                            if (SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
                             {
+                                searchResponse.fileSaved = true;
+                                searchResponse.file = fileArray;
+                            }
+                            else
+                            {
+                                searchResponse.errorOccured = true;
                                 throw new ConditionNotMetException("Search could not save the result file");
                             }
 
@@ -532,7 +553,9 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                    trans.Rollback();
                     throw new BadLogicException(ex.Message.ToString());
+                    
                 }
             }
         }
@@ -775,12 +798,14 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var creditBureau = context.TBL_CREDIT_BUREAU.Find(model.creditBureauId);
+                var b = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault();
+                var fileName = b != null ? b.CUSTOMERCODE + creditBureau.CREDITBUREAUNAME : "new" + creditBureau.CREDITBUREAUNAME;
                 var data = new Entities.DocumentModels.TBL_CUSTOMER_CREDIT_BUREAU
                 {
                     CUSTOMERCREDITBUREAUID = customerCreditBureauId,
                     DOCUMENT_TITLE = creditBureau.CREDITBUREAUNAME + " Report Document Upload",
                     FILEEXTENSION = "pdf",
-                    // FILENAME = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault().CUSTOMERCODE + creditBureau.CREDITBUREAUNAME,
+                    FILENAME = fileName.Trim(), //context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault().CUSTOMERCODE + creditBureau.CREDITBUREAUNAME,
                     FILEDATA = file,
                     SYSTEMDATETIME = genSetup.GetApplicationDate(),
                     DATETIMECREATED = DateTime.Now,
@@ -791,6 +816,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 // Audit Section ---------------------------
                 var creditBureauInfo = context.TBL_CREDIT_BUREAU.Find(model.creditBureauId);
+                var mergeId = model.mergeList;
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,

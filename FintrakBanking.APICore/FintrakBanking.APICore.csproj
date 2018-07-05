@@ -675,7 +675,6 @@
     </Compile>
     <Compile Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx.cs">
       <DependentUpon>LoanCASAaccountWithLein.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx.designer.cs">
       <DependentUpon>LoanCASAaccountWithLein.aspx</DependentUpon>

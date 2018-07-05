@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
@@ -598,58 +599,35 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
-        public IList<LoanViewModel> GetLoanWithLein(short branchId, string customerName, int staffId)
+        public IList<CasaLienViewModel> AccountsWithLein(DateTime endDate, DateTime startDate, string searchParamemter, int companyId)
         {
            
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var staffSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
-                var data = (from a in context.TBL_LOAN
-                            join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
-                            join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
-                            join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                            where (s.HASLIEN == true || (s.POSTNOSTATUSID == (short)CASAPostNoStatusEnum.PostNoDebit || s.POSTNOSTATUSID == (short)CASAPostNoStatusEnum.PostNoDebitandCredit)
-                            && (a.LOANREFERENCENUMBER.StartsWith(customerName.Trim()) || cs.FIRSTNAME.StartsWith(customerName.Trim()) || cs.MIDDLENAME.StartsWith(customerName.Trim()) || cs.LASTNAME.StartsWith(customerName.Trim()) || customerName== "undefined")
-                            && (a.BRANCHID==branchId || branchId==0) && cs.CUSTOMERSENSITIVITYLEVELID <= staffSensitivityLevelId
 
-                            )
-                            select new LoanViewModel
+                var data = (from a in context.TBL_CASA_LIEN
+                            //join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.
+                           // join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                            where a.COMPANYID == companyId
+                            && (a.DATETIMECREATED <= endDate && a.DATETIMECREATED >= startDate)
+                            && (a.PRODUCTACCOUNTNUMBER == searchParamemter || a.LIENREFERENCENUMBER == searchParamemter || searchParamemter == null)
+
+                            select new CasaLienViewModel
                             {
-                                applicationReferenceNumber = a.LOANREFERENCENUMBER,
-                                loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                bookingDate = a.BOOKINGDATE,
-                                disburseDate = a.DISBURSEDATE,
-                                maturityDate = a.MATURITYDATE,
-                                principalAmount = a.PRINCIPALAMOUNT,
-                                interestRate = a.INTERESTRATE,
-                                outstandingInterest = a.OUTSTANDINGINTEREST,
-                                outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
-                                loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
-                                relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                                relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-                                relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
-                                branchId = a.BRANCHID,
-                                branchName = br.BRANCHNAME,
-                                customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME
+                               sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
+                               productAccountNumber =a.PRODUCTACCOUNTNUMBER,
+                               lienReferenceNumber = a.LIENREFERENCENUMBER,
+                               branchName = context.TBL_BRANCH.Where(x=>x.BRANCHID==a.BRANCHID).Select(x=>x.BRANCHNAME).FirstOrDefault(),
+                               lienAmount =a.LIENAMOUNT,
+                               description = a.DESCRIPTION,
+                               lienTypeName = context.TBL_CASA_LIEN_TYPE.Where(x=>x.LIENTYPEID==a.LIENTYPEID).Select(x=>x.LIENTYPENAME).FirstOrDefault(),
+                               dateTimeCreated = a.DATETIMECREATED,
+                               //customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+
                             }).ToList();
                 return data;
 
-                //if (branchId == 0 && customerName == "undefined")
-                //{
-                //    return data;
-
-                //}
-                //else if (branchId == 0 && customerName != "undefined")
-                //{
-                //    return data.Where(x => x.loanReferenceNumber.StartsWith(customerName) || x.customerName.Contains(customerName) && x.branchId == 0).ToList();
-                //}
-                //else
-                //{
-                //    return data.Where(x => x.loanReferenceNumber.StartsWith(customerName) || x.customerName.Contains(customerName) && x.branchId == branchId).ToList();
-                //}
+                
             }
 
         }
