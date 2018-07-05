@@ -87,7 +87,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanId = d.LOANID,
                     loanSystemTypeId = d.LOANSYSTEMTYPEID,
                     loanSystemTypeName = d.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
-                    //productId = NEEDED
+                    productId = d.PRODUCTID
                     
                 })
                 .ToList()
@@ -152,17 +152,24 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     LOANAPPLICATIONID = application.LOANAPPLICATIONID,
                     LOANID = model.loanId,
-                    LOANSYSTEMTYPEID = model.productTypeId,/*Term/Disbursed Facility..Overdraft Facility..Contingent Liability*/
-                    OPERATIONID = detail.operationTypeId, // refactor to operationId from ui!
+                    LOANSYSTEMTYPEID = model.loanSystemTypeId,/*Term/Disbursed Facility..Overdraft Facility..Contingent Liability*/
+                    OPERATIONID = detail.operationId, // refactor to operationId from ui!
                     REVIEWDETAILS = detail.reviewDetails,
+                    PRODUCTID = detail.productId,
                     REPAYMENTTERMS = String.Empty,
                     REPAYMENTSCHEDULE = String.Empty,
                     CUSTOMERID = model.customerId,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending, // REMOVE DUPLICATE [STATUSID]
-                    //STATUSID = (int)ApprovalStatusEnum.Pending, // REMOVE DUPLICATE [STATUSID]
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved, // REMOVE DUPLICATE [STATUSID]
                     CREATEDBY = model.createdBy,
-                    //BRANCHID = model.branchId,
-                    DATECREATED = applicationDate,
+                    DATETIMECREATED = applicationDate,
+                    PROPOSEDTENOR = 10,
+                    PROPOSEDINTERESTRATE = 10,
+                    PROPOSEDAMOUNT = 10,
+                    APPROVEDTENOR = 10,
+                    APPROVEDINTERESTRATE = 10,
+                    APPROVEDAMOUNT = 10,
+                    OPERATIONPERFORMED = false,
+                    
                 });
             }
 

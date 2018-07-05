@@ -88,7 +88,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetLoanApplicationRef();
-                if (data == 0)
+                if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }

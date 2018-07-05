@@ -2,6 +2,7 @@
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -85,6 +86,10 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
         bool CommercialPaperTenorReviewDetails(int loanAplicationDetailId, int newTenor);
         bool GetRepaymentFromStaging();
+        #endregion
+
+        #region
+        List<ItemValue> FlowTypes();
         #endregion
     }
 }

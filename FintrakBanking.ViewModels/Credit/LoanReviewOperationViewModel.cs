@@ -268,6 +268,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public string branchName { get; set; }
         public string approvalState { get; set; }
+        public short loanSystemTypeId { get; set; }
     }
 
     public class applicationDetails
@@ -282,6 +283,7 @@ namespace FintrakBanking.ViewModels.Credit
         //public string loanSystemType { get; set; }
         public string loanSystemTypeName { get; set; }
         public string operationName { get; set; }
+        public short productId { get; set; }
     }
 
     public class SelectListViewModel

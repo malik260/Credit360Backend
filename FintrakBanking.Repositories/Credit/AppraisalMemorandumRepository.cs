@@ -282,7 +282,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            workflow.Disputed = appl.DISPUTED;
+            // workflow.Disputed = appl.DISPUTED; // buggy
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.receiverLevelId;
@@ -399,20 +399,21 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.comment == "debug_test") throw new Exception("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
-            context.SaveChanges();
             LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate); // LOG CHANGES
+            context.SaveChanges();
 
-            if (workflow.NewState == (int)ApprovalState.Ended)
+            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
                 var lastStatus = workflow.StatusId;
-                PassApplicationToOperation(appl.LOANAPPLICATIONID, (int)OperationsEnum.OfferLetterApproval, model.createdBy, "New pproved application");
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, appl.PRODUCTCLASSID, "New pproved application", true, false);
                 return lastStatus;
             }
 
             return (int)ApprovalStatusEnum.Processing; // default for now
         }
 
-        private void LogApplicationDetailChanges(int applicationId,int staffId,DateTime date)
+        private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date)
         {
             var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId);
             foreach (var detail in details)
@@ -431,7 +432,7 @@ namespace FintrakBanking.Repositories.Credit
                     SYSTEMDATETIME = DateTime.Now,
                 });
             }
-            context.SaveChanges();
+            //context.SaveChanges();
         }
 
         private string LineItemChanges(List<RecommendedChangesViewModel> recommendedChanges)
@@ -910,9 +911,10 @@ namespace FintrakBanking.Repositories.Credit
 
             bool response = (context.SaveChanges() > 0) == result;
 
-            if (workflow.NewState == (int)ApprovalState.Ended)
+            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
-                PassApplicationToOperation(appl.LOANAPPLICATIONID, (int)OperationsEnum.OfferLetterApproval, model.createdBy, "New pproved application");
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, appl.PRODUCTCLASSID, "New pproved application", true, false);
             }
 
             return response;
@@ -955,6 +957,10 @@ namespace FintrakBanking.Repositories.Credit
                         operationId = x.a.OPERATIONID,
                         timeIn = y.SYSTEMARRIVALDATETIME,
                         timeOut = y.SYSTEMRESPONSEDATETIME,
+                        currentApprovalLevelId = y.TOAPPROVALLEVELID,
+                        currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                        customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                        customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                         responsiblePerson = context.TBL_STAFF
                                                 .Where(s => s.STAFFID == y.TOSTAFFID)
                                                 .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
@@ -1283,21 +1289,21 @@ namespace FintrakBanking.Repositories.Credit
 
         # endregion LMS APPROVAL
 
-        private void PassApplicationToOperation(int applicationId, int operationId, int staffId, string comment)
-        {
-            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-            var staff = context.TBL_STAFF.Find(staffId);
-            workflow.StaffId = staffId;
-            workflow.CompanyId = staff.COMPANYID;
-            workflow.OperationId = operationId;
-            workflow.TargetId = applicationId;
-            workflow.ProductClassId = null;
-            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-            workflow.Comment = comment;
-            workflow.ExternalInitialization = true;
-            workflow.DeferredExecution = false;
-            workflow.LogActivity();
-        }
+        //private void PassApplicationToOperation(int applicationId, int operationId, int staffId, string comment)
+        //{
+        //    var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+        //    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+        //    var staff = context.TBL_STAFF.Find(staffId);
+        //    workflow.StaffId = staffId;
+        //    workflow.CompanyId = staff.COMPANYID;
+        //    workflow.OperationId = operationId;
+        //    workflow.TargetId = applicationId;
+        //    workflow.ProductClassId = null;
+        //    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+        //    workflow.Comment = comment;
+        //    workflow.ExternalInitialization = true;
+        //    workflow.DeferredExecution = false;
+        //    workflow.LogActivity();
+        //}
     }
 }

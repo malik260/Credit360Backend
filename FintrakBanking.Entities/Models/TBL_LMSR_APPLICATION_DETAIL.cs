@@ -19,7 +19,7 @@
 
         public int LOANAPPLICATIONID { get; set; }
         public int LOANID { get; set; }
-        //public int BRANCHID { get; set; }
+        public short PRODUCTID { get; set; }
         public int OPERATIONID { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
@@ -39,7 +39,21 @@
 
         public int CREATEDBY { get; set; }
 
-        public DateTime DATECREATED { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
+
+        public int PROPOSEDTENOR { get; set; }
+
+        public double PROPOSEDINTERESTRATE { get; set; }
+
+        public decimal PROPOSEDAMOUNT { get; set; }
+
+        public int APPROVEDTENOR { get; set; }
+
+        public double APPROVEDINTERESTRATE { get; set; }
+
+        public decimal APPROVEDAMOUNT { get; set; }
+
+        public bool OPERATIONPERFORMED { get; set; }
 
         // public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
@@ -49,7 +63,7 @@
 
         // public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        // public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
+        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 
         public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 

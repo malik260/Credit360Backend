@@ -387,6 +387,9 @@ namespace FintrakBanking.ViewModels.Credit
         public short? productClassId { get; set; }
         public int? finalApprovalLevelId { get; set; }
         public short? nextApplicationStatusId { get; set; }
+        public string customerName { get; set; }
+        public string customerGroupName { get; set; }
+        public int? currentApprovalLevelId { get; set; }
     }
     public class InvoiceDetailViewModel
     {

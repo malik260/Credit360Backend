@@ -263,6 +263,17 @@ namespace FintrakBanking.Common
             return sb.ToString();
         }
 
+        public static string AppendZeroString(int value, int maxLength)
+        {
+            string sb = string.Empty;
+            for (int i = value.ToString().Length; i < maxLength; i++)
+            {
+                sb += "0";
+            }
+            string result = sb + value.ToString();
+            return result;
+        }
+
         public static int PasswordExpirationDays
         {
             get
@@ -381,9 +392,14 @@ namespace FintrakBanking.Common
 
         public static int GetLoanReferanceNumber()
         {
+            //var salt = GetUniqueKey(4).ToUpper();
+
             TimeSpan epochTicks = new TimeSpan(new DateTime(1980, 1, 1).Ticks);
             TimeSpan unixTicks = new TimeSpan(DateTime.UtcNow.Ticks) - epochTicks;
             double unixTime = unixTicks.TotalSeconds;
+
+            //var output = salt + unixTime.ToString();
+
             return (int)unixTime;
         }
 
@@ -403,6 +419,23 @@ namespace FintrakBanking.Common
         {
             byte[] byteBuffer = Convert.FromBase64String(base64String);
             return byteBuffer;
+        }
+        public static string AddSpacesToSentence(string text, bool preserveAcronyms)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return string.Empty;
+            StringBuilder newText = new StringBuilder(text.Length * 2);
+            newText.Append(text[0]);
+            for (int i = 1; i < text.Length; i++)
+            {
+                if (char.IsUpper(text[i]))
+                    if ((text[i - 1] != ' ' && !char.IsUpper(text[i - 1])) ||
+                        (preserveAcronyms && char.IsUpper(text[i - 1]) &&
+                         i < text.Length - 1 && !char.IsUpper(text[i + 1])))
+                        newText.Append(' ');
+                newText.Append(text[i]);
+            }
+            return newText.ToString();
         }
     }
 }
