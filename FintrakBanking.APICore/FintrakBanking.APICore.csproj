@@ -916,6 +916,7 @@
     <Content Include="Reports\ReportDataset\TransactionDataSet.xss">
       <DependentUpon>TransactionDataSet.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\Report\Lein.rdlc" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -1066,7 +1067,6 @@
     <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentDeferralForMCC.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
-    <EmbeddedResource Include="Reports\Report\LoanRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanScheduleSimulation.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
