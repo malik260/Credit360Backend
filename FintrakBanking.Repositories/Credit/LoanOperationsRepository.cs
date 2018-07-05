@@ -6884,30 +6884,43 @@ namespace FintrakBanking.Repositories.Credit
             //using (var trans = context.Database.BeginTransaction())
             //{
                 bool output = false;
-                try
-
+                double penalAmount = 0;
+            try
+                
                 {
                     var systemDate = generalSetup.GetApplicationDate();
                     var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanInput.productId);
                     var penalCharge = context.TBL_CHARGE_FEE.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.Prepayment);
                     var loan = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
                     decimal principalOutStandingBalance = loan.OUTSTANDINGPRINCIPAL;
-                    decimal accruedInterest = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == loanId && x.DATE == applicationDate).ACCRUEDINTEREST;
+                    decimal accruedInterest = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == loanId && x.DATE == systemDate).ACCRUEDINTEREST;
                     accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
                     principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
                     decimal pastDue = decimal.Round((loan.PASTDUEINTEREST + loan.INTERESTONPASTDUEINTEREST + loan.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
                     decimal totalamount = (principalOutStandingBalance + pastDue + accruedInterest);
-                    var penalAmount = loanInput.principalAmount * (penalCharge.RATE / 100);
+                        if(penalCharge == null)
+                        {
+                            penalAmount = 0;
+                        }
+                        else
+                        {
+                            penalAmount = loanInput.principalAmount * (double)(penalCharge.RATE / 100);
+                        }
+                   
                     decimal partPayment = (decimal)loanInput.payAmount - (pastDue + (decimal)penalAmount + accruedInterest);
 
-                    var penalGL = penalCharge.CHARGEFEEID;
+                int value = product.INTERESTRECEIVABLEPAYABLEGL.Value;
 
-                    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                     //finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId)
+
+                //var penalGL = penalCharge.CHARGEFEEID;
+
+                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
                     if (loanInput.payAmount >= (double)(totalamount + accruedInterest))
                     {
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalGL, "Penal Charge", (int)OperationsEnum.PenalFee));///change to charge GL
+                        //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalGL, "Penal Charge", (int)OperationsEnum.PenalFee));///change to charge GL
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
+                        //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
 
                         inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest", (int)OperationsEnum.InterestLoanRepayment));
 
@@ -6918,9 +6931,9 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalGL, "Penal Charge", (int)OperationsEnum.PenalFee));///change to charge GL
+                        //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalGL, "Penal Charge", (int)OperationsEnum.PenalFee));///change to charge GL
 
-                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
+                        //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
 
                         inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest", (int)OperationsEnum.InterestLoanRepayment));
 
@@ -9522,10 +9535,10 @@ namespace FintrakBanking.Repositories.Credit
                     workFlow.OperationId = model.operationTypeId;
                     workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                     workFlow.ExternalInitialization = true;
-                    //if ((int)OperationsEnum.Prepayment != model.operationTypeId)
-                    //{
+                    if ((int)OperationsEnum.Prepayment != model.operationTypeId)
+                    {
                         var response = workFlow.LogActivity();
-                    //}
+                    }
 
                     try
                     {
@@ -9540,11 +9553,11 @@ namespace FintrakBanking.Repositories.Credit
 
                     trans.Commit();
 
-                    //if ((int)OperationsEnum.Prepayment == model.operationTypeId)
-                    //{
-                    //    int loanReviewOperationsId = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANID == model.loanId).LOANREVIEWOPERATIONID;
-                    //    LoanRephasementProcess((short)loanReviewOperationsId, model.loanId, model.staffId);
-                    //}
+                    if ((int)OperationsEnum.Prepayment == model.operationTypeId)
+                    {
+                        int loanReviewOperationsId = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANID == model.loanId).LOANREVIEWOPERATIONID;
+                        LoanRephasementProcess((short)loanReviewOperationsId, model.loanId, model.staffId);
+                    }
 
                     return output;
 
@@ -10129,6 +10142,7 @@ namespace FintrakBanking.Repositories.Credit
                                  staffId = staffId,
                                  createdBy = staffId,
                                  customerId = b.CUSTOMERID,
+                                 productId = b.PRODUCTID,
 
                              }).FirstOrDefault();
 
@@ -10231,6 +10245,7 @@ namespace FintrakBanking.Repositories.Credit
                                  staffId = staffId,
                                  createdBy = staffId,
                                  customerId = b.CUSTOMERID,
+                                 productId = b.PRODUCTID,
                              }).FirstOrDefault();
 
                     //foreach (var model in model)
@@ -10546,6 +10561,7 @@ namespace FintrakBanking.Repositories.Credit
                                  staffId = staffId,
                                  createdBy = staffId,
                                  customerId = b.CUSTOMERID,
+                                 productId = b.PRODUCTID,
 
 
                              }).FirstOrDefault();
@@ -10587,7 +10603,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if ((int)OperationsEnum.Prepayment == model.operationId)
                     {
-                        decimal accruedInterest = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.DATE == applicationDate).ACCRUEDINTEREST;
+                        //decimal accruedInterest = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.DATE == applicationDate).ACCRUEDINTEREST;
                         DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.PAYMENTDATE >= applicationDate).PAYMENTDATE;
                         if (model.isManagementInterestRate == true)
                         {
