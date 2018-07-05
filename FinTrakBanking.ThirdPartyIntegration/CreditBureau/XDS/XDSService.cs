@@ -93,7 +93,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
                 return proxy.IsTicketValid(ticket);
             }
           return false;
-                   }
+        }
 
         public List<dynamic> GetApprovedReasons()
         {

@@ -10,8 +10,11 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
-        public string senderDepartment;
-
+        public string senderDepartment { get; set; }
+        public string operationsName { get; set; }
+        public string customerName { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int customerId { get; set; }
         public string senderUnit { get; set; }
         public string jobTypeName { get; set; }
         public string senderRole { get; set; }
@@ -53,6 +56,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string assignee { get; set; }
         public Array emailList { get; set; }
         public List<MessageLogViewModel> mailData { get; set; }
+        public List<JobRequestDetailViewModel> jobDetail { get; set; }
     }
 
     public  class JobRequestMessageViewModel : GeneralEntity
@@ -69,6 +73,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class JobRequestDetailViewModel : GeneralEntity
     {
+        public int customerId { get; set; }
+
         public string jobRequestCode { get; set; }
 
         public string operationsName { get; set; }

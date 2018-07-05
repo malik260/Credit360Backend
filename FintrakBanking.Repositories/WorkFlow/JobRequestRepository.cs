@@ -508,17 +508,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private List<JobRequestDetailViewModel> GetJobRequestDetails()
         {
-            //var allstaff = this.context.TBL_STAFF.Select(s => new 
-            //{
-            //    id = s.STAFFID,
-            //    name = s.LASTNAME + " " + s.FIRSTNAME
-            //});
-
             var details = (from x in this.context.TBL_JOB_REQUEST_DETAIL
                            join b in context.TBL_JOB_REQUEST on x.JOBREQUESTID equals b.JOBREQUESTID
                            where x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs
-                  //.Where(i=> (i.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || i.JOB_SUB_TYPEID ==  (short)JobSubTypeEnum.LegalSearch || (short)JobSubTypeEnum.LegalVerification == i.JOB_SUB_TYPEID || i.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs )
-                  && x.DELETED == false
+                           && x.DELETED == false
                            select new JobRequestDetailViewModel
                            {
                                jobRequestId = x.JOBREQUESTID,
@@ -536,9 +529,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                operationsName = x.TBL_JOB_REQUEST.TBL_OPERATIONS.OPERATIONNAME,
                                amount = x.AMOUNT,
                                accountNumber = x.ACCOUNTNUMBER,
-                               dateTimeCreated = x.DATETIMECREATED,
-                               // customerName = (from v in context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONDETAILID == b.TARGETID).FirstOrDefault()).CUSTOMERID) select v.FIRSTNAME + " " + v.MIDDLENAME + " " + v.LASTNAME).FirstOrDefault()
-
+                               dateTimeCreated = x.DATETIMECREATED
                            }).ToList();
 
             foreach (var item in details)
@@ -549,20 +540,72 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     var t = a.FirstOrDefault();
                     item.customerName = (from v in context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == t.CUSTOMERID) select v.FIRSTNAME + " " + v.MIDDLENAME + " " + v.LASTNAME).FirstOrDefault();
-                    item.applicationReferenceNumber = t.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER; // context.TBL_LOAN_APPLICATION.Find(x.FirstOrDefault().LOANAPPLICATIONID).APPLICATIONREFERENCENUMBER;
+                    item.applicationReferenceNumber = t.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER; 
+                    item.customerId = t.CUSTOMERID;
                 }
             };
 
-            var d = details.ToList();
             return details.ToList();
         }
 
-        public List<JobRequestDetailViewModel> GetJobRequestLegalJobDetails()
+        //public List<JobRequestDetailViewModel> GetJobRequestLegalJobDetails()
+        //{
+
+        //    return GetJobRequestDetails().Where(x => x.jobTypeId == (short)JobTypeEnum.legal).ToList();
+        //}
+
+        public List<JobRequestViewModel> GetJobRequestLegalJobDetail()
         {
+            //var job = context.TBL_JOB_REQUEST.Where(x => x. == (short)JobSubTypeEnum.LegalCharting || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs);
+            var details = (from x in this.context.TBL_JOB_REQUEST
+                           join b in context.TBL_JOB_REQUEST_DETAIL on x.JOBREQUESTID equals b.JOBREQUESTID
+                           where b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs
+                           && b.DELETED == false
+                           select new JobRequestViewModel
+                           {
+                               jobRequestId = x.JOBREQUESTID,
+                               jobRequestCode = x.JOBREQUESTCODE,
+                               jobTypeId = x.TBL_JOB_TYPE.JOBTYPEID,
+                               jobTypeName = x.TBL_JOB_TYPE.JOBTYPENAME,
+                               targetId = x.TARGETID,
+                               operationsId = x.OPERATIONSID,
+                               operationsName = x.TBL_OPERATIONS.OPERATIONNAME,
+                               dateTimeCreated = x.ARRIVALDATE,
+                               jobDetail = (from d in this.context.TBL_JOB_REQUEST_DETAIL
+                                           select new JobRequestDetailViewModel
+                                            {
+                                                jobRequestId = d.JOBREQUESTID,
+                                                jobRequestDetailId = d.JOBREQUEST_DETAILID,
+                                                accreditedConsultantId = (int)d.ACCREDITEDCONSULTANTID,
+                                                accreditedConsultantName = d.TBL_ACCREDITEDCONSULTANT.FIRMNAME,
+                                                jobSubTypeId = d.JOB_SUB_TYPEID,
+                                                jobRequestCode = x.JOBREQUESTCODE,
+                                                jobSubTypeName = d.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME,
+                                                jobTypeId = d.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPEID,
+                                                jobTypeName = d.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPENAME,
+                                                description = d.DESCRIPTION,
+                                                amount = d.AMOUNT,
+                                                accountNumber = d.ACCOUNTNUMBER,
+                                                dateTimeCreated = d.DATETIMECREATED
+                                            }).ToList(),
+                                }).ToList();
+            
 
-            return GetJobRequestDetails().Where(x => x.jobTypeId == (short)JobTypeEnum.legal).ToList();
+            foreach (var item in details)
+            {
+                var a = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONDETAILID == item.targetId);
+
+                if (a.Any())
+                {
+                    var t = a.FirstOrDefault();
+                    item.customerName = (from v in context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == t.CUSTOMERID) select v.FIRSTNAME + " " + v.MIDDLENAME + " " + v.LASTNAME).FirstOrDefault();
+                    item.applicationReferenceNumber = t.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+                    item.customerId = t.CUSTOMERID;
+                }
+            };
+
+            return details.ToList();
         }
-
         public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId)
         {
             var requests = this.context.TBL_JOB_REQUEST.Where(d => d.TARGETID == applicationDetailId
@@ -1013,6 +1056,19 @@ namespace FintrakBanking.Repositories.WorkFlow
             return context.SaveChanges() != 0;
         }
 
+        public bool chargeCustomerForCollateralJobs(int jobRequestDetailId, JobRequestDetailViewModel model)
+        {
+            var jobDetail = context.TBL_JOB_REQUEST_DETAIL.Find(jobRequestDetailId);
+            var consultant = context.TBL_ACCREDITEDCONSULTANT.Find(jobDetail.ACCREDITEDCONSULTANTID);
+            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == consultant.ACCOUNTNUMBER).FirstOrDefault();
+
+            if (casa == null)
+                throw new ConditionNotMetException("Accredited consultant account number not found in the system");
+
+
+
+            return false;
+        }
         #endregion End Middle Office Updates
 
         #region Job-Request Document
