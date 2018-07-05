@@ -386,7 +386,13 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LMSR_CONDITION_PRECEDENT> TBL_LMSR_CONDITION_PRECEDENT { get; set; }
         public virtual DbSet<TBL_LMSR_TRANSACTION_DYNAMICS> TBL_LMSR_TRANSACTION_DYNAMICS { get; set; }
         public virtual DbSet<TBL_CUSTOM_API_LOGS> TBL_CUSTOM_API_LOGS { get; set; }
-        
+        public virtual DbSet<TBL_ESG_CATEGORY> TBL_ESG_CATEGORY { get; set; }
+        public virtual DbSet<TBL_ESG_SUB_CATEGORY> TBL_ESG_SUB_CATEGORY { get; set; }
+        public virtual DbSet<TBL_ESG_CHECKLIST_SUMMARY> TBL_ESG_CHECKLIST_SUMMARY { get; set; }
+        public virtual DbSet<TBL_ESG_CLASS> TBL_ESG_CLASS { get; set; }
+        public virtual DbSet<TBL_ESG_CHECKLIST_DETAIL> TBL_ESG_CHECKLIST_DETAIL { get; set; }
+        public virtual DbSet<TBL_ESG_CHECKLIST_DEFINITION> TBL_ESG_CHECKLIST_DEFINITION { get; set; }
+        public virtual DbSet<TBL_ESG_TYPE> TBL_ESG_TYPE { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

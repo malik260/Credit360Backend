@@ -34,7 +34,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Checklist Definition
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("checklist-definition")]
         public HttpResponseMessage AddChecklistDefinition([FromBody] ChecklistDefinitionViewModel model)
         {
@@ -64,7 +65,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("checklist-definition/multiple")]
         public HttpResponseMessage AddMultipleChecklistDefinition([FromBody] List<ChecklistDefinitionViewModel> model)
         {
@@ -97,7 +99,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("checklist-definition/multiple-items")]
         public HttpResponseMessage AddMultipleChecklistDefinitionWithMultipleItems([FromBody] ChecklistDefinitionViewModel model)
         {
@@ -128,7 +131,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-definition")]
         public HttpResponseMessage GetAllChecklistDefinition()
         {
@@ -151,7 +155,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-definition-checklisttype/")]
         public HttpResponseMessage GetChecklistDefinitionByApprovalLevelCheckListType(int operationId, int checklistTypeId, int? productId, int loanTargetId)
         {
@@ -174,7 +179,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-type")]
         public HttpResponseMessage GetAllChecklistType()
         {
@@ -197,7 +203,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-type-byapprovallevel")]
         public HttpResponseMessage GetChecklistTypeByApprovalLevel(int operationId, int productClassProcessId)
         {
@@ -220,7 +227,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-detail-valitation/")]
         public HttpResponseMessage GetChecklistByCheckListTypeAndTargetId(int targetId, int checklistTypeId, bool isCamChecklist)
         {
@@ -243,7 +251,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-definition/{CheckListDefinitionId}")]
         public HttpResponseMessage GetAllChecklistDefinitionById(short CheckListDefinitionId)
         {
@@ -270,7 +279,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-definition/mapped/approval-level/{approvalLevelId}/product/{productId}")]
         public HttpResponseMessage GetAllChecklistDefinitionByApprovalLevelId(short approvalLevelId, short productId)
         {
@@ -297,7 +307,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-definition/unmapped/approval-level/{approvalLevelId}/product/{productId}")]
         public HttpResponseMessage GetUnmappedChecklistDefintionToApprovalLevel(short approvalLevelId, short productId)
         {
@@ -334,7 +345,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("checklist-definition/{CheckListDefinitionId}")]
         public HttpResponseMessage UpdateChecklistDefinition(short CheckListDefinitionId, [FromBody] ChecklistDefinitionViewModel model)
         {
@@ -365,7 +377,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete]
+        [ClaimsAuthorization]
         [Route("checklist-definition/{CheckListDefinitionId}")]
         public HttpResponseMessage DeleteChecklistDefinition(short CheckListDefinitionId)
         {
@@ -396,7 +409,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Checklist Detail
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-details-targetid/")]
         public HttpResponseMessage GetChecklistDetailsById(int targetId)
         {
@@ -422,7 +436,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("checklist-detail")]
         public HttpResponseMessage AddChecklistDetail([FromBody] ChecklistDetailViewModel model)
         {
@@ -442,12 +457,12 @@ namespace FintrakBanking.APICore.Controllers
                                 new { success = false, message = "This checklist item is checked already" });
                     }
                 }
-                    model.userBranchId = (short)token.GetBranchId;
+                model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = CommonHelpers.GetUserIP();
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-                
+
                 var data = repo.AddChecklistDetail(model);
                 if (data)
                 {
@@ -465,7 +480,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("checklist-detail-multiple")]
         public HttpResponseMessage AddChecklistDetailMultiple([FromBody] List<ChecklistDetailViewModel> model)
         {
@@ -493,7 +509,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-detail")]
         public HttpResponseMessage GetAllChecklistDetail()
         {
@@ -516,7 +533,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-detail/")]
         public HttpResponseMessage GetAllChecklistDetailByProductId(int targetId)
         {
@@ -540,7 +558,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-detail/target-type/{targetTypeId}/product/{productId}")]
         public HttpResponseMessage GetAllChecklistDetailByProductAndTargetType(int targetTypeId, int productId)
         {
@@ -563,7 +582,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-detail/checklist-definition/{checklistDefinitionId}")]
         public HttpResponseMessage GetAllChecklistDetailByChecklistDefinition(int checklistDefinitionId)
         {
@@ -586,7 +606,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-detail/{ChecklistId}")]
         public HttpResponseMessage GetAllChecklistById(int ChecklistId)
         {
@@ -604,7 +625,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("checklist-detail/{ChecklistId}")]
         public HttpResponseMessage UpdateChecklistDetail(int ChecklistId, [FromBody] ChecklistDetailViewModel model)
         {
@@ -635,7 +657,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete]
+        [ClaimsAuthorization]
         [Route("checklist-detail/{ChecklistId}")]
         public HttpResponseMessage DeleteLoanChecklist(int ChecklistId)
         {
@@ -665,7 +688,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region CheckList Items
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("checklist-item")]
         public HttpResponseMessage AddChecklistItem([FromBody] ChecklistItemViewModel model)
         {
@@ -696,7 +720,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("checklist-item/multiple")]
         public HttpResponseMessage AddMultipleChecklistItem([FromBody] List<ChecklistItemViewModel> model)
         {
@@ -719,7 +744,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-item")]
         public HttpResponseMessage GetAllChecklistItem()
         {
@@ -743,7 +769,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-item/{ChecklistId}")]
         public HttpResponseMessage GetAllChecklistItemById(int CheckListItemId)
         {
@@ -762,7 +789,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("checklist-item/{CheckListItemId}")]
         public HttpResponseMessage UpdateChecklistItem(int CheckListItemId, [FromBody] ChecklistItemViewModel model)
         {
@@ -794,7 +822,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete]
+        [ClaimsAuthorization]
         [Route("checklist-item/{CheckListItemId}")]
         public HttpResponseMessage DeleteChecklistItem(int CheckListItemId)
         {
@@ -826,7 +855,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region CheckList Select List
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-status")]
         public HttpResponseMessage GetAllChecklistStatus()
         {
@@ -848,7 +878,8 @@ namespace FintrakBanking.APICore.Controllers
                 new { success = false, message = $"Error: {e.Message}" });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-response-type")]
         public HttpResponseMessage GetAllChecklistResponseType()
         {
@@ -870,7 +901,8 @@ namespace FintrakBanking.APICore.Controllers
                 new { success = false, message = $"Error: {e.Message}" });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("checklist-target-type")]
         public HttpResponseMessage GetAllChecklistTargetType()
         {
@@ -895,7 +927,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Loan Application CheckList
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application-checklist")]
         public HttpResponseMessage GetLoanApplicationsAwaitingCheckList()
         {
@@ -915,7 +948,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("validate-checklist-details")]
         public HttpResponseMessage ValidateChecklistDetail([FromBody] ValidateChecklistDetailViewModel model)
         {
@@ -936,7 +970,8 @@ namespace FintrakBanking.APICore.Controllers
                  new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
         }
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("validate-condition-precedence")]
         public HttpResponseMessage ValidateConditionPrecedentDetail([FromBody] ConditionPrecedentViewModel model)
         {
@@ -971,7 +1006,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Condition Precedence Checklist
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("condition-prededence-checklist")]
         public HttpResponseMessage GetConditionPrecedenceChecklist(int loanApplicationId, bool isAvailment)
         {
@@ -990,7 +1026,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("condition-prededence-checklist-status")]
         public HttpResponseMessage GetConditionPrecedenceChecklistStatus(int loanApplicationId, bool isAvailment)
         {
@@ -1009,7 +1046,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("deferred-checklist-awaiting-approval")]
         public HttpResponseMessage GetChecklistAwaitingApproval()
         {
@@ -1028,7 +1066,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("deferred-checklist")]
         public HttpResponseMessage GetAllDeferralChecklist()
         {
@@ -1047,7 +1086,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("deferred-checklist-byContionId/")]
         public HttpResponseMessage GetAllDeferralChecklist(int conditionId)
         {
@@ -1067,7 +1107,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("update-loan-condition-precedence-status")]
         public HttpResponseMessage UpdateLoanConditionPrecedenceStatus([FromBody] ConditionPrecedentViewModel model)
         {
@@ -1078,7 +1119,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                  new { success = false, message = "Please select a checklist to continue" });
                 }
-                if (model.deferedDate < DateTime.Now )
+                if (model.deferedDate < DateTime.Now)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                  new { success = false, message = "Deferred date cannot be less than today's date" });
@@ -1106,7 +1147,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("extend-checklist-deferral-date")]
         public HttpResponseMessage ExtendChecklistDeferralDate([FromBody] ConditionPrecedentViewModel model)
         {
@@ -1145,7 +1187,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("update-provided-checklist")]
         public HttpResponseMessage UpdateProvidedChecklist([FromBody] ConditionPrecedentViewModel model)
         {
@@ -1179,7 +1222,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("checklist-approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {
@@ -1210,7 +1254,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Checklist Type Mapping
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("mapped-checklist-type")]
         public HttpResponseMessage GetAllChecklistTypeMapping()
         {
@@ -1230,7 +1275,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("checklist-type-mapping")]
         public HttpResponseMessage AddChecklistTypeMapping([FromBody] CheckListTypeMappingViewModel model)
         {
@@ -1250,7 +1296,7 @@ namespace FintrakBanking.APICore.Controllers
                      new { success = false, message = "This Checklist Type is already mapped with the selected Approval Level" });
                     }
                 }
-               
+
                 model.userBranchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
                 model.createdBy = token.GetStaffId;
@@ -1272,6 +1318,236 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
             new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
+        }
+        #endregion
+
+        #region EGS Checklist
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("esg-type")]
+        public HttpResponseMessage GetESGType()
+        {
+            try
+            {
+                var data = repo.GetESGType();
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("esg-class")]
+        public HttpResponseMessage GetESGClass()
+        {
+            try
+            {
+                var data = repo.GetESGClass();
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("esg-categories")]
+        public HttpResponseMessage GetESGCategory()
+        {
+            try
+            {
+                var data = repo.GetESGCategory();
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("esg-sub-categories")]
+        public HttpResponseMessage GetESGSubCategory(int categoryId)
+        {
+            try
+            {
+                var data = repo.GetESGSubCategory(categoryId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("esg-checklist-definition")]
+        public HttpResponseMessage GetESGChecklistDefinition()
+        {
+            try
+            {
+                var data = repo.GetESGChecklistDefinition();
+                if (data.Count() > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("esg-checklist-status")]
+        public HttpResponseMessage GetESGChecklistDefinition(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetESGChecklistStatus(loanApplicationId);
+                if (data.Count() > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (Exception ex)
+            { 
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("esg-checklist-detail")]
+        public HttpResponseMessage GetESGChecklistDetail(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetESGChecklistDetail(loanApplicationId);
+                if (data.Count() > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("esg-checklist-definition")]
+        public HttpResponseMessage AddESGChecklistDefinition([FromBody] List<ESGChecklistDefinitionViewModel> model)
+        {
+            try
+            {
+                foreach (var item in model)
+                {
+                    item.userBranchId = (short)token.GetBranchId;
+                    item.userIPAddress = CommonHelpers.GetUserIP();
+                    item.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                    item.createdBy = token.GetStaffId;
+                    item.companyId = token.GetCompanyId;
+                }
+
+                var data = repo.AddESGChecklistDefinition(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error creating record" });
+            }
+
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("esg-checklist-detail")]
+        public HttpResponseMessage AddESGChecklistDetail([FromBody] List<ESGChecklistDetailViewModel> model)
+        {
+            try
+            {
+                foreach (var item in model)
+                {
+                    item.userBranchId = (short)token.GetBranchId;
+                    item.userIPAddress = CommonHelpers.GetUserIP();
+                    item.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                    item.createdBy = token.GetStaffId;
+                    item.companyId = token.GetCompanyId;
+                }
+
+                var data = repo.AddESGChecklistDetail(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error creating record" });
+            }
+
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+
         }
         #endregion
     }
