@@ -135,8 +135,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             dateTimeDeleted = a.DATETIMEDELETED,
                             groupId = (int)a.GROUPID,
                             operationId = d.OPERATIONID //c.TBL_APPROVAL_GROUP_MAPPING.Select(x=> x.OPERATIONID).FirstOrDefault()
-                        }).ToList();
-            //GroupBy(x => x.approvalLevelId).Select(g => g.FirstOrDefault()).ToList();
+                        }).GroupBy(x => x.approvalLevelId).Select(g => g.FirstOrDefault()).ToList();
 
             return data;
         }

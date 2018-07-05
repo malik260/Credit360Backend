@@ -26,7 +26,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByApprovalLevelAndProduct(int approvalLevelId, int productId);
         IEnumerable<ChecklistItemViewModel> GetAllUnmappedChecklistItemsToApprovalLevelAndProduct(int approvalLevelId, int productId);
         IEnumerable<ChecklistDefinitionViewModel> GetUnmappedChecklistDefintionToApprovalLevel(int approvalLevelId);
-       // IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId);
+        // IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId);
         IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId);
         #endregion
 
@@ -81,6 +81,18 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<CheckListTypeMappingViewModel> GetAllChecklistTypeMapping();
         bool AddChecklistTypeMapping(CheckListTypeMappingViewModel model);
         bool ValidateChecklistTypeMapping(short checklistTypeId, int approvallevelId);
+        #endregion
+
+        #region ESG Checklist
+        IEnumerable<ESGClassViewModel> GetESGClass();
+        IEnumerable<ESGTypeViewModel> GetESGType();
+        IEnumerable<ESGCategoryViewModel> GetESGCategory();
+        IEnumerable<ESGSubCategoryViewModel> GetESGSubCategory(int categoryId);
+        IEnumerable<ESGChecklistDefinitionViewModel> GetESGChecklistDefinition();
+        IEnumerable<ESGChecklistDetailViewModel> GetESGChecklistDetail(int loanApplicationDetailId);
+        IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetESGChecklistStatus(int loanApplicationDetailId);
+        bool AddESGChecklistDefinition(List<ESGChecklistDefinitionViewModel> models);
+        bool AddESGChecklistDetail(List<ESGChecklistDetailViewModel> models);
         #endregion
     }
 }
