@@ -1561,7 +1561,7 @@ namespace FintrakBanking.Repositories.Credit
             //var refNo = CommonHelpers.GenerateRandomDigitCode(10);
 
             var data = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
-                        where a.AMT_COLLECTED < a.AMT && a.FINTRAK_FLG != "Y" && a.AMT_COLLECTED > 0 //|| a.PSTD_FLG == "P"
+                        where  a.AMT_COLLECTED > 0 &&  a.AMT_COLLECTED <= a.AMT && a.FINTRAK_FLG != "Y"  //|| a.PSTD_FLG == "P"
                         //where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && a.BATCHID == batchCode
                         select new FinanceTransactionStagingViewModel()
                         {
@@ -1588,40 +1588,42 @@ namespace FintrakBanking.Repositories.Credit
                                                       == item.batchRefId
                               select p).SingleOrDefault();
                 FinanceTransactionStagingViewModel model = new FinanceTransactionStagingViewModel();
-                model.actualAmount = item.amountCollected - result.AMOUNTCOLLECTED;
-                model.operationId = result.OPERATIONID;
-                model.description = result.DESCRIPTION;
-                model.valueDate = result.VALUEDATE;
-                model.transactionDate = result.VALUEDATE;
-                model.currencyId = result.CURRENCYID;
-                model.currencyRate = result.CURRENCYRATE;
-                model.companyId = result.COMPANYID;
-                model.debitGlAccountId = result.DEBITGLACCOUNTID;
-                model.sourceReferenceNumber = result.SOURCEREFERENCENUMBER;
-                model.debitCasaAccountId = result.DEBITCASAACCOUNTID;
-                model.sourceBranchId = (short)result.SOURCEBRANCHID;
-                model.destinationBranchId = (short)result.DESTINATIONBRANCHID;
-                model.creditGlAccountId = result.CREDITGLACCOUNTID;
-                model.creditCasaAccountId = result.CREDITCASAACCOUNTID;
-                model.batchId = result.BATCHID;
-                model.batchRefId = result.BATCHREFID;
-                result.AMOUNTCOLLECTED = item.amountCollected;
-                var results = financeTransaction.BulkIntegrationPosting(model);
-                if (results == true)
+                if (result != null)
                 {
-                    if (result.AMOUNT == item.amountCollected)
+                    model.actualAmount = item.amountCollected - result.AMOUNTCOLLECTED;
+                    model.operationId = result.OPERATIONID;
+                    model.description = result.DESCRIPTION;
+                    model.valueDate = result.VALUEDATE;
+                    model.transactionDate = result.VALUEDATE;
+                    model.currencyId = result.CURRENCYID;
+                    model.currencyRate = result.CURRENCYRATE;
+                    model.companyId = result.COMPANYID;
+                    model.debitGlAccountId = result.DEBITGLACCOUNTID;
+                    model.sourceReferenceNumber = result.SOURCEREFERENCENUMBER;
+                    model.debitCasaAccountId = result.DEBITCASAACCOUNTID;
+                    model.sourceBranchId = (short)result.SOURCEBRANCHID;
+                    model.destinationBranchId = (short)result.DESTINATIONBRANCHID;
+                    model.creditGlAccountId = result.CREDITGLACCOUNTID;
+                    model.creditCasaAccountId = result.CREDITCASAACCOUNTID;
+                    model.batchId = result.BATCHID;
+                    model.batchRefId = result.BATCHREFID;
+                    result.AMOUNTCOLLECTED = item.amountCollected;
+                    var results = financeTransaction.BulkIntegrationPosting(model);
+                    if (results == true)
                     {
-                        result.ISPOSTED = true;
+                        if (result.AMOUNT == item.amountCollected)
+                        {
+                            result.ISPOSTED = true;
 
-                        FINTRAK_TRAN_PROC_DETAILS bulk = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
-                                                          where a.BATCH_ID == model.batchId && a.BATCH_REF_ID
-                                                            == model.batchRefId
-                                                          select a).SingleOrDefault();
-                        bulk.FINTRAK_FLG = "Y";
+                            FINTRAK_TRAN_PROC_DETAILS bulk = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
+                                                              where a.BATCH_ID == model.batchId && a.BATCH_REF_ID
+                                                                == model.batchRefId
+                                                              select a).SingleOrDefault();
+                            bulk.FINTRAK_FLG = "Y";
+                        }
                     }
                 }
-
-
+                          
             }
             output = stagingContext.SaveChanges() > 0;
             return output;
@@ -4094,7 +4096,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public void OverdraftTopUp(int loanId, decimal amount)
+        public bool OverdraftTopUp(int loanId, decimal amount)
         {
 
             //using (var trans = context.Database.BeginTransaction())
@@ -4247,10 +4249,10 @@ namespace FintrakBanking.Repositories.Credit
                     output = false;
 
                 }
-
+            return output;
         }
 
-        public void OverdraftRenewal(int loanId, decimal amount)
+        public bool OverdraftRenewal(int loanId, decimal amount)
         {
 
             //using (var trans = context.Database.BeginTransaction())
@@ -4398,9 +4400,10 @@ namespace FintrakBanking.Repositories.Credit
                     output = false;
 
                 }
+            return output;
         }
 
-        public void OverdraftExtension(int loanId, decimal amount)
+        public bool OverdraftExtension(int loanId, decimal amount)
         {
             //using (var trans = context.Database.BeginTransaction())
             //{
@@ -4547,10 +4550,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
-
+            return output;
         }
 
-        public void ChangeOperativeAccount(int casaAccountId, int newCasaAccountId)
+        public bool ChangeOperativeAccount(int casaAccountId, int newCasaAccountId)
         {
 
             //using (var trans = context.Database.BeginTransaction())
@@ -4580,9 +4583,10 @@ namespace FintrakBanking.Repositories.Credit
                     output = false;
 
                 }
+            return output;
         }
 
-        public void SubAllocation(int loanId, decimal amount, DateTime applicationDate, int staffId)
+        public bool SubAllocation(int loanId, decimal amount, DateTime applicationDate, int staffId)
         {
             //using (var trans = context.Database.BeginTransaction())
             //{
@@ -4726,6 +4730,7 @@ namespace FintrakBanking.Repositories.Credit
                     output = false;
 
                 }
+            return output;
         }
 
         #endregion
@@ -6038,8 +6043,10 @@ namespace FintrakBanking.Repositories.Credit
 
                         this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
                         context.SaveChanges();
-                        //----------update loan details -----------------------------------
-                        var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
+
+                         MergePeriodicScheduleForInterest(loanId, applicationDate);
+                    //----------update loan details -----------------------------------
+                    var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
 
                         loan.INTERESTRATE = loanInput.interestRate;
                         loan.MATURITYDATE = periodicScheduleTemp.Max(x => x.paymentDate);
@@ -6047,7 +6054,7 @@ namespace FintrakBanking.Repositories.Credit
                         loan.INTERESTNUMBEROFINSTALLMENT = loan.PRINCIPALNUMBEROFINSTALLMENT;
                         //-------------------------------------------------
 
-                        MergePeriodicScheduleForInterest(loanId, applicationDate);
+                        
 
 
                         //-------------------------------------------------------
@@ -6059,7 +6066,7 @@ namespace FintrakBanking.Repositories.Credit
                        // trans.Commit();
                         output = true;
                     }
-                    output = false;
+                    //output = false;
                 }
                 catch (Exception ex)
                 {
@@ -9438,7 +9445,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
-
             List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
             //Storing the Irregular Schedule Payment Plan
             if (model.reviewIrregularSchedule.Count > 0)
@@ -9516,10 +9522,10 @@ namespace FintrakBanking.Repositories.Credit
                     workFlow.OperationId = model.operationTypeId;
                     workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                     workFlow.ExternalInitialization = true;
-                    if ((int)OperationsEnum.Prepayment != model.operationTypeId)
-                    {
+                    //if ((int)OperationsEnum.Prepayment != model.operationTypeId)
+                    //{
                         var response = workFlow.LogActivity();
-                    }
+                    //}
 
                     try
                     {
@@ -9534,11 +9540,11 @@ namespace FintrakBanking.Repositories.Credit
 
                     trans.Commit();
 
-                    if ((int)OperationsEnum.Prepayment == model.operationTypeId)
-                    {
-                        int loanReviewOperationsId = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANID == model.loanId).LOANREVIEWOPERATIONID;
-                        LoanRephasementProcess((short)loanReviewOperationsId, model.loanId, model.staffId);
-                    }
+                    //if ((int)OperationsEnum.Prepayment == model.operationTypeId)
+                    //{
+                    //    int loanReviewOperationsId = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANID == model.loanId).LOANREVIEWOPERATIONID;
+                    //    LoanRephasementProcess((short)loanReviewOperationsId, model.loanId, model.staffId);
+                    //}
 
                     return output;
 
@@ -9965,6 +9971,7 @@ namespace FintrakBanking.Repositories.Credit
             workFlow.TargetId = entity.targetId;
             workFlow.Comment = entity.comment;
             workFlow.OperationId = entity.operationId;
+            //workFlow.DeferredExecution = false;
 
             workFlow.LogActivity();
 
@@ -9980,51 +9987,55 @@ namespace FintrakBanking.Repositories.Credit
 
         private int ApproveLoanReview(int loanId, ApprovalViewModel user)
         {
-            try
+            using (var trans = context.Database.BeginTransaction())
             {
-                bool output = false;
-                bool result = false;
-                int data = 0;
-                var reviewRecord = (from s in context.TBL_LOAN_REVIEW_OPERATION
-                                    where s.LOANID == loanId && s.OPERATIONTYPEID == user.operationId
-                                   && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                    && s.OPERATIONCOMPLETED == false
-                                    select s).FirstOrDefault();
-                if (workFlow.NewState != (int)ApprovalState.Ended)
+                try
                 {
-                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                    output = context.SaveChanges() > 0;
-                    //if(output == true)
-                    //{
-                    //trans.Commit();
-                    data = 1;
-
-                    //}
-                }
-                else if (workFlow.NewState == (int)ApprovalState.Ended)
-                {
-                    result = LoanRephasementProcess((short)reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, user.staffId);
-                    if (result == true)
+                    bool output = false;
+                    bool result = false;
+                    int data = 0;
+                    var reviewRecord = (from s in context.TBL_LOAN_REVIEW_OPERATION
+                                        where s.LOANID == loanId && s.OPERATIONTYPEID == user.operationId
+                                       && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                        && s.OPERATIONCOMPLETED == false
+                                        select s).FirstOrDefault();
+                    if (workFlow.NewState != (int)ApprovalState.Ended)
                     {
-                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                         output = context.SaveChanges() > 0;
+                        //if (output == true)
+                        //{
+                            trans.Commit();
+                            data = 1;
+
+                        //}
                     }
-
-
-                    if (output == true && result == true)
+                    else if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
-                        //trans.Commit();
-                        data = 2;
-                    }
+                        result = LoanRephasementProcess((short)reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, user.staffId);
+                        if (result == true)
+                        {
+                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            output = context.SaveChanges() > 0;
+                        }
 
+
+                        if (output == true && result == true)
+                        {
+                            trans.Commit();
+                            data = 2;
+                        }
+
+                    }
+                    return data;
                 }
-                return data;
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                //trans.Rollback();
-                throw new Exception(ex.Message);
-            }
+                
 
         }
 
@@ -10085,6 +10096,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanRephasementProcess(short loanReviewOperationsId, int loanId, int staffId)
         {
             bool output = false;
+            bool result = false;
             var systemDate = generalSetup.GetApplicationDate();
 
             var checkForOverDraft = this.context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.REVOLVINGLOANID == loanId);
@@ -10127,20 +10139,52 @@ namespace FintrakBanking.Repositories.Credit
                 if ((int)OperationsEnum.OverdraftTopup == model.operationId)
                 {
 
-                    OverdraftTopUp(loanId, (decimal)model.newAmount);
+                    result = OverdraftTopUp(loanId, (decimal)model.newAmount);
+                    if (result == true)
+                    {
+                        output = true;
+                    }
+                    else
+                    {
+                        output = false;
+                    }
                 }
                 else if ((int)OperationsEnum.OverdraftRenewal == model.operationId)
                 {
-                    OverdraftRenewal(loanId, (decimal)model.newAmount);
+                    result = OverdraftRenewal(loanId, (decimal)model.newAmount);
+                    if (result == true)
+                    {
+                        output = true;
+                    }
+                    else
+                    {
+                        output = false;
+                    }
                 }
                 else if ((int)OperationsEnum.OverdraftTenorExtension == model.operationId)
                 {
-                    OverdraftExtension(loanId, (decimal)model.newAmount);
+                    result = OverdraftExtension(loanId, (decimal)model.newAmount);
+                    if (result == true)
+                    {
+                        output = true;
+                    }
+                    else
+                    {
+                        output = false;
+                    }
                 }
 
                 else if ((int)OperationsEnum.OverdraftSubAllocation == model.operationId)
                 {
-                    SubAllocation(loanId, (decimal)model.newAmount, applicationDate, staffId);
+                    result = SubAllocation(loanId, (decimal)model.newAmount, applicationDate, staffId);
+                    if (result == true)
+                    {
+                        output = true;
+                    }
+                    else
+                    {
+                        output = false;
+                    }
                 }
                 //}
             }
@@ -10219,8 +10263,17 @@ namespace FintrakBanking.Repositories.Credit
                         model.tenor = model.newTenor;
                         model.principalFirstpaymentDate = nextPaymentDate;
                         model.interestFirstpaymentDate = nextPaymentDate;
-                        InterestRateReview(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = InterestRateReview(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                        
 
                     }
                     else if ((int)OperationsEnum.Prepayment == model.operationId)
@@ -10248,17 +10301,35 @@ namespace FintrakBanking.Repositories.Credit
                             model.principalFirstpaymentDate = nextPaymentDate;
                         }
 
-                        UpdateLoanPrepaymentSchedule(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = UpdateLoanPrepaymentSchedule(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                       
                     }
                     else if ((int)OperationsEnum.PaymentDateChange == model.operationId)
                     {
                         model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
                         model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;
 
-                        PaymentDateChange(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                        updateLoanPrincipalInterestPaymentDate(model.interestFirstpaymentDate, model.principalFirstpaymentDate, loanId);
+                        result = PaymentDateChange(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            updateLoanPrincipalInterestPaymentDate(model.interestFirstpaymentDate, model.principalFirstpaymentDate, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                        
 
                     }
                     else if ((int)OperationsEnum.PrincipalFrequencyChange == model.operationId || (int)OperationsEnum.InterestFrequencyChange == model.operationId
@@ -10279,23 +10350,58 @@ namespace FintrakBanking.Repositories.Credit
                             model.interestFrequency = (short)model.newInterestFrequency;
                             model.principalFrequency = (short)model.newPrincipalFrequency;
                         }
-                        PaymentFrequencyChange(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                        updateLoanFrequency((short)model.principalFrequency, (short)model.interestFrequency, loanId);
+                        result = PaymentFrequencyChange(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            updateLoanFrequency((short)model.principalFrequency, (short)model.interestFrequency, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+          
                     }
                     else if ((int)OperationsEnum.CompleteWriteOff == model.operationId)
                     {
-                        CompleteWriteOff(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = CompleteWriteOff(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                      
                     }
                     else if ((int)OperationsEnum.CancelUndisbursedLoan == model.operationId)
                     {
-                        LoanCancellation(loanId, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = LoanCancellation(loanId, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                        
                     }
                     else if ((int)OperationsEnum.Fee_chargeChange == model.operationId)
                     {
-                        ProcessChargeReversal(loanId, model.operationId, staffId);
+                        result = ProcessChargeReversal(loanId, model.operationId, staffId);
+                        if (result == true)
+                        {
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
 
                     }
                     else if ((int)OperationsEnum.TenorChange == model.operationId)
@@ -10306,8 +10412,17 @@ namespace FintrakBanking.Repositories.Credit
                         model.tenor = model.newTenor; ;
                         model.principalFirstpaymentDate = nextPaymentDate;
                         model.interestFirstpaymentDate = nextPaymentDate;
-                        TenorExtension(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = TenorExtension(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                        
                     }
 
                     else if ((int)OperationsEnum.Restructured == model.operationId)
@@ -10321,13 +10436,31 @@ namespace FintrakBanking.Repositories.Credit
                         model.tenor = model.newTenor;
                         model.interestFrequency = (short)model.newInterestFrequency;
                         model.principalFrequency = (short)model.newPrincipalFrequency;
-                        Restructured(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = Restructured(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                    
                     }
                     else if ((int)OperationsEnum.LoanSales == model.operationId)
                     {
-                        LoanSales(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = LoanSales(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                   
                     }
                     else if ((int)OperationsEnum.LoanWorkOut == model.operationId)
                     {
@@ -10335,8 +10468,17 @@ namespace FintrakBanking.Repositories.Credit
                         model.interestRate = model.newInterest;
                         model.effectiveDate = model.newEffectiveDate;
                         model.scheduleMethodId = model.scheduleMethodId;
-                        LoanWorkOut(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = LoanWorkOut(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                       
                     }
 
                     else if ((int)OperationsEnum.LoanRecovery == model.operationId)
@@ -10353,8 +10495,17 @@ namespace FintrakBanking.Repositories.Credit
                         model.interestRate = model.newInterest;
                         model.effectiveDate = model.newEffectiveDate;
                         model.scheduleMethodId = (short)LoanScheduleTypeEnum.IrregularSchedule;
-                        LoanRecovery(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = LoanRecovery(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                   
                     }
                     //}
                 }
@@ -10417,8 +10568,21 @@ namespace FintrakBanking.Repositories.Credit
                         model.tenor = model.newTenor;
                         model.principalFirstpaymentDate = nextPaymentDate;
                         model.interestFirstpaymentDate = nextPaymentDate;
-                        InterestRateReview(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        if (model.interestFirstpaymentDate <= model.effectiveDate)
+                        {
+                            throw new ConditionNotMetException("First Payment Date must be greater than Effective Date");
+                        }
+                        result = InterestRateReview(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                       
 
                     }
                     else if ((int)OperationsEnum.Prepayment == model.operationId)
@@ -10444,17 +10608,35 @@ namespace FintrakBanking.Repositories.Credit
                             model.principalFirstpaymentDate = nextPaymentDate;
                         }
 
-                        UpdateLoanPrepaymentSchedule(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = UpdateLoanPrepaymentSchedule(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                    
                     }
                     else if ((int)OperationsEnum.PaymentDateChange == model.operationId)
                     {
                         model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
                         model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;
 
-                        PaymentDateChange(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                        updateLoanPrincipalInterestPaymentDate(model.interestFirstpaymentDate, model.principalFirstpaymentDate, loanId);
+                        result = PaymentDateChange(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            updateLoanPrincipalInterestPaymentDate(model.interestFirstpaymentDate, model.principalFirstpaymentDate, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                       
 
                     }
                     else if ((int)OperationsEnum.PrincipalFrequencyChange == model.operationId || (int)OperationsEnum.InterestFrequencyChange == model.operationId
@@ -10475,9 +10657,18 @@ namespace FintrakBanking.Repositories.Credit
                             model.interestFrequency = (short)model.newInterestFrequency;
                             model.principalFrequency = (short)model.newPrincipalFrequency;
                         }
-                        PaymentFrequencyChange(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                        updateLoanFrequency((short)model.principalFrequency, (short)model.interestFrequency, loanId);
+                        result = PaymentFrequencyChange(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            updateLoanFrequency((short)model.principalFrequency, (short)model.interestFrequency, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                        
                     }
                     else if ((int)OperationsEnum.CompleteWriteOff == model.operationId)
                     {
@@ -10489,8 +10680,17 @@ namespace FintrakBanking.Repositories.Credit
                         model.tenor = model.newTenor;
                         model.interestFrequency = (short)model.newInterestFrequency;
                         model.principalFrequency = (short)model.newPrincipalFrequency;
-                        CompleteWriteOff(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = CompleteWriteOff(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                       
                     }
                     else if ((int)OperationsEnum.TerminateAndRebook == model.operationId)
                     {
@@ -10524,14 +10724,31 @@ namespace FintrakBanking.Repositories.Credit
 
                         //foreach (var model1 in data)
                         //{
-                        RegenerateSchedule(data.loanId, data, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, data.loanId);
+                        result = RegenerateSchedule(data.loanId, data, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, data.loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                        
                         //}
 
                     }
                     else if ((int)OperationsEnum.Fee_chargeChange == model.operationId)
                     {
-                        ProcessChargeReversal(loanId, model.operationId, staffId);
+                        result = ProcessChargeReversal(loanId, model.operationId, staffId);
+                        if (result == true)
+                        {
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
 
                     }
                     else if ((int)OperationsEnum.TenorChange == model.operationId)
@@ -10542,14 +10759,32 @@ namespace FintrakBanking.Repositories.Credit
                         model.tenor = model.newTenor; ;
                         model.principalFirstpaymentDate = nextPaymentDate;
                         model.interestFirstpaymentDate = nextPaymentDate;
-                        TenorExtension(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = TenorExtension(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                      
                     }
 
                     else if ((int)OperationsEnum.LoanSales == model.operationId)
                     {
-                        LoanSales(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = LoanSales(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                      
                     }
 
                     else if ((int)OperationsEnum.Restructured == model.operationId)
@@ -10563,8 +10798,17 @@ namespace FintrakBanking.Repositories.Credit
                         model.tenor = model.newTenor;
                         model.interestFrequency = (short)model.newInterestFrequency;
                         model.principalFrequency = (short)model.newPrincipalFrequency;
-                        Restructured(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = Restructured(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                 
                     }
                     else if ((int)OperationsEnum.LoanWorkOut == model.operationId)
                     {
@@ -10572,8 +10816,17 @@ namespace FintrakBanking.Repositories.Credit
                         model.interestRate = model.newInterest;
                         model.effectiveDate = model.newEffectiveDate;
                         model.scheduleMethodId = model.scheduleMethodId;
-                        LoanWorkOut(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = LoanWorkOut(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+              
                     }
                     else if ((int)OperationsEnum.LoanRecovery == model.operationId)
                     {
@@ -10585,8 +10838,17 @@ namespace FintrakBanking.Repositories.Credit
                         model.tenor = model.newTenor;
                         model.interestFrequency = (short)model.newInterestFrequency;
                         model.principalFrequency = (short)model.newPrincipalFrequency;
-                        LoanRecovery(loanId, model, applicationDate, staffId);
-                        updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        result = LoanRecovery(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+             
                     }
                     //}
                 }
@@ -10595,7 +10857,7 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
             //-------------------------------------------------------
-            output = true;
+            //output = true;
 
             return output;
         }
