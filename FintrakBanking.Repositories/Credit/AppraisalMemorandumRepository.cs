@@ -402,15 +402,15 @@ namespace FintrakBanking.Repositories.Credit
             LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate); // LOG CHANGES
             context.SaveChanges();
 
+            var lastStatus = workflow.StatusId; // prevents the next block from changing it
+
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-                var lastStatus = workflow.StatusId;
                 workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, appl.PRODUCTCLASSID, "New pproved application", true, false);
-                return lastStatus;
             }
 
-            return (int)ApprovalStatusEnum.Processing; // default for now
+            return lastStatus;
         }
 
         private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date)
