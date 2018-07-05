@@ -277,12 +277,13 @@ namespace FintrakBanking.APICore.Controllers
         //[HttpGet("customer-fs-caption/unmapped/{fsCaptionGroupId}/customer/{customerId}/date/{fsDate}")]
       [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption/customer/unmapped")]
-        public HttpResponseMessage GetUnmappedCustomerFsCaption(short fsCaptionGroupId, int customerId, string fsDate)
+        public HttpResponseMessage GetUnmappedCustomerFsCaption(short fsCaptionGroupId, int customerId, DateTime fsDate)
         {
             try
             {
-                var fsDateConverted = Convert.ToDateTime(fsDate); //DateTime.ParseExact(fsDate, "yy/mm/dd", System.Globalization.CultureInfo.InvariantCulture); // DateTime.Parse(fsDate); // 
-                var data = _fsCaptionRepo.GetUnmappedCustomerFSCaption(fsCaptionGroupId, customerId, fsDateConverted);
+           
+               //     var fsDateConverted = DateTime.Parse(fsDate.ToString()); //DateTime.ParseExact(fsDate, "yy/mm/dd", System.Globalization.CultureInfo.InvariantCulture); //Convert.ToDateTime(fsDate); //DateTime.ParseExact(fsDate, "yy/mm/dd", System.Globalization.CultureInfo.InvariantCulture); // DateTime.Parse(fsDate); // 
+                var data = _fsCaptionRepo.GetUnmappedCustomerFSCaption(fsCaptionGroupId, customerId, fsDate);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -501,12 +502,12 @@ namespace FintrakBanking.APICore.Controllers
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption-detail/customer/")]
-        public HttpResponseMessage GetMappedCustomerFsCaptionDetail(short fsCaptionGroupId, int customerId, string fsDate)
+        public HttpResponseMessage GetMappedCustomerFsCaptionDetail(short fsCaptionGroupId, int customerId, DateTime fsDate)
         {
             try
             {
-                var fsDateConverted = Convert.ToDateTime(fsDate); //DateTime.ParseExact(fsDate, "yy/mm/dd", System.Globalization.CultureInfo.InvariantCulture);  //DateTime.Parse(fsDate); //
-                var data = _fsDetailRepo.GetMappedCustomerFsCaptionDetail(customerId, fsCaptionGroupId, fsDateConverted);
+           //     var fsDateConverted = Convert.ToDateTime(fsDate); //DateTime.ParseExact(fsDate, "yy/mm/dd", System.Globalization.CultureInfo.InvariantCulture);  //DateTime.Parse(fsDate); //
+                var data = _fsDetailRepo.GetMappedCustomerFsCaptionDetail(customerId, fsCaptionGroupId, fsDate);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
