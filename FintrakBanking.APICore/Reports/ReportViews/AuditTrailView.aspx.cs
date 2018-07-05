@@ -23,6 +23,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 endDate.Text = Request.QueryString["endDate"];
                 companyId.Text = Request.QueryString["companyId"];
                 username.Text = Request.QueryString["username"];
+                auditTypeId.Text = Request.QueryString["auditTypeId"];
 
                 string tmpPath = @"Content\Icons\firstbank-logo.jpg";
                 string a = Path.GetFullPath(tmpPath);

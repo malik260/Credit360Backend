@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string BATCHCODE { get; set; }
+        public string BATCHCODE2 { get; set; }
 
         [StringLength(50)]
         public string REVERSAL_BATCHCODE { get; set; }

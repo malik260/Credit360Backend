@@ -2,9 +2,12 @@
 using FintrakBanking.Common.Crypto;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Finance.ViewModels;
 using FintrakBanking.Interfaces.Reports;
+using FintrakBanking.ViewModels.Admin;
 using FintrakBanking.ViewModels.Reports;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -24,6 +27,38 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                 data = context.TBL_LOAN_APPLICATION.Where(c => c.COMPANYID == companyId && c.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID <= customerSensitivityLevelId);
             }
             return data;
+        }
+        public IEnumerable<AuditViewModel> AuditType(string searchValue)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var auditType = from x in context.TBL_AUDIT_TYPE
+                                where x.AUDITTYPENAME.ToUpper().Contains(searchValue.ToUpper())
+                                select new AuditViewModel
+                                {
+                                    auditTypeId = x.AUDITTYPEID,
+                                    auditType = x.AUDITTYPENAME,
+                                  
+                                };
+                return auditType.ToList();
+
+            }
+
+        }
+        public List<TransactionViewModel> GLAccount(string searchValue)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var gl = from x in context.TBL_CHART_OF_ACCOUNT
+                                where x.ACCOUNTNAME.ToUpper().Contains(searchValue.ToUpper()) || x.ACCOUNTCODE.ToUpper().Contains(searchValue.ToUpper())
+                         select new TransactionViewModel
+                         {
+                             GLAccountCode=x.ACCOUNTCODE,
+                             GLAccount   = x.ACCOUNTNAME,
+                             glAccountId = x.GLACCOUNTID
+                         };
+                return gl.ToList();
+            }
         }
         public string GetWorkflowSLA(int loanApplicationId, int companyId, int staffId)
         {
@@ -430,7 +465,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         public string GetAuditTrail(DateRange dateRange, int companyId, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/AuditTrailView.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate + "&staffId=" + staffId;
+            path = reportPath + "ReportViews/AuditTrailView.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate + "&staffId=" + staffId + "&auditTypeId="+dateRange.auditTypeId;
             return path;
         }
         public string GetLoanInterestReceivableAndPayable(ReportSearchEntity searchEntity, int companyId, int staffId)

@@ -1,4 +1,6 @@
-﻿using FintrakBanking.ViewModels.Reports;
+﻿using FintrakBanking.Finance.ViewModels;
+using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,5 +55,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetRepayment(ReportSearchEntity searchEntity);
         string GetCustomeFacilityRepayment(ReportSearchEntity searchEntity);
         string AccountWithLein(ReportSearchEntity searchEntity);
+        IEnumerable<AuditViewModel> AuditType(string searchValue);
+        List<TransactionViewModel> GLAccount(string searchValue);
     }
 }

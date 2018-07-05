@@ -36,6 +36,10 @@ namespace FintrakBanking.Finance.ViewModels
         public string customerCode { get; set; }
         public string branchCode { get; set; }
         public string sourceReferenceNumber { get; set; }
+        public string batchNo2 { get; set; }
+        public string GLAccountCode { get; set; }
+        public int GLAccountId { get; set; }
+        public int glAccountId { get; set; }
     }
     public class BulkTransactionViewModel
     {
