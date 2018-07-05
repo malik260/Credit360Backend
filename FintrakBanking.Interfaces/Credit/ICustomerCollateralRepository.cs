@@ -92,11 +92,11 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool AddNewItemInsurancePolicy(InsurancePolicies entity);
 
-        bool GoForApproval(ApprovalViewModel model);
+        int GoForApproval(ApprovalViewModel model);
 
         List<InsurancePolicies> GetTempCollateralInsurancePoliciesWaitingForApproval(int staffId);
 
-        bool GoForPolicyApproval(ApprovalViewModel model);
+        int GoForPolicyApproval(ApprovalViewModel model);
 
         List<CollateralDocumentViewModel> GetPropertyVistation(int collateralId);
         List<InsurancePolicies> GetTempCollateralInsurancePolicy(int collateralId);

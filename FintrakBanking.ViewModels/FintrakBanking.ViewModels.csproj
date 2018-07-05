@@ -169,6 +169,7 @@
     <Compile Include="Setups\Credit\CreditTemplateViewModel.cs" />
     <Compile Include="Setups\Credit\CustomerProductFeeViewModel.cs" />
     <Compile Include="Setups\Credit\CustomFieldsViewModel.cs" />
+    <Compile Include="Setups\Credit\ESGChecklistViewModel.cs" />
     <Compile Include="Setups\Credit\FXAccountCreationViewModel.cs" />
     <Compile Include="Setups\Credit\LoanCovenantTypeViewModel.cs" />
     <Compile Include="Setups\Credit\PrudentialGuidelineViewModel.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="ThridPartyIntegration\CasaIntegrationViewModel.cs" />
     <Compile Include="UserInfo.cs" />
     <Compile Include="WorkFlow\ApprovalTrailViewModel.cs" />
+    <Compile Include="WorkFlow\WorkflowResponseViewModel.cs" />
     <Compile Include="WorkFlow\ApprovalViewModel.cs" />
     <Compile Include="WorkFlow\JobRequestViewModel.cs" />
     <Compile Include="WorkFlow\WorkflowTrackerViewModel.cs" />

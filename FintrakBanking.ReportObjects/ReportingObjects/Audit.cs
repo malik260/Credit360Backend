@@ -11,7 +11,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 {
    public class Audit
     {
-        public IEnumerable<AuditViewModel> GetAuditTrailByParam(DateTime startDate, DateTime endDate, string username)
+        public IEnumerable<AuditViewModel> GetAuditTrailByParam(DateTime startDate, DateTime endDate, string username, int auditTypeId)
         {
 
 
@@ -30,6 +30,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 || _audit.BRANCHID == context.TBL_BRANCH.Where(x => x.BRANCHCODE == username).Select(x => x.BRANCHID).FirstOrDefault()
                 || atype.AUDITTYPENAME.StartsWith(username.Trim())
                 || username == null)
+                &&(_audit.AUDITTYPEID== auditTypeId || auditTypeId==0)
                 select new AuditViewModel
                 {
                     auditId = _audit.AUDITID,
@@ -47,6 +48,21 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 return data.ToList();
             }
         
+        }
+        public IEnumerable<AuditViewModel> AuditType(string searchValue)
+        {
+
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+               return context.TBL_AUDIT_TYPE.Where(x=>x.AUDITTYPENAME.Contains(searchValue.ToUpper())).Select(x => new AuditViewModel
+                {
+                    auditTypeId = x.AUDITTYPEID,
+                    auditType = x.AUDITTYPENAME
+                });
+
+            }
+
         }
     }
 }

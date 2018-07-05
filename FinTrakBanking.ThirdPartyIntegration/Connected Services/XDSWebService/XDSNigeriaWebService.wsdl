@@ -401,12 +401,12 @@
   </wsdl:message>
   <wsdl:portType name="XDSNigeriaWebServiceSoap">
     <wsdl:operation name="Login">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Log in XDS Nigeria WebService and returns a Ticket.</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Log in FirstCentral Nigeria WebService and returns a Ticket.</wsdl:documentation>
       <wsdl:input message="tns:LoginSoapIn" />
       <wsdl:output message="tns:LoginSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="IsTicketValid">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Checks Validity of your XDS Nigeria WebService Ticket.</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Checks Validity of your FirstCentral Nigeria WebService Ticket.</wsdl:documentation>
       <wsdl:input message="tns:IsTicketValidSoapIn" />
       <wsdl:output message="tns:IsTicketValidSoapOut" />
     </wsdl:operation>

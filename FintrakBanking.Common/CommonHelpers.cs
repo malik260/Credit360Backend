@@ -263,6 +263,17 @@ namespace FintrakBanking.Common
             return sb.ToString();
         }
 
+        public static string AppendZeroString(int value, int maxLength)
+        {
+            string sb = string.Empty;
+            for (int i = value.ToString().Length; i < maxLength; i++)
+            {
+                sb += "0";
+            }
+            string result = sb + value.ToString();
+            return result;
+        }
+
         public static int PasswordExpirationDays
         {
             get

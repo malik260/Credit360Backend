@@ -50,6 +50,7 @@ namespace FintrakBanking.Repositories.Credit
                             isActive = a.ISACTIVE,
                             isRequired = a.ISREQUIRED,
                             productId = a.PRODUCTID,
+                            checkListTypeId = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPEID,
                             productName = a.TBL_PRODUCT.PRODUCTNAME,
                             checkListItemId = a.CHECKLISTITEMID,
                             checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
@@ -66,8 +67,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
 
-            
-            List <CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
+
+            List<CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
             var detailItem = (from s in context.TBL_CHECKLIST_DETAIL
                               join k in context.TBL_CHECKLIST_DEFINITION
                               on s.CHECKLISTDEFINITIONID equals k.CHECKLISTDEFINITIONID
@@ -85,7 +86,7 @@ namespace FintrakBanking.Repositories.Credit
                                   itemDescription = k.ITEMDESCRIPTION,
                                   checklistStatusId = s.CHECKLISTSTATUSID,
                                   approvalLevelId = k.APPROVALLEVELID,
-                                  responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID).
+                                  responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
                             Select(x => new CheckListStatusViewModel()
                             {
                                 checklistStatusId = x.CHECKLISTSTATUSID,
@@ -95,14 +96,14 @@ namespace FintrakBanking.Repositories.Credit
             var proposedProductId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == loanTargetId select (short?)id.PROPOSEDPRODUCTID).ToList();
             var isproductBased = context.TBL_CHECKLIST_TYPE.FirstOrDefault(x => x.CHECKLIST_TYPEID == checkListTypeId).ISPRODUCT_BASED;
 
-           
+
             var data = (from a in context.TBL_CHECKLIST_DEFINITION
                         join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
-                        where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checkListTypeId 
+                        where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checkListTypeId
                         && a.OPERATIONID == operationId && a.DELETED == false
                         select new ChecklistDefinitionAndDetailViewModel
                         {
-                           checkListDetailId = 0,
+                            checkListDetailId = 0,
                             checkListDefinitionId = a.CHECKLISTDEFINITIONID,
                             responseTypeId = d.RESPONSE_TYPEID,
                             requireUpload = d.REQUIREUPLOAD,
@@ -113,7 +114,7 @@ namespace FintrakBanking.Repositories.Credit
                             itemDescription = a.ITEMDESCRIPTION,
                             productId = a.PRODUCTID,
                             approvalLevelId = a.APPROVALLEVELID,
-                            responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == d.RESPONSE_TYPEID).
+                            responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == d.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
                             Select(x => new CheckListStatusViewModel()
                             {
                                 checklistStatusId = x.CHECKLISTSTATUSID,
@@ -121,7 +122,7 @@ namespace FintrakBanking.Repositories.Credit
                             }).ToList()
 
                         });
-           
+
             if (isproductBased)
             {
                 if (productId > 0)
@@ -264,7 +265,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (productClassProcessId != 0 && productClassProcessId == (int)ProductClassProcessEnum.CAMBased)
             {
-              return  checkType.Where(x => x.isproductbased != true).GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
+                return checkType.Where(x => x.isproductbased != true).GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
             }
 
             return checkType.GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
@@ -738,8 +739,8 @@ namespace FintrakBanking.Repositories.Credit
                                      deferedDate = cl.DEFEREDDATE,
                                      checkListValidationStatus1 = cl.CHECKLISTSTATUSID2,
                                      checkListValidationStatus2 = cl.CHECKLISTSTATUSID3,
-                                   checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
-                                  checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
+                                     checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                     checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
 
                                  }).ToList();
                 return checkList;
@@ -1378,7 +1379,7 @@ namespace FintrakBanking.Repositories.Credit
                     else
                     {
                         trans.Commit();
-                       return false;
+                        return false;
                     }
 
                 }
@@ -1388,7 +1389,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new Exception(ex.Message);
                 }
             }
-           // return false;
+            // return false;
         }
         private bool ApproveChecklistDeferral(int targetId, ApprovalViewModel user)
         {
@@ -1643,6 +1644,290 @@ namespace FintrakBanking.Repositories.Credit
                         where a.APPROVALLEVELID == approvallevelId && a.CHECKLIST_TYPEID == checklistTypeId
                         select a).ToList();
             return data.Any();
+        }
+        #endregion
+
+        #region EGS Checklist
+        public IEnumerable<ESGClassViewModel> GetESGClass()
+        {
+            var data = (from a in context.TBL_ESG_CLASS
+                        orderby a.ESGCLASSNAME
+                        select new ESGClassViewModel()
+                        {
+                            esgClassId = a.ESGCLASSID,
+                            esgClassName = a.ESGCLASSNAME
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<ESGTypeViewModel> GetESGType()
+        {
+            var data = (from a in context.TBL_ESG_TYPE
+                        orderby a.ESGTYPENAME
+                        select new ESGTypeViewModel()
+                        {
+                            esgTypeId = a.ESGTYPEID,
+                            esgTypeName = a.ESGTYPENAME
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<ESGCategoryViewModel> GetESGCategory()
+        {
+            var data = (from a in context.TBL_ESG_CATEGORY
+                        orderby a.ESGCATEGORYNAME
+                        select new ESGCategoryViewModel()
+                        {
+                            esgCategoryId = a.ESGCATEGORYID,
+                            esgCategoryName = a.ESGCATEGORYNAME
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<ESGSubCategoryViewModel> GetESGSubCategory(int categoryId)
+        {
+            var data = (from a in context.TBL_ESG_SUB_CATEGORY
+                        where a.ESGCATEGORYID == categoryId
+                        orderby a.ESGSUBCATEGORYNAME
+                        select new ESGSubCategoryViewModel()
+                        {
+                            esgSubCategoryId = a.ESGSUBCATEGORYID,
+                            esgCategoryId = a.ESGCATEGORYID,
+                            esgSubCategoryName = a.ESGSUBCATEGORYNAME
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<ESGChecklistDefinitionViewModel> GetESGChecklistDefinition()
+        {
+            var data = (from a in context.TBL_ESG_CHECKLIST_DEFINITION
+                        join b in context.TBL_ESG_CATEGORY on a.ESGCATEGORYID equals b.ESGCATEGORYID
+                        join d in context.TBL_ESG_SUB_CATEGORY on a.ESGSUBCATEGORYID equals d.ESGSUBCATEGORYID
+                        into cg
+                        from d in cg.DefaultIfEmpty()
+                        join c in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals c.CHECKLISTITEMID
+                        where a.DELETED == false
+                        select new ESGChecklistDefinitionViewModel()
+                        {
+                            esgChecklistDefinitionId = a.ESGCHECKLISTDEFINITIONID,
+                            checklistItemId = a.CHECKLISTITEMID,
+                            checklistItemName = c.CHECKLISTITEMNAME,
+                            esgSubCategoryId = a.ESGSUBCATEGORYID,
+                            esgSubCategoryName = d.ESGSUBCATEGORYNAME,
+                            esgCategoryId = a.ESGCATEGORYID,
+                            esgCategoryName = b.ESGCATEGORYNAME,
+                            isCompulsory = a.ISCOMPULSORY,
+                            itemDescription = a.ITEMDESCRIPTION
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<ESGChecklistDetailViewModel> GetESGChecklistDetail(int loanApplicationDetailId)
+        {
+            var data = (from a in context.TBL_ESG_CHECKLIST_DETAIL
+                        join b in context.TBL_ESG_CHECKLIST_SUMMARY on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                        select new ESGChecklistDetailViewModel()
+                        {
+                            esgChecklistDetailId = a.ESGCHECKLISTDETAILID,
+                            esgChecklistDefinitionId = a.ESGCHECKLISTDEFINITIONID,
+                            loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                            esgClassId = a.ESGCLASSID,
+                            esgTypeId = a.ESGTYPEID,
+                            checkStatusId = a.CHECKLISTSTATUSID,
+                            comment = a.COMMENT_,
+                            description = a.DESCRIPTION,
+                            overAllRiskStatusId = b.RATINGID,
+                            overSummary = b.COMMENT_
+                        }).ToList();
+            return data.GroupBy(x=> x.loanApplicationDetailId).Select(k=>k.FirstOrDefault());
+        }
+        public bool AddESGChecklistDefinition(List<ESGChecklistDefinitionViewModel> models)
+        {
+            if (models.Count <= 0)
+                return false;
+            bool output = false;
+            foreach (ESGChecklistDefinitionViewModel model in models)
+            {
+                var data = new TBL_ESG_CHECKLIST_DEFINITION
+                {
+                    CHECKLISTITEMID = model.checklistItemId,
+                    ESGCATEGORYID = model.esgCategoryId,
+                    ESGSUBCATEGORYID = model.esgSubCategoryId,
+                    ISCOMPULSORY = model.isCompulsory,
+                    ITEMDESCRIPTION = model.itemDescription,
+                    COMPANYID = model.companyId,
+                    DELETED = false,
+                    DATETIMECREATED = _genSetup.GetApplicationDate(),
+                    CREATEDBY = (int)model.createdBy
+                };
+
+                //Audit Section ---------------------------
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added ESG Checklist Definition  with ChecklistItemId of {model.checklistItemId}' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                context.TBL_ESG_CHECKLIST_DEFINITION.Add(data);
+                this.auditTrail.AddAuditTrail(audit);
+                //end of Audit section -------------------------------
+
+                output = context.SaveChanges() != 0;
+            }
+            return output;
+        }
+
+        public bool AddESGChecklistDetail(List<ESGChecklistDetailViewModel> models)
+        {
+            if (models.Count <= 0)
+                return false;
+            bool output = false;
+            foreach (ESGChecklistDetailViewModel model in models)
+            {
+                var existItem = (from a in context.TBL_ESG_CHECKLIST_DETAIL
+                                 where a.ESGCHECKLISTDETAILID == model.esgChecklistDetailId && a.ESGCHECKLISTDEFINITIONID == model.esgChecklistDefinitionId
+                                 && a.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && a.DELETED == false
+                                 select a).FirstOrDefault();
+                if (existItem != null)
+                {
+                    existItem.CHECKLISTSTATUSID = model.checkStatusId;
+                    existItem.COMMENT_ = model.comment;
+                    existItem.LASTUPDATEDBY = (int)model.createdBy;
+                    existItem.DATETIMEUPDATED = DateTime.Now;
+
+                }
+                else
+                {
+                    var data = new TBL_ESG_CHECKLIST_DETAIL
+                    {
+                        ESGCHECKLISTDEFINITIONID = model.esgChecklistDefinitionId,
+                        LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                        ESGCLASSID = model.esgClassId,
+                        ESGTYPEID = model.esgTypeId,
+                        CHECKLISTSTATUSID = model.checkStatusId,
+                        DESCRIPTION = model.description,
+                        COMMENT_ = model.comment,
+                        DELETED = false,
+                        DATETIMECREATED = _genSetup.GetApplicationDate(),
+                        CREATEDBY = (int)model.createdBy
+                    };
+                    context.TBL_ESG_CHECKLIST_DETAIL.Add(data);
+                }
+                //Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added ESG Checklist Detail  with ESGChecklistDefinitionId of {model.esgChecklistDefinitionId}' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.auditTrail.AddAuditTrail(audit);
+                //end of Audit section -------------------------------
+
+                output = context.SaveChanges() != 0;
+            }
+            var sumModel = models[0];
+            var summaryExist = (from s in context.TBL_ESG_CHECKLIST_SUMMARY
+                                where s.LOANAPPLICATIONDETAILID == sumModel.loanApplicationDetailId && s.CREATEDBY == (int)sumModel.createdBy
+                                select s).FirstOrDefault();
+            if (summaryExist != null)
+            {
+                summaryExist.COMMENT_ = sumModel.overSummary;
+                summaryExist.RATINGID = sumModel.overAllRiskStatusId;
+            }
+            else
+            {
+                var summary = new TBL_ESG_CHECKLIST_SUMMARY
+                {
+                    LOANAPPLICATIONDETAILID = sumModel.loanApplicationDetailId,
+                    COMMENT_ = sumModel.overSummary,
+                    RATINGID = sumModel.overAllRiskStatusId,
+                    CREATEDBY = (int)sumModel.createdBy,
+                    DATETIMECREATED = _genSetup.GetApplicationDate()
+                };
+                context.TBL_ESG_CHECKLIST_SUMMARY.Add(summary);
+            }
+            context.SaveChanges();
+            return output;
+        }
+        public IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetESGChecklistStatus(int loanApplicationDetailId)
+        {
+            List<CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
+            var detailItem = (from s in context.TBL_ESG_CHECKLIST_DETAIL
+                              join k in context.TBL_ESG_CHECKLIST_DEFINITION
+                              on s.ESGCHECKLISTDEFINITIONID equals k.ESGCHECKLISTDEFINITIONID
+                              join i in context.TBL_CHECKLIST_ITEM on k.CHECKLISTITEMID equals i.CHECKLISTITEMID
+                              join c in context.TBL_ESG_CATEGORY on k.ESGCATEGORYID equals c.ESGCATEGORYID
+                              join q in context.TBL_ESG_SUB_CATEGORY on k.ESGSUBCATEGORYID equals q.ESGSUBCATEGORYID into gg
+                              from q in gg.DefaultIfEmpty()
+                              where s.LOANAPPLICATIONDETAILID == loanApplicationDetailId && s.DELETED == false
+                              select new ESGChecklistDefinitionAndDetailViewModel
+                              {
+                                  checkListDetailId = s.ESGCHECKLISTDETAILID,
+                                  checkListDefinitionId = s.ESGCHECKLISTDEFINITIONID,
+                                  categoryName = c.ESGCATEGORYNAME,
+                                  subCategoryName = q.ESGSUBCATEGORYNAME,
+                                  responseTypeId = i.RESPONSE_TYPEID,
+                                  requireComment = i.REQUIREUPLOAD,
+                                  checkListItemId = k.CHECKLISTITEMID,
+                                  checkListItemName = i.CHECKLISTITEMNAME,
+                                  comment = s.COMMENT_,
+                                  checklistStatusId = s.CHECKLISTSTATUSID,
+                                  responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == i.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
+                            Select(x => new CheckListStatusViewModel()
+                            {
+                                checklistStatusId = x.CHECKLISTSTATUSID,
+                                checklistStatusName = x.CHECKLISTSTATUSNAME,
+                            }).ToList()
+                              });
+
+            var data = (from k in context.TBL_ESG_CHECKLIST_DEFINITION
+                        join i in context.TBL_CHECKLIST_ITEM on k.CHECKLISTITEMID equals i.CHECKLISTITEMID
+                        join c in context.TBL_ESG_CATEGORY on k.ESGCATEGORYID equals c.ESGCATEGORYID
+                        join q in context.TBL_ESG_SUB_CATEGORY on k.ESGSUBCATEGORYID equals q.ESGSUBCATEGORYID
+                        into gg
+                        from q in gg.DefaultIfEmpty()
+                        select new ESGChecklistDefinitionAndDetailViewModel
+                        {
+                            checkListDetailId = 0,
+                            checkListDefinitionId = k.ESGCHECKLISTDEFINITIONID,
+                            categoryName = c.ESGCATEGORYNAME,
+                            subCategoryName = q.ESGSUBCATEGORYNAME,
+                            responseTypeId = i.RESPONSE_TYPEID,
+                            requireComment = i.REQUIREUPLOAD,
+                            checkListItemId = k.CHECKLISTITEMID,
+                            checkListItemName = i.CHECKLISTITEMNAME,
+                            comment = "",
+                            checklistStatusId = 0,
+                            responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == i.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
+                            Select(x => new CheckListStatusViewModel()
+                            {
+                                checklistStatusId = x.CHECKLISTSTATUSID,
+                                checklistStatusName = x.CHECKLISTSTATUSNAME,
+                            }).ToList()
+
+                        });
+            var definitionList = data.ToList();
+            var detailList = detailItem.ToList();
+            var detailId = detailItem.Select(a => a.checkListDefinitionId).ToList();
+            if (detailItem.Any())
+            {
+                var checklist = detailList.Concat(definitionList.Where(x => !detailId.Contains(x.checkListDefinitionId)));
+                return checklist.ToList();
+            }
+            return data.ToList();
         }
         #endregion
     }
