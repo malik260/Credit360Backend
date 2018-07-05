@@ -770,27 +770,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("lein-loan-casa-account/{branchId}/{customerName}")]
-        public HttpResponseMessage GetLoanAccountWithLein(short? branchId, string customerName)
-        {
-            var token = new TokenDecryptionHelper();
-            try
-            {
-                var data = repo.GetAccountWithLein( token.GetStaffId, branchId, customerName,token.GetCompanyId);
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data });  //Ok(accounts);
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+      
          [HttpPost] [ClaimsAuthorization]
         [Route("stakeholders-on-experation-ftp")]
         public HttpResponseMessage GetStakeHolderOnExperationOfFfp(ReportSearchEntity reportSearchEntity)
@@ -971,6 +951,8 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
+                param.companyId = token.GetCompanyId;
+
                 var data = repo.GetDailyAccrual(param);
                 if (data == null)
                 {
@@ -993,6 +975,8 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
+                param.companyId = token.GetCompanyId;
+
                 var data = repo.GetRepayment(param);
                 if (data == null)
                 {
@@ -1015,6 +999,8 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
+                param.companyId = token.GetCompanyId;
+
                 var data = repo.GetCustomeFacilityRepayment(param);
                 if (data == null)
                 {
@@ -1072,6 +1058,75 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("account-with-lien")]
+        public HttpResponseMessage GetAccountWithLien([FromBody]ReportSearchEntity param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.AccountWithLein(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("audit-search")]
+        public HttpResponseMessage GetAuditType(string searchQuery)
+        {
+            try
+            {
+                var data = repo.AuditType(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("gl-search")]
+        public HttpResponseMessage GetGLAccount(string searchQuery)
+        {
+            try
+            {
+                var data = repo.GLAccount(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
             }
         }
     }

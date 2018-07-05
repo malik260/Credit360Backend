@@ -15,7 +15,7 @@
 
         <rsweb:ReportViewer ID="ReportViewer" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="800px" WaitMessageFont-Names="Verdana" 
             WaitMessageFont-Size="14pt" Width="100%" BackColor="" ClientIDMode="AutoID" HighlightBackgroundColor="" InternalBorderColor="204, 204, 204" InternalBorderStyle="Solid" InternalBorderWidth="1px" LinkActiveColor="" LinkActiveHoverColor="" LinkDisabledColor="" PrimaryButtonBackgroundColor="" PrimaryButtonForegroundColor="" PrimaryButtonHoverBackgroundColor="" PrimaryButtonHoverForegroundColor="" SecondaryButtonBackgroundColor="" SecondaryButtonForegroundColor="" SecondaryButtonHoverBackgroundColor="" SecondaryButtonHoverForegroundColor="" SplitterBackColor="" ToolbarDividerColor="" ToolbarForegroundColor="" ToolbarForegroundDisabledColor="" ToolbarHoverBackgroundColor="" ToolbarHoverForegroundColor="" ToolBarItemBorderColor="" ToolBarItemBorderStyle="Solid" ToolBarItemBorderWidth="1px" ToolBarItemHoverBackColor="" ToolBarItemPressedBorderColor="51, 102, 153" ToolBarItemPressedBorderStyle="Solid" ToolBarItemPressedBorderWidth="1px" ToolBarItemPressedHoverBackColor="153, 187, 226">
-            <LocalReport ReportPath="Reports\Report\Repayment.rdlc" >
+            <LocalReport ReportPath="Reports\Report\LoanRepayment.rdlc" >
                 
                 <datasources>
                           <rsweb:ReportDataSource DataSourceId="ObjectDataSourceRepayment" Name="repayment" />
@@ -23,7 +23,7 @@
             </LocalReport>
         </rsweb:ReportViewer>
      
-        <asp:ObjectDataSource ID="ObjectDataSourceRepayment" runat="server" SelectMethod="Repayment" TypeName="FintrakBanking.ReportObjects.ReportingObjects.FinanceRepotObject">
+        <asp:ObjectDataSource ID="ObjectDataSourceRepayment" runat="server" SelectMethod="LoanRepayment" TypeName="FintrakBanking.ReportObjects.ReportingObjects.FinanceRepotObject">
             <SelectParameters> 
                 <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />

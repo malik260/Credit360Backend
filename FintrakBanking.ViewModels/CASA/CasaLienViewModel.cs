@@ -14,7 +14,9 @@ namespace FintrakBanking.ViewModels.CASA
         public decimal lienAmount { get; set; }
         public short lienTypeId { get; set; }                
         public int stateId { get; set; }
-
+        public string branchName { get; set; }
+        public string lienTypeName { get; set; }
+        public string customerName { get; set; }
         //public string lienReferenceNumber { get; set; }
         //public string productAccountNumber { get; set; }
         //public string sourceReferenceNumber { get; set; }

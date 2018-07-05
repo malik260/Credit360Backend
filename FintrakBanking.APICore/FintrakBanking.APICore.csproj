@@ -673,12 +673,12 @@
     <Compile Include="Reports\ReportViews\LoanAnniversery.aspx.designer.cs">
       <DependentUpon>LoanAnniversery.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx.cs">
-      <DependentUpon>LoanCASAaccountWithLein.aspx</DependentUpon>
+    <Compile Include="Reports\ReportViews\Lein.aspx.cs">
+      <DependentUpon>Lein.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx.designer.cs">
-      <DependentUpon>LoanCASAaccountWithLein.aspx</DependentUpon>
+    <Compile Include="Reports\ReportViews\Lein.aspx.designer.cs">
+      <DependentUpon>Lein.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.cs">
       <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
@@ -812,7 +812,7 @@
     <Content Include="Reports\ReportViews\GetStakeholdersOnExpirationOfFTP.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanAnniversery.aspx" />
-    <Content Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx" />
+    <Content Include="Reports\ReportViews\Lein.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferral.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentWaived.aspx" />
@@ -1062,10 +1062,11 @@
     <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
-    <EmbeddedResource Include="Reports\Report\LoanCASAAccountWithLein.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentDeferralForMCC.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanScheduleSimulation.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
@@ -1073,7 +1074,6 @@
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
-    <EmbeddedResource Include="Reports\Report\Repayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />

@@ -1907,6 +1907,7 @@ namespace FintrakBanking.Repositories.Finance
 
         {
             model.branchId = 100;
+            model.staffId = 1;
             //var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -1917,8 +1918,8 @@ namespace FintrakBanking.Repositories.Finance
             debit.currencyId = (short)model.currencyId;
             debit.currencyRate = model.currencyRate;//GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
             debit.isApproved = true;
-            debit.postedBy = (int)SystemStaff.System;
-            debit.approvedBy = (int)SystemStaff.System;
+            debit.postedBy = model.staffId;//(int)SystemStaff.System;
+            debit.approvedBy = model.staffId;//(int)SystemStaff.System;
             debit.approvedDate = debit.transactionDate;
             debit.approvedDateTime = DateTime.Now;
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
@@ -1940,8 +1941,8 @@ namespace FintrakBanking.Repositories.Finance
             credit.currencyId = (short)model.currencyId;
             credit.currencyRate = model.currencyRate;//GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
             credit.isApproved = true;
-            credit.postedBy = (int)SystemStaff.System;
-            credit.approvedBy = (int)SystemStaff.System;
+            credit.postedBy = model.staffId;//(int)SystemStaff.System;
+            credit.approvedBy = model.staffId;//(int)SystemStaff.System;
             credit.approvedDate = credit.transactionDate;
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
