@@ -399,8 +399,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.comment == "debug_test") throw new Exception("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
-            context.SaveChanges();
             LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate); // LOG CHANGES
+            context.SaveChanges();
 
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
@@ -413,7 +413,7 @@ namespace FintrakBanking.Repositories.Credit
             return (int)ApprovalStatusEnum.Processing; // default for now
         }
 
-        private void LogApplicationDetailChanges(int applicationId,int staffId,DateTime date)
+        private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date)
         {
             var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId);
             foreach (var detail in details)
@@ -432,7 +432,7 @@ namespace FintrakBanking.Repositories.Credit
                     SYSTEMDATETIME = DateTime.Now,
                 });
             }
-            context.SaveChanges();
+            //context.SaveChanges();
         }
 
         private string LineItemChanges(List<RecommendedChangesViewModel> recommendedChanges)
