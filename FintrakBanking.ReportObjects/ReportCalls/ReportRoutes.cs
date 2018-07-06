@@ -50,7 +50,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var gl = from x in context.TBL_CHART_OF_ACCOUNT
-                                where x.ACCOUNTNAME.ToUpper().Contains(searchValue.ToUpper()) || x.ACCOUNTCODE.ToUpper().Contains(searchValue.ToUpper())
+                                where x.ACCOUNTNAME.ToUpper().Contains(searchValue.ToUpper()) //|| x.ACCOUNTCODE.ToUpper().Contains(searchValue.ToUpper())
                          select new TransactionViewModel
                          {
                              GLAccountCode=x.ACCOUNTCODE,

@@ -5455,6 +5455,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan;
         }
+
         private IQueryable<LoanViewModel> SearchRevolvingLoan(string searchQuery)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
@@ -5484,6 +5485,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan;
         }
+
         private IQueryable<LoanViewModel> SearchContigentLoan(string searchQuery)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
@@ -5513,6 +5515,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan;
         }
+
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int productTypeId, string searchQuery)
         {
             var applicationDate = generalSetup.GetApplicationDate();

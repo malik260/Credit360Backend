@@ -11,9 +11,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            StartDate.Text = Request.QueryString[""];
-            EndDate.Text = Request.QueryString[""];
-            PostedByStaffId.Text = Request.QueryString[""];
+            StartDate.Text = Request.QueryString["StartDate"];
+            EndDate.Text = Request.QueryString["EndDate"];
+            PostedByStaffId.Text = Request.QueryString["PostedByStaffId"];
+            glAccountId.Text = Request.QueryString["glAccountId"];
+            branchId.Text = Request.QueryString["branchId"];
+            companyId.Text = Request.QueryString["companyId"];
         }
     }
 }

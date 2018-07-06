@@ -1053,6 +1053,7 @@
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc">
