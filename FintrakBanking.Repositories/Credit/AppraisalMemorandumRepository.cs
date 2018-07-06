@@ -750,6 +750,7 @@ namespace FintrakBanking.Repositories.Credit
                     //&& (x.BRANCHID == branchId || isHeadOffice) // branch filter
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                 )
+            .OrderByDescending(x => x.LOANAPPLICATIONID)
             .GroupJoin(
                 context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
                 a => a.LOANAPPLICATIONID,
@@ -804,8 +805,7 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .OrderByDescending(x => x.applicationDate)
-                .ThenByDescending(x => x.loanApplicationId);
+                ;
 
             return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
@@ -932,7 +932,9 @@ namespace FintrakBanking.Repositories.Credit
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                     && x.SUBMITTEDFORAPPRAISAL == true
-                ).GroupJoin(
+                )
+                .OrderByDescending(x => x.LOANAPPLICATIONID)
+                .GroupJoin(
                     context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
                     a => a.LOANAPPLICATIONID,
                     b => b.TARGETID,
@@ -976,8 +978,6 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null))
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .OrderByDescending(x => x.applicationDate)
-                .ThenByDescending(x => x.loanApplicationId)
                 ;
 
             return applications;
