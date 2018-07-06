@@ -323,12 +323,17 @@ namespace FintrakBanking.Repositories.Credit
                         detail.LASTUPDATEDBY = model.createdBy;
                         detail.DATETIMEUPDATED = DateTime.Now;
 
-                        if (model.isBusiness) // UPDATE PROPOSED
+                        if (model.isBusiness) // REMOVE PROPOSED
                         {
-                            detail.PROPOSEDPRODUCTID = (short)changed.productId;
-                            detail.PROPOSEDAMOUNT = changed.amount;
-                            detail.PROPOSEDINTERESTRATE = changed.interestRate;
-                            detail.PROPOSEDTENOR = changed.tenor;
+                            if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved)
+                            {
+                                context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
+                            } else {
+                                detail.PROPOSEDPRODUCTID = (short)changed.productId;
+                                detail.PROPOSEDAMOUNT = changed.amount;
+                                detail.PROPOSEDINTERESTRATE = changed.interestRate;
+                                detail.PROPOSEDTENOR = changed.tenor;
+                            }
                         }
 
                         /*context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG // LOG CHANGES
