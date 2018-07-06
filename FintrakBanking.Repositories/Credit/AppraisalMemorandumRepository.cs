@@ -211,7 +211,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<int?> GetLoanApplicationProductIds(int applicationId)
         {
-            return context.TBL_LOAN_APPLICATION_DETAIL
+            return context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.DELETED == false)
                 .Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x => (int?)x.PROPOSEDPRODUCTID)
                 .Distinct();
@@ -306,7 +306,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.recommendedChanges.Count() > 0) // only approving authority
             {
                 updateApprovedAmount = true;
-                items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).ToList();
+                items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
                 foreach (var changed in model.recommendedChanges)
                 {
                     var detail = items.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == changed.detailId);
@@ -323,12 +323,10 @@ namespace FintrakBanking.Repositories.Credit
                         detail.LASTUPDATEDBY = model.createdBy;
                         detail.DATETIMEUPDATED = DateTime.Now;
 
-                        if (model.isBusiness) // REMOVE PROPOSED
+                        if (model.isBusiness) // DELETE OR UPDATE PROPOSED
                         {
-                            if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved)
+                            if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; } else
                             {
-                                context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
-                            } else {
                                 detail.PROPOSEDPRODUCTID = (short)changed.productId;
                                 detail.PROPOSEDAMOUNT = changed.amount;
                                 detail.PROPOSEDINTERESTRATE = changed.interestRate;
@@ -420,7 +418,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date)
         {
-            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId);
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId && x.DELETED == false);
             foreach (var detail in details)
             {
                 context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG // LOG CHANGES
@@ -631,45 +629,38 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId)
         {
-            //var details = context.TBL_LOAN_APPLICATION
-            //    .Where(x => x.LOANAPPLICATIONID == applicationId)
-            //    .SelectMany(x => x.TBL_LOAN_APPLICATION_DETAIL)
-            //from a in context.TBL_LOAN_FEE
-            //join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
             var details = (from a in context.TBL_LOAN_APPLICATION
-                          join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                          join c in context.TBL_PRODUCT on b.PROPOSEDPRODUCTID equals c.PRODUCTID
-                          join d in context.TBL_PRODUCT on b.APPROVEDPRODUCTID equals d.PRODUCTID
-                          join e in context.TBL_CUSTOMER on b.CUSTOMERID equals e.CUSTOMERID
-                          join f in context.TBL_CURRENCY on b.CURRENCYID equals f.CURRENCYID
-                          where a.LOANAPPLICATIONID == applicationId
-                          
-                          select new ApprovedLoanDetailViewModel
-                   {
-                    loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
-                    applicationId = b.LOANAPPLICATIONID,
-                    customerId = e.CUSTOMERID,
-                    obligorName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME,
-                    currencyCode = f.CURRENCYCODE,
+                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                           join c in context.TBL_PRODUCT on b.PROPOSEDPRODUCTID equals c.PRODUCTID
+                           join d in context.TBL_PRODUCT on b.APPROVEDPRODUCTID equals d.PRODUCTID
+                           join e in context.TBL_CUSTOMER on b.CUSTOMERID equals e.CUSTOMERID
+                           join f in context.TBL_CURRENCY on b.CURRENCYID equals f.CURRENCYID
+                           where a.LOANAPPLICATIONID == applicationId && b.DELETED == false
+                           select new ApprovedLoanDetailViewModel
+                           {
+                               loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                               applicationId = b.LOANAPPLICATIONID,
+                               customerId = e.CUSTOMERID,
+                               obligorName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME,
+                               currencyCode = f.CURRENCYCODE,
 
-                    proposedProductName = c.PRODUCTNAME,
-                    proposedTenor = b.PROPOSEDTENOR,
-                    proposedRate = b.PROPOSEDINTERESTRATE,
-                    proposedAmount = b.PROPOSEDAMOUNT,
-                    proposedProductId = b.PROPOSEDPRODUCTID,
+                               proposedProductName = c.PRODUCTNAME,
+                               proposedTenor = b.PROPOSEDTENOR,
+                               proposedRate = b.PROPOSEDINTERESTRATE,
+                               proposedAmount = b.PROPOSEDAMOUNT,
+                               proposedProductId = b.PROPOSEDPRODUCTID,
 
-                    approvedProductName = d.PRODUCTNAME, // <----------take note of 1
-                    approvedTenor = b.APPROVEDTENOR,
-                    approvedRate = b.APPROVEDINTERESTRATE,
-                    approvedAmount = b.APPROVEDAMOUNT,
-                    //convertedApprovedAmount = x.ApprovedAmount * Convert.ToDecimal(x.ExchangeRate),
-                    approvedProductId = b.APPROVEDPRODUCTID,
+                               approvedProductName = d.PRODUCTNAME, // <----------take note of 1
+                               approvedTenor = b.APPROVEDTENOR,
+                               approvedRate = b.APPROVEDINTERESTRATE,
+                               approvedAmount = b.APPROVEDAMOUNT,
+                               approvedProductId = b.APPROVEDPRODUCTID,
 
-                    statusId = b.STATUSID,
-                    exchangeRate = b.EXCHANGERATE,
-                    terms = b.REPAYMENTTERMS,
-                    schedule = b.REPAYMENTSCHEDULE
-                });
+                               statusId = b.STATUSID,
+                               exchangeRate = b.EXCHANGERATE,
+                               terms = b.REPAYMENTTERMS,
+                               schedule = b.REPAYMENTSCHEDULE
+                           });
 
             return details;
         }
@@ -677,7 +668,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanDetailsFeeViewModel> GetLoanDetailsFee(int applicationId)
         {
             var fees = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
-                .SelectMany(x => x.TBL_LOAN_APPLICATION_DETAIL)
+                .SelectMany(x => x.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.DELETED == false))
                 .SelectMany(x => x.TBL_LOAN_APPLICATION_DETL_FEE)
                 .Select(x => new LoanDetailsFeeViewModel
                 {
@@ -894,7 +885,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (workflow.GroupStatusId == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
 
                 if (memo != null) memo.ISCOMPLETED = true;
-                var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false);
                 var approvedAmount = items.Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
                 appl.APPROVEDAMOUNT = approvedAmount;
             }
@@ -1038,14 +1029,14 @@ namespace FintrakBanking.Repositories.Credit
         public bool GetUntenoredStatus(int applicationId)
         {
             var detail = context.TBL_LOAN_APPLICATION_DETL_BG
-                .FirstOrDefault(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId);
+                .FirstOrDefault(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId && x.DELETED == false);
             return detail == null ? false : !detail.ISTENORED;
         }
 
         public IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggers(int applicationId)
         {
             return context.TBL_LOAN_APPLICATN_DETL_MTRIG
-                .Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
+                .Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId && x.DELETED == false)
                 .Select(x => new MonitoringTriggersViewModel
                 {
                     applicationDetailId = x.LOANAPPLICATIONDETAILID,
@@ -1102,7 +1093,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.REPAYMENTTERMS = entity.terms;
             detail.REPAYMENTSCHEDULE = entity.schedule;
             context.SaveChanges();
-            return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID)
+            return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID && x.DELETED == false)
                 .Select(x => new RepaymentScheduleTermsViewModel
                 {
                     applicationDetailId = x.LOANAPPLICATIONDETAILID,
@@ -1135,7 +1126,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (classId == 7) // first edu
             {
-                limits = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId)
+                limits = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId && x.DELETED == false)
                        .Join(context.TBL_LOAN_APPLICATION_DETL_EDU, a => a.LOANAPPLICATIONDETAILID, b => b.LOANAPPLICATIONDETAILID, (a, b) => new { a, b })
                        .Join(context.TBL_PRODUCT_BEHAVIOUR, ab => ab.a.APPROVEDPRODUCTID, c => c.PRODUCTID, (ab, c) => new { ab, c })
                        .Select(x => new ProductLimitValidationViewModel
