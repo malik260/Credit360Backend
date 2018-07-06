@@ -24,6 +24,7 @@ using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using System.Net.Http.Formatting;
 using FintrakBanking.Interfaces.CASA;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -305,6 +306,15 @@ namespace FintrakBanking.APICore.Controllers
                 model.BranchId = token.GetBranchId;
 
                 var response = repo.GoForApproval(model);
+
+                if (response== (int)ApprovalStatusEnum.Disapproved)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Disapproved Successfully" });
+                }
+                else if(response==0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Approval has failed" });
+                }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message ="Approved Successfully"});
             }
             catch (Exception ex)
@@ -323,7 +333,15 @@ namespace FintrakBanking.APICore.Controllers
                 model.BranchId = token.GetBranchId;
 
                 var response = repo.GoForPolicyApproval(model);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                if (response == (int)ApprovalStatusEnum.Disapproved)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Disapproved Successfully" });
+                }
+                else if (response == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Approval has failed" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Approved Successfully" });
             }
             catch (Exception ex)
             {

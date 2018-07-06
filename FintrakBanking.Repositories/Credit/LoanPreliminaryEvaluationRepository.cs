@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Customer;
 using System.ServiceModel;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -96,13 +97,23 @@ namespace FintrakBanking.Repositories.Credit
             var customerRecord = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == model.customerId);
 
             var groupRecord = context.TBL_CUSTOMER_GROUP.FirstOrDefault(c => c.CUSTOMERGROUPID == model.customerGroupId);
+            var detail = string.Empty;
+            if (customerRecord != null)
+            {
+                detail = $"Created Prelimenary Evaluation with code ({model.preliminaryEvaluationCode}) for customer with code {customerRecord.CUSTOMERCODE}";
+            }
+            else
+            {
+                detail = $"Created Prelimenary Evaluation with code ({model.preliminaryEvaluationCode})";
+            }
+                
 
             var auditRecord = new TBL_AUDIT()
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanPreliminaryEvaluationAdded,
                 BRANCHID = model.userBranchId,
                 STAFFID = model.createdBy,
-                //Detail = $"Created Prelimenary Evaluation with code ({model.preliminaryEvaluationCode}) for customer {customerRecord.FirstName} {customerRecord.LastName}",
+                DETAIL = detail,
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 SYSTEMDATETIME = DateTime.Now,
@@ -139,9 +150,15 @@ namespace FintrakBanking.Repositories.Credit
                         workFlow.DeferredExecution = true; 
                         workFlow.ExternalInitialization = true;
 
-                        workFlow.LogActivity();
-
-                        context.SaveChanges();
+                        try
+                        {
+                            workFlow.LogActivity();
+                            context.SaveChanges();
+                        }
+                        catch(Exception ex)
+                        {
+                            throw new ConditionNotMetException(ex.Message);
+                        }
 
                         trans.Commit();
                     }

@@ -30,6 +30,16 @@ namespace FintrakBanking.Finance.ViewModels
         public string casaAccountNumber { get; set; }
         public string GLAccount { get; set; }
         public string branchName { get; set; }
+        public string productName { get; set; }
+        public string productCode { get; set; }
+        public string customerName { get; set; }
+        public string customerCode { get; set; }
+        public string branchCode { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public string batchNo2 { get; set; }
+        public string GLAccountCode { get; set; }
+        public int GLAccountId { get; set; }
+        public int glAccountId { get; set; }
     }
     public class BulkTransactionViewModel
     {
@@ -56,6 +66,12 @@ namespace FintrakBanking.Finance.ViewModels
         public string forceDebitAccount { get; set; }
         public string bankId { get; set; }
         public decimal amountCollected { get; set; }
+        public string branchName { get; set; }
+        public string productName { get; set; }
+        public string productCode { get; set; }
+        public string customerName { get; set; }
+        public string customerCode { get; set; }
+        public string branchCode { get; set; }
     }
     public class DailyAccrualViewModel
     {
@@ -78,6 +94,11 @@ namespace FintrakBanking.Finance.ViewModels
         public bool repaymentPostedStatus { get; set; }
         public DateTime dateTimeTime { get; set; }
         public DateTime date { get; set; }
+        public string productName { get; set; }
+        public string productCode { get; set; }
+        public string customerName { get; set; }
+        public string customerCode { get; set; }
+        public string branchCode { get; set; }
     }
     
 }

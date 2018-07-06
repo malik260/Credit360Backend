@@ -8,6 +8,7 @@ namespace FintrakBanking.ViewModels.Admin
     {
         public long auditId { get; set; }
         public string auditType { get; set; }
+        public int auditTypeId { get; set; }
         public string firstName { get; set; }
         public string lastName { get; set; }
         public DateTime systemDate { get; set; }

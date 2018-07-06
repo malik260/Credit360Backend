@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class ApprovalTrailWithSLA {
+    public partial class LoanCASAaccountWithLein {
         
         /// <summary>
         /// form1 control.
@@ -31,13 +31,13 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// approvalTrailWithSLA control.
+        /// ReportViewer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer approvalTrailWithSLA;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer;
         
         /// <summary>
         /// ObjectDataSource1 control.
@@ -47,5 +47,41 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSource1;
+        
+        /// <summary>
+        /// searchParamemter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label searchParamemter;
+        
+        /// <summary>
+        /// companyId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label companyId;
+        
+        /// <summary>
+        /// endDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label endDate;
+        
+        /// <summary>
+        /// startDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label startDate;
     }
 }

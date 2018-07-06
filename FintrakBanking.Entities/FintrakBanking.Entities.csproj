@@ -246,6 +246,13 @@
     <Compile Include="Models\TBL_DEPARTMENT.cs" />
     <Compile Include="Models\TBL_DEPARTMENT_UNIT.cs" />
     <Compile Include="Models\TBL_ERRORLOG.cs" />
+    <Compile Include="Models\TBL_ESG_CATEGORY.cs" />
+    <Compile Include="Models\TBL_ESG_CHECKLIST_DEFINITION.cs" />
+    <Compile Include="Models\TBL_ESG_CHECKLIST_DETAIL.cs" />
+    <Compile Include="Models\TBL_ESG_CHECKLIST_SUMMARY.cs" />
+    <Compile Include="Models\TBL_ESG_CLASS.cs" />
+    <Compile Include="Models\TBL_ESG_SUB_CATEGORY.cs" />
+    <Compile Include="Models\TBL_ESG_TYPE.cs" />
     <Compile Include="Models\TBL_FEE_AMORTISATION_TYPE.cs" />
     <Compile Include="Models\TBL_FEE_INTERVAL.cs" />
     <Compile Include="Models\TBL_FEE_TARGET.cs" />

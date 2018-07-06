@@ -524,6 +524,13 @@
     <Compile Include="Reports\ReportViews\FinancialTransactions.aspx.designer.cs">
       <DependentUpon>FinancialTransactions.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\Lein.aspx.cs">
+      <DependentUpon>Lein.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\Lein.aspx.designer.cs">
+      <DependentUpon>Lein.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\NonPeformingLoans.aspx.cs">
       <DependentUpon>NonPeformingLoans.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -673,13 +680,6 @@
     <Compile Include="Reports\ReportViews\LoanAnniversery.aspx.designer.cs">
       <DependentUpon>LoanAnniversery.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx.cs">
-      <DependentUpon>LoanCASAaccountWithLein.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx.designer.cs">
-      <DependentUpon>LoanCASAaccountWithLein.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.cs">
       <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -801,6 +801,7 @@
     <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
+    <Content Include="Reports\ReportViews\Lein.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
@@ -812,7 +813,6 @@
     <Content Include="Reports\ReportViews\GetStakeholdersOnExpirationOfFTP.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanAnniversery.aspx" />
-    <Content Include="Reports\ReportViews\LoanCASAaccountWithLein.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferral.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentWaived.aspx" />
@@ -916,6 +916,7 @@
     <Content Include="Reports\ReportDataset\TransactionDataSet.xss">
       <DependentUpon>TransactionDataSet.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\Report\Lein.rdlc" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -1052,6 +1053,7 @@
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc">
@@ -1062,7 +1064,6 @@
     <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
-    <EmbeddedResource Include="Reports\Report\LoanCASAAccountWithLein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentDeferralForMCC.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
@@ -1073,7 +1074,6 @@
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
-    <EmbeddedResource Include="Reports\Report\Repayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
