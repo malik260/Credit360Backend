@@ -402,7 +402,7 @@ namespace FintrakBanking.Repositories.Credit
             LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate); // LOG CHANGES
             context.SaveChanges();
 
-            var lastStatus = workflow.StatusId; // prevents the next block from changing it
+            var lastStatus = workflow.StatusId; // prevents the nex
 
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
@@ -804,8 +804,7 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .OrderByDescending(x => x.applicationDate)
-                .ThenByDescending(x => x.loanApplicationId);
+                ;
 
             return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
@@ -976,8 +975,6 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null))
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .OrderByDescending(x => x.applicationDate)
-                .ThenByDescending(x => x.loanApplicationId)
                 ;
 
             return applications;

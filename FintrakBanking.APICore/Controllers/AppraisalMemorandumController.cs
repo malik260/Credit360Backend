@@ -144,32 +144,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpGet]
-        //[Route("appraisal-memorandum/privilege/{loanApplicationId}/operation/{operationId}")]
-        //public HttpResponseMessage GetUserPrivilege(int loanApplicationId, int operationId)
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetUserPrivilege(token.GetStaffId, loanApplicationId, operationId);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-        //    }
-        //}
-        /*
-         [HttpPost] [ClaimsAuthorization]
-        [Route("appraisal-memorandum/forward")]
-        public HttpResponseMessage ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
-        {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;*/
-
         [HttpPost]
         [Route("appraisal-memorandum/privilege")]
         public HttpResponseMessage GetUserPrivilege([FromBody] AuthoritySignatureViewModel entity)
@@ -234,21 +208,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpGet]
-        //[Route("appraisal-memorandum/confirmation/{type}/application/{loanApplicationId}")]
-        //public HttpResponseMessage Confirmation(int type, int loanApplicationId)
-        //{
-        //    try
-        //    {
-        //        var data = repo.Confirmation(type, loanApplicationId);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-        //    }
-        //}
-
         [HttpGet, Route("loan-application-approval-process")]
         public HttpResponseMessage GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString)
         {
@@ -270,8 +229,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
-                    .ThenByDescending(x => x.loanApplicationId)
+                    .OrderByDescending(x => x.loanApplicationId) // OrderBy() must be called for Skip() to work!
                     .Skip(page)
                     .Take(itemsPerPage)
                     .ToList();
@@ -344,8 +302,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
-                    .ThenByDescending(x => x.loanApplicationId)
+                    .OrderByDescending(x => x.loanApplicationId) // OrderBy() must be called for Skip() to work!
                     .Skip(page)
                     .Take(itemsPerPage)
                     .ToList();
@@ -357,33 +314,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
-
-        //[HttpGet]
-        //[Route("appraisal-workflow/next-level-staff/{loanApplicationId}/operation/{operationId}`")]
-        //public HttpResponseMessage GetNextLevelStaff(int loanApplicationId, int operationId)
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetNextLevelStaff(token.GetStaffId, loanApplicationId, operationId);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-        //    }
-        //}
-
-        //credit/loan-application/product-programs
-
-        /*UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                    userIPAddress = HttpContext.Current.Request.UserHostAddress
-                };*/
-
 
         [HttpGet]
         [Route("appraisal-memorandum/pending-product-program")]
