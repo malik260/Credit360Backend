@@ -49,7 +49,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string searchItem { get { return this.firstName + " " + this.middleName + " " + this.lastName + " " + this.customerCode; } }
         public string lastName { get; set; }
         public string gender { get; set; }
-        public DateTime dateOfBirth { get; set; }
+        public DateTime? dateOfBirth { get; set; }
         public string placeOfBirth { get; set; }
         public string nationality { get; set; }
         public int maritalStatus { get; set; }
