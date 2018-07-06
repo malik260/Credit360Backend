@@ -14,7 +14,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 {
     public partial class FinanceRepotObject
     {
-        public List<TransactionViewModel> FinanceTransaction(DateTime startDate, DateTime endDate,  int? staffId, int companyId, int? branchId, bool excludeSystem)
+        public List<TransactionViewModel> FinanceTransaction(DateTime startDate, DateTime endDate,  int companyId, int? branchId,int glAccountId,int PostedByStaffId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -22,6 +22,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                          where a.COMPANYID == companyId
                                                          && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)
                                                          && (branchId == null || branchId==0 || a.TBL_BRANCH.BRANCHID==branchId)
+                                                         && (a.GLACCOUNTID== glAccountId || glAccountId==0)
+                                                         && (a.POSTEDBY == PostedByStaffId || PostedByStaffId ==0)
                                                          orderby a.POSTEDDATE, a.TRANSACTIONID descending
                                                          select new TransactionViewModel()
                                                          {

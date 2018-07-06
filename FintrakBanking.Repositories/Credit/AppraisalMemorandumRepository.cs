@@ -402,7 +402,7 @@ namespace FintrakBanking.Repositories.Credit
             LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate); // LOG CHANGES
             context.SaveChanges();
 
-            var lastStatus = workflow.StatusId; // prevents the next block from changing it
+            var lastStatus = workflow.StatusId; // prevents the nex
 
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {

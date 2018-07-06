@@ -146,8 +146,17 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONSTATUSID = (short)1, // -------------------------------------------------- REMOVE COLUMN!!
             });
 
+            LoanViewModel loan = new LoanViewModel();
+
+            loan.effectiveDate = applicationDate;
+            loan.maturityDate = applicationDate;
+            loan.interestRate = 100;
+            loan.outstandingPrincipal = 100;
+
             foreach (var detail in model.applicationDetails)
             {
+                // loan = GetLoanInformation(model.loanSystemTypeId, model.loanId); // TODO
+
                 context.TBL_LMSR_APPLICATION_DETAIL.Add(new TBL_LMSR_APPLICATION_DETAIL
                 {
                     LOANAPPLICATIONID = application.LOANAPPLICATIONID,
@@ -162,12 +171,12 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved, // REMOVE DUPLICATE [STATUSID]
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = applicationDate,
-                    PROPOSEDTENOR = 10,
-                    PROPOSEDINTERESTRATE = 10,
-                    PROPOSEDAMOUNT = 10,
-                    APPROVEDTENOR = 10,
-                    APPROVEDINTERESTRATE = 10,
-                    APPROVEDAMOUNT = 10,
+                    PROPOSEDTENOR = loan.tenor,
+                    PROPOSEDINTERESTRATE = loan.interestRate,
+                    PROPOSEDAMOUNT = loan.outstandingPrincipal,
+                    APPROVEDTENOR = loan.tenor,
+                    APPROVEDINTERESTRATE = loan.interestRate,
+                    APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     
                 });
@@ -478,6 +487,32 @@ namespace FintrakBanking.Repositories.Credit
             decimal totalBalance = loanBalance + overdraftBalance;
 
             return totalBalance;
+        }
+
+        public LoanViewModel GetLoanInformation(int loanSystemTypeId, int loanId)
+        {
+            var result = new LoanViewModel();
+            if (loanSystemTypeId == (int)LoanProductTypeEnum.TermLoan || loanSystemTypeId == (int)LoanProductTypeEnum.SelfLiquidating)
+            {
+                //return this.AddTermLoan(entity);
+            }
+            else if (loanSystemTypeId == (int)LoanProductTypeEnum.CommercialPaper)
+            {
+                //return AddCommercialLoan(entity);
+            }
+            else if (loanSystemTypeId == (int)LoanProductTypeEnum.RevolvingLoan)
+            {
+                //return addRevolvingLoan(entity);
+            }
+            else if (loanSystemTypeId == (int)LoanProductTypeEnum.ContingentLiability)
+            {
+                //return addContingentLiability(entity);
+            }
+            else
+            {
+                throw new Exception("The Product type is Invalid");
+            }
+            return result;
         }
 
     }
