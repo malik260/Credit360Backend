@@ -755,6 +755,7 @@ namespace FintrakBanking.Repositories.Credit
                     //&& (x.BRANCHID == branchId || isHeadOffice) // branch filter
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                 )
+            .OrderByDescending(x => x.LOANAPPLICATIONID)
             .GroupJoin(
                 context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
                 a => a.LOANAPPLICATIONID,
@@ -936,7 +937,9 @@ namespace FintrakBanking.Repositories.Credit
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                     && x.SUBMITTEDFORAPPRAISAL == true
-                ).GroupJoin(
+                )
+                .OrderByDescending(x => x.LOANAPPLICATIONID)
+                .GroupJoin(
                     context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
                     a => a.LOANAPPLICATIONID,
                     b => b.TARGETID,

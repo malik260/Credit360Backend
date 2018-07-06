@@ -6926,7 +6926,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Principal Amount", (int)OperationsEnum.PrincipalLoanRepayment));
 
-                        financeTransaction.PostTransaction(inputTransactions);
+                        //financeTransaction.PostTransaction(inputTransactions);
                         updateloanTableStatus(loanInput.loanId);
                     }
                     else
@@ -6939,8 +6939,8 @@ namespace FintrakBanking.Repositories.Credit
 
                         inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, partPayment, product.PRINCIPALBALANCEGL.Value, "Principal Amount", (int)OperationsEnum.PrincipalLoanRepayment));
 
-                        financeTransaction.PostTransaction(inputTransactions);
-                        updateloanTableStatus(loanInput.loanId);
+                        //financeTransaction.PostTransaction(inputTransactions);
+                        //updateloanTableStatus(loanInput.loanId);
 
                         if (LoanExist(loanId) > 0)
                         {
@@ -7064,9 +7064,12 @@ namespace FintrakBanking.Repositories.Credit
                             this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                             this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
-                            context.SaveChanges();
+                            //context.SaveChanges();
 
-                            var outstInterest = from d in context.TBL_LOAN_SCHEDULE_PERIODIC_TMP
+                        MergePeriodicSchedule(loanId, applicationDate);
+                        MergeDailySchedule(loanId, applicationDate);
+
+                        var outstInterest = from d in context.TBL_LOAN_SCHEDULE_PERIODIC_TMP
                                                 where d.LOANID == loanId
                                                 let sumPrincipalAmount = context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.Where(a => a.LOANID == loanId).Sum(a => a.PERIODINTERESTAMOUNT)
                                                 select sumPrincipalAmount;
@@ -7080,8 +7083,7 @@ namespace FintrakBanking.Repositories.Credit
                             loan.OUTSTANDINGINTEREST = outstandingInterest;
                             //-------------------------------------------------
 
-                            MergePeriodicSchedule(loanId, applicationDate);
-                            MergeDailySchedule(loanId, applicationDate);
+                            
 
 
                             //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
@@ -7100,7 +7102,7 @@ namespace FintrakBanking.Repositories.Credit
                         //trans.Commit();
                         output = true;
                     }
-                    output = false;
+                    //output = false;
                 }
                 catch (Exception ex)
                 {
@@ -9556,7 +9558,7 @@ namespace FintrakBanking.Repositories.Credit
                     if ((int)OperationsEnum.Prepayment == model.operationTypeId)
                     {
                         int loanReviewOperationsId = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANID == model.loanId).LOANREVIEWOPERATIONID;
-                        LoanRephasementProcess((short)loanReviewOperationsId, model.loanId, model.staffId);
+                        LoanRephasementProcess((short)loanReviewOperationsId, model.loanId, model.createdBy);
                     }
 
                     return output;
