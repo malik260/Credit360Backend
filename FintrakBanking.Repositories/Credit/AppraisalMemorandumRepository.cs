@@ -991,7 +991,7 @@ namespace FintrakBanking.Repositories.Credit
                 x.DELETED == false
                 && x.COMPANYID == user.companyId
                 //&& (x.BRANCHID == user.BranchId || isHeadOffice) // branch filter
-                && x.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == productBasedId
+                // && x.PRODUCT_CLASS_PROCESSID == productBasedId
                 && x.PRODUCTCLASSID != null
             )
             .GroupJoin(
@@ -1010,20 +1010,31 @@ namespace FintrakBanking.Repositories.Credit
                     toStaffId = y.TOSTAFFID,
                 })
                 .GroupBy(d => d.loanApplicationId)
-                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
-
-            applications = applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
+                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
+                .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId))
+                .ToList()
+                ;
 
             var productClasses = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCT_CLASS_PROCESSID == productBasedId)
                 .Select(item => new PendingProductProgramViewModel
                 {
                     productClassId = item.PRODUCTCLASSID,
                     productClassName = item.PRODUCTCLASSNAME,
-                    pendingNumber = applications.Where(x => x.productClassId == item.PRODUCTCLASSID).Count(),
+                    pendingNumber = 0,
                 })
                 .ToList();
 
-            return productClasses;
+            var result = new List<PendingProductProgramViewModel>();
+            foreach(var pc in productClasses)
+            {
+                result.Add(new PendingProductProgramViewModel {
+                    productClassId = pc.productClassId,
+                    productClassName=pc.productClassName,
+                    pendingNumber= applications.Count(x => x.productClassId == pc.productClassId)
+                });
+            }
+
+            return result;
         }
 
         public bool GetUntenoredStatus(int applicationId)
