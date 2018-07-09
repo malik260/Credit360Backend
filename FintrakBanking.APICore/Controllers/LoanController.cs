@@ -617,6 +617,35 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+        //[HttpGet]
+        //[Route("commercial-loans}")]
+        //public HttpResponseMessage GetLoanCommercialLoans()
+        //{
+        //    try
+        //    {
+        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        //        var data = repo.GetLoanCommercialLoans(token.GetCompanyId);
+
+        //        if (data.Any() == false)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        //    }
+        //    catch (ConditionNotMetException ce)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+        //    }
+        //    catch (BadLogicException be)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+        //    }
+        //}
+
         [HttpGet]
         [Route("loan-booking/revolving/awaiting-approval")]
         public HttpResponseMessage GetRevolvingLoanBookingAwaitingApproval()
@@ -625,6 +654,35 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.GetRevolvingLoanBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet]
+        [Route("commercial-loans")]
+        public HttpResponseMessage GetLoanCommercialLoans()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetLoanCommercialLoans(token.GetCompanyId);
 
                 if (data.Any() == false)
                 {
