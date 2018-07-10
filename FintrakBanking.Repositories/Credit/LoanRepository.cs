@@ -1033,7 +1033,7 @@ namespace FintrakBanking.Repositories.Credit
             //PostLoanDisbursment(entity);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));            
+            inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));
 
             var feePostings = BuildLoanChargeFeesPosting(entity);
 
@@ -1042,7 +1042,7 @@ namespace FintrakBanking.Repositories.Credit
                 inputTransactions.AddRange(feePostings);
 
             financeTransaction.PostTransaction(inputTransactions);
-            
+
             //if (feePostings.Count() > 0)
             //    financeTransaction.PostTransaction(feePostings);
         }
@@ -3788,7 +3788,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             customerId = d.CUSTOMERID,
                             customerCode = cust.CUSTOMERCODE,
-                            customerName =  d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME ,
+                            customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                             customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                             customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
@@ -4439,7 +4439,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
 
                 exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
-                           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int) ApprovalStatusEnum.Disapproved)
+                           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                            select new CurrentCustomerExposure
                            {
                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
@@ -4462,7 +4462,7 @@ namespace FintrakBanking.Repositories.Credit
                 facilityType = "TOTAL",
                 existingLimit = exposures.Sum(t => t.existingLimit),
                 proposedLimit = exposures.Sum(t => t.proposedLimit),
-                recommendedLimit = exposure.Sum(t=> t.recommendedLimit),
+                recommendedLimit = exposure.Sum(t => t.recommendedLimit),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
                 PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
                 reviewDate = DateTime.Now,
@@ -4693,11 +4693,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                var currentDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals b.LOANID
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                       where a.ISDISBURSED == true && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility &&
+                                       where a.ISDISBURSED == true && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft && //(int)LoanSystemTypeEnum.OverdraftFacility &&
                                        e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
@@ -4712,9 +4713,10 @@ namespace FintrakBanking.Repositories.Credit
                                            principalAmount = a.OVERDRAFTLIMIT,
                                            effectiveDate = a.EFFECTIVEDATE,
                                            maturityDate = a.MATURITYDATE,
+                                           operationId = b.OPERATIONID,
                                            operationName = b.TBL_OPERATIONS.OPERATIONNAME,
                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-
+                                           systemCurrentDate = currentDate
                                        }).ToList();
                 return allFilteredLoan;
             }
@@ -4736,39 +4738,97 @@ namespace FintrakBanking.Repositories.Credit
                     overDraftLimit = odDetail.OVERDRAFTLIMIT;
                     availableBalance = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == odDetail.CASAACCOUNTID).AVAILABLEBALANCE;
                 }
+                //var overDraftDetail = (from a in context.TBL_LOAN_REVOLVING
+                //                       join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                //                       join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                //                       where a.REVOLVINGLOANID == revolvingLoanId
+                //                       select new LoanViewModel
+                //                       {
+                //                           loanId = a.REVOLVINGLOANID,
+                //                           customerId = a.CUSTOMERID,
+                //                           customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                //                           customerCode = b.CUSTOMERCODE,
+                //                           productId = a.PRODUCTID,
+                //                           companyId = a.COMPANYID,
+                //                           casaAccountId = a.CASAACCOUNTID,
+                //                           branchId = a.BRANCHID,
+                //                           branchName = a.TBL_BRANCH.BRANCHNAME,
+                //                           loanReferenceNumber = a.LOANREFERENCENUMBER,
+                //                           //applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                //                           //loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                //                           //productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+                //                           //productName = a.TBL_PRODUCT.PRODUCTNAME,
+                //                           //productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                //                           //relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                //                           //relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                //                           //relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                //                           //relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
+                //                           //misCode = a.MISCODE,
+                //                           //teamMiscode = a.TEAMMISCODE,
+                //                           //interestRate = a.INTERESTRATE,
+                //                           //effectiveDate = a.EFFECTIVEDATE,
+                //                           //maturityDate = a.MATURITYDATE,
+                //                           //bookingDate = a.BOOKINGDATE,
+                //                           //principalAmount = a.OVERDRAFTLIMIT,
+                //                           //approvalStatusId = a.APPROVALSTATUSID,
+                //                           //approverComment = a.APPROVERCOMMENT,
+                //                           //dateApproved = a.DATEAPPROVED,
+                //                           //loanStatusId = a.LOANSTATUSID,
+                //                           //isDisbursed = a.ISDISBURSED,
+                //                           //disburserComment = a.DISBURSERCOMMENT,
+                //                           //disburseDate = a.DISBURSEDATE,
+                //                           //operationId = a.OPERATIONID,
+                //                           //operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                //                           //subSectorName = a.TBL_SUB_SECTOR.NAME,
+                //                           //sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                //                           //casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                //                           //productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
+                //                           //customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                //                           //loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                //                           //loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                //                           outstandingPrincipal = availableBalance,
+                //                           dischargeLetter = a.DISCHARGELETTER,
+                //                           suspendInterest = a.SUSPENDINTEREST,
+                //                           customerSensitivityLevelId = a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+                //                           createdBy = a.CREATEDBY,
+                //                           dateTimeCreated = a.DATETIMECREATED,
+                //                           exchangeRate = a.EXCHANGERATE,
+                //                           currencyId = a.CURRENCYID,
+                //                           currency = a.TBL_CURRENCY.CURRENCYNAME,
+                //                       }).FirstOrDefault();
+
                 var overDraftDetail = (from a in context.TBL_LOAN_REVOLVING
+                                       join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
+                                       join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                       join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                       join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                       join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                        join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
-                                       join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                                       join pr in context.TBL_PRODUCT on a.PRODUCTID equals pr.PRODUCTID
+                                       join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
+                                       join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
                                        where a.REVOLVINGLOANID == revolvingLoanId
                                        select new LoanViewModel
                                        {
                                            loanId = a.REVOLVINGLOANID,
                                            customerId = a.CUSTOMERID,
-                                           customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
-                                           customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                           customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                           customerCode = b.CUSTOMERCODE,
                                            productId = a.PRODUCTID,
                                            companyId = a.COMPANYID,
                                            casaAccountId = a.CASAACCOUNTID,
                                            branchId = a.BRANCHID,
-                                           branchName = a.TBL_BRANCH.BRANCHNAME,
+                                           branchName = br.BRANCHNAME,
                                            loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                           applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
-                                           loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
-                                           //principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                           //pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
-                                           //interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
-                                           //interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
-                                           productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
-                                           productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                           productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
-                                           //principalNumberOfInstallment = a.PRINCIPALNUMBEROFINSTALLMENT,
-                                           //interestNumberOfInstallment = a.INTERESTNUMBEROFINSTALLMENT,
-
+                                           applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                           loanApplicationId = lp.LOANAPPLICATIONID,
+                                           productTypeId = pr.PRODUCTTYPEID,
+                                           productName = pr.PRODUCTNAME,
+                                           productTypeName = pr.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                                           relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                                           relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
                                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                           relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
-
+                                           relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
                                            misCode = a.MISCODE,
                                            teamMiscode = a.TEAMMISCODE,
                                            interestRate = a.INTERESTRATE,
@@ -4776,48 +4836,31 @@ namespace FintrakBanking.Repositories.Credit
                                            maturityDate = a.MATURITYDATE,
                                            bookingDate = a.BOOKINGDATE,
                                            principalAmount = a.OVERDRAFTLIMIT,
-                                           //principalInstallmentLeft = a.PRINCIPALINSTALLMENTLEFT,
-                                           //interestInstallmentLeft = a.INTERESTINSTALLMENTLEFT,
                                            approvalStatusId = a.APPROVALSTATUSID,
-                                           //approvedBy = a.APPROVEDBY,
                                            approverComment = a.APPROVERCOMMENT,
                                            dateApproved = a.DATEAPPROVED,
                                            loanStatusId = a.LOANSTATUSID,
-                                           //scheduleTypeId = a.SCHEDULETYPEID,
-                                           //scheduleTypeName = a.TBL_LOAN_SCHEDULE_TYPE.SCHEDULETYPENAME,
                                            isDisbursed = a.ISDISBURSED,
-                                           //disbursedBy = a.DISBURSEDBY,
                                            disburserComment = a.DISBURSERCOMMENT,
                                            disburseDate = a.DISBURSEDATE,
-                                           //approvedAmount = a.ApprovedAmount,
                                            operationId = a.OPERATIONID,
-                                           operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                           operationName = tt.OPERATIONNAME,
                                            subSectorName = a.TBL_SUB_SECTOR.NAME,
                                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                            casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
                                            productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
-                                           customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
-                                           loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
-                                           loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                           //equityContribution = a.EQUITYCONTRIBUTION,
-                                           //firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
-                                           //firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
-                                           outstandingPrincipal = a.TBL_CASA.AVAILABLEBALANCE,
-                                           //outstandingInterest = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == c.CASAACCOUNTID).AVAILABLEBALANCE,
-                                           //principalAdditionCount = a.PRINCIPALADDITIONCOUNT ?? 0,
-                                           //principalReductionCount = a.PRINCIPALREDUCTIONCOUNT ?? 0,
-                                           //fixedPrincipal = a.FIXEDPRINCIPAL,
-                                           //profileLoan = a.PROFILELOAN,
+                                           customerGroupId = lp.CUSTOMERGROUPID,
+                                           loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                           loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                           outstandingPrincipal = availableBalance,
                                            dischargeLetter = a.DISCHARGELETTER,
                                            suspendInterest = a.SUSPENDINTEREST,
-                                           customerSensitivityLevelId = a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+                                           customerSensitivityLevelId = b.CUSTOMERSENSITIVITYLEVELID,
                                            createdBy = a.CREATEDBY,
                                            dateTimeCreated = a.DATETIMECREATED,
-                                           //isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.REVOLVINGLOANID).Any(),
                                            exchangeRate = a.EXCHANGERATE,
                                            currencyId = a.CURRENCYID,
                                            currency = a.TBL_CURRENCY.CURRENCYNAME,
-                                           //overDraftCheckAmount = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == c.CASAACCOUNTID).AVAILABLEBALANCE,
                                        }).FirstOrDefault();
                 if (availableBalance > 0)
                 {
@@ -4829,7 +4872,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 return overDraftDetail;
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -4928,7 +4971,8 @@ namespace FintrakBanking.Repositories.Credit
                                            interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
                                            interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
                                            pastDueInterest = a.PASTDUEINTEREST,
-                                           accrualedAmount = d.ACCRUEDINTEREST//context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,
+                                           accrualedAmount = d.ACCRUEDINTEREST, //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,
+                                           systemCurrentDate = applicationDate
                                        }).ToList();
 
                 return allFilteredLoan;
@@ -5203,85 +5247,151 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel GetDisbursedODByODId(int loanId)//GetDisbursedODByODId
         {
 
+            //var loanDetails = (from a in context.TBL_LOAN_REVOLVING
+            //                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+            //                   join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+            //                   where a.REVOLVINGLOANID == loanId && a.ISDISBURSED == true
+            //                   select new LoanViewModel
+            //                   {
+            //                       loanId = a.REVOLVINGLOANID,
+            //                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+            //                       customerId = a.CUSTOMERID,
+            //                       customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+            //                       customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+            //                       productId = a.PRODUCTID,
+            //                       companyId = a.COMPANYID,
+            //                       casaAccountId = a.CASAACCOUNTID,
+            //                       branchId = a.BRANCHID,
+            //                       branchName = a.TBL_BRANCH.BRANCHNAME,
+            //                       loanReferenceNumber = a.LOANREFERENCENUMBER,
+            //                       applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+            //                       //principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
+            //                       //pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+            //                       //interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
+            //                       //interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
+            //                       productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+            //                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+            //                       productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+            //                       //principalNumberOfInstallment = a.PRINCIPALNUMBEROFINSTALLMENT,
+            //                       //interestNumberOfInstallment = a.INTERESTNUMBEROFINSTALLMENT,
+            //                       relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+            //                       relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+            //                       relationshipManagerId = a.RELATIONSHIPMANAGERID,
+            //                       relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
+            //                       misCode = a.MISCODE,
+            //                       teamMiscode = a.TEAMMISCODE,
+            //                       interestRate = a.INTERESTRATE,
+            //                       effectiveDate = a.EFFECTIVEDATE,
+            //                       maturityDate = a.MATURITYDATE,
+            //                       bookingDate = a.BOOKINGDATE,
+            //                       principalAmount = a.OVERDRAFTLIMIT,
+            //                       //principalInstallmentLeft = a.PRINCIPALINSTALLMENTLEFT,
+            //                       //interestInstallmentLeft = a.INTERESTINSTALLMENTLEFT,
+            //                       approvalStatusId = a.APPROVALSTATUSID,
+            //                       //approvedBy = a.APPROVEDBY,
+            //                       approverComment = a.APPROVERCOMMENT,
+            //                       dateApproved = a.DATEAPPROVED,
+            //                       loanStatusId = a.LOANSTATUSID,
+            //                       //scheduleTypeId = a.SCHEDULETYPEID,
+            //                       //scheduleTypeName = a.TBL_LOAN_SCHEDULE_TYPE.SCHEDULETYPENAME,
+            //                       isDisbursed = a.ISDISBURSED,
+            //                       //disbursedBy = a.DISBURSEDBY,
+            //                       disburserComment = a.DISBURSERCOMMENT,
+            //                       disburseDate = a.DISBURSEDATE,
+            //                       operationId = a.OPERATIONID,
+            //                       operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+            //                       subSectorName = a.TBL_SUB_SECTOR.NAME,
+            //                       sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+            //                       casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+            //                       productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
+            //                       customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+            //                       loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+            //                       loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+            //                       //equityContribution = a.EQUITYCONTRIBUTION,
+            //                       //firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
+            //                       //firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
+            //                       //outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+            //                       //outstandingInterest = a.OUTSTANDINGINTEREST,
+            //                       //principalAdditionCount = a.PRINCIPALADDITIONCOUNT ?? 0,
+            //                       //principalReductionCount = a.PRINCIPALREDUCTIONCOUNT ?? 0,
+            //                       //fixedPrincipal = a.FIXEDPRINCIPAL,
+            //                       //profileLoan = a.PROFILELOAN,
+            //                       dischargeLetter = a.DISCHARGELETTER,
+            //                       suspendInterest = a.SUSPENDINTEREST,
+            //                       customerSensitivityLevelId = a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+            //                       createdBy = a.CREATEDBY,
+            //                       dateTimeCreated = a.DATETIMECREATED,
+            //                       isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.REVOLVINGLOANID).Any(),
+            //                       exchangeRate = a.EXCHANGERATE,
+            //                       currencyId = a.CURRENCYID,
+            //                       currency = a.TBL_CURRENCY.CURRENCYNAME
+            //                   }).FirstOrDefault();
+
             var loanDetails = (from a in context.TBL_LOAN_REVOLVING
-                               join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
-                               join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                               where a.REVOLVINGLOANID == loanId && a.ISDISBURSED == true
+                                   join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
+                                   join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                   join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                   join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                   join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                   join pr in context.TBL_PRODUCT on a.PRODUCTID equals pr.PRODUCTID
+                                   join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
+                                   join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                    where a.REVOLVINGLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
-                               {
-                                   loanId = a.REVOLVINGLOANID,
-                                   loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-                                   customerId = a.CUSTOMERID,
-                                   customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
-                                   customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                                   productId = a.PRODUCTID,
-                                   companyId = a.COMPANYID,
-                                   casaAccountId = a.CASAACCOUNTID,
-                                   branchId = a.BRANCHID,
-                                   branchName = a.TBL_BRANCH.BRANCHNAME,
-                                   loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                   applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
-                                   //principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                   //pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
-                                   //interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
-                                   //interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
-                                   productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
-                                   productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                   productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
-                                   //principalNumberOfInstallment = a.PRINCIPALNUMBEROFINSTALLMENT,
-                                   //interestNumberOfInstallment = a.INTERESTNUMBEROFINSTALLMENT,
-                                   relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                                   relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
-                                   relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                   relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
-                                   misCode = a.MISCODE,
-                                   teamMiscode = a.TEAMMISCODE,
-                                   interestRate = a.INTERESTRATE,
-                                   effectiveDate = a.EFFECTIVEDATE,
-                                   maturityDate = a.MATURITYDATE,
-                                   bookingDate = a.BOOKINGDATE,
-                                   principalAmount = a.OVERDRAFTLIMIT,
-                                   //principalInstallmentLeft = a.PRINCIPALINSTALLMENTLEFT,
-                                   //interestInstallmentLeft = a.INTERESTINSTALLMENTLEFT,
-                                   approvalStatusId = a.APPROVALSTATUSID,
-                                   //approvedBy = a.APPROVEDBY,
-                                   approverComment = a.APPROVERCOMMENT,
-                                   dateApproved = a.DATEAPPROVED,
-                                   loanStatusId = a.LOANSTATUSID,
-                                   //scheduleTypeId = a.SCHEDULETYPEID,
-                                   //scheduleTypeName = a.TBL_LOAN_SCHEDULE_TYPE.SCHEDULETYPENAME,
-                                   isDisbursed = a.ISDISBURSED,
-                                   //disbursedBy = a.DISBURSEDBY,
-                                   disburserComment = a.DISBURSERCOMMENT,
-                                   disburseDate = a.DISBURSEDATE,
-                                   operationId = a.OPERATIONID,
-                                   operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
-                                   subSectorName = a.TBL_SUB_SECTOR.NAME,
-                                   sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                                   casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                   productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
-                                   customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
-                                   loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
-                                   loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                   //equityContribution = a.EQUITYCONTRIBUTION,
-                                   //firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
-                                   //firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
-                                   //outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
-                                   //outstandingInterest = a.OUTSTANDINGINTEREST,
-                                   //principalAdditionCount = a.PRINCIPALADDITIONCOUNT ?? 0,
-                                   //principalReductionCount = a.PRINCIPALREDUCTIONCOUNT ?? 0,
-                                   //fixedPrincipal = a.FIXEDPRINCIPAL,
-                                   //profileLoan = a.PROFILELOAN,
-                                   dischargeLetter = a.DISCHARGELETTER,
-                                   suspendInterest = a.SUSPENDINTEREST,
-                                   customerSensitivityLevelId = a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
-                                   createdBy = a.CREATEDBY,
-                                   dateTimeCreated = a.DATETIMECREATED,
-                                   isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.REVOLVINGLOANID).Any(),
-                                   exchangeRate = a.EXCHANGERATE,
-                                   currencyId = a.CURRENCYID,
-                                   currency = a.TBL_CURRENCY.CURRENCYNAME
-                               }).FirstOrDefault();
+                                   {
+                                       loanId = a.REVOLVINGLOANID,
+                                       customerId = a.CUSTOMERID,
+                                       customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                       customerCode = b.CUSTOMERCODE,
+                                       productId = a.PRODUCTID,
+                                       companyId = a.COMPANYID,
+                                       casaAccountId = a.CASAACCOUNTID,
+                                       branchId = a.BRANCHID,
+                                       branchName = br.BRANCHNAME,
+                                       loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                       applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                       loanApplicationId = lp.LOANAPPLICATIONID,
+                                       productTypeId = pr.PRODUCTTYPEID,
+                                       productName = pr.PRODUCTNAME,
+                                       productTypeName = pr.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                       relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                       relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                       relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                       relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                       misCode = a.MISCODE,
+                                       teamMiscode = a.TEAMMISCODE,
+                                       interestRate = a.INTERESTRATE,
+                                       effectiveDate = a.EFFECTIVEDATE,
+                                       maturityDate = a.MATURITYDATE,
+                                       bookingDate = a.BOOKINGDATE,
+                                       principalAmount = a.OVERDRAFTLIMIT,
+                                       approvalStatusId = a.APPROVALSTATUSID,
+                                       approverComment = a.APPROVERCOMMENT,
+                                       dateApproved = a.DATEAPPROVED,
+                                       loanStatusId = a.LOANSTATUSID,
+                                       isDisbursed = a.ISDISBURSED,
+                                       disburserComment = a.DISBURSERCOMMENT,
+                                       disburseDate = a.DISBURSEDATE,
+                                       operationId = a.OPERATIONID,
+                                       operationName = tt.OPERATIONNAME,
+                                       subSectorName = a.TBL_SUB_SECTOR.NAME,
+                                       sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                       casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                       productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       customerGroupId = lp.CUSTOMERGROUPID,
+                                       loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                       loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                       //outstandingPrincipal = availableBalance,
+                                       dischargeLetter = a.DISCHARGELETTER,
+                                       suspendInterest = a.SUSPENDINTEREST,
+                                       customerSensitivityLevelId = b.CUSTOMERSENSITIVITYLEVELID,
+                                       createdBy = a.CREATEDBY,
+                                       dateTimeCreated = a.DATETIMECREATED,
+                                       exchangeRate = a.EXCHANGERATE,
+                                       currencyId = a.CURRENCYID,
+                                       currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                   }).FirstOrDefault();
             return loanDetails;
         }
 
