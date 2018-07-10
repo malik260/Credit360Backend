@@ -1549,6 +1549,35 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("esg-checklist-summary")]
+        public HttpResponseMessage AddESGChecklistSummary([FromBody] ESGChecklistSummaryViewModel model)
+        {
+            try
+            {
+
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                model.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+             
+                var data = repo.AddESGChecklistSummary(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error creating record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+        }
         #endregion
     }
 }

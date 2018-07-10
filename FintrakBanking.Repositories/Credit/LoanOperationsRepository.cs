@@ -9282,7 +9282,8 @@ namespace FintrakBanking.Repositories.Credit
                                    pastDueTotal = pastDue,
                                    relationshipManagerId = l.RELATIONSHIPMANAGERID,
                                    relationshipOfficerId = l.RELATIONSHIPOFFICERID,
-                                   productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID
+                                   productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID,
+                                   systemCurrentDate = applicationDate
                                }).FirstOrDefault();
 
             return runningLoan;
