@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -634,7 +635,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.feeName}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.rateValue}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.rateValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
                     $"</tr>";
             }
 
@@ -676,8 +677,8 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmount}</p> % p.a </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmount.ToString("N", new CultureInfo("en-US"))}</p> % p.a </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate.ToString("dd/MM/yyyy")}</p></td>" +
                     $"</tr>";
             }
 
@@ -710,8 +711,8 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfCollaterals}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralDetail}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralValue}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount}</p> Days </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount.ToString("N", new CultureInfo("en-US"))}</p> Days </td>" +
                     $"</tr>";
             }
 
@@ -1152,7 +1153,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.feeName}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.rateValue}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.rateValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
                     $"</tr>";
             }
 
@@ -1191,8 +1192,8 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate.ToString("N", new CultureInfo("en-US"))}</p> % p.a </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate.ToString("dd/MM/yyyy")}</p></td>" +
                     $"</tr>";
             }
 
@@ -1225,8 +1226,8 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfCollaterals}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralDetail}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralValue}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount}</p> Days </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount.ToString("N", new CultureInfo("en-US"))}</p> Days </td>" +
                     $"</tr>";
             }
 

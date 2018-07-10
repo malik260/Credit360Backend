@@ -435,6 +435,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Credit.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx.cs">
+      <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx.designer.cs">
+      <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\TransactionDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -786,6 +793,7 @@
     <Content Include="Reports\Collateral\ScheduledCollateralReport.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
+    <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
@@ -1037,6 +1045,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
     <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
