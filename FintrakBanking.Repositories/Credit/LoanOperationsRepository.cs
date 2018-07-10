@@ -9770,8 +9770,8 @@ namespace FintrakBanking.Repositories.Credit
                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
-                                     join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                                     //join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                      //|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                                      && atrail.OPERATIONID == op.OPERATIONTYPEID
                                      && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
@@ -9797,7 +9797,7 @@ namespace FintrakBanking.Repositories.Credit
                                          maturityDate = ln.MATURITYDATE,
                                          bookingDate = ln.BOOKINGDATE,
                                          approvalStatusId = op.APPROVALSTATUSID,
-                                         approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                        approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                          approvedBy = (int)ln.APPROVEDBY,
                                          approverComment = ln.APPROVERCOMMENT,
                                          dateApproved = ln.DATEAPPROVED,
@@ -9814,8 +9814,8 @@ namespace FintrakBanking.Repositories.Credit
                                          dischargeLetter = ln.DISCHARGELETTER,
                                          suspendInterest = ln.SUSPENDINTEREST,
                                          customerCode = cu.CUSTOMERCODE,
-                                         productAccountNumber = ch.ACCOUNTCODE,
-                                         productAccountName = ch.ACCOUNTNAME,
+                                         //productAccountNumber = ch.ACCOUNTCODE,
+                                         //productAccountName = ch.ACCOUNTNAME,
                                          loanTypeName = at.LOANAPPLICATIONTYPENAME,
                                          customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
                                          currencyId = ln.CURRENCYID,
@@ -9825,7 +9825,7 @@ namespace FintrakBanking.Repositories.Credit
                                          productName = pr.PRODUCTNAME,
                                          comment = "",
                                          operationTypeId = op.OPERATIONTYPEID,
-                                         operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
+                                         operationTypeName = tt.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
                                          newEffectiveDate = op.EFFECTIVEDATE,
                                          reviewDetails = op.REVIEWDETAILS,
                                      }).ToList();
