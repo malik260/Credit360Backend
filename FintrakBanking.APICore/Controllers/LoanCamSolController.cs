@@ -37,7 +37,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-camsol-search/{searchValue}")]
@@ -46,6 +45,24 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetCamSol(searchValue);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-camsol-approval")]
+        public HttpResponseMessage GetLoanCamsolAwaitingApproval ()
+        {
+            try
+            {
+                var staff = token.GetCompanyId;
+                var companyId = token.GetStaffId;
+
+                var data = repo.CamSolAwaitingApproval(companyId,staff);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
@@ -95,6 +112,39 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var data = repo.ViewCamSolByType(id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("camsol-approval-type/{id}")]
+        public HttpResponseMessage GetCamsolAwaitingApprovalById(int id)
+        {
+            try
+            {
+                var data = repo.CamSolAwaitingApprovalById(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("go-for-camsol-approval")]
+        public HttpResponseMessage goForApproval([FromBody] LoanCAMSOLViewModel data)
+        {
+            try
+            {
+                data.companyId = token.GetCompanyId;
+                data.createdBy = (short)token.GetStaffId;
+                var val = repo.goForApproval(data);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = val });
+
             }
             catch (Exception ex)
             {
