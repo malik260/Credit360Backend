@@ -62,46 +62,46 @@ namespace FintrakBanking.MonitoringMessagesSender
                 {
 
 
-                    //    bool response = emailSender.LogMonitoringEmailAlerts();
-                    //if (response == true)
-                    //{
-                    //    _log.Info("");
-                    //    _log.Info("==================================================================");
-                    //    _log.Info("Emails has been sent successfully and ends at : " + DateTime.Now);
-                    //}
-                    //else
-                    //{
-                    //    _log.Info("");
-                    //    _log.Info("==================================================================");
-                    //    _log.Info("No email has been sent as at : " + DateTime.Now);
-                    //}
+                    bool response = emailSender.LogMonitoringEmailAlerts();
+                    if (response == true)
+                    {
+                        _log.Info("");
+                        _log.Info("==================================================================");
+                        _log.Info("Emails has been sent successfully and ends at : " + DateTime.Now);
+                    }
+                    else
+                    {
+                        _log.Info("");
+                        _log.Info("==================================================================");
+                        _log.Info("No email has been sent as at : " + DateTime.Now);
+                    }
 
-                    //if (slaEscalationIntervalInHours!=null)
-                    //{
-                    //    DateTime currentDate = DateTime.Now;
-                    //    TimeSpan escalationTime = currentDate.AddHours(Convert.ToInt32(slaEscalationIntervalInHours)).TimeOfDay;
-                    //    TimeSpan endOfescalationTime = DateTime.Now.AddMinutes(5).TimeOfDay;
-                    //    TimeSpan timeAtTheMoment = DateTime.Now.TimeOfDay;
+                    if (slaEscalationIntervalInHours != null)
+                    {
+                        DateTime currentDate = DateTime.Now;
+                        TimeSpan escalationTime = currentDate.AddHours(Convert.ToInt32(slaEscalationIntervalInHours)).TimeOfDay;
+                        TimeSpan endOfescalationTime = DateTime.Now.AddMinutes(5).TimeOfDay;
+                        TimeSpan timeAtTheMoment = DateTime.Now.TimeOfDay;
 
-                    //    if (escalationTime >= timeAtTheMoment && escalationTime <= endOfescalationTime)
-                    //    {
-                    //        _log.Info("");
-                    //        _log.Info("==================================================================");
-                    //        _log.Info("SLA notification has started successfully at : " + DateTime.Now);
+                        if (escalationTime >= timeAtTheMoment && escalationTime <= endOfescalationTime)
+                        {
+                            _log.Info("");
+                            _log.Info("==================================================================");
+                            _log.Info("SLA notification has started successfully at : " + DateTime.Now);
 
                             logger.LogSLAApprovalNotification();
 
-                    //        _log.Info("");
-                    //        _log.Info("==================================================================");
-                    //        _log.Info("SLA notification has ends at : " + DateTime.Now);
-                    //    }
+                            _log.Info("");
+                            _log.Info("==================================================================");
+                            _log.Info("SLA notification has ends at : " + DateTime.Now);
+                        }
 
-                    //}
-
-                  
+                    }
 
 
-                  //  MONITORING ALERT LOGGIN
+
+
+                    //  MONITORING ALERT LOGGIN
                     TimeSpan currentTime = DateTime.Now.TimeOfDay;
                     TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
 

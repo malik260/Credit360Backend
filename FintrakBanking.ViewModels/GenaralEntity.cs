@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels
         public short userBranchId { get; set; }
         public string userIPAddress { get; set; }
         public string applicationUrl { get; set; }
-
+        public DateTime? systemCurrentDate { get; set; }
         public int staffId { get; set; }
     }
 

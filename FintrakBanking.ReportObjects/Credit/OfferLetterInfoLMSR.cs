@@ -17,7 +17,7 @@ namespace FintrakBanking.ReportObjects.Credit
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
 
-            var customerExist = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).CUSTOMERID;
+            var customerExist = context.TBL_LMSR_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x=>x.CUSTOMERID).FirstOrDefault();
             //if (customerExist != null)
             //{
 
@@ -47,7 +47,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                   a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       select new OfferLetterViewModel
                                       {
-                                          companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
+                                          companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x=>x.NAME).FirstOrDefault(),
                                           customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
                                           customerAddress = e.ADDRESS ?? " ",
                                           customerEmailAddress = b.EMAILADDRESS,
@@ -69,7 +69,6 @@ namespace FintrakBanking.ReportObjects.Credit
 
             return new OfferLetterViewModel();
         }
-
 
         public static List<SignatoryViewModel> GetLoanApplicationSignatory(string applicationRefNumber)
         {
@@ -202,7 +201,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        loanAmount = b.APPROVEDAMOUNT,
                                        //exchangeRate = b.EXCHANGERATE,
                                        //currencyId = b.CURRENCYID,
-                                       companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
+                                       companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x=>x.NAME).FirstOrDefault(),
                                      //  customerName =  c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
                                        customerAddress = e.ADDRESS ?? " ", //a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                                        applicationDate = a.APPLICATIONDATE,
@@ -314,7 +313,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                      b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                select new OfferLetterDetailViewModel()
                                {
-                                   productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.PRODUCTID).PRODUCTNAME,
+                                   productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == b.PRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
                                    customerName = c.FIRSTNAME + " " + c.LASTNAME,
                                    customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                   // currencyName = b.TBL_CURRENCY.CURRENCYNAME,
@@ -325,11 +324,11 @@ namespace FintrakBanking.ReportObjects.Credit
                                   // loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                }).ToList();
 
-            var facilityType = loanDetails.FirstOrDefault().loanTypeName;
+            var facilityType = loanDetails.Select(x=>x.loanTypeName).FirstOrDefault();
 
             var totalLoanAmount = $"{loanDetails.Sum(x => x.baseCurrencyLoanAmount):f}";
 
-            var currency = loanDetails.FirstOrDefault().currencyName;
+            var currency = loanDetails.Select(x=>x.currencyName).FirstOrDefault();
 
             var interestRate = loanDetails.Sum(x => x.interestRate);
 

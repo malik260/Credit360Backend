@@ -93,6 +93,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetESGChecklistStatus(int loanApplicationDetailId);
         bool AddESGChecklistDefinition(List<ESGChecklistDefinitionViewModel> models);
         bool AddESGChecklistDetail(List<ESGChecklistDetailViewModel> models);
+        bool AddESGChecklistSummary(ESGChecklistSummaryViewModel models);
         #endregion
     }
 }
