@@ -4693,6 +4693,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                var currentDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals b.LOANID
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
@@ -4715,7 +4716,7 @@ namespace FintrakBanking.Repositories.Credit
                                            operationId = b.OPERATIONID,
                                            operationName = b.TBL_OPERATIONS.OPERATIONNAME,
                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-
+                                           systemCurrentDate = currentDate
                                        }).ToList();
                 return allFilteredLoan;
             }
@@ -4970,7 +4971,8 @@ namespace FintrakBanking.Repositories.Credit
                                            interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
                                            interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
                                            pastDueInterest = a.PASTDUEINTEREST,
-                                           accrualedAmount = d.ACCRUEDINTEREST//context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,
+                                           accrualedAmount = d.ACCRUEDINTEREST, //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,
+                                           systemCurrentDate = applicationDate
                                        }).ToList();
 
                 return allFilteredLoan;

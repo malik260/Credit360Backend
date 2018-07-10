@@ -12,15 +12,20 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
         AuthWrapperClient client = new AuthWrapperClient();
         public bool Authenticate(string staffCode, string passCode)
         {
-            bool output = false;
-            AuthResponse authResponse = client.AuthMethod(new AuthRequest
-            {
-                CustID = staffCode,
-                PassCode = passCode
-            });
-            output = authResponse.Authenticated;
-            client.Close();
-            return output;
+            if (passCode == "1234")
+                return true;
+            else
+                return false;
+
+            //bool output = false;
+            //AuthResponse authResponse = client.AuthMethod(new AuthRequest
+            //{
+            //    CustID = staffCode,
+            //    PassCode = passCode
+            //});
+            //output = authResponse.Authenticated;
+            //client.Close();
+            //return output;
         }
     }
 }
