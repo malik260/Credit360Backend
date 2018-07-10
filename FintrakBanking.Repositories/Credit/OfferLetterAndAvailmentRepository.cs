@@ -1640,7 +1640,7 @@ namespace FintrakBanking.Repositories.Credit
                 return false;
         }
 
-        public bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
+        public int ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
         {
             int operationId = (int)OperationsEnum.LoanAvailment;
             //int staffApprovalLevelId = 0;
@@ -1649,65 +1649,49 @@ namespace FintrakBanking.Repositories.Credit
             var loanApplication = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
             var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
 
-            foreach (var item in loanApplicationDetails)
+            using (var trans = context.Database.BeginTransaction())
             {
-                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
-                    throw new ConditionNotMetException("There are unapproved middle office request.");
-                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
-                    throw new ConditionNotMetException("There are unattended middle office request which must be attended to.");
-            }
-
-            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
-
-            var initiated = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == loanApplication.LOANAPPLICATIONID).Any();
-
-            workflow.StaffId = entity.createdBy;
-            workflow.OperationId = operationId;
-            workflow.TargetId = loanApplication.LOANAPPLICATIONID;
-            workflow.CompanyId = loanApplication.COMPANYID;
-            workflow.ProductClassId = loanApplication.PRODUCTCLASSID;
-            workflow.ProductId = null;
-            workflow.StatusId = initiated == true ? (int)ApprovalStatusEnum.Approved : (int)ApprovalStatusEnum.Processing;
-            workflow.Comment = entity.comment;
-            workflow.Amount = entity.amount;
-            workflow.DeferredExecution = true;
-
-            workflow.LogActivity(); // ------------------- LOG ONCE
-
-            if (workflow.NewState == (int)ApprovalState.Ended)
-            {
-                loanApplication.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
-                loanApplication.AVAILMENTDATE = DateTime.Now;
-
-
-                //CHECKING FOR COMMERCIAL LOANS IN LOOP
-                foreach (var record in loanApplicationDetails)
+                try
                 {
-                    if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper)
+                    foreach (var item in loanApplicationDetails)
                     {
-                        record.EFFECTIVEDATE = DateTime.Now;
-                        record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
+                        if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
+                            throw new ConditionNotMetException("There are unapproved middle office request.");
+                        if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                            throw new ConditionNotMetException("There are unattended middle office request which must be attended to.");
                     }
-                    else if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+
+                    var initiated = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == loanApplication.LOANAPPLICATIONID).Any();
+
+                    workflow.StaffId = entity.createdBy;
+                    workflow.OperationId = operationId;
+                    workflow.TargetId = loanApplication.LOANAPPLICATIONID;
+                    workflow.CompanyId = loanApplication.COMPANYID;
+                    workflow.ProductClassId = loanApplication.PRODUCTCLASSID;
+                    workflow.ProductId = null;
+                    workflow.StatusId = initiated == true ? (int)ApprovalStatusEnum.Approved : (int)ApprovalStatusEnum.Processing;
+                    workflow.Comment = entity.comment;
+                    workflow.Amount = entity.amount;
+                    workflow.DeferredExecution = true;
+
+                    workflow.LogActivity(); // ------------------- LOG ONCE
+
+                    if (workflow.NewState == (int)ApprovalState.Ended)
                     {
-                        if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
+                        loanApplication.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                        loanApplication.AVAILMENTDATE = DateTime.Now;
+
+
+                        //CHECKING FOR COMMERCIAL LOANS IN LOOP
+                        foreach (var record in loanApplicationDetails)
                         {
-                            var request = new TBL_LOAN_BOOKING_REQUEST
+                            if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper)
                             {
-                                AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                                LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
-                                DATETIMECREATED = DateTime.Now,
-                                CREATEDBY = entity.staffId,
-                            };
-                            context.TBL_LOAN_BOOKING_REQUEST.Add(request);
-                        }
-                    }
-                    else if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
-                    {
-                        if(loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
-                        {
-                            if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                                record.EFFECTIVEDATE = DateTime.Now;
+                                record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
+                            }
+
+                            if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                             {
                                 if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                                 {
@@ -1722,17 +1706,59 @@ namespace FintrakBanking.Repositories.Credit
                                     context.TBL_LOAN_BOOKING_REQUEST.Add(request);
                                 }
                             }
-                        }
+
+                            if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
+                            {
+                                if (loanApplication.PRODUCTCLASSID != 0 && loanApplication.PRODUCTCLASSID != null)
+                                {
+                                    if (loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                                    {
+                                        if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
+                                        {
+                                            var request = new TBL_LOAN_BOOKING_REQUEST
+                                            {
+                                                AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                                                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                                                LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                                                DATETIMECREATED = DateTime.Now,
+                                                CREATEDBY = entity.staffId,
+                                            };
+                                            context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                                        }
+                                    }
+                                }
+                            }
+                        };
                     }
-                };
+
+                    context.SaveChanges();
+
+                    if (workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        trans.Commit();
+                        return 0;
+                    }
+
+                    else
+                    {
+                        trans.Commit();
+                        return 1;
+                    }
+                        
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw ex;
+                }
             }
+            
 
-            context.SaveChanges();
+            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            if (workflow.NewState == (int)ApprovalState.Ended)
-                return true;
-            else
-                return false;
+           
+
+           
 
 
         }
