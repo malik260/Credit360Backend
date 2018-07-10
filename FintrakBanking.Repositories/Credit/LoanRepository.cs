@@ -4712,6 +4712,7 @@ namespace FintrakBanking.Repositories.Credit
                                            principalAmount = a.OVERDRAFTLIMIT,
                                            effectiveDate = a.EFFECTIVEDATE,
                                            maturityDate = a.MATURITYDATE,
+                                           operationId = b.OPERATIONID,
                                            operationName = b.TBL_OPERATIONS.OPERATIONNAME,
                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
 
