@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.Approval;
@@ -30,7 +31,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public ProductRepository(FinTrakBankingContext _context,
                                 IGeneralSetupRepository _genSetup,
                                 IAuditTrailRepository _auditTrail,
-            IWorkflow _workFlow,
+                                IWorkflow _workFlow,
                                 IApprovalLevelStaffRepository _level,
                                 IProductFeeRepository _productFee,
                                 IProductCollateralTypeRepository _productCollateralType)
@@ -1155,26 +1156,26 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 try
                 {
-                    workFlow.LogForApproval(entity);
-                    var b = workFlow.NextLevelId ?? 0;
+                    // workFlow.LogForApproval(entity);
+                    // var b = workFlow.NextLevelId ?? 0;
 
-                    //workFlow.StaffId = entity.createdBy;
-                    //workFlow.CompanyId = entity.companyId;
-                    //workFlow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
-                    //workFlow.TargetId = entity.targetId;
-                    //workFlow.Comment = entity.comment;
-                    //workFlow.OperationId = entity.operationId;
-                    //workFlow.DeferredExecution = true;
-                    //workFlow.ExternalInitialization = false;
+                    workFlow.StaffId = entity.staffId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.OperationId = entity.operationId;
+                    workFlow.DeferredExecution = true;
+                    workFlow.ExternalInitialization = false;
 
-                    //workFlow.LogActivity();
+                    workFlow.LogActivity();
 
-                    //context.SaveChanges();
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
+                    //context.savechanges();
+                    //if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    //{
+                    //    trans.Rollback();
+                    //    throw new Exception("Approval Failed");
+                    //}
 
                     if(entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                     {
@@ -1191,8 +1192,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         if (response)
                         {
+                            context.SaveChanges();
                             trans.Commit();
                         }
+                        else throw new ConditionNotMetException("One or more errors occured on commit.");
                         return 1;
                     }
                     else
@@ -1215,171 +1218,57 @@ namespace FintrakBanking.Repositories.Setups.General
             var productModel = context.TBL_TEMP_PRODUCT.Find(productId);
             var productBehaviourModel = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == productModel.PRODUCTID).FirstOrDefault();
 
-            var productToUpdate = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTCODE == productModel.PRODUCTCODE);
+            var productToUpdate = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == productModel.PRODUCTCODE).FirstOrDefault();
             var productBehaviourToUpdate = context.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault(x => x.PRODUCTID == productModel.PRODUCTID);
 
             var currModel = context.TBL_TEMP_PRODUCT_CURRENCY.Where(c => c.PRODUCTID == productModel.PRODUCTID && c.DELETED == false);
             var currListToUpdate = new List<TBL_PRODUCT_CURRENCY>();
 
-            var feeModel =
-                context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(c => c.PRODUCTID == productModel.PRODUCTID && c.DELETED == false);
+            var feeModel = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(c => c.PRODUCTID == productModel.PRODUCTID && c.DELETED == false);
             var feeListToUpdate = new List<TBL_PRODUCT_CHARGE_FEE>();
 
-            var collateralModel =
-                context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(c =>
-                    c.PRODUCTID == productModel.PRODUCTID && c.DELETED == false);
+            var collateralModel = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(c => c.PRODUCTID == productModel.PRODUCTID && c.DELETED == false);
             var collateralListToUpdate = new List<TBL_PRODUCT_COLLATERALTYPE>();
 
             List<TBL_PRODUCT_CHARGE_FEE> productFees = new List<TBL_PRODUCT_CHARGE_FEE>();
             List<TBL_PRODUCT_COLLATERALTYPE> productCollateral = new List<TBL_PRODUCT_COLLATERALTYPE>();
             List<TBL_PRODUCT_CURRENCY> productCurrencies = new List<TBL_PRODUCT_CURRENCY>();
-
-            if (productToUpdate != null) //Update existing product with tempProduct record
+            try
             {
-                currListToUpdate = context.TBL_PRODUCT_CURRENCY.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
-
-                feeListToUpdate =
-               context.TBL_PRODUCT_CHARGE_FEE.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
-
-                collateralListToUpdate =
-                context.TBL_PRODUCT_COLLATERALTYPE.Where(x =>
-                    x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
-
-                // remove exisiting records for currencies
-                foreach (var curr in currListToUpdate)
+                if (productToUpdate != null)
                 {
-                    context.TBL_PRODUCT_CURRENCY.Remove(curr);
-                }
+                    currListToUpdate = context.TBL_PRODUCT_CURRENCY.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
 
-                foreach (var item in feeListToUpdate)
-                {
-                    context.TBL_PRODUCT_CHARGE_FEE.Remove(item);
-                }
+                    feeListToUpdate =
+                               context.TBL_PRODUCT_CHARGE_FEE.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
 
-                foreach (var item in collateralListToUpdate)
-                {
-                    context.TBL_PRODUCT_COLLATERALTYPE.Remove(item);
-                }
-
-                // Insert updated records for currencies
-                foreach (var c in currModel)
-                {
-                    var curr = new TBL_PRODUCT_CURRENCY()
+                    collateralListToUpdate = context.TBL_PRODUCT_COLLATERALTYPE.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
+                    foreach (var curr in currListToUpdate)
                     {
-                        //ProductId = c.ProductId,
-                        CURRENCYID = c.CURRENCYID,
-                        CREATEDBY = c.CREATEDBY,
-                        DATETIMECREATED = genSetup.GetApplicationDate(),
-                    };
-                    productCurrencies.Add(curr);
-                }
-
-                foreach (var item in feeModel)
-                {
-                    var feeList = new TBL_PRODUCT_CHARGE_FEE()
-                    {
-                        //ProductId = item.productId,
-                        //ProductFeeId = item.ProductFeeId,
-                        CHARGEFEEID = item.CHARGEFEEID,
-                        DEPENDENTAMOUNT = item.DEPENDENTAMOUNT,
-                        RATEVALUE = item.RATEVALUE,
-                        COMPANYID = (int)item.COMPANYID,
-                        CREATEDBY = (int)item.CREATEDBY,
-                        DATETIMECREATED = genSetup.GetApplicationDate(),
-                        DELETED = false
-                    };
-                    productFees.Add(feeList);
-                }
-
-                foreach (var item in collateralModel)
-                {
-                    var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
-                    {
-                        PRODUCTID = item.PRODUCTID,
-                        //PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
-                        COLLATERALTYPEID = item.COLLATERALTYPEID,
-                        COMPANYID = item.COMPANYID,
-                        CREATEDBY = item.CREATEDBY,
-                        DATETIMECREATED = genSetup.GetApplicationDate(),
-                        DELETED = false,
-
-                    };
-                    productCollateral.Add(productCollaterals);
-                }
-
-                var existingProduct = productToUpdate;
-                if (productModel != null)
-                {
-                    existingProduct.PRODUCTCLASSID = productModel.PRODUCTCLASSID;
-                    existingProduct.PRODUCTCODE = productModel.PRODUCTCODE;
-                    existingProduct.PRODUCTNAME = productModel.PRODUCTNAME;
-                    existingProduct.PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION;
-
-                    existingProduct.PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL;
-                    existingProduct.PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2;
-                    existingProduct.INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL;
-                    existingProduct.INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL;
-                    existingProduct.DORMANTGL = productModel.DORMANTGL;
-                    existingProduct.PREMIUMDISCOUNTGL = productModel.PREMIUMDISCOUNTGL;
-                    existingProduct.OVERDRAWNGL = productModel.OVERDRAWNGL;
-
-                    existingProduct.PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID;
-                    existingProduct.PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD;
-
-                    existingProduct.DEALTYPEID = productModel.DEALTYPEID;
-                    existingProduct.DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID;
-                    existingProduct.DAYCOUNTCONVENTIONID = productModel.DAYCOUNTCONVENTIONID;
-
-                    existingProduct.MAXIMUMTENOR = productModel.MAXIMUMTENOR;
-                    existingProduct.MINIMUMTENOR = productModel.MINIMUMTENOR;
-                    existingProduct.MAXIMUMRATE = productModel.MAXIMUMRATE;
-                    existingProduct.MINIMUMRATE = productModel.MINIMUMRATE;
-                    existingProduct.MINIMUMBALANCE = productModel.MINIMUMBALANCE;
-
-                    existingProduct.ALLOWRATE = productModel.ALLOWRATE;
-                    existingProduct.ALLOWTENOR = productModel.ALLOWTENOR;
-                    existingProduct.ALLOWOVERDRAWN = productModel.ALLOWOVERDRAWN;
-                    existingProduct.ALLOWCUSTOMERACCOUNTFORCEDEBIT = productModel.ALLOWCUSTOMERACCOUNTFORCEDEBIT;
-                    existingProduct.ALLOWMORATORIUM = productModel.ALLOWMORATORIUM;
-                    existingProduct.ALLOWSCHEDULETYPEOVERRIDE = productModel.ALLOWSCHEDULETYPEOVERRIDE;
-
-                    existingProduct.CLEANUPPERIOD = productModel.CLEANUPPERIOD;
-                    existingProduct.DEFAULTGRACEPERIOD = productModel.DEFAULTGRACEPERIOD;
-                    existingProduct.EQUITYCONTRIBUTION = productModel.EQUITYCONTRIBUTION;
-                    existingProduct.EXPIRYPERIOD = productModel.EXPIRYPERIOD;
-                    existingProduct.ISMULTIPLECURENCY = productModel.ISMULTIPLECURENCY;
-                    existingProduct.SCHEDULETYPEID = productModel.SCHEDULETYPEID;
-                    //existingProduct.PRODUCT_BEHAVIOURID = productModel.PRODUCT_BEHAVIOURID;
-
-                    existingProduct.TBL_PRODUCT_CURRENCY = productCurrencies;
-                    existingProduct.TBL_PRODUCT_CHARGE_FEE = productFees;
-                    existingProduct.TBL_PRODUCT_COLLATERALTYPE = productCollateral;
-                    existingProduct.APPROVED = true;
-                    existingProduct.DELETED = false;
-                    existingProduct.APPROVEDBY = productModel.CREATEDBY;
-
-                    var existingProductBehaviour = productBehaviourToUpdate;
-                    if (productBehaviourModel != null && productBehaviourToUpdate != null)
-                    {
-                        existingProductBehaviour.PRODUCTID = productModel.PRODUCTID;
-                        existingProductBehaviour.PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT;
-                        existingProductBehaviour.CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT;
-                        existingProductBehaviour.COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT;
-                        existingProductBehaviour.COLLATERAL_LCY_LIMIT = productBehaviourModel.COLLATERAL_LCY_LIMIT;
-                        existingProductBehaviour.ISINVOICEBASED = productBehaviourModel.ISINVOICEBASED;
-                        existingProductBehaviour.ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE;
+                        context.TBL_PRODUCT_CURRENCY.Remove(curr);
                     }
-                }
-                else //Insert a new product record into the real product table
-                {
+
+                    foreach (var item in feeListToUpdate)
+                    {
+                        context.TBL_PRODUCT_CHARGE_FEE.Remove(item);
+                    }
+
+                    foreach (var item in collateralListToUpdate)
+                    {
+                        context.TBL_PRODUCT_COLLATERALTYPE.Remove(item);
+                    }
+
+
+
+                    // Insert updated records for currencies
                     foreach (var c in currModel)
                     {
                         var curr = new TBL_PRODUCT_CURRENCY()
                         {
                             //ProductId = c.ProductId,
                             CURRENCYID = c.CURRENCYID,
+                            CREATEDBY = c.CREATEDBY,
                             DATETIMECREATED = genSetup.GetApplicationDate(),
-                            DELETED = false
                         };
                         productCurrencies.Add(curr);
                     }
@@ -1405,8 +1294,120 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
                         {
-                           PRODUCTID = item.PRODUCTID,
-                        //    PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
+                            PRODUCTID = item.PRODUCTID,
+                            //PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
+                            COLLATERALTYPEID = item.COLLATERALTYPEID,
+                            COMPANYID = item.COMPANYID,
+                            CREATEDBY = item.CREATEDBY,
+                            DATETIMECREATED = genSetup.GetApplicationDate(),
+                            DELETED = false,
+
+                        };
+                        productCollateral.Add(productCollaterals);
+
+                    }
+
+                    var existingProduct = productToUpdate;
+                    if (productModel != null)
+                    {
+                        existingProduct.PRODUCTCLASSID = productModel.PRODUCTCLASSID;
+                        existingProduct.PRODUCTCODE = productModel.PRODUCTCODE;
+                        existingProduct.PRODUCTNAME = productModel.PRODUCTNAME;
+                        existingProduct.PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION;
+
+                        existingProduct.PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL;
+                        existingProduct.PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2;
+                        existingProduct.INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL;
+                        existingProduct.INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL;
+                        existingProduct.DORMANTGL = productModel.DORMANTGL;
+                        existingProduct.PREMIUMDISCOUNTGL = productModel.PREMIUMDISCOUNTGL;
+                        existingProduct.OVERDRAWNGL = productModel.OVERDRAWNGL;
+
+                        existingProduct.PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID;
+                        existingProduct.PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD;
+
+                        existingProduct.DEALTYPEID = productModel.DEALTYPEID;
+                        existingProduct.DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID;
+                        existingProduct.DAYCOUNTCONVENTIONID = productModel.DAYCOUNTCONVENTIONID;
+
+                        existingProduct.MAXIMUMTENOR = productModel.MAXIMUMTENOR;
+                        existingProduct.MINIMUMTENOR = productModel.MINIMUMTENOR;
+                        existingProduct.MAXIMUMRATE = productModel.MAXIMUMRATE;
+                        existingProduct.MINIMUMRATE = productModel.MINIMUMRATE;
+                        existingProduct.MINIMUMBALANCE = productModel.MINIMUMBALANCE;
+
+                        existingProduct.ALLOWRATE = productModel.ALLOWRATE;
+                        existingProduct.ALLOWTENOR = productModel.ALLOWTENOR;
+                        existingProduct.ALLOWOVERDRAWN = productModel.ALLOWOVERDRAWN;
+                        existingProduct.ALLOWCUSTOMERACCOUNTFORCEDEBIT = productModel.ALLOWCUSTOMERACCOUNTFORCEDEBIT;
+                        existingProduct.ALLOWMORATORIUM = productModel.ALLOWMORATORIUM;
+                        existingProduct.ALLOWSCHEDULETYPEOVERRIDE = productModel.ALLOWSCHEDULETYPEOVERRIDE;
+
+                        existingProduct.CLEANUPPERIOD = productModel.CLEANUPPERIOD;
+                        existingProduct.DEFAULTGRACEPERIOD = productModel.DEFAULTGRACEPERIOD;
+                        existingProduct.EQUITYCONTRIBUTION = productModel.EQUITYCONTRIBUTION;
+                        existingProduct.EXPIRYPERIOD = productModel.EXPIRYPERIOD;
+                        existingProduct.ISMULTIPLECURENCY = productModel.ISMULTIPLECURENCY;
+                        existingProduct.SCHEDULETYPEID = productModel.SCHEDULETYPEID;
+                        //existingProduct.PRODUCT_BEHAVIOURID = productModel.PRODUCT_BEHAVIOURID;
+
+                        existingProduct.TBL_PRODUCT_CURRENCY = productCurrencies;
+                        existingProduct.TBL_PRODUCT_CHARGE_FEE = productFees;
+                        existingProduct.TBL_PRODUCT_COLLATERALTYPE = productCollateral;
+                        existingProduct.APPROVED = true;
+                        existingProduct.DELETED = false;
+                        existingProduct.APPROVEDBY = productModel.CREATEDBY;
+
+                        var existingProductBehaviour = productBehaviourToUpdate;
+                        if (productBehaviourModel != null && productBehaviourToUpdate != null)
+                        {
+                            existingProductBehaviour.PRODUCTID = productModel.PRODUCTID;
+                            existingProductBehaviour.PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT;
+                            existingProductBehaviour.CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT;
+                            existingProductBehaviour.COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT;
+                            existingProductBehaviour.COLLATERAL_LCY_LIMIT = productBehaviourModel.COLLATERAL_LCY_LIMIT;
+                            existingProductBehaviour.ISINVOICEBASED = productBehaviourModel.ISINVOICEBASED;
+                            existingProductBehaviour.ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE;
+                        }
+                    }
+
+                }
+                else
+                {
+                    foreach (var c in currModel)
+                    {
+                        var curr = new TBL_PRODUCT_CURRENCY()
+                        {
+                            //ProductId = c.ProductId,
+                            CURRENCYID = c.CURRENCYID,
+                            DATETIMECREATED = genSetup.GetApplicationDate(),
+                            DELETED = false
+                        };
+                        productCurrencies.Add(curr);
+                    }
+                    foreach (var item in feeModel)
+                    {
+                        var feeList = new TBL_PRODUCT_CHARGE_FEE()
+                        {
+                            //ProductId = item.productId,
+                            //ProductFeeId = item.ProductFeeId,
+                            CHARGEFEEID = item.CHARGEFEEID,
+                            DEPENDENTAMOUNT = item.DEPENDENTAMOUNT,
+                            RATEVALUE = item.RATEVALUE,
+                            COMPANYID = (int)item.COMPANYID,
+                            CREATEDBY = (int)item.CREATEDBY,
+                            DATETIMECREATED = genSetup.GetApplicationDate(),
+                            DELETED = false
+                        };
+                        productFees.Add(feeList);
+                    }
+
+                    foreach (var item in collateralModel)
+                    {
+                        var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
+                        {
+                            PRODUCTID = item.PRODUCTID,
+                            //PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
                             COLLATERALTYPEID = item.COLLATERALTYPEID,
                             COMPANYID = item.COMPANYID,
                             CREATEDBY = item.CREATEDBY,
@@ -1475,77 +1476,34 @@ namespace FintrakBanking.Repositories.Setups.General
                             DELETED = false,
                             APPROVEDBY = productModel.CREATEDBY
                         };
-
-                        var productBehaviour = new TBL_PRODUCT_BEHAVIOUR()
+                       
+                        if(productBehaviourModel != null)
                         {
-                            PRODUCTID = productModel.PRODUCTID,
-                            ISINVOICEBASED = productBehaviourModel.ISINVOICEBASED,
-                            COLLATERAL_LCY_LIMIT = productBehaviourModel.COLLATERAL_LCY_LIMIT,
-                            COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT,
-                            CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT,
-                            PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT,
-                            ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE,
-                            ISTEMPORARYOVERDRAFT = productBehaviourModel.ISTEMPORARYOVERDRAFT,
-                            REQUIRECASAACCOUNT = productBehaviourModel.REQUIRECASAACCOUNT
-                        };
+                            TBL_PRODUCT_BEHAVIOUR productBehaviour = new TBL_PRODUCT_BEHAVIOUR()
+                            {
+                                PRODUCTID = productModel.PRODUCTID,
+                                ISINVOICEBASED = productBehaviourModel.ISINVOICEBASED,
+                                COLLATERAL_LCY_LIMIT = productBehaviourModel.COLLATERAL_LCY_LIMIT,
+                                COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT,
+                                CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT,
+                                PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT,
+                                ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE,
+                                ISTEMPORARYOVERDRAFT = productBehaviourModel.ISTEMPORARYOVERDRAFT,
+                                REQUIRECASAACCOUNT = productBehaviourModel.REQUIRECASAACCOUNT
+                            };
+                            context.TBL_PRODUCT_BEHAVIOUR.Add(productBehaviour);
+                        }
                         context.TBL_PRODUCT.Add(product);
-                        context.TBL_PRODUCT_BEHAVIOUR.Add(productBehaviour);
                     }
 
-                    //productFee.ApproveProductFee(productId, user);
-                    //productCollateralType.ApproveProductCollateral(productId, user);
                 }
-
-                productModel.ISCURRENT = false;
-                productModel.APPROVALSTATUSID = approvalStatusId;
-                productModel.DATETIMEUPDATED = DateTime.Now;
-
-                // Remove all tem products, currencies and fees
-                //context.tbl_Temp_Product.Remove(productModel);
-
-                //foreach (var curr in currModel)
-                //{
-                //    context.TBL_PRODUCT_CURRENCY.Remove(curr);
-                //}
-
-                //foreach (var fee in feeModel)
-                //{
-                //    context.TBL_TEMP_PRODUCT_CHARGE_FEE.Remove(fee);
-                //}
-
-                //foreach (var coll in collateralModel)
-                //{
-                //    context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Remove(coll);
-                //}
-
-                // Audit Section ---------------------------
-                var audit = new TBL_AUDIT
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.ProductUpdated,
-                    STAFFID = user.staffId,
-                    BRANCHID = (short)user.BranchId,
-                    DETAIL = $"Approved Product '{productModel.PRODUCTNAME}' with product code'{productModel.PRODUCTCODE}'",
-                    IPADDRESS = user.userIPAddress,
-                    URL = user.applicationUrl,
-                    APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
-                };
-
-                try
-                {
-                    context.TBL_AUDIT.Add(audit);
-                    // Audit Section ---------------------------
-                    var output = context.SaveChanges() > 0;
-
-                    return output;
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
+                return true;
             }
-            else return false;
-
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
         }
 
         public async Task<ProductViewModel> AddTempProduct(ProductViewModel productModel)
