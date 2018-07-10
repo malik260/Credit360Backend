@@ -19,6 +19,7 @@ using System.Data.Entity;
 using FinTrakBanking.ThirdPartyIntegration;
 using FintrakBanking.Common.CustomException;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -119,6 +120,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (customerType == (short)CustomerTypeEnum.Corporate)
             {
+
                 var shareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).ToList();
                 foreach (var director in shareholders)
                 {
@@ -126,6 +128,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                     && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
                                                                                      && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30));
                     int directorCount = directorData.Count();
+                    var typeCustomer = director.TBL_CUSTOMER_TYPE.TBL_CUSTOMER.FirstOrDefault();
                     CustomerViewModels shareholdersData = new CustomerViewModels
                     {
                         companyDirectorId = director.COMPANYDIRECTORID,
@@ -138,6 +141,7 @@ namespace FintrakBanking.Repositories.Credit
                         companyDirectorTypeName = director.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                         address = director.ADDRESS,
                         phoneNumber = director.PHONENUMBER,
+                        dateOfBirth = typeCustomer != null ? (DateTime)typeCustomer.DATEOFBIRTH : DateTime.Now,
                         customerId = customerId,
                         emailAddress = director.EMAILADDRESS,
                         firstName = director.FIRSTNAME,
@@ -403,9 +407,9 @@ namespace FintrakBanking.Repositories.Credit
         #endregion
 
         #region Integration 
-        public List<string> GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
+        public XDSSearchResult GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
-
+            XDSSearchResult resultData; // = new XDSSearchResult();
             var dateOfBirth = Convert.ToDateTime(searchInfoList.dateOfBirth);
             searchInfoList.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfoList.creditBureauId);
@@ -423,7 +427,48 @@ namespace FintrakBanking.Repositories.Credit
                 var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
                 if (task.Wait(TimeSpan.FromSeconds(600)))
                 {
-                    return searchResult;
+                    resultData = new XDSSearchResult()
+                    {
+                        searchResult = searchResult,
+                        status = 0
+                    };
+                    if (searchResult.Count <= 1)
+                    {
+                        foreach (var strLine in searchResult)
+                        {
+                            JObject json = JObject.Parse(strLine);
+                            JObject jsonNoResult = JObject.Parse(strLine);
+                            Object CommercialID;
+                            Object noResult;
+                            if (json["CommercialMatching"] != null || json["ConsumerMtaching"] != null)
+                            {
+                                if (searchInfoList.searchType == (short)CreditBureauTypeEnum.CommercialSearch)
+                                    CommercialID = json["CommercialMatching"]["MatchedCommercial"]["CommercialID"].ToString();
+                                else
+                                    CommercialID = json["ConsumerMtaching"]["MatchedConsumer"]["ConsumerID"].ToString();
+
+                                if (Convert.ToInt32(CommercialID) == 0)
+                                {
+                                    resultData.status = 1;
+                                }
+                            }
+                            else if (jsonNoResult["NoResult"] != null)
+                            {
+                                noResult = jsonNoResult["NoResult"];
+                                string stringNoResult = noResult.ToString();
+                                resultData.errorMessage = stringNoResult;
+                                resultData.errorOccured = true;
+                                resultData.status = 2;
+                            }
+                            else
+                            {
+                                resultData.errorOccured = true;
+                                resultData.status = 3;
+                            }
+                        }
+                    }
+                        
+                    return resultData;
                 }
                 else
                 {
@@ -509,9 +554,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
+                    if (searchInfo.accountOrRegistrationNumber == null)
+                        searchInfo.accountOrRegistrationNumber = string.Empty;
+
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
-                    if (task.Wait(TimeSpan.FromSeconds(640)))
+                    if (task.Wait(TimeSpan.FromSeconds(2000)))
                     {
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                         {

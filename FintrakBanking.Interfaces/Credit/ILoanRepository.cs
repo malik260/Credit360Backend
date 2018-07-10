@@ -7,6 +7,7 @@ using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,5 +132,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddUpdateLoanDisbursement(LoanDisbursementViewModel entity);
         #endregion
         IEnumerable<LookupViewModel> GetAllFrequencyType();
+
+        List<ProductViewModel> GetLoanCommercialLoans(int companyId);
     }
 }

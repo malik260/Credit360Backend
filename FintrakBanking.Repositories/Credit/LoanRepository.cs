@@ -3586,11 +3586,12 @@ namespace FintrakBanking.Repositories.Credit
                                 applicationStatusId = m.APPLICATIONSTATUSID,
                                 customerId = m.CUSTOMERID ?? 0,
                                 customerCode = cust.CUSTOMERCODE,
-                                customerName = m.CUSTOMERID.HasValue ? m.TBL_CUSTOMER.FIRSTNAME + " " + m.TBL_CUSTOMER.MIDDLENAME + " " + m.TBL_CUSTOMER.LASTNAME : "",
-                                isRelatedParty = m.ISRELATEDPARTY,
+
+                                customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                                 customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                                 customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                                 customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
+                                isRelatedParty = m.ISRELATEDPARTY,
                                 customerSensitivityLevelId = d.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
                                 customerOccupation = d.TBL_CUSTOMER.OCCUPATION,
                                 customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
@@ -3921,11 +3922,11 @@ namespace FintrakBanking.Repositories.Credit
 
                             customerId = d.CUSTOMERID,
                             customerCode = cust.CUSTOMERCODE,
-                            customerName = m.CUSTOMERID.HasValue ? m.TBL_CUSTOMER.FIRSTNAME + " " + m.TBL_CUSTOMER.MIDDLENAME + " " + m.TBL_CUSTOMER.LASTNAME : "",
-                            isRelatedParty = m.ISRELATEDPARTY,
+                            customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                             customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                             customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
+                            isRelatedParty = m.ISRELATEDPARTY,
                             customerSensitivityLevelId = d.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
 
                             customerOccupation = d.TBL_CUSTOMER.OCCUPATION,
@@ -4127,6 +4128,22 @@ namespace FintrakBanking.Repositories.Credit
                          tenor = (int)k.TENOR,
                      })).ToList();
             return customerAccounts;
+        }
+
+
+        public List<ProductViewModel> GetLoanCommercialLoans(int companyId)
+        {
+            var commercialLoans = (from k in context.TBL_PRODUCT
+                                   where k.DELETED == false && k.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper
+                                   && k.COMPANYID == companyId
+                                    select (
+                                    new ProductViewModel
+                                    {
+                                        productId = k.PRODUCTID,
+                                        productName = k.PRODUCTNAME
+                                    })
+                                    ).ToList();
+            return commercialLoans;
         }
 
 
