@@ -10,6 +10,8 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using System.Threading.Tasks;
+using FintrakBanking.Common.CustomException;
+using System;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -990,12 +992,22 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office." });
                 }
-
-                
             }
-            catch (System.Exception ex)
+            catch (ConditionNotMetException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $" {ex.Message}" });
+            }
+            catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ex.Message}" });
+            }
+            catch (APIErrorException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ex.Message}" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: An unhandled error occured." });
             }
         }
 

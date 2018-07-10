@@ -37,7 +37,7 @@ namespace FintrakBanking.Entities.Models
 
         public short REVOLVINGTYPEID { get; set; }
 
-        public bool ISTEMPORARYOVERDRAFT { get; set; }
+       // public bool ISTEMPORARYOVERDRAFT { get; set; }
 
         [Required]
         [StringLength(50)]

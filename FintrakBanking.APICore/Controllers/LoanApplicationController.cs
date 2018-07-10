@@ -1,5 +1,6 @@
 using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.ErrorLogger;
@@ -555,6 +556,14 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Preliminary evaluation note not created" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{be.Message}" });
             }
             catch (Exception ex)
             {

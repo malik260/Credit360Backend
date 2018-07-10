@@ -242,10 +242,11 @@
             {
                 string result = string.Empty;
                 XDSService xds = new XDSService();
+                if (searchInfo.dateOfBirth == "01-Jan-0001") searchInfo.dateOfBirth = "";
                 var data = new XDSIndividualSearchViewModel
                 {
                     userName = searchInfo.userName,
-                    AccountNumber = searchInfo.accountOrRegistrationNumber,
+                    AccountNumber = searchInfo.accountOrRegistrationNumber ?? "",
                     ConsumerName = searchInfo.customerName,
                     DateOfBirth = searchInfo.dateOfBirth,
                     Identification = searchInfo.identification,

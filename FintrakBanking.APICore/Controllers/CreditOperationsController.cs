@@ -448,7 +448,7 @@ namespace FintrakBanking.APICore.Controllers
                 if ((int)OperationsEnum.Prepayment == model.operationTypeId)
 
                 {
-                    model.approvalStatusId = (int)ApprovalStatusEnum.Approved;
+                    model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
 
                     if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
                     {

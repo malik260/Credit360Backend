@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace FintrakBanking.ViewModels.ThridPartyIntegration
 {
 
@@ -198,11 +199,17 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
     public class CRCSearchResult
     {
-
         public int SearchCompleted { get; set; }
         public string SearchResult { get; set; }
         public bool fileSaved { get; set; }
         public byte[] file { get; set; }
         public bool errorOccured { get; set; }
+    }
+    public class XDSSearchResult
+    {
+        public string errorMessage { get; set; }
+        public List<string> searchResult { get; set; }
+        public bool errorOccured { get; set; }
+        public int status { get; set; }
     }
 }
