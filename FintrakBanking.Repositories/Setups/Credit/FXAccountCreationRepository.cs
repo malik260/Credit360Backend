@@ -355,7 +355,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         if (!customerExist)
                         {
                             TBL_CASA addCustomerAcct = new TBL_CASA();
-                            addCustomerAcct.CUSTOMERID = 123;
+                            addCustomerAcct.CUSTOMERID = customerInfo.CUSTOMERID;
                             addCustomerAcct.AVAILABLEBALANCE = 0;
                             addCustomerAcct.LEDGERBALANCE = 0;
                             addCustomerAcct.PRODUCTACCOUNTNAME = "Foreign Account";

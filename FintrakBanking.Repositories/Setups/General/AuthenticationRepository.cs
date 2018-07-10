@@ -512,6 +512,5 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return activities;
         }
-
     }
 }
