@@ -76,6 +76,22 @@ namespace FintrakBanking.APICore.Controllers
         }
 
       [HttpGet] [ClaimsAuthorization]  
+        [Route("approval-levels/operation/{operationId}/product-class/{classId}")]
+        public HttpResponseMessage GetApprovalLevelByOperationIdAndProductClassId(int operationId, int? classId)
+        {
+            try
+            {
+                List<FintrakDropDownSelectList> data = repo.GetApprovalLevelsByOperationIdAndProductClassId(operationId, classId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+      [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level-detailed/all")]
         public HttpResponseMessage GetAllDetailedApprovalLevel()
         {

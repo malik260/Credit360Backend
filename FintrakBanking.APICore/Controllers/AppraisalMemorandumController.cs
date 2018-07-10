@@ -607,7 +607,22 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion LMS APPROVAL
-
+        
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("tranch-disbursment-approval-level")]
+        public HttpResponseMessage saveTranchDisbursmentApprovalLevel([FromBody] TranchDisbursmentViewModel entity)
+        {
+            try
+            {
+                bool response = repo.saveTranchDisbursmentApprovalLevel(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }

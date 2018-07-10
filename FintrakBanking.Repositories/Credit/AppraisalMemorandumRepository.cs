@@ -1294,7 +1294,14 @@ namespace FintrakBanking.Repositories.Credit
                 .ToList();
         }
 
-        # endregion LMS APPROVAL
+        public bool saveTranchDisbursmentApprovalLevel(TranchDisbursmentViewModel entity)
+        {
+            var appl = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
+            appl.TRANCHEAPPROVAL_LEVELID = entity.approvalLevelId;
+            return context.SaveChanges() > 0;
+        }
+
+        #endregion LMS APPROVAL
 
         //private void PassApplicationToOperation(int applicationId, int operationId, int staffId, string comment)
         //{
