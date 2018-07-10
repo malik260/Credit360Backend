@@ -419,7 +419,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var data = repo.ApproveLoanAvailmentDecision(entity);
 
-                if (data)
+                if (data == 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Availment completed, now proceeding to booking" });
