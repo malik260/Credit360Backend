@@ -397,7 +397,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel GetLoanInformation(int loanSystemTypeId, int loanId, DateTime startDate)
         {
             var result = new LoanViewModel();
-            if (loanSystemTypeId == (int)LoanProductTypeEnum.TermLoan || loanSystemTypeId == (int)LoanProductTypeEnum.SelfLiquidating)
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
             {
                 result = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).Select(loan => new LoanViewModel
                 {
@@ -408,7 +408,7 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .FirstOrDefault();
             }
-            else if (loanSystemTypeId == (int)LoanProductTypeEnum.RevolvingLoan)
+            else if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
             {
                 result = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId).Select(loan => new LoanViewModel
                 {
@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .FirstOrDefault();
             }
-            else if (loanSystemTypeId == (int)LoanProductTypeEnum.ContingentLiability)
+            else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
             {
                 result = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId).Select(loan => new LoanViewModel
                 {
