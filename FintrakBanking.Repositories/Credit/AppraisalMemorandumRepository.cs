@@ -662,7 +662,9 @@ namespace FintrakBanking.Repositories.Credit
                                schedule = b.REPAYMENTSCHEDULE
                            });
 
-            return details;
+            // var test = details.ToList();
+
+            return details.ToList();
         }
 
         public IEnumerable<LoanDetailsFeeViewModel> GetLoanDetailsFee(int applicationId)
