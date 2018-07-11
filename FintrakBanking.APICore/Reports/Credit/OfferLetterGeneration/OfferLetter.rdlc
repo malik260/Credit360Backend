@@ -3322,7 +3322,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -4933,7 +4932,7 @@
             <Top>1.8944in</Top>
             <Left>0.20181in</Left>
             <Height>0.75in</Height>
-            <Width>6.59053in</Width>
+            <Width>6.59052in</Width>
             <ZIndex>33</ZIndex>
             <Style>
               <Border>
@@ -4994,21 +4993,6 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Image Name="Image1">
-              <Source>Embedded</Source>
-              <Value>firstbanknewlogo</Value>
-              <Sizing>FitProportional</Sizing>
-              <Top>0.19218in</Top>
-              <Left>5.99472in</Left>
-              <Height>0.78in</Height>
-              <Width>0.80311in</Width>
-              <ZIndex>1</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-              </Style>
-            </Image>
           </ReportItems>
           <Style>
             <Border>
