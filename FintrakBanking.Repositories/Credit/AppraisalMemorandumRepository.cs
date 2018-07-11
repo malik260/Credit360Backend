@@ -629,6 +629,42 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId)
         {
+            var details = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL,
+                a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
+                .Select(x => new ApprovedLoanDetailViewModel
+                {
+                    loanApplicationDetailId = x.d.LOANAPPLICATIONDETAILID,
+                    applicationId = x.d.LOANAPPLICATIONID,
+                    customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
+                    obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
+                    currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
+
+                    proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
+                    proposedTenor = x.d.PROPOSEDTENOR,
+                    proposedRate = x.d.PROPOSEDINTERESTRATE,
+                    proposedAmount = x.d.PROPOSEDAMOUNT,
+                    proposedProductId = x.d.PROPOSEDPRODUCTID,
+
+                    approvedProductName = x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
+                    approvedTenor = x.d.APPROVEDTENOR,
+                    approvedRate = x.d.APPROVEDINTERESTRATE,
+                    approvedAmount = x.d.APPROVEDAMOUNT,
+                    approvedProductId = x.d.APPROVEDPRODUCTID,
+
+                    statusId = x.d.STATUSID,
+                    exchangeRate = x.d.EXCHANGERATE,
+                    terms = x.d.REPAYMENTTERMS,
+                    schedule = x.d.REPAYMENTSCHEDULE
+                });
+
+            var test = details.ToList();
+
+            return details.ToList();
+        }
+
+        /*public IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId)
+        {
             var details = (from a in context.TBL_LOAN_APPLICATION
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                            join c in context.TBL_PRODUCT on b.PROPOSEDPRODUCTID equals c.PRODUCTID
@@ -665,7 +701,7 @@ namespace FintrakBanking.Repositories.Credit
             // var test = details.ToList();
 
             return details.ToList();
-        }
+        }*/
 
         public IEnumerable<LoanDetailsFeeViewModel> GetLoanDetailsFee(int applicationId)
         {
