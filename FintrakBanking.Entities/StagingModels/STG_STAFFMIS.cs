@@ -70,5 +70,13 @@ namespace FintrakBanking.Entities.StagingModels
         public string TEAMSTRUCTURE { get; set; }
 
         public bool? ACTIVE { get; set; }
+
+        public string TEAM_UNIT { get; set; }
+
+        public string COST_CENT { get; set; }
+        public string DEPT_NAME { get; set; }
+        public string REGION { get; set; }
+        public string GROUP_HUB { get; set; }
+        public string DIRECTORATE { get; set; }
     }
 }

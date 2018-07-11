@@ -552,6 +552,13 @@
     <Compile Include="Reports\ReportViews\OverDraft.aspx.designer.cs">
       <DependentUpon>OverDraft.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\PostedTransactions.aspx.cs">
+      <DependentUpon>PostedTransactions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\PostedTransactions.aspx.designer.cs">
+      <DependentUpon>PostedTransactions.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\Repayment.aspx.cs">
       <DependentUpon>Repayment.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -813,6 +820,7 @@
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
+    <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
