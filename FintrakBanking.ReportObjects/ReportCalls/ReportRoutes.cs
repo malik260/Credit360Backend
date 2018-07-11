@@ -55,7 +55,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                          {
                              GLAccountCode=x.ACCOUNTCODE,
                              GLAccount   = x.ACCOUNTNAME,
-                             glAccountId = x.GLACCOUNTID
+                             GLAccountId = x.GLACCOUNTID
                          };
                 return gl.ToList();
             }
@@ -176,8 +176,8 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             {
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
-                    var productClassId = context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).PRODUCTCLASSID;
-                    var productClassProcessId = context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).PRODUCT_CLASS_PROCESSID;
+                    var productClassId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x=>x.PRODUCTCLASSID).FirstOrDefault();
+                    var productClassProcessId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x=>x.PRODUCT_CLASS_PROCESSID).FirstOrDefault();
                     return GetProductSpecificTemplate(productClassProcessId, productClassId, applicationRefNumber);
                 }
               
@@ -190,35 +190,9 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        public string GetGeneratedOfferLetterLMS(string refNumber)
+        public string GetGeneratedOfferLetterLMS(string applicationRefNumber)
         {
-            try
-            {
-                using (FinTrakBankingContext context = new FinTrakBankingContext())
-                {
-                    var loanApplId = 0;
-                    var facility = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == refNumber);
-                    if (facility == null)
-                    {
-                        var facility1 = context.TBL_LOAN_REVOLVING.Where(x => x.LOANREFERENCENUMBER == refNumber);
-                        loanApplId = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == facility1.FirstOrDefault().LOANAPPLICATIONDETAILID).LOANAPPLICATIONID;
-                    }
-
-                    loanApplId = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == facility.FirstOrDefault().LOANAPPLICATIONDETAILID).LOANAPPLICATIONID;
-                    var targetAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == loanApplId);
-
-                    var productClassId = context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER).PRODUCTCLASSID;
-                    var productClassProcessId = context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER).PRODUCT_CLASS_PROCESSID;
-                    return GetProductSpecificTemplate(productClassProcessId, productClassId, targetAppl.APPLICATIONREFERENCENUMBER);
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
+            return reportPath + "Credit/OfferLetterGeneration/OfferLetterLMSR.aspx?applicationRefNumber=" + applicationRefNumber;
         }
 
         public string GetProductSpecificTemplate(short? productClassProcessId, short? productClassId, string applicationRefNumber)
@@ -431,7 +405,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         {
             string path = string.Empty;
             path = reportPath + "ReportViews/GrantedFacilities.aspx?companyId=" + companyId.ToString() + "&startDate=" + searchEntity.startDate.ToShortDateString() + 
-                "&endDate=" + searchEntity.endDate.ToShortDateString() + "&staffId=" + searchEntity.staffId + "&excludeSystem=" + searchEntity.excludeSystem + "&branchId=" + searchEntity.branchId;
+                "&endDate=" + searchEntity.endDate.ToShortDateString() + "&glAccountId=" + searchEntity.glAccountId + "&PostedByStaffId=" + searchEntity.PostedByStaffId + "&branchId=" + searchEntity.branchId;
             return path;
         }
 

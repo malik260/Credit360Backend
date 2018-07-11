@@ -716,6 +716,37 @@ namespace FintrakBanking.Repositories.Setups.General
             return productData.AsEnumerable().AsQueryable();
         }
 
+
+        public IEnumerable<ProductLiteViewModel> GetAllProductLite()
+        {
+            var productData = (from data in context.TBL_PRODUCT
+                               join g in context.TBL_PRODUCT_TYPE on data.PRODUCTTYPEID equals g.PRODUCTTYPEID
+                               select new ProductLiteViewModel()
+                               {
+                                   productId = data.PRODUCTID,
+                                   companyId = data.COMPANYID,
+                                   productTypeId = data.PRODUCTTYPEID,
+                                   productTypeName = data.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                   productGroupName = data.TBL_PRODUCT_TYPE.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
+                                   productCategoryId = data.PRODUCTCATEGORYID,
+                                   productCategoryName = data.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
+                                   productClassId = data.PRODUCTCLASSID,
+                                   productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+
+                                   productCode = data.PRODUCTCODE,
+                                   productName = data.PRODUCTNAME,
+                                   productGroupId = g.PRODUCTGROUPID,
+                    
+                                   dateTimeUpdated = data.DATETIMEUPDATED,
+                                   deleted = data.DELETED,
+                                   deletedBy = data.DELETEDBY,
+                                   dateTimeDeleted = data.DATETIMEDELETED,
+                               });
+
+            return productData.ToList();
+        }
+
+
         private IEnumerable<ProductSearchViewModel> ProductSearch(int companyId)
         {
             var data = context.TBL_PRODUCT.Where(p => p.COMPANYID == companyId).Select(p => new ProductSearchViewModel
@@ -2576,6 +2607,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSNAME == productClassName).Any();
         }
+
         #endregion
     }
 }

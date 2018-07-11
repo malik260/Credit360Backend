@@ -435,6 +435,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Credit.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx.cs">
+      <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx.designer.cs">
+      <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\TransactionDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -544,6 +551,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\OverDraft.aspx.designer.cs">
       <DependentUpon>OverDraft.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\PostedTransactions.aspx.cs">
+      <DependentUpon>PostedTransactions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\PostedTransactions.aspx.designer.cs">
+      <DependentUpon>PostedTransactions.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\Repayment.aspx.cs">
       <DependentUpon>Repayment.aspx</DependentUpon>
@@ -786,6 +800,7 @@
     <Content Include="Reports\Collateral\ScheduledCollateralReport.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
+    <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
@@ -805,6 +820,7 @@
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
+    <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
@@ -1037,6 +1053,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
     <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />

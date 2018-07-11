@@ -91,6 +91,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductClassificationViewModel> GetAllProductClassification();
         bool AddUpdateProductClassification(ProductClassificationViewModel model);
         bool ValidateProductClassification(string productClassName);
+        IEnumerable<ProductLiteViewModel> GetAllProductLite();
         #endregion Product Classification 
     }
 }

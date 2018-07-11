@@ -28,7 +28,7 @@ namespace FintrakBanking.Repositories.Validetion
         { 
           var data =  context.TBL_LOAN_REVOLVING.Find(loanId);
              
-            if (data.LOANSTATUSID == (int)LoanStatusEnum.Inactive && data.MATURITYDATE.Date > generalSetup.GetApplicationDate().Date)
+            if (data.LOANSTATUSID == (int)LoanStatusEnum.Inactive && data.MATURITYDATE.Date > topupDate.Date)
             {
                 if(data.MATURITYDATE.Date < topupDate.Date)
                 {

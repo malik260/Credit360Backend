@@ -64,12 +64,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StagingDatabase\Finacle\StaffMIS.cs" />
+    <Compile Include="TwoFactorAuthIntegration\TwoFactorAuthIntegrationService.cs" />
     <Compile Include="Connected Services\CRCWebService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="Connected Services\FbnAlertWS\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\TwoFactorAuthService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -131,6 +138,34 @@
     <None Include="Connected Services\FbnAlertWS\Service2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\TwoFactorAuthService\AuthWrapper.wsdl" />
+    <None Include="Connected Services\TwoFactorAuthService\AuthWrapper.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\TwoFactorAuthService\AuthWrapper1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\TwoFactorAuthService\AuthWrapper2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\TwoFactorAuthService\AuthWrapper3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\TwoFactorAuthService\FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService.AuthResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TwoFactorAuthService\FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService.ResponseModel.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TwoFactorAuthService\FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService.SerialNoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TwoFactorAuthService\FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService.UnlockClearQAResponseModel.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TwoFactorAuthService\FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService.UserCheckResponseModel.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Connected Services\XDSWebService\FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -188,6 +223,7 @@
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\CRCWebService\" />
     <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
+    <WCFMetadataStorage Include="Connected Services\TwoFactorAuthService\" />
     <WCFMetadataStorage Include="Connected Services\XDSWebService\" />
   </ItemGroup>
   <ItemGroup>
@@ -228,6 +264,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\FbnAlertWS\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\TwoFactorAuthService\AuthWrapper.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\TwoFactorAuthService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\TwoFactorAuthService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\TwoFactorAuthService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

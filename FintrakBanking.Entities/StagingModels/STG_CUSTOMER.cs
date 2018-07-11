@@ -6,117 +6,95 @@ namespace FintrakBanking.Entities.StagingModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("STG_CUSTOMER")]
     public partial class STG_CUSTOMER
     {
         [Key]
-        [Column(Order = 0)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public decimal ID { get; set; }
-
-        [Key]
-        [Column(Order = 1)]
-        [StringLength(255)]
+        [StringLength(50)]
         public string CUSTOMERCODE { get; set; }
 
-        [StringLength(255)]
-        public string BRANCHCODE { get; set; }
+        public short BRANCHID { get; set; }
 
-        public int? COMPANY { get; set; }
+        public int? COMPANYID { get; set; }
 
-        [StringLength(255)]
+        [StringLength(50)]
         public string TITLE { get; set; }
 
-        [StringLength(255)]
-        public string CONTACTADDRESS { get; set; }
-
-        [StringLength(255)]
-        public string LASTCONTACTADDRESS { get; set; }
-
-        [StringLength(255)]
+        [Required]
+        [StringLength(200)]
         public string FIRSTNAME { get; set; }
 
-        [StringLength(255)]
+        [StringLength(200)]
         public string MIDDLENAME { get; set; }
 
-        [StringLength(255)]
+        [StringLength(200)]
         public string LASTNAME { get; set; }
 
-        [StringLength(255)]
+        [StringLength(10)]
         public string GENDER { get; set; }
 
+        [Column(TypeName = "date")]
         public DateTime? DATEOFBIRTH { get; set; }
 
-        [StringLength(255)]
+        [StringLength(200)]
+        public string PLACEOFBIRTH { get; set; }
+
+        [StringLength(20)]
         public string NATIONALITY { get; set; }
 
-        [StringLength(255)]
-        public string MARITALSTATUS { get; set; }
+        public int? MARITALSTATUS { get; set; }
 
-        [StringLength(255)]
+        [StringLength(100)]
         public string EMAILADDRESS { get; set; }
 
-        [StringLength(255)]
+        [StringLength(200)]
         public string MAIDENNAME { get; set; }
 
-        [StringLength(255)]
+        [StringLength(200)]
+        public string SPOUSE { get; set; }
+
+        [StringLength(100)]
         public string OCCUPATION { get; set; }
 
-        [StringLength(255)]
-        public string CUSTOMERTYPE { get; set; }
+        public short? CUSTOMERTYPEID { get; set; }
 
-        [StringLength(255)]
-        public string RELATIONSHIPOFFICERCODE { get; set; }
+        public int? RELATIONSHIPOFFICERID { get; set; }
 
-        public bool? POLITICALLYEXPOSEDPERSON { get; set; }
+        public bool ISPOLITICALLYEXPOSED { get; set; }
 
-        [StringLength(255)]
+        public bool ISINVESTMENTGRADE { get; set; }
+
+        public bool ISREALATEDPARTY { get; set; }
+
+        [StringLength(200)]
         public string MISCODE { get; set; }
 
-        [StringLength(255)]
-        public string STAFFCODE { get; set; }
+        [StringLength(200)]
+        public string MISSTAFF { get; set; }
 
-        public bool? CUSTOMERSENSITIVITYLEVEL { get; set; }
+        public int? APPROVALSTATUS { get; set; }
 
-        [StringLength(255)]
-        public string FSCAPTIONGROUPCODE { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime? DATEACTEDON { get; set; }
 
-        [StringLength(255)]
-        public string TAXIDNUMBER { get; set; }
+        [StringLength(150)]
+        public string ACTEDONBY { get; set; }
 
-        [StringLength(255)]
-        public string BUSINESSTAXIDNUMBER { get; set; }
+        public bool ACCOUNTCREATIONCOMPLETE { get; set; }
 
-        [StringLength(255)]
-        public string ELECTRICMETERNUMBER { get; set; }
+        public bool CREATIONMAILSENT { get; set; }
 
-        [StringLength(255)]
-        public string BANKVERIFICATIONNUMBER { get; set; }
+        public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
-        [StringLength(255)]
-        public string OFFICEADDRESS { get; set; }
+        public short? SUBSECTORID { get; set; }
 
-        [StringLength(255)]
-        public string NEARESTLANDMARK { get; set; }
+        public short? FSCAPTIONGROUPID { get; set; }
 
-        public DateTime? DATEOFINCORPORATION { get; set; }
+        [StringLength(50)]
+        public string TAXNUMBER { get; set; }
 
-        [StringLength(255)]
-        public string PAIDUPCAPITAL { get; set; }
+        [StringLength(50)]
+        public string CUSTOMERBVN { get; set; }
 
-        [StringLength(255)]
-        public string AUTHORIZEDCAPITAL { get; set; }
-
-        [StringLength(255)]
-        public string EMPLOYERDETAILS { get; set; }
-
-        [StringLength(255)]
-        public string RCNUMBER { get; set; }
-
-        [StringLength(255)]
-        public string SUBSECTORCODE { get; set; }
-
-        [StringLength(255)]
-        public string SECTORCODE { get; set; }
+        public short? RISKRATINGID { get; set; }
     }
 }

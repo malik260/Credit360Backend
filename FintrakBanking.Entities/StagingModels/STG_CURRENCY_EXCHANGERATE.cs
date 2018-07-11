@@ -1,4 +1,4 @@
-namespace FintrakBanking.Entities.StagingModels
+namespace DAL.CWG
 {
     using System;
     using System.Collections.Generic;

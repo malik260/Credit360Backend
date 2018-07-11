@@ -181,6 +181,25 @@ namespace FintrakBanking.Entities.Models
         public int EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
         public int USER_PRUDENTIAL_GUIDE_STATUSID { get; set; }
+        public string FIELD1 { get; set; }
+
+        public string FIELD2 { get; set; }
+
+        public string FIELD3 { get; set; }
+
+        public string FIELD4 { get; set; }
+
+        public string FIELD5 { get; set; }
+
+        public string FIELD6 { get; set; }
+
+        public string FIELD7 { get; set; }
+
+        public string FIELD8 { get; set; }
+
+        public string FIELD9 { get; set; }
+
+        public string FIELD10 { get; set; }
 
         //[Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }

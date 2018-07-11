@@ -212,6 +212,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_BOOKING_REQUEST> TBL_LOAN_BOOKING_REQUEST { get; set; }
         public virtual DbSet<TBL_LOAN_BULK_INTEREST_REVIEW> TBL_LOAN_BULK_INTEREST_REVIEW { get; set; }
         public virtual DbSet<TBL_LOAN_CAMSOL> TBL_LOAN_CAMSOL { get; set; }
+        public virtual DbSet<TBL_TEMP_LOAN_CAMSOL> TBL_TEMP_LOAN_CAMSOL { get; set; }
         public virtual DbSet<TBL_LOAN_CAMSOL_TYPE> TBL_LOAN_CAMSOL_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }
         public virtual DbSet<TBL_LOAN_COMMENT> TBL_LOAN_COMMENT { get; set; }
@@ -6496,13 +6497,13 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_PRODUCT>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WithRequired(e => e.TBL_PRODUCT)
-                .HasForeignKey(e => e.APPROVEDPRODUCTID)
+                .HasForeignKey(e => e.PROPOSEDPRODUCTID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL1)
                 .WithRequired(e => e.TBL_PRODUCT1)
-                .HasForeignKey(e => e.PROPOSEDPRODUCTID)
+                .HasForeignKey(e => e.APPROVEDPRODUCTID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT>()

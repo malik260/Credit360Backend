@@ -245,7 +245,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-
+        
       [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application-eligibility/loanApplicationId/{id}")]
         public HttpResponseMessage GetLoanApplicationsDetails(int id)
@@ -265,10 +265,29 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application-details/loanApplicationId/{id}")]
+        public HttpResponseMessage GetAllLoanApplicationsDetails(int id)
+        {
+            try
+            {
+                var data = repo.GetAllLoanApplicationsDetails(id, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
 
-
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("loan-applications-details")]
         public HttpResponseMessage GetLoanApplicationByRelationshipOfficerId([FromUri] int page, [FromUri] int itemsPerPage)
         {
@@ -713,22 +732,6 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion Loan Preliminary Evaluation
 
-         [HttpPost] [ClaimsAuthorization]
-        [Route("loan-application/search")]
-        public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
-        {
-            try
-            {
-                var response = repo.Search(model.searchString);
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-
         #region Loan Collateral
 
          [HttpPost] [ClaimsAuthorization]
@@ -979,6 +982,24 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error Occured =>  {e.Message}" });
             }
         }
+
+        
+         [HttpPost] [ClaimsAuthorization]
+        [Route("loan-application/search")]
+        public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.Search(model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
       [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/search")]
         public HttpResponseMessage SearchLoanApplication(string searchString)
@@ -986,17 +1007,32 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.SearchForLoan(searchString);
-                if (response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record Found for " + searchString });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
             }
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("committee-credit-application/{applicationType}")]
+        public HttpResponseMessage CommitteeCreditApplications(int applicationType)
+        {
+            try
+            {
+                var response = repo.CommitteeCreditApplications(applicationType, token.GetStaffId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
 
         [HttpDelete] [ClaimsAuthorization]
         [Route("loanApplicationDetail/{id}")]

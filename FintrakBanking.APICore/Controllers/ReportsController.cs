@@ -1109,7 +1109,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("gl-search")]
+        [Route("account-gl-search/{searchQuery}")]
         public HttpResponseMessage GetGLAccount(string searchQuery)
         {
             try

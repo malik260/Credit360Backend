@@ -27,6 +27,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string loansystemtype { get; set; }
         public string camsolType { get; set; }
         public bool updateOption { get; set; }
+        public string comment { get; set; }
+        public short approvalStatusId { get; set; }
+        public short tempLoancamsolid { get; set; }
     }
 
     public class Blacklist
