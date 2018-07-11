@@ -36,7 +36,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public int response { get; set; }
         public bool isGroupLoan { get; set; }
-        public TBL_LOAN_APPLICATION data { get; set; }
+        public TBL_LOAN_APPLICATION loanData { get; set; }
 
         public LoanApplicationRepository(IAuditTrailRepository _auditTrail,
             ICasaRepository _casa,
@@ -891,11 +891,11 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
-            this.data = context.TBL_LOAN_APPLICATION.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).FirstOrDefault();
+            loanData = context.TBL_LOAN_APPLICATION.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).FirstOrDefault();
 
             if (loan.isNewApplication)
             {
-                    if (this.data == null)
+                    if (loanData == null)
                     {
                         loan.applicationReferenceNumber = GetRefrenceNumber();// CommonHelpers.GetLoanReferanceNumber().ToString();
 
@@ -931,7 +931,7 @@ namespace FintrakBanking.Repositories.Credit
                 response = context.SaveChanges();
 
 
-                var returndate = this.GetLoanApplicationByLoanRefrenceNo(this.data.APPLICATIONREFERENCENUMBER, data.COMPANYID);
+                var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
                 if (response > 0 && !loan.isNewApplication)
                 {
@@ -985,7 +985,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
             var loanStatusId = (short)LoanStatusEnum.Inactive;
 
-            data = new TBL_LOAN_APPLICATION
+            loanData = new TBL_LOAN_APPLICATION
             {
                 REQUIRECOLLATERAL = loan.requireCollateral,
                 TOTALEXPOSUREAMOUNT = totalAmount,
@@ -1022,16 +1022,16 @@ namespace FintrakBanking.Repositories.Credit
             };
             if (isGroupLoan)
             {
-                data.CUSTOMERGROUPID = loan.customerGroupId;
-                data.CUSTOMERID = null;
+                loanData.CUSTOMERGROUPID = loan.customerGroupId;
+                loanData.CUSTOMERID = null;
             }
             else
             {
-                data.CUSTOMERID = loan.customerId;
-                data.CUSTOMERGROUPID = null;
+                loanData.CUSTOMERID = loan.customerId;
+                loanData.CUSTOMERGROUPID = null;
             }
 
-            context.TBL_LOAN_APPLICATION.Add(data);
+            context.TBL_LOAN_APPLICATION.Add(loanData);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -1058,19 +1058,19 @@ namespace FintrakBanking.Repositories.Credit
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a=> a.PROPOSEDAMOUNT);
 
 
-            this.data.REQUIRECOLLATERAL = loan.requireCollateral;
-            this.data.TOTALEXPOSUREAMOUNT = totalAmount;
-            this.data.INTERESTRATE = loan.interestRate;
-            this.data.APPLICATIONDATE = genSetup.GetApplicationDate();
-            this.data.LOANINFORMATION = loan.loanInformation;
-            this.data.ISRELATEDPARTY = loan.isRelatedParty;
-            this.data.ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed;
-            this.data.CREATEDBY = (int)loan.createdBy;
-            this.data.DATETIMECREATED = genSetup.GetApplicationDate();
-            this.data.SYSTEMDATETIME = DateTime.Now;
-            this.data.CASAACCOUNTID = loan.casaAccountId;
-            this.data.APPLICATIONAMOUNT = loan.proposedAmount;
-            this.data.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
+            this.loanData.REQUIRECOLLATERAL = loan.requireCollateral;
+            this.loanData.TOTALEXPOSUREAMOUNT = totalAmount;
+            this.loanData.INTERESTRATE = loan.interestRate;
+            this.loanData.APPLICATIONDATE = genSetup.GetApplicationDate();
+            this.loanData.LOANINFORMATION = loan.loanInformation;
+            this.loanData.ISRELATEDPARTY = loan.isRelatedParty;
+            this.loanData.ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed;
+            this.loanData.CREATEDBY = (int)loan.createdBy;
+            this.loanData.DATETIMECREATED = genSetup.GetApplicationDate();
+            this.loanData.SYSTEMDATETIME = DateTime.Now;
+            this.loanData.CASAACCOUNTID = loan.casaAccountId;
+            this.loanData.APPLICATIONAMOUNT = loan.proposedAmount;
+            this.loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -1132,7 +1132,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new Exception("Tenor can not be ZERO (0)");
                 }
-                int loanId = this.data == null ? 0 : this.data.LOANAPPLICATIONID;
+                int loanId = this.loanData == null ? 0 : this.loanData.LOANAPPLICATIONID;
                 int tenor = 0;
 
                 switch (a.tenorModeId)
