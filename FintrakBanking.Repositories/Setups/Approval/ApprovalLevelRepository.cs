@@ -166,6 +166,20 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return data.GroupBy(x => x.approvalLevelId).Select(g => g.FirstOrDefault()).ToList();
         }
 
+        public List<FintrakDropDownSelectList> GetApprovalLevelsByOperationIdAndProductClassId(int operationId, int? classId)
+        {
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == classId)
+                .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL, mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new FintrakDropDownSelectList
+                {
+                    id = l.APPROVALLEVELID,
+                    name = l.LEVELNAME,
+                })
+                .ToList();
+
+            return levels;
+        }
+
         public bool AddApprovalLevel(ApprovalLevelViewModel model)
         {
             var data = new TBL_APPROVAL_LEVEL
@@ -464,6 +478,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             return preset;
         }
+
 
         #endregion preset note
     }

@@ -66,9 +66,9 @@ namespace FintrakBanking.Entities.StagingModels
 
             modelBuilder.HasDefaultSchema(databaseUsername);
 
-            modelBuilder.Entity<STG_BRANCH>()
-                .Property(e => e.ID)
-                .HasPrecision(38, 0);
+            //modelBuilder.Entity<STG_BRANCH>()
+            //   // .Property(e => e.ID)
+            //    .HasPrecision(38, 0);
 
             modelBuilder.Entity<STG_BRANCH>()
                 .Property(e => e.BRANCHCODE)
@@ -78,9 +78,9 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.BRANCHNAME)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_BRANCH>()
-                .Property(e => e.COMPANYCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_BRANCH>()
+            //    .Property(e => e.COMPANYCODE)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<STG_BRANCH>()
                 .Property(e => e.ADDRESSLINE1)
@@ -90,9 +90,9 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.ADDRESSLINE2)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_BRANCH>()
-                .Property(e => e.COMMENTS)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_BRANCH>()
+            //    .Property(e => e.COMMENTS)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<STG_BRANCH>()
                 .Property(e => e.STATECODE)
@@ -110,9 +110,9 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.CITYNAME)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.ID)
-                .HasPrecision(38, 0);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.ID)
+            //    .HasPrecision(38, 0);
 
             modelBuilder.Entity<STG_LOAN_MART>()
                 .Property(e => e.PRODUCTCODE)
@@ -134,9 +134,9 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.LOANREFERENCENUMBER)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.INTERESTRATE)
-                .HasPrecision(15, 0);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.INTERESTRATE)
+            //   // .HasPrecision(15, 0);
 
             modelBuilder.Entity<STG_LOAN_MART>()
                 .Property(e => e.PRINCIPALAMOUNT)
@@ -174,9 +174,9 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.CURRENCY)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.EXCHANGERATE)
-                .HasPrecision(38, 0);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.EXCHANGERATE)
+            //    .HasPrecision(38, 0);
 
             modelBuilder.Entity<STG_STAFFMIS>()
                 .Property(e => e.ID)
@@ -282,9 +282,9 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.TOTALOUTFLOW)
                 .HasPrecision(19, 2);
 
-            modelBuilder.Entity<STG_CASA_DAILY_BALANCE>()
-                .Property(e => e.ID)
-                .HasPrecision(38, 0);
+            //modelBuilder.Entity<STG_CASA_DAILY_BALANCE>()
+            //    .Property(e => e.ID)
+            //    .HasPrecision(38, 0);
 
             modelBuilder.Entity<STG_CASA_DAILY_BALANCE>()
                 .Property(e => e.ACCOUNTNUMBER)
@@ -298,45 +298,45 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.ACCOUNTNAME)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CASA_DAILY_BALANCE>()
-                .Property(e => e.ACCOUNTBALANCE)
-                .HasPrecision(19, 2);
+            //modelBuilder.Entity<STG_CASA_DAILY_BALANCE>()
+            //    .Property(e => e.ACCOUNTBALANCE)
+            //    .HasPrecision(19, 2);
 
-            modelBuilder.Entity<STG_CASA_DAILY_BALANCE>()
-                .Property(e => e.TOTALINFLOW)
-                .HasPrecision(19, 2);
+            //modelBuilder.Entity<STG_CASA_DAILY_BALANCE>()
+            //    .Property(e => e.TOTALINFLOW)
+            //    .HasPrecision(19, 2);
 
-            modelBuilder.Entity<STG_CASA_DAILY_BALANCE>()
-                .Property(e => e.TOTALOUTFLOW)
-                .HasPrecision(19, 2);
+            //modelBuilder.Entity<STG_CASA_DAILY_BALANCE>()
+            //    .Property(e => e.TOTALOUTFLOW)
+            //    .HasPrecision(19, 2);
 
             modelBuilder.Entity<STG_CASA_DAILY_BALANCE>()
                 .Property(e => e.CURRENCY)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.ID)
-                .HasPrecision(38, 0);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.ID)
+            //    .HasPrecision(38, 0);
 
             modelBuilder.Entity<STG_CUSTOMER>()
                 .Property(e => e.CUSTOMERCODE)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.BRANCHCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.BRANCHCODE)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<STG_CUSTOMER>()
                 .Property(e => e.TITLE)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.CONTACTADDRESS)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.CONTACTADDRESS)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.LASTCONTACTADDRESS)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.LASTCONTACTADDRESS)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<STG_CUSTOMER>()
                 .Property(e => e.FIRSTNAME)
@@ -358,9 +358,9 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.NATIONALITY)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.MARITALSTATUS)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.MARITALSTATUS)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<STG_CUSTOMER>()
                 .Property(e => e.EMAILADDRESS)
@@ -374,73 +374,73 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.OCCUPATION)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.CUSTOMERTYPE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.CUSTOMERTYPE)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.RELATIONSHIPOFFICERCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.RELATIONSHIPOFFICERCODE)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<STG_CUSTOMER>()
                 .Property(e => e.MISCODE)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.STAFFCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.STAFFCODE)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.FSCAPTIONGROUPCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.FSCAPTIONGROUPCODE)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.TAXIDNUMBER)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.TAXIDNUMBER)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.BUSINESSTAXIDNUMBER)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.BUSINESSTAXIDNUMBER)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.ELECTRICMETERNUMBER)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.ELECTRICMETERNUMBER)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.BANKVERIFICATIONNUMBER)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.BANKVERIFICATIONNUMBER)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.OFFICEADDRESS)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.OFFICEADDRESS)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.NEARESTLANDMARK)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.NEARESTLANDMARK)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.PAIDUPCAPITAL)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.PAIDUPCAPITAL)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.AUTHORIZEDCAPITAL)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.AUTHORIZEDCAPITAL)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.EMPLOYERDETAILS)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.EMPLOYERDETAILS)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.RCNUMBER)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.RCNUMBER)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.SUBSECTORCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.SUBSECTORCODE)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_CUSTOMER>()
-                .Property(e => e.SECTORCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_CUSTOMER>()
+            //    .Property(e => e.SECTORCODE)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<STG_CUSTOMER_CLIENT>()
                 .Property(e => e.ID)
@@ -630,21 +630,21 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.SUBCLASSIFICATION)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_PRICE_INDEX_RATE>()
-                .Property(e => e.ID)
-                .HasPrecision(38, 0);
+            //modelBuilder.Entity<STG_PRICE_INDEX_RATE>()
+            //    .Property(e => e.ID)
+            //    .HasPrecision(38, 0);
 
-            modelBuilder.Entity<STG_PRICE_INDEX_RATE>()
-                .Property(e => e.BID_RATE)
-                .HasPrecision(15, 0);
+            //modelBuilder.Entity<STG_PRICE_INDEX_RATE>()
+            //    .Property(e => e.BID_RATE)
+            //    .HasPrecision(15, 0);
 
             modelBuilder.Entity<STG_PRICE_INDEX_RATE>()
                 .Property(e => e.PRICEINDEX)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_PRICE_INDEX_RATE>()
-                .Property(e => e.OFFER_RATE)
-                .HasPrecision(38, 0);
+            //modelBuilder.Entity<STG_PRICE_INDEX_RATE>()
+            //    .Property(e => e.OFFER_RATE)
+            //    .HasPrecision(38, 0);
 
             modelBuilder.Entity<STG_PRICE_INDEX_RATE>()
                 .Property(e => e.CURRENCY)

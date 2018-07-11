@@ -45,5 +45,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool ClearLoginToken(string userName);
 
+        bool TwoFactorAuthentication(string staffCode, string passCode);
+
     }
 }

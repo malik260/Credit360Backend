@@ -512,6 +512,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return activities;
         }
+        public bool TwoFactorAuthentication(string staffCode, string passCode)
+        {
 
+            return true;
+        }
     }
 }

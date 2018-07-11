@@ -17,6 +17,8 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationDetailId, int companyId);
 
+        IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetails(int loanApplicationId, int companyId);
+
         IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailByLoanApplicationId(int loanApplicationId, int companyId);
 
         bool CheckExistingCertificateOfOwnership(string certificateOfOwnership, int companyId);
@@ -82,5 +84,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteLoanApplicationDetail(int loanApplicationDetailId);
 
         IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId, int companyId);
+
+        IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationType, int staffId);
     }
 }

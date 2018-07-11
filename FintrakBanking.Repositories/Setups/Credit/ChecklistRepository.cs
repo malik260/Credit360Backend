@@ -1726,6 +1726,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.TBL_ESG_CHECKLIST_DETAIL
                         join b in context.TBL_ESG_CHECKLIST_SUMMARY on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        into gg
+                        from b in gg.DefaultIfEmpty()
+                        join d in context.TBL_ESG_CHECKLIST_DEFINITION on a.ESGCHECKLISTDEFINITIONID equals d.ESGCHECKLISTDEFINITIONID
+                        join i in context.TBL_CHECKLIST_ITEM on d.CHECKLISTITEMID equals i.CHECKLISTITEMID
+                        join c in context.TBL_ESG_CATEGORY on d.ESGCATEGORYID equals c.ESGCATEGORYID
+                        join s in context.TBL_ESG_SUB_CATEGORY on d.ESGSUBCATEGORYID equals s.ESGSUBCATEGORYID into cg
+                        from s in cg.DefaultIfEmpty()
                         where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                         select new ESGChecklistDetailViewModel()
                         {
@@ -1734,13 +1741,16 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             esgClassId = a.ESGCLASSID,
                             esgTypeId = a.ESGTYPEID,
+                            esgCheckListItemName = i.CHECKLISTITEMNAME,
                             checkStatusId = a.CHECKLISTSTATUSID,
+                            categoryName = c.ESGCATEGORYNAME,
+                            subCategoryName = s.ESGSUBCATEGORYNAME,
                             comment = a.COMMENT_,
                             description = a.DESCRIPTION,
                             overAllRiskStatusId = b.RATINGID,
                             overSummary = b.COMMENT_
                         }).ToList();
-            return data.GroupBy(x=> x.loanApplicationDetailId).Select(k=>k.FirstOrDefault());
+            return data;
         }
         public bool AddESGChecklistDefinition(List<ESGChecklistDefinitionViewModel> models)
         {
@@ -1860,6 +1870,46 @@ namespace FintrakBanking.Repositories.Credit
                 context.TBL_ESG_CHECKLIST_SUMMARY.Add(summary);
             }
             context.SaveChanges();
+            return output;
+        }
+        public bool AddESGChecklistSummary(ESGChecklistSummaryViewModel models)
+        {
+            var summaryExist = (from s in context.TBL_ESG_CHECKLIST_SUMMARY
+                                where s.LOANAPPLICATIONDETAILID == models.loanApplicationDetailId
+                                && s.CREATEDBY == (int)models.createdBy
+                                select s).FirstOrDefault();
+            if (summaryExist != null)
+            {
+                summaryExist.COMMENT_ = models.comment;
+                summaryExist.RATINGID = models.ratingId;
+            }
+            else
+            {
+                var summary = new TBL_ESG_CHECKLIST_SUMMARY
+                {
+                    LOANAPPLICATIONDETAILID = models.loanApplicationDetailId,
+                    COMMENT_ = models.comment,
+                    RATINGID = models.ratingId,
+                    CREATEDBY = (int)models.createdBy,
+                    DATETIMECREATED = _genSetup.GetApplicationDate()
+                };
+                context.TBL_ESG_CHECKLIST_SUMMARY.Add(summary);
+            }
+            //Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                STAFFID = models.createdBy,
+                BRANCHID = (short)models.userBranchId,
+                DETAIL = $"Added/updated ESG Checklist Summary  with ESGChecklistDefinitionId of {models.loanApplicationDetailId}",
+                IPADDRESS = models.userIPAddress,
+                URL = models.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+            var output = context.SaveChanges() > 0;
             return output;
         }
         public IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetESGChecklistStatus(int loanApplicationDetailId)

@@ -1550,7 +1550,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL
                         on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                        where a.LOANAPPLICATIONID == loanApplicationId && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
+                        where a.LOANAPPLICATIONID == loanApplicationId 
+                        && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                         && b.STATUSID == (short)LoanApplicationDetailsStatusEnum.Pending
                         // && b.HASDONECHECKLIST == false
                         && a.COMPANYID == companyId && a.DELETED == false
@@ -1571,13 +1572,30 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             // LoanCreditBereauReport = GetCustomerLoanCreditBureauReportChargesByApplicationId(b.CUSTOMERID, a.LOANAPPLICATIONID).ToList()
-                        });
-
-
+                        }).ToList();
             return data;
         }
 
 
+        public IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetails(int loanApplicationId, int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL
+                        on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        where a.LOANAPPLICATIONID == loanApplicationId
+                        && a.COMPANYID == companyId && a.DELETED == false
+                        select new LoanApplicationDetailViewModel()
+                        {
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                           // applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                            //customerId = b.CUSTOMERID,
+                            //customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
+                            loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedAmount = b.PROPOSEDAMOUNT,
+                        }).ToList();
+            return data;
+        }
         #endregion "Loan Applications Awaiting Checklist"
 
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
@@ -1642,6 +1660,43 @@ namespace FintrakBanking.Repositories.Credit
             applications = applications.OrderByDescending(x => x.approvalTrailId).GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
             //var filteredList = applications.ToList();
             return applications;
+
+        }
+
+        public IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationTypeId,int staffId)
+        {
+            IQueryable<CreditApplicationViewModel> applications = null;
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CAM).ToList();
+
+            if (applicationTypeId == 1)
+            {
+                var applicationType = "Loan Origination";
+                applications = context.TBL_LOAN_APPLICATION
+                        .Join(context.TBL_LOAN_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
+                        .Join(context.TBL_CUSTOMER, g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
+                        .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.CAM 
+                                && t.RESPONSESTAFFID == null  && t.APPROVALSTATEID != (int)ApprovalState.Ended
+                                && ids.Contains((int)t.TOAPPROVALLEVELID)
+                            ), 
+                            q => q.g.a.LOANAPPLICATIONID, 
+                            t => t.TARGETID, (q, t) => new { q, t })
+                        .Select(x => new CreditApplicationViewModel
+                        {
+                            applicationType= applicationType,
+                            firstName = x.q.c.FIRSTNAME,
+                            middleName = x.q.c.MIDDLENAME,
+                            lastName = x.q.c.LASTNAME,
+                            customerCode = x.q.c.CUSTOMERCODE,
+                            loanApplicationId = x.q.g.a.LOANAPPLICATIONID,
+                            applicationReferenceNumber = x.q.g.a.APPLICATIONREFERENCENUMBER,
+                            applicationDate = x.q.g.a.APPLICATIONDATE,
+                            customerGroupName = x.q.g.a.CUSTOMERGROUPID.HasValue ? x.q.g.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+
+                        });
+
+            }
+
+            return applications.ToList();
 
         }
 
