@@ -62,5 +62,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<RecommendedCollateralViewModel> UpdateRecommendedCollateralLms(RecommendedCollateralViewModel entity);
         List<RecommendedCollateralViewModel> AddRecommendedCollateralLms(RecommendedCollateralViewModel entity);
         List<RecommendedCollateralViewModel> GetRecommendedCollateralLms(int applicationId);
+        bool saveTranchDisbursmentApprovalLevel(TranchDisbursmentViewModel entity);
     }
 }

@@ -154,6 +154,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string expiryDate { get; set; }
         public int overdraftExtendId { get; set; }
         public string apiUrl { get; set; }
+        public DateTime createdDate { get; set; }
     }
     
 

@@ -4158,6 +4158,8 @@ namespace FintrakBanking.Repositories.Credit
                                  nplDate = a.NPLDATE,
                                  createdBy = a.CREATEDBY,
                                  dateTimeCreated = DateTime.Today,
+                                 revolvingTypeId = a.REVOLVINGTYPEID,
+                                 productAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
 
                              }).FirstOrDefault();
 
@@ -4180,7 +4182,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.CURRENCYID = model.currencyId;
                 addOverDraft.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
                 addOverDraft.EXCHANGERATE = model.exchangeRate;
-                addOverDraft.LOANREFERENCENUMBER = loanReferenceNumber;
+                addOverDraft.LOANREFERENCENUMBER = loanReferenceNumber + "005";
                 addOverDraft.RELATED_LOAN_REFERENCE_NUMBER = model.loanReferenceNumber;
                 addOverDraft.SUBSECTORID = model.subSectorId;
                 addOverDraft.RELATIONSHIPOFFICERID = model.relationshipOfficerId;
@@ -4209,9 +4211,12 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.DAYCOUNTCONVENTIONID = (short)model.dayCountConventionId;
                 addOverDraft.INT_PRUDENT_GUIDELINE_STATUSID = 1; //model.internalPrudentialGuidelineStatusId;
                 addOverDraft.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //model.externalPrudentialGuidelineStatusId;
+                addOverDraft.USER_PRUDENTIAL_GUIDE_STATUSID = 1;
                 addOverDraft.NPLDATE = model.nplDate;
                 addOverDraft.CREATEDBY = model.createdBy;
                 addOverDraft.DATETIMECREATED = model.dateTimeCreated;
+                addOverDraft.REVOLVINGTYPEID = model.revolvingTypeId;
+
 
                 overDraft.Add(addOverDraft);
                 // }
@@ -4220,19 +4225,47 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    if (validate.ODTopupValidation(loanId, generalSetup.GetApplicationDate(), amount))
+
+                    var data1 = context.TBL_LOAN_REVOLVING.Find(loanId);
+
+                    if (data1.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
                     {
+                        if (data1.MATURITYDATE.Date < systemDate.Date)
+                        {
+                            throw new Exception("The tenor for the top-up amount is not expected to exceed the expiry date of the current limit");
+                        }
                         var loan = model;
+                        var reviewDate = data1.BOOKINGDATE.AddMonths(1);
                         var data = new OverDraftTopUpAndRenewViewModel
                         {
-                            sanctionLimit = loan.overdraftLimit.ToString(),
-                            sanctionReferenceNumber = loan.serialNumber,
+                            sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
+                            sanctionReferenceNumber = loan.loanReferenceNumber,
                             accountNumber = loan.productAccountNumber,
-                            expiryDate = loan.maturityDate.ToString(),
-                            reviewedDate = loan.effectiveDate.ToString()
+                            expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
+                            reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                            createdDate= systemDate,
                         };
-                        finacle.OverDraftTopUp(data);
+                        var topResult =  finacle.OverDraftTopUp(data);
+                        //return true;
                     }
+                    else
+                    {
+                        throw new Exception("Limit has experied or is inactive");
+                    }
+                    //var resultdata = validate.ODTopupValidation(loanId, systemDate, amount);
+                    //if (resultdata)
+                    //{
+                    //    var loan = model;
+                    //    var data = new OverDraftTopUpAndRenewViewModel
+                    //    {
+                    //        sanctionLimit = loan.overdraftLimit.ToString(),
+                    //        sanctionReferenceNumber = loan.serialNumber,
+                    //        accountNumber = loan.productAccountNumber,
+                    //        expiryDate = loan.maturityDate.ToString(),
+                    //        reviewedDate = loan.effectiveDate.ToString()
+                    //    };
+                    //    finacle.OverDraftTopUp(data);
+                    //}
 
                 }
                 var result = context.SaveChanges() > 0;
@@ -5054,6 +5087,7 @@ namespace FintrakBanking.Repositories.Credit
                              nplDate = a.NPLDATE,
                              createdBy = a.CREATEDBY,
                              dateTimeCreated = a.DATETIMECREATED,
+                             revolvingTypeId = a.REVOLVINGTYPEID,
 
                          }).FirstOrDefault();
 
@@ -5111,6 +5145,7 @@ namespace FintrakBanking.Repositories.Credit
             addOverDraftArchive.NPLDATE = model.nplDate;
             addOverDraftArchive.CREATEDBY = model.createdBy;
             addOverDraftArchive.DATETIMECREATED = model.dateTimeCreated;
+            addOverDraftArchive.REVOLVINGTYPEID = model.revolvingTypeId;
 
             overDraftArchive.Add(addOverDraftArchive);
             //}

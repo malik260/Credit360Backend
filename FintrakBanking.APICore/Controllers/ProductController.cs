@@ -12,6 +12,7 @@ using System.Web.Http;
 using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
 using System;
+using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -604,12 +605,24 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllProduct().ToList();
                 if (data == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK,
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
-                    new { success = true, result = data.ToList() });  //Ok(accounts);
+      [HttpGet] [ClaimsAuthorization]  
+        [Route("product-lite")]
+        public HttpResponseMessage GetAllProductLite()
+        {
+            try
+            {
+                var data = repo.GetAllProductLite();
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });  //Ok(accounts);
             }
             catch (System.Exception ex)
             {
