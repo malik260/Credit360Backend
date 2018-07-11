@@ -12567,9 +12567,13 @@ namespace FintrakBanking.Repositories.Credit
                            numberofrunningTranches = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Count(),
                            customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
                            customerCode = c.CUSTOMERCODE,
+                           approvedTenor = a.APPROVEDTENOR,
+                           //lineEffectiveDate =  (DateTime)a.EXPIRYDATE.Value.AddDays(- (int)a.APPROVEDTENOR) ,
+                           expiryDate = (DateTime)a.EXPIRYDATE,
+                           //tenorLeft = a.APPROVEDTENOR - (int)a.EXPIRYDATE.Value.AddDays(-(int)a.APPROVEDTENOR).Day
 
                        };
-
+            var v = data.ToList();
             return data.ToList();
         }
 
