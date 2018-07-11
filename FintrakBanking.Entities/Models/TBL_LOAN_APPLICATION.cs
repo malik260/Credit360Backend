@@ -111,6 +111,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? FINALAPPROVAL_LEVELID { get; set; }
 
+        public int? TRANCHEAPPROVAL_LEVELID { get; set; }
+
         public short? NEXTAPPLICATIONSTATUSID { get; set; }
 
         public DateTime? DATEACTEDON { get; set; }
