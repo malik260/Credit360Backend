@@ -471,13 +471,12 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool RemoveLoanConditionPrecedentLms(int id, UserInfo model)
         {
-            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(id);
+            var data = this.context.TBL_LMSR_CONDITION_PRECEDENT.Find(id);
             if (data == null)
             {
                 return false;
             }
-            context.TBL_LOAN_CONDITION_PRECEDENT.Remove(data);
-          
+            context.TBL_LMSR_CONDITION_PRECEDENT.Remove(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -495,13 +494,11 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
-
-           
         }
 
         public bool EditLoanConditionPrecedentLms(int id, ConditionPrecedentViewModel model)
         {
-            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(id);
+            var data = this.context.TBL_LMSR_CONDITION_PRECEDENT.Find(id);
             if (data == null)
             {
                 return false;
@@ -511,7 +508,7 @@ namespace FintrakBanking.Repositories.Credit
             data.ISEXTERNAL = (bool)model.isExternal;
             data.ISSUBSEQUENT = (bool)model.isSubsequent;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
-            data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+            data.LOANREVIEWAPPLICATIONID = model.loanApplicationDetailId;
             data.TIMELINEID = model.timelineId;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
@@ -577,7 +574,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddConditionPrecedentLms(ConditionPrecedentViewModel model)
         {
-            var data = new TBL_LOAN_CONDITION_PRECEDENT
+            var data = new TBL_LMSR_CONDITION_PRECEDENT
             {
                 CONDITION = model.condition,
                 ISEXTERNAL = (bool)model.isExternal,
@@ -585,12 +582,12 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = model.createdBy,
                 //LOANAPPLICATIONID = model.loanApplicationId,
                 TIMELINEID = model.timelineId,
-                LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                LOANREVIEWAPPLICATIONID = model.loanApplicationDetailId,
                 RESPONSE_TYPEID = 1,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
 
-            context.TBL_LOAN_CONDITION_PRECEDENT.Add(data);
+            context.TBL_LMSR_CONDITION_PRECEDENT.Add(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
