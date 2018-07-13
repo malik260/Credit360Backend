@@ -5698,7 +5698,8 @@ namespace FintrakBanking.Repositories.Credit
                                        maturityDate = a.MATURITYDATE,
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
-                                       productName = a.TBL_PRODUCT.PRODUCTNAME
+                                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1
                                    });
             return allFilteredLoan;
         }
@@ -5728,7 +5729,8 @@ namespace FintrakBanking.Repositories.Credit
                                        maturityDate = a.MATURITYDATE,
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
-                                       productName = a.TBL_PRODUCT.PRODUCTNAME
+                                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1
                                    });
             return allFilteredLoan;
         }
@@ -5758,14 +5760,18 @@ namespace FintrakBanking.Repositories.Credit
                                        maturityDate = a.MATURITYDATE,
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
-                                       productName = a.TBL_PRODUCT.PRODUCTNAME
+                                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       // isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1
                                    });
             return allFilteredLoan;
         }
 
-        public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int productTypeId, string searchQuery)
+        public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int productTypeId, string searchQuery)
         {
+            bool all = performanceTypeId == 3;
+            bool performing = performanceTypeId == 1;
             var applicationDate = generalSetup.GetApplicationDate();
+
             try
             {
                 IEnumerable<LoanViewModel> allFilteredLoan = null;
@@ -5778,11 +5784,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (productTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
                     {
-                        allFilteredLoan = SearchTermLoan(searchQuery);
+                        allFilteredLoan = SearchTermLoan(searchQuery).Where(x => x.isPerforming == performing || all);
                     }
                     else if (productTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
                     {
-                        allFilteredLoan = SearchRevolvingLoan(searchQuery);
+                        allFilteredLoan = SearchRevolvingLoan(searchQuery).Where(x => x.isPerforming == performing || all);
                     }
                     else if (productTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
                     {

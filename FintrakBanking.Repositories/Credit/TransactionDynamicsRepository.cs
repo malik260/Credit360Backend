@@ -330,12 +330,12 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool RemoveLoanTransactionDynamicsLms(int id, UserInfo model)
         {
-            var data = this.context.TBL_LOAN_TRANSACTION_DYNAMICS.Find(id);
+            var data = this.context.TBL_LMSR_TRANSACTION_DYNAMICS.Find(id);
             if (data == null)
             {
                 return false;
             }
-            context.TBL_LOAN_TRANSACTION_DYNAMICS.Remove(data);
+            context.TBL_LMSR_TRANSACTION_DYNAMICS.Remove(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -357,7 +357,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool EditLoanTransactionDynamicsLms(int id, TransactionDynamicsViewModel model)
         {
-            var data = this.context.TBL_LOAN_TRANSACTION_DYNAMICS.Find(id);
+            var data = this.context.TBL_LMSR_TRANSACTION_DYNAMICS.Find(id);
             if (data == null)
             {
                 return false;
@@ -365,7 +365,7 @@ namespace FintrakBanking.Repositories.Credit
 
             data.DYNAMICS = model.dynamics;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
-            data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+            data.LOANREVIEWAPPLICATIONID = model.loanApplicationDetailId;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
 
@@ -391,16 +391,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddTransactionDynamicsLms(TransactionDynamicsViewModel model)
         {
-            var data = new TBL_LOAN_TRANSACTION_DYNAMICS
+            var data = new TBL_LMSR_TRANSACTION_DYNAMICS
             {
                 DYNAMICS = model.dynamics,
                 CREATEDBY = model.createdBy,
                 //LOANAPPLICATIONID = model.loanApplicationId,
-                LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                LOANREVIEWAPPLICATIONID = model.loanApplicationDetailId,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
 
-            context.TBL_LOAN_TRANSACTION_DYNAMICS.Add(data);
+            context.TBL_LMSR_TRANSACTION_DYNAMICS.Add(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -427,7 +427,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<TransactionDynamicsViewModel> GetAllTransactionDynamicsLms()
         {
-            return this.context.TBL_LOAN_TRANSACTION_DYNAMICS
+            return this.context.TBL_LMSR_TRANSACTION_DYNAMICS
                 .Join(
                     context.TBL_STAFF,
                     c => c.CREATEDBY,
@@ -438,8 +438,8 @@ namespace FintrakBanking.Repositories.Credit
                         dynamicsId = c.DYNAMICSID == null ? 0 : (int)c.DYNAMICSID,
                         dynamics = c.DYNAMICS,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
-                        loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-                        loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                        loanApplicationId = c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                        loanApplicationDetailId = c.LOANREVIEWAPPLICATIONID,
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
                     });

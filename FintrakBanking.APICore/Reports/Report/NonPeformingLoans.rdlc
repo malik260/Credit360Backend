@@ -1377,20 +1377,6 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Image Name="HeaderLogo">
-              <Source>Embedded</Source>
-              <Value>firstbanknewlogo</Value>
-              <Sizing>FitProportional</Sizing>
-              <Left>11.07167in</Left>
-              <Height>0.95833in</Height>
-              <Width>0.96305in</Width>
-              <ZIndex>1</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-              </Style>
-            </Image>
           </ReportItems>
           <Style>
             <Border>
