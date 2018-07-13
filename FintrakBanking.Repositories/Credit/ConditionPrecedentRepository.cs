@@ -617,7 +617,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ConditionPrecedentViewModel> GetAllConditionPrecedentLms()
         {
-            var x = this.context.TBL_LOAN_CONDITION_PRECEDENT
+            var x = this.context.TBL_LMSR_CONDITION_PRECEDENT
                 .Join(
                     context.TBL_STAFF,
                     c => c.CREATEDBY,
@@ -630,8 +630,8 @@ namespace FintrakBanking.Repositories.Credit
                         isExternal = c.ISEXTERNAL,
                         isSubsequent = c.ISSUBSEQUENT,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
-                        loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-                        loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                        loanApplicationId = c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                        loanApplicationDetailId = c.LOANREVIEWAPPLICATIONID,
                         timelineId = c.TIMELINEID,
                         responseTypeId = c.RESPONSE_TYPEID,
                         dateTimeCreated = c.DATETIMECREATED,

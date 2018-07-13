@@ -233,7 +233,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal penalChargeAmount { get; set; }
         public DateTime lastRestructureDate  { get; set; }
         public short loanSystemTypeId  { get; set; }
-        
+        public bool isPerforming { get; set; }
+
 
 
         //......End f Loan Relational Table View Mapping Models......//

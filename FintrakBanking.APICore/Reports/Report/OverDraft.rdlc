@@ -675,7 +675,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -743,7 +742,7 @@
         <Top>0.06944in</Top>
         <Left>0.19667in</Left>
         <Height>0.57292in</Height>
-        <Width>13.73238in</Width>
+        <Width>13.73239in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -761,20 +760,6 @@
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
-        <Image Name="HeaderLlogo">
-          <Source>Embedded</Source>
-          <Value>firstbank</Value>
-          <Sizing>FitProportional</Sizing>
-          <Top>0.11806in</Top>
-          <Left>10.53447in</Left>
-          <Height>0.53347in</Height>
-          <Width>1.95708in</Width>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </Image>
         <Textbox Name="Textbox8">
           <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
@@ -800,7 +785,6 @@
           <Left>4.55011in</Left>
           <Height>0.25in</Height>
           <Width>3.94792in</Width>
-          <ZIndex>1</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>

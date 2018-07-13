@@ -51,19 +51,16 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
+                    searchString = searchString.Trim().ToLower();
                     items = items.Where(x =>
                         x.referenceNumber.Contains(searchString)
-                        //|| x.principalAmount.ToString().Contains(searchString)
                         || x.customerName.Contains(searchString)
                         ).Take(itemsPerPage);
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
-                    .ThenByDescending(x => x.loanReviewApplicationId)
-                    .Skip(page)
-                    .Take(itemsPerPage)
-                    .ToList();
+                    .OrderByDescending(x => x.loanReviewApplicationId) // OrderBy() must be called for Skip() to work!
+                    .Skip(page).Take(itemsPerPage);//.ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
             }
@@ -112,7 +109,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
-                var data = loanRepo.SearchForLoanAndRevolvingLoan(search.productTypeId, search.searchString);
+                var data = loanRepo.SearchForLoanAndRevolvingLoan(search.performanceTypeId, search.productTypeId, search.searchString);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
             catch (Exception e)

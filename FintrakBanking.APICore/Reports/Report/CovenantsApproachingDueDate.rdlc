@@ -743,7 +743,7 @@
       <Width>9.20707in</Width>
       <Page>
         <PageHeader>
-          <Height>1in</Height>
+          <Height>1.01389in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -767,7 +767,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox2</rd:DefaultName>
-              <Top>0.32812in</Top>
+              <Top>0.34201in</Top>
               <Left>2.33333in</Left>
               <Height>0.34375in</Height>
               <Width>4.25in</Width>
@@ -781,20 +781,6 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Image Name="HeaderLogo">
-              <Source>Embedded</Source>
-              <Value>firstbanknewlogo</Value>
-              <Sizing>FitProportional</Sizing>
-              <Left>8.2175in</Left>
-              <Height>0.97222in</Height>
-              <Width>0.95833in</Width>
-              <ZIndex>1</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-              </Style>
-            </Image>
           </ReportItems>
           <Style>
             <Border>

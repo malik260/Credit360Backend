@@ -9,7 +9,7 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class StaffAccountHistoryViewModel : GeneralEntity
     {
-        public short productTypeId { get; set; }
+        public short accountTypeId { get; set; }
 
         public string  productType { get; set; }
 
@@ -33,8 +33,26 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string currentRMStaffName { get; set; }
 
-       
 
+        public string field1 { get; set; }
+                      
+        public string field2 { get; set; }
+                   
+        public string field3 { get; set; }
+                 
+        public string field4 { get; set; }
+                      
+        public string field5 { get; set; }
+                    
+        public string field6 { get; set; }
+              
+        public string field7 { get; set; }
+                 
+        public string field8 { get; set; }
+                      
+        public string field9 { get; set; }
+                    
+        public string field10 { get; set; }
     }
 
     public class StaffMISHistoryViewModel : LoanViewModel
@@ -67,7 +85,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ReasignedAccountApprovalViewModel : ApprovalViewModel
     {
-        public int productTypeId { get; set; }
+        public int accountTypeId { get; set; }
         public int loanId { get; set; }
         public int newRMStaffId { get; set; }
         public int staffAccountHistoryId { get; set; }
