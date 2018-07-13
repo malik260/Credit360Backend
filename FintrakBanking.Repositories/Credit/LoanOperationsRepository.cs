@@ -12383,8 +12383,27 @@ namespace FintrakBanking.Repositories.Credit
                                                   where p.LOANAPPLICATIONDETAILID == loanAplicationDetailId
                                                   select p).SingleOrDefault();
 
-            result.PROPOSEDTENOR = result.PROPOSEDTENOR + newTenor;
+            
             result.APPROVEDTENOR = result.APPROVEDTENOR + newTenor;
+            if (result.EXPIRYDATE != null)
+            {
+                var expiryDate = (DateTime)result.EXPIRYDATE;
+                result.EXPIRYDATE = expiryDate.AddDays(newTenor);
+
+                //List<TBL_LOAN> loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanAplicationDetailId).ToList();
+                //if(loans.Count > 0)
+                //{
+                //    foreach(var loan in loans)
+                //    {
+                //        var newMaturitydate = loan.MATURITYDATE;
+
+                //        if(newMaturitydate.AddDays(newTenor) <= result.EXPIRYDATE)
+                //        {
+                //            loan.MATURITYDATE = newMaturitydate.AddDays(newTenor);
+                //        }
+                //    }
+                //}
+            }
 
             return context.SaveChanges() > 0;
         }
@@ -12563,8 +12582,6 @@ namespace FintrakBanking.Repositories.Credit
                            approvedAmount = a.APPROVEDAMOUNT,
                            approvedInterestRate = a.APPROVEDINTERESTRATE,
                            approvedProductName = a.TBL_PRODUCT.PRODUCTNAME,
-                           numberofTranchesBooked = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking).Count(),
-                           numberofrunningTranches = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Count(),
                            customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
                            customerCode = c.CUSTOMERCODE,
                            approvedTenor = a.APPROVEDTENOR,
@@ -12573,7 +12590,7 @@ namespace FintrakBanking.Repositories.Credit
                            //tenorLeft = a.APPROVEDTENOR - (int)a.EXPIRYDATE.Value.AddDays(-(int)a.APPROVEDTENOR).Day
 
                        };
-            var v = data.ToList();
+            var v = data;
             return data.ToList();
         }
 
@@ -12608,8 +12625,8 @@ namespace FintrakBanking.Repositories.Credit
                            approvedAmount = a.APPROVEDAMOUNT,
                            approvedInterestRate = a.APPROVEDINTERESTRATE,
                            approvedProductName = a.TBL_PRODUCT.PRODUCTNAME,
-                           numberofTranchesBooked = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking).Count(),
-                           numberofrunningTranches = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Count(),
+                           //numberofTranchesBooked = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking).Count(),
+                          // numberofrunningTranches = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Count(),
                            // runningTranches = GetMaturedCommercialLoans(companyId,a.LOANAPPLICATIONDETAILID).ToList()
                            //effectiveDate = ln.TBL_LOAN_APPLICATION_DETAIL.EFFECTIVEDATE ?? null,
                            // maturityDate = ln.EFFECTIVEDATE.Value.AddDays((int)ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR),
@@ -12621,7 +12638,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID)
         {
             var data = (from ln in context.TBL_LOAN
-                        where ln.LOANAPPLICATIONDETAILID == loanApplicationDetailID
+                        //where ln.LOANAPPLICATIONDETAILID == loanApplicationDetailID
                         ////&& ln.MATURITYDATE < DateTime.Now
                         ////&& ln.LOANSTATUSID == (short)LoanStatusEnum.Active || ln.LOANSTATUSID == (short)LoanStatusEnum.Completed
                         ////&& ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
