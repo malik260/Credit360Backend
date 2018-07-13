@@ -300,8 +300,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationParentChildViewModel
     {
-        public short loanStatusId;
-        public string customerName;
+        public int? tenorLeft { get; set; }
+
+        public short loanStatusId { get; set; }
+        public string customerName { get; set; }
+        public int? approvedTenor { get; set; }
+        public DateTime lineEffectiveDate { get; set; }
+        public DateTime? expiryDate { get; set; }
 
         public double approvedInterestRate { get; set; }
         public string approvedProductName { get; set; }

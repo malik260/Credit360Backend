@@ -809,20 +809,6 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Image Name="HeaderLlogo">
-              <Source>Embedded</Source>
-              <Value>firstbank</Value>
-              <Sizing>FitProportional</Sizing>
-              <Left>10.30048in</Left>
-              <Height>0.70708in</Height>
-              <Width>2.48833in</Width>
-              <ZIndex>1</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-              </Style>
-            </Image>
           </ReportItems>
           <Style>
             <Border>

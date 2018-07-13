@@ -186,6 +186,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <exception cref="Exception"></exception>
         private string addRevolvingLoan(LoanViewModel model)
         {
+            var application = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
             var revolvingLoanInput = model.revolvingLoanInput;
 
             var overdraftLimit = from a in context.TBL_LOAN_REVOLVING
@@ -223,7 +224,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = model.customerId,
                 PRODUCTID = model.productId,
                 CASAACCOUNTID = model.casaAccountId,
-                BRANCHID = model.branchId,
+                BRANCHID = application.BRANCHID, //model.branchId,
                 CURRENCYID = (short)model.exchangeRate,
                 EXCHANGERATE = currentExchangeRate,
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
@@ -263,7 +264,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanBookingAdded,
                 STAFFID = model.createdBy,
-                BRANCHID = (short)model.branchId,
+                BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Applied for loan with reference number: {loanReferenceNumber}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
@@ -382,8 +383,8 @@ namespace FintrakBanking.Repositories.Credit
         /// <exception cref="Exception"></exception>
         private string addContingentLiability(LoanViewModel entity)
         {
+            var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
             var contingentLoanInput = entity.contingentLoanInput;
-
             var contingentAmount = from a in context.TBL_LOAN_CONTINGENT
                                    where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
                                    let sumAmount = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.CONTINGENTAMOUNT)
@@ -421,7 +422,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = entity.customerId,
                 PRODUCTID = entity.productId,
                 CASAACCOUNTID = entity.casaAccountId,
-                BRANCHID = entity.branchId,
+                BRANCHID = application .BRANCHID, //entity.branchId,
                 CURRENCYID = contingentLoanInput.currencyId,
                 EXCHANGERATE = currentExchangeRate,
                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
@@ -455,7 +456,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanBookingAdded,
                 STAFFID = entity.createdBy,
-                BRANCHID = (short)entity.branchId,
+                BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Applied for loan with reference number: {loanReferenceNumber}",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
@@ -570,6 +571,7 @@ namespace FintrakBanking.Repositories.Credit
         /// </exception>
         private string AddTermLoan(LoanViewModel entity)
         {
+            var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
             if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
                 throw new ConditionNotMetException("Loan terminal date should be more than effective date");
 
@@ -628,7 +630,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTID = (short)entity.productId,
                 COMPANYID = entity.companyId,
                 CASAACCOUNTID = entity.casaAccountId,
-                BRANCHID = entity.branchId,
+                BRANCHID = application.BRANCHID, //entity.branchId,
                 SHOULD_DISBURSE = entity.loanScheduleInput.shouldDisburse,
 
 
@@ -805,6 +807,7 @@ namespace FintrakBanking.Repositories.Credit
         /// </exception>
         private string AddCommercialLoan(LoanViewModel entity)
         {
+            var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
 
@@ -860,7 +863,7 @@ namespace FintrakBanking.Repositories.Credit
                 COMPANYID = entity.companyId,
                 CASAACCOUNTID = entity.casaAccountId,
                 CASAACCOUNTID2 = entity.casaAccountId2,
-                BRANCHID = entity.branchId,
+                BRANCHID = application.BRANCHID, //entity.branchId,
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,
                 RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
                 RELATIONSHIPMANAGERID = entity.relationshipManagerId,
@@ -3994,6 +3997,52 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in data)
             {
+                var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                switch (item.productTypeId)
+                {
+                    case (short)LoanProductTypeEnum.TermLoan:
+                        decimal customerAvailableAmount = 0;
+                        foreach (var loan in loans)
+                        {
+                            if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount = customerAvailableAmount + loan.PRINCIPALAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount;
+                        break;
+                    case (short)LoanProductTypeEnum.CommercialPaper:
+                        decimal customerAvailableAmount2 = 0;
+                        foreach (var loan in loans)
+                        {
+                            if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount2 = customerAvailableAmount2 + loan.PRINCIPALAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount2;
+                        break;
+                    case (short)LoanProductTypeEnum.SelfLiquidating:
+                        decimal customerAvailableAmount3 = 0;
+                        foreach (var loan in loans)
+                        {
+                            if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount3 = customerAvailableAmount3 + loan.PRINCIPALAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount3;
+                        break;
+                    case (short)LoanProductTypeEnum.RevolvingLoan:
+                        decimal overdraftBal = 0;
+                        foreach (var overdraft in overdrafts)
+                        {
+                            if (overdraft.OVERDRAFTLIMIT > 0) overdraftBal = overdraftBal + overdraft.OVERDRAFTLIMIT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - overdraftBal;
+                        break;
+                    case (short)LoanProductTypeEnum.ContingentLiability:
+                        decimal contingentBal = 0;
+                        foreach (var contingent in contingents)
+                        {
+                            if (contingent.CONTINGENTAMOUNT > 0) contingentBal = contingentBal + contingent.CONTINGENTAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - contingentBal;
+                        break;
+                }
                 var companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION
                                           where a.CUSTOMERID == item.customerId
                                           select new CustomerCompanyInfomationViewModels

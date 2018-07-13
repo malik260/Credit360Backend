@@ -410,8 +410,13 @@ namespace FintrakBanking.Repositories.Credit
         public XDSSearchResult GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
             XDSSearchResult resultData; // = new XDSSearchResult();
-            var dateOfBirth = Convert.ToDateTime(searchInfoList.dateOfBirth);
-            searchInfoList.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
+
+            if (searchInfoList.dateOfBirth != string.Empty && searchInfoList.dateOfBirth != null)
+            {
+                var dateOfBirth = Convert.ToDateTime(searchInfoList.dateOfBirth);
+                searchInfoList.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
+            }
+
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfoList.creditBureauId);
             if (creditBureau != null)
             {

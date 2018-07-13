@@ -16,17 +16,17 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             if (!IsPostBack)
             {
                 ReportParameter data = new ReportParameter("selectedDate", DateTime.Now.ToString());
-                StartDate.Text = Request.QueryString["startDate"];
-                EndDate.Text = Request.QueryString["endDate"];
-                PostedByStaffId.Text = Request.QueryString["staffId"];
-                CompanyId.Text = Request.QueryString["companyId"];
-                BranchId.Text = Request.QueryString["branchId"];
-                ExcludeSystem.Text = Request.QueryString["excludeSystem"];
+                StartDate.Text = Request.QueryString["StartDate"];
+                EndDate.Text = Request.QueryString["EndDate"];
+                PostedByStaffId.Text = Request.QueryString["PostedByStaffId"];
+                glAccountId.Text = Request.QueryString["glAccountId"];
+                branchId.Text = Request.QueryString["branchId"];
+                companyId.Text = Request.QueryString["companyId"];
 
                 ReportParameter sDate = new ReportParameter("StartDate", StartDate.Text);
                 ReportParameter eDate = new ReportParameter("EndDate", EndDate.Text);
 
-                ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+               // ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                 ReportViewer.LocalReport.Refresh();
 
             }

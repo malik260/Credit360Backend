@@ -552,6 +552,13 @@
     <Compile Include="Reports\ReportViews\OverDraft.aspx.designer.cs">
       <DependentUpon>OverDraft.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\PostedTransactions.aspx.cs">
+      <DependentUpon>PostedTransactions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\PostedTransactions.aspx.designer.cs">
+      <DependentUpon>PostedTransactions.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\Repayment.aspx.cs">
       <DependentUpon>Repayment.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -813,6 +820,7 @@
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
+    <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
@@ -1046,7 +1054,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
-    <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
@@ -1076,6 +1084,7 @@
     <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentDeferralForMCC.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanScheduleSimulation.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
@@ -1084,6 +1093,7 @@
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\SLAMonitoringReport.rdlc" />

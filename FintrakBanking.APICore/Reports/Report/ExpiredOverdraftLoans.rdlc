@@ -80,41 +80,6 @@
     <ReportSection>
       <Body>
         <ReportItems>
-          <Textbox Name="Textbox7">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Expired Overdraft Facilities</Value>
-                    <Style>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>12pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Center</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>0.22917in</Top>
-            <Left>3.42188in</Left>
-            <Height>0.25in</Height>
-            <Width>3.94792in</Width>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Textbox Name="Textbox8">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -132,11 +97,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox2</rd:DefaultName>
-            <Top>0.60417in</Top>
+            <Top>0.10417in</Top>
             <Left>1.34548in</Left>
             <Height>0.25in</Height>
             <Width>0.91667in</Width>
-            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -164,11 +128,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox3</rd:DefaultName>
-            <Top>0.60417in</Top>
+            <Top>0.10417in</Top>
             <Left>1.12673in</Left>
             <Height>0.25in</Height>
             <Width>0.16319in</Width>
-            <ZIndex>2</ZIndex>
+            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -197,11 +161,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>0.60417in</Top>
+            <Top>0.10417in</Top>
             <Left>0.07117in</Left>
             <Height>0.25in</Height>
             <Width>1in</Width>
-            <ZIndex>3</ZIndex>
+            <ZIndex>2</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -993,11 +957,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OverdraftLoanDetails</DataSetName>
-            <Top>1.09375in</Top>
+            <Top>0.59375in</Top>
             <Left>0.07117in</Left>
             <Height>1.01042in</Height>
             <Width>10.26089in</Width>
-            <ZIndex>4</ZIndex>
+            <ZIndex>3</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1005,7 +969,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>2.65625in</Height>
+        <Height>1.875in</Height>
         <Style />
       </Body>
       <Width>10.43623in</Width>
@@ -1015,18 +979,41 @@
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
-            <Image Name="HeaderLlogo">
-              <Source>Embedded</Source>
-              <Value>firstbank</Value>
-              <Sizing>FitProportional</Sizing>
-              <Height>1.08208in</Height>
-              <Width>3.51958in</Width>
+            <Textbox Name="Textbox7">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Expired Overdraft Facilities</Value>
+                      <Style>
+                        <FontFamily>Garamond</FontFamily>
+                        <FontSize>12pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox1</rd:DefaultName>
+              <Top>0.36333in</Top>
+              <Left>3.39871in</Left>
+              <Height>0.25in</Height>
+              <Width>3.94792in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>
                 </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
               </Style>
-            </Image>
+            </Textbox>
           </ReportItems>
           <Style>
             <Border>
