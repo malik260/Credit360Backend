@@ -4158,6 +4158,8 @@ namespace FintrakBanking.Repositories.Credit
                                  nplDate = a.NPLDATE,
                                  createdBy = a.CREATEDBY,
                                  dateTimeCreated = DateTime.Today,
+                                 revolvingTypeId = a.REVOLVINGTYPEID,
+                                 productAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
 
                              }).FirstOrDefault();
 
@@ -4180,7 +4182,7 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.CURRENCYID = model.currencyId;
                 addOverDraft.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
                 addOverDraft.EXCHANGERATE = model.exchangeRate;
-                addOverDraft.LOANREFERENCENUMBER = loanReferenceNumber;
+                addOverDraft.LOANREFERENCENUMBER = loanReferenceNumber + "005";
                 addOverDraft.RELATED_LOAN_REFERENCE_NUMBER = model.loanReferenceNumber;
                 addOverDraft.SUBSECTORID = model.subSectorId;
                 addOverDraft.RELATIONSHIPOFFICERID = model.relationshipOfficerId;
@@ -4209,9 +4211,12 @@ namespace FintrakBanking.Repositories.Credit
                 addOverDraft.DAYCOUNTCONVENTIONID = (short)model.dayCountConventionId;
                 addOverDraft.INT_PRUDENT_GUIDELINE_STATUSID = 1; //model.internalPrudentialGuidelineStatusId;
                 addOverDraft.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //model.externalPrudentialGuidelineStatusId;
+                addOverDraft.USER_PRUDENTIAL_GUIDE_STATUSID = 1;
                 addOverDraft.NPLDATE = model.nplDate;
                 addOverDraft.CREATEDBY = model.createdBy;
                 addOverDraft.DATETIMECREATED = model.dateTimeCreated;
+                addOverDraft.REVOLVINGTYPEID = model.revolvingTypeId;
+
 
                 overDraft.Add(addOverDraft);
                 // }
@@ -4220,19 +4225,47 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    if (validate.ODTopupValidation(loanId, generalSetup.GetApplicationDate(), amount))
+
+                    var data1 = context.TBL_LOAN_REVOLVING.Find(loanId);
+
+                    if (data1.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
                     {
+                        if (data1.MATURITYDATE.Date < systemDate.Date)
+                        {
+                            throw new Exception("The tenor for the top-up amount is not expected to exceed the expiry date of the current limit");
+                        }
                         var loan = model;
+                        var reviewDate = data1.BOOKINGDATE.AddMonths(1);
                         var data = new OverDraftTopUpAndRenewViewModel
                         {
-                            sanctionLimit = loan.overdraftLimit.ToString(),
-                            sanctionReferenceNumber = loan.serialNumber,
+                            sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
+                            sanctionReferenceNumber = loan.loanReferenceNumber,
                             accountNumber = loan.productAccountNumber,
-                            expiryDate = loan.maturityDate.ToString(),
-                            reviewedDate = loan.effectiveDate.ToString()
+                            expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
+                            reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                            createdDate= systemDate,
                         };
-                        finacle.OverDraftTopUp(data);
+                        var topResult =  finacle.OverDraftTopUp(data);
+                        //return true;
                     }
+                    else
+                    {
+                        throw new Exception("Limit has experied or is inactive");
+                    }
+                    //var resultdata = validate.ODTopupValidation(loanId, systemDate, amount);
+                    //if (resultdata)
+                    //{
+                    //    var loan = model;
+                    //    var data = new OverDraftTopUpAndRenewViewModel
+                    //    {
+                    //        sanctionLimit = loan.overdraftLimit.ToString(),
+                    //        sanctionReferenceNumber = loan.serialNumber,
+                    //        accountNumber = loan.productAccountNumber,
+                    //        expiryDate = loan.maturityDate.ToString(),
+                    //        reviewedDate = loan.effectiveDate.ToString()
+                    //    };
+                    //    finacle.OverDraftTopUp(data);
+                    //}
 
                 }
                 var result = context.SaveChanges() > 0;
@@ -5054,6 +5087,7 @@ namespace FintrakBanking.Repositories.Credit
                              nplDate = a.NPLDATE,
                              createdBy = a.CREATEDBY,
                              dateTimeCreated = a.DATETIMECREATED,
+                             revolvingTypeId = a.REVOLVINGTYPEID,
 
                          }).FirstOrDefault();
 
@@ -5111,6 +5145,7 @@ namespace FintrakBanking.Repositories.Credit
             addOverDraftArchive.NPLDATE = model.nplDate;
             addOverDraftArchive.CREATEDBY = model.createdBy;
             addOverDraftArchive.DATETIMECREATED = model.dateTimeCreated;
+            addOverDraftArchive.REVOLVINGTYPEID = model.revolvingTypeId;
 
             overDraftArchive.Add(addOverDraftArchive);
             //}
@@ -9770,8 +9805,8 @@ namespace FintrakBanking.Repositories.Credit
                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
-                                     join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                                     //join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                      //|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                                      && atrail.OPERATIONID == op.OPERATIONTYPEID
                                      && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
@@ -9797,7 +9832,7 @@ namespace FintrakBanking.Repositories.Credit
                                          maturityDate = ln.MATURITYDATE,
                                          bookingDate = ln.BOOKINGDATE,
                                          approvalStatusId = op.APPROVALSTATUSID,
-                                         approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                        approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                          approvedBy = (int)ln.APPROVEDBY,
                                          approverComment = ln.APPROVERCOMMENT,
                                          dateApproved = ln.DATEAPPROVED,
@@ -9814,8 +9849,8 @@ namespace FintrakBanking.Repositories.Credit
                                          dischargeLetter = ln.DISCHARGELETTER,
                                          suspendInterest = ln.SUSPENDINTEREST,
                                          customerCode = cu.CUSTOMERCODE,
-                                         productAccountNumber = ch.ACCOUNTCODE,
-                                         productAccountName = ch.ACCOUNTNAME,
+                                         //productAccountNumber = ch.ACCOUNTCODE,
+                                         //productAccountName = ch.ACCOUNTNAME,
                                          loanTypeName = at.LOANAPPLICATIONTYPENAME,
                                          customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
                                          currencyId = ln.CURRENCYID,
@@ -9825,7 +9860,7 @@ namespace FintrakBanking.Repositories.Credit
                                          productName = pr.PRODUCTNAME,
                                          comment = "",
                                          operationTypeId = op.OPERATIONTYPEID,
-                                         operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
+                                         operationTypeName = tt.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
                                          newEffectiveDate = op.EFFECTIVEDATE,
                                          reviewDetails = op.REVIEWDETAILS,
                                      }).ToList();
@@ -12348,8 +12383,27 @@ namespace FintrakBanking.Repositories.Credit
                                                   where p.LOANAPPLICATIONDETAILID == loanAplicationDetailId
                                                   select p).SingleOrDefault();
 
-            result.PROPOSEDTENOR = result.PROPOSEDTENOR + newTenor;
+            
             result.APPROVEDTENOR = result.APPROVEDTENOR + newTenor;
+            if (result.EXPIRYDATE != null)
+            {
+                var expiryDate = (DateTime)result.EXPIRYDATE;
+                result.EXPIRYDATE = expiryDate.AddDays(newTenor);
+
+                //List<TBL_LOAN> loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanAplicationDetailId).ToList();
+                //if(loans.Count > 0)
+                //{
+                //    foreach(var loan in loans)
+                //    {
+                //        var newMaturitydate = loan.MATURITYDATE;
+
+                //        if(newMaturitydate.AddDays(newTenor) <= result.EXPIRYDATE)
+                //        {
+                //            loan.MATURITYDATE = newMaturitydate.AddDays(newTenor);
+                //        }
+                //    }
+                //}
+            }
 
             return context.SaveChanges() > 0;
         }
@@ -12528,13 +12582,15 @@ namespace FintrakBanking.Repositories.Credit
                            approvedAmount = a.APPROVEDAMOUNT,
                            approvedInterestRate = a.APPROVEDINTERESTRATE,
                            approvedProductName = a.TBL_PRODUCT.PRODUCTNAME,
-                           numberofTranchesBooked = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking).Count(),
-                           numberofrunningTranches = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Count(),
                            customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
                            customerCode = c.CUSTOMERCODE,
+                           approvedTenor = a.APPROVEDTENOR,
+                           //lineEffectiveDate =  (DateTime)a.EXPIRYDATE.Value.AddDays(- (int)a.APPROVEDTENOR) ,
+                           expiryDate = (DateTime)a.EXPIRYDATE,
+                           //tenorLeft = a.APPROVEDTENOR - (int)a.EXPIRYDATE.Value.AddDays(-(int)a.APPROVEDTENOR).Day
 
                        };
-
+            var v = data;
             return data.ToList();
         }
 
@@ -12569,8 +12625,8 @@ namespace FintrakBanking.Repositories.Credit
                            approvedAmount = a.APPROVEDAMOUNT,
                            approvedInterestRate = a.APPROVEDINTERESTRATE,
                            approvedProductName = a.TBL_PRODUCT.PRODUCTNAME,
-                           numberofTranchesBooked = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking).Count(),
-                           numberofrunningTranches = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Count(),
+                           //numberofTranchesBooked = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking).Count(),
+                          // numberofrunningTranches = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID && x.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Count(),
                            // runningTranches = GetMaturedCommercialLoans(companyId,a.LOANAPPLICATIONDETAILID).ToList()
                            //effectiveDate = ln.TBL_LOAN_APPLICATION_DETAIL.EFFECTIVEDATE ?? null,
                            // maturityDate = ln.EFFECTIVEDATE.Value.AddDays((int)ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR),
@@ -12582,7 +12638,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID)
         {
             var data = (from ln in context.TBL_LOAN
-                        where ln.LOANAPPLICATIONDETAILID == loanApplicationDetailID
+                        //where ln.LOANAPPLICATIONDETAILID == loanApplicationDetailID
                         ////&& ln.MATURITYDATE < DateTime.Now
                         ////&& ln.LOANSTATUSID == (short)LoanStatusEnum.Active || ln.LOANSTATUSID == (short)LoanStatusEnum.Completed
                         ////&& ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking

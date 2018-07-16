@@ -760,20 +760,6 @@
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
-        <Image Name="HeaderLlogo">
-          <Source>Embedded</Source>
-          <Value>firstbank</Value>
-          <Sizing>FitProportional</Sizing>
-          <Top>0.22917in</Top>
-          <Left>10.53322in</Left>
-          <Height>0.53347in</Height>
-          <Width>1.95708in</Width>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </Image>
         <Textbox Name="Textbox8">
           <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
@@ -799,7 +785,6 @@
           <Left>4.28844in</Left>
           <Height>0.25in</Height>
           <Width>3.94792in</Width>
-          <ZIndex>1</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>

@@ -6497,13 +6497,13 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_PRODUCT>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WithRequired(e => e.TBL_PRODUCT)
-                .HasForeignKey(e => e.APPROVEDPRODUCTID)
+                .HasForeignKey(e => e.PROPOSEDPRODUCTID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL1)
                 .WithRequired(e => e.TBL_PRODUCT1)
-                .HasForeignKey(e => e.PROPOSEDPRODUCTID)
+                .HasForeignKey(e => e.APPROVEDPRODUCTID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT>()

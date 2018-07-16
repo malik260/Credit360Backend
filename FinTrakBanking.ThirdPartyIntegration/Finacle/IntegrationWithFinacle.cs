@@ -100,13 +100,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             model.apiUrl = @"api/OverDraft/TopUp";
 
-            if (LogOverDraftTopUpAndRenew(model))
+            //if (LogOverDraftTopUpAndRenew(model))
                 Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
+                    LogOverDraftTopUpAndRenew(model);
                     throw new Exception(result.APIResponse.message);
                 }
                 else
@@ -117,6 +118,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
+                LogOverDraftTopUpAndRenew(model);
                 throw new Exception(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
@@ -558,10 +560,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                     ACCOUNTNUMBER = model.accountNumber,
                     APIURL = model.apiUrl,
-                    DATETIMECREATED = DateTime.Now,
+                    DATETIMECREATED = model.createdDate,
                     EXPIRYDATE = model.expiryDate,
                     SANCTIONLIMIT = model.sanctionLimit,
-                    SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber
+                    SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber,
+                    CONSUMED= true,
+                    DATETIMECONSUMED = DateTime.Now,
+
                 };
                 context.TBL_CUSTOM_OVERDRAFTEXTEND.Add(data);
                 result = context.SaveChanges() > 0;

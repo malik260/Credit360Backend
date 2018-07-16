@@ -45,6 +45,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                           //from j in jj.DefaultIfEmpty()
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
                                   a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                       && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       select new OfferLetterViewModel
                                       {
                                           companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x=>x.NAME).FirstOrDefault(),
@@ -80,6 +81,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                  join b in context.TBL_STAFF on a.REQUESTSTAFFID equals b.STAFFID
                                  join c in context.TBL_LMSR_APPLICATION on a.TARGETID equals c.LOANAPPLICATIONID
                                  where c.APPLICATIONREFERENCENUMBER == applicationRefNumber && a.FROMAPPROVALLEVELID != null
+                                  && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                  orderby (a.APPROVALTRAILID)
                                  select new SignatoryViewModel()
                                  {
@@ -112,6 +114,7 @@ namespace FintrakBanking.ReportObjects.Credit
                 var collateral = (from x in context.TBL_LMSR_APPLICATION_COLLATRL2
                                   join b in context.TBL_LMSR_APPLICATION on x.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                                   where b.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                   && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                   select new LoanApplicationCollateralViewModel
                                   {
                                       collateralDetail = x.COLLATERALDETAIL,
@@ -147,6 +150,7 @@ namespace FintrakBanking.ReportObjects.Credit
                             join d in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                             join e in context.TBL_PRODUCT on b.OPERATIONID equals e.PRODUCTID
                             where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                             && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             select new ProductFeeViewModel()
                             {
                                 feeName = c.CHARGEFEENAME,
@@ -190,6 +194,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                  //  from h in hh.DefaultIfEmpty()
                                    where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
                                          b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
                                    select new OfferLetterDetailViewModel()
                                    {
                                        productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.PRODUCTID).PRODUCTNAME,
@@ -239,6 +244,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                           join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                           join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
+                                           && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                           select new OfferLetterConditionPrecidentViewModel()
                                           {
                                               conditionPrecident = b.CONDITION,
@@ -260,6 +266,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                            join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                            join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                            where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == true && b.ISEXTERNAL == true
+                                            && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                            select new OfferLetterConditionPrecidentViewModel()
                                            {
                                                conditionPrecident = b.CONDITION,
@@ -287,6 +294,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                   from c in cg.DefaultIfEmpty()
                                   where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
                                   a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                   && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                   select new OfferLetterViewModel
                                   {
                                       companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
@@ -351,6 +359,7 @@ namespace FintrakBanking.ReportObjects.Credit
             var conditionPrecedent = (from a in context.TBL_LMSR_APPLICATION
                                       join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISEXTERNAL == true
+                                       && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       select new OfferLetterConditionPrecidentViewModel()
                                       {
                                           conditionPrecident = b.CONDITION,

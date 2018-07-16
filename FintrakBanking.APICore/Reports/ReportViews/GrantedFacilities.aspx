@@ -29,24 +29,24 @@
                   </localreport>
            
         </rsweb:ReportViewer>
-             <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="FinanceTransaction" TypeName="FintrakBanking.ReportObjects.ReportingObjects.FinanceRepotObject">
-                 <SelectParameters>
-                     <asp:ControlParameter ControlID="EndDate" Name="endDate" PropertyName="Text" Type="DateTime" />
-                     <asp:ControlParameter ControlID="StartDate" Name="startDate" PropertyName="Text" Type="DateTime" />
-                     <asp:ControlParameter ControlID="PostedByStaffId" Name="staffId" PropertyName="Text" Type="Int32" />
-                     <asp:ControlParameter ControlID="CompanyId" Name="companyId" PropertyName="Text" Type="Int32" />
-                     <asp:ControlParameter ControlID="BranchId" Name="branchId" PropertyName="Text" Type="Int32" />
-                     <asp:ControlParameter ControlID="ExcludeSystem" Name="excludeSystem" PropertyName="Text" Type="Boolean" />
-                 </SelectParameters>
+             <asp:ObjectDataSource ID="odsTransaction" runat="server" SelectMethod="FinanceTransaction" TypeName="FintrakBanking.ReportObjects.ReportingObjects.FinanceRepotObject">
+                <SelectParameters>
+                    <asp:ControlParameter ControlID="StartDate" Name="startDate" PropertyName="Text" Type="DateTime" />
+                    <asp:ControlParameter ControlID="EndDate" Name="endDate" PropertyName="Text" Type="DateTime" />
+                    <asp:ControlParameter ControlID="companyId" Name="companyId" PropertyName="Text" Type="Int32" />
+                    <asp:ControlParameter ControlID="branchId" Name="branchId" PropertyName="Text" Type="Int32" />
+                    <asp:ControlParameter ControlID="glAccountId" Name="glAccountId" PropertyName="Text" Type="Int32" />
+                    <asp:ControlParameter ControlID="PostedByStaffId" Name="PostedByStaffId" PropertyName="Text" Type="Int32" />
+                </SelectParameters>
              </asp:ObjectDataSource>
 
-             <asp:Label ID="StartDate" runat="server" Visible="false"  ></asp:Label>
+        </div>
+        <asp:Label ID="StartDate" runat="server" Visible="false"  ></asp:Label>
         <asp:Label ID="EndDate" runat="server"  Visible="false" ></asp:Label>
         <asp:Label ID="PostedByStaffId" runat="server"  Visible="false" ></asp:Label>
-        <asp:Label ID="CompanyId" runat="server"  Visible="false" ></asp:Label>
-        <asp:Label ID="BranchId" runat="server"  Visible="False" ></asp:Label>
-        <asp:Label ID="ExcludeSystem" runat="server"  Visible="False" ></asp:Label>
-        </div>
+        <asp:Label ID="glAccountId" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="branchId" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>
     </form> 
 </body>
 </html>

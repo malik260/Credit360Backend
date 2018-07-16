@@ -119,6 +119,24 @@ namespace FintrakBanking.ViewModels.Setups.General
     }
 
 
+    public class ProductLiteViewModel : GeneralEntity
+    {
+        public bool? requireCasaAccount;
+        public int productId { get; set; }
+        public short productTypeId { get; set; }
+        public string productTypeName { get; set; }
+        public string productGroupName { get; set; }
+        public short productCategoryId { get; set; }
+        public string productCategoryName { get; set; }
+        public short? productClassId { get; set; }
+        public string productClassName { get; set; }
+        public int productGroupId { get; set; }
+        public string productCode { get; set; }
+        public string productName { get; set; }
+        public short currencyId { get; set; }
+        public short productClassProcessId { get; set; }
+    }
+
 
     public class ProductCurrencyViewModel : GeneralEntity
     {

@@ -275,8 +275,15 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class SearchViewModel
     {
+        public int performanceTypeId { get; set; }
         public int productTypeId { get; set; }
         public string searchString { get; set; }
+    }
+
+    public class CommitteFilterViewModel
+    {
+        public int? applicationTypeId { get; set; }
+        public int staffId { get; set; }
     }
 
     public class jobLoanApplicationDetailViewModel : LoanApplicationViewModel
@@ -539,5 +546,19 @@ namespace FintrakBanking.ViewModels.Credit
         public float? feeRateConcession { get; set; }
     }
 
-    
+    public class CreditApplicationViewModel
+    {
+        public int loanApplicationId { get; set; }
+        public string applicationType { get; set; }
+        public DateTime applicationDate { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerName { get { return this.firstName + "" + this.middleName + "" + this.lastName; } }
+        public string customerGroupName { get; set; }
+        public List<LoanApplicationDatailViewModel> details { get; set; }
+        public string customerCode { get; set; }
+    }
+
 }

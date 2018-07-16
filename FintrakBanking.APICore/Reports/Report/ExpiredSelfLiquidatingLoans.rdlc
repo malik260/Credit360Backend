@@ -1115,27 +1115,13 @@
         <Height>2.07292in</Height>
         <Style />
       </Body>
-      <Width>11.19667in</Width>
+      <Width>10.33209in</Width>
       <Page>
         <PageHeader>
-          <Height>1in</Height>
+          <Height>1.01389in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
-            <Image Name="HeaderLogo">
-              <Source>Embedded</Source>
-              <Value>firstbanknewlogo</Value>
-              <Sizing>FitProportional</Sizing>
-              <Top>0.01389in</Top>
-              <Left>9.23833in</Left>
-              <Height>0.95833in</Height>
-              <Width>0.95833in</Width>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-              </Style>
-            </Image>
             <Textbox Name="Textbox30">
               <CanGrow>true</CanGrow>
               <KeepTogether>true</KeepTogether>
@@ -1156,11 +1142,10 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox30</rd:DefaultName>
-              <Top>0.3425in</Top>
+              <Top>0.35639in</Top>
               <Left>2.81125in</Left>
               <Height>0.28125in</Height>
               <Width>4.67708in</Width>
-              <ZIndex>1</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>

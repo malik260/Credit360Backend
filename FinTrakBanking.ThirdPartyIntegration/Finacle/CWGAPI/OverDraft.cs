@@ -154,6 +154,9 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
+
+                model.sanctionLevel = "003";
+                model.sanctionAuthorizer = "999";
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;

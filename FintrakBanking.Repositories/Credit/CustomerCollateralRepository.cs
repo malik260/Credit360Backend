@@ -1812,7 +1812,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease()
         {
-            return context.TBL_CUSTOMER//.Where(x => x.CustomerId == customerId)
+            var pending = context.TBL_CUSTOMER//.Where(x => x.CustomerId == customerId)
                 .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
                 .Join(context.TBL_LOAN_APPLICATION, cc => cc.Collateral.CUSTOMERID, a => a.CUSTOMERID, (cc, a) => new { CustomerCollateral = cc, Application = a })
                 .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
@@ -1839,10 +1839,14 @@ namespace FintrakBanking.Repositories.Credit
                     applicationReferenceNumber = x.CollateralApplication.Application.APPLICATIONREFERENCENUMBER,
                     applicationDate = x.CollateralApplication.Application.APPLICATIONDATE,
                     interestRate = x.CollateralApplication.Application.INTERESTRATE,
-                    loanInformation = x.CollateralApplication.Application.LOANINFORMATION,
+                    loanInformation = ""//x.CollateralApplication.Application.LOANINFORMATION,
                 })
                 .Where(x => x.isReleased == false && x.releaseApprovalStatusId == (int)ApprovalStatusEnum.Processing)
                 .Distinct();
+
+            var test = pending.ToList();
+
+            return pending.ToList();
         }
 
         public IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId)

@@ -13,6 +13,8 @@ using FintrakBanking.Interfaces.WorkFlow;
 using System.Data.Entity.Validation;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Data.Entity;
+using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
+using FintrakBanking.Entities.StagingModels;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -24,6 +26,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository generalSetup;
         private ILoanOperationsRepository loanOp;
+       private FinTrakBankingStagingContext stagingContext;
 
         public StaffAccountHistoryRepository(
             FinTrakBankingContext context,
@@ -31,7 +34,8 @@ namespace FintrakBanking.Repositories.Credit
             IAuditTrailRepository auditTrail,
             IGeneralSetupRepository generalSetup,
             ILoanOperationsRepository loanOp,
-            IWorkflow workflow)
+            FinTrakBankingStagingContext _stagingContext,
+        IWorkflow workflow)
         {
             this.context = context;
             this.genSetup = genSetup;
@@ -39,6 +43,7 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = workflow;
             this.generalSetup = generalSetup;
             this.loanOp = loanOp;
+            this.stagingContext =_stagingContext;
         }
 
 
@@ -55,7 +60,7 @@ namespace FintrakBanking.Repositories.Credit
                 productType = sa.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                 endDate = sa.ENDDATE,
                 startDate = sa.STARTDATE,
-                productTypeId = sa.PRODUCTTYPEID,
+                accountTypeId = sa.ACCOUNTTYPEID,
                 staffId = sa.STAFFID,
                 newRMStaffId = sa.NEWSTAFFID,
             }).ToList();
@@ -74,16 +79,27 @@ namespace FintrakBanking.Repositories.Credit
         public bool AddStaffAccountHistory(StaffAccountHistoryViewModel entity)
         {
             var checkStartDate = context.TBL_STAFF_ACCOUNT_HISTORY.Where(c => c.NEWSTAFFID == entity.currentRMStaffId
-            && c.PRODUCTTYPEID == entity.productTypeId
+            && c.ACCOUNTTYPEID == entity.accountTypeId
             && c.TARGETID == entity.targetId);
             if (checkStartDate.Any())
             {
-                entity.startDate = checkStartDate.FirstOrDefault().ENDDATE;
+                entity.startDate = checkStartDate.OrderByDescending(x => x.ENDDATE).FirstOrDefault().ENDDATE;
             }
             else
             {
-                var getLoan = GetloanDetails(entity.targetId, entity.staffId, entity.productTypeId);
+                var getLoan = GetloanDetails(entity.targetId, entity.staffId, entity.accountTypeId);
+
                 entity.startDate = getLoan.effectiveDate;
+                entity.field1 = getLoan.field1;
+                entity.field2 = getLoan.field2;
+                entity.field3 = getLoan.field3;
+                entity.field4 = getLoan.field4;
+                entity.field5 = getLoan.field5;
+                entity.field6 = getLoan.field6;
+                entity.field7 = getLoan.field7;
+                entity.field8 = getLoan.field8;
+                entity.field9 = getLoan.field9;
+                entity.field10 = getLoan.field10;
             }
 
             var data = new TBL_STAFF_ACCOUNT_HISTORY
@@ -97,7 +113,17 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 ENDDATE = entity.endDate,
                 STARTDATE = entity.startDate,
-                PRODUCTTYPEID = entity.productTypeId
+                ACCOUNTTYPEID = entity.accountTypeId,
+                FIELD1=entity.field1,
+                FIELD2=entity.field2,
+                FIELD3=entity.field3,
+                FIELD4=entity.field4,
+                FIELD5=entity.field5,
+                FIELD6=entity.field6,
+                FIELD7=entity.field7,
+                FIELD8=entity.field8,
+                FIELD9=entity.field9,
+                FIELD10=entity.field10,
 
             };
 
@@ -174,7 +200,7 @@ namespace FintrakBanking.Repositories.Credit
                                 newRMStaffId = ln.NEWSTAFFID,
                                 currentRMStaffId = ln.STAFFID,
                                 targetId = ln.TARGETID,
-                                productTypeId = ln.PRODUCTTYPEID
+                                accountTypeId = ln.ACCOUNTTYPEID
                             }).ToList();
 
 
@@ -203,7 +229,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var staff = context.TBL_STAFF_ACCOUNT_HISTORY.Where(s => s.STAFFACCOUNTHISTORYID == entity.staffAccountHistoryId).FirstOrDefault();
 
-                data = GetSelectedLoanDetails(entity.companyId, staff.TARGETID, entity.productTypeId);
+                data = GetSelectedLoanDetails(entity.companyId, staff.TARGETID, entity.accountTypeId);
                  
                 data.reasonForChange = staff.REASONFORCHANGE;
                 data.newRMStaffName = staff.TBL_STAFF1.LASTNAME + " " + staff.TBL_STAFF1.FIRSTNAME + " " + staff.TBL_STAFF1.MIDDLENAME;
@@ -214,20 +240,20 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public StaffMISHistoryViewModel GetSelectedLoanDetails(int companyId, int loanId, int productTypeId)
+        public StaffMISHistoryViewModel GetSelectedLoanDetails(int companyId, int loanId, int accountTypeId)
         {
             StaffMISHistoryViewModel loan = null;
-            if (productTypeId == 1)
+            if (accountTypeId == 1)
             {
                 loan = GetRunningTeamLoans(companyId, loanId);
             }
-            if(productTypeId == 2 || productTypeId == 6)
+            if(accountTypeId == 2)
             {
                 loan = GetRunningRevolvingLoans(companyId, loanId);
             }
-            if (productTypeId == 3 || productTypeId == 9)
+            if (accountTypeId == 3 )
             {
-                loan = GetRunningRevolvingLoans(companyId, loanId);
+                loan = GetRunningContingentLiability(companyId, loanId);
             }
 
             return loan;
@@ -250,18 +276,19 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if(entity.approvalStatusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    switch (entity.productTypeId)
+                    switch (entity.accountTypeId)
                     {
-                        case ((int)LoanProductTypeEnum.TermLoan): TeamLoan(entity); break;
-                        case ((int)LoanProductTypeEnum.RevolvingLoan): RevolvingLoan(entity); break;
+                        case ((int) StaffAccountHistoryTypeEnum.TermOrDisbusrsedFacility): TeamLoan(entity); break;
+                        case ((int)StaffAccountHistoryTypeEnum.RevolvingFacility): RevolvingLoan(entity); break;
+                        case ((int)StaffAccountHistoryTypeEnum.ContingentLiability): ContingentLiability(entity); break;
                     }
 
-                    var data = context.TBL_STAFF_ACCOUNT_HISTORY.FirstOrDefault(sa => sa.APPROVALSTATUSID == entity.approvalStatusId);
+                    var data = context.TBL_STAFF_ACCOUNT_HISTORY.FirstOrDefault(sa => sa.STAFFACCOUNTHISTORYID == entity.staffAccountHistoryId);
                     data.APPROVALSTATUSID = entity.approvalStatusId;
                 }
                 if (entity.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                 {
-                    var data = context.TBL_STAFF_ACCOUNT_HISTORY.FirstOrDefault(sa => sa.APPROVALSTATUSID == entity.approvalStatusId);
+                    var data = context.TBL_STAFF_ACCOUNT_HISTORY.FirstOrDefault(sa => sa.STAFFACCOUNTHISTORYID == entity.staffAccountHistoryId );
                     data.APPROVALSTATUSID = entity.approvalStatusId;
                 }
             }
@@ -270,11 +297,6 @@ namespace FintrakBanking.Repositories.Credit
                 var data = context.TBL_STAFF_ACCOUNT_HISTORY.FirstOrDefault(sa => sa.APPROVALSTATUSID == entity.approvalStatusId);
                 data.APPROVALSTATUSID = entity.approvalStatusId;
             }
-
-
-
-
-
 
                 return context.SaveChanges() > 0;
         }
@@ -285,34 +307,61 @@ namespace FintrakBanking.Repositories.Credit
             return context.TBL_STAFF.Where(s => s.STAFFID == staffId).Select(s => new { staffName = s.LASTNAME + " " + s.FIRSTNAME + " " + s.MIDDLENAME }).FirstOrDefault().staffName;
         }
 
-        private loanDetailsViewModel GetloanDetails(int loanId, int staffId, int productTypeId)
+        private loanDetailsViewModel GetloanDetails(int loanId, int staffId, int accountTypeId)
         {
             loanDetailsViewModel loanDetails = null;
-            switch (productTypeId)
+            switch (accountTypeId)
             {
-                case ((int)LoanProductTypeEnum.TermLoan):
+                case ((int)StaffAccountHistoryTypeEnum.TermOrDisbusrsedFacility):
                     loanDetails = context.TBL_LOAN.Where(l => l.RELATIONSHIPOFFICERID == staffId && l.TERMLOANID == loanId).Select(l => new loanDetailsViewModel
                     {
                         loanId = l.TERMLOANID,
                         relationshipOfficerId = l.RELATIONSHIPOFFICERID,
                         effectiveDate = l.EFFECTIVEDATE,
-                        productTypeId = productTypeId
+                        field1=l.FIELD1,
+                        field2=l.FIELD2,
+                        field3 = l.FIELD3,
+                        field4 = l.FIELD4,
+                        field5 = l.FIELD5,
+                        field6 = l.FIELD6,
+                        field7 = l.FIELD7,
+                        field8 = l.FIELD8,
+                        field9 = l.FIELD9,
+                        field10 = l.FIELD10,
                     }).FirstOrDefault(); break;
-                case ((int)LoanProductTypeEnum.RevolvingLoan):
+                case ((int)StaffAccountHistoryTypeEnum.RevolvingFacility):
                     loanDetails = context.TBL_LOAN_REVOLVING.Where(r => r.RELATIONSHIPMANAGERID == staffId && r.REVOLVINGLOANID == loanId).Select(r => new loanDetailsViewModel
                     {
                         loanId = r.REVOLVINGLOANID,
                         relationshipOfficerId = r.RELATIONSHIPOFFICERID,
                         effectiveDate = r.EFFECTIVEDATE,
-                        productTypeId = productTypeId
+                        field1 = r.FIELD1,
+                        field2 = r.FIELD2,
+                        field3 = r.FIELD3,
+                        field4 = r.FIELD4,
+                        field5 = r.FIELD5,
+                        field6 = r.FIELD6,
+                        field7 = r.FIELD7,
+                        field8 = r.FIELD8,
+                        field9 = r.FIELD9,
+                        field10 = r.FIELD10,
                     }).FirstOrDefault(); break;
-                case ((int)LoanProductTypeEnum.ContingentLiability):
+                case ((int)StaffAccountHistoryTypeEnum.ContingentLiability):
                     loanDetails = context.TBL_LOAN_CONTINGENT.Where(c => c.RELATIONSHIPMANAGERID == staffId && c.CONTINGENTLOANID == loanId).Select(c => new loanDetailsViewModel
                     {
                         loanId = c.CONTINGENTLOANID,
                         relationshipOfficerId = c.RELATIONSHIPOFFICERID,
                         effectiveDate = c.EFFECTIVEDATE,
-                        productTypeId = productTypeId
+                        field1 = c.FIELD1,
+                        field2 = c.FIELD2,
+                        field3 = c.FIELD3,
+                        field4 = c.FIELD4,
+                        field5 = c.FIELD5,
+                        field6 = c.FIELD6,
+                        field7 = c.FIELD7,
+                        field8 = c.FIELD8,
+                        field9 = c.FIELD9,
+                        field10 = c.FIELD10,
                     }).FirstOrDefault(); break;
             }
             return loanDetails;
@@ -479,28 +528,65 @@ namespace FintrakBanking.Repositories.Credit
             return runningLoan;
         }
 
-
-
         private void TeamLoan(ReasignedAccountApprovalViewModel entity )
         {
+            StaffMIS mis = new StaffMIS(context,stagingContext);
+            var misRecord = mis.StaffInformationSystem(entity.newRMStaffId);
+
             var data = context.TBL_LOAN.FirstOrDefault(l => l.TERMLOANID == entity.loanId);
             loanOp.ArchiveLoan(entity.targetId, (int)OperationsEnum.ReassigningOfAccount);
 
             data.RELATIONSHIPOFFICERID = entity.newRMStaffId;
-            
+            data.FIELD1 = misRecord.field1;
+            data.FIELD2 = misRecord.field2;
+            data.FIELD3 = misRecord.field3;
+            data.FIELD4 = misRecord.field4;
+            data.FIELD5 = misRecord.field5;
+            data.FIELD6 = misRecord.field6;
+            data.FIELD7 = misRecord.field7;
+            data.FIELD8 = misRecord.field8;
+            data.FIELD9 = misRecord.field9;
+            data.FIELD10 = misRecord.field10;
         }
         private void RevolvingLoan(ReasignedAccountApprovalViewModel entity)
         {
+            StaffMIS mis = new StaffMIS(context, stagingContext);
+            var misRecord = mis.StaffInformationSystem(entity.newRMStaffId);
+
             var data = context.TBL_LOAN_REVOLVING.FirstOrDefault(l => l.REVOLVINGLOANID == entity.loanId);
             loanOp.ArchiveLoan(entity.targetId, (int)OperationsEnum.ReassigningOfAccount);
+
             data.RELATIONSHIPOFFICERID = entity.newRMStaffId;
-           
+            data.FIELD1 = misRecord.field1;
+            data.FIELD2 = misRecord.field2;
+            data.FIELD3 = misRecord.field3;
+            data.FIELD4 = misRecord.field4;
+            data.FIELD5 = misRecord.field5;
+            data.FIELD6 = misRecord.field6;
+            data.FIELD7 = misRecord.field7;
+            data.FIELD8 = misRecord.field8;
+            data.FIELD9 = misRecord.field9;
+            data.FIELD10 = misRecord.field10;
         }
         private void ContingentLiability(ReasignedAccountApprovalViewModel entity)
         {
+            StaffMIS mis = new StaffMIS(context, stagingContext);
+            var misRecord = mis.StaffInformationSystem(entity.newRMStaffId);
+
             var data = context.TBL_LOAN_CONTINGENT.FirstOrDefault(l => l.CONTINGENTLOANID == entity.loanId);
+            loanOp.ArchiveLoan(entity.targetId, (int)OperationsEnum.ReassigningOfAccount);
+
             data.RELATIONSHIPOFFICERID = entity.newRMStaffId;
-             
+            data.FIELD1 = misRecord.field1;
+            data.FIELD2 = misRecord.field2;
+            data.FIELD3 = misRecord.field3;
+            data.FIELD4 = misRecord.field4;
+            data.FIELD5 = misRecord.field5;
+            data.FIELD6 = misRecord.field6;
+            data.FIELD7 = misRecord.field7;
+            data.FIELD8 = misRecord.field8;
+            data.FIELD9 = misRecord.field9;
+            data.FIELD10 = misRecord.field10;
         }
 
       
@@ -510,7 +596,22 @@ namespace FintrakBanking.Repositories.Credit
         public int loanId { get; set; }
         public int relationshipOfficerId { get; set; }
         public DateTime effectiveDate { get; set; }
-        public int productTypeId { get; set; }
+        public int accountTypeId { get; set; }
+
+        public string field1 { get; set; }
+        public string field2 { get; set; }
+
+        public string field3 { get; set; }
+        public string field4 { get; set; }
+
+        public string field5 { get; set; }
+        public string field6 { get; set; }
+
+        public string field7 { get; set; }
+        public string field8 { get; set; }
+
+        public string field9 { get; set; }
+        public string field10 { get; set; }
     }
 
    

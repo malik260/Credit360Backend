@@ -318,6 +318,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                   lastname = c.LASTNAME,
                                   staffId = c.STAFFID,
                                   middlename = c.MIDDLENAME,
+                                  staffCode = c.STAFFCODE,
+                                  staffPhone = c.PHONE,
+                                  staffEmail = c.EMAIL,
                                   roleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
                                   jobTitleName = c.TBL_STAFF_JOBTITLE.JOBTITLENAME
                               });
@@ -345,7 +348,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     .Where(x =>
                            (x.firstname.ToLower().Contains(searchQuery)
                            || x.lastname.ToLower().Contains(searchQuery)
-                           || x.middlename.ToLower().Contains(searchQuery))
+                           || x.middlename.ToLower().Contains(searchQuery)
+                           || x.staffCode.ToLower().Contains(searchQuery)
+                           || x.staffEmail.ToLower().Contains(searchQuery)
+                           || x.staffPhone.ToLower().Contains(searchQuery)
+                           )
                 );
             }
 
