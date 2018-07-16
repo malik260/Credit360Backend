@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
+using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -16,7 +17,6 @@ namespace FintrakBanking.Repositories.Setups.General
     public class AuthenticationRepository : IAuthenticationRepository
     {
         private FinTrakBankingContext context;
-
         public AuthenticationRepository(FinTrakBankingContext _context)
         {
             this.context = _context;
@@ -511,11 +511,6 @@ namespace FintrakBanking.Repositories.Setups.General
             //var test2 = roleGroupActivityIds.ToList();
 
             return activities;
-        }
-        public bool TwoFactorAuthentication(string staffCode, string passCode)
-        {
-
-            return true;
         }
     }
 }

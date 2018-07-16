@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
 namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
 {
-    public class TwoFactorAuthIntegrationService
+    public class TwoFactorAuthIntegrationService : ITwoFactorAuthIntegrationService
     {
         AuthWrapperClient client = new AuthWrapperClient();
         public bool Authenticate(string staffCode, string passCode)
@@ -26,6 +27,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
             //output = authResponse.Authenticated;
             //client.Close();
             //return output;
+        }
+        public interface ITwoFactorAuthIntegrationService
+        {
+            bool Authenticate(string staffCode, string passCode);
         }
     }
 }
