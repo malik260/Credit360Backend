@@ -1308,7 +1308,7 @@ namespace FintrakBanking.Repositories.Credit
             recommendation.COLLATERALVALUE = entity.collateralValue;
             recommendation.STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount;
             context.SaveChanges();
-            return GetRecommendedCollateral(entity.applicationId);
+            return GetRecommendedCollateralLms(entity.applicationId);
         }
 
         public List<RecommendedCollateralViewModel> AddRecommendedCollateralLms(RecommendedCollateralViewModel entity)
@@ -1324,7 +1324,7 @@ namespace FintrakBanking.Repositories.Credit
                 SYSTEMDATETIME = DateTime.Now
             });
             context.SaveChanges();
-            return GetRecommendedCollateral(entity.applicationId);
+            return GetRecommendedCollateralLms(entity.applicationId);
         }
 
         public List<RecommendedCollateralViewModel> GetRecommendedCollateralLms(int applicationId)

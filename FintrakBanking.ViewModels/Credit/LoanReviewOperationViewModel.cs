@@ -305,10 +305,10 @@ namespace FintrakBanking.ViewModels.Credit
         public short loanStatusId { get; set; }
         public string customerName { get; set; }
         public int? approvedTenor { get; set; }
-        public DateTime lineEffectiveDate { get; set; }
+        public DateTime? lineEffectiveDate { get; set; }
         public DateTime? expiryDate { get; set; }
 
-        public double approvedInterestRate { get; set; }
+        public double? approvedInterestRate { get; set; }
         public string approvedProductName { get; set; }
         public int numberofTranchesBooked { get; set; }
         public int numberofrunningTranches { get; set; }
@@ -366,6 +366,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int oldTenor { get; set; }
         public int newTenor { get; set; }
         public double interestRate { get; set; }
+
+        public DateTime? valueDate { get; set; }
 
         public short instructionTypeId { get; set; }
         public string instructionTypeName { get; set; }

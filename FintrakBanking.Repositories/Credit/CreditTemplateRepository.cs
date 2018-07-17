@@ -313,7 +313,6 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-
         public bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity)
         {
             var doc = context.TBL_DOC_TEMPLATE_DETAIL.Find(entity.sectionId);

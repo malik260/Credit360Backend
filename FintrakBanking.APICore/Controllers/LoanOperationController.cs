@@ -220,7 +220,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.ProcessCommercialPaperRollOver(entity, null);
+                var data = repo.ProcessCommercialPaperManualRollOver(entity, null);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan Rollover process was Successfully." });
