@@ -394,6 +394,10 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ESG_CHECKLIST_DETAIL> TBL_ESG_CHECKLIST_DETAIL { get; set; }
         public virtual DbSet<TBL_ESG_CHECKLIST_DEFINITION> TBL_ESG_CHECKLIST_DEFINITION { get; set; }
         public virtual DbSet<TBL_ESG_TYPE> TBL_ESG_TYPE { get; set; }
+        public virtual DbSet<TBL_DOC_TEMPLATE> TBL_DOC_TEMPLATE { get; set; }
+        public virtual DbSet<TBL_DOC_TEMPLATE_DETAIL> TBL_DOC_TEMPLATE_DETAIL { get; set; }
+        public virtual DbSet<TBL_DOC_TEMPLATE_SECTION> TBL_DOC_TEMPLATE_SECTION { get; set; }
+        public virtual DbSet<TBL_DOC_TEMPLATE_SECTION_ROLE> TBL_DOC_TEMPLATE_SECTION_ROLE { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

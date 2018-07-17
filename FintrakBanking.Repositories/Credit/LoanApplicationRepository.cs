@@ -1606,8 +1606,10 @@ namespace FintrakBanking.Repositories.Credit
                     .Join(context.TBL_LOAN_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
                     .Join(context.TBL_CUSTOMER, g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
                     .Join(context.TBL_CASA, o => o.c.CUSTOMERID, s => s.CUSTOMERID, (o, s) => new { o, s })
-                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended), q => q.o.g.a.LOANAPPLICATIONID, t => t.TARGETID, (q, t) => new { q, t })
-                    .Select(x => new LoanApplicationViewModel
+                    .GroupJoin(context.TBL_APPROVAL_TRAIL.Where(t => t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended), q => q.o.g.a.LOANAPPLICATIONID, t => t.TARGETID, (q, t) => new { q, t })
+                    .SelectMany(x => 
+                        x.t.DefaultIfEmpty(), 
+                        (x, y) => new LoanApplicationViewModel
                     {
                         firstName = x.q.o.c.FIRSTNAME,
                         middleName = x.q.o.c.MIDDLENAME,
@@ -1634,9 +1636,9 @@ namespace FintrakBanking.Repositories.Credit
                         isPoliticallyExposed = x.q.o.g.a.ISPOLITICALLYEXPOSED,
                         approvalStatusId = (short)x.q.o.g.a.APPROVALSTATUSID,
                         //approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.q.o.g.a.APPROVALSTATUSID).APPROVALSTATUSNAME,
-                        currentApprovalLevel = x.t.TBL_APPROVAL_LEVEL1.LEVELNAME,
-                        approvalTrailId = x.t.APPROVALTRAILID,
-                        responsiblePerson = x.t.TOSTAFFID == null ? "n/a" : x.t.TBL_STAFF1.STAFFCODE + " - " + x.t.TBL_STAFF1.FIRSTNAME + " " + x.t.TBL_STAFF1.MIDDLENAME + " " + x.t.TBL_STAFF1.LASTNAME,
+                        currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                        approvalTrailId = y.APPROVALTRAILID,
+                        responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
                         applicationStatusId = x.q.o.g.a.APPLICATIONSTATUSID,
                         branchName = x.q.o.g.a.TBL_BRANCH.BRANCHNAME,
                         relationshipOfficerName = x.q.o.g.a.TBL_STAFF.FIRSTNAME + " " + x.q.o.g.a.TBL_STAFF.MIDDLENAME + " " + x.q.o.g.a.TBL_STAFF.LASTNAME,
@@ -1649,12 +1651,13 @@ namespace FintrakBanking.Repositories.Credit
                         operationId = x.q.o.g.a.OPERATIONID,
                         accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
                     })
+                    .ToList()
                     .Where(x => x.applicationReferenceNumber == searchString
-                        || x.firstName.ToLower().Contains(searchString)
-                        || x.lastName.ToLower().Contains(searchString)
-                        || x.middleName.ToLower().Contains(searchString)
-                        || x.customerCode.ToLower() == searchString)
-                    ;
+                        || x.firstName.ToLower() == searchString
+                        || x.lastName.ToLower() == searchString
+                        || x.middleName.ToLower() == searchString
+                        || x.customerCode.ToLower() == searchString
+                    );
 
             //var list = applications.ToList();
             applications = applications.OrderByDescending(x => x.approvalTrailId).GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
