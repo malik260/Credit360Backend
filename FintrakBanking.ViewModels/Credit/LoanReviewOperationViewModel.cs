@@ -367,6 +367,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int newTenor { get; set; }
         public double interestRate { get; set; }
 
+        public DateTime? valueDate { get; set; }
+
         public short instructionTypeId { get; set; }
         public string instructionTypeName { get; set; }
         public int loanId { get; set; }

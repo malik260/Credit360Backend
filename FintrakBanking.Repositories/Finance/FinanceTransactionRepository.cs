@@ -124,7 +124,6 @@ namespace FintrakBanking.Repositories.Finance
             //transaction.transactionDetails.Sum(x => x.creditAmount);
             //var sumDebit = debitSum.FirstOrDefault();
 
-
             if (debitSum != creditSum)
                 throw new ConditionNotMetException("Total Debit Amount should equal Total Credit Amount");
 
@@ -132,7 +131,6 @@ namespace FintrakBanking.Repositories.Finance
 
             foreach (var item in inputTransactions)
             {
-
                 if (item.debitAmount != 0 && item.creditAmount != 0)
                     throw new ConditionNotMetException("Debit or Credit Amount should be 0");
 
@@ -195,7 +193,6 @@ namespace FintrakBanking.Repositories.Finance
                 trans.DESTINATIONBRANCHID = item.destinationBranchId;
 
                 transactions.Add(trans);
-
             }
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
@@ -206,7 +203,6 @@ namespace FintrakBanking.Repositories.Finance
 
         public void UpdateCustomTransactions(string batchCode)
         {
-
             //var result = (from p in context.TBL_CUSTOM_FIANCE_TRANSACTION
             //              where p.BATCHCODE == batchCode && p.CONSUMED == false
             //                select new CustomFinanceTransactionViewModel()

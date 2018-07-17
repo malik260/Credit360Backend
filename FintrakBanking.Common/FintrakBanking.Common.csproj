@@ -100,6 +100,7 @@
     <Compile Include="Enum\CreditBureauEnum.cs" />
     <Compile Include="Enum\CustomerInformationEnum.cs" />
     <Compile Include="Enum\CustomerInformationTrackerEnum.cs" />
+    <Compile Include="Enum\DealType.cs" />
     <Compile Include="Enum\DailyAccuralCategory.cs" />
     <Compile Include="Enum\DayCountConventionEnum.cs" />
     <Compile Include="Enum\documentUploadDatabaseTableEnum.cs" />

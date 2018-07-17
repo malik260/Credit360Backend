@@ -47,6 +47,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public short trailApprovalStatus;
+
         public short requestStatusId { get; set; }
         public bool requestDeleted { get; set; }
         public string casaAccountDetails { get; set; }
@@ -66,7 +68,7 @@ namespace FintrakBanking.ViewModels.Credit
         //public decimal productPriceIndexRate { get; set; }
         public double productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
-        public int casaAccountId2 { get; set; }
+        public int? casaAccountId2 { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
        
