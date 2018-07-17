@@ -30,6 +30,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.Common.CustomException;
 using System.Net.Sockets;
+using FintrakBanking.Entities.StagingModels;
+using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -870,7 +872,7 @@ namespace FintrakBanking.Repositories.Credit
                 MISCODE = entity.misCode,
                 TEAMMISCODE = entity.teamMiscode,
                 INTERESTRATE = Convert.ToInt32(applicationDetail.APPROVEDINTERESTRATE),
-                ALLOWFORCEDEBITREPAYMENT = false,
+                ALLOWFORCEDEBITREPAYMENT = true,
                 PRINCIPALINSTALLMENTLEFT = 0,
                 INTERESTINSTALLMENTLEFT = 0,
                 EQUITYCONTRIBUTION = 0,
@@ -1774,6 +1776,9 @@ namespace FintrakBanking.Repositories.Credit
                                 revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                             }
 
+                            /*UPDATING STAFF MIS */
+                            this.updateLoanRevolvingStaffMIS(revolvingLoanRecord);
+
                             /* BUILD FEE MODEL & HANDLE FEE POSTING */
                             var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.OverdraftFacility);
                             var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
@@ -1783,6 +1788,7 @@ namespace FintrakBanking.Repositories.Credit
                             revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                             revolvingLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             revolvingLoanRecord.ISDISBURSED = true;
+                            //revolvingLoanRecord.EFFECTIVEDATE = DateTime.Now;
                             revolvingLoanRecord.APPROVEDBY = user.createdBy;
                             revolvingLoanRecord.APPROVERCOMMENT = user.comment;
                         }
@@ -1850,6 +1856,9 @@ namespace FintrakBanking.Repositories.Credit
                             var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
                             if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings); }
 
+                            /*UPDATING STAFF MIS */
+                            this.updateLoanContingentStaffMIS(contingentLoanRecord);
+
                             contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             contingentLoanRecord.ISDISBURSED = true;
                             contingentLoanRecord.APPROVEDBY = user.createdBy;
@@ -1886,8 +1895,12 @@ namespace FintrakBanking.Repositories.Credit
 
                             DisburseLoan(loanDisbursementModel);
 
+                            /*UPDATING STAFF MIS */
+                            this.updateloanStaffMIS(loanRecord);
+
                             loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             loanRecord.ISDISBURSED = true;
+                            loanRecord.EFFECTIVEDATE = DateTime.Now;
                             loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
                             loanRecord.DISBURSEDBY = user.createdBy;
                             loanRecord.APPROVEDBY = user.createdBy;
@@ -1922,8 +1935,12 @@ namespace FintrakBanking.Repositories.Credit
 
                             DisburseLoan(loanDisbursementModel);
 
+                            /*UPDATING STAFF MIS */
+                            this.updateloanStaffMIS(loanRecord);
+
                             loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             loanRecord.ISDISBURSED = true;
+                            loanRecord.EFFECTIVEDATE = DateTime.Now;
                             loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
                             loanRecord.DISBURSEDBY = user.createdBy;
                             loanRecord.APPROVEDBY = user.createdBy;
@@ -1931,6 +1948,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         break;
                 }
+
                 // Audit Section ---------------------------
                 var action = user.approvalStatusId == (short)ApprovalStatusEnum.Approved ? "Approved" : "Disapproved";
                 var audit = new TBL_AUDIT
@@ -1956,6 +1974,59 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.SaveChanges() > 0;
         }
 
+        private void updateLoanRevolvingStaffMIS(TBL_LOAN_REVOLVING revolvingLoanRecord)
+        {
+            FinTrakBankingStagingContext staggingContext = new FinTrakBankingStagingContext();
+            StaffMIS staffMIS = new StaffMIS(context, staggingContext);
+
+            var relationshipOfficerStaffInfo = staffMIS.StaffInformationSystem(revolvingLoanRecord.RELATIONSHIPOFFICERID);
+            revolvingLoanRecord.FIELD1 = relationshipOfficerStaffInfo.field1;
+            revolvingLoanRecord.FIELD2 = relationshipOfficerStaffInfo.field2;
+            revolvingLoanRecord.FIELD3 = relationshipOfficerStaffInfo.field3;
+            revolvingLoanRecord.FIELD4 = relationshipOfficerStaffInfo.field4;
+            revolvingLoanRecord.FIELD5 = relationshipOfficerStaffInfo.field5;
+            revolvingLoanRecord.FIELD6 = relationshipOfficerStaffInfo.field6;
+            revolvingLoanRecord.FIELD7 = relationshipOfficerStaffInfo.field7;
+            revolvingLoanRecord.FIELD8 = relationshipOfficerStaffInfo.field8;
+            revolvingLoanRecord.FIELD9 = relationshipOfficerStaffInfo.field9;
+            revolvingLoanRecord.FIELD10 = relationshipOfficerStaffInfo.field10;
+        }
+
+        private void updateloanStaffMIS(TBL_LOAN loanRecord)
+        {
+            FinTrakBankingStagingContext staggingContext = new FinTrakBankingStagingContext();
+            StaffMIS staffMIS = new StaffMIS(context, staggingContext);
+
+            var relationshipOfficerStaffInfo = staffMIS.StaffInformationSystem(loanRecord.RELATIONSHIPOFFICERID);
+            loanRecord.FIELD1 = relationshipOfficerStaffInfo.field1;
+            loanRecord.FIELD2 = relationshipOfficerStaffInfo.field2;
+            loanRecord.FIELD3 = relationshipOfficerStaffInfo.field3;
+            loanRecord.FIELD4 = relationshipOfficerStaffInfo.field4;
+            loanRecord.FIELD5 = relationshipOfficerStaffInfo.field5;
+            loanRecord.FIELD6 = relationshipOfficerStaffInfo.field6;
+            loanRecord.FIELD7 = relationshipOfficerStaffInfo.field7;
+            loanRecord.FIELD8 = relationshipOfficerStaffInfo.field8;
+            loanRecord.FIELD9 = relationshipOfficerStaffInfo.field9;
+            loanRecord.FIELD10 = relationshipOfficerStaffInfo.field10;
+        }
+
+        private void updateLoanContingentStaffMIS(TBL_LOAN_CONTINGENT contingentLoanRecord)
+        {
+            FinTrakBankingStagingContext staggingContext = new FinTrakBankingStagingContext();
+            StaffMIS staffMIS = new StaffMIS(context, staggingContext);
+
+            var relationshipOfficerStaffInfo = staffMIS.StaffInformationSystem(contingentLoanRecord.RELATIONSHIPOFFICERID);
+            contingentLoanRecord.FIELD1 = relationshipOfficerStaffInfo.field1;
+            contingentLoanRecord.FIELD2 = relationshipOfficerStaffInfo.field2;
+            contingentLoanRecord.FIELD3 = relationshipOfficerStaffInfo.field3;
+            contingentLoanRecord.FIELD4 = relationshipOfficerStaffInfo.field4;
+            contingentLoanRecord.FIELD5 = relationshipOfficerStaffInfo.field5;
+            contingentLoanRecord.FIELD6 = relationshipOfficerStaffInfo.field6;
+            contingentLoanRecord.FIELD7 = relationshipOfficerStaffInfo.field7;
+            contingentLoanRecord.FIELD8 = relationshipOfficerStaffInfo.field8;
+            contingentLoanRecord.FIELD9 = relationshipOfficerStaffInfo.field9;
+            contingentLoanRecord.FIELD10 = relationshipOfficerStaffInfo.field10;
+        }
         /// <summary>
         /// Builds the schedule model.
         /// </summary>

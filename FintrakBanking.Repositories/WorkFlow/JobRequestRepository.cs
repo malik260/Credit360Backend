@@ -462,6 +462,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                          jobTypeName = x.TBL_JOB_TYPE.JOBTYPENAME,
                          senderStaffId = x.SENDERSTAFFID,
                          senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                         senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
                          departmentUnitId = x.DEPARTMENTUNITID,
                          departmentId = x.DEPARTMENTID,
                          //senderUnit = context.TBL_DEPARTMENT_UNIT.Where(c=>c.DEPARTMENTUNITID == context.TBL_STAFF.Where(z=>z.STAFFID == x.SENDERSTAFFID).FirstOrDefault().DEPARTMENTUNITID).FirstOrDefault().DEPARTMENTUNITNAME, // +"(" + x.TBL_DEPARTMENT.DEPARTMENTNAME +")",
@@ -484,6 +485,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                          acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
                          systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
                          loggedInStaffId = staffId,
+
+                         refNo = (x.OPERATIONSID == (short)OperationsEnum.LoanApplication || x.OPERATIONSID == (short)OperationsEnum.CAM ) 
+                         && context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l=>l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
+                         ? context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+
                          from = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
                          fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
                          //from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
@@ -497,7 +503,23 @@ namespace FintrakBanking.Repositories.WorkFlow
                          //assignee = allstaff.GetStaffName(s => s.id == x.ReassignedTo),
                      }).OrderByDescending(x => x.arrivalDate).Take(500);
 
+            //foreach (var item in data)
+            //{
+            //    var refNo = string.Empty;
+            //    if (item.operationsId == (short)OperationsEnum.LoanApplication || item.operationsId == (short)OperationsEnum.CAM
+            //        || item.operationsId == (short)OperationsEnum.LoanAvailment)
+            //    {
+            //        var appl = context.TBL_LOAN_APPLICATION_DETAIL.Find(item.targetId);
+            //        if (appl != null)
+            //        {
+            //            //item.refNo = appl.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER.ToString();
+            //            data.Single(p => p.jobRequestId == item.jobRequestId).refNo = appl.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+            //        }
+            //    }
+                
+            //}
 
+            var c = data.ToList();
             return data;
         }
 

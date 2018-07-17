@@ -15,6 +15,11 @@
 
     public class DepartmentCustomersViewModel : DepartmentViewModel
     {
+        public string staffEmail { get; set; }
+        public string staffPhone { get; set; }
+
+        public string staffCode { get; set; }
+
         public short departmentUnitId { get; set; }
 
         public string departmentUnitName { get; set; }
