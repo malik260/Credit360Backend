@@ -51,12 +51,12 @@
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        //public virtual TBL_CASA TBL_CASA { get; set; }
+        public virtual TBL_CASA TBL_CASA { get; set; }
 
-        //public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }
+        public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }
 
         public virtual TBL_LMSR_APPLICATION_DETAIL TBL_LMSR_APPLICATION_DETAIL { get; set; }
 
-        //public virtual TBL_LOAN_COVENANT_TYPE TBL_LOAN_COVENANT_TYPE { get; set; }
+        public virtual TBL_LOAN_COVENANT_TYPE TBL_LOAN_COVENANT_TYPE { get; set; }
     }
 }
