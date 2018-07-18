@@ -80,6 +80,7 @@ namespace FintrakBanking.Common.Enum
         PrincipalPastDueLoanRepayment =68,
         PenalFee=69, 
         CamsolBackbookModification =70,
-        NPLoanReviewApprovalAppraisal = 71
+        NPLoanReviewApprovalAppraisal = 71,
+        ForeignExchangeLoanBooking = 72
     }
 }

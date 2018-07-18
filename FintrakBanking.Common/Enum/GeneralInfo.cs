@@ -243,6 +243,7 @@ namespace FintrakBanking.Common.Enum
         ApprovedOverrideRequest = 217,
         AttemptedApproveOverrideRequest = 218,
         ForeignAccountCreation = 219,
+        ForeignExchangeLoanAdded = 220,
     };
 
 

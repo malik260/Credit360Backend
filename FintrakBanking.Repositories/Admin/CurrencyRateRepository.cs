@@ -186,6 +186,17 @@ namespace FintrakBanking.Repositories.Admin
             //end of Audit section -----------------------
             return context.SaveChanges() != 0;
         }
+
+        public IEnumerable<LookupViewModel> GetRateCode()
+        {
+            return (from data in context.TBL_CURRENCY_RATECODE
+                    select new LookupViewModel()
+                    {
+                        lookupId = data.RATECODEID,
+                        lookupName = data.RATECODE
+                    });
+        }
+
         public IEnumerable<CurrencyRateCodeViewModel> GetAllCurrencyRateCode()
         {
             return (from data in context.TBL_CURRENCY_RATECODE
