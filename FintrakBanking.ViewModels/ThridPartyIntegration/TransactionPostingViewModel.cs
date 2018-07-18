@@ -166,6 +166,10 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string expiryDate { get; set; }
         public int overdraftExtendId { get; set; }
+        public DateTime createdDate { get; set; }
+        public string reviewedDate { get; set; }
+        public string sanctionLevel { get; set; }
+        public string sanctionAuthorizer { get; set; }
     }
 
     public class TemporaryOverDraftViewModel

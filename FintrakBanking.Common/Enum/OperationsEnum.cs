@@ -81,5 +81,6 @@ namespace FintrakBanking.Common.Enum
         PenalFee=69, 
         CamsolBackbookModification =70,
         NPLoanReviewApprovalAppraisal = 71
+        CommercialPaperRollOver = 72,
     }
 }

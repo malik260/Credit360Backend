@@ -238,6 +238,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
+                model.sanctionLevel = "003";
+                model.sanctionAuthorizer = "999";
 
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
@@ -319,6 +321,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
+                model.sanctionLevel = "003";
+                model.sanctionAuthorizer = "999";
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
@@ -404,6 +408,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
+               
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
@@ -488,7 +493,6 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
 
-
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
@@ -570,7 +574,6 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
-
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 ;
                 _handler.UseDefaultCredentials = true;
