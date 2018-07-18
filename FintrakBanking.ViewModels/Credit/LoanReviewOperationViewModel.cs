@@ -230,7 +230,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationTypeId { get; set; }
         public string reviewDetails { get; set; }
 
-        public List<applicationDetails> applicationDetails { get; set; }
+        public IEnumerable<applicationDetails> applicationDetails { get; set; }
 
         public float interateRate { get; set; }
         public decimal? prepayment { get; set; }
@@ -269,6 +269,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string branchName { get; set; }
         public string approvalState { get; set; }
         public short loanSystemTypeId { get; set; }
+        public int performanceTypeId { get; set; }
+        public int? operationId { get; set; }
     }
 
     public class applicationDetails
@@ -277,8 +279,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string reviewDetails { get; set; }
         //public string operationType { get; set; } // not relevant
         public int loanId { get; set; }
+        public int customerId { get; set; }
         public int detailId { get; set; }
-        public int loanSystemTypeId { get; set; }
+        public short loanSystemTypeId { get; set; }
         public int operationId { get; set; }
         //public string loanSystemType { get; set; }
         public string loanSystemTypeName { get; set; }
@@ -297,10 +300,15 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationParentChildViewModel
     {
-        public short loanStatusId;
-        public string customerName;
+        public int? tenorLeft { get; set; }
 
-        public double approvedInterestRate { get; set; }
+        public short loanStatusId { get; set; }
+        public string customerName { get; set; }
+        public int? approvedTenor { get; set; }
+        public DateTime? lineEffectiveDate { get; set; }
+        public DateTime? expiryDate { get; set; }
+
+        public double? approvedInterestRate { get; set; }
         public string approvedProductName { get; set; }
         public int numberofTranchesBooked { get; set; }
         public int numberofrunningTranches { get; set; }
@@ -358,6 +366,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int oldTenor { get; set; }
         public int newTenor { get; set; }
         public double interestRate { get; set; }
+
+        public DateTime? valueDate { get; set; }
 
         public short instructionTypeId { get; set; }
         public string instructionTypeName { get; set; }

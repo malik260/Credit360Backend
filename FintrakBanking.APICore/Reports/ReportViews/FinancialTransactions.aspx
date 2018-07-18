@@ -24,21 +24,23 @@
                   ToolbarHoverBackgroundColor="" ToolbarHoverForegroundColor="" ToolBarItemBorderColor="" ToolBarItemBorderStyle="Solid" ToolBarItemBorderWidth="1px" ToolBarItemHoverBackColor="" ToolBarItemPressedBorderColor="51, 102, 153" ToolBarItemPressedBorderStyle="Solid" ToolBarItemPressedBorderWidth="1px" ToolBarItemPressedHoverBackColor="153, 187, 226">
                   <localreport reportpath="Reports\Report\FinanceTransactions.rdlc">
                       <datasources>
-                          <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="FinanceTransactions" />
+                          <rsweb:ReportDataSource DataSourceId="ObjectDataSourceTransaction" Name="FinanceTransactions" />
                       </datasources>
                   </localreport>
            
         </rsweb:ReportViewer>
-             <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="FinanceTransaction" TypeName="FintrakBanking.ReportObjects.ReportingObjects.FinanceRepotObject">
-                 <SelectParameters>
-                     <asp:ControlParameter ControlID="StartDate" Name="startDate" PropertyName="Text" Type="DateTime" />
-                     <asp:ControlParameter ControlID="EndDate" Name="endDate" PropertyName="Text" Type="DateTime" />
-                     <asp:ControlParameter ControlID="branchId" Name="branchId" PropertyName="Text" Type="Int32" />
-                     <asp:ControlParameter ControlID="glAccountId" Name="glAccountId" PropertyName="Text" Type="Int32" />
-                     <asp:ControlParameter ControlID="PostedByStaffId" Name="PostedByStaffId" PropertyName="Text" Type="Int32" />
-                     <asp:ControlParameter ControlID="companyId" Name="companyId" PropertyName="Text" Type="Int32" />
-                 </SelectParameters>
+
+            <asp:ObjectDataSource ID="odsTransaction" runat="server" SelectMethod="FinanceTransaction" TypeName="FintrakBanking.ReportObjects.ReportingObjects.FinanceRepotObject">
+                <SelectParameters>
+                    <asp:ControlParameter ControlID="StartDate" Name="startDate" PropertyName="Text" Type="DateTime" />
+                    <asp:ControlParameter ControlID="EndDate" Name="endDate" PropertyName="Text" Type="DateTime" />
+                    <asp:ControlParameter ControlID="companyId" Name="companyId" PropertyName="Text" Type="Int32" />
+                    <asp:ControlParameter ControlID="branchId" Name="branchId" PropertyName="Text" Type="Int32" />
+                    <asp:ControlParameter ControlID="glAccountId" Name="glAccountId" PropertyName="Text" Type="Int32" />
+                    <asp:ControlParameter ControlID="PostedByStaffId" Name="PostedByStaffId" PropertyName="Text" Type="Int32" />
+                </SelectParameters>
              </asp:ObjectDataSource>
+
         </div>
         <asp:Label ID="StartDate" runat="server" Visible="false"  ></asp:Label>
         <asp:Label ID="EndDate" runat="server"  Visible="false" ></asp:Label>

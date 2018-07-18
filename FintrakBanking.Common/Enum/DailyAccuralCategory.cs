@@ -12,6 +12,7 @@ namespace FintrakBanking.Common.Enum
         PastDuePrincipal  = 4,
         CreditCards = 5,
         PastDueInterest  = 6,
-        Fee = 7,
+        CommercialLoan = 7,
+        Fee = 8,
     }
 }

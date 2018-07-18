@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -183,5 +184,122 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
+
+
+
+        #region DOCUMENT TEMPLATE SETUP
+        // TODO
+        #endregion DOCUMENT TEMPLATE SETUP
+
+
+
+        #region DOCUMENT TEMPLATE IMPL
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-section/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetLoadedDocumentSections(int operationId, int targetId)
+        {
+            try
+            {
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentSections(token.GetStaffId, operationId, targetId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-section/operation/{operationId}/section/{sectionId}")]
+        public HttpResponseMessage GetDocumentSection(int operationId, int sectionId)
+        {
+            try
+            {
+                LoadedDocumentSectionViewModel response = repo.GetDocumentSection(token.GetStaffId,operationId,sectionId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-template/operation/{operationId}")]
+        public HttpResponseMessage GetDocumentTemplates(int operationId)
+        {
+            try
+            {
+                List<DocumentTemplateViewModel> response = repo.GetDocumentTemplates(token.GetStaffId, operationId, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("documentation/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetLoadedDocumentation(int operationId, int targetId)
+        {
+            try
+            {
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId,operationId, targetId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("document-template/load")]
+        public HttpResponseMessage LoadDocumentTemplate([FromBody] DocumentTemplateViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                bool response = repo.LoadDocumentTemplate(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("document-section")]
+        public HttpResponseMessage SaveLoadedDocumentSection([FromBody] LoadedDocumentSectionViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                bool response = repo.SaveLoadedDocumentSection(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion DOCUMENT TEMPLATE IMPL
+
     }
 }

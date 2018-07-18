@@ -1248,20 +1248,6 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Image Name="Image1">
-              <Source>Embedded</Source>
-              <Value>firstbank</Value>
-              <Sizing>FitProportional</Sizing>
-              <Left>14.29043in</Left>
-              <Height>0.65847in</Height>
-              <Width>2.54292in</Width>
-              <ZIndex>3</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-              </Style>
-            </Image>
           </ReportItems>
           <Style>
             <Border>

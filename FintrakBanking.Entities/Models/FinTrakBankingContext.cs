@@ -394,6 +394,10 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ESG_CHECKLIST_DETAIL> TBL_ESG_CHECKLIST_DETAIL { get; set; }
         public virtual DbSet<TBL_ESG_CHECKLIST_DEFINITION> TBL_ESG_CHECKLIST_DEFINITION { get; set; }
         public virtual DbSet<TBL_ESG_TYPE> TBL_ESG_TYPE { get; set; }
+        public virtual DbSet<TBL_DOC_TEMPLATE> TBL_DOC_TEMPLATE { get; set; }
+        public virtual DbSet<TBL_DOC_TEMPLATE_DETAIL> TBL_DOC_TEMPLATE_DETAIL { get; set; }
+        public virtual DbSet<TBL_DOC_TEMPLATE_SECTION> TBL_DOC_TEMPLATE_SECTION { get; set; }
+        public virtual DbSet<TBL_DOC_TEMPLATE_SECTION_ROLE> TBL_DOC_TEMPLATE_SECTION_ROLE { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1024,7 +1028,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WithOptional(e => e.TBL_CASA)
                 .HasForeignKey(e => e.EQUITYCASAACCOUNTID);
-
+            
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION)
                 .WithRequired(e => e.TBL_CASA)
@@ -4551,6 +4555,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_LMSR_APPLICATION_DETAIL>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION_COVENANT)
+                .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_TRA)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION_DETAIL)
@@ -4986,6 +4995,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_COVENANT_TYPE>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_COVENANT)
+                .WithRequired(e => e.TBL_LOAN_COVENANT_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_COVENANT_TYPE>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION_COVENANT)
                 .WithRequired(e => e.TBL_LOAN_COVENANT_TYPE)
                 .WillCascadeOnDelete(false);
 
@@ -6497,13 +6511,13 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_PRODUCT>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WithRequired(e => e.TBL_PRODUCT)
-                .HasForeignKey(e => e.APPROVEDPRODUCTID)
+                .HasForeignKey(e => e.PROPOSEDPRODUCTID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL1)
                 .WithRequired(e => e.TBL_PRODUCT1)
-                .HasForeignKey(e => e.PROPOSEDPRODUCTID)
+                .HasForeignKey(e => e.APPROVEDPRODUCTID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT>()

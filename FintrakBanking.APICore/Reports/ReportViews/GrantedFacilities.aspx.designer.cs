@@ -40,13 +40,13 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer;
         
         /// <summary>
-        /// ObjectDataSource1 control.
+        /// odsTransaction control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSource1;
+        protected global::System.Web.UI.WebControls.ObjectDataSource odsTransaction;
         
         /// <summary>
         /// StartDate control.
@@ -76,30 +76,30 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.WebControls.Label PostedByStaffId;
         
         /// <summary>
-        /// CompanyId control.
+        /// glAccountId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label CompanyId;
+        protected global::System.Web.UI.WebControls.Label glAccountId;
         
         /// <summary>
-        /// BranchId control.
+        /// branchId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label BranchId;
+        protected global::System.Web.UI.WebControls.Label branchId;
         
         /// <summary>
-        /// ExcludeSystem control.
+        /// companyId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ExcludeSystem;
+        protected global::System.Web.UI.WebControls.Label companyId;
     }
 }

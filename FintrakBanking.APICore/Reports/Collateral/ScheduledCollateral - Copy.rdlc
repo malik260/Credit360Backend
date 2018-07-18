@@ -1242,20 +1242,6 @@
             <PaddingBottom>2pt</PaddingBottom>
           </Style>
         </Textbox>
-        <Image Name="HeaderLogo">
-          <Source>Embedded</Source>
-          <Value>firstbanknewlogo</Value>
-          <Sizing>FitProportional</Sizing>
-          <Left>20.46111in</Left>
-          <Height>1.05083in</Height>
-          <Width>1.05048in</Width>
-          <ZIndex>1</ZIndex>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </Image>
         <Textbox Name="Textbox12">
           <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
@@ -1280,7 +1266,7 @@
           <Left>10.82604in</Left>
           <Height>0.34375in</Height>
           <Width>4.25in</Width>
-          <ZIndex>2</ZIndex>
+          <ZIndex>1</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>

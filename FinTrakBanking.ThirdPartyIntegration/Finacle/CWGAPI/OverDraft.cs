@@ -107,7 +107,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                             APIResponse = null,
                             APIStatus = response.IsSuccessStatusCode,
                             Message = response
-                        };
+                        }; 
                     }
                     responseMessage = await response.Content.ReadAsStringAsync();
                     return responseMsg;

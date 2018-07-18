@@ -72,14 +72,14 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
         bool addMaturityInstruction(MaturityIntructionViewModel model);
         IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
-        bool ProcessCommercialPaperRollOver(MaturityIntructionViewModel model, string refNo);
-        void CommercialPaperRollOver(DateTime applicationDate);
+        bool ProcessCommercialPaperManualRollOver(MaturityIntructionViewModel model, string refNo);
+        //void CommercialPaperManualRollOver(DateTime applicationDate);
         bool CommercialPaperTenorReview(TenorExtionViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
         bool CommercialPaperRateReview(InterestReviewViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId);
         List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID);
-        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
+        //IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
         void CommercialPaperChangeOperativeAccount(int casaPayAccountId, int newCasaPayAccountId);
         bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId);
         bool CommercialPaperPrepayment(string refNo, decimal prepaymentAmount, DateTime applicationDate, int staffId);

@@ -92,7 +92,7 @@
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual ICollection<TBL_LMSR_APPLICATION_DETAIL> TBL_LMSR_APPLICATION_DETAIL { get; set; }
-
+        public int? OPERATIONID { get; set; }
     }
 }
 /*DESC TBL_LMSR_APPLICATION

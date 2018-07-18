@@ -351,10 +351,10 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddGlobalJobRequest(entity);
-                if (data != null)
+                var code = repo.AddGlobalJobRequest(entity);
+                if (code != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The request logged successfully." });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = code, message = "Request logged successfully. The Request Code is "+ code });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error logging this request" });
@@ -422,7 +422,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ReplyJobRequest(entity, jobRequestId);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Job response was successfully saved" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });

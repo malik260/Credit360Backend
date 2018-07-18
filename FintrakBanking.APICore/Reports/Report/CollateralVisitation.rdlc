@@ -665,8 +665,8 @@
         </TablixRowHierarchy>
         <DataSetName>CollateralVisitation</DataSetName>
         <Top>0.14458in</Top>
-        <Height>0.53125in</Height>
-        <Width>14.72917in</Width>
+        <Height>0.53124in</Height>
+        <Width>14.72916in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -719,21 +719,6 @@
             <PaddingBottom>2pt</PaddingBottom>
           </Style>
         </Textbox>
-        <Image Name="HeaderLlogo">
-          <Source>Embedded</Source>
-          <Value>firstbank</Value>
-          <Sizing>FitProportional</Sizing>
-          <Top>0.02586in</Top>
-          <Left>12.17226in</Left>
-          <Height>0.70708in</Height>
-          <Width>2.48833in</Width>
-          <ZIndex>1</ZIndex>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </Image>
       </ReportItems>
       <Style>
         <Border>

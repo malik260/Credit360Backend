@@ -101,6 +101,26 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime DATETIMECREATED { get; set; }
 
+        public string FIELD1 { get; set; }
+
+        public string FIELD2 { get; set; }
+
+        public string FIELD3 { get; set; }
+
+        public string FIELD4 { get; set; }
+
+        public string FIELD5 { get; set; }
+
+        public string FIELD6 { get; set; }
+
+        public string FIELD7 { get; set; }
+
+        public string FIELD8 { get; set; }
+
+        public string FIELD9 { get; set; }
+
+        public string FIELD10 { get; set; }
+
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
