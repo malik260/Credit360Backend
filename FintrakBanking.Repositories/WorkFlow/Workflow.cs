@@ -104,6 +104,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private List<TBL_APPROVAL_TRAIL> trailLog;
         private bool skipLimitsCheck = false;
         private IEnumerable<WorkflowSetup> approvalGrid;
+        private int slaInterval = 780; // 1month
 
         public bool LogActivity()
         {
@@ -183,6 +184,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 APPROVALSTATEID = (short)this.newStateId,
                 APPROVALSTATUSID = (short)this.statusId,
                 SYSTEMARRIVALDATETIME = this.systemDate,
+                SLADATETIME = this.systemDate.AddHours(this.slaInterval),
                 VOTE = this.vote,
                 TOSTAFFID = this.toStaffId,
             };
@@ -290,6 +292,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.smsNotification = next.CanRecieveSMS;
                     this.emailNotification = next.CanRecieveEmail;
                     this.nextLevelId = next.ApprovalLevelId;
+                    this.slaInterval = next.SlaInterval;
                     this.useOrganogram = next.RouteViaStaffOrganogram;
                     return true;
                 }
@@ -363,6 +366,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     next.CanRecieveSMS = nextlevel.CANRECIEVESMS;
                     next.CanRecieveEmail = nextlevel.CANRECIEVEEMAIL;
                     next.ApprovalLevelId = nextlevel.APPROVALLEVELID;
+                    this.slaInterval = nextlevel.SLAINTERVAL;
                     next.RouteViaStaffOrganogram = nextlevel.ROUTEVIASTAFFORGANOGRAM;
                 }
             }
@@ -377,6 +381,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.smsNotification = next.CanRecieveSMS;
                 this.emailNotification = next.CanRecieveEmail;
                 this.nextLevelId = next.ApprovalLevelId;
+                this.slaInterval = next.SlaInterval;
                 this.useOrganogram = next.RouteViaStaffOrganogram;
             }
             return true;
@@ -713,6 +718,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                ApprovalLevelId = x.Level.APPROVALLEVELID,
                                RouteViaStaffOrganogram = x.Level.ROUTEVIASTAFFORGANOGRAM,
                                DefaultRoleId = x.Level.STAFFROLEID,
+                               SlaInterval = x.Level.SLAINTERVAL
                            })
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition);
@@ -884,6 +890,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
     public class WorkflowSetup
     {
+        internal int SlaInterval;
+
         public int GroupPosition { get; set; }
 
         public int LevelPosition { get; set; }
