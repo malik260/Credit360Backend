@@ -89,6 +89,7 @@ namespace FintrakBanking.ViewModels.Finance
         public string accountNo { get; set; }
         public string productName { get; set; }
         public int currencyId { get; set; }
+        public bool isCasaAccountDetailAvailable { get; set; }
         public CASAAccountStatusEnum accountStatusId { get; set; }
     }
 

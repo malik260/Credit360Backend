@@ -44,7 +44,7 @@
         public int PROPOSEDTENOR { get; set; }
 
         public double PROPOSEDINTERESTRATE { get; set; }
-
+        
         public decimal PROPOSEDAMOUNT { get; set; }
 
         public int APPROVEDTENOR { get; set; }
@@ -57,7 +57,7 @@
 
         // public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        // public virtual TBL_CASA TBL_CASA { get; set; }
+        //public virtual TBL_CASA TBL_CASA { get; set; }
 
         // public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 

@@ -1028,7 +1028,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WithOptional(e => e.TBL_CASA)
                 .HasForeignKey(e => e.EQUITYCASAACCOUNTID);
-            
+
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION)
                 .WithRequired(e => e.TBL_CASA)
