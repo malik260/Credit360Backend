@@ -61,6 +61,8 @@ namespace FintrakBanking.APICore.App_Start
     using FinTrakBanking.ThirdPartyIntegration;
     using FintrakBanking.Repositories.Validetion;
     using FintrakBanking.Interfaces.Validation;
+    using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
+    using FintrakBanking.Entities.StagingModels;
 
     public static class NinjectWebCommon
     {
@@ -115,6 +117,7 @@ namespace FintrakBanking.APICore.App_Start
         {
             kernel.Bind<FinTrakBankingContext>().To<FinTrakBankingContext>();
             kernel.Bind<FinTrakBankingDocumentsContext>().To<FinTrakBankingDocumentsContext>();
+            kernel.Bind<FinTrakBankingStagingContext>().To<FinTrakBankingStagingContext>();
 
             kernel.Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
             kernel.Bind<IAuthenticationRepository>().To<AuthenticationRepository>();
@@ -212,6 +215,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IProfileSetupRepository>().To<ProfileSetupRepository>();
             kernel.Bind<IFXAccountCreationRepository>().To<FXAccountCreationRepository>();
             kernel.Bind<ILaonCamSolRepository>().To<LaonCamSolRepository>();
+            kernel.Bind<IStaffMIS>().To<StaffMIS>();
         }
 
     }

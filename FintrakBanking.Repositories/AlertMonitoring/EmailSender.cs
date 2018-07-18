@@ -146,7 +146,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             return true;
         }
 
-        public bool LogMonitoringEmailAlerts()
+        public bool SendEmails()
         {
             try
             {

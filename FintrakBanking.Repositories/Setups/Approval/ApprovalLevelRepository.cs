@@ -56,7 +56,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             canApproveUntenored = x.CANAPPROVEUNTENORED,
                             canResolveDispute = x.CANRESOLVEDISPUTE,
                             isActive = x.ISACTIVE,
-
+                            slaNotificationInterval = x.SLANOTIFICATIONINTERVAL,
                             canViewDocument = x.CANVIEWDOCUMENT,
                             canEdit = x.CANEDIT,
                             canViewUploadedFile = x.CANVIEWUPLOAD,
@@ -117,7 +117,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             canUploadFile = a.CANUPLOAD,
                             canViewApproval = a.CANVIEWAPPROVAL,
                             canApprove = a.CANAPPROVE,
-
+                            slaNotificationInterval = a.SLANOTIFICATIONINTERVAL,
                             //canDoRiskAssessment = a.CANDORISKASSESSMENT,
                             //canRecieveAdjustment = a.CANRECIEVEADJUSTMENT,
                             canRecieveEmail = a.CANRECIEVEEMAIL,
@@ -221,7 +221,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 CREATEDBY = model.createdBy,
                 GROUPID = model.groupId,
                 STAFFROLEID = model.roleId,
-                DATETIMECREATED = genSetup.GetApplicationDate()
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                SLANOTIFICATIONINTERVAL = model.slaNotificationInterval
             };
 
             context.TBL_APPROVAL_LEVEL.Add(data);
@@ -300,6 +301,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             data.GROUPID = model.groupId;
             data.STAFFROLEID = model.roleId;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.SLANOTIFICATIONINTERVAL = model.slaNotificationInterval;
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT

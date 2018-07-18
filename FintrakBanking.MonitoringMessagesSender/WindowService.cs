@@ -61,8 +61,8 @@ namespace FintrakBanking.MonitoringMessagesSender
                 try
                 {
 
-
-                    bool response = emailSender.LogMonitoringEmailAlerts();
+                    //SEND EMAILS
+                    bool response = emailSender.SendEmails();
                     if (response == true)
                     {
                         _log.Info("");
@@ -76,6 +76,8 @@ namespace FintrakBanking.MonitoringMessagesSender
                         _log.Info("No email has been sent as at : " + DateTime.Now);
                     }
 
+
+                    //LOG SLA APPROVAL NOTIFICATIONS
                     if (slaEscalationIntervalInHours != null)
                     {
                         DateTime currentDate = DateTime.Now;
@@ -98,10 +100,7 @@ namespace FintrakBanking.MonitoringMessagesSender
 
                     }
 
-
-
-
-                    //  MONITORING ALERT LOGGIN
+                    // LOG MONITORING ALERTS
                     TimeSpan currentTime = DateTime.Now.TimeOfDay;
                     TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
 
@@ -115,7 +114,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                         _log.Info("==================================================================");
                         _log.Info("Monitoring alert has started successfully");
 
-                      //  emailSender.LogMonitorringAlert();
+                       emailSender.LogMonitorringAlert();
 
                         _log.Info("");
                         _log.Info("==================================================================");
@@ -167,7 +166,6 @@ namespace FintrakBanking.MonitoringMessagesSender
                     Monitor.Exit(s_lock);
                 }
             }
-
         }
         private void StopJob(object state, ElapsedEventArgs elapsedEventArgs)
         {
