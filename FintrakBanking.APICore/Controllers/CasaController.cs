@@ -223,6 +223,29 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("group-account-number/")]
+        public HttpResponseMessage GetGroupAccountNumberWithCustomerId(string accountNumberOrName,int customerId)
+        {
+            try
+            {
+                var data = repo.GetGroupAccountNumberWithCustomerId(accountNumberOrName, customerId, token.GetCompanyId);// token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer-account/")]
         public HttpResponseMessage SearchForCustomerAccount(string searchQuery, int loanTypeId)
         {
