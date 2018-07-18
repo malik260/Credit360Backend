@@ -297,7 +297,20 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
-            // workflow.NextProcess = appl.NEXTAPPLICATIONSTATUSID;
+
+            var placeholders = new AlertPlaceholders();
+            if (appl.CUSTOMERGROUPID == null)
+            {
+                var c = appl.TBL_CUSTOMER;
+                placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME;
+            } else
+            {
+                placeholders.customerName = "<br />CUSTOMER NAME: " + appl.TBL_CUSTOMER_GROUP.GROUPNAME;
+            }
+            placeholders.referenceNumber = "<br />APPLICATION REFERENCENUMBER: " + appl.APPLICATIONREFERENCENUMBER;
+            placeholders.operationName = "<br />OPERATION NAME: Loan Origination";
+            placeholders.branchName = "<br />BRANCH NAME: " + appl.TBL_BRANCH.BRANCHNAME;
+            workflow.Placeholders = placeholders;
 
             workflow.DeferredExecution = true;
             workflow.LogActivity();

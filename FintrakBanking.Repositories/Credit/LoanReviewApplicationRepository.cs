@@ -144,6 +144,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = model.customerId,
                 BRANCHID = model.branchId,
                 OPERATIONID = camOperationId,
+                
                 // CUSTOMERGROUPID = null,
                 DISPUTED = false,
                 REQUIRECOLLATERAL = false,
@@ -181,7 +182,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDTENOR = loan.tenor,
                     APPROVEDINTERESTRATE = loan.interestRate,
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
-                    OPERATIONPERFORMED = false,     
+                    OPERATIONPERFORMED = false,   
                 });
             }
 
@@ -230,7 +231,11 @@ namespace FintrakBanking.Repositories.Credit
                     COMPANYID = model.companyId, // NN
                     ISCOMPLETED = false,
                     CREATEDBY = model.createdBy,
-                    DATETIMECREATED = DateTime.Now
+                    DATETIMECREATED = DateTime.Now,
+                    RISKRATED = true,
+                    DELETED = false
+                    
+
                 };
 
                 context.TBL_LOAN_REVIEW_APPLICATN_CAM.Add(cam);

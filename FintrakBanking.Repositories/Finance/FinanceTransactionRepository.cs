@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Finance
             }
             else
             {
-                return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID, currencyId = account.CURRENCYID, accountNo = account.PRODUCTACCOUNTNUMBER, accountName = account.PRODUCTACCOUNTNAME };
+                return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID, currencyId = account.CURRENCYID, accountNo = account.PRODUCTACCOUNTNUMBER, accountName = account.PRODUCTACCOUNTNAME, hasBalance = true };
             }
 
         }
@@ -235,7 +235,7 @@ namespace FintrakBanking.Repositories.Finance
 
             foreach (var item in inputTransactions)
             {
-                item.batchCode = batchCode;
+                //item.batchCode = batchCode;
 
                 if (item.debitAmount != 0 && item.creditAmount != 0)
                     throw new ConditionNotMetException("Debit or Credit Amount should be 0");
@@ -361,6 +361,7 @@ namespace FintrakBanking.Repositories.Finance
                 trans.CREDITAMOUNT = item.creditAmount;
                 trans.SOURCEBRANCHID = item.sourceBranchId;
                 trans.DESTINATIONBRANCHID = item.destinationBranchId;
+                trans.BATCHCODE2 = item.batchId;
 
                 transactions.Add(trans);
 

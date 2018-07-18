@@ -20,6 +20,8 @@ namespace FintrakBanking.Interfaces.CASA
 
         IEnumerable<CasaViewModel> FindAccount(string accountNumberOrName, int companyId);
 
+        IEnumerable<CasaViewModel> GetGroupAccountNumberWithCustomerId(string accountNumberOrName, int customerId, int companyId);
+
         IQueryable<CustomerSearchVM> SearchCustomer(int customerTypeId,int companyId, string searchQuery);
 
         IQueryable<CasaCustomerSearchViewModel> SearchForCustomerAccount(int companyId, string searchQuery, int customerTypeId);

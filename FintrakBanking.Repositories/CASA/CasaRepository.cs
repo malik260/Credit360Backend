@@ -46,8 +46,8 @@ namespace FintrakBanking.Repositories.CASA
             var CasaAccount = (context.TBL_CASA.Where(d => d.OLDPRODUCTACCOUNTNUMBER3 == accountNumber ||
                 d.OLDPRODUCTACCOUNTNUMBER2 == accountNumber || d.OLDPRODUCTACCOUNTNUMBER1 == accountNumber ||
                 d.CASAACCOUNTID == (value) || d.PRODUCTACCOUNTNUMBER == accountNumber && d.COMPANYID == companyId)
-                ).AsQueryable().SingleOrDefault();
-            return CasaAccount.CASAACCOUNTID;
+                ).Select(d=>d.CASAACCOUNTID).FirstOrDefault();
+            return CasaAccount;
         }
 
         public string GetAccountOwnerByAccountNumber(string accountNumber, int companyId)
@@ -83,8 +83,16 @@ namespace FintrakBanking.Repositories.CASA
 
         public CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId)
         {
+            CasaBalanceViewModel model = new CasaBalanceViewModel();
+
             int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
             var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
+
+            if (account == null) {
+                model.isCasaAccountDetailAvailable=false;
+                return model;
+            }
+                
             return transRepo.GetCASABalance(account.CASAACCOUNTID);
         }
 
@@ -94,6 +102,60 @@ namespace FintrakBanking.Repositories.CASA
             return (from data in context.TBL_CASA
                     join cust in context.TBL_CUSTOMER on data.CUSTOMERID equals cust.CUSTOMERID
                     where data.COMPANYID == companyId && (data.PRODUCTACCOUNTNUMBER.Contains(accountNumberOrName) ||
+                    cust.CUSTOMERCODE.Contains(accountNumberOrName) || cust.FIRSTNAME.Contains(accountNumberOrName) ||
+                 cust.LASTNAME.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
+                    select new CasaViewModel()
+                    {
+                        casaAccountId = data.CASAACCOUNTID,
+                        productAccountNumber = data.PRODUCTACCOUNTNUMBER,
+                        productAccountName = data.PRODUCTACCOUNTNAME,
+                        customerId = data.CUSTOMERID,
+                        customerCode = data.TBL_CUSTOMER.CUSTOMERCODE,
+                        customerName = data.TBL_CUSTOMER.FIRSTNAME + " " + data.TBL_CUSTOMER.LASTNAME,
+                        productId = data.PRODUCTID,
+                        productCode = data.TBL_PRODUCT.PRODUCTCODE,
+                        productName = data.TBL_PRODUCT.PRODUCTNAME,
+                        companyId = data.COMPANYID,
+                        branchId = data.BRANCHID,
+                        currency = data.TBL_CURRENCY.CURRENCYNAME,
+                        branchCode = data.TBL_BRANCH.BRANCHCODE,
+                        branchName = data.TBL_BRANCH.BRANCHNAME,
+                        isCurrentAccount = data.ISCURRENTACCOUNT,
+                        tenor = data.TENOR ?? 0,
+                        interestRate = data.INTERESTRATE ?? 0,
+                        effectiveDate = data.EFFECTIVEDATE ?? General.DefaultDate,
+                        terminalDate = data.TERMINALDATE ?? General.DefaultDate,
+                        actionBy = data.ACTIONBY ?? 0,
+                        actionDate = data.ACTIONDATE ?? General.DefaultDate,
+                        accountStatusId = data.ACCOUNTSTATUSID,
+                        operationId = data.OPERATIONID ?? 0,
+                        availableBalance = data.AVAILABLEBALANCE,
+                        ledgerBalance = data.LEDGERBALANCE,
+                        relationshipOfficerId = data.RELATIONSHIPOFFICERID ?? 0,
+                        misCode = data.MISCODE,
+                        overdraftAmount = data.OVERDRAFTAMOUNT ?? 0,
+                        overdraftInterestRate = data.OVERDRAFTINTERESTRATE ?? 0,
+                        overdraftExpiryDate = data.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
+                        hasOverdraft = data.HASOVERDRAFT.HasValue == true ? data.HASOVERDRAFT.Value : false,
+                        lienAmount = data.LIENAMOUNT,
+                        hasLien = data.HASLIEN,
+                        postNoStatusId = data.POSTNOSTATUSID,
+                        oldProductAccountNumber1 = data.OLDPRODUCTACCOUNTNUMBER1,
+                        oldProductAccountNumber2 = data.OLDPRODUCTACCOUNTNUMBER2,
+                        oldProductAccountNumber3 = data.OLDPRODUCTACCOUNTNUMBER3,
+                        //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0
+                        aprovalStatusId = data.APROVALSTATUSID,
+                    });
+        }
+
+        public IEnumerable<CasaViewModel> GetGroupAccountNumberWithCustomerId(string accountNumberOrName, int customerId, int companyId)
+        {
+            int customerGroupId = context.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault(x => x.CUSTOMERID == customerId).CUSTOMERGROUPID;
+
+            return (from data in context.TBL_CASA
+                    join cust in context.TBL_CUSTOMER on data.CUSTOMERID equals cust.CUSTOMERID
+                    join custGroup in context.TBL_CUSTOMER_GROUP_MAPPING on cust.CUSTOMERID equals custGroup.CUSTOMERID
+                    where data.COMPANYID == companyId && custGroup.CUSTOMERGROUPID == customerGroupId && (data.PRODUCTACCOUNTNUMBER.Contains(accountNumberOrName) ||
                     cust.CUSTOMERCODE.Contains(accountNumberOrName) || cust.FIRSTNAME.Contains(accountNumberOrName) ||
                  cust.LASTNAME.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
                     select new CasaViewModel()

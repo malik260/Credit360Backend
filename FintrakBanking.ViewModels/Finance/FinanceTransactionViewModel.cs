@@ -89,7 +89,18 @@ namespace FintrakBanking.ViewModels.Finance
         public string accountNo { get; set; }
         public string productName { get; set; }
         public int currencyId { get; set; }
+        public string customerCode { get; set; }
+        public string product  { get; set; }
+        public string productType { get; set; }
+        public string currencyType  { get; set; }
+        public string accountStatus { get; set; }
+        public string freezeStatus { get; set; }
+        public string freezeReason { get; set; }
+        public string lastTransactionDate { get; set; }
+        public bool isCasaAccountDetailAvailable { get; set; }
         public CASAAccountStatusEnum accountStatusId { get; set; }
+
+        public bool hasBalance { get; set; }
     }
 
     public class BasicTrasactionSourceInputModel : GeneralEntity

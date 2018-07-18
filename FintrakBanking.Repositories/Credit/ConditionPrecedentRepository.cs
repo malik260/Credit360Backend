@@ -201,8 +201,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             return this.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == detailId);
         }
-
-      
+     
 
         #region CP Template
 

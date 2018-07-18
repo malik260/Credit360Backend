@@ -24,7 +24,7 @@
                   ToolbarHoverBackgroundColor="" ToolbarHoverForegroundColor="" ToolBarItemBorderColor="" ToolBarItemBorderStyle="Solid" ToolBarItemBorderWidth="1px" ToolBarItemHoverBackColor="" ToolBarItemPressedBorderColor="51, 102, 153" ToolBarItemPressedBorderStyle="Solid" ToolBarItemPressedBorderWidth="1px" ToolBarItemPressedHoverBackColor="153, 187, 226">
                   <localreport reportpath="Reports\Report\FinanceTransactions.rdlc">
                       <datasources>
-                          <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="FinanceTransactions" />
+                          <rsweb:ReportDataSource DataSourceId="odsTransaction" Name="FinanceTransactions" />
                       </datasources>
                   </localreport>
            

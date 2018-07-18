@@ -20,6 +20,8 @@ using GemBox.Spreadsheet;
 using System.IO;
 using FintrakBanking.ViewModels.Admin;
 using System.Web;
+using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
+using FintrakBanking.Entities.StagingModels;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -31,6 +33,8 @@ namespace FintrakBanking.Repositories.Setups.General
         private IWorkflow workflow;
         private IApprovalLevelStaffRepository level;
         private FinTrakBankingDocumentsContext documentsContext;
+        private FinTrakBankingStagingContext stagingContext;
+        private IStaffMIS staffMIS;
 
         public object FileUploadControl { get; private set; }
 
@@ -39,7 +43,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                IGeneralSetupRepository _genSetup,
                                IWorkflow _workFlow,
                                IApprovalLevelStaffRepository _level,
-                               FinTrakBankingDocumentsContext _documentsContext)
+                               FinTrakBankingDocumentsContext _documentsContext,
+                               IStaffMIS _staffMIS,
+        FinTrakBankingStagingContext _stagingContext)
         {
             this.context = _context;
             this.genSetup = _genSetup;
@@ -47,6 +53,8 @@ namespace FintrakBanking.Repositories.Setups.General
             this.workflow = _workFlow;
             level = _level;
             documentsContext = _documentsContext;
+            stagingContext = _stagingContext;
+            staffMIS = _staffMIS;
         }
 
         public StaffRepository(FinTrakBankingContext context)
@@ -2116,23 +2124,87 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() > 0;
         }
-        //public byte[] GetStaffSampleDocument()
-        //{
-        //    // HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data")
-        //    var pathString = HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data/StaffSampleDocument.xlsx");
-        //    byte[] readBuffer = System.IO.File.ReadAllBytes(pathString);
 
-        //    return readBuffer;
+        public List<simpleStaffModel> StaffReportingLine(string staffCode, int companyId)
+        {
+            List<simpleStaffModel> list=new List<simpleStaffModel>();
+            if (staffCode!=null)
+            {
+                var staffId = context.TBL_STAFF.Where(a => a.STAFFCODE == staffCode && a.COMPANYID == companyId).Select(a => a.STAFFID).FirstOrDefault();
+                list = context.TBL_STAFF.Where(x => x.SUPERVISOR_STAFFID == staffId && x.COMPANYID == companyId)
+                        .Select(x => new simpleStaffModel
+                        {
+                            staffCode = x.STAFFCODE,
+                            firstName = x.FIRSTNAME + " " + x.LASTNAME + " " + x.MIDDLENAME,
+                            branchCode = context.TBL_BRANCH.Where(a => a.BRANCHID == x.BRANCHID).Select(a => a.BRANCHCODE).FirstOrDefault(),
+                            branchName = context.TBL_BRANCH.Where(a => a.BRANCHID == x.BRANCHID).Select(a => a.BRANCHNAME).FirstOrDefault(),
+                            email = x.EMAIL
+                        }).ToList();
+            }
+            return list;
 
-            //string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            //string filePath = Path.Combine(appDataFolder, "test.txt");
-            //var reader = new StreamReader(filePath);
 
-            //string path = Server.MapPath(String.Format("~/App_Data/uploads/{0}", fileName));
-            //if (File.Exists(path))
-            //{
-            //    return File(path, "application/pdf");
-            //}
-       // }
+        }
+
+        public simpleStaffModel StaffReportingTo(int staffId, int companyId)
+        {
+            var supervisorStaffId =  context.TBL_STAFF.Where(a => a.STAFFID == 183 && a.COMPANYID == companyId).Select(a => a.SUPERVISOR_STAFFID).FirstOrDefault();
+            return context.TBL_STAFF.Where(x => x.STAFFID == supervisorStaffId && x.COMPANYID == companyId)
+                  .Select(x => new simpleStaffModel
+                  {
+                      staffCode = x.STAFFCODE,
+                      firstName = x.FIRSTNAME + " " + x.LASTNAME + " " + x.MIDDLENAME,
+                      branchCode = context.TBL_BRANCH.Where(a => a.BRANCHID == x.BRANCHID).Select(a => a.BRANCHCODE).FirstOrDefault(),
+                      branchName = context.TBL_BRANCH.Where(a => a.BRANCHID == x.BRANCHID).Select(a => a.BRANCHNAME).FirstOrDefault(),
+                      email = x.EMAIL
+                  }).FirstOrDefault();
+        }
+        public simpleStaffModel StaffInformation(int staffId, int companyId)
+        {
+            return context.TBL_STAFF.Where(x => x.STAFFID == 183 && x.COMPANYID == companyId)
+                  .Select(x => new simpleStaffModel
+                  {
+                      staffCode = x.STAFFCODE,
+                      firstName = x.FIRSTNAME + " " + x.LASTNAME + " " + x.MIDDLENAME,
+                      branchCode = context.TBL_BRANCH.Where(a => a.BRANCHID == x.BRANCHID).Select(a => a.BRANCHCODE).FirstOrDefault(),
+                      branchName = context.TBL_BRANCH.Where(a => a.BRANCHID == x.BRANCHID).Select(a => a.BRANCHNAME).FirstOrDefault(),
+                      email = x.EMAIL
+                  }).FirstOrDefault();
+        }
+
+        public StaffMISDetailsModel StaffMIS(int staffId)
+        {
+            StaffMISDetailsModel model = new StaffMISDetailsModel();
+            var misRecord = staffMIS.StaffInformationSystem(183);
+            model.username = misRecord.field1;
+            model.teamUnit = misRecord.field2;
+            model.costCent = misRecord.field3;
+            model.dept = misRecord.field4;
+            model.region = misRecord.field5;
+            model.group = misRecord.field6;
+            model.directorate = misRecord.field7;
+
+            return model;
+        }
+
+        public IEnumerable<simpleStaffModel> GetSearchedStaff(string search)
+        {
+
+            var branches = from x in context.TBL_STAFF
+                           where x.DELETED == false
+                           && x.FIRSTNAME.Contains(search.ToUpper())
+                           || x.LASTNAME.Contains(search.ToUpper())
+                           || x.STAFFCODE.Contains(search.ToUpper())
+                           select new simpleStaffModel
+                           {
+                               staffId = x.STAFFID,
+                               firstName = x.FIRSTNAME + " " + x.LASTNAME,
+                               staffCode = x.STAFFCODE,
+                               branchName =  context.TBL_BRANCH.Where(a=>a.BRANCHID==x.BRANCHID).Select(a=>a.BRANCHNAME + " - " + a.BRANCHCODE).FirstOrDefault()
+                            
+                           };
+
+            return branches.ToList();
+        }
     }
 }

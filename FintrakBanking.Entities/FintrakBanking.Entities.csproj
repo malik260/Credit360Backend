@@ -75,6 +75,10 @@
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
+    <Compile Include="Models\TBL_DOC_TEMPLATE.cs" />
+    <Compile Include="Models\TBL_DOC_TEMPLATE_DETAIL.cs" />
+    <Compile Include="Models\TBL_DOC_TEMPLATE_SECTION.cs" />
+    <Compile Include="Models\TBL_DOC_TEMPLATE_SECTION_ROLE.cs" />
     <Compile Include="Models\TBL_TEMP_LOAN_CAMSOL.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_CONDITION_DOCUMENTS.cs" />
@@ -482,6 +486,7 @@
     <Compile Include="StagingModels\STG_BRANCH.cs" />
     <Compile Include="StagingModels\STG_CASA_BALANCE.cs" />
     <Compile Include="StagingModels\STG_CASA_DAILY_BALANCE.cs" />
+    <Compile Include="StagingModels\STG_CASA_DAILY_BALANCE_INPUT.cs" />
     <Compile Include="StagingModels\STG_CURRENCY_EXCHANGERATE.cs" />
     <Compile Include="StagingModels\STG_CURRENCY_TBL.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />

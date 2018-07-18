@@ -16,6 +16,7 @@ namespace FintrakBaking.BranchUpdateService
     public partial class NewBranchService : ServiceBase
     {
         FintrakStaggingInformationUpdate newBranch = new FintrakStaggingInformationUpdate();
+        TransactionExtration excep = new TransactionExtration();
 
         Timer timer = new Timer();
 
@@ -59,9 +60,13 @@ namespace FintrakBaking.BranchUpdateService
                 AuditTrail.LogFileManager.LogToFile("New Branch Logger Service Started Successfully" + DateTime.Now.ToString());
 
                 string UpdateRespose = newBranch.UpdateStaffInformation();
-               // string AddRespose = newBranch.AddNewBranches();
+                string AddRespose = newBranch.AddNewBranches();
+                excep.CurrencyExchangeRateExtraction();
+                excep.CustomerAccountBalances();
+                excep.CustomerAccountExtraction();
+                excep.ProductPricingExtraction();
 
-                
+
 
                 AuditTrail.LogFileManager.LogToFile("New Branch Logger Service ends with these responses : " + UpdateRespose + " " + DateTime.Now.ToString());
 
