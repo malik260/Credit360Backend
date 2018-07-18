@@ -28,7 +28,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 || st.LASTNAME.StartsWith(username.Trim()) || u.USERNAME.StartsWith(username.Trim())
                 || _audit.URL.StartsWith(username.Trim())
                 || _audit.BRANCHID == context.TBL_BRANCH.Where(x => x.BRANCHCODE == username).Select(x => x.BRANCHID).FirstOrDefault()
-                || atype.AUDITTYPENAME.StartsWith(username.Trim())
+                || atype.AUDITTYPENAME.ToLower().StartsWith(username.ToLower().Trim())
+                || _audit.DETAIL.ToLower().Contains(username.ToLower().Trim())
                 || username == null)
                 &&(_audit.AUDITTYPEID== auditTypeId || auditTypeId==0)
                 select new AuditViewModel

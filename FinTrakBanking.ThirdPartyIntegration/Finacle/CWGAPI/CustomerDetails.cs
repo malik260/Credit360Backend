@@ -166,13 +166,28 @@
                         accountOutput.productName = accountAPI.productName;
                         accountOutput.currencyId = currencyId;
                         accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
+                        accountOutput.customerCode = accountAPI.customerCode;
+                        accountOutput.product = accountAPI.product;
+                        accountOutput.productType = accountAPI.productType;
+                        accountOutput.currencyType = accountAPI.currencyType;
+                        accountOutput.accountStatus = accountAPI.accountStatus;
+                        accountOutput.freezeStatus = accountAPI.freezeStatus;
+                        accountOutput.freezeReason = accountAPI.freezeReason;
+                        accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
+                        accountOutput.hasBalance = true;
                     }
 
                     //responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
 
                     responseMessage = await response.Content.ReadAsStringAsync(); //.ReadAsAsync<CasaIntegrationViewModel>();
 
-                    handler.Dispose();
+                    if (response.IsSuccessStatusCode == false)
+                    {
+                        accountOutput.hasBalance = false;
+                        accountOutput.accountName = responseMessage;
+                    }
+
+                        handler.Dispose();
                     client.Dispose();
 
                     return accountOutput;

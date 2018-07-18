@@ -31,5 +31,14 @@ namespace FintrakBanking.ViewModels.AlertMonitoring
         public string comment { get; set; }
         public int approvalStatusId { get; set; }
         public string approvalStatus { get; set; }
+        public double responseDefaultTime { get; set; }
+        public DateTime? ressponseTime { get; set; }
+        //set {
+
+        //    if (systemResponseDate!=null)
+        //    {
+        //        responseDefaultTime = (systemResponseDate.Value.Day - systemArrivalDate.Day);
+        //    }
+        //} }
     }
 }

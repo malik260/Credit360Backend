@@ -4,6 +4,15 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.WorkFlow
 {
+    public class AlertPlaceholders
+    {
+        public string customerName { get; set; }
+        public string referenceNumber { get; set; }
+        public string operationName { get; set; }
+        public string branchName { get; set; }
+        public string locationName { get; set; }
+    }
+
     public class ApprovalViewModel : UserInfo
     {
         private bool _keepPending = true;

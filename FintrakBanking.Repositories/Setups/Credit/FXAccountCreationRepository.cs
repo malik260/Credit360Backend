@@ -410,5 +410,6 @@ namespace FintrakBanking.Repositories.Setups.Credit
             //}
           
         }
+
     }
 }
