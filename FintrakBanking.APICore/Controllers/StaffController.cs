@@ -778,6 +778,141 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("staff-reporting/{staffCode}")]
+        public HttpResponseMessage GetStaffSupervisorReporting(string staffCode)
+        {
+            try
+            {
+                var staffInfo = repo.StaffReportingLine(staffCode, token.GetCompanyId);
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("staff-reporting-search/{staffCode}")]
+        public HttpResponseMessage GetStaffSupervisorReportingSearch(string staffCode)
+        {
+            try
+            {
+                var staffInfo = repo.StaffReportingLine(staffCode, token.GetCompanyId);
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("supervisor")]
+        public HttpResponseMessage Supervisor()
+        {
+            try
+            {
+                var staffInfo = repo.StaffReportingTo(token.GetStaffId, token.GetCompanyId);
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("staff/information")]
+        public HttpResponseMessage StaffInformation()
+        {
+            try
+            {
+                var staffInfo = repo.StaffInformation(token.GetStaffId, token.GetCompanyId);
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("staff/mis")]
+        public HttpResponseMessage StaffMIS()
+        {
+            try
+            {
+                var staffInfo = repo.StaffMIS(token.GetStaffId);
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("staff/search/{searchQuery}")]
+        public HttpResponseMessage SearchForBranch(string searchQuery)
+        {
+            try
+            {
+                var data = repo.GetSearchedStaff(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
     }
 
 }

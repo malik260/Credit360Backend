@@ -9729,9 +9729,9 @@ namespace FintrakBanking.Repositories.Credit
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                 principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.DESCRIPTION,
+                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
                                 interestFrequencyTypeId = ln.INTERESTFREQUENCYTYPEID != null ? (short)ln.INTERESTFREQUENCYTYPEID : (short)0,
-                                interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.DESCRIPTION,
+                                interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
                                 principalNumberOfInstallment = ln.PRINCIPALNUMBEROFINSTALLMENT,
                                 interestNumberOfInstallment = ln.INTERESTNUMBEROFINSTALLMENT,
                                 relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
@@ -9791,6 +9791,8 @@ namespace FintrakBanking.Repositories.Credit
                                 operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
                                 newEffectiveDate = op.EFFECTIVEDATE,
                                 reviewDetails = op.REVIEWDETAILS,
+                                approvedAmount = ld.APPROVEDAMOUNT,
+                                creatorName = context.TBL_STAFF.Where(x=>x.STAFFID==ld.CREATEDBY).Select(x=>x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
                             }).ToList();
 
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING

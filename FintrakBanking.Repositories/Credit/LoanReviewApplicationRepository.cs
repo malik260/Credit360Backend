@@ -222,7 +222,11 @@ namespace FintrakBanking.Repositories.Credit
                     COMPANYID = model.companyId, // NN
                     ISCOMPLETED = false,
                     CREATEDBY = model.createdBy,
-                    DATETIMECREATED = DateTime.Now
+                    DATETIMECREATED = DateTime.Now,
+                    RISKRATED = true,
+                    DELETED = false
+                    
+
                 };
 
                 context.TBL_LOAN_REVIEW_APPLICATN_CAM.Add(cam);
