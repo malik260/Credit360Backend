@@ -186,7 +186,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.SearchForLoanAndRevolvingLoan(productTypeId, searchQuery);
+                var data = loanRepo.SearchForLoanAndRevolvingLoan(3,productTypeId, searchQuery);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

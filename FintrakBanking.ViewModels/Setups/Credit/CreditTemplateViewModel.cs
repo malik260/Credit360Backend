@@ -14,4 +14,26 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int approvalLevelId { get; set; }
         public short productClassId { get; set; }
     }
+
+    public class LoadedDocumentSectionViewModel : GeneralEntity
+    {
+        public int sectionId { get; set; }
+        public int operationId { get; set; }
+        public int targetId { get; set; }
+        public int templateSectionId { get; set; }
+        public string title { get; set; }
+        public string templateDocument { get; set; }
+        public int position { get; set; }
+        public bool canEdit { get; set; }
+        public bool editable { get; set; }
+    }
+
+    public class DocumentTemplateViewModel : GeneralEntity
+    {
+        public int templateId { get; set; }
+        public string templateName { get; set; }
+        public int staffRoleId { get; set; }
+        public int operationId { get; set; }
+        public int targetId { get; set; }
+    }
 }

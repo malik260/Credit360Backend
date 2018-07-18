@@ -114,7 +114,7 @@ namespace FintrakBanking.Repositories.Credit
                 ENDDATE = entity.endDate,
                 STARTDATE = entity.startDate,
                 ACCOUNTTYPEID = entity.accountTypeId,
-                 FIELD1=entity.field1,
+                FIELD1=entity.field1,
                 FIELD2=entity.field2,
                 FIELD3=entity.field3,
                 FIELD4=entity.field4,

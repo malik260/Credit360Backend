@@ -79,6 +79,8 @@ namespace FintrakBanking.Common.Enum
         InterestPastDueLoanRepayment = 67,
         PrincipalPastDueLoanRepayment =68,
         PenalFee=69, 
-        CamsolBackbookModification =70
+        CamsolBackbookModification =70,
+        NPLoanReviewApprovalAppraisal = 71,
+        CommercialPaperRollOver = 72,
     }
 }

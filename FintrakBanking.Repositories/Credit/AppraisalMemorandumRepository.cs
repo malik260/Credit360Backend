@@ -778,70 +778,138 @@ namespace FintrakBanking.Repositories.Credit
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
 
             // query
-            applications = context.TBL_LOAN_APPLICATION.Where(x =>
+            var query = context.TBL_LOAN_APPLICATION.Where(x =>
                     x.DELETED == false
                     && x.COMPANYID == companyId
                     //&& (x.BRANCHID == branchId || isHeadOffice) // branch filter
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                 )
             .OrderByDescending(x => x.LOANAPPLICATIONID)
-            .GroupJoin(
-                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
+            .Join(
+                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                    && x.APPROVALSTATEID != (int)ApprovalState.Ended
+                    && x.RESPONSESTAFFID == null
+                    && levelIds.Contains((int)x.TOAPPROVALLEVELID)
+                    && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
+                ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,
-                (x, y) => new { a = x, bs = y })
-            .SelectMany(
-                xy => xy.bs.DefaultIfEmpty(),
-                (x, y) => new LoanApplicationViewModel
+                (a, b) => new { a, b })
+            .Select(x => new LoanApplicationViewModel
+            {
+                //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
+                loanApplicationId = x.a.LOANAPPLICATIONID,
+                applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
+                customerId = x.a.CUSTOMERID,
+                branchId = x.a.BRANCHID,
+                productClassId = x.a.PRODUCTCLASSID,
+                productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                customerGroupId = x.a.CUSTOMERGROUPID,
+                loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
+                relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
+                relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
+                applicationDate = x.a.APPLICATIONDATE,
+                //newApplicationDate = x.a.APPLICATIONDATE,
+                applicationAmount = x.a.APPLICATIONAMOUNT,
+                approvedAmount = x.a.APPROVEDAMOUNT,
+                interestRate = x.a.INTERESTRATE,
+                applicationTenor = x.a.APPLICATIONTENOR,
+                lastComment = x.b.COMMENT,
+                currentApprovalStateId = x.b.APPROVALSTATEID,
+                currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
+                currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                approvalTrailId = x.b == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
+                toStaffId = x.b.TOSTAFFID,
+                loanInformation = x.a.LOANINFORMATION,
+                submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
+                customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
+                isRelatedParty = x.a.ISRELATEDPARTY,
+                isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
+                approvalStatusId = (short)x.a.APPROVALSTATUSID,
+                applicationStatusId = x.a.APPLICATIONSTATUSID,
+                branchName = x.a.TBL_BRANCH.BRANCHNAME,
+                relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
+                relationshipManagerName = x.a.TBL_STAFF1.FIRSTNAME + " " + x.a.TBL_STAFF1.MIDDLENAME + " " + x.a.TBL_STAFF1.LASTNAME,
+                misCode = x.a.MISCODE,
+                loanTypeName = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                createdBy = x.a.CREATEDBY,
+                loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
+                customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
+                operationId = x.a.OPERATIONID,
+                productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
+            })
+            .ToList()
+            ;
+
+            applications = query.AsQueryable()
+                .GroupBy(d => d.loanApplicationId)
+                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+
+            return applications;//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
+        }
+
+        public List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user)
+        {
+            int staffId = user.staffId;
+            bool isHeadOffice = (user.BranchId == 1) ? true : false;
+            int operationId = (int)OperationsEnum.CAM;
+            var levelIds = general.GetStaffApprovalLevelIds(user.staffId, operationId);// new int[] {3,1,5};
+            int productBasedId = (int)ProductClassProcessEnum.ProductBased;
+
+            var applications = context.TBL_LOAN_APPLICATION.Where(x =>
+                x.DELETED == false
+                && x.COMPANYID == user.companyId
+                //&& (x.BRANCHID == user.BranchId || isHeadOffice) // branch filter
+                // && x.PRODUCT_CLASS_PROCESSID == productBasedId
+                && x.PRODUCTCLASSID != null
+            )
+            .Join(
+                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                    && x.APPROVALSTATEID != (int)ApprovalState.Ended
+                    && x.RESPONSESTAFFID == null
+                    && levelIds.Contains((int)x.TOAPPROVALLEVELID)
+                    && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
+                    ),
+                a => a.LOANAPPLICATIONID,
+                b => b.TARGETID,
+                (a, b) => new { a, b })
+            .Select(
+                x => new
                 {
-                    //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
                     loanApplicationId = x.a.LOANAPPLICATIONID,
-                    applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
-                    relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
-                    customerId = x.a.CUSTOMERID,
-                    branchId = x.a.BRANCHID,
+                    approvalTrailId = x == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
                     productClassId = x.a.PRODUCTCLASSID,
-                    productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-                    customerGroupId = x.a.CUSTOMERGROUPID,
-                    loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
-                    relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
-                    relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
-                    applicationDate = x.a.APPLICATIONDATE,
-                    //newApplicationDate = x.a.APPLICATIONDATE,
-                    applicationAmount = x.a.APPLICATIONAMOUNT,
-                    approvedAmount = x.a.APPROVEDAMOUNT,
-                    interestRate = x.a.INTERESTRATE,
-                    applicationTenor = x.a.APPLICATIONTENOR,
-                    lastComment = y.COMMENT,
-                    currentApprovalStateId = y.APPROVALSTATEID,
-                    currentApprovalLevelId = y.TOAPPROVALLEVELID,
-                    currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
-                    approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
-                    toStaffId = y.TOSTAFFID,
-                    loanInformation = x.a.LOANINFORMATION,
-                    submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
-                    customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
-                    isRelatedParty = x.a.ISRELATEDPARTY,
-                    isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
-                    approvalStatusId = (short)x.a.APPROVALSTATUSID,
-                    applicationStatusId = x.a.APPLICATIONSTATUSID,
-                    branchName = x.a.TBL_BRANCH.BRANCHNAME,
-                    relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
-                    relationshipManagerName = x.a.TBL_STAFF1.FIRSTNAME + " " + x.a.TBL_STAFF1.MIDDLENAME + " " + x.a.TBL_STAFF1.LASTNAME,
-                    misCode = x.a.MISCODE,
-                    loanTypeName = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                    createdBy = x.a.CREATEDBY,
-                    loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
-                    customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                    customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
-                    operationId = x.a.OPERATIONID,
-                    productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
+                    currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
+                    toStaffId = x.b.TOSTAFFID,
                 })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
+                .ToList()
                 ;
 
-            return applications.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
+            var productClasses = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCT_CLASS_PROCESSID == productBasedId)
+                .Select(item => new PendingProductProgramViewModel
+                {
+                    productClassId = item.PRODUCTCLASSID,
+                    productClassName = item.PRODUCTCLASSNAME,
+                    pendingNumber = 0,
+                })
+                .ToList();
+
+            var result = new List<PendingProductProgramViewModel>();
+            foreach (var pc in productClasses)
+            {
+                result.Add(new PendingProductProgramViewModel
+                {
+                    productClassId = pc.productClassId,
+                    productClassName = pc.productClassName,
+                    pendingNumber = applications.Count(x => x.productClassId == pc.productClassId)
+                });
+            }
+
+            return result;
         }
 
         #endregion CAM Pending Applications
@@ -1015,64 +1083,6 @@ namespace FintrakBanking.Repositories.Credit
                 ;
 
             return applications;
-        }
-
-        public List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user)
-        {
-            int staffId = user.staffId;
-            bool isHeadOffice = (user.BranchId == 1) ? true : false;
-            int operationId = (int)OperationsEnum.CAM;
-            var levelIds = general.GetStaffApprovalLevelIds(user.staffId, operationId);// new int[] {3,1,5};
-            int productBasedId = (int)ProductClassProcessEnum.ProductBased;
-
-            var applications = context.TBL_LOAN_APPLICATION.Where(x =>
-                x.DELETED == false
-                && x.COMPANYID == user.companyId
-                //&& (x.BRANCHID == user.BranchId || isHeadOffice) // branch filter
-                // && x.PRODUCT_CLASS_PROCESSID == productBasedId
-                && x.PRODUCTCLASSID != null
-            )
-            .GroupJoin(
-                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
-                a => a.LOANAPPLICATIONID,
-                b => b.TARGETID,
-                (x, y) => new { a = x, bs = y })
-            .SelectMany(
-                xy => xy.bs.DefaultIfEmpty(),
-                (x, y) => new
-                {
-                    loanApplicationId = x.a.LOANAPPLICATIONID,
-                    approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
-                    productClassId = x.a.PRODUCTCLASSID,
-                    currentApprovalLevelId = y.TOAPPROVALLEVELID,
-                    toStaffId = y.TOSTAFFID,
-                })
-                .GroupBy(d => d.loanApplicationId)
-                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId))
-                .ToList()
-                ;
-
-            var productClasses = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCT_CLASS_PROCESSID == productBasedId)
-                .Select(item => new PendingProductProgramViewModel
-                {
-                    productClassId = item.PRODUCTCLASSID,
-                    productClassName = item.PRODUCTCLASSNAME,
-                    pendingNumber = 0,
-                })
-                .ToList();
-
-            var result = new List<PendingProductProgramViewModel>();
-            foreach(var pc in productClasses)
-            {
-                result.Add(new PendingProductProgramViewModel {
-                    productClassId = pc.productClassId,
-                    productClassName=pc.productClassName,
-                    pendingNumber= applications.Count(x => x.productClassId == pc.productClassId)
-                });
-            }
-
-            return result;
         }
 
         public bool GetUntenoredStatus(int applicationId)
@@ -1298,7 +1308,7 @@ namespace FintrakBanking.Repositories.Credit
             recommendation.COLLATERALVALUE = entity.collateralValue;
             recommendation.STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount;
             context.SaveChanges();
-            return GetRecommendedCollateral(entity.applicationId);
+            return GetRecommendedCollateralLms(entity.applicationId);
         }
 
         public List<RecommendedCollateralViewModel> AddRecommendedCollateralLms(RecommendedCollateralViewModel entity)
@@ -1314,7 +1324,7 @@ namespace FintrakBanking.Repositories.Credit
                 SYSTEMDATETIME = DateTime.Now
             });
             context.SaveChanges();
-            return GetRecommendedCollateral(entity.applicationId);
+            return GetRecommendedCollateralLms(entity.applicationId);
         }
 
         public List<RecommendedCollateralViewModel> GetRecommendedCollateralLms(int applicationId)

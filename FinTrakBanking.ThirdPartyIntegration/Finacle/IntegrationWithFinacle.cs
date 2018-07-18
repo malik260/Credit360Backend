@@ -46,7 +46,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
 
             ResponseMessage result = null;
-            if (LogOverDraftExtend(model))
                 Task.Run(async () => result = await overDraft.APIOverDraftExtend(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
@@ -107,7 +106,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    LogOverDraftTopUpAndRenew(model);
                     throw new Exception(result.APIResponse.message);
                 }
                 else
@@ -118,7 +116,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                LogOverDraftTopUpAndRenew(model);
                 throw new Exception(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
@@ -129,7 +126,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             model.apiUrl = @"api/OverDraft/Renew ";
 
-            if (LogOverDraftTopUpAndRenew(model))
                 Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
@@ -181,7 +177,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
             model.APIUrl = @"api/TemporaryOverDraft/Running";
             ResponseMessage result = null;
 
-            if (LogTemporaryOverDraft(model))
                 Task.Run(async () => result = await overDraft.APITemporaryOverDraftRunning(model)).GetAwaiter().GetResult();
 
 
@@ -214,7 +209,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             model.APIUrl = @"api/TemporaryOverDraft/Single";
             ResponseMessage result = null;
-            if (LogTemporaryOverDraft(model))
                 Task.Run(async () => result = await overDraft.APITemporaryOverDraftSingle(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)

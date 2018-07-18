@@ -109,7 +109,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         //void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
 
-        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int productTypeId, string searchQuery);
+        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int productTypeId, string searchQuery);
 
         string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId);
 
@@ -134,5 +134,11 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LookupViewModel> GetAllFrequencyType();
 
         List<ProductViewModel> GetLoanCommercialLoans(int companyId);
+
+        LoanPaymentScheduleInputViewModel BuildScheduleModel(int targetId, int createdBy);
+
+        LoanViewModel BuildDisbursementModel(int loanId, LoanPaymentScheduleInputViewModel loanInputModel, int staffId);
+
+        void DisburseLoan(LoanViewModel entity);
     }
 }
