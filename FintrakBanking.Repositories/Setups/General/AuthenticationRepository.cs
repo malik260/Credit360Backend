@@ -315,13 +315,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             workStartTime = st.WORKSTARTDURATION,
                             workEndTime = st.WORKENDDURATION
                         }).FirstOrDefault();
-            if (data != null)
+            if (data != null && data.workStartTime != null && data.workEndTime != null)
             {
-              
-                if (data.workStartTime == null || data.workEndTime == null)
-                {
-                    return true;
-                }
                 var startTime = TimeSpan.FromHours((int)data.workStartTime);
                 var endTime = TimeSpan.FromHours((int)data.workEndTime);
 

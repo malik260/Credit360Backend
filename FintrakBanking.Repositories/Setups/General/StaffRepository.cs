@@ -1063,6 +1063,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     entity.STATEID = temp.STATEID;
                     entity.CITYID = temp.CITYID;
                     entity.DELETED = false;
+                    entity.LOAN_LIMIT = temp.LOAN_LIMIT;
+                    entity.WORKSTARTDURATION = temp.WORKSTARTDURATION;
+                    entity.WORKENDDURATION = temp.WORKENDDURATION;
                 }
                 else
                 {
@@ -1096,7 +1099,10 @@ namespace FintrakBanking.Repositories.Setups.General
                         PHONEOFNOK = temp.PHONEOFNOK,
                         STATEID = temp.STATEID,
                         CITYID = temp.CITYID,
-                    };
+                        LOAN_LIMIT = temp.LOAN_LIMIT,
+                        WORKSTARTDURATION = temp.WORKSTARTDURATION,
+                    WORKENDDURATION = temp.WORKENDDURATION
+                };
                     if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                     context.TBL_STAFF.Add(entity);
                 }
