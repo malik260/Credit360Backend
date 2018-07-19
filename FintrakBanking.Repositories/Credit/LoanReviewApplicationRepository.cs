@@ -122,8 +122,12 @@ namespace FintrakBanking.Repositories.Credit
 
             list.casaAccounts = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
             list.productTypes = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
-            list.operationTypes = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement || x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
-            || x.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial).Select(x => new DropDownSelect { id = x.OPERATIONID, name = x.OPERATIONNAME }).OrderBy(o => o.name).ToList();
+            list.operationTypes = context.TBL_OPERATIONS.Where(x => 
+                (x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement 
+                || x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
+                || x.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial)
+                && x.ISDISABLED == false
+            ).Select(x => new DropDownSelect { id = x.OPERATIONID, name = x.OPERATIONNAME, typeId = (int)x.OPERATIONTYPEID }).OrderBy(o => o.name).ToList();
 
             return list;
         }
@@ -328,17 +332,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public int ForwardApplication(ForwardReviewViewModel model)
         {
+            int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
-            bool operationIsCam = (model.operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) || (model.operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
+
+            bool operationIsCam = (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
             if (operationIsCam)
             {
+                operationId = (int)appl.OPERATIONID;
                 if (appl.CUSTOMERID > 0) workflow.Amount = GetCustomerTotalOutstandingBalance((int)appl.CUSTOMERID);
             }
 
             workflow.StaffId = model.lastUpdatedBy;
-            workflow.CompanyId = model.companyId;
-            workflow.OperationId = model.operationId;
-            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.OperationId = operationId;
+            workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.ProductClassId = null;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
@@ -353,9 +360,9 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
                 int lastStatusId = workflow.StatusId;
-                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && model.operationId != lastOperationId) // jump process OR end flag
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId) // jump process OR end flag
                 {
-                    workflow.NextProcess(model.companyId, model.lastUpdatedBy, model.operationId + 1, model.applicationId, null, "New application", true, true);
+                    workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, model.operationId + 1, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
                 appl.APPROVALSTATUSID = (short)lastStatusId;
                 context.SaveChanges();

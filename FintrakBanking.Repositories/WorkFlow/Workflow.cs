@@ -167,7 +167,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.RESPONSESTAFFID = this.staffId;
             }
 
-        //    SendNotifications();
+            SendNotifications();
 
             if (this.comment == "flow_test") { throw new Exception("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", CURRL:" + this.fromLevelId + ", NEXTL:" + this.nextLevelId + ", TOSTAFFID:" + this.toStaffId); }
 

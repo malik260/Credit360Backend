@@ -239,10 +239,8 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        private string ResolvePlaceHolders(string template, int operationId, int targetId)
+        private string ResolvePlaceHolders(string content, int operationId, int targetId)
         {
-            string content = String.Empty;
-
             if (operationId == (int)OperationsEnum.CAM)
             {
                 if (loanAppllication == null)
