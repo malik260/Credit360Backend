@@ -140,5 +140,12 @@ namespace FintrakBanking.Interfaces.Credit
         LoanViewModel BuildDisbursementModel(int loanId, LoanPaymentScheduleInputViewModel loanInputModel, int staffId);
 
         void DisburseLoan(LoanViewModel entity);
+
+        IEnumerable<CamProcessedLoanViewModel> GetInitiatedLoanApplicationAwaitingApproval(int staffId, int companyId);
+
+        int GoForInitiatedLoanApproval(ApprovalViewModel entity, int loanBookingRequestId);
+
+
+
     }
 }

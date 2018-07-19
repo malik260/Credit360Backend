@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Admin
         bool UpdateCurrencyRate(short currencyRateId, CurrencyRateViewModel model);
 
         IEnumerable<CurrencyRateCodeViewModel> GetAllCurrencyRateCode();
+        IEnumerable<LookupViewModel> GetRateCode();
 
         #endregion
     }

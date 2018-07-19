@@ -10,6 +10,7 @@
         CFF =16,
         IDF = 17,
         CommercialPaper = 40,
+        ForeignXRevolving = 41,
     };
 
     public enum LoanSystemTypeEnum
