@@ -49,7 +49,7 @@ namespace FintrakBanking.Entities.Models
 
         public short? VOTE { get; set; }
 
-        public DateTime SLADATETIME { get; set; }
+        public DateTime? SLADATETIME { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
