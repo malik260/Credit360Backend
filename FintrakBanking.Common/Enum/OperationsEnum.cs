@@ -82,5 +82,6 @@ namespace FintrakBanking.Common.Enum
         CamsolBackbookModification =70,
         NPLoanReviewApprovalAppraisal = 71,
         CommercialPaperRollOver = 72,
+        ForeignExchangeLoanBooking = 73,
     }
 }
