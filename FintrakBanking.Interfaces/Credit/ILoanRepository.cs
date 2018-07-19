@@ -141,6 +141,11 @@ namespace FintrakBanking.Interfaces.Credit
 
         void DisburseLoan(LoanViewModel entity);
 
-        
+        IEnumerable<CamProcessedLoanViewModel> GetInitiatedLoanApplicationAwaitingApproval(int staffId, int companyId);
+
+        int GoForInitiatedLoanApproval(ApprovalViewModel entity, int loanBookingRequestId);
+
+
+
     }
 }

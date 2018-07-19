@@ -24,8 +24,6 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-
-
       [HttpGet] [ClaimsAuthorization]  [Route("currency")]
         public HttpResponseMessage GetCurrency()
         {
@@ -39,6 +37,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
             }
         }
+
       [HttpGet] [ClaimsAuthorization]  
         [Route("currency-ratecode")]
         public HttpResponseMessage GetCurrencyRaceCode()
@@ -55,8 +54,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("rate-code}")]
-        public HttpResponseMessage GetRateCode(int customerId, int loanApplicationDetailId)
+        [Route("rate-code")]
+        public HttpResponseMessage GetRateCode()
         {
             try
             {
@@ -82,8 +81,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
         [HttpGet] [ClaimsAuthorization]  
         [Route("base-currency")]
         public HttpResponseMessage GetBaseCurrency()
@@ -99,7 +96,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
       [HttpGet] [ClaimsAuthorization]  [Route("currency-rate")]
         public HttpResponseMessage GetCurrencyRate()
         {
@@ -112,7 +108,6 @@ namespace FintrakBanking.APICore.Controllers
             {
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
             }
-
         }
 
       [HttpGet] [ClaimsAuthorization]  
@@ -167,7 +162,6 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
-
         }
 
        [HttpPut] [ClaimsAuthorization][Route("currency-rate/{currencyId}")]
