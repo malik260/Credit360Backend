@@ -5709,7 +5709,7 @@ namespace FintrakBanking.Repositories.Credit
                          }).Concat
                          (from a in context.TBL_LOAN_SCHEDULE_DAILY_TEMP
                           where a.LOANID == loanId && a.DATE >= DbFunctions.TruncateTime(applicationDate)
-                          && a.PAYMENTNUMBER != 0
+                          //&& a.PAYMENTNUMBER != 0
                           orderby a.PAYMENTNUMBER ascending
                           select new LoanPaymentScheduleDailyViewModel()
                           {
