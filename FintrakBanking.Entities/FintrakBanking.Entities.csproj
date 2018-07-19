@@ -486,6 +486,7 @@
     <Compile Include="StagingModels\STG_BRANCH.cs" />
     <Compile Include="StagingModels\STG_CASA_BALANCE.cs" />
     <Compile Include="StagingModels\STG_CASA_DAILY_BALANCE.cs" />
+    <Compile Include="StagingModels\STG_CASA_DAILY_BALANCE_INPUT.cs" />
     <Compile Include="StagingModels\STG_CURRENCY_EXCHANGERATE.cs" />
     <Compile Include="StagingModels\STG_CURRENCY_TBL.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />

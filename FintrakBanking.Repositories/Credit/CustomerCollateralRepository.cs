@@ -3635,7 +3635,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 casaDetail = (casa.GetCASABalance(entity.collateralCode, entity.companyId));
 
-                if (casaDetail.accountNo == null)
+                if (casaDetail.isCasaAccountDetailAvailable == false)
                 {
                     throw new Exception(entity.collateralCode + " is not a valid CASA account number");
                 }

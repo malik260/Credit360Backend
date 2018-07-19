@@ -9,7 +9,7 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
 {
     public interface IEmailSender
     {
-        bool LogMonitoringEmailAlerts();
+        bool SendEmails();
         bool SendEmailOfException(string body);
         bool SendEmailCompleted();
         List<TBL_MESSAGE_LOG> GetMaillingList();

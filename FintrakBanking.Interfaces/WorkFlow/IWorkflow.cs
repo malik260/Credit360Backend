@@ -1,12 +1,9 @@
 ﻿using FintrakBanking.ViewModels.WorkFlow;
-using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.WorkFlow
 {
     public interface IWorkflow
     {
-        bool LogActivity();
-
         int OperationId { set; }
         int? ProductClassId { set; }
         int? ProductId { set; }
@@ -35,7 +32,9 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool Saved { get; }
         float? InterestRateConcession { set; }
         float? FeeRateConcession { set; }
+        AlertPlaceholders Placeholders { set; }
 
+        bool LogActivity();
         void NextProcess(int companyId, int staffId, int operationId, int targetId, int? productClassId, string comment, bool external, bool deferred);
 
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!

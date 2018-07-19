@@ -44,6 +44,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public bool canEscalate { get; set; }
         public double? feeRate { get; set; }
         public double? interestRate { get; set; }
+        public int slaNotificationInterval { get; set; }
     }
 
     public class PresetRouteViewModel : GeneralEntity

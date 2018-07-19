@@ -239,10 +239,8 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        private string ResolvePlaceHolders(string template, int operationId, int targetId)
+        private string ResolvePlaceHolders(string content, int operationId, int targetId)
         {
-            string content = String.Empty;
-
             if (operationId == (int)OperationsEnum.CAM)
             {
                 if (loanAppllication == null)
@@ -311,6 +309,13 @@ namespace FintrakBanking.Repositories.Credit
             }
             result = result + $"</table>";
             return result;
+            
+            /*
+            int number = 1234567890;
+            Convert.ToDecimal(number).ToString("#,##0.00");
+
+            You will get the result 1,234,567,890.00.
+            */
         }
 
         public bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity)

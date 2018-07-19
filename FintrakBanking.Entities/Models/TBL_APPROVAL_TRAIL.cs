@@ -49,6 +49,8 @@ namespace FintrakBanking.Entities.Models
 
         public short? VOTE { get; set; }
 
+        public DateTime SLADATETIME { get; set; }
+
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL1 { get; set; }
@@ -70,6 +72,5 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_STAFF TBL_STAFF2 { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF3 { get; set; }
-   
     }
 }
