@@ -354,6 +354,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int id { get; set; }
         public string name { get; set; }
+        public int typeId { get; set; }
     }
 
     public class MaturityIntructionViewModel : GeneralEntity
