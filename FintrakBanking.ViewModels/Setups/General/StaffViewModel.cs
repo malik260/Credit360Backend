@@ -67,6 +67,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string fileName { get; set; }
         public string fileExtension { get; set; }
         public string DelegateName { get; set; }
+        public decimal? workStartDuration { get; set; }
+        public decimal? workEndDuration { get; set; }
         public AppUserViewModel user { get; set; }
      
     }

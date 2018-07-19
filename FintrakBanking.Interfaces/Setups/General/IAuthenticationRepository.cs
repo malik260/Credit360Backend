@@ -27,7 +27,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         Task<bool> UpdateUser(int userId, UserViewModel user);
 
         bool IsAccountActive(string userName);
-
+        bool ResumptionClosignTime(string userName);
 
         Task<UserViewModel> FindUserByUserNameAndPassword(string username, string password);
 

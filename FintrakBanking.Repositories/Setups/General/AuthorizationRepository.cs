@@ -170,10 +170,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     groupId = x.GROUPID
                 });
         }
-        public bool TwoFactorAuthentication(string staffCode, string passCode)
-        {
-            var output = auth.Authenticate(staffCode, passCode);
-            return output;
-        }
+       
     }
 }

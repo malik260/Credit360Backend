@@ -536,32 +536,32 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
-         [HttpPost] [ClaimsAuthorization]
-        [Route("operation-loan-rephrasement")]
-        public HttpResponseMessage LoanRephrasementOperation([FromBody]LoanReviewOperationViewModel entity)
-        {
-            try
-            {
+        // [HttpPost] [ClaimsAuthorization]
+        //[Route("operation-loan-rephrasement")]
+        //public HttpResponseMessage LoanRephrasementOperation([FromBody]LoanReviewOperationViewModel entity)
+        //{
+        //    try
+        //    {
 
-                if (entity.loanReviewOperationsId == 0 || entity.loanId == 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Please reconfirm your request and try again" });
-                }
-                var data = repo.LoanRephasementProcess((short)entity.loanReviewOperationsId, entity.loanId, token.GetStaffId);
+        //        if (entity.loanReviewOperationsId == 0 || entity.loanId == 0)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Please reconfirm your request and try again" });
+        //        }
+        //        var data = repo.LoanRephasementProcess((short)entity.loanReviewOperationsId, entity.loanId, token.GetStaffId);
 
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successfully" });
-                }
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = true, message = "Operation successfully" });
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "Operation not successful" });
-            }
-            catch (System.Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = false, message = "Operation not successful" });
+        //    }
+        //    catch (System.Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+        //    }
+        //}
     }
 }

@@ -21,7 +21,6 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         Task<bool> AddActivitiesToGroup(GroupViewModel model);
 
-        bool TwoFactorAuthentication(string staffCode, string passCode);
         //bool AddActivitiesToGroup(GroupViewModel model);
     }
 }

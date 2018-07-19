@@ -145,6 +145,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              //State = c.State.StateName
                              CityId = c.CITYID,
                              loanLimit = c.LOAN_LIMIT,
+                             workStartDuration = c.WORKSTARTDURATION,
+                             workEndDuration = c.WORKENDDURATION,
                          }).ToList();
 
             var department = (from k in context.TBL_DEPARTMENT_UNIT
@@ -205,6 +207,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                              //State = c.State.StateName
                              loanLimit = c.LOAN_LIMIT,
+                             workStartDuration = c.WORKSTARTDURATION,
+                             workEndDuration = c.WORKENDDURATION,
                          }).SingleOrDefault();
             return staff;
         }
@@ -361,7 +365,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 tempStaffToUpdate.ISCURRENT = true;
                 tempStaffToUpdate.LOAN_LIMIT = staffModel.loanLimit;
-
+                tempStaffToUpdate.WORKSTARTDURATION = staffModel.workStartDuration;
+                tempStaffToUpdate.WORKENDDURATION = staffModel.workEndDuration;
             }
             else
             {
@@ -401,7 +406,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFSIGNATURE = staffModel.StaffSignature,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                     LOAN_LIMIT = staffModel.loanLimit,
-                    ISCURRENT = true
+                    ISCURRENT = true,
+                    WORKSTARTDURATION = staffModel.workStartDuration,
+                    WORKENDDURATION = staffModel.workEndDuration
                 };
 
                 context.TBL_TEMP_STAFF.Add(tempStaff);
@@ -742,6 +749,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.CITYID = temp.CITYID;
                 entity.LOAN_LIMIT = temp.LOAN_LIMIT;
                 entity.DELETED = false;
+                entity.WORKSTARTDURATION = temp.WORKSTARTDURATION;
+                entity.WORKENDDURATION = temp.WORKENDDURATION;
             }
             else //Insert a new staff record into the real staff table
             {
@@ -776,8 +785,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     PHONEOFNOK = temp.PHONEOFNOK,
                     STATEID = temp.STATEID,
                     CITYID = temp.CITYID,
-                   LOAN_LIMIT = temp.LOAN_LIMIT,
-            };
+                    LOAN_LIMIT = temp.LOAN_LIMIT,
+                    WORKSTARTDURATION = temp.WORKSTARTDURATION,
+                    WORKENDDURATION = temp.WORKENDDURATION,
+                };
                 if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                 context.TBL_STAFF.Add(entity);
             }
@@ -857,7 +868,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             trans.Commit();
                             output = false;
-                        } 
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1241,7 +1252,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFSIGNATURE = staffModel.StaffSignature,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 ISCURRENT = true,
-
+                WORKSTARTDURATION = staffModel.workStartDuration,
+                WORKENDDURATION = staffModel.workEndDuration
             };
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -1263,7 +1275,7 @@ namespace FintrakBanking.Repositories.Setups.General
             user.TEMPSTAFFID = staff.TEMPSTAFFID;
             context.TBL_TEMP_PROFILE_USER.Add(user);
 
-          
+
             workflow.StaffId = staffModel.createdBy;
             workflow.CompanyId = staffModel.companyId;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
@@ -1646,7 +1658,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             MemoryStream ms = new MemoryStream(file);
 
-            ExcelFile ef = ExcelFile.Load(ms,LoadOptions.XlsxDefault);
+            ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
 
             //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
             ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
@@ -1797,7 +1809,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 else if (!rowSuccess && excelRowPosition > 1) failedStaffInfo.Add(staffRowData);
 
             };
-            if(staffInfo.Count() < 1)
+            if (staffInfo.Count() < 1)
             {
                 staffBulkFeedbackViewModel.commitedRows = staffInfo;
                 staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
@@ -1827,7 +1839,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 };
             }
-           
+
             return staffBulkFeedbackViewModel;
         }
 
@@ -2124,15 +2136,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
         //    return readBuffer;
 
-            //string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            //string filePath = Path.Combine(appDataFolder, "test.txt");
-            //var reader = new StreamReader(filePath);
+        //string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        //string filePath = Path.Combine(appDataFolder, "test.txt");
+        //var reader = new StreamReader(filePath);
 
-            //string path = Server.MapPath(String.Format("~/App_Data/uploads/{0}", fileName));
-            //if (File.Exists(path))
-            //{
-            //    return File(path, "application/pdf");
-            //}
-       // }
+        //string path = Server.MapPath(String.Format("~/App_Data/uploads/{0}", fileName));
+        //if (File.Exists(path))
+        //{
+        //    return File(path, "application/pdf");
+        //}
+        // }
     }
 }

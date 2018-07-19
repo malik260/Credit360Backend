@@ -197,10 +197,10 @@ namespace FintrakBanking.APICore.Controllers
             {
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
                 string ipAddressStr = null;
-                if(token.LoginCode == null)
+                if (token.LoginCode == null)
                     ipAddressStr = token.LoginCode.Split('@')[1];
 
-               _repo.SessionInfo = await _repo.CheckSessionState(user.username.ToLower(), ipAddressStr);
+                _repo.SessionInfo = await _repo.CheckSessionState(user.username.ToLower(), ipAddressStr);
                 var foundUser = await _repo.FindUserByUserNameAndPassword(user.username.ToLower(), user.password);
 
                 if (foundUser == null)
@@ -263,7 +263,7 @@ namespace FintrakBanking.APICore.Controllers
                     {
                         branchName = currUser.branchName,
                         companyName = currUser.companyName,
-                        UserName = currUser.username,
+                        userName = currUser.username,
                         activities = userActivities,
                         staffId = currUser.staffId,
                         staffName = currUser.staffName,
@@ -280,7 +280,7 @@ namespace FintrakBanking.APICore.Controllers
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
                 {
-                    str = ex.Message.Replace("1001", "");                    
+                    str = ex.Message.Replace("1001", "");
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = str });
             }
@@ -366,7 +366,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-       
+      
         private IAuthenticationManager Authentication => Request.GetOwinContext().Authentication;
 
     }

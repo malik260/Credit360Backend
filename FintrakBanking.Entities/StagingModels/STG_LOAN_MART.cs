@@ -47,7 +47,7 @@ namespace FintrakBanking.Entities.StagingModels
 
         public double? INTERESTRATE { get; set; }
 
-        [Column(TypeName = "money")]
+        //[Column(TypeName = "money")]
         public decimal? PRINCIPALAMOUNT { get; set; }
 
         public double? PRINCIPALINSTALLMENTLEFT { get; set; }
@@ -58,10 +58,10 @@ namespace FintrakBanking.Entities.StagingModels
 
         public DateTime? FIRSTINTERESTPAYMENTDATE { get; set; }
 
-        [Column(TypeName = "money")]
+       // [Column(TypeName = "money")]
         public decimal? OUTSTANDINGPRINCIPAL { get; set; }
 
-        [Column(TypeName = "money")]
+       // [Column(TypeName = "money")]
         public decimal? OUTSTANDINGINTEREST { get; set; }
 
         [StringLength(50)]
@@ -75,7 +75,7 @@ namespace FintrakBanking.Entities.StagingModels
         [StringLength(255)]
         public string SUBCLASSIFICATION { get; set; }
 
-        [Column(TypeName = "money")]
+       // [Column(TypeName = "money")]
         public decimal? CASABALANCE { get; set; }
 
         [StringLength(255)]

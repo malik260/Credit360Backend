@@ -202,27 +202,6 @@ namespace FintrakBanking.APICore.Controllers
                   new { success = false, message = $"There was an error creating this group {e.Message}" });
             }
         }
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("two-factor-auth")]
-        public HttpResponseMessage TwoFactorAuthentication(string staffCode, string passCode)
-        {
-            try
-            {
-                var data = repo.TwoFactorAuthentication(staffCode, passCode);
-                if (!data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, result = data, message = "" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = data });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-        }
+       
     }
 }

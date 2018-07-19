@@ -1054,11 +1054,17 @@ namespace FintrakBanking.Repositories.Credit
 
         public void PostLoanFees(LoanViewModel entity)
         {
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = entity.username,
+                passcode = entity.passCode
+            };
+
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
             inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
 
-            if (inputTransactions.Count > 0) financeTransaction.PostTransaction(inputTransactions);
+            if (inputTransactions.Count > 0) financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
         }
 
         public List<ApprovalLevelStaffViewModel> GetLoanOperationApprovers(int operation, int companyId)

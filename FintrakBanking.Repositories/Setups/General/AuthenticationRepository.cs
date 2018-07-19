@@ -115,22 +115,22 @@ namespace FintrakBanking.Repositories.Setups.General
             if (user != null)
             {
                 var data = (from p in context.TBL_PROFILE_USER
-                    join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
-                    join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
-                    join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                    where p.USERNAME.ToLower() == username.ToLower()
-                    select new UserViewModel
-                    {
-                        companyId = coy.COMPANYID,
-                        staffId = p.STAFFID,
-                        user_id = p.USERID,
-                        username = p.USERNAME,
-                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                        branchId = st.BRANCHID.Value,
-                        countryId = coy.COUNTRYID,
-                        branchName = br.BRANCHNAME,
-                        companyName = coy.NAME
-                    }).FirstOrDefault();
+                            join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
+                            join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                            join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                            where p.USERNAME.ToLower() == username.ToLower()
+                            select new UserViewModel
+                            {
+                                companyId = coy.COMPANYID,
+                                staffId = p.STAFFID,
+                                user_id = p.USERID,
+                                username = p.USERNAME,
+                                staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                branchId = st.BRANCHID.Value,
+                                countryId = coy.COUNTRYID,
+                                branchName = br.BRANCHNAME,
+                                companyName = coy.NAME
+                            }).FirstOrDefault();
 
                 if (data == null)
                 {
@@ -143,7 +143,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         user.LASTLOCKOUTDATE = DateTime.Now;
                     }
 
-                 
+
                 }
                 else
                 {
@@ -152,7 +152,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
 
                 context.SaveChanges();
-                
+
                 return data;
 
             }
@@ -171,7 +171,7 @@ namespace FintrakBanking.Repositories.Setups.General
             string loginCodeStr = null;
             string ipAddressStr = null;
 
-            
+
             if (user != null)
             {
                 if (user.LOGINCODE != null)
@@ -194,25 +194,14 @@ namespace FintrakBanking.Repositories.Setups.General
                         errorMessage = "",
 
                     };
-                    this.LogCode = gcode.ToString()+"@"+ipAddress;
+                    this.LogCode = gcode.ToString() + "@" + ipAddress;
                 }
-                   
-               
+
+
                 else if (loginCodeStr != null)
                 {
                     //  int timeStamp = 1;// (DateTime.Now - Convert.ToDateTime(user.LASTLOCKOUTDATE.HasValue) ).Minutes;
                     if (ipAddressStr == ipAddress && loginCodeStr != Guid.Empty.ToString())
-                    {
-                        this.LogCode = loginCodeStr+"@"+ ipAddressStr;
-                        result = new SessionStatusInfo
-                        {
-                            loginCode = Guid.Parse(loginCodeStr),
-                            state = 0,
-                            ipaddress = ipAddressStr,
-                            errorMessage = "",
-                        };
-                    }
-                    else if(this.LogCode.Split('@')[1] != null)
                     {
                         this.LogCode = loginCodeStr + "@" + ipAddressStr;
                         result = new SessionStatusInfo
@@ -223,7 +212,18 @@ namespace FintrakBanking.Repositories.Setups.General
                             errorMessage = "",
                         };
                     }
-                    else  
+                    else if (this.LogCode.Split('@')[1] != null)
+                    {
+                        this.LogCode = loginCodeStr + "@" + ipAddressStr;
+                        result = new SessionStatusInfo
+                        {
+                            loginCode = Guid.Parse(loginCodeStr),
+                            state = 0,
+                            ipaddress = ipAddressStr,
+                            errorMessage = "",
+                        };
+                    }
+                    else
                     {
                         this.LogCode = loginCodeStr + "@" + ipAddressStr;
                         result = new SessionStatusInfo
@@ -279,7 +279,7 @@ namespace FintrakBanking.Repositories.Setups.General
             data.sessionStatusInfo = result;
             return data;
         }
-       
+
         public bool IsAccountLocked(string userName)
         {
             var data = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == userName);
@@ -290,7 +290,7 @@ namespace FintrakBanking.Repositories.Setups.General
             throw new Exception("1001 Login Failure.");
         }
 
-        public  bool IsAccountActive(string userName)
+        public bool IsAccountActive(string userName)
         {
             var data = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == userName);
             if (data != null)
@@ -301,6 +301,59 @@ namespace FintrakBanking.Repositories.Setups.General
             throw new Exception("1001 Login Failure.");
         }
 
+        public bool ResumptionClosignTime(string userName)
+        {
+            var presentTime = DateTime.Now.TimeOfDay;
+
+            var data = (from u in context.TBL_PROFILE_USER
+                        join st in context.TBL_STAFF
+                        on u.STAFFID equals st.STAFFID
+                        where u.USERNAME.ToLower() == userName
+                        select new
+                        {
+                            staffId = st.STAFFID,
+                            workStartTime = st.WORKSTARTDURATION,
+                            workEndTime = st.WORKENDDURATION
+                        }).FirstOrDefault();
+            if (data != null)
+            {
+              
+                if (data.workStartTime == null || data.workEndTime == null)
+                {
+                    return true;
+                }
+                var startTime = TimeSpan.FromHours((int)data.workStartTime);
+                var endTime = TimeSpan.FromHours((int)data.workEndTime);
+
+                return startTime < presentTime || endTime < presentTime;
+            }
+            else
+            {
+                var staffRole = (from u in context.TBL_STAFF_ROLE
+                                 join st in context.TBL_STAFF on u.STAFFROLEID equals st.STAFFROLEID
+                                 join p in context.TBL_PROFILE_USER on st.STAFFID equals p.STAFFID
+                                 where p.USERNAME.ToLower() == userName
+                                 select new
+                                 {
+                                     staffId = st.STAFFID,
+                                     workStartTime = u.WORKSTARTDURATION,
+                                     workEndTime = u.WORKENDDURATION
+                                 }).FirstOrDefault();
+                if(staffRole != null)
+                {
+                    if (staffRole.workStartTime == null || staffRole.workEndTime == null)
+                    {
+                        return true;
+                    }
+                    var startTime = TimeSpan.FromHours((int)staffRole.workStartTime);
+                    var endTime = TimeSpan.FromHours((int)staffRole.workEndTime);
+
+                    return startTime < presentTime || endTime < presentTime;
+                }
+            }
+
+            throw new Exception("You cannot resume now.");
+        }
         private UserViewModel UserLoginDetails(string username, string password)
         {
             var data = context.TBL_PROFILE_USER.Where(c => c.USERNAME.ToLower() == username && c.PASSWORD == password);
@@ -316,7 +369,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     dat.FAILEDLOGONATTEMPT = 0;
                     context.SaveChanges();
                 }
-                
+
 
                 return data.Select(c => new UserViewModel
                 {
@@ -353,7 +406,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             faileddata.LASTLOCKOUTDATE = DateTime.Now;
                         }
 
-                        
+
                         context.SaveChanges();
 
                         throw new Exception("1001 Login Failure.");

@@ -61,6 +61,8 @@ namespace FintrakBanking.APICore.App_Start
     using FinTrakBanking.ThirdPartyIntegration;
     using FintrakBanking.Repositories.Validetion;
     using FintrakBanking.Interfaces.Validation;
+    using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
+    using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration;
 
     public static class NinjectWebCommon
     {
@@ -212,6 +214,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IProfileSetupRepository>().To<ProfileSetupRepository>();
             kernel.Bind<IFXAccountCreationRepository>().To<FXAccountCreationRepository>();
             kernel.Bind<ILaonCamSolRepository>().To<LaonCamSolRepository>();
+            kernel.Bind<ITwoFactorAuthIntegrationService>().To<TwoFactorAuthIntegrationService>();
         }
 
     }

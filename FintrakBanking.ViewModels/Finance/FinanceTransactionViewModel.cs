@@ -72,8 +72,16 @@ namespace FintrakBanking.ViewModels.Finance
         public short sourceBranchId { get; set; }
         public short destinationBranchId { get; set; }
         public string batchId { get; set; }
-
+        
     }
+
+
+    public class TwoFactorAutheticationViewModel 
+    {                
+        public string username { get; set; }
+        public string passcode { get; set; }
+    }
+
 
     public class CasaBalanceViewModel
     {
