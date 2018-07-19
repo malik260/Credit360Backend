@@ -622,7 +622,15 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     : "D" + String.Format("{0:0.00}", item.debitAmount);
                 //amounts = item.sourceReferenceNumber,
                 transPosting.narration = item.description;
-                transPosting.referenceNumber = item.batchCode;
+                if(item.batchCode == null)
+                {
+                    transPosting.referenceNumber = "1222333444";// to be change  transPosting.referenceNumber = item.sourceReferenceNumber
+                }
+                else
+                {
+                    transPosting.referenceNumber = item.batchCode;
+                }
+                
 
                 transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
 

@@ -220,7 +220,7 @@ namespace FintrakBanking.Repositories.Finance
         public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
+            
             var transactionCount = (inputTransactions.Count());
 
             if (transactionCount < 2) //transaction.transactionDetails.Count() < 2
@@ -282,7 +282,7 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             //api call
-
+           
             if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
             {
                 bool data;
