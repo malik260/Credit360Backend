@@ -264,7 +264,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.SCHEME_CODE,
-                                 ref_Desc = a.SCHEME_DESCRIPTION + " - " + a.SCHEME_CODE,
+                                 ref_Desc = a.SCHEME_CODE + " - " + a.SCHEME_DESCRIPTION ,
                                  // del_Flg = a.DEL_FLG,
                                  // bank_Id = a.BANK_ID
                              }).ToList();
@@ -410,5 +410,6 @@ namespace FintrakBanking.Repositories.Setups.Credit
             //}
           
         }
+
     }
 }

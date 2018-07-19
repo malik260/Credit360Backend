@@ -60,6 +60,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private short? vote = null;
         private int? toStaffId = null;
         private bool endProcess = false;
+        private AlertPlaceholders placeholders = null;
 
         private float? interestRateConcession = null;
         private float? feeRateConcession = null;
@@ -95,6 +96,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool KeepPending { set { keepPending = value; } }
         public bool DeferredExecution { set { deferredExecution = value; } }
         public bool ForcefullyEndProcess { set { endProcess = value; keepPending = false; } } // <----------- this property is deprecated!!!
+        public AlertPlaceholders Placeholders { set { placeholders = value; } }
 
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
@@ -102,6 +104,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private List<TBL_APPROVAL_TRAIL> trailLog;
         private bool skipLimitsCheck = false;
         private IEnumerable<WorkflowSetup> approvalGrid;
+        private int slaInterval = 780; // 1month
 
         public bool LogActivity()
         {
@@ -164,7 +167,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.RESPONSESTAFFID = this.staffId;
             }
 
-        //    SendNotifications();
+            SendNotifications();
 
             if (this.comment == "flow_test") { throw new Exception("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", CURRL:" + this.fromLevelId + ", NEXTL:" + this.nextLevelId + ", TOSTAFFID:" + this.toStaffId); }
 
@@ -181,6 +184,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 APPROVALSTATEID = (short)this.newStateId,
                 APPROVALSTATUSID = (short)this.statusId,
                 SYSTEMARRIVALDATETIME = this.systemDate,
+                SLADATETIME = this.systemDate.AddHours(this.slaInterval),
                 VOTE = this.vote,
                 TOSTAFFID = this.toStaffId,
             };
@@ -288,6 +292,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.smsNotification = next.CanRecieveSMS;
                     this.emailNotification = next.CanRecieveEmail;
                     this.nextLevelId = next.ApprovalLevelId;
+                    this.slaInterval = next.SlaInterval;
                     this.useOrganogram = next.RouteViaStaffOrganogram;
                     return true;
                 }
@@ -361,6 +366,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     next.CanRecieveSMS = nextlevel.CANRECIEVESMS;
                     next.CanRecieveEmail = nextlevel.CANRECIEVEEMAIL;
                     next.ApprovalLevelId = nextlevel.APPROVALLEVELID;
+                    this.slaInterval = nextlevel.SLAINTERVAL;
                     next.RouteViaStaffOrganogram = nextlevel.ROUTEVIASTAFFORGANOGRAM;
                 }
             }
@@ -375,6 +381,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.smsNotification = next.CanRecieveSMS;
                 this.emailNotification = next.CanRecieveEmail;
                 this.nextLevelId = next.ApprovalLevelId;
+                this.slaInterval = next.SlaInterval;
                 this.useOrganogram = next.RouteViaStaffOrganogram;
             }
             return true;
@@ -711,6 +718,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                ApprovalLevelId = x.Level.APPROVALLEVELID,
                                RouteViaStaffOrganogram = x.Level.ROUTEVIASTAFFORGANOGRAM,
                                DefaultRoleId = x.Level.STAFFROLEID,
+                               SlaInterval = x.Level.SLAINTERVAL
                            })
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition);
@@ -746,7 +754,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 string messageSubject = "PENDING APPROVAL FOR " + operationName.ToUpper();
                 string status = GetApprovalStatusName(this.statusId);
                 string ownerMessageSubject = "YOUR INITIATED " + operationName.ToUpper() + " PROCESS HAVE BEEN " + status.ToUpper();
-                string link = "";
                 var level = string.Empty;
                 List<string> emails = new List<string>();
 
@@ -775,15 +782,25 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 var time = String.Format("{0:F}", DateTime.Now);
 
+                if (placeholders == null) placeholders = new AlertPlaceholders();
+
                 var ownerMessageBody = $"Dear {owner.FIRSTNAME}, <br /><br />" +
                             $"The {operationName} approval process you initiated have been {status}{level}. <br /><br />" +
-                            $"See details here {link}" +
+                            $"{placeholders.customerName}" +
+                            $"{placeholders.referenceNumber}" +
+                            $"{placeholders.operationName}" +
+                            $"{placeholders.branchName}" +
+                            $"{placeholders.locationName}" +
                             $"<p>Time: { time }</p>"
                             ;
 
                 var messageBody = $"Dear {recipientName}, <br /><br />" +
                             $"You have a new pending {operationName} approval request. <br /><br />" +
-                            $"See details here {link}" +
+                            $"{placeholders.customerName}" +
+                            $"{placeholders.referenceNumber}" +
+                            $"{placeholders.operationName}" +
+                            $"{placeholders.branchName}" +
+                            $"{placeholders.locationName}" +
                             $"<p>Time: { time }</p>"
                             ;
 
@@ -873,6 +890,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
     public class WorkflowSetup
     {
+        internal int SlaInterval;
+
         public int GroupPosition { get; set; }
 
         public int LevelPosition { get; set; }

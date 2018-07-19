@@ -51,8 +51,7 @@ namespace FintrakBanking.Repositories.Admin
              });
 
             return baseCurrency.FirstOrDefault();
-    }
-
+        }
 
 
         public IEnumerable<CurrencyRateViewModel> GetCurrencyRate()
@@ -61,7 +60,6 @@ namespace FintrakBanking.Repositories.Admin
                         where a.DELETED == false 
                         select new CurrencyRateViewModel
                         {
-
                             currencyRateId = a.CURRENCYRATEID,
                             currencyId = a.CURRENCYID,
                             baseCurrencyId = a.BASECURRENCYID,
@@ -111,10 +109,6 @@ namespace FintrakBanking.Repositories.Admin
             return data;
         }
 
-
-
-
-
         public bool AddCurrencyRate(CurrencyRateViewModel model)
         {
             var data = new TBL_CURRENCY_EXCHANGERATE
@@ -151,6 +145,7 @@ namespace FintrakBanking.Repositories.Admin
 
             return context.SaveChanges() != 0;
         }
+
         public bool UpdateCurrencyRate(short currencyRateId, CurrencyRateViewModel model)
         {
             var data = this.context.TBL_CURRENCY_EXCHANGERATE.Find(currencyRateId);
@@ -186,6 +181,17 @@ namespace FintrakBanking.Repositories.Admin
             //end of Audit section -----------------------
             return context.SaveChanges() != 0;
         }
+
+        public IEnumerable<LookupViewModel> GetRateCode()
+        {
+            return (from data in context.TBL_CURRENCY_RATECODE
+                    select new LookupViewModel()
+                    {
+                        lookupId = data.RATECODEID,
+                        lookupName = data.RATECODE
+                    });
+        }
+
         public IEnumerable<CurrencyRateCodeViewModel> GetAllCurrencyRateCode()
         {
             return (from data in context.TBL_CURRENCY_RATECODE

@@ -9361,6 +9361,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnapprovalStatus;
             
+            private global::System.Data.DataColumn columnresponseDefaultTime;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public SLATrackerDataTable() {
@@ -9548,6 +9550,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn responseDefaultTimeColumn {
+                get {
+                    return this.columnresponseDefaultTime;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -9602,7 +9612,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string requestFrom, 
                         string emailFrom, 
                         string comment, 
-                        string approvalStatus) {
+                        string approvalStatus, 
+                        string responseDefaultTime) {
                 SLATrackerRow rowSLATrackerRow = ((SLATrackerRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         arrivalDate,
@@ -9623,7 +9634,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         requestFrom,
                         emailFrom,
                         comment,
-                        approvalStatus};
+                        approvalStatus,
+                        responseDefaultTime};
                 rowSLATrackerRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowSLATrackerRow);
                 return rowSLATrackerRow;
@@ -9665,6 +9677,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnemailFrom = base.Columns["emailFrom"];
                 this.columncomment = base.Columns["comment"];
                 this.columnapprovalStatus = base.Columns["approvalStatus"];
+                this.columnresponseDefaultTime = base.Columns["responseDefaultTime"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -9708,6 +9721,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columncomment);
                 this.columnapprovalStatus = new global::System.Data.DataColumn("approvalStatus", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnapprovalStatus);
+                this.columnresponseDefaultTime = new global::System.Data.DataColumn("responseDefaultTime", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnresponseDefaultTime);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -19140,6 +19155,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string responseDefaultTime {
+                get {
+                    try {
+                        return ((string)(this[this.tableSLATracker.responseDefaultTimeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'responseDefaultTime\' in table \'SLATracker\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSLATracker.responseDefaultTimeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsarrivalDateNull() {
                 return this.IsNull(this.tableSLATracker.arrivalDateColumn);
             }
@@ -19364,6 +19395,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetapprovalStatusNull() {
                 this[this.tableSLATracker.approvalStatusColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsresponseDefaultTimeNull() {
+                return this.IsNull(this.tableSLATracker.responseDefaultTimeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetresponseDefaultTimeNull() {
+                this[this.tableSLATracker.responseDefaultTimeColumn] = global::System.Convert.DBNull;
             }
         }
         

@@ -354,6 +354,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int id { get; set; }
         public string name { get; set; }
+        public int typeId { get; set; }
     }
 
     public class MaturityIntructionViewModel : GeneralEntity
@@ -366,6 +367,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int oldTenor { get; set; }
         public int newTenor { get; set; }
         public double interestRate { get; set; }
+
+        public DateTime? valueDate { get; set; }
 
         public short instructionTypeId { get; set; }
         public string instructionTypeName { get; set; }

@@ -348,12 +348,12 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationCovenantLms(int applicationId)
         {
-            var ids = context.TBL_LOAN_APPLICATION_DETAIL
+            var ids = context.TBL_LMSR_APPLICATION_DETAIL
                  .Where(x => x.LOANAPPLICATIONID == applicationId)
-                 .Select(x => x.LOANAPPLICATIONDETAILID);
+                 .Select(x => x.LOANREVIEWAPPLICATIONID);
 
-            return context.TBL_LOAN_APPLICATION_COVENANT.Where(x =>
-                    x.DELETED == false && ids.Contains(x.LOANAPPLICATIONDETAILID)
+            return context.TBL_LMSR_APPLICATION_COVENANT.Where(x =>
+                    x.DELETED == false && ids.Contains(x.LOANREVIEWAPPLICATIONID)
                 ).Select(c => new LoanCovenantDetailViewModel
                 {
                     loanCovenantDetailId = c.LOANCOVENANTDETAILID,
@@ -364,7 +364,7 @@ namespace FintrakBanking.Repositories.Customer
                     covenantTypeName = c.TBL_LOAN_COVENANT_TYPE.COVENANTTYPENAME,
                     frequencyTypeId = c.FREQUENCYTYPEID,
                     frequencyTypeName = c.TBL_FREQUENCY_TYPE.MODE,
-                    loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                    loanApplicationDetailId = c.LOANREVIEWAPPLICATIONID,
                     isPercentage = c.ISPERCENTAGE,
                     nextCovenantDate = c.NEXTCOVENANTDATE,
                     casaAccountId = c.CASAACCOUNTID,
@@ -375,7 +375,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool AddLoanApplicationCovenantLms(LoanCovenantDetailViewModel entity)
         {
-            var convenant = new TBL_LOAN_APPLICATION_COVENANT
+            var convenant = new TBL_LMSR_APPLICATION_COVENANT
             {
                 LOANCOVENANTDETAILID = entity.loanCovenantDetailId,
                 COVENANTAMOUNT = entity.covenantAmount,
@@ -383,7 +383,7 @@ namespace FintrakBanking.Repositories.Customer
                 COVENANTDETAIL = entity.covenantDetail,
                 COVENANTTYPEID = entity.covenantTypeId,
                 FREQUENCYTYPEID = entity.frequencyTypeId,
-                LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
+                LOANREVIEWAPPLICATIONID = entity.loanApplicationDetailId,
                 ISPERCENTAGE = entity.isPercentage,
                 NEXTCOVENANTDATE = entity.nextCovenantDate,
                 CASAACCOUNTID = entity.casaAccountId,
@@ -392,16 +392,16 @@ namespace FintrakBanking.Repositories.Customer
                 DATETIMECREATED = this.genSetup.GetApplicationDate().Date,
                 COMPANYID = entity.companyId,
             };
-            context.TBL_LOAN_APPLICATION_COVENANT.Add(convenant);
+            context.TBL_LMSR_APPLICATION_COVENANT.Add(convenant);
 
-            var appl = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+            var appl = context.TBL_LMSR_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
 
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantDetailAdd,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Added loan application covenant on application: { appl.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER } ",
+                DETAIL = $"Added loan REVIEW application covenant on application: { appl.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER } ",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
@@ -414,7 +414,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool DeleteLoanApplicationCovenantLms(int covenantId, UserInfo user)
         {
-            var covenant = context.TBL_LOAN_APPLICATION_COVENANT.Find(covenantId);
+            var covenant = context.TBL_LMSR_APPLICATION_COVENANT.Find(covenantId);
             covenant.DELETED = true;
             covenant.DELETEDBY = user.staffId;
             covenant.DATETIMEDELETED = DateTime.Now;
@@ -424,7 +424,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantDetailDelete,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"Delete loan application covenant: { covenant.COVENANTDETAIL } ",
+                DETAIL = $"Delete loan REVIEW application covenant: { covenant.COVENANTDETAIL } ",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),

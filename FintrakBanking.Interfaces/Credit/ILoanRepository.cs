@@ -134,5 +134,18 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LookupViewModel> GetAllFrequencyType();
 
         List<ProductViewModel> GetLoanCommercialLoans(int companyId);
+
+        LoanPaymentScheduleInputViewModel BuildScheduleModel(int targetId, int createdBy);
+
+        LoanViewModel BuildDisbursementModel(int loanId, LoanPaymentScheduleInputViewModel loanInputModel, int staffId);
+
+        void DisburseLoan(LoanViewModel entity);
+
+        IEnumerable<CamProcessedLoanViewModel> GetInitiatedLoanApplicationAwaitingApproval(int staffId, int companyId);
+
+        int GoForInitiatedLoanApproval(ApprovalViewModel entity, int loanBookingRequestId);
+
+
+
     }
 }

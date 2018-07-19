@@ -26,6 +26,11 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string error { get; set; }
         public string field { get; set; }
         public string errorDescription { get; set; }
+        public int currencyId { get; set; }
+        public string customerCode { get; set; }
+
+        public string freezeStatus { get; set; }
+        public string freezeReason { get; set; }
 
 
     }

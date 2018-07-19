@@ -1,5 +1,6 @@
 using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.ViewModels.Admin;
 using System;
@@ -23,8 +24,6 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-
-
       [HttpGet] [ClaimsAuthorization]  [Route("currency")]
         public HttpResponseMessage GetCurrency()
         {
@@ -38,6 +37,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
             }
         }
+
       [HttpGet] [ClaimsAuthorization]  
         [Route("currency-ratecode")]
         public HttpResponseMessage GetCurrencyRaceCode()
@@ -52,7 +52,36 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet]
+        [Route("rate-code")]
+        public HttpResponseMessage GetRateCode()
+        {
+            try
+            {
+                var data = repo.GetRateCode();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("base-currency")]
         public HttpResponseMessage GetBaseCurrency()
         {
@@ -67,7 +96,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
       [HttpGet] [ClaimsAuthorization]  [Route("currency-rate")]
         public HttpResponseMessage GetCurrencyRate()
         {
@@ -80,7 +108,6 @@ namespace FintrakBanking.APICore.Controllers
             {
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
             }
-
         }
 
       [HttpGet] [ClaimsAuthorization]  
@@ -135,7 +162,6 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
-
         }
 
        [HttpPut] [ClaimsAuthorization][Route("currency-rate/{currencyId}")]

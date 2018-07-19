@@ -88,8 +88,6 @@ namespace FintrakBaking.BranchUpdateService
                         LASTNAME = staging.LASTNAME,
                         PHONE = staging.PHONE,
                         EMAIL = staging.EMAIL,
-                       // DEPARTMENTUNITID = staging.
-                        //DEPARTMENTID = coreContext.TBL_DEPARTMENT.FirstOrDefault(o => o.DEPARTMENTCODE == staging.DEPARTMENTCODE.ToString()).DEPARTMENTID,
                         STAFFCODE = staging.STAFFCODE,
                         SUPERVISOR_STAFFID = coreContext.TBL_STAFF.FirstOrDefault(s => s.STAFFCODE == staging.SUPERVISORSTAFFCODE).STAFFID,
                         COMPANYID = 1,

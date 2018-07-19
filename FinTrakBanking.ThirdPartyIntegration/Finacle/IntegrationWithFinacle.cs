@@ -46,7 +46,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
 
             ResponseMessage result = null;
-            if (LogOverDraftExtend(model))
                 Task.Run(async () => result = await overDraft.APIOverDraftExtend(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
@@ -101,13 +100,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
             model.apiUrl = @"api/OverDraft/TopUp";
 
             //if (LogOverDraftTopUpAndRenew(model))
-                Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
                 if (result.APIResponse.webRequestStatus == "FAILURE")
                 {
-                    LogOverDraftTopUpAndRenew(model);
                     throw new Exception(result.APIResponse.message);
                 }
                 else
@@ -118,7 +116,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                LogOverDraftTopUpAndRenew(model);
                 throw new Exception(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
@@ -129,7 +126,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             model.apiUrl = @"api/OverDraft/Renew ";
 
-            if (LogOverDraftTopUpAndRenew(model))
                 Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
@@ -181,7 +177,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
             model.APIUrl = @"api/TemporaryOverDraft/Running";
             ResponseMessage result = null;
 
-            if (LogTemporaryOverDraft(model))
                 Task.Run(async () => result = await overDraft.APITemporaryOverDraftRunning(model)).GetAwaiter().GetResult();
 
 
@@ -214,7 +209,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             model.APIUrl = @"api/TemporaryOverDraft/Single";
             ResponseMessage result = null;
-            if (LogTemporaryOverDraft(model))
                 Task.Run(async () => result = await overDraft.APITemporaryOverDraftSingle(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
@@ -295,10 +289,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public TDAccountRecordViewModel ValidateTDAccountNumber(string teamDepositAccountNumber)
         {
             TDAccountRecordViewModel result = null;
-            Task.Run(async () => result = await accountDetail.APIOfficeAccountGetTermDepositAccountRecord(teamDepositAccountNumber)).GetAwaiter().GetResult();
-            if (result.response.ReasonPhrase == "OK")
+            try
             {
-                return result;
+                Task.Run(async () => result = await accountDetail.APIOfficeAccountGetTermDepositAccountRecord(teamDepositAccountNumber)).GetAwaiter().GetResult();
+                if (result.response.ReasonPhrase == "OK")
+                {
+                    return result;
+                }
+            }
+            catch  {
+                throw new Exception("Could not verify this fixed deposit account number");
             }
             return result;
         }
@@ -477,7 +477,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return glAccountCode;
         }
 
-        
+
         #region  private
         private bool LogOverDraftExtend(OverDraftExtendViewModel model)
         {
@@ -564,7 +564,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     EXPIRYDATE = model.expiryDate,
                     SANCTIONLIMIT = model.sanctionLimit,
                     SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber,
-                    CONSUMED= true,
+                    CONSUMED = true,
                     DATETIMECONSUMED = DateTime.Now,
 
                 };
@@ -605,7 +605,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
 
-     
+
 
         private List<TransactionPostingViewModel> TransactionData(List<FinanceTransactionViewModel> model)
         {
@@ -628,7 +628,15 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     : "D" + String.Format("{0:0.00}", item.debitAmount);
                 //amounts = item.sourceReferenceNumber,
                 transPosting.narration = item.description;
-                transPosting.referenceNumber = item.batchCode;
+                if(item.batchCode == null)
+                {
+                    transPosting.referenceNumber = "1222333444";// to be change  transPosting.referenceNumber = item.sourceReferenceNumber
+                }
+                else
+                {
+                    transPosting.referenceNumber = item.batchCode;
+                }
+                
 
                 transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
 
