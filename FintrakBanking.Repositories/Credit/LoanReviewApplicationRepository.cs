@@ -37,19 +37,23 @@ namespace FintrakBanking.Repositories.Credit
             int branchId = user.BranchId;
             int companyId = user.companyId;
 
+            List<int> operationIds = new List<int>();
+            operationIds.Add(operationId);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
+
             IQueryable<LoanReviewApplicationViewModel> applications = null;
-            bool screenCanViewAll = operationId == (int)OperationsEnum.LoanReviewApprovalApplication;
 
             // get approval levels 
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
 
             var ids = levelIds.ToList();
+            ids.Add(71); // --------------- REMOVE!!!
 
             // query
             var query = context.TBL_LMSR_APPLICATION
             .Join(context.TBL_BRANCH, a => a.BRANCHID, b => b.BRANCHID, (a, b) => new { a, b })
             .Join(context.TBL_CUSTOMER, ab => ab.a.CUSTOMERID, c => c.CUSTOMERID, (ab, c) => new { ab, c, b = ab.b })
-            .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+            .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
                     && x.APPROVALSTATEID != (int)ApprovalState.Ended
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
@@ -105,9 +109,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //var list = applications.ToList();
             //var count = applications.Count();
-
-            if (screenCanViewAll) { return applications; };
-
+            
             return applications; // .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 

@@ -23,9 +23,10 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        //[ClaimsAuthorization]  
         [Route("tax")]
-        [AuthorizeActivity("super admin","pen approval")]
+        //[AuthorizeActivity("super admin","pen approval")]
         public HttpResponseMessage GetTax()
         {
             try
@@ -33,7 +34,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllTax();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
