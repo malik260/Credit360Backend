@@ -1,11 +1,9 @@
-﻿using FintrakBanking.Interfaces.Setups.General;
+﻿using FintrakBanking.Entities.DocumentModels;
+using FintrakBanking.Repositories.Admin;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -14,29 +12,21 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 {
     public partial class AuditTrail : System.Web.UI.Page
     {
-     
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                startDate.Text = Request.QueryString["startDate"];
-                endDate.Text = Request.QueryString["endDate"];
-                companyId.Text = Request.QueryString["companyId"];
-                username.Text = Request.QueryString["username"];
-                auditTypeId.Text = Request.QueryString["auditTypeId"];
+            startDate.Text = Request.QueryString["startDate"];
+            endDate.Text = Request.QueryString["endDate"];
+            companyId.Text = Request.QueryString["companyId"];
+            username.Text = Request.QueryString["username"];
+          //  Id.Text = "2019";
 
-                string tmpPath = @"Content\Icons\firstbank-logo.jpg";
-                string a = Path.GetFullPath(tmpPath);
-                string ProjectPath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)));
-                var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-                var imagePath = Path.Combine(outPutDirectory, tmpPath);
+        //    FinTrakBankingDocumentsContext context = new FinTrakBankingDocumentsContext();
+         //   CompanyInformationRepository generalSetup = new CompanyInformationRepository(context);
+          //  ReportParameter date = new ReportParameter("Path", generalSetup.GetCompanyImage());
 
-                this.ReportViewer.LocalReport.EnableExternalImages = true;
-               // ReportParameter logo = new ReportParameter("logoPath", imagePath);
-               // ReportViewer.LocalReport.SetParameters(logo);
-                ReportViewer.LocalReport.Refresh();
-            }
-
+         //   ReportViewer.LocalReport.SetParameters(new ReportParameter[] { date });
+         //   ReportViewer.LocalReport.Refresh();
+            ReportViewer.LocalReport.Refresh();
         }
     }
 }
