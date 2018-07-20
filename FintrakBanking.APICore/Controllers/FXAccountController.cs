@@ -84,9 +84,9 @@ namespace FintrakBanking.APICore.Controllers
                 //entity.functionCode = "A";
                 //entity.solId = "230";
                 //entity.currencyCode = "USD";
-                //entity.customerCode = "230046318";
+            //    entity.customerCode = "230046318";
                 //entity.schemeCode = "CA208";
-                //entity.generalLedgerSubHeadCode = "15100";
+                entity.generalLedgerSubHeadCode = "30000";
                 //entity.channel = "FINTRAK";
                 //entity.sectorCode = "40900";
                 //entity.subSectorCode = "40110";

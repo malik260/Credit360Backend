@@ -37,19 +37,23 @@ namespace FintrakBanking.Repositories.Credit
             int branchId = user.BranchId;
             int companyId = user.companyId;
 
+            List<int> operationIds = new List<int>();
+            operationIds.Add(operationId);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
+
             IQueryable<LoanReviewApplicationViewModel> applications = null;
-            bool screenCanViewAll = operationId == (int)OperationsEnum.LoanReviewApprovalApplication;
 
             // get approval levels 
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
 
             var ids = levelIds.ToList();
+            ids.Add(71); // --------------- REMOVE!!!
 
             // query
             var query = context.TBL_LMSR_APPLICATION
             .Join(context.TBL_BRANCH, a => a.BRANCHID, b => b.BRANCHID, (a, b) => new { a, b })
             .Join(context.TBL_CUSTOMER, ab => ab.a.CUSTOMERID, c => c.CUSTOMERID, (ab, c) => new { ab, c, b = ab.b })
-            .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+            .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
                     && x.APPROVALSTATEID != (int)ApprovalState.Ended
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
@@ -105,9 +109,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //var list = applications.ToList();
             //var count = applications.Count();
-
-            if (screenCanViewAll) { return applications; };
-
+            
             return applications; // .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
@@ -122,8 +124,12 @@ namespace FintrakBanking.Repositories.Credit
 
             list.casaAccounts = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
             list.productTypes = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
-            list.operationTypes = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement || x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
-            || x.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial).Select(x => new DropDownSelect { id = x.OPERATIONID, name = x.OPERATIONNAME }).OrderBy(o => o.name).ToList();
+            list.operationTypes = context.TBL_OPERATIONS.Where(x => 
+                (x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement 
+                || x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
+                || x.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial)
+                && x.ISDISABLED == false
+            ).Select(x => new DropDownSelect { id = x.OPERATIONID, name = x.OPERATIONNAME, typeId = (int)x.OPERATIONTYPEID }).OrderBy(o => o.name).ToList();
 
             return list;
         }
@@ -144,6 +150,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = model.customerId,
                 BRANCHID = model.branchId,
                 OPERATIONID = camOperationId,
+                
                 // CUSTOMERGROUPID = null,
                 DISPUTED = false,
                 REQUIRECOLLATERAL = false,
@@ -181,7 +188,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDTENOR = loan.tenor,
                     APPROVEDINTERESTRATE = loan.interestRate,
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
-                    OPERATIONPERFORMED = false,     
+                    OPERATIONPERFORMED = false,   
                 });
             }
 
@@ -327,17 +334,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public int ForwardApplication(ForwardReviewViewModel model)
         {
+            int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
-            bool operationIsCam = (model.operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) || (model.operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
+
+            bool operationIsCam = (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
             if (operationIsCam)
             {
+                operationId = (int)appl.OPERATIONID;
                 if (appl.CUSTOMERID > 0) workflow.Amount = GetCustomerTotalOutstandingBalance((int)appl.CUSTOMERID);
             }
 
             workflow.StaffId = model.lastUpdatedBy;
-            workflow.CompanyId = model.companyId;
-            workflow.OperationId = model.operationId;
-            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.OperationId = operationId;
+            workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.ProductClassId = null;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
@@ -352,9 +362,9 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
                 int lastStatusId = workflow.StatusId;
-                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && model.operationId != lastOperationId) // jump process OR end flag
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId) // jump process OR end flag
                 {
-                    workflow.NextProcess(model.companyId, model.lastUpdatedBy, model.operationId + 1, model.applicationId, null, "New application", true, true);
+                    workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, model.operationId + 1, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
                 appl.APPROVALSTATUSID = (short)lastStatusId;
                 context.SaveChanges();

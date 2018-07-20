@@ -97,6 +97,7 @@ namespace FintrakBanking.ViewModels.Finance
         public string freezeStatus { get; set; }
         public string freezeReason { get; set; }
         public string lastTransactionDate { get; set; }
+        public bool isCasaAccountDetailAvailable { get; set; }
         public CASAAccountStatusEnum accountStatusId { get; set; }
 
         public bool hasBalance { get; set; }
@@ -148,6 +149,7 @@ namespace FintrakBanking.ViewModels.Finance
         public int debitGlAccountId { get; set; }
         public int? creditCasaAccountId { get; set; }
         public int? debitCasaAccountId{ get; set; }
+        public int loanId { get; set; }
 
 
 

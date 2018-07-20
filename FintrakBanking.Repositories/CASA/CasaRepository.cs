@@ -46,8 +46,8 @@ namespace FintrakBanking.Repositories.CASA
             var CasaAccount = (context.TBL_CASA.Where(d => d.OLDPRODUCTACCOUNTNUMBER3 == accountNumber ||
                 d.OLDPRODUCTACCOUNTNUMBER2 == accountNumber || d.OLDPRODUCTACCOUNTNUMBER1 == accountNumber ||
                 d.CASAACCOUNTID == (value) || d.PRODUCTACCOUNTNUMBER == accountNumber && d.COMPANYID == companyId)
-                ).AsQueryable().SingleOrDefault();
-            return CasaAccount.CASAACCOUNTID;
+                ).Select(d=>d.CASAACCOUNTID).FirstOrDefault();
+            return CasaAccount;
         }
 
         public string GetAccountOwnerByAccountNumber(string accountNumber, int companyId)
@@ -83,8 +83,16 @@ namespace FintrakBanking.Repositories.CASA
 
         public CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId)
         {
+            CasaBalanceViewModel model = new CasaBalanceViewModel();
+
             int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
             var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
+
+            if (account == null) {
+                model.isCasaAccountDetailAvailable=false;
+                return model;
+            }
+                
             return transRepo.GetCASABalance(account.CASAACCOUNTID);
         }
 

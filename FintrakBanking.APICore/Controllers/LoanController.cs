@@ -307,7 +307,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
@@ -490,6 +490,35 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.GetLoanApplicationCollateralsByApplicationId(loanApplicationId);
+
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-booking/request/approval")]
+        public HttpResponseMessage GetInitiatedLoanApplicationAwaitingApproval()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetInitiatedLoanApplicationAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (data.Any() == false)
                 {
@@ -763,6 +792,61 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, message = "Loan disapproval was successful" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
+                }
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (APIErrorException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-request/approval/{loanBookingRequestId}")]
+        public HttpResponseMessage ApproveInitiatedLoanBooking(ApprovalViewModel model, int loanBookingRequestId)
+        {
+            try
+            {
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.BranchId = (short)token.GetBranchId;
+                model.staffId = token.GetStaffId;
+
+                var responseId = repo.GoForInitiatedLoanApproval(model, loanBookingRequestId);
+
+                if (responseId == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+                else if (responseId == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, message = "Loan request has been successfully approved" });
+                }
+                else if (responseId == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, message = "Loan request was successfully disapproved" });
                 }
                 else
                 {
@@ -1569,43 +1653,43 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("loan-disbursement")]
-        public HttpResponseMessage AddUpdateLoanDisbursement([FromBody]LoanDisbursementViewModel entity)
-        {
-            try
-            {
-                string createUpdate = "";
-                if (entity.loanDisbursementId != 0 || entity.loanDisbursementId < 0)
-                {
-                    createUpdate = "updated";
-                }
-                else
-                {
-                    createUpdate = "created";
-                }
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = (short)token.GetCompanyId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("loan-disbursement")]
+        //public HttpResponseMessage AddUpdateLoanDisbursement([FromBody]LoanDisbursementViewModel entity)
+        //{
+        //    try
+        //    {
+        //        string createUpdate = "";
+        //        if (entity.loanDisbursementId != 0 || entity.loanDisbursementId < 0)
+        //        {
+        //            createUpdate = "updated";
+        //        }
+        //        else
+        //        {
+        //            createUpdate = "created";
+        //        }
+        //        entity.userBranchId = (short)token.GetBranchId;
+        //        entity.companyId = (short)token.GetCompanyId;
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
+        //        entity.createdBy = token.GetStaffId;
+        //        entity.staffId = token.GetStaffId;
 
-                var data = repo.AddUpdateLoanDisbursement(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error {createUpdate} this record" });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error creating this record {e.Message}" });
-            }
-        }
+        //        var data = repo.AddUpdateLoanDisbursement(entity);
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = $"There was an error {createUpdate} this record" });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = $"There was an error creating this record {e.Message}" });
+        //    }
+        //}
         #endregion
     }
 }

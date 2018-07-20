@@ -129,8 +129,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         #region Loan Disbursement 
         IEnumerable<LoanDisbursementViewModel> GetAllLoanDisbursement(int loanId);
-        bool AddUpdateLoanDisbursement(LoanDisbursementViewModel entity);
+       // bool AddUpdateLoanDisbursement(LoanDisbursementViewModel entity);
         #endregion
+
         IEnumerable<LookupViewModel> GetAllFrequencyType();
 
         List<ProductViewModel> GetLoanCommercialLoans(int companyId);
@@ -140,5 +141,12 @@ namespace FintrakBanking.Interfaces.Credit
         LoanViewModel BuildDisbursementModel(int loanId, LoanPaymentScheduleInputViewModel loanInputModel, int staffId);
 
         void DisburseLoan(LoanViewModel entity);
+
+        IEnumerable<CamProcessedLoanViewModel> GetInitiatedLoanApplicationAwaitingApproval(int staffId, int companyId);
+
+        int GoForInitiatedLoanApproval(ApprovalViewModel entity, int loanBookingRequestId);
+
+
+
     }
 }

@@ -220,7 +220,7 @@ namespace FintrakBanking.Repositories.Finance
         public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
+            
             var transactionCount = (inputTransactions.Count());
 
             if (transactionCount < 2) //transaction.transactionDetails.Count() < 2
@@ -282,7 +282,7 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             //api call
-
+           
             if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
             {
                 bool data;
@@ -298,7 +298,6 @@ namespace FintrakBanking.Repositories.Finance
                 {
                     throw new Exception($"Transaction Failed.");
                 }
-
             }
             else
                 PostTransactionSub(batchCode, inputTransactions, transactions);
@@ -1316,7 +1315,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanPrepaymentFeePosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int chargeFeeId, string description,int operationId)
+        public FinanceTransactionViewModel PostBuildLoanPrepaymentFeePosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int chargeFeeId, string description, int operationId)
         {
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
@@ -1407,6 +1406,99 @@ namespace FintrakBanking.Repositories.Finance
 
 
         }
+
+        //public List<FinanceTransactionViewModel> PostBuildLoanPrepaymentFeePosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int chargeFeeId, string description, int operationId)
+        //{
+        //    FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
+
+        //    //var feeDetails = context.TBL_CHARGE_FEE_DETAIL.FirstOrDefault(x => x.CHARGEFEEID == chargeFeeId);            
+
+        //    var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId && x.COMPANYID == model.companyId);
+
+        //    var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
+
+        //    var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
+
+        //    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+        //    foreach (var item in postingGroups)
+        //    {
+        //        var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId && details.POSTINGGROUP == item orderby details.POSTINGTYPEID select details).ToList();
+
+        //        foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
+        //        {
+        //            decimal debitAmount = 0;
+        //            if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+        //                debitAmount = (decimal)postedAmount * (decimal)(debits.VALUE / 100.0);
+        //            else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
+        //                debitAmount = (decimal)debits.VALUE;
+
+        //            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+
+        //            debit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
+        //            debit.description = description; // "Loan Disbursment Amount";
+        //            debit.valueDate = generalSetup.GetApplicationDate();
+        //            debit.transactionDate = debit.valueDate;
+        //            debit.currencyId = casa.CURRENCYID;
+        //            debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+        //            debit.isApproved = true;
+        //            debit.postedBy = model.createdBy;
+        //            debit.approvedBy = model.createdBy;
+        //            debit.approvedDate = debit.transactionDate;
+        //            debit.approvedDateTime = DateTime.Now;
+        //            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+        //            debit.companyId = model.companyId;
+        //            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+        //            debit.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
+        //            debit.casaAccountId = casa.CASAACCOUNTID;
+        //            debit.debitAmount = debitAmount;
+        //            debit.creditAmount = 0;
+        //            debit.sourceBranchId = loan.BRANCHID;
+        //            debit.destinationBranchId = casa.BRANCHID;
+
+        //            inputTransactions.Add(debit);
+        //        }
+
+        //        foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
+        //        {
+        //            decimal creditAmount = 0;
+        //            if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
+        //                creditAmount = (decimal)postedAmount * (decimal)(credits.VALUE / 100.0);
+        //            else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
+        //                creditAmount = (decimal)credits.VALUE;
+
+        //            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+        //            credit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
+        //            credit.description = description; // "Loan Disbursment Amount";
+        //            credit.valueDate = generalSetup.GetApplicationDate();
+        //            credit.transactionDate = credit.valueDate;
+        //            credit.currencyId = casa.CURRENCYID;
+        //            credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+        //            credit.isApproved = true;
+        //            credit.postedBy = model.createdBy;
+        //            credit.approvedBy = model.createdBy;
+        //            credit.approvedDate = credit.transactionDate;
+        //            credit.approvedDateTime = DateTime.Now;
+        //            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+        //            credit.companyId = model.companyId;
+        //            credit.glAccountId = credits.GLACCOUNTID1.Value;
+        //            credit.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
+        //            credit.casaAccountId = null;
+        //            credit.debitAmount = 0;
+        //            credit.creditAmount = creditAmount;
+        //            credit.sourceBranchId = loan.BRANCHID;
+        //            credit.destinationBranchId = loan.BRANCHID;
+
+        //            inputTransactions.Add(credit);
+        //        }
+        //    }
+
+        //    //PostTransaction(inputTransactions);
+
+        //    return inputTransactions;
+
+
+        //}
 
         public FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model)
         {

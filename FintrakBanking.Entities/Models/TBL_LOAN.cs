@@ -201,6 +201,8 @@ namespace FintrakBanking.Entities.Models
 
         public string FIELD10 { get; set; }
 
+        public string NOSTROACCOUNTID { get; set; }
+
         //[Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
 
