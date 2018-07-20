@@ -149,6 +149,7 @@ namespace FintrakBanking.ViewModels.Finance
         public int debitGlAccountId { get; set; }
         public int? creditCasaAccountId { get; set; }
         public int? debitCasaAccountId{ get; set; }
+        public int loanId { get; set; }
 
 
 
