@@ -4669,6 +4669,7 @@ namespace FintrakBanking.Repositories.Credit
                                  dateTimeCreated = DateTime.Today,
                                  revolvingTypeId = a.REVOLVINGTYPEID,
                                  productAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                 serialNumber = a.SERIALNUMBER,
 
                              }).FirstOrDefault();
 
@@ -4743,7 +4744,7 @@ namespace FintrakBanking.Repositories.Credit
                         //expiryDate = loan.maturityDate.ToString()
 
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.loanReferenceNumber,
+                        sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -7186,7 +7187,7 @@ namespace FintrakBanking.Repositories.Credit
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
                 if (loanInput.payAmount >= (double)(totalamount + (decimal)penalAmount))
                 {
-                    //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalGL, "Penal Charge", (int)OperationsEnum.PenalFee));///change to charge GL
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalCharge.CHARGEFEEID, "Penal Charge", (int)OperationsEnum.Prepayment));///change to charge GL
 
                     //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
 
