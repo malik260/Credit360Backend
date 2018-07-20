@@ -334,13 +334,18 @@ namespace FintrakBanking.Repositories.Credit
 
         public int ForwardApplication(ForwardReviewViewModel model)
         {
+            int nextProcessId = model.operationId + 1;
             int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
+            int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
 
+            // customization for CAM approvals
             bool operationIsCam = (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
             if (operationIsCam)
             {
+                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 operationId = (int)appl.OPERATIONID;
+                nextProcessId = (int)OperationsEnum.LoanReviewApprovalAppraisal + 1;
                 if (appl.CUSTOMERID > 0) workflow.Amount = GetCustomerTotalOutstandingBalance((int)appl.CUSTOMERID);
             }
 
@@ -355,29 +360,20 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
-            context.SaveChanges();          
+            context.SaveChanges();
 
-            int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
-
+            int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                int lastStatusId = workflow.StatusId;
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId) // jump process OR end flag
                 {
-                    workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, model.operationId + 1, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
+                    workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
-                appl.APPROVALSTATUSID = (short)lastStatusId;
-                context.SaveChanges();
-                return lastStatusId;
-            }
-
-            if (operationIsCam)
-            {
-                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                if (operationId == lastOperationId) appl.APPROVALSTATUSID = (short)lastStatusId;
                 context.SaveChanges();
             }
 
-            return (int)ApprovalStatusEnum.Processing; // default for now
+            return lastStatusId;
         }
 
         public decimal GetCustomerTotalOutstandingBalance(int customerId)
