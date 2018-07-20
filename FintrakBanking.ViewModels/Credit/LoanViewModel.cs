@@ -851,7 +851,11 @@ namespace FintrakBanking.ViewModels.Credit
 
 
     }
-
+    public class ProductType
+    {
+        public int productTypeId { get; set; }
+        public string prodcutTypeName { get; set; }
+    }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
     //    public int maturityInstructionId { get; set; }
