@@ -307,7 +307,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
@@ -786,7 +786,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 else if (responseId == 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = "Loan has been successfully booking successfully completed" });
+                                            new { success = true, message = "Loan booking completed successfully" });
                 }
                 else if (responseId == 3)
                 {
@@ -1653,43 +1653,43 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("loan-disbursement")]
-        public HttpResponseMessage AddUpdateLoanDisbursement([FromBody]LoanDisbursementViewModel entity)
-        {
-            try
-            {
-                string createUpdate = "";
-                if (entity.loanDisbursementId != 0 || entity.loanDisbursementId < 0)
-                {
-                    createUpdate = "updated";
-                }
-                else
-                {
-                    createUpdate = "created";
-                }
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = (short)token.GetCompanyId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("loan-disbursement")]
+        //public HttpResponseMessage AddUpdateLoanDisbursement([FromBody]LoanDisbursementViewModel entity)
+        //{
+        //    try
+        //    {
+        //        string createUpdate = "";
+        //        if (entity.loanDisbursementId != 0 || entity.loanDisbursementId < 0)
+        //        {
+        //            createUpdate = "updated";
+        //        }
+        //        else
+        //        {
+        //            createUpdate = "created";
+        //        }
+        //        entity.userBranchId = (short)token.GetBranchId;
+        //        entity.companyId = (short)token.GetCompanyId;
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
+        //        entity.createdBy = token.GetStaffId;
+        //        entity.staffId = token.GetStaffId;
 
-                var data = repo.AddUpdateLoanDisbursement(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error {createUpdate} this record" });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error creating this record {e.Message}" });
-            }
-        }
+        //        var data = repo.AddUpdateLoanDisbursement(entity);
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = $"There was an error {createUpdate} this record" });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = $"There was an error creating this record {e.Message}" });
+        //    }
+        //}
         #endregion
     }
 }

@@ -14,9 +14,6 @@ namespace FintrakBanking.Entities.Models
 
         public int TERMLOANID { get; set; }
 
-        [StringLength(50)]
-        public string ACCOUNTNUMBER { get; set; }
-
         public decimal AMOUNTDISBURSED { get; set; }
 
         public int CREATEDBY { get; set; }
@@ -32,5 +29,15 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public short CURRENCYID { get; set; }
+
+        public short RATECODEID { get; set; }
+
+        [StringLength(1000)]
+        public string NARRATION { get; set; }
+
+        public decimal? RATEAMOUNT { get; set; }
+
     }
 }
