@@ -2257,6 +2257,7 @@ namespace FintrakBanking.Repositories.Credit
                             if (USE_THIRD_PARTY_INTEGRATION)
                             {
                                 var reviewDate = revolvingLoanRecord.BOOKINGDATE.AddMonths(1);
+                                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
                                 if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
                                 {
                                     var model = new OverDraftNormalViewModel
@@ -2268,7 +2269,7 @@ namespace FintrakBanking.Repositories.Credit
                                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
                                         sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                                         sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
-                                        sanctionReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER
+                                        sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
                                     };
 
                                     ResponseMessageViewModel res = finacle.OverDraftNormal(model);

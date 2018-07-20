@@ -786,7 +786,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 else if (responseId == 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = "Loan booking completed successfully" });
+                                            new { success = true, message = "Loan has been successfully disbursed" });
                 }
                 else if (responseId == 3)
                 {
