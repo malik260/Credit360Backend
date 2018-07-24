@@ -7369,7 +7369,7 @@ namespace FintrakBanking.Repositories.Credit
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
                 if (loanInput.payAmount >= (double)(totalamount + (decimal)penalAmount))
                 {
-                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalCharge.CHARGEFEEID, "Penal Charge", (int)OperationsEnum.Prepayment));///change to charge GL
+                    //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalCharge.CHARGEFEEID, "Penal Charge", (int)OperationsEnum.Prepayment));///change to charge GL
 
                     //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
 
@@ -7382,7 +7382,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalCharge.CHARGEFEEID, "Penal Charge", (int)OperationsEnum.Prepayment));///change to charge GL
+                    //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalCharge.CHARGEFEEID, "Penal Charge", (int)OperationsEnum.Prepayment));///change to charge GL
 
                     //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
 

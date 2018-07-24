@@ -94,8 +94,8 @@ namespace FintrakBanking.Repositories.Credit
                     loanId = d.LOANID,
                     loanSystemTypeId = d.LOANSYSTEMTYPEID,
                     loanSystemTypeName = d.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
-                    productId = d.PRODUCTID
-
+                    productId = d.PRODUCTID,
+                    customerId = d.CUSTOMERID,
                 })
                 
             })
@@ -369,7 +369,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
-                if (operationId == lastOperationId) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam
+                if (operationId == lastOperationId) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
                 context.SaveChanges();
             }
 

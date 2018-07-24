@@ -1,4 +1,5 @@
-﻿using Microsoft.Reporting.WebForms;
+﻿using FintrakBanking.ReportObjects;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +15,28 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-                startDate.Text = Request.QueryString["startDate"];
-                endDate.Text = Request.QueryString["endDate"];
-                companyId.Text = Request.QueryString["companyId"];
-                branchId.Text = Request.QueryString["branchId"];
-                loanRefNo.Text = Request.QueryString["loanRefNo"];
-                productClassId.Text = Request.QueryString["productClassId"];
-                staffId.Text = Request.QueryString["staffId"];
+                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+               int companyId = Int32.Parse( Request.QueryString["companyId"]);
+               short branchId = short.Parse(Request.QueryString["branchId"]);
+               string loanRefNo = Request.QueryString["loanRefNo"];
+               int productClassId = Int32.Parse(Request.QueryString["productClassId"]);
+               int staffId = Int32.Parse(Request.QueryString["staffId"]);
 
-                ReportParameter sDate = new ReportParameter("startDate", startDate.Text);
-                ReportParameter eDate = new ReportParameter("endDate", endDate.Text);
 
+                LoanReportObjects dispursement = new LoanReportObjects();
+                var data = dispursement.GetDisburstLoans(startDate, endDate, companyId, loanRefNo, branchId, productClassId, staffId);
+
+                this.ReportViewer.LocalReport.DataSources.Clear();
+                ReportDataSource reportDataSource = new ReportDataSource();
+                reportDataSource.Value = data;
+                reportDataSource.Name = "DisbursedLoan";
+
+                ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanDisbursement.rdlc");
                 ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate});
                 ReportViewer.LocalReport.Refresh();
             }

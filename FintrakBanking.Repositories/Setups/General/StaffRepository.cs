@@ -2125,13 +2125,14 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() > 0;
         }
 
-        public List<simpleStaffModel> StaffReportingLine(string staffCode, int companyId)
+        public List<simpleStaffModel> StaffReportingLine(int staffId, string staffCode, int companyId)
         {
             List<simpleStaffModel> list=new List<simpleStaffModel>();
-            if (staffCode!=null)
+            if (staffCode != "undefined")
             {
-                var staffId = context.TBL_STAFF.Where(a => a.STAFFCODE == staffCode && a.COMPANYID == companyId).Select(a => a.STAFFID).FirstOrDefault();
-                list = context.TBL_STAFF.Where(x => x.SUPERVISOR_STAFFID == staffId && x.COMPANYID == companyId)
+                staffId = context.TBL_STAFF.Where(a => a.STAFFCODE.ToLower() == staffCode.Trim().ToLower() && a.COMPANYID == companyId).Select(a => a.STAFFID).FirstOrDefault();
+            }
+            list = context.TBL_STAFF.Where(x => x.SUPERVISOR_STAFFID == staffId && x.COMPANYID == companyId)
                         .Select(x => new simpleStaffModel
                         {
                             staffCode = x.STAFFCODE,
@@ -2140,15 +2141,19 @@ namespace FintrakBanking.Repositories.Setups.General
                             branchName = context.TBL_BRANCH.Where(a => a.BRANCHID == x.BRANCHID).Select(a => a.BRANCHNAME).FirstOrDefault(),
                             email = x.EMAIL
                         }).ToList();
-            }
+            
             return list;
 
 
         }
 
-        public simpleStaffModel StaffReportingTo(int staffId, int companyId)
+        public simpleStaffModel StaffReportingTo(int staffId, string staffCode, int companyId)
         {
-            var supervisorStaffId =  context.TBL_STAFF.Where(a => a.STAFFID == 183 && a.COMPANYID == companyId).Select(a => a.SUPERVISOR_STAFFID).FirstOrDefault();
+            if (staffCode != "null")
+            {
+                staffId = context.TBL_STAFF.Where(a => a.STAFFCODE.ToLower() == staffCode.Trim().ToLower() && a.COMPANYID == companyId).Select(a => a.STAFFID).FirstOrDefault();
+            }
+            var supervisorStaffId =  context.TBL_STAFF.Where(a => a.STAFFID == staffId && a.COMPANYID == companyId).Select(a => a.SUPERVISOR_STAFFID).FirstOrDefault();
             return context.TBL_STAFF.Where(x => x.STAFFID == supervisorStaffId && x.COMPANYID == companyId)
                   .Select(x => new simpleStaffModel
                   {
@@ -2159,9 +2164,14 @@ namespace FintrakBanking.Repositories.Setups.General
                       email = x.EMAIL
                   }).FirstOrDefault();
         }
-        public simpleStaffModel StaffInformation(int staffId, int companyId)
+        public simpleStaffModel StaffInformation(int staffId, string staffCode, int companyId)
         {
-            return context.TBL_STAFF.Where(x => x.STAFFID == 183 && x.COMPANYID == companyId)
+            if (staffCode != "null")
+            {
+                staffId = context.TBL_STAFF.Where(a => a.STAFFCODE.ToLower() == staffCode.Trim().ToLower() && a.COMPANYID == companyId).Select(a => a.STAFFID).FirstOrDefault();
+            }
+
+            return context.TBL_STAFF.Where(x => x.STAFFID == staffId && x.COMPANYID == companyId)
                   .Select(x => new simpleStaffModel
                   {
                       staffCode = x.STAFFCODE,
@@ -2172,10 +2182,14 @@ namespace FintrakBanking.Repositories.Setups.General
                   }).FirstOrDefault();
         }
 
-        public StaffMISDetailsModel StaffMIS(int staffId)
+        public StaffMISDetailsModel StaffMIS(int staffId, string staffCode)
         {
+            if (staffCode != "null")
+            {
+                staffId = context.TBL_STAFF.Where(a => a.STAFFCODE.ToLower() == staffCode.Trim().ToLower()).Select(a => a.STAFFID).FirstOrDefault();
+            }
             StaffMISDetailsModel model = new StaffMISDetailsModel();
-            var misRecord = staffMIS.StaffInformationSystem(183);
+            var misRecord = staffMIS.StaffInformationSystem(staffId);
             model.username = misRecord.field1;
             model.teamUnit = misRecord.field2;
             model.costCent = misRecord.field3;
