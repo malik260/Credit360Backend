@@ -787,7 +787,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var staffInfo = repo.StaffReportingLine(staffCode, token.GetCompanyId);
+                var staffInfo = repo.StaffReportingLine(token.GetStaffId, staffCode, token.GetCompanyId);
 
                 if (staffInfo == null)
                 {
@@ -809,7 +809,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var staffInfo = repo.StaffReportingLine(staffCode, token.GetCompanyId);
+                var staffInfo = repo.StaffReportingLine(token.GetStaffId, staffCode, token.GetCompanyId);
 
                 if (staffInfo == null)
                 {
@@ -826,12 +826,12 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("supervisor")]
-        public HttpResponseMessage Supervisor()
+        [Route("supervisor/{staffCode}")]
+        public HttpResponseMessage Supervisor(string staffCode)
         {
             try
             {
-                var staffInfo = repo.StaffReportingTo(token.GetStaffId, token.GetCompanyId);
+                var staffInfo = repo.StaffReportingTo(token.GetStaffId, staffCode, token.GetCompanyId);
 
                 if (staffInfo == null)
                 {
@@ -848,12 +848,12 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("staff/information")]
-        public HttpResponseMessage StaffInformation()
+        [Route("staff/information/{staffCode}")]
+        public HttpResponseMessage StaffInformation(string staffCode)
         {
             try
             {
-                var staffInfo = repo.StaffInformation(token.GetStaffId, token.GetCompanyId);
+                var staffInfo = repo.StaffInformation(token.GetStaffId, staffCode, token.GetCompanyId);
 
                 if (staffInfo == null)
                 {
@@ -870,12 +870,12 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("staff/mis")]
-        public HttpResponseMessage StaffMIS()
+        [Route("staff/mis/{staffCode}")]
+        public HttpResponseMessage StaffMIS(string staffCode)
         {
             try
             {
-                var staffInfo = repo.StaffMIS(token.GetStaffId);
+                var staffInfo = repo.StaffMIS(token.GetStaffId, staffCode);
 
                 if (staffInfo == null)
                 {

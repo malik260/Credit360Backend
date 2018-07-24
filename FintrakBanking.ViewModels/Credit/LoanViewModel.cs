@@ -48,6 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanViewModel : GeneralEntity
     {
         public short trailApprovalStatus;
+        public string ApprovalStatus { get; set; }
+        public string approvedByName { get; set; }
 
         public short requestStatusId { get; set; }
         public bool requestDeleted { get; set; }
@@ -238,6 +240,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isPerforming { get; set; }
         public object loanPrincipal { get; set; }
         public List<LoanDisbursementViewModel> loanBeneficiary { get; set; }
+        public string approvedComment { get; set; }
+        public decimal scheduleDayCountConvention { get; set; }
+        public string isDisbursedState { get; set; }
+        public string productPriceIndexName { get; set; }
 
 
 
@@ -857,8 +863,8 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class ProductType
     {
-        public int productTypeId { get; set; }
-        public string prodcutTypeName { get; set; }
+        public int loanSystemTypeId { get; set; }
+        public string loanSystemTypeName { get; set; }
     }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
