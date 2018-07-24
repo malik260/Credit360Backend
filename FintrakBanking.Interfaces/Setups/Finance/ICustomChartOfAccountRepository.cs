@@ -12,6 +12,8 @@ namespace FintrakBanking.Interfaces.Setups.Finance
 
         IEnumerable<CustomChartOfAccountViewModel> GetAllCustomChartOfAccountByCompanyId(int companyId);
 
+        IEnumerable<CustomChartOfAccountViewModel> GetnostroCustomChartOfAccountByCompanyId(int companyId);
+
         bool AddCustomChartOfAccount(CustomChartOfAccountViewModel model);
 
         bool UpdateCustomChartOfAccount(CustomChartOfAccountViewModel model, int customChartOfAccountId);

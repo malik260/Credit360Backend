@@ -110,11 +110,34 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpGet]
         [Route("revolving-types")]
-        public HttpResponseMessage GetRevolvingLoanTypes(int id)
+        public HttpResponseMessage GetRevolvingLoanTypes()
         {
             try
             {
                 var data = repo.GetRevolvingLoanTypes();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet]
+        [Route("temporary-overdraft-revolving-types")]
+        public HttpResponseMessage GetTemporaryOverdrafts()
+        {
+            try
+            {
+                var data = repo.GetTemporaryOverdrafts();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
             catch (ConditionNotMetException ce)
@@ -518,7 +541,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetInitiatedLoanApplicationAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetLoanBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (data.Any() == false)
                 {

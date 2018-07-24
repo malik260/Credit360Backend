@@ -81,6 +81,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("nostro-custom-chart-of-account/company")]
+        public HttpResponseMessage GetnostroCustomChartOfAccountByCompanyId()
+        {
+            try
+            {
+                var data = repo.GetnostroCustomChartOfAccountByCompanyId(token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [Route("custom-chart-of-account")]
         public HttpResponseMessage AddCustomChartOfAccount([FromBody] CustomChartOfAccountViewModel entity)
