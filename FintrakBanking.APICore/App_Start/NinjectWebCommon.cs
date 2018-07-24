@@ -216,6 +216,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IFXAccountCreationRepository>().To<FXAccountCreationRepository>();
             kernel.Bind<ILaonCamSolRepository>().To<LaonCamSolRepository>();
             kernel.Bind<IStaffMIS>().To<StaffMIS>();
+            kernel.Bind<IFacilityDetailSummary>().To<FacilityDetailSummary>();
         }
 
     }

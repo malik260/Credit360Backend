@@ -49,15 +49,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSourceAudit;
         
         /// <summary>
-        /// odsLogo control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsLogo;
-        
-        /// <summary>
         /// endDate control.
         /// </summary>
         /// <remarks>
@@ -94,12 +85,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.WebControls.Label username;
         
         /// <summary>
-        /// auditTypeId control.
+        /// Id control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label auditTypeId;
+        protected global::System.Web.UI.WebControls.Label Id;
     }
 }

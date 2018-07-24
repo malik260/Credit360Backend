@@ -59,7 +59,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatusName { get; set; }
         public bool isBidbond { get; set; }
         public bool isOverdraft { get; set; }
-        public decimal loanPrincipal { get; set; }
+        public object commercialPrincipal { get; set; }
 
         public int notificationDuration { get; set; }
         public int loanId { get; set; }
@@ -215,8 +215,6 @@ namespace FintrakBanking.ViewModels.Credit
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
 
-        public List<LoanDisbursementViewModel> loanBeneficiary { get; set; }
-
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
@@ -238,26 +236,12 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime lastRestructureDate  { get; set; }
         public short loanSystemTypeId  { get; set; }
         public bool isPerforming { get; set; }
+        public object loanPrincipal { get; set; }
+        public List<LoanDisbursementViewModel> loanBeneficiary { get; set; }
 
 
 
         //......End f Loan Relational Table View Mapping Models......//
-    }
-
-    public class LoanDisbursementViewModel : GeneralEntity
-    {
-        public string loanReferenceNo;
-        public string customerName;
-        public int loanDisbursementId;
-
-        public short beneficiaryCurrencyId { get; set; }
-        public int beneficiaryCurrencyCode { get; set; }
-        public decimal amountDisbursed { get; set; }
-        public string beneficiaryReason { get; set; }
-        public string beneficiaryRateCode { get; set; }
-        public short beneficiaryRateCodeId { get; set; }
-        public int beneficiaryRateAmount { get; set; }
-        public int loanId { get; set; }
     }
 
     public class RevolvingLoanViewModel : GeneralEntity
@@ -858,7 +842,31 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class LoanDisbursementViewModel : GeneralEntity
+    { 
+    
+        public int loanDisbursementId { get; set; }
 
+        public int termLoanId { get; set; }
+
+        public string  accountNumber { get; set; }
+
+        public decimal amountDisbursed { get; set; }
+
+        public string customerName { get; set; }
+
+        public string loanReferenceNo { get; set; }
+        public short beneficiaryCurrencyId { get; set; }
+        public short beneficiaryRateCodeId { get; set; }
+        public string beneficiaryReason { get; set; }
+        public decimal? beneficiaryRateAmount { get; set; }
+        public int loanId { get; set; }
+    }
+    public class ProductType
+    {
+        public int productTypeId { get; set; }
+        public string prodcutTypeName { get; set; }
+    }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
     //    public int maturityInstructionId { get; set; }
