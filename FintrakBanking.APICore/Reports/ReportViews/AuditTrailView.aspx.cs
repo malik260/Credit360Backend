@@ -18,14 +18,15 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             endDate.Text = Request.QueryString["endDate"];
             companyId.Text = Request.QueryString["companyId"];
             username.Text = Request.QueryString["username"];
-          //  Id.Text = "2019";
+            auditTypeId.Text = Request.QueryString["auditTypeId"];
+            //  Id.Text = "2019";
 
-        //    FinTrakBankingDocumentsContext context = new FinTrakBankingDocumentsContext();
-         //   CompanyInformationRepository generalSetup = new CompanyInformationRepository(context);
-          //  ReportParameter date = new ReportParameter("Path", generalSetup.GetCompanyImage());
+            //    FinTrakBankingDocumentsContext context = new FinTrakBankingDocumentsContext();
+            //   CompanyInformationRepository generalSetup = new CompanyInformationRepository(context);
+            //  ReportParameter date = new ReportParameter("Path", generalSetup.GetCompanyImage());
 
-         //   ReportViewer.LocalReport.SetParameters(new ReportParameter[] { date });
-         //   ReportViewer.LocalReport.Refresh();
+            //   ReportViewer.LocalReport.SetParameters(new ReportParameter[] { date });
+            //   ReportViewer.LocalReport.Refresh();
             ReportViewer.LocalReport.Refresh();
         }
     }

@@ -85,12 +85,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.WebControls.Label username;
         
         /// <summary>
-        /// Id control.
+        /// auditTypeId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Id;
+        protected global::System.Web.UI.WebControls.Label auditTypeId;
     }
 }
