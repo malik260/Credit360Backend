@@ -298,7 +298,6 @@ namespace FintrakBanking.Repositories.Finance
                 {
                     throw new Exception($"Transaction Failed.");
                 }
-
             }
             else
                 PostTransactionSub(batchCode, inputTransactions, transactions);

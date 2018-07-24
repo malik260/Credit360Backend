@@ -236,6 +236,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime lastRestructureDate  { get; set; }
         public short loanSystemTypeId  { get; set; }
         public bool isPerforming { get; set; }
+        public object loanPrincipal { get; set; }
+        public List<LoanDisbursementViewModel> loanBeneficiary { get; set; }
 
 
 
@@ -847,11 +849,17 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerName { get; set; }
 
         public string loanReferenceNo { get; set; }
-
-
-
+        public short beneficiaryCurrencyId { get; set; }
+        public short beneficiaryRateCodeId { get; set; }
+        public string beneficiaryReason { get; set; }
+        public decimal? beneficiaryRateAmount { get; set; }
+        public int loanId { get; set; }
     }
-
+    public class ProductType
+    {
+        public int productTypeId { get; set; }
+        public string prodcutTypeName { get; set; }
+    }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
     //    public int maturityInstructionId { get; set; }

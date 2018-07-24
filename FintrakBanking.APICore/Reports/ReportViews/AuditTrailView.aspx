@@ -21,33 +21,25 @@
                 
                 <datasources>
                           <rsweb:ReportDataSource DataSourceId="ObjectDataSourceAudit" Name="Audit" />
-                      <rsweb:ReportDataSource DataSourceId="odsLogo" Name="logo" />
                       </datasources>
             </LocalReport>
         </rsweb:ReportViewer>
      
-        <asp:ObjectDataSource ID="ObjectDataSourceAudit" runat="server" SelectMethod="GetAuditTrailByParam" TypeName="FintrakBanking.ReportObjects.ReportingObjects.Audit">
+                <asp:ObjectDataSource ID="ObjectDataSourceAudit" runat="server" SelectMethod="GetAuditTrailByParam" TypeName="FintrakBanking.ReportObjects.ReportingObjects.Audit">
             <SelectParameters> 
                 <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
-                <asp:ControlParameter ControlID="username" Name="username" PropertyName="Text" Type="String" />
-                <asp:ControlParameter ControlID="auditTypeId" Name="auditTypeId" PropertyName="Text" Type="Int32" />
+                <asp:ControlParameter ControlID="username" Name="username" PropertyName="Text" Type="String" />          
             </SelectParameters>
         </asp:ObjectDataSource>
-            <asp:ObjectDataSource ID="odsLogo" runat="server" SelectMethod="GetCompanyLogoArray" TypeName="FintrakBanking.ReportObjects.ReportingObjects.CompanyLogo">
-                <SelectParameters>
-                    <asp:Parameter DefaultValue="1" Name="companyId" Type="Int32" />
-                </SelectParameters>
-             </asp:ObjectDataSource>
         </div>
 
          <asp:Label ID="endDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="startDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>
         <asp:Label ID="username" runat="server"  Visible="false" ></asp:Label>
-        <asp:Label ID="auditTypeId" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="Id" runat="server"  Visible="false" ></asp:Label>
      
-        
     </form>
 </body>
 </html>
