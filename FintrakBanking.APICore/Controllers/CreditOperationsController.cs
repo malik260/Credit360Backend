@@ -533,7 +533,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
             }
         }
          [HttpPost] [ClaimsAuthorization]

@@ -77,7 +77,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool CommercialPaperTenorReview(TenorExtionViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
         bool CommercialPaperRateReview(InterestReviewViewModel userModel);
-        List<LoanReviewOperationParentChildViewModel> GetMaturedCommercialLoansParent(int companyId);
+        List<LoanReviewOperationParentChildViewModel> GetCommercialLoansLines(int companyId);
         List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID);
         //IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
         void CommercialPaperChangeOperativeAccount(int casaPayAccountId, int newCasaPayAccountId);
@@ -86,6 +86,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
         bool CommercialPaperTenorReviewDetails(int loanAplicationDetailId, int newTenor);
         bool GetRepaymentFromStaging();
+        bool reBookCommercialLoan(int loanId, int additionalTenor, int staffId, short instructionTypeId);
         #endregion
 
         #region
