@@ -1329,7 +1329,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 .Where(x => x.operationId == operation).ToList();
         }
 
-        public int GoForInitiatedLoanApproval(ApprovalViewModel entity, int loanBookingRequestId)
+        public int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId)
         {
             using (var trans = context.Database.BeginTransaction())
             {
@@ -1400,12 +1400,11 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="staffId">The staff identifier.</param>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        public IEnumerable<CamProcessedLoanViewModel> GetLoanBookingRequestAwaitingApproval(int staffId, int companyId)
+        public IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId)
         {
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanBookingRequest).ToList();
             List<int> operationIds = new List<int>();
-            operationIds.Add((int)OperationsEnum.TermLoanBooking);
-            operationIds.Add((int)OperationsEnum.CommercialPaperLoanBooking);
-            operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
+            operationIds.Add((int)OperationsEnum.LoanBookingRequest);
 
             try
             {
@@ -1417,22 +1416,23 @@ namespace FintrakBanking.Repositories.Credit
                             join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                             join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
                             join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
-                            where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                                  &&
-                                  operationIds.Contains(atrail.OPERATIONID)
-                                  &&
-                                  req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                            where ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
+                                  && operationIds.Contains(atrail.OPERATIONID)
+                                  && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                                   && (m.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.AvailmentCompleted || m.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.LoanBookingInProgress)
+                                  && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                   && atrail.RESPONSESTAFFID == null
                             orderby d.LOANAPPLICATIONDETAILID descending
 
                             select new CamProcessedLoanViewModel
                             {
+                                loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
                                 approvalStatusId = (short)m.APPROVALSTATUSID,
                                 loanApplicationId = m.LOANAPPLICATIONID,
                                 loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                 applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                 applicationStatusId = m.APPLICATIONSTATUSID,
+                                operationId = (short)OperationsEnum.LoanBookingRequest,
                                 requestedAmount = req.AMOUNT_REQUESTED,
                                 customerId = m.CUSTOMERID ?? 0,
                                 customerCode = cust.CUSTOMERCODE,
@@ -1530,6 +1530,7 @@ namespace FintrakBanking.Repositories.Credit
             List<int> operationIds = new List<int>();
             operationIds.Add((int)OperationsEnum.TermLoanBooking);
             operationIds.Add((int)OperationsEnum.CommercialPaperLoanBooking);
+            operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
 
             try
             {
@@ -4380,9 +4381,9 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex) { throw; }
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int companyId, int applicationDetailId)
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int companyId, int applicationDetailId, int loanBookingRequestId)
         {
-            var data = AvailedLoanApplicationsReadyForBookingByApplicationDetailId(companyId, applicationDetailId).Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Pending);
+            var data = AvailedLoanApplicationsReadyForBookingByApplicationDetailId(companyId, applicationDetailId, loanBookingRequestId); //.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Approved);
 
             data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
@@ -4435,7 +4436,7 @@ namespace FintrakBanking.Repositories.Credit
                         amount = entity.amount_Requested,
                     };
                     
-                    LogApproval(approvalModel, operationId, true, (int)ApprovalStatusEnum.Pending);
+                    LogApproval(approvalModel,(short)OperationsEnum.LoanBookingRequest, true, (int)ApprovalStatusEnum.Pending);
 
                     // Audit Section ---------------------------
                     var audit = new TBL_AUDIT
@@ -4474,8 +4475,11 @@ namespace FintrakBanking.Repositories.Credit
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                        where m.COMPANYID == companyId && d.DELETED == false && s.DELETED == false
-                        && d.STATUSID == (short)ApprovalStatusEnum.Approved
+                        where m.COMPANYID == companyId 
+                        && d.DELETED == false 
+                        && s.DELETED == false
+                        && d.STATUSID == (short)ApprovalStatusEnum.Approved 
+                        && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
@@ -4601,7 +4605,7 @@ namespace FintrakBanking.Repositories.Credit
                         break;
                 }
             }
-            return data.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Pending).ToList();
+            return data; //.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Pending).ToList();
         }
 
         /// <summary>
@@ -4609,7 +4613,7 @@ namespace FintrakBanking.Repositories.Credit
         /// </summary>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        private IEnumerable<CamProcessedLoanViewModel> AvailedLoanApplicationsReadyForBookingByApplicationDetailId(int companyId, int applicationDetailId)
+        private IEnumerable<CamProcessedLoanViewModel> AvailedLoanApplicationsReadyForBookingByApplicationDetailId(int companyId, int applicationDetailId, int loanBookingRequestId)
         {
             var newApplicationDate = generalSetup.GetApplicationDate();
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
@@ -4618,6 +4622,7 @@ namespace FintrakBanking.Repositories.Credit
                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         where d.LOANAPPLICATIONDETAILID == applicationDetailId && d.DELETED == false && s.DELETED == false
+                        && s.LOAN_BOOKING_REQUESTID == loanBookingRequestId
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
@@ -4626,6 +4631,7 @@ namespace FintrakBanking.Repositories.Credit
                             bookingRequestStatusId = s.APPROVALSTATUSID,
                             requestDate = s.DATETIMECREATED,
                             requestedBy = "",
+
                             requestedAmount = s.AMOUNT_REQUESTED,
                             requestOperationId = (short)OperationsEnum.LoanBookingRequest,
                             approvalStatusId = (short)m.APPROVALSTATUSID,
@@ -4690,14 +4696,6 @@ namespace FintrakBanking.Repositories.Credit
                             isOverdraft = d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
                             repaymentTerms = d.REPAYMENTTERMS,
                             repaymentSchedule = d.REPAYMENTSCHEDULE,
-                            //customerAvailableAmount =   pt.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || pt.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper || pt.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating
-                            //                            ? (d.APPROVEDAMOUNT - d.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.PRINCIPALAMOUNT) )
-                            //                            : ((pt.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
-                            //                            ? (d.APPROVEDAMOUNT - d.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.OVERDRAFTLIMIT))
-                            //                            : (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
-                            //                            ? (d.APPROVEDAMOUNT - d.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.CONTINGENTAMOUNT))
-                            //                            : 0)),
-
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
                             applicationDate = m.APPLICATIONDATE,

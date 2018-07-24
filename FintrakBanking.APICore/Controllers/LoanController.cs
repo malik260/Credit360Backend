@@ -541,7 +541,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetLoanBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (data.Any() == false)
                 {
@@ -854,14 +854,14 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var responseId = repo.GoForInitiatedLoanApproval(model, loanBookingRequestId);
+                var responseId = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
 
-                if (responseId == 0)
+                if (responseId == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation successful, request has been routed to the next approving office" });
                 }
-                else if (responseId == 1)
+                else if (responseId == 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, message = "Loan request has been successfully approved" });
@@ -1437,13 +1437,13 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("availed-loan-application/booking-ready/{applicationDetailId}")]
-        public HttpResponseMessage GetAvailedLoanApplicationDetailById(int applicationDetailId)
+        [Route("requested-loan-booking/{loanBookingRequestId}/application-detail/{applicationDetailId}")]
+        public HttpResponseMessage GetAvailedLoanApplicationDetailById(int applicationDetailId, int loanBookingRequestId)
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repo.GetAvailedLoanApplicationDetailById(token.GetCompanyId, applicationDetailId);
+                var response = repo.GetAvailedLoanApplicationDetailById(token.GetCompanyId, applicationDetailId, loanBookingRequestId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
