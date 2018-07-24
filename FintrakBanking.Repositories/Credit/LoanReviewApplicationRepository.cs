@@ -94,8 +94,8 @@ namespace FintrakBanking.Repositories.Credit
                     loanId = d.LOANID,
                     loanSystemTypeId = d.LOANSYSTEMTYPEID,
                     loanSystemTypeName = d.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
-                    productId = d.PRODUCTID
-
+                    productId = d.PRODUCTID,
+                    customerId = d.CUSTOMERID,
                 })
                 
             })
