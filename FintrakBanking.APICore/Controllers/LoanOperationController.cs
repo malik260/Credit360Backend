@@ -58,12 +58,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("mature-commercial-loans/parent")]
-        public HttpResponseMessage GetMaturedCommercialLoans()
+        [Route("commercial-loans-lines")]
+        public HttpResponseMessage GetCommercialLoansLines()
         {
             try
             {
-                var data = repo.GetMaturedCommercialLoansParent(token.GetCompanyId);
+                var data = repo.GetCommercialLoansLines(token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)

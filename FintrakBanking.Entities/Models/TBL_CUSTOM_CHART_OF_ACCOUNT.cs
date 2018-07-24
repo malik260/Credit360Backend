@@ -20,5 +20,7 @@
 
         public string PLACEHOLDERID { get; set; }
 
+        public bool ISNOSTROACCOUNT { get; set; }
+
     }
 }
