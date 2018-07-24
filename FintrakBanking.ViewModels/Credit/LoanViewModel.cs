@@ -244,6 +244,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal scheduleDayCountConvention { get; set; }
         public string isDisbursedState { get; set; }
         public string productPriceIndexName { get; set; }
+        public string revolvingType { get; set; }
 
 
 
@@ -252,6 +253,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string revolvingTypeName { get; set; }
+
         public string casaAccountDetails { get; set; }
 
         public string casaAccountNumber { get; set; }
@@ -463,6 +466,11 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public decimal approveRequestAmount { get; set; }
+        public decimal pendingRequestAmount { get; set; }
+        public decimal allRequestAmount { get; set; }
+        public decimal disapprovedCount { get; set; }
+
         public bool? isTemporaryOverdraft { get; set; }
 
         public string repaymentTerms { get; set; }

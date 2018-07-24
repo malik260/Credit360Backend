@@ -217,6 +217,22 @@ namespace FintrakBanking.Repositories.Credit
                                    exchangeRate = a.EXCHANGERATE,
                                    currencyId = a.CURRENCYID,
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
+
+                                   revolvingType = context.TBL_LOAN_REVOLVING_TYPE.Where(x => x.REVOLVINGTYPEID == a.REVOLVINGTYPEID).Select(x => x.REVOLVINGTYPENAME).FirstOrDefault(),
+                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                                   pastDueInterest = a.PASTDUEINTEREST,
+                                   interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                                   interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                                   penalChargeAmount = a.PENALCHARGEAMOUNT,
+                                   ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
+                                   loanStatus = context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == a.LOANSTATUSID).Select(x => x.ACCOUNTSTATUS).FirstOrDefault(),
+                                   scheduleDayCountConvention = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == a.DAYCOUNTCONVENTIONID).Select(x => x.DAYSINAYEAR).FirstOrDefault(),
+                                   externalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.EXT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
+                                   // internalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.INT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
+                                   userPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.USER_PRUDENTIAL_GUIDE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
+
+
                                }).FirstOrDefault();
             return loanDetails;
         }
