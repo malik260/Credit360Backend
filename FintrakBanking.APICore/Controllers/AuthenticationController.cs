@@ -373,6 +373,14 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                if (!_repo.ValidateOldPassword(pwdChange.username, StaticHelpers.EncryptSha512(pwdChange.currentPassword, StaticHelpers.EncryptionKey)))
+                {
+                    return this.Ok(new { success = false, message = "Invalid current password." });
+                }
+                if (!_repo.ValidatePasswordPolicy(pwdChange.newPassword))
+                {
+                    return this.Ok(new { success = false, message = "Password must contain at least 8 characters, a number, lowercare and uppercase" });
+                }
                 var password = new PasswordChangeViewModel
                 {
                     username = pwdChange.username,

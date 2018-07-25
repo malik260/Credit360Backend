@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Data.Entity;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static FintrakBanking.Repositories.Credit.LoanApplicationRepository;
 
@@ -262,7 +263,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
         public string LogCode { get; set; }
-   
+
 
         public async Task<UserViewModel> FindUserByUserNameAndPassword(string username, string password)
         {
@@ -292,24 +293,24 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool IsPasswordExpired(string userName)
         {
-          if((bool)profile_Setting.ENABLEPASSWORDRESET)
+            if ((bool)profile_Setting.ENABLEPASSWORDRESET)
             {
-              DateTime changeDate = (DateTime) context.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME.ToUpper() == userName.ToUpper()).NEXTPASSWORDCHANGEDATE;
+                DateTime changeDate = (DateTime)context.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME.ToUpper() == userName.ToUpper()).NEXTPASSWORDCHANGEDATE;
                 var duration = (changeDate.Date - DateTime.Now).Days;
-                 
+
                 if (duration >= profile_Setting.EXPIREPASSWORDAFTER)
-                    return true;                
+                    return true;
             }
             return false;
         }
 
         public bool IsFirstLogin(string userName)
         {
-          var  data =  context.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME.ToUpper() == userName.ToUpper());
-           if( data  != null)
+            var data = context.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME.ToUpper() == userName.ToUpper());
+            if (data != null)
             {
-               if(data.LASTLOGINDATE == null)
-                return true;
+                if (data.LASTLOGINDATE == null)
+                    return true;
             }
             return false;
         }
@@ -573,7 +574,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         email = st.EMAIL,
                         sessionTimeout = this.profile_Setting.SESSIONTIMEOUT
                     }).FirstOrDefault();
-            
+
         }
 
 
@@ -632,32 +633,55 @@ namespace FintrakBanking.Repositories.Setups.General
                 //                                            .Take(profile_Setting.ALLOWPASSWORDREUSEAFTER);
                 //if (!daat.Any())
                 //{
-                    if (data != null && data.PASSWORD == pwdChange.currentPassword)
-                    {
-                        int staffId = data.STAFFID;
-                        data.PASSWORD = pwdChange.newPassword;
-                        data.DATETIMEUPDATED = DateTime.Now;
-                        data.LASTUPDATEDBY = staffId;
-                        data.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);
-                        //var history = new TBL_PROFILE_PASSWORD_HISTORY
-                        //{
-                        //    CREATEDBY = staffId,
-                        //    DATETIMECREATED = DateTime.Now,
-                        //    PASSWORD = pwdChange.newPassword,
-                        //    USERID = daat.FirstOrDefault().USERID
-                        //};
-                        //context.TBL_PROFILE_PASSWORD_HISTORY.Add(history);
+                if (data != null && data.PASSWORD == pwdChange.currentPassword)
+                {
+                    int staffId = data.STAFFID;
+                    data.PASSWORD = pwdChange.newPassword;
+                    data.DATETIMEUPDATED = DateTime.Now;
+                    data.LASTUPDATEDBY = staffId;
+                    data.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);
+                    //var history = new TBL_PROFILE_PASSWORD_HISTORY
+                    //{
+                    //    CREATEDBY = staffId,
+                    //    DATETIMECREATED = DateTime.Now,
+                    //    PASSWORD = pwdChange.newPassword,
+                    //    USERID = daat.FirstOrDefault().USERID
+                    //};
+                    //context.TBL_PROFILE_PASSWORD_HISTORY.Add(history);
 
-                        return context.SaveChanges() > 0;
-                    }
-                    else
-                        throw new Exception("Password is not valid");
+                    return context.SaveChanges() > 0;
+                }
+                else
+                    throw new Exception("Password is not valid");
                 //}
                 //else
                 //    throw new Exception("You are not allow to re-use the previous 12 passwords");
             }
             else
                 throw new Exception("New Password should not be same as the Current Password");
+        }
+        public bool ValidatePasswordPolicy(string password)
+        {
+            var hasNumber = new Regex(@"[0-9]+");
+            var hasUpperChar = new Regex(@"[A-Z]+");
+            var hasMinimum8Chars = new Regex(@".{8,}");
+
+            var isValidated = hasNumber.IsMatch(password) && hasUpperChar.IsMatch(password) && hasMinimum8Chars.IsMatch(password);
+            return isValidated;
+        }
+        public bool ValidateOldPassword(string username, string oldPassword)
+        {
+            bool isOldPasswordValid = false;
+            var data = context.TBL_PROFILE_USER.Where(u => u.USERNAME.ToUpper() == username.ToUpper()).FirstOrDefault();
+            if (data != null)
+            {
+                if (data.PASSWORD == oldPassword)
+                {
+                    isOldPasswordValid = true;
+                    return isOldPasswordValid;
+                }
+            }
+            return isOldPasswordValid;
         }
     }
 }
