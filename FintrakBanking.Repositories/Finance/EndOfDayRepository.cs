@@ -124,9 +124,9 @@ namespace FintrakBanking.Repositories.Finance
 
             //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            //loanOperation.ProcessDailyPastDueInterestAccrual(date);
+            loanOperation.ProcessDailyPastDueInterestAccrual(date);
 
-            //loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
+            loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
 
             loanOperation.ProcessLoanRepaymentPostingPastDue(date);
 
@@ -142,7 +142,7 @@ namespace FintrakBanking.Repositories.Finance
 
             //collateralItemPolicy.CheckForExpiredItemPolicies(date);
 
-            //loanOperation.CalculateLoanClassification(date);
+            loanOperation.CalculateLoanClassification(date);
 
            // loanOperation.GetRepaymentFromStaging();
 

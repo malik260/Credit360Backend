@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Common.CustomException
 {
-    //class Exceptions
-    //{
-    //}
     [Serializable]
     public class ConditionNotMetException : Exception
     {

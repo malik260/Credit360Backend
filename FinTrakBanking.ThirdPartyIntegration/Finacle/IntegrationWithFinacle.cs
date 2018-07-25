@@ -66,7 +66,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             if (result.Message.IsSuccessStatusCode)
             {
-                if (result.APIResponse.webRequestStatus == "FAILURE")
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
                     throw new Exception(result.APIResponse.message);
                 }
@@ -143,7 +143,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             if (result.Message.IsSuccessStatusCode)
             {
-                if (result.APIResponse.webRequestStatus == "FAILURE")
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
                     throw new Exception(result.APIResponse.message);
                 }
@@ -180,7 +180,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             if (result.Message.IsSuccessStatusCode)
             {
-                if (result.APIResponse.webRequestStatus == "FAILURE")
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
                     throw new Exception(result.APIResponse.message);
                 }
@@ -218,7 +218,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             if (result.Message.IsSuccessStatusCode)
             {
-                if (result.APIResponse.webRequestStatus == "FAILURE")
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
                     throw new Exception(result.APIResponse.message);
                 }
@@ -255,7 +255,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             if (result.Message.IsSuccessStatusCode)
             {
-                if (result.APIResponse.webRequestStatus == "FAILURE")
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
                     throw new Exception(result.APIResponse.message);
                 }
@@ -296,7 +296,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             if (result.Message.IsSuccessStatusCode)
             {
-                if (result.APIResponse.webRequestStatus == "FAILURE")
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
                     throw new Exception(result.APIResponse.message);
                 }

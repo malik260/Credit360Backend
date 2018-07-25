@@ -1668,7 +1668,6 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = x.q.o.g.a.OPERATIONID,
                             accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
                         })
-                    .ToList()
                     .Where(x => x.applicationReferenceNumber == searchString
                         || x.firstName.ToLower() == searchString
                         || x.lastName.ToLower() == searchString
@@ -1677,7 +1676,7 @@ namespace FintrakBanking.Repositories.Credit
                         )
                     ;
 
-            //var list = applications.ToList();
+            var list = applications.ToList();
             applications = applications.OrderByDescending(x => x.approvalTrailId).GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
             //var filteredList = applications.ToList();
             return applications;

@@ -219,6 +219,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILaonCamSolRepository>().To<LaonCamSolRepository>();
             kernel.Bind<ITwoFactorAuthIntegrationService>().To<TwoFactorAuthIntegrationService>();
             kernel.Bind<IStaffMIS>().To<StaffMIS>();
+            kernel.Bind<IFacilityDetailSummary>().To<FacilityDetailSummary>();
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ReportObjects.ReportingObjects;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
@@ -19,22 +20,26 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-                startDate.Text = Request.QueryString["startDate"];
-                endDate.Text = Request.QueryString["endDate"];
-                companyId.Text = Request.QueryString["companyId"];
-                username.Text = Request.QueryString["username"];
-                auditTypeId.Text = Request.QueryString["auditTypeId"];
+                var dateInfo = Request.QueryString["startDate"];
+                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                int auditTypeId = Int32.Parse( Request.QueryString["auditTypeId"]);
+                string username = Request.QueryString["username"];
+                string logo = Server.MapPath("~/Content/icons/firstbank.png");
 
-                string tmpPath = @"Content\Icons\firstbank-logo.jpg";
-                string a = Path.GetFullPath(tmpPath);
-                string ProjectPath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)));
-                var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-                var imagePath = Path.Combine(outPutDirectory, tmpPath);
+                Audit audit = new Audit();
+                var data =    audit.GetAuditTrailByParam(startDate, endDate, username, auditTypeId);
 
-                this.ReportViewer.LocalReport.EnableExternalImages = true;
-               // ReportParameter logo = new ReportParameter("logoPath", imagePath);
-               // ReportViewer.LocalReport.SetParameters(logo);
-                ReportViewer.LocalReport.Refresh();
+                this.ReportViewer.LocalReport.DataSources.Clear();
+                ReportDataSource reportDataSource = new ReportDataSource();
+                reportDataSource.Value = data;
+                reportDataSource.Name = "Audit";
+
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/AuditTrailReports.rdlc"); 
+                this.ReportViewer.LocalReport.Refresh();
+
+               
             }
 
         }

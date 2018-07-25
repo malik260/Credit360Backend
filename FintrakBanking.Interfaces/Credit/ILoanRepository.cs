@@ -9,6 +9,7 @@ using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +18,12 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        decimal getDailyInterest(int principal, double interestRate, int interestDaysPeriod);
+
+        decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod);
+
+        int getDaysInLoanPeriod(DateTime startDate, DateTime endDate);
+
         IEnumerable<LookupViewModel> GetLoanApplicationTypes();
 
         IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
@@ -50,7 +57,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int companyId, int applicationDetailId);
+        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int companyId, int applicationDetailId,int loanBookingRequestId);
 
         bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity);
 
@@ -121,7 +128,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanViewModel> SearchRunningCommercialForLoans(string searchQuery);
 
-        IEnumerable<LookupViewModel> GetRevolvingLoanTypes();
+        IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanTypes();
+
+        IEnumerable<RevolvingLoanViewModel> GetTemporaryOverdrafts();
 
         IEnumerable<LoanViewModel> GetLoanStatus(int companyId);
 
@@ -129,8 +138,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         #region Loan Disbursement 
         IEnumerable<LoanDisbursementViewModel> GetAllLoanDisbursement(int loanId);
-        bool AddUpdateLoanDisbursement(LoanDisbursementViewModel entity);
+       // bool AddUpdateLoanDisbursement(LoanDisbursementViewModel entity);
         #endregion
+
         IEnumerable<LookupViewModel> GetAllFrequencyType();
 
         List<ProductViewModel> GetLoanCommercialLoans(int companyId);
@@ -141,9 +151,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         void DisburseLoan(LoanViewModel entity, TwoFactorAutheticationViewModel twoFactorAuthDetails = null);
 
-        IEnumerable<CamProcessedLoanViewModel> GetInitiatedLoanApplicationAwaitingApproval(int staffId, int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId);
 
-        int GoForInitiatedLoanApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
 
 

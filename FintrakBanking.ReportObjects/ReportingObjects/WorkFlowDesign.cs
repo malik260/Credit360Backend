@@ -43,7 +43,7 @@ namespace FintrakBanking.ReportObjects
 
         //}
 
-        public static IEnumerable<WorkflowTrackerViewModel> TrackWorkFlow(int operationId, int companyId, int targetId, int staffId)
+        public  IEnumerable<WorkflowTrackerViewModel> TrackWorkFlow(int operationId, int companyId, int targetId, int staffId)
         {
 
 

@@ -110,11 +110,34 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpGet]
         [Route("revolving-types")]
-        public HttpResponseMessage GetRevolvingLoanTypes(int id)
+        public HttpResponseMessage GetRevolvingLoanTypes()
         {
             try
             {
                 var data = repo.GetRevolvingLoanTypes();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet]
+        [Route("temporary-overdraft-revolving-types")]
+        public HttpResponseMessage GetTemporaryOverdrafts()
+        {
+            try
+            {
+                var data = repo.GetTemporaryOverdrafts();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
             catch (ConditionNotMetException ce)
@@ -522,7 +545,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetInitiatedLoanApplicationAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (data.Any() == false)
                 {
@@ -790,7 +813,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 else if (responseId == 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = "Loan has been successfully booking successfully completed" });
+                                            new { success = true, message = "Loan has been successfully disbursed" });
                 }
                 else if (responseId == 3)
                 {
@@ -839,14 +862,14 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var responseId = repo.GoForInitiatedLoanApproval(model, loanBookingRequestId);
+                var responseId = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
 
-                if (responseId == 0)
+                if (responseId == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation successful, request has been routed to the next approving office" });
                 }
-                else if (responseId == 1)
+                else if (responseId == 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, message = "Loan request has been successfully approved" });
@@ -1422,13 +1445,13 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("availed-loan-application/booking-ready/{applicationDetailId}")]
-        public HttpResponseMessage GetAvailedLoanApplicationDetailById(int applicationDetailId)
+        [Route("requested-loan-booking/{loanBookingRequestId}/application-detail/{applicationDetailId}")]
+        public HttpResponseMessage GetAvailedLoanApplicationDetailById(int applicationDetailId, int loanBookingRequestId)
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repo.GetAvailedLoanApplicationDetailById(token.GetCompanyId, applicationDetailId);
+                var response = repo.GetAvailedLoanApplicationDetailById(token.GetCompanyId, applicationDetailId, loanBookingRequestId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -1661,43 +1684,43 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("loan-disbursement")]
-        public HttpResponseMessage AddUpdateLoanDisbursement([FromBody]LoanDisbursementViewModel entity)
-        {
-            try
-            {
-                string createUpdate = "";
-                if (entity.loanDisbursementId != 0 || entity.loanDisbursementId < 0)
-                {
-                    createUpdate = "updated";
-                }
-                else
-                {
-                    createUpdate = "created";
-                }
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = (short)token.GetCompanyId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("loan-disbursement")]
+        //public HttpResponseMessage AddUpdateLoanDisbursement([FromBody]LoanDisbursementViewModel entity)
+        //{
+        //    try
+        //    {
+        //        string createUpdate = "";
+        //        if (entity.loanDisbursementId != 0 || entity.loanDisbursementId < 0)
+        //        {
+        //            createUpdate = "updated";
+        //        }
+        //        else
+        //        {
+        //            createUpdate = "created";
+        //        }
+        //        entity.userBranchId = (short)token.GetBranchId;
+        //        entity.companyId = (short)token.GetCompanyId;
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
+        //        entity.createdBy = token.GetStaffId;
+        //        entity.staffId = token.GetStaffId;
 
-                var data = repo.AddUpdateLoanDisbursement(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error {createUpdate} this record" });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error creating this record {e.Message}" });
-            }
-        }
+        //        var data = repo.AddUpdateLoanDisbursement(entity);
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = $"There was an error {createUpdate} this record" });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = $"There was an error creating this record {e.Message}" });
+        //    }
+        //}
         #endregion
     }
 }
