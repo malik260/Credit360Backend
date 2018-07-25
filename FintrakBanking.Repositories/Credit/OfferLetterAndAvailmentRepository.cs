@@ -1699,7 +1699,7 @@ namespace FintrakBanking.Repositories.Credit
                                     var request = new TBL_LOAN_BOOKING_REQUEST
                                     {
                                         AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                                         LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                                         DATETIMECREATED = DateTime.Now,
                                         CREATEDBY = entity.staffId,
@@ -1719,7 +1719,7 @@ namespace FintrakBanking.Repositories.Credit
                                             var request = new TBL_LOAN_BOOKING_REQUEST
                                             {
                                                 AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                                                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                                                APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                                                 LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                                                 DATETIMECREATED = DateTime.Now,
                                                 CREATEDBY = entity.staffId,
