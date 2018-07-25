@@ -4475,11 +4475,9 @@ namespace FintrakBanking.Repositories.Credit
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                        where m.COMPANYID == companyId 
-                        && d.DELETED == false 
-                        && s.DELETED == false
-                        && d.STATUSID == (short)ApprovalStatusEnum.Approved 
-                        && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        where m.COMPANYID == companyId && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        && s.DELETED == false // && d.DELETED == false
+                       // && d.STATUSID == (short)ApprovalStatusEnum.Approved
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
@@ -4546,8 +4544,6 @@ namespace FintrakBanking.Repositories.Credit
 
                         }).ToList().Take(500);
 
-            data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
-
             foreach (var item in data)
             {
                 var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
@@ -4605,6 +4601,7 @@ namespace FintrakBanking.Repositories.Credit
                         break;
                 }
             }
+            data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
             return data; //.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Pending).ToList();
         }
 
