@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Admin
     {
         #region 
         LookupViewModel GetDashboardStaffRole(int staffId);
-#endregion
+        #endregion
 
         #region Users
         IEnumerable<UserViewModel> GetAllUsers();
@@ -35,11 +35,11 @@ namespace FintrakBanking.Interfaces.Admin
         IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId);
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
 
-       bool CreateUser(AppUserViewModel user);
+        bool CreateUser(AppUserViewModel user);
 
-       bool UpdateUser(int userId, AppUserViewModel user);
+        bool UpdateUser(int userId, AppUserViewModel user);
 
-     //   Object ManageUserAccount(int userId, int lockStatus);
+        //   Object ManageUserAccount(int userId, int lockStatus);
 
         #endregion Users
 
@@ -73,5 +73,11 @@ namespace FintrakBanking.Interfaces.Admin
         bool UpdateUserStatus(ActiveUserDetails entity, out string message);
         IEnumerable<ActiveUserDetails> GetActiveUsers(int companyId);
 
+
+        #region Two Factor Authentication
+        bool TwoFactorAuthentication(string staffCode, string passCode);
+        bool TwoFactorAuthenticationEnabled();
+        bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId);
+        #endregion
     }
 }

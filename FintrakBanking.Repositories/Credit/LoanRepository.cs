@@ -806,6 +806,11 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new APIErrorException(ae.Message);
                 }
+                catch (TwoFactorAuthenticationException fa)
+                {
+                    trans.Rollback();
+                    throw new TwoFactorAuthenticationException(fa.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();
@@ -1017,6 +1022,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     throw new APIErrorException(ae.Message);
+                }
+                catch (TwoFactorAuthenticationException fa)
+                {
+                    trans.Rollback();
+                    throw new TwoFactorAuthenticationException(fa.Message);
                 }
                 catch (Exception ex)
                  {
@@ -1234,6 +1244,11 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new APIErrorException(ae.Message);
                 }
+                catch (TwoFactorAuthenticationException fa)
+                {
+                    trans.Rollback();
+                    throw new TwoFactorAuthenticationException(fa.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();
@@ -1295,7 +1310,7 @@ namespace FintrakBanking.Repositories.Credit
         /// Disburses the loan.
         /// </summary>
         /// <param name="entity">The entity.</param>
-        public void DisburseLoan(LoanViewModel entity)
+        public void DisburseLoan(LoanViewModel entity, TwoFactorAutheticationViewModel twoFactorAuthDetails = null)
         {
             //PostLoanDisbursment(entity);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
@@ -1308,7 +1323,7 @@ namespace FintrakBanking.Repositories.Credit
             if (feePostings.Count() > 0)
                 inputTransactions.AddRange(feePostings);
 
-            financeTransaction.PostTransaction(inputTransactions);
+            financeTransaction.PostTransaction(inputTransactions, false, twoFactorAuthDetails);
 
             //if (feePostings.Count() > 0)
             //    financeTransaction.PostTransaction(feePostings);
@@ -1316,11 +1331,17 @@ namespace FintrakBanking.Repositories.Credit
 
         public void PostLoanFees(LoanViewModel entity)
         {
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = entity.username,
+                passcode = entity.passCode
+            };
+
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
             inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
 
-            if (inputTransactions.Count > 0) financeTransaction.PostTransaction(inputTransactions);
+            if (inputTransactions.Count > 0) financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
         }
 
         public List<ApprovalLevelStaffViewModel> GetLoanOperationApprovers(int operation, int companyId)
@@ -1551,6 +1572,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 loanId = ln.TERMLOANID,
                                 operationId = ln.OPERATIONID,
+                                operationTypeId = atrail.OPERATIONID,
                                 loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
                                 customerId = ln.CUSTOMERID,
                                 productId = ln.PRODUCTID,
@@ -1706,6 +1728,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 loanId = ln.REVOLVINGLOANID,
                                 operationId = ln.OPERATIONID,
+                                operationTypeId = (int)OperationsEnum.RevolvingLoanBooking,
                                 loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
                                 customerId = ln.CUSTOMERID,
                                 productId = ln.PRODUCTID,
@@ -1839,6 +1862,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             loanId = ln.CONTINGENTLOANID,
                             operationId = (int)OperationsEnum.ContigentLoanBooking,
+                            operationTypeId = (int)OperationsEnum.ContigentLoanBooking,
                             loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
                             customerId = ln.CUSTOMERID,
                             productId = ln.PRODUCTID,
@@ -2127,6 +2151,10 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new APIErrorException(e.Message);
                 }
+                catch (TwoFactorAuthenticationException e)
+                {
+                    throw new TwoFactorAuthenticationException(e.Message);
+                }
                 catch (Exception e)
                 {
                     //trans.Rollback();
@@ -2149,6 +2177,11 @@ namespace FintrakBanking.Repositories.Credit
             var contingentLoanRecord = context.TBL_LOAN_CONTINGENT.Find(loanId);
             var loanReferenceNumber = string.Empty;
 
+            var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+            {
+                username = user.userName,
+                passcode = user.passCode
+            };
             /* HANDLING APPROVAL THAT ARE STILL IN PROCESSING STATE */
             if (workflow.NewState != (int)ApprovalState.Ended)
             {
@@ -2283,7 +2316,7 @@ namespace FintrakBanking.Repositories.Credit
                                         sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
                                     };
 
-                                    ResponseMessageViewModel res = finacle.OverDraftNormal(model);
+                                    ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
                                     revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                                 }
                                 if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalTemporaryOverdraft)
@@ -2296,7 +2329,7 @@ namespace FintrakBanking.Repositories.Credit
                                         TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
                                         TemporaryOverDraftNaration = "Normal Temporary Overdraft",
                                     };
-                                    ResponseMessageViewModel res = finacle.TemporaryOverDraftNormal(model);
+                                    ResponseMessageViewModel res = finacle.TemporaryOverDraftNormal(model, twoFactorAuthDetails);
                                     revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                                 }
                                 if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.SingleLimitTemporaryOverdraft)
@@ -2309,7 +2342,7 @@ namespace FintrakBanking.Repositories.Credit
                                         TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
                                         TemporaryOverDraftNaration = "Single Limit Temporary Overdraft",
                                     };
-                                    ResponseMessageViewModel res = finacle.TemporaryOverDraftSingle(model);
+                                    ResponseMessageViewModel res = finacle.TemporaryOverDraftSingle(model, twoFactorAuthDetails);
                                     revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                                 }
                             }
@@ -2320,7 +2353,7 @@ namespace FintrakBanking.Repositories.Credit
                             /* BUILD FEE MODEL & HANDLE FEE POSTING */
                             var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.OverdraftFacility);
                             var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
-                            if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings); }
+                            if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
 
                             revolvingLoanRecord.DATEAPPROVED = DateTime.Now;
                             revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
@@ -2371,7 +2404,7 @@ namespace FintrakBanking.Repositories.Credit
                                     userIPAddress = user.userIPAddress,
                                     applicationUrl = user.applicationUrl,
                                 };
-                                casaLien.PlaceLien(lienModel);
+                                casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
                             }
                             else if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees && proBehaviour.Any() && proBehaviour.FirstOrDefault().ALLOWFUNDUSAGE == false)
                             {   /* DEBIT B&G CUSTOMER WHERE PRODUCT DOES NOT ALLOW FUND USAGE */
@@ -2392,7 +2425,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
                             var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
-                            if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings); }
+                            if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
 
                             /*UPDATING STAFF MIS */
                             //this.updateLoanContingentStaffMIS(contingentLoanRecord);
@@ -2431,7 +2464,7 @@ namespace FintrakBanking.Repositories.Credit
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
                             var systemDate = generalSetup.GetApplicationDate();
 
-                            DisburseLoan(loanDisbursementModel);
+                            DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
 
                             /*UPDATING STAFF MIS */
                            // this.updateloanStaffMIS(loanRecord);
@@ -2545,7 +2578,7 @@ namespace FintrakBanking.Repositories.Credit
                             /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                             var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-                            DisburseLoan(loanDisbursementModel);
+                            DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
 
                             var systemDate = generalSetup.GetApplicationDate();
 
